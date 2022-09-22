@@ -1,15 +1,13 @@
 /**
  * CU Generic ISO/FIPS Country modification
  */
-const ISO_COUNTRY_CODE_FIELD = 'document.newMaintainableObject.isoCountryCode';
 const ISO_COUNTRY_NAME_FIELD = 'document.newMaintainableObject.isoCountry.name.div';
-const FIPS_COUNTRY_CODE_FIELD = 'document.newMaintainableObject.fipsCountryCode';
 const FIPS_COUNTRY_NAME_FIELD = 'document.newMaintainableObject.fipsCountry.name.div';
 const EMPTY_STRING = '';
 
 function onblur_lookupFipsCountry(fipsCountryCodeField) {
-    let primaryKeyValue = ensurePrimaryKeyIsUppercase(fipsCountryCodeField);
-    if (primaryKeyValue === null || primaryKeyValue === '') {
+    let primaryKeyValue = ensurePrimaryKeyIsUppercase(dwr.util.getValue(fipsCountryCodeField));
+    if (!primaryKeyValue || primaryKeyValue === '') {
         clearCountryName(FIPS_COUNTRY_NAME_FIELD);
     } else {
         setFieldToSpecifiedValue(fipsCountryCodeField, primaryKeyValue);
@@ -25,11 +23,11 @@ function setFieldToSpecifiedValue(fieldName, fieldValue) {
     dwr.util.setValue(fieldName, fieldValue)
 }
 
-function ensurePrimaryKeyIsUppercase(countryCodeField) {
-    if (countryCodeField === null || countryCodeField === '') {
-        return countryCodeField;
+function ensurePrimaryKeyIsUppercase(countryCodeValue) {
+    if (!countryCodeValue || countryCodeValue === '') {
+        return countryCodeValue;
     }
-    return dwr.util.getValue(countryCodeField).trim().toUpperCase();
+    return countryCodeValue.trim().toUpperCase();
 }
 
 function updateCountryName(primaryKeyValue, targetFieldName) {   
@@ -38,7 +36,7 @@ function updateCountryName(primaryKeyValue, targetFieldName) {
     } else {
         var dwrReply = {
                  callback:function(data) {
-                    if (data === null || data.includes("NOT FOUND")) {
+                    if (!data || data.includes("NOT FOUND")) {
                         setRecipientValue(targetFieldName, wrapError("Country Name not found"), true);
                     } else {
                         setFieldToSpecifiedValue(targetFieldName, data);
@@ -53,8 +51,8 @@ function updateCountryName(primaryKeyValue, targetFieldName) {
 }
 
 function onblur_lookupIsoCountry(isoCountryCodeField) {
-    let primaryKeyValue = ensurePrimaryKeyIsUppercase(isoCountryCodeField);
-    if (primaryKeyValue === null || primaryKeyValue === '') {
+    let primaryKeyValue = ensurePrimaryKeyIsUppercase(dwr.util.getValue(isoCountryCodeField));
+    if (!primaryKeyValue || primaryKeyValue === '') {
         clearCountryName(ISO_COUNTRY_NAME_FIELD);
     } else {
         setFieldToSpecifiedValue(isoCountryCodeField, primaryKeyValue);
@@ -68,7 +66,7 @@ function updateIsoCountryName(primaryKeyValue, targetFieldName) {
     } else {
         var dwrReply = {
                  callback:function(data) {
-                    if (data === null|| data.includes("NOT FOUND")) {
+                    if (!data || data.includes("NOT FOUND")) {
                         setRecipientValue(targetFieldName, wrapError("ISOCountry Name not found"), true);
                     } else {
                         setFieldToSpecifiedValue(targetFieldName, data);

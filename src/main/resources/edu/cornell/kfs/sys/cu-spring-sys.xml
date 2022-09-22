@@ -417,6 +417,7 @@
 
     <bean id="isoFipsCountryMapService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSCountryMapServiceImpl">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
 
     <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">

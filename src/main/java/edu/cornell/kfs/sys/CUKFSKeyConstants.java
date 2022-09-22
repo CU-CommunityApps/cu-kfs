@@ -244,8 +244,6 @@ public class CUKFSKeyConstants {
     //** CU Generic ISO-FIPS Country modification **
     public static final String ERROR_NO_COUNTRY_FOUND_FOR_CODE = "error.no.country.found.for.code";
     public static final String MESSAGE_COUNTRY_CODE_INDICATOR = "message.country.code.indicator";
-    public static final String ERROR_NO_ISO_COUNTRY_FOUND_FOR_CODE = "error.no.iso.country.found.for.code";
-    public static final String MESSAGE_ISO_COUNTRY_CODE_INDICATOR = "message.iso.country.code.indicator";
     public static final String ERROR_NO_ISO_TO_FIPS_MAPPINGS = "error.no.iso.to.fips.mappings";
     public static final String ERROR_MANY_ISO_TO_FIPS_MAPPINGS = "error.many.iso.to.fips.mappings";
     public static final String MESSAGE_ONE_TO_ONE_ISO_TO_FIPS_MAPPING = "message.one.to.one.iso.to.fips.mappping";
@@ -255,4 +253,5 @@ public class CUKFSKeyConstants {
     public static final String ACTIVE_MAP_ERROR_COUNTRY_INACTIVE = "active.map.error.country.inactive";
     public static final String ACTIVE_MAP_ERROR_COUNTRY_DOES_NOT_EXIST = "active.map.error.country.does.not.exist";
     public static final String NAME_NOT_FOUND_FOR_COUNTRY_CODE = "name.not.found.for.country.code";
+    public static final String NULL_OR_BLANK_CODE_PARAMETER = "null.or.blank.code.parameter";
 }

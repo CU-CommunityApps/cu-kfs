@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -29,38 +30,48 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean isCountryActive(String countryCode) {
-        if (ObjectUtils.isNull(countryCode)) {
+        if (isBlank(countryCode)) {
             return false;
         }
         Country countryFound = getByPrimaryId(countryCode);
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryActive: " +
-                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR),
+                            CUKFSConstants.FIPS, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return countryFound.isActive();
         } else {
-            LOG.error("isCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), countryCode));
+            LOG.error("isCountryActive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), CUKFSConstants.FIPS, countryCode));
             return false;
         }
     }
     
     @Override
     public boolean isCountryInactive(String countryCode) {
-        if (ObjectUtils.isNull(countryCode)) {
+        if (isBlank(countryCode)) {
             return false;
         }
         Country countryFound = getByPrimaryId(countryCode);
         if (ObjectUtils.isNotNull(countryFound)) {
             LOG.debug("isCountryInactive: " +
-                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
+                    MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.MESSAGE_COUNTRY_CODE_INDICATOR), 
+                            CUKFSConstants.FIPS, countryCode, (countryFound.isActive() ? "Active" : "Inactive")));
             return !countryFound.isActive();
         } else {
-            LOG.error("isCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), countryCode));
+            LOG.error("isCountryInactive: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.ERROR_NO_COUNTRY_FOUND_FOR_CODE), CUKFSConstants.FIPS, countryCode));
             return false;
         }
     }
     
+    private boolean isBlank(String countryCode) {
+        if (StringUtils.isBlank(countryCode)) {
+            LOG.debug("isBlank: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), "countryCode"));
+            return true;
+        }
+        return false;
+    }
+    
     protected Country getByPrimaryId(String countryCode) {
-        if (ObjectUtils.isNull(countryCode)) {
+        if (isBlank(countryCode)) {
             return null;
         }
         return getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode));
@@ -68,7 +79,7 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public String findCountryNameByCountryCode(String countryCode) {
-        if (ObjectUtils.isNull(countryCode)) {
+        if (isBlank(countryCode)) {
             return KFSConstants.EMPTY_STRING;
         }
         Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
@@ -81,7 +92,7 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean countryExists(String countryCode) {
-        if (ObjectUtils.isNull(countryCode)) {
+        if (isBlank(countryCode)) {
             return false;
         }
         Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
