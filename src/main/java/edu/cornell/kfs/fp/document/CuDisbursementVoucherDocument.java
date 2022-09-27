@@ -98,6 +98,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     public CuDisbursementVoucherDocument() {
         super();
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
+        tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
 
     @Override
@@ -608,6 +609,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     }
 
     /**
+     * Clear fields that shouldn't be copied to to the new DV.
+     */
+    @Override
+    protected void clearFieldsThatShouldNotBeCopied() {
+        super.clearFieldsThatShouldNotBeCopied();
+        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
+        setTripId(null);
+    }
+
+    /**
      * This overrides the code in the parent base class because of an issue where vendorDetail is null when it shouldn't be.
      * Might be related to OJB and proxy objects or something like that.
      * Hopefully we can contribute a fix to base code and eliminate this duplicate method in the future.
@@ -891,6 +902,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         }
 
         return false;
+    }
+
+    public String getTripAssociationStatusCode() {
+        return tripAssociationStatusCode;
     }
 
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {

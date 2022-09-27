@@ -21,12 +21,26 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
         tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
 
+    @Override
+    public void toCopy() {
+        super.toCopy();
+        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
+        setTripId(null);
+    }
+
     public String getTripId() {
         return this.tripId;
     }
 
-
     public void setTripId(String tripId) {
         this.tripId = tripId;
+    }
+
+    public String getTripAssociationStatusCode() {
+        return this.tripAssociationStatusCode;
+    }
+
+    public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
+        this.tripAssociationStatusCode = tripAssociationStatusCode;
     }
 }

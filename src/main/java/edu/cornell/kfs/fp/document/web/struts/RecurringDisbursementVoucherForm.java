@@ -75,6 +75,18 @@ public class RecurringDisbursementVoucherForm extends CuDisbursementVoucherForm 
         return !StringUtils.equalsIgnoreCase(pdpSatus.getDvStatus(), DocumentStatus.CANCELED.getLabel());
     }
 
+    public boolean isRecurringDVDetailsDefaultOpen() {
+        return !((RecurringDisbursementVoucherDocument)this.getDocument()).getRecurringDisbursementVoucherDetails().isEmpty();
+    }
+
+    public int getRecurringDVDetailsSize() {
+        return ((RecurringDisbursementVoucherDocument)this.getDocument()).getRecurringDisbursementVoucherDetails().size();
+    }
+
+    public boolean isPreDisbursementProcessorTabDefaultOpen() {
+        return !getPdpStatuses().isEmpty();
+    }
+
     public List<RecurringDisbursementVoucherPDPStatus> getPdpStatuses() {
         if(pdpStatuses == null) {
             pdpStatuses = getRecurringDisbursementVoucherDocumentService().findPdpStatuses((RecurringDisbursementVoucherDocument)getDocument());
