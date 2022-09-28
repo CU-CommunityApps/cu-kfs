@@ -921,6 +921,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         return tripAssociationStatusCode;
     }
 
+
     public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
         this.tripAssociationStatusCode = tripAssociationStatusCode;
     }
