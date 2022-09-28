@@ -32,15 +32,16 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
         return this.tripAssociationStatusCode;
     }
 
+    public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
+        this.tripAssociationStatusCode = tripAssociationStatusCode;
+    }
+
     public String getTripId() {
         return this.tripId;
     }
+    
 
     public void setTripId(String tripId) {
         this.tripId = tripId;
-    }
-
-    public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
-        this.tripAssociationStatusCode = tripAssociationStatusCode;
     }
 }
