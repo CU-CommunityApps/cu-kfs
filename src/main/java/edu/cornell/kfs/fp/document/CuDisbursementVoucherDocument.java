@@ -904,10 +904,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         return false;
     }
 
-    public String getTripAssociationStatusCode() {
-        return tripAssociationStatusCode;
-    }
-
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
         return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
     }
@@ -919,6 +915,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     @Override
     public void setDvPayeeDetail(DisbursementVoucherPayeeDetail dvPayeeDetail) {
         this.dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) dvPayeeDetail;
+    }
+    
+    public String getTripAssociationStatusCode() {
+        return tripAssociationStatusCode;
     }
 
     public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
