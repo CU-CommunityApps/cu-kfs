@@ -72,6 +72,7 @@ public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends LocalSer
         if (this.server != null) {
             this.server.shutdown(0L, TimeUnit.SECONDS);
         }
+        webServiceCallsService.destroy();
     }
 
     private WebServiceCredentialService buildMockWebServiceCredentialService(String mockPaymentWorksUrl) {
