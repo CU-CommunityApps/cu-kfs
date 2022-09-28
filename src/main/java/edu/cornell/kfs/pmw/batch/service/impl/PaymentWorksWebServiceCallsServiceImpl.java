@@ -51,7 +51,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
 
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
     protected WebServiceCredentialService webServiceCredentialService;
-    
+
     @Override
     public List<String> obtainPmwIdentifiersForApprovedNewVendorRequests() {
         LOG.info("obtainPmwIdentifiersForApprovedNewVendorRequests: Processing started.");
@@ -67,7 +67,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
         List<PaymentWorksNewVendorRequestDTO> pmwNewVendorIdentifiers = new ArrayList<PaymentWorksNewVendorRequestDTO>();
         
         try{
-            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(), buildPaymentWorksApprovedNewVendorRequestsURI());
+            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(MultiPartFeature.class), buildPaymentWorksApprovedNewVendorRequestsURI());
             PaymentWorksNewVendorRequestsRootDTO newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
             LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
             
@@ -190,7 +190,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
     
     private Response buildJsonResponse(URI uri, String jsonString) {
-        Invocation request = buildJsonClientRequest(getClient(), uri, jsonString);
+        Invocation request = buildJsonClientRequest(getClient(MultiPartFeature.class), uri, jsonString);
         Response response = request.invoke();
         response.bufferEntity();
         return response;
@@ -344,8 +344,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
 
     private Response performSupplierUpload(InputStream vendorCsvDataStream) {
-        getClient().register(MultiPartFeature.class);
-        Invocation request = buildMultiPartRequestForSupplierUpload(getClient(), buildSupplierUploadURI(), vendorCsvDataStream);
+        Invocation request = buildMultiPartRequestForSupplierUpload(getClient(MultiPartFeature.class), buildSupplierUploadURI(), vendorCsvDataStream);
         return request.invoke();
     }
 
