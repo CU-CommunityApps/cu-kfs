@@ -916,7 +916,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     public void setDvPayeeDetail(DisbursementVoucherPayeeDetail dvPayeeDetail) {
         this.dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) dvPayeeDetail;
     }
-    
+
     public String getTripAssociationStatusCode() {
         return tripAssociationStatusCode;
     }
