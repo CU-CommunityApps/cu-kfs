@@ -9,6 +9,8 @@
   <proposalOrganizations/>
   <proposalProjectDirectors/>
   <proposalResearchRisks/>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
 </org.kuali.kfs.module.cg.businessobject.Proposal><maintenanceAction>null</maintenanceAction>
 </oldMaintainableObject><newMaintainableObject><org.kuali.kfs.module.cg.businessobject.Proposal>
   <newCollectionRecord>false</newCollectionRecord>
@@ -278,6 +280,8 @@
     <active>false</active>
     <stateAgencyIndicator>false</stateAgencyIndicator>
   </federalPassThroughAgency>
+  <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+  <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
 </org.kuali.kfs.module.cg.businessobject.Proposal><maintenanceAction>New</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </oldData>

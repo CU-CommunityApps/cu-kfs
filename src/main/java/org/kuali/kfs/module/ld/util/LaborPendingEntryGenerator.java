@@ -150,7 +150,7 @@ public final class LaborPendingEntryGenerator {
                     // Use parameter default if labor benefit rate category code is blank
                     if (StringUtils.isBlank(laborBenefitRateCategoryCode)) {
                         laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class,
-                        		COAParameterConstants.BENEFIT_RATE);
+                                 COAParameterConstants.BENEFIT_RATE);
                     }
 
                     //create a  map for the search criteria to lookup the fringe benefit percentage

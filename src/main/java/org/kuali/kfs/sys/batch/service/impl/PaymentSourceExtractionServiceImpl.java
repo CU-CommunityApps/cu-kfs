@@ -246,7 +246,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      * @return A fully populated batch instance.
      */
     protected Batch createBatch(String campusCode, String principalId, Date processRunDate) {
-    	final String unitCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileUnit();
+        final String unitCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileUnit();
         final String subUnitCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileSubUnit();
         CustomerProfile customer = customerProfileService.get(campusCode, unitCode, subUnitCode);
         if (customer == null) {

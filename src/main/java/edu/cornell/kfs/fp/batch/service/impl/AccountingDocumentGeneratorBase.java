@@ -66,7 +66,7 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
     }
 
     protected void populateDocumentHeader(T document, AccountingXmlDocumentEntry documentEntry) {
-        DocumentHeader documentHeader = (DocumentHeader) document.getDocumentHeader();
+        DocumentHeader documentHeader = document.getDocumentHeader();
         documentHeader.setDocumentDescription(documentEntry.getDescription());
         documentHeader.setExplanation(documentEntry.getExplanation());
         documentHeader.setOrganizationDocumentNumber(documentEntry.getOrganizationDocumentNumber());

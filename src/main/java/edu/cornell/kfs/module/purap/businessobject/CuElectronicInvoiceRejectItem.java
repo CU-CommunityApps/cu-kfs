@@ -44,7 +44,7 @@ public class CuElectronicInvoiceRejectItem extends ElectronicInvoiceRejectItem {
             returnValue = getInvoiceItemQuantity().multiply(getInvoiceItemUnitPrice());
         }
         // KFSPTS-1719 - add "0"
-        else if (getInvoiceItemQuantity() == null
+        else if ((getInvoiceItemQuantity() == null || BigDecimal.ZERO.compareTo(getInvoiceItemQuantity()) == 0)
                 && getInvoiceItemUnitPrice() != null) {
             // quantity is empty but unit cost exists... use it
             returnValue = getInvoiceItemUnitPrice();

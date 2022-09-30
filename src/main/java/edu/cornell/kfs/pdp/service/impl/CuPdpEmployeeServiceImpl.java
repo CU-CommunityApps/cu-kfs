@@ -15,12 +15,12 @@ public class CuPdpEmployeeServiceImpl implements CuPdpEmployeeService {
     
     @Override
     public boolean shouldPayeeBeProcessedAsEmployeeForThisCustomer(PaymentFileLoad paymentFile) {
-        String chartCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
+        String campusCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION);
         String subUnitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT);
         String unitCode = getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT);
         return StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getUnitCode(), unitCode) &&
                 StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getSubUnitCode(), subUnitCode) &&
-                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getCampusCode(), chartCode);
+                StringUtils.equalsIgnoreCase(paymentFile.getCustomer().getCampusCode(), campusCode);
     }
     
     public String getConcurParameterValue(String parameterName) {

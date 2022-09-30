@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+/* CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz*/
 public class KSBScheduledThreadPoolExecutor extends ScheduledThreadPoolExecutor implements KSBScheduledPool {
 
     private static final Logger LOG = LogManager.getLogger();

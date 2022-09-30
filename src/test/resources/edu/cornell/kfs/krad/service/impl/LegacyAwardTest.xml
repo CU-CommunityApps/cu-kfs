@@ -194,6 +194,8 @@
     <proposalPurposeCode>S</proposalPurposeCode>
     <proposalProjectTitle>LEGACY TEST PROJECT</proposalProjectTitle>
     <active>true</active>
+    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
     <versionNumber>1</versionNumber>
     <objectId>A53DCA7FBEAF467EE04054802FC20000</objectId>
     <newCollectionRecord>false</newCollectionRecord>
@@ -466,6 +468,8 @@
     <proposalPurposeCode>S</proposalPurposeCode>
     <proposalProjectTitle>LEGACY TEST PROJECT</proposalProjectTitle>
     <active>true</active>
+    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
+    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
     <versionNumber>1</versionNumber>
     <objectId>A53DCA7FBEAF467EE04054802FC00000</objectId>
     <newCollectionRecord>false</newCollectionRecord>

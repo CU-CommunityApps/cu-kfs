@@ -201,14 +201,18 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
             BufferedReader bufferedReader = new BufferedReader(inputReader);
             String line = "";
             boolean found = false;
-            String chartVal = "";
+            String campusVal = "";
             String unitVal = "";
             String subUnitVal = "";
 
             while(!found && (line=bufferedReader.readLine())!=null) {
                 // Use multiple ifs instead of else/ifs because all values could occur on the same line.
+            	// This should be removed when we no longer need to support the chart tag
                 if(StringUtils.contains(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.CHART_OPEN)) {
-                    chartVal = StringUtils.substringBetween(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.CHART_OPEN, CUPdpConstants.CustomerProfilePrimaryKeyTags.CHART_CLOSE);
+                    campusVal = StringUtils.substringBetween(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.CHART_OPEN, CUPdpConstants.CustomerProfilePrimaryKeyTags.CHART_CLOSE);
+                }
+                if(StringUtils.contains(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.CAMPUS_OPEN)) {
+                    campusVal = StringUtils.substringBetween(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.CAMPUS_OPEN, CUPdpConstants.CustomerProfilePrimaryKeyTags.CAMPUS_CLOSE);
                 }
                 if(StringUtils.contains(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.UNIT_OPEN)) {
                     unitVal = StringUtils.substringBetween(line, CUPdpConstants.CustomerProfilePrimaryKeyTags.UNIT_OPEN, CUPdpConstants.CustomerProfilePrimaryKeyTags.UNIT_CLOSE);
@@ -223,12 +227,12 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 // Note: the pdpEmailServiceImpl doesn't actually use the customer object from the paymentFile, but rather retrieves an instance using
                 // the values provided for chart, unit and sub_unit.  However, it doesn't make sense to even populate the paymentFile object if 
                 // the values retrieved don't map to a valid customer object, so we will retrieve the object here to validate the values.
-                CustomerProfile customer = customerProfileService.get(chartVal, unitVal, subUnitVal);
+                CustomerProfile customer = customerProfileService.get(campusVal, unitVal, subUnitVal);
                 if(ObjectUtils.isNotNull(customer)) {
                     if(ObjectUtils.isNull(paymentFile)) {
                         paymentFile = new PaymentFileLoad();
                     }
-                    paymentFile.setCampus(chartVal);
+                    paymentFile.setCampus(campusVal);
                     paymentFile.setUnit(unitVal);
                     paymentFile.setSubUnit(subUnitVal);
                     paymentFile.setCustomer(customer);

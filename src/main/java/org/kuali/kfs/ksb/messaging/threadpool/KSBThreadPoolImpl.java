@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A Thread Pool implementation for the KSB which implements a thread pool backed by a configuration store.
  */
+/* CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz*/
 public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPool {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -44,7 +45,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
 
     public KSBThreadPoolImpl() {
         super(DEFAULT_POOL_SIZE, DEFAULT_POOL_SIZE, 60, TimeUnit.SECONDS,
-        		new PriorityBlockingQueue<>(1, new PriorityBlockingQueuePersistedMessageComparator()),
+                new PriorityBlockingQueue<>(1, new PriorityBlockingQueuePersistedMessageComparator()),
                 new KSBThreadFactory(
                         ClassLoaderUtils.getDefaultClassLoader()), new ThreadPoolExecutor.AbortPolicy());
     }

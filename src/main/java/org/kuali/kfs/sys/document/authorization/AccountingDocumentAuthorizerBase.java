@@ -62,9 +62,9 @@ public class AccountingDocumentAuthorizerBase extends FinancialSystemTransaction
         Document document = (Document) dataObject;
         // add the document amount
         // CU customization: this line is a modified version of the FINP-8249 fix; it adds the cast to DocumentHeader
-        if (((DocumentHeader) document.getDocumentHeader()).getFinancialDocumentTotalAmount() != null) {
+        if (document.getDocumentHeader().getFinancialDocumentTotalAmount() != null) {
             attributes.put(KimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
-                    ((DocumentHeader) document.getDocumentHeader()).getFinancialDocumentTotalAmount().toString());
+                    document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
         } else {
             attributes.put(KimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, "0");
         }

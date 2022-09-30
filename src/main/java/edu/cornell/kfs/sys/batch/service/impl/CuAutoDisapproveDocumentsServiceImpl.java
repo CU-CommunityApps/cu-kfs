@@ -31,7 +31,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
 import org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;

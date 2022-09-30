@@ -51,7 +51,7 @@ public interface PaymentRequestDao {
      * @param campusCode           if not null, limit results to a single campus
      * @return Collection of payment requests that need to be extracted to PDP.
      */
-    List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String chartCode,
+    List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String campusCode,
             Date onOrBeforePaymentRequestPayDate);
 
     /**

@@ -27,6 +27,7 @@ import edu.cornell.kfs.pmw.web.mock.MockPaymentWorksRefreshTokenEndpoint;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
+/* The test has been temporarily commented out as it needs to be reworked after the httpclient version upgrade. This will be fixed with KFSPTS-26117*/
 public class PaymentWorksWebServiceCallsServiceRefreshTokenTest {
 //extends LocalServerTestBase {
 //

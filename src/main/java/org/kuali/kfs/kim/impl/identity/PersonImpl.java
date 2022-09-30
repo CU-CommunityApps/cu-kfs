@@ -175,8 +175,8 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
                 if (entityTypeCode.equals(KimConstants.EntityTypes.SYSTEM)) {
                     name = principal.getPrincipalName().toUpperCase(Locale.US);
                 } else {
-                	name = entityName.getCompositeNameUnmasked();
-                	if (StringUtils.isEmpty(name)) {
+                    name = entityName.getCompositeNameUnmasked();
+                    if (StringUtils.isEmpty(name)) {
                         name = lastName + ", " + firstName;
                     }
                 }

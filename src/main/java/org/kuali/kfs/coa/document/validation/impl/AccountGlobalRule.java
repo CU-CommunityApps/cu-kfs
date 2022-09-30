@@ -926,7 +926,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		if (StringUtils.isNotBlank(fundGroupCode) && StringUtils.isNotBlank(subFundGroupCode)) {
 			if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_FUNDS, fundGroupCode).evaluationSucceeds()) {
-				if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_FUNDS, subFundGroupCode).evaluationSucceeds()) {
+				if (SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(Account.class, COAParameterConstants.INCOME_STREAM_SUB_FUNDS, subFundGroupCode).evaluationSucceeds()) {
 					required = true;
 				}
 			}
