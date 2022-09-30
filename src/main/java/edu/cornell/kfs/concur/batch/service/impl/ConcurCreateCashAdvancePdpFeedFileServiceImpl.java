@@ -155,7 +155,7 @@ public class ConcurCreateCashAdvancePdpFeedFileServiceImpl implements ConcurCrea
 
     private PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
-        header.setChart(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
+        header.setCampus(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
         header.setCreationDate(getConcurBatchUtilityService().formatDate_MMddyyyy(batchDate));
         header.setSubUnit(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT));
         header.setUnit(getConcurBatchUtilityService().getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT));

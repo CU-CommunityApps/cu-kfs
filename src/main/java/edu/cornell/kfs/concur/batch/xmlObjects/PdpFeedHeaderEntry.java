@@ -13,7 +13,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "chart",
+    "campus",
     "unit",
     "subUnit",
     "creationDate"
@@ -24,7 +24,7 @@ public class PdpFeedHeaderEntry {
     @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
-    protected String chart;
+    protected String campus;
     @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -38,12 +38,12 @@ public class PdpFeedHeaderEntry {
     @XmlSchemaType(name = "normalizedString")
     protected String creationDate;
 
-    public String getChart() {
-        return chart;
+    public String getCampus() {
+        return campus;
     }
 
-    public void setChart(String value) {
-        this.chart = value;
+    public void setCampus(String value) {
+        this.campus = value;
     }
 
     public String getUnit() {
