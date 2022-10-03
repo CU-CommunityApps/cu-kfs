@@ -132,6 +132,22 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     }
     
     public void sendEmail(String subject, String body) {
+        BodyMailMessage message = buildBodyMailMessage(subject, body);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("sendEmail, from address: " + message.getFromAddress());
+            LOG.debug("sendEmail. Send email to: " + String.join(",", message.getToAddresses()));
+            LOG.debug("sendEmail, the email subject: " + subject);
+            LOG.debug("sendEmail, the email budy: " + body);
+        }
+        
+        try {
+            emailService.sendMessage(message, false);
+        } catch (Exception e) {
+            LOG.error("sendEmail, the email could not be sent", e);
+        }
+    }
+    
+    private BodyMailMessage buildBodyMailMessage(String subject, String body) {
         String toAddress = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_TO_ADDRESS);
         String fromAddress = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_FROM_ADDRESS);
         List<String> toAddressList = new ArrayList<>();
@@ -143,18 +159,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
         message.getToAddresses().addAll(toAddressList);
         message.setMessage(body);
         
-        boolean htmlMessage = false;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
-            LOG.debug("sendEmail, the email subject: " + subject);
-            LOG.debug("sendEmail, the email budy: " + body);
-        }
-        try {
-            emailService.sendMessage(message, htmlMessage);
-        } catch (Exception e) {
-            LOG.error("sendEmail, the email could not be sent", e);
-        }
-
+        return message;
     }
 
     public void setReportWriterService(ReportWriterService reportWriterService) {

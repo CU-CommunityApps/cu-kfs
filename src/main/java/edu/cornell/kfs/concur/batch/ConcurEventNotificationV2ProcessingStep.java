@@ -44,7 +44,6 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     }
     
     private void generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        LOG.info("generateReport, full report has not bee implemented yet");
         if (processingResults.isEmpty()) {
             LOG.info("generateReport, no reports nor travel requests were validated");
         } else {
