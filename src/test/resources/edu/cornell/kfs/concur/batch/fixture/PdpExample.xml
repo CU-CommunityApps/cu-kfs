@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pdp_file xmlns="http://www.kuali.org/kfs/pdp/payment" version="1.0">
 	<header>
-		<chart>IT</chart>
+		<campus>IT</campus>
 		<unit>CRNL</unit>
 		<sub_unit>CLIF</sub_unit>
 		<creation_date>02/17/2017</creation_date>
