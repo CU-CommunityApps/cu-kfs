@@ -467,6 +467,17 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>proposal</class>
+            <pattern>
+                <match>userLookupRoleNamespaceCode</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>userLookupRoleName</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>org.kuali.kfs.pdp.businessobject.CustomerProfile</class>
             <pattern>
                 <match>chartCode</match>

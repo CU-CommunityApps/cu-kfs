@@ -815,7 +815,7 @@ public enum AccountingXmlDocumentEntryFixture {
     }
 
     private void populateNumberAndHeaderOnDocument(AccountingDocument accountingDocument, String documentNumber) {
-        DocumentHeader documentHeader = (DocumentHeader) accountingDocument.getDocumentHeader();
+        DocumentHeader documentHeader = accountingDocument.getDocumentHeader();
         accountingDocument.setDocumentNumber(documentNumber);
         documentHeader.setDocumentNumber(documentNumber);
         documentHeader.setDocumentDescription(description);

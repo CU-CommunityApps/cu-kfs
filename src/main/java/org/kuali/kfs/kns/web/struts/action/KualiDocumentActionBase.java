@@ -1207,7 +1207,7 @@ public class KualiDocumentActionBase extends KualiAction {
             		&& StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 //check for namespace
                 String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                if (StringUtils.isNotEmpty(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim())) {
+                if (StringUtils.isNotBlank(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim())) {
                     namespace = request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim();
                 }
                 Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
@@ -1228,7 +1228,7 @@ public class KualiDocumentActionBase extends KualiAction {
                     //check for namespace
                     String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
                     String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                    if (StringUtils.isNotEmpty(request.getParameter(namespaceParam).trim())) {
+                    if (StringUtils.isNotBlank(request.getParameter(namespaceParam).trim())) {
                         namespace = request.getParameter(namespaceParam).trim();
                     }
                     Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(

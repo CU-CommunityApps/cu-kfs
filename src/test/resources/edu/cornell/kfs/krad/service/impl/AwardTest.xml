@@ -871,8 +871,6 @@
     <proposalPurposeCode>R</proposalPurposeCode>
     <proposalProjectTitle>TESTDATA: ANONYMOUS RESEARCH</proposalProjectTitle>
     <active>true</active>
-    <userLookupRoleNamespaceCode>KFS-SYS</userLookupRoleNamespaceCode>
-    <userLookupRoleName>Contracts &amp; Grants Test Director</userLookupRoleName>
   </proposal>
   <agency>
     <versionNumber>3</versionNumber>
