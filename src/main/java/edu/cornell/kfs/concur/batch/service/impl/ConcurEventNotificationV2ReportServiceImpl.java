@@ -137,7 +137,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
             LOG.debug("sendEmail, from address: " + message.getFromAddress());
             LOG.debug("sendEmail. Send email to: " + String.join(",", message.getToAddresses()));
             LOG.debug("sendEmail, the email subject: " + subject);
-            LOG.debug("sendEmail, the email budy: " + body);
+            LOG.debug("sendEmail, the email body: " + body);
         }
         
         try {
