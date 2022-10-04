@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
+import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -19,11 +20,13 @@ import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
+import edu.cornell.kfs.sys.util.CuSqlChunk;
+import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
 import org.springframework.jdbc.core.RowMapper;
 
-public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
+public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
     private static final Logger LOG = LogManager.getLogger();
     
     protected ISOFIPSConversionService isoFipsConversionService;
@@ -164,6 +167,9 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return sb.toString();
     }
     
+    /*
+     * @todo remove
+     */
     private String buildTimeFrameRestrictionClause(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         StringBuilder sb = new StringBuilder();
         if (processingMode == JaggaerContractUploadProcessingMode.PO) {
@@ -174,6 +180,23 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return sb.toString();
     }
     
+    private CuSqlChunk buildTimeFrameRestrictionClauseCuSqlChunk(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+        if (processingMode == JaggaerContractUploadProcessingMode.PO) {
+            CuSqlChunk chunk = CuSqlChunk.of("AND VH.VNDR_HDR_GNRTD_ID IN (",
+                    buildPurchaseOrderLimitSubQueryCuSqlChunk(processingDate),
+                    ") ");
+            return chunk;
+        } else {
+            CuSqlChunk chunk = CuSqlChunk.of("AAND VD.LAST_UPDT_TS > TO_DATE('",
+                    CuSqlChunk.forParameter(processingDate),
+                    "', 'YYYY-MM-DD') ");
+            return chunk;
+        }
+    }
+    
+    /*
+     * @todo remove this
+     */
     private String buildPurchaseOrderLimitSubQuery(String processingDate) {
         StringBuilder sb = new StringBuilder("SELECT VNDR_HDR_GNRTD_ID FROM (");
         sb.append("SELECT VNDR_HDR_GNRTD_ID, COUNT(1) ");
@@ -184,8 +207,26 @@ public class JaggaerUploadDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ja
         return sb.toString();
     }
     
+    private CuSqlChunk buildPurchaseOrderLimitSubQueryCuSqlChunk(String processingDate) {
+        CuSqlChunk chunk = CuSqlChunk.of("SELECT VNDR_HDR_GNRTD_ID FROM (",
+                "SELECT VNDR_HDR_GNRTD_ID, COUNT(1) ",
+                "FROM KFS.PUR_PO_T ",
+                "WHERE PO_LST_TRNS_DT > TO_DATE('",
+                CuSqlChunk.forParameter(processingDate),
+                "', 'YYYY-MM-DD') GROUP BY VNDR_HDR_GNRTD_ID HAVING COUNT(1) > 1)");
+        return chunk;
+    }
+    
+    /*
+     * @todo remove this
+     */
     private String buildOrderByClause() {
         return "ORDER BY VD.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID";
+    }
+    
+    private CuSqlChunk buildOrderByClauseCuSqlChunk() {
+        CuSqlChunk chunk = CuSqlChunk.of("ORDER BY VD.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID");
+        return chunk;
     }
     
     private String buildVendorNumber(String vendorHeaderId, String vendorDetailId) {
