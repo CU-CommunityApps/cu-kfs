@@ -2279,28 +2279,6 @@
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-common</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-transport</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-buffer</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-handler</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-codec</artifactId>
-            	</exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

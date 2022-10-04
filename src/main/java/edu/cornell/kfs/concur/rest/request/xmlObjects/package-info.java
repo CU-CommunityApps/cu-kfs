@@ -6,8 +6,8 @@
 )
 package edu.cornell.kfs.concur.rest.request.xmlObjects;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlNs;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurXmlNamespaces;
