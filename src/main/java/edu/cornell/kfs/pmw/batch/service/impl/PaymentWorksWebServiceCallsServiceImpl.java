@@ -76,7 +76,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
                 closeResponseJustObtained(responseForNewVendorRequestsRootResults);
                 
                 if (additionalPagesOfPmwVendorIdsExist(newVendorsRoot)) {
-                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(), buildURI(newVendorsRoot.getNext()));
+                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(MultiPartFeature.class), buildURI(newVendorsRoot.getNext()));
                     newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
                 } else {
                     newVendorsRoot = null;
@@ -206,7 +206,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
     
     private Response buildXmlOutput(URI uri) {
-        Invocation request = buildXmlClientRequest(getClient(), uri);
+        Invocation request = buildXmlClientRequest(getClient(MultiPartFeature.class), uri);
         Response response = request.invoke();
         response.bufferEntity();
         return response;

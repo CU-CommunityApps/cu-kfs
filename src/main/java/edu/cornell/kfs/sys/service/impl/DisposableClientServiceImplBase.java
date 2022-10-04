@@ -18,7 +18,7 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
         closeClientQuietly();
     }
     
-    protected Client getClient(Class classToRegister) {
+    protected Client getClient(Class<?> classToRegister) {
         // Use double-checked locking to lazy-load the Client object.
         // See effective java 2nd ed. pg. 71
         Client jerseyClient = client;
@@ -27,10 +27,10 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
                 jerseyClient = client;
                 if (jerseyClient == null) {
                     ClientConfig clientConfig = new ClientConfig();
-                    jerseyClient = ClientBuilder.newClient(clientConfig);
                     if (classToRegister != null) {
-                        jerseyClient.register(classToRegister);
+                        clientConfig.register(classToRegister);
                     }
+                    jerseyClient = ClientBuilder.newClient(clientConfig);
                     client = jerseyClient;
                 }
             }
