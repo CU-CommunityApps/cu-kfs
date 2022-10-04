@@ -635,18 +635,18 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
               </exclusion>
-                <exclusion>
-                	<groupId>io.netty</groupId>
-                	<artifactId>netty-common</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>io.netty</groupId>
-                	<artifactId>netty-transport</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>io.netty</groupId>
-                	<artifactId>netty-handler</artifactId>
-                </exclusion>
+              <exclusion>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
