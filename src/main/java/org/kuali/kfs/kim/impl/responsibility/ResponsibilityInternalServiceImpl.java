@@ -81,16 +81,6 @@ public class ResponsibilityInternalServiceImpl implements ResponsibilityInternal
     }
 
     @Override
-<<<<<<< HEAD
-=======
-    public void updateActionRequestsForRoleChange(String roleId) {
-        List<RoleResponsibility> newRoleResp = getRoleResponsibilities(roleId);
-
-        updateActionRequestsForResponsibilityChange(getChangedRoleResponsibilityIds(Collections.EMPTY_LIST, newRoleResp));
-    }
-
-    @Override
->>>>>>> 1fe671bcd (KFSPTS-25523 cleanup)
     /* Cornell customization: backport FINP-8341 */
     public void updateActionRequestsForResponsibilityChange(final Set<String> responsibilityIds) {
         responsibilityChangeQueue.responsibilitiesChanged(responsibilityIds);
