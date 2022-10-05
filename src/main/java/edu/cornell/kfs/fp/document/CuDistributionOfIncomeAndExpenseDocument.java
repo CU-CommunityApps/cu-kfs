@@ -1,6 +1,7 @@
 package edu.cornell.kfs.fp.document;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.fp.document.DistributionOfIncomeAndExpenseDocument;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
@@ -26,6 +27,10 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
         super.toCopy();
         setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
         setTripId(null);
+    }
+
+    public boolean isLegacyTrip() {
+        return StringUtils.equals(getTripAssociationStatusCode(), CuFPConstants.IS_TRIP_DOC);
     }
 
     public String getTripAssociationStatusCode() {

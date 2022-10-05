@@ -904,6 +904,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         return false;
     }
 
+    public boolean isLegacyTrip() {
+        return StringUtils.equals(getTripAssociationStatusCode(), CuFPConstants.IS_TRIP_DOC);
+    }
+
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
         return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
     }
@@ -920,7 +924,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     public String getTripAssociationStatusCode() {
         return tripAssociationStatusCode;
     }
-
 
     public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
         this.tripAssociationStatusCode = tripAssociationStatusCode;

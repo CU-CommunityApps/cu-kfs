@@ -34,12 +34,14 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
         return dvPayeeDetail.isAlumni();
     }
 
-    /**
-     *
-     * @return
-     */
+    public boolean getCanViewTrip() {
+        CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument)this.getDocument();
+        return disbursementVoucherDocument.isLegacyTrip();
+    }
+
     public String getTripID() {
-        return StringUtils.EMPTY;
+        CuDisbursementVoucherDocument dvd = (CuDisbursementVoucherDocument) this.getDocument();
+        return dvd.isLegacyTrip() ? dvd.getTripId() : StringUtils.EMPTY;
     }
     
     
