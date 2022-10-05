@@ -61,13 +61,18 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
         LOG.info("obtainPmwIdentifiersForApprovedNewVendorRequests: Processing completed.");
         return pmwNewVendorIdentifiers;
     }
-    
+
+    @Override
+    protected Client getClient() {
+        return super.getClient(MultiPartFeature.class);
+    }
+
     private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksApprovedNewVendorRequests() {
         Response responseForNewVendorRequestsRootResults = null;
         List<PaymentWorksNewVendorRequestDTO> pmwNewVendorIdentifiers = new ArrayList<PaymentWorksNewVendorRequestDTO>();
         
         try{
-            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(MultiPartFeature.class), buildPaymentWorksApprovedNewVendorRequestsURI());
+            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(), buildPaymentWorksApprovedNewVendorRequestsURI());
             PaymentWorksNewVendorRequestsRootDTO newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
             LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
             
@@ -76,7 +81,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
                 closeResponseJustObtained(responseForNewVendorRequestsRootResults);
                 
                 if (additionalPagesOfPmwVendorIdsExist(newVendorsRoot)) {
-                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(MultiPartFeature.class), buildURI(newVendorsRoot.getNext()));
+                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(), buildURI(newVendorsRoot.getNext()));
                     newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
                 } else {
                     newVendorsRoot = null;
@@ -190,7 +195,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
     
     private Response buildJsonResponse(URI uri, String jsonString) {
-        Invocation request = buildJsonClientRequest(getClient(MultiPartFeature.class), uri, jsonString);
+        Invocation request = buildJsonClientRequest(getClient(), uri, jsonString);
         Response response = request.invoke();
         response.bufferEntity();
         return response;
@@ -206,7 +211,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
     
     private Response buildXmlOutput(URI uri) {
-        Invocation request = buildXmlClientRequest(getClient(MultiPartFeature.class), uri);
+        Invocation request = buildXmlClientRequest(getClient(), uri);
         Response response = request.invoke();
         response.bufferEntity();
         return response;
@@ -344,7 +349,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
 
     private Response performSupplierUpload(InputStream vendorCsvDataStream) {
-        Invocation request = buildMultiPartRequestForSupplierUpload(getClient(MultiPartFeature.class), buildSupplierUploadURI(), vendorCsvDataStream);
+        Invocation request = buildMultiPartRequestForSupplierUpload(getClient(), buildSupplierUploadURI(), vendorCsvDataStream);
         return request.invoke();
     }
 
