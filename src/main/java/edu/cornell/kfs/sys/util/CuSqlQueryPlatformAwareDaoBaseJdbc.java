@@ -17,14 +17,24 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     private static final String PARAMETER_MESSAGE_FORMAT = "(Type: '{0}', Value: '{1}')";
     
     protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
+        return queryForValues(sqlQuery, rowMapper);
+    }
+    
+    protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper, boolean logSQLOnError) {
         try {
             return getJdbcTemplate().query(sqlQuery.getQueryString(), rowMapper, sqlQuery.getParametersArray());
         } catch (RuntimeException e) {
-            LOG.error("queryForValues, Unexpected error encountered while running query! Query String: <["
-                    + sqlQuery.getQueryString() + "]>, Query Parameters: <["
-                    + buildParametersMessage(sqlQuery) + "]>", e);
+            if (logSQLOnError) {
+                logSQL(sqlQuery);
+            }
+            LOG.error("queryForValues, Unexpected error encountered while running query!", e);
             throw e;
         }
+    }
+    
+    protected void logSQL(CuSqlQuery sqlQuery) {
+        LOG.info("logSQL, queryString: " + sqlQuery.getQueryString());
+        LOG.info("logSQL, parameters: " + buildParametersMessage(sqlQuery));
     }
 
     private String buildParametersMessage(CuSqlQuery sqlQuery) {
