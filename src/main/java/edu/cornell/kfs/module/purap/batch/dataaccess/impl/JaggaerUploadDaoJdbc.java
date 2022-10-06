@@ -126,7 +126,8 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
     }
     
     private CuSqlChunk buildVendorAddressSqlCuSqlChunk(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
-        Collection<String> addressTypes = Arrays.asList("RM", "PO");
+        Collection<String> addressTypes = Arrays.asList(CUPurapConstants.JaggaerAddressType.REMIT.kfsAddressTypeCode, 
+                CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode);
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VA.VNDR_ADDR_GNRTD_ID, VA.VNDR_ADDR_TYP_CD, VA.VNDR_DFLT_ADDR_IND, VA.VNDR_CNTRY_CD, VA.VNDR_LN1_ADDR, ",
                 "VA.VNDR_LN2_ADDR, VA.VNDR_CTY_NM, VA.VNDR_ST_CD, VA.VNDR_ADDR_INTL_PROV_NM, VA.VNDR_ZIP_CD, VA.VNDR_HDR_GNRTD_ID, VA.VNDR_DTL_ASND_ID ",
                 buildFromClauseCuSqlChunk(true),
@@ -155,7 +156,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
             chunk.append("AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
         }
         chunk.append("AND VH.VNDR_TYP_CD =");
-        chunk.append(CuSqlChunk.forParameter("PO"));
+        chunk.append(CuSqlChunk.forParameter(CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode));
         chunk.append(StringUtils.SPACE);
         return chunk;
     }
