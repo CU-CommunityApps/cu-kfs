@@ -21,7 +21,6 @@ package org.kuali.kfs.sys.batch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
-import org.kuali.kfs.sys.KFSConstants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,7 +30,6 @@ import java.util.Date;
 
 public class BatchFile extends TransientBusinessObjectBase {
     private static final Logger LOG = LogManager.getLogger();
-    // backport redis changes
     public static final String CACHE_NAME = "BatchFile";
 
     private File file;

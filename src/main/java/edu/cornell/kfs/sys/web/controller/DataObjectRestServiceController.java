@@ -255,7 +255,7 @@ public class DataObjectRestServiceController {
             throw new NoSuchBeanDefinitionException("Data object not found.");
         }
 
-        Boolean isModuleLocked = getParameterService().getParameterValueAsBoolean(namespace, KfsParameterConstants.PARAMETER_ALL_DETAIL_TYPE, KRADConstants.SystemGroupParameterNames.OLTP_LOCKOUT_ACTIVE_IND);
+        Boolean isModuleLocked = getParameterService().getParameterValueAsBoolean(namespace, KfsParameterConstants.PARAMETER_ALL_DETAIL_TYPE, KRADConstants.SystemGroupParameterNames.MODULE_LOCKED_IND);
         boolean notAuthorized = !isAuthorized(boe);
         boolean moduleIsLocked = isModuleLocked != null && isModuleLocked;
         boolean noInquiryDefinition = !boe.hasInquiryDefinition();

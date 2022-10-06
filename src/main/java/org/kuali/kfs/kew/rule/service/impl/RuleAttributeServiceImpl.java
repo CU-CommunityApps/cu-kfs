@@ -20,8 +20,6 @@ package org.kuali.kfs.kew.rule.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Element;
-import org.kuali.kfs.core.api.impex.ExportDataSet;
 import org.kuali.kfs.kew.exception.WorkflowServiceError;
 import org.kuali.kfs.kew.exception.WorkflowServiceErrorException;
 import org.kuali.kfs.kew.exception.WorkflowServiceErrorImpl;
@@ -29,7 +27,6 @@ import org.kuali.kfs.kew.rule.bo.RuleAttribute;
 import org.kuali.kfs.kew.rule.dao.RuleAttributeDAO;
 import org.kuali.kfs.kew.rule.service.RuleAttributeService;
 import org.kuali.kfs.kew.xml.RuleAttributeXmlParser;
-import org.kuali.kfs.kew.xml.export.RuleAttributeXmlExporter;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -121,15 +118,4 @@ public class RuleAttributeServiceImpl implements RuleAttributeService {
                     new WorkflowServiceErrorImpl("Error loading xml file", XML_PARSE_ERROR));
         }
     }
-
-    public Element export(ExportDataSet dataSet) {
-        RuleAttributeXmlExporter exporter = new RuleAttributeXmlExporter();
-        return exporter.export(dataSet);
-    }
-
-    @Override
-    public boolean supportPrettyPrint() {
-        return true;
-    }
-
 }

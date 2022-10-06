@@ -26,12 +26,12 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
 	private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String chartCode, Date onOrBeforePaymentRequestPayDate) {
+    public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String campusCode, Date onOrBeforePaymentRequestPayDate) {
         LOG.debug("getPaymentRequestsToExtract() started");
 
         Criteria criteria = new Criteria();
-        if (chartCode != null) {
-            criteria.addEqualTo("processingCampusCode", chartCode);
+        if (campusCode != null) {
+            criteria.addEqualTo("processingCampusCode", campusCode);
         }
         //criteria.addIn(PurapPropertyConstants.STATUS_CODE, Arrays.asList(PaymentRequestStatuses.STATUSES_ALLOWED_FOR_EXTRACTION));
         criteria.addIsNull("extractedTimestamp");

@@ -75,8 +75,6 @@ import static java.util.Map.entry;
  * CU Customization:
  * Updated the member-removal methods to properly convert the qualifiers where needed.
  * 
- * Additional changes added to backport the redis implementation.
- * 
  * Backported redis fixes on FINP-8169
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {

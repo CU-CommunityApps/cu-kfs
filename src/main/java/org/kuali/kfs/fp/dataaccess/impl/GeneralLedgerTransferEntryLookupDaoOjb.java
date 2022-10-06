@@ -31,7 +31,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.core.framework.persistence.ojb.dao.PlatformAwareDaoBaseOjb;
 
 import java.util.Arrays;
@@ -97,7 +97,7 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
         criteria.addNotEqualTo(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,
             KFSConstants.DocumentStatusCodes.DISAPPROVED);
 
-        return QueryFactory.newQuery(FinancialSystemDocumentHeader.class, criteria);
+        return QueryFactory.newQuery(DocumentHeader.class, criteria);
     }
 
     private Criteria buildFundAndSubFundGroupCriteria(Integer currentFiscalYear, Collection<String> fundGroups,
@@ -128,7 +128,7 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
         criteria.addNotIn(KFSPropertyConstants.WORKFLOW_DOCUMENT_STATUS_CODE,
                 Arrays.asList(KFSConstants.DocumentStatusCodes.PROCESSED, KFSConstants.DocumentStatusCodes.FINAL));
 
-        ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(FinancialSystemDocumentHeader.class, criteria);
+        ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(DocumentHeader.class, criteria);
         subQuery.setAttributes(new String[]{KFSPropertyConstants.DOCUMENT_NUMBER});
         return subQuery;
     }

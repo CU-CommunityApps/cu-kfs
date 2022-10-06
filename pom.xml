@@ -23,16 +23,16 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2021-08-17</kfs.version>
+        <kfs.version>2021-11-17</kfs.version>
 
         <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>8.43</checkstyle.version>
         <cxf.version>3.3.10</cxf.version>
         <gson.version>2.8.9</gson.version>
-        <guava.version>30.1.1-jre</guava.version>
         <hibernate-validator-annotation-processor.version>5.4.1.Final</hibernate-validator-annotation-processor.version>
-        <httpclient.version>4.5.13</httpclient.version>
+        <httpclient.version>5.1</httpclient.version>
+        <httpcore.version>5.1</httpcore.version>
         <jasperreports.version>2.0.4</jasperreports.version>
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <jersey.version>2.25.1</jersey.version>
@@ -45,7 +45,7 @@
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
-        <mockito.version>3.11.2</mockito.version>
+        <mockito.version>4.0.0</mockito.version>
         <powermock.version>2.0.7</powermock.version>
         <!--Cornell Customization: backport redis-->
         <spring-data-redis.version>2.6.0</spring-data-redis.version>
@@ -72,6 +72,7 @@
         <plugin.war.version>3.3.1</plugin.war.version>
         <javax.activation.version>1.1.1</javax.activation.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
+        <jta.version>1.1</jta.version>
         <log4j.version>2.17.1</log4j.version>
     </properties>
 
@@ -252,13 +253,14 @@
                             	<exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
-                                <exclude>WEB-INF/lib/guava-*.jar</exclude>
+                                <exclude>WEB-INF/lib/lettuce-*.jar</exclude>
                                 <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-aop-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-beans-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-support-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-core-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-data-redis-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-expression-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-jdbc-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-orm-*.jar</exclude>
@@ -517,12 +519,28 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.google.code.gson</groupId>
                     <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>io.netty</groupId>
+                	<artifactId>netty-common</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>io.netty</groupId>
+                	<artifactId>netty-transport</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>io.netty</groupId>
+                	<artifactId>netty-handler</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -614,13 +632,21 @@
                 <artifactId>spring-webmvc</artifactId>
               </exclusion>
               <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-              </exclusion>
-              <exclusion>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
               </exclusion>
+              <exclusion>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -711,8 +737,12 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -802,10 +832,6 @@
               <exclusion>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -897,8 +923,12 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -988,10 +1018,6 @@
               <exclusion>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -1087,8 +1113,12 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1179,10 +1209,6 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
               </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-              </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1273,8 +1299,12 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1364,10 +1394,6 @@
               <exclusion>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -1459,8 +1485,12 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1550,10 +1580,6 @@
               <exclusion>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -1645,8 +1671,12 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1736,10 +1766,6 @@
               <exclusion>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -1830,8 +1856,12 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-redis</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>biz.paluch.redis</groupId>
+                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1921,10 +1951,6 @@
               <exclusion>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -2032,6 +2058,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+        	<groupId>org.apache.httpcomponents.core5</groupId>
+        	<artifactId>httpcore5-testing</artifactId>
+        	<version>${httpcore.version}</version>
+        	<scope>test</scope>
+      	</dependency>
 
         <dependency>
             <groupId>com.oracle</groupId>
@@ -2081,21 +2113,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-            <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
             <version>${httpclient.version}</version>
             <exclusions>
                 <exclusion>
@@ -2130,6 +2149,11 @@
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
             <version>${javax.activation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+            <version>${jta.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
@@ -2300,17 +2324,7 @@
             		<groupId>io.netty</groupId>
             		<artifactId>netty-codec</artifactId>
             	</exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
             </exclusions>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
 
         <dependency>
@@ -2396,10 +2410,6 @@
             <artifactId>squiggly-filter-jackson</artifactId>
             <version>${squiggly-filter-jackson.version}</version>
             <exclusions>
-            	<exclusion>
-            		<groupId>com.google.guava</groupId>
-            		<artifactId>guava</artifactId>
-            	</exclusion>
             	<exclusion>
             		<groupId>commons-beanutils</groupId>
             		<artifactId>commons-beanutils</artifactId>

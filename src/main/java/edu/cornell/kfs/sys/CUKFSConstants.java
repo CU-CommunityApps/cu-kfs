@@ -205,6 +205,10 @@ public class CUKFSConstants {
     public static final String EXCEPTION_MESSAGE_JOB_NAME_PREFIX = "Exception_Message_Job ";
     
     public static final String RESTRICTED_DATA_PLACEHOLDER = "RestrictedData";
+    
+    public static final class Config {
+    	public static final String FIXED_POOL_SIZE = "ksb.fixedPoolSize";
+    }
 
     //** CU Generic ISO-FIPS Country modification items **
     public static final boolean MAPPING_ACTIVE = true;

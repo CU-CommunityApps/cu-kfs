@@ -2209,7 +2209,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     
             writeCloseTag(os, 6, "payment");
     
-            String unit = paymentGroup.getBatch().getCustomerProfile().getChartCode() + "-" +
+            String unit = paymentGroup.getBatch().getCustomerProfile().getCampusCode() + "-" +
                     paymentGroup.getBatch().getCustomerProfile().getUnitCode() + "-" +
                     paymentGroup.getBatch().getCustomerProfile().getSubUnitCode();
     

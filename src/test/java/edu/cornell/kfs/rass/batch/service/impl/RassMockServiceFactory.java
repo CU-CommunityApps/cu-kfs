@@ -23,7 +23,7 @@ import org.kuali.kfs.module.cg.document.ProposalMaintainableImpl;
 import org.kuali.kfs.module.cg.service.AgencyService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.EmailService;
@@ -77,7 +77,7 @@ public class RassMockServiceFactory {
             
             FinancialSystemMaintenanceDocument maintenanceDocument = Mockito.mock(
                     FinancialSystemMaintenanceDocument.class, Mockito.CALLS_REAL_METHODS);
-            FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
+            DocumentHeader documentHeader = new DocumentHeader();
             Maintainable oldMaintainable = maintainableClass.newInstance();
             Maintainable newMaintainable = maintainableClass.newInstance();
             PersistableBusinessObject oldBo = businessObjectClass.newInstance();

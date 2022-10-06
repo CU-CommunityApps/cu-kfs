@@ -18,10 +18,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="BudgetAdjustment-documentBalancedValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuBudgetAdjustmentDocumentBalancedValidation" abstract="true" />
-	<bean id="YearEndBudgetAdjustment-documentBalancedValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuBudgetAdjustmentDocumentBalancedValidation" abstract="true" />
 	<bean id="DisbursementVoucher-employeeInformationValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherEmployeeInformationValidation" abstract="true" p:dataDictionaryService-ref="dataDictionaryService" p:personService-ref="personService"/>
 	<bean id="DisbursementVoucher-payeeInitiatorValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeInitiatorValidation" abstract="true" p:personService-ref="personService" p:vendorService-ref="vendorService"/>
     <bean id="DisbursementVoucher-initiatorPrimaryDepartmentValidation" class="edu.cornell.kfs.fp.document.validation.impl.DisbursementVoucherInitiatorPrimaryDepartmentValidation" abstract="true" />

@@ -110,7 +110,7 @@ public class FormatAction extends KualiAction {
             List<CustomerProfile> customers = formatSelection.getCustomerList();
 
             for (CustomerProfile element : customers) {
-                if (formatSelection.getCampus().equals(element.getDefaultPhysicalCampusProcessingCode())) {
+                if (formatSelection.getCampus().equals(element.getFormatCampusCode())) {
                     element.setSelectedForFormat(Boolean.TRUE);
                 } else {
                     element.setSelectedForFormat(Boolean.FALSE);

@@ -187,7 +187,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
             LOG.debug("performFormat() Payment Group ID " + paymentGroup.getId());
 
             //Use the customer's profile's campus code to check for disbursement ranges
-            String campus = paymentGroup.getBatch().getCustomerProfile().getDefaultPhysicalCampusProcessingCode();
+            String campus = paymentGroup.getBatch().getCustomerProfile().getFormatCampusCode();
             
             //Where should this come from?
             List<DisbursementNumberRange> disbursementRanges = paymentDetailDao.getDisbursementNumberRanges(campus);

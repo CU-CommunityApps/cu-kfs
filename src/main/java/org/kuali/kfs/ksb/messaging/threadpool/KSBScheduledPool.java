@@ -16,25 +16,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kuali.kfs.kim.impl.permission;
+package org.kuali.kfs.ksb.messaging.threadpool;
 
-import org.kuali.kfs.kim.impl.common.template.Template;
+import org.kuali.kfs.core.api.lifecycle.Lifecycle;
 
-/* Cornell Customization: backport redis*/
-public class PermissionTemplate extends Template {
+import java.util.concurrent.ScheduledExecutorService;
 
-    private static final long serialVersionUID = 1L;
-    
-    public static final String CACHE_NAME = "PermissionTemplate";
+/* CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz*/
+public interface KSBScheduledPool extends ScheduledExecutorService, Lifecycle {
 
-    protected String id;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 }

@@ -13,7 +13,7 @@ import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -815,7 +815,7 @@ public enum AccountingXmlDocumentEntryFixture {
     }
 
     private void populateNumberAndHeaderOnDocument(AccountingDocument accountingDocument, String documentNumber) {
-        FinancialSystemDocumentHeader documentHeader = (FinancialSystemDocumentHeader) accountingDocument.getDocumentHeader();
+        DocumentHeader documentHeader = accountingDocument.getDocumentHeader();
         accountingDocument.setDocumentNumber(documentNumber);
         documentHeader.setDocumentNumber(documentNumber);
         documentHeader.setDocumentDescription(description);

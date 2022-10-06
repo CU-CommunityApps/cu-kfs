@@ -52,7 +52,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
     @Override
     public PdpFeedHeaderEntry buildPdpFeedHeaderEntry(Date batchDate) {
         PdpFeedHeaderEntry headerEntry = new PdpFeedHeaderEntry();
-        headerEntry.setChart(getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
+        headerEntry.setCampus(getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_LOCATION));
         headerEntry.setCreationDate(formatDate(batchDate));
         headerEntry.setSubUnit(getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_SUB_UNIT));
         headerEntry.setUnit(getConcurParameterValue(ConcurParameterConstants.CONCUR_CUSTOMER_PROFILE_UNIT));
@@ -348,7 +348,7 @@ public class ConcurStandardAccountExtractPdpEntryServiceImpl implements ConcurSt
 
     private PdpFeedHeaderEntry copyHeaderEntry(PdpFeedHeaderEntry headerEntry) {
         PdpFeedHeaderEntry newHeaderEntry = new PdpFeedHeaderEntry();
-        newHeaderEntry.setChart(headerEntry.getChart());
+        newHeaderEntry.setCampus(headerEntry.getCampus());
         newHeaderEntry.setCreationDate(headerEntry.getCreationDate());
         newHeaderEntry.setSubUnit(headerEntry.getSubUnit());
         newHeaderEntry.setUnit(headerEntry.getUnit());

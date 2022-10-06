@@ -34,7 +34,7 @@ import java.util.List;
 public interface PaymentRequestDao {
 
     /**
-     * @param campusCode                      limit results to a single chart
+     * @param campusCode                      limit results to a single campus
      * @param paymentRequestIdentifier        Payment Request Identifier (can be null)
      * @param purchaseOrderIdentifier         PO Identifier (can be null)
      * @param vendorHeaderGeneratedIdentifier Vendor Header ID
@@ -48,14 +48,14 @@ public interface PaymentRequestDao {
 
     /**
      * @param onlySpecialPayments true only include special payments, False include all
-     * @param chartCode           if not null, limit results to a single chart
+     * @param campusCode           if not null, limit results to a single campus
      * @return Collection of payment requests that need to be extracted to PDP.
      */
-    List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String chartCode,
+    List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String campusCode,
             Date onOrBeforePaymentRequestPayDate);
 
     /**
-     * @param campusCode                      limit results to a single chart
+     * @param campusCode                      limit results to a single campus
      * @param vendor                          Vendor Header ID, Vendor Detail ID, Country, Zip Code
      * @param onOrBeforePaymentRequestPayDate only payment requests with a pay date on or before this value will be
      *                                        returned in the iterator
@@ -65,10 +65,10 @@ public interface PaymentRequestDao {
             VendorGroupingHelper vendor, Date onOrBeforePaymentRequestPayDate);
 
     /**
-     * @param chartCode chart of accounts code
+     * @param campusCode campus code
      * @return Collection of payment requests that are marked immediate that need to be extracted to PDP.
      */
-    List<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String chartCode);
+    List<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String campusCode);
 
     /**
      * Get all payment request documents that are eligible for auto-approval. Whether or not a document is eligible

@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.kim.impl.identity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -174,8 +175,8 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
                 if (entityTypeCode.equals(KimConstants.EntityTypes.SYSTEM)) {
                     name = principal.getPrincipalName().toUpperCase(Locale.US);
                 } else {
-                    name = unNullify(entityName.getCompositeNameUnmasked());
-                    if ("".equals(name)) {
+                    name = entityName.getCompositeNameUnmasked();
+                    if (StringUtils.isEmpty(name)) {
                         name = lastName + ", " + firstName;
                     }
                 }

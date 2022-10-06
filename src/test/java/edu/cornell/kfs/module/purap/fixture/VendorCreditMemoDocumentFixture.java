@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import org.kuali.kfs.krad.document.DocumentBase;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocumentTestUtils;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -80,7 +80,7 @@ public enum VendorCreditMemoDocumentFixture {
 	public CuVendorCreditMemoDocument createVendorCreditMemoDocumentForMicroTest() {
 	    PowerMockito.suppress(PowerMockito.constructor(DocumentBase.class));
 	    CuVendorCreditMemoDocument creditMemoDocument = PowerMockito.spy(new CuVendorCreditMemoDocument());
-	    FinancialSystemDocumentHeader documentHeader = new FinancialSystemDocumentHeader();
+	    DocumentHeader documentHeader = new DocumentHeader();
 	    
 	    documentHeader.setDocumentNumber(this.documentNumber);
 	    documentHeader.setDocumentDescription(this.documentDescription);

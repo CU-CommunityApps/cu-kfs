@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;

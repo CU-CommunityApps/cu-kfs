@@ -108,6 +108,7 @@ public class ConcurTestConstants {
     
     public static class PdpFeedFileConstants {
         public static final String CHART = "IT";
+        public static final String CAMPUS = "IT";
         public static final String BATCH_DATE = "02/17/2017";
         public static final String UNIT = "CRNL";
         public static final String SUB_UNIT = "CLIF";

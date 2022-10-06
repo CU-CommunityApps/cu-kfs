@@ -94,7 +94,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         boolean filterOn = false;
         String filteredByItems = "";
 
-        if (filter.getActionRequestCd() != null && !"".equals(filter.getActionRequestCd().trim())
+        if (StringUtils.isNotBlank(filter.getActionRequestCd())
                 && !filter.getActionRequestCd().equals(KewApiConstants.ALL_CODE)) {
             if (filter.isExcludeActionRequestCd()) {
                 criteria.addNotEqualTo("actionRequestCd", filter.getActionRequestCd());
@@ -135,7 +135,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             filteredByItems += "Date Created";
         }
 
-        if (filter.getDocRouteStatus() != null && !"".equals(filter.getDocRouteStatus().trim())
+        if (StringUtils.isNotBlank(filter.getDocRouteStatus())
                 && !filter.getDocRouteStatus().equals(KewApiConstants.ALL_CODE)) {
             if (filter.isExcludeRouteStatus()) {
                 criteria.addNotEqualTo("routeHeader.docRouteStatus", filter.getDocRouteStatus());
@@ -146,7 +146,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             filteredByItems += "Document Route Status";
         }
 
-        if (filter.getDocumentTitle() != null && !"".equals(filter.getDocumentTitle().trim())) {
+        if (StringUtils.isNotBlank(filter.getDocumentTitle())) {
             String docTitle = filter.getDocumentTitle();
             if (docTitle.trim().endsWith("*")) {
                 docTitle = docTitle.substring(0, docTitle.length() - 1);
@@ -161,7 +161,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             filteredByItems += "Document Title";
         }
 
-        if (filter.getDocumentType() != null && !"".equals(filter.getDocumentType().trim())) {
+        if (StringUtils.isNotBlank(filter.getDocumentType())) {
             if (filter.isExcludeDocumentType()) {
                 criteria.addNotLike("docName", "%" + filter.getDocumentType() + "%");
             } else {
@@ -242,7 +242,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         }
 
         filter.setGroupId(null);
-        if (filter.getGroupIdString() != null && !"".equals(filter.getGroupIdString().trim())
+        if (StringUtils.isNotBlank(filter.getGroupIdString())
                 && !filter.getGroupIdString().trim().equals(KewApiConstants.NO_FILTERING)) {
             filter.setGroupId(filter.getGroupIdString().trim());
 
@@ -386,7 +386,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             criteria.addAndCriteria(critNotEqual);
         }
 
-        if (!"".equals(filteredByItems)) {
+        if (StringUtils.isNotEmpty(filteredByItems)) {
             filteredByItems = "Filtered by " + filteredByItems;
         }
         filter.setFilterLegend(filteredByItems);

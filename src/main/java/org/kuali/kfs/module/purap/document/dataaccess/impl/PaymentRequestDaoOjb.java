@@ -62,13 +62,13 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
      * or IMD_PMT_IND = 'Y')})
      */
     @Override
-    public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String chartCode,
+    public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String campusCode,
             Date onOrBeforePaymentRequestPayDate) {
         LOG.debug("getPaymentRequestsToExtract() started");
 
         Criteria criteria = new Criteria();
-        if (chartCode != null) {
-            criteria.addEqualTo("processingCampusCode", chartCode);
+        if (campusCode != null) {
+            criteria.addEqualTo("processingCampusCode", campusCode);
         }
         criteria.addIsNull("extractedTimestamp");
         criteria.addEqualTo("holdIndicator", Boolean.FALSE);
@@ -148,12 +148,12 @@ public class PaymentRequestDaoOjb extends PlatformAwareDaoBaseOjb implements Pay
     }
 
     @Override
-    public List<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String chartCode) {
+    public List<PaymentRequestDocument> getImmediatePaymentRequestsToExtract(String campusCode) {
         LOG.debug("getImmediatePaymentRequestsToExtract() started");
 
         Criteria criteria = new Criteria();
-        if (chartCode != null) {
-            criteria.addEqualTo("processingCampusCode", chartCode);
+        if (campusCode != null) {
+            criteria.addEqualTo("processingCampusCode", campusCode);
         }
 
         criteria.addIsNull("extractedTimestamp");

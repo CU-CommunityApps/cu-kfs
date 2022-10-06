@@ -91,7 +91,7 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
         ParameterService parameterService = SpringContext.getBean(ParameterService.class);
         KualiDecimal maxAllowedAmount = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.SEPARATION_OF_DUTIES_DOLLAR_AMOUNT));
         // if app param amount is greater than or equal to documentTotalAmount... no need for separation of duties
-        KualiDecimal totalAmount = getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
+        KualiDecimal totalAmount = getDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(maxAllowedAmount) && ObjectUtils.isNotNull(totalAmount) && (maxAllowedAmount.compareTo(totalAmount) >= 0)) {
             return false;
         }
@@ -103,7 +103,7 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
 
     public Set<Person> getAllPriorApprovers() throws WorkflowException {
         PersonService personService = KimApiServiceLocator.getPersonService();
-         List<ActionTaken> actionsTaken = this.getFinancialSystemDocumentHeader().getWorkflowDocument().getActionsTaken();
+         List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
         Set<String> principalIds = new HashSet<String>();
         Set<Person> persons = new HashSet<Person>();
 
@@ -150,8 +150,8 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
-        if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
-            String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+        if (this.getDocumentHeader().getWorkflowDocument().isDisapproved()) {
+            String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getDocumentHeader().getWorkflowDocument());
             String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
             updateAndSaveAppDocStatus(disapprovalStatus);
         }

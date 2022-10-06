@@ -4,15 +4,15 @@ import edu.cornell.kfs.concur.ConcurTestConstants.PdpFeedFileConstants;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedHeaderEntry;
 
 public enum PdpFeedHeaderEntryFixture {
-    BASIC_HEADER(PdpFeedFileConstants.CHART, PdpFeedFileConstants.BATCH_DATE, PdpFeedFileConstants.UNIT, PdpFeedFileConstants.SUB_UNIT);
+    BASIC_HEADER(PdpFeedFileConstants.CAMPUS, PdpFeedFileConstants.BATCH_DATE, PdpFeedFileConstants.UNIT, PdpFeedFileConstants.SUB_UNIT);
 
-    public final String chart;
+    public final String campus;
     public final String creationDate;
     public final String unit;
     public final String subUnit;
 
-    private PdpFeedHeaderEntryFixture(String chart, String creationDate, String unit, String subUnit) {
-        this.chart = chart;
+    private PdpFeedHeaderEntryFixture(String campus, String creationDate, String unit, String subUnit) {
+        this.campus = campus;
         this.creationDate = creationDate;
         this.unit = unit;
         this.subUnit = subUnit;
@@ -20,7 +20,7 @@ public enum PdpFeedHeaderEntryFixture {
     
     public PdpFeedHeaderEntry toPdpFeedHeaderEntry() {
         PdpFeedHeaderEntry header = new PdpFeedHeaderEntry();
-        header.setChart(chart);
+        header.setCampus(campus);
         header.setCreationDate(creationDate);
         header.setSubUnit(subUnit);
         header.setUnit(unit);
