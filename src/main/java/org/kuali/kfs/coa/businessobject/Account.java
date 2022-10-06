@@ -58,7 +58,6 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     private static final Logger LOG = LogManager.getLogger();
     
-    //backport redis changes
     public static final String CACHE_NAME = "Account";
 
     protected String chartOfAccountsCode;

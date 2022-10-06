@@ -37,7 +37,7 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 
 /**
@@ -54,7 +54,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     //create date from the workflow document header...
     private DateTime createDate;
 
-    protected FinancialSystemDocumentHeader documentHeader;
+    protected DocumentHeader documentHeader;
 
     public Integer getAccountsPayablePurchasingDocumentLinkIdentifier() {
         return accountsPayablePurchasingDocumentLinkIdentifier;

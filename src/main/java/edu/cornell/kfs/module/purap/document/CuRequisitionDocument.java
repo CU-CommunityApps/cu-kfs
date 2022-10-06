@@ -143,7 +143,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
             }
         }
         RequisitionDocument document = (RequisitionDocument) (SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(this.getDocumentNumber()));
-        KualiDecimal totalAmount = document.getFinancialSystemDocumentHeader().getFinancialDocumentTotalAmount();
+        KualiDecimal totalAmount = document.getDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {  
             returnValue = true;
                

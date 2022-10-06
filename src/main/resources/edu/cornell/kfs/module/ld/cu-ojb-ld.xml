@@ -113,7 +113,7 @@
 	<field-descriptor name="postingPeriodCode" column="FDOC_POST_PRD_CD" jdbc-type="VARCHAR" />
 	<field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" />
 
-	<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+	<reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
 		<foreignkey field-ref="documentNumber" />
 	</reference-descriptor>
 
@@ -159,7 +159,7 @@
     <field-descriptor name="emplid" column="EMPLID" jdbc-type="VARCHAR" />
 
     <reference-descriptor name="documentHeader"
-      class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader"
+      class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader"
       auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
       <foreignkey field-ref="documentNumber" />
     </reference-descriptor>

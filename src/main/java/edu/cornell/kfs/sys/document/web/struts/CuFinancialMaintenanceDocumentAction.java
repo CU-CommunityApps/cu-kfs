@@ -16,7 +16,7 @@ import org.kuali.kfs.kns.util.WebUtils;
 import org.kuali.kfs.kns.web.struts.action.KualiMaintenanceDocumentAction;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.Document;

@@ -26,6 +26,8 @@ public class CUPdpConstants {
     public static class CustomerProfilePrimaryKeyTags {
         public static final String CHART_OPEN = "<chart>";
         public static final String CHART_CLOSE = "</chart>";
+        public static final String CAMPUS_OPEN = "<campus>";
+        public static final String CAMPUS_CLOSE = "</campus>";
         public static final String UNIT_OPEN = "<unit>";
         public static final String UNIT_CLOSE = "</unit>";
         public static final String SUBUNIT_OPEN = "<sub_unit>";

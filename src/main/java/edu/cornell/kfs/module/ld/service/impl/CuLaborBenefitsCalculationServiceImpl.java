@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.module.ld.LaborConstants;
@@ -79,7 +80,7 @@ public class CuLaborBenefitsCalculationServiceImpl extends LaborBenefitsCalculat
         if(StringUtils.isBlank(laborBenefitRateCategoryCode)){
             LOG.info("The Account did not have a Labor Benefit Rate Category Code. Will use the system parameter default.");
             //The system parameter does not exist. Using a blank Labor Benefit Rate Category Code
-            laborBenefitRateCategoryCode = StringUtils.defaultString(getParameterService().getParameterValueAsString(Account.class, LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER));
+            laborBenefitRateCategoryCode = StringUtils.defaultString(getParameterService().getParameterValueAsString(Account.class, COAParameterConstants.BENEFIT_RATE));
         }else{
             LOG.debug("Labor Benefit Rate Category Code for Account " + accountNumber + " is " + laborBenefitRateCategoryCode);
         }

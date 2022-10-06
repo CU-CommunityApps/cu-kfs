@@ -27,11 +27,22 @@ import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.document.search.DocumentSearchCriteria;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
 
 public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumentServiceImpl
 		implements CUFinancialSystemDocumentService {
+	
+	protected ParameterService parameterService;
+	private static final int DEFAULT_FETCH_MORE_ITERATION_LIMIT = 10;
     
     private static final Logger LOG = LogManager.getLogger();
 	
@@ -277,6 +288,75 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         }
         
         return documentAuthorizer;
+    }
+    
+    /**
+     * Returns the maximum number of results that should be returned from the document search.
+     *
+     * @param criteria the criteria in which to check for a max results value
+     * @return the maximum number of results that should be returned from a document search
+     */
+    public int getMaxResultCap(DocumentSearchCriteria criteria) {
+        int systemLimit = KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP;
+        String resultCapValue = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.WORKFLOW,
+                KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.DOC_SEARCH_RESULT_CAP);
+        if (StringUtils.isNotBlank(resultCapValue)) {
+            try {
+                int configuredLimit = Integer.parseInt(resultCapValue);
+                if (configuredLimit <= 0) {
+                    LOG.warn(KewApiConstants.DOC_SEARCH_RESULT_CAP + " was less than or equal to zero.  Please " +
+                            "use a positive integer.");
+                } else {
+                    systemLimit = configuredLimit;
+                }
+            } catch (NumberFormatException e) {
+                LOG.warn(KewApiConstants.DOC_SEARCH_RESULT_CAP + " is not a valid number.  Value was " +
+                        resultCapValue + ".  Using default: " + KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
+            }
+        }
+        int maxResults = systemLimit;
+        if (criteria.getMaxResults() != null) {
+            int criteriaLimit = criteria.getMaxResults();
+            if (criteriaLimit > systemLimit) {
+                LOG.warn("Result set cap of " + criteriaLimit + " is greater than system value of " + systemLimit);
+            } else {
+                if (criteriaLimit < 0) {
+                    LOG.warn("Criteria results limit was less than zero.");
+                    criteriaLimit = 0;
+                }
+                maxResults = criteriaLimit;
+            }
+        }
+        return maxResults;
+    }
+
+    public int getFetchMoreIterationLimit() {
+        int fetchMoreLimit = DEFAULT_FETCH_MORE_ITERATION_LIMIT;
+        String fetchMoreLimitValue = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
+                KFSConstants.CoreModuleNamespaces.WORKFLOW, KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE,
+                KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT);
+        if (StringUtils.isNotBlank(fetchMoreLimitValue)) {
+            try {
+                fetchMoreLimit = Integer.parseInt(fetchMoreLimitValue);
+                if (fetchMoreLimit < 0) {
+                    LOG.warn(KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT + " was less than zero.  " +
+                            "Please use a value greater than or equal to zero.");
+                    fetchMoreLimit = DEFAULT_FETCH_MORE_ITERATION_LIMIT;
+                }
+            } catch (NumberFormatException e) {
+                LOG.warn(KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT + " is not a valid number.  " +
+                        "Value was " + fetchMoreLimitValue);
+            }
+        }
+        return fetchMoreLimit;
+    }
+    
+    public ParameterService getParameterService() {
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
     
 }

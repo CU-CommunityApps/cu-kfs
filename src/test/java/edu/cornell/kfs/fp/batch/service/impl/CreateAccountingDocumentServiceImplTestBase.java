@@ -64,7 +64,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.FileStorageService;
@@ -235,8 +235,8 @@ public class CreateAccountingDocumentServiceImplTestBase {
         assertTrue("Document was not of the expected type of " + documentClass.getName(), documentClass.isAssignableFrom(actualDocument.getClass()));
         assertEquals("Wrong document number", expectedDocument.getDocumentNumber(), actualDocument.getDocumentNumber());
         
-        assertHeaderIsCorrect((FinancialSystemDocumentHeader) expectedDocument.getDocumentHeader(),
-                (FinancialSystemDocumentHeader) actualDocument.getDocumentHeader());
+        assertHeaderIsCorrect(expectedDocument.getDocumentHeader(),
+                actualDocument.getDocumentHeader());
         assertObjectListIsCorrect("source accounting lines",
                 expectedDocument.getSourceAccountingLines(), actualDocument.getSourceAccountingLines(), this::assertAccountingLineIsCorrect);
         assertObjectListIsCorrect("target accounting lines",
@@ -255,7 +255,7 @@ public class CreateAccountingDocumentServiceImplTestBase {
         }
     }
 
-    private void assertHeaderIsCorrect(FinancialSystemDocumentHeader expectedHeader, FinancialSystemDocumentHeader actualHeader) {
+    private void assertHeaderIsCorrect(DocumentHeader expectedHeader, DocumentHeader actualHeader) {
         assertEquals("Wrong document number", expectedHeader.getDocumentNumber(), actualHeader.getDocumentNumber());
         assertEquals("Wrong document description", expectedHeader.getDocumentDescription(), actualHeader.getDocumentDescription());
         assertEquals("Wrong document explanation", expectedHeader.getExplanation(), actualHeader.getExplanation());

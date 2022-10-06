@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Organization;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
@@ -24,7 +24,6 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.impl.document.WorkflowDocumentImpl;
 import org.kuali.kfs.kns.maintenance.Maintainable;
-import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.Document;
@@ -152,7 +151,7 @@ public class CuFinancialMaintenanceDocumentActionTest {
     }
 
     protected DocumentHeader createMockDocumentHeader(DocumentStatus documentStatus) {
-        DocumentHeader documentHeader = mock(FinancialSystemDocumentHeader.class);
+        DocumentHeader documentHeader = mock(DocumentHeader.class);
         WorkflowDocument mockWorkflowDocument = createMockWorkflowDocument(documentStatus);
         when(documentHeader.getWorkflowDocument()).thenReturn(mockWorkflowDocument);
         return documentHeader;
