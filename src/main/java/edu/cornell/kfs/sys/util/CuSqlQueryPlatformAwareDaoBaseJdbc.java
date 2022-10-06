@@ -17,7 +17,7 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     private static final String PARAMETER_MESSAGE_FORMAT = "(Type: {0}, Value: {1})";
     
     protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
-        return queryForValues(sqlQuery, rowMapper);
+        return queryForValues(sqlQuery, rowMapper, true);
     }
     
     protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper, boolean logSQLOnError) {
