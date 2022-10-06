@@ -3,7 +3,7 @@ package edu.cornell.kfs.sys.service;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 public interface CUMarshalService {
     

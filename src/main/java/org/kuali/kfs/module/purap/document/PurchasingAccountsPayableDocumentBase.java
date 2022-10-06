@@ -253,7 +253,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     // for app doc status
     @Override
     public boolean isDocumentStoppedInRouteNode(String nodeName) {
-        WorkflowDocument workflowDocument = this.getFinancialSystemDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workflowDocument = this.getDocumentHeader().getWorkflowDocument();
 
         Set<String> names = workflowDocument.getCurrentNodeNames();
         if (CollectionUtils.isNotEmpty(names)) {

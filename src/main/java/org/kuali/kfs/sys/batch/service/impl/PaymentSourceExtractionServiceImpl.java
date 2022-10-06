@@ -246,11 +246,11 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      * @return A fully populated batch instance.
      */
     protected Batch createBatch(String campusCode, String principalId, Date processRunDate) {
-        final String orgCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileUnit();
+        final String unitCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileUnit();
         final String subUnitCode = getPaymentSourceToExtractService().getPreDisbursementCustomerProfileSubUnit();
-        CustomerProfile customer = customerProfileService.get(campusCode, orgCode, subUnitCode);
+        CustomerProfile customer = customerProfileService.get(campusCode, unitCode, subUnitCode);
         if (customer == null) {
-            throw new IllegalArgumentException("Unable to find customer profile for " + campusCode + "/" + orgCode +
+            throw new IllegalArgumentException("Unable to find customer profile for " + campusCode + "/" + unitCode +
                     "/" + subUnitCode);
         }
 

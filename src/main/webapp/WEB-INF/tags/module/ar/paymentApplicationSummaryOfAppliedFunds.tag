@@ -25,7 +25,7 @@
 	description="If document is in read only mode"%>
 <%@ attribute name="isCustomerSelected" required="true"
     description="Whether or not the customer is set" %>
-<c:set var="docHeaderAttributes" value="${DataDictionary.FinancialSystemDocumentHeader.attributes}" />
+<c:set var="docHeaderAttributes" value="${DataDictionary.DocumentHeader.attributes}" />
 <c:set var="invoicePaidAppliedAttributes" value="${DataDictionary.InvoicePaidApplied.attributes}" />
 <kul:tab tabTitle="Summary of Applied Funds"
 	defaultOpen="${isCustomerSelected}"

@@ -46,14 +46,13 @@ import org.kuali.kfs.kns.util.FieldUtils;
 import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Row;
 import org.kuali.kfs.krad.bo.BusinessObject;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.workflow.attribute.DataDictionarySearchableAttribute;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -99,7 +98,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
         magicFields.put(KFSPropertyConstants.ORGANIZATION_CODE, Organization.class.getSimpleName());
         magicFields.put(KFSPropertyConstants.ACCOUNT_NUMBER, SourceAccountingLine.class.getSimpleName());
         magicFields.put(KFSPropertyConstants.FINANCIAL_DOCUMENT_TYPE_CODE, GeneralLedgerPendingEntry.class.getSimpleName());
-        magicFields.put(KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, FinancialSystemDocumentHeader.class.getSimpleName());
+        magicFields.put(KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, DocumentHeader.class.getSimpleName());
     }
 
     @Override
@@ -192,7 +191,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
             }
 
             if (AmountTotaling.class.isAssignableFrom(docClass)) {
-                Field searchField = FieldUtils.getPropertyField(FinancialSystemDocumentHeader.class,
+                Field searchField = FieldUtils.getPropertyField(DocumentHeader.class,
                         KFSPropertyConstants.FINANCIAL_DOCUMENT_TOTAL_AMOUNT, true);
                 searchField.setFieldDataType(CoreConstants.DATA_TYPE_FLOAT);
                 docSearchRows.add(new Row(Collections.singletonList(searchField)));

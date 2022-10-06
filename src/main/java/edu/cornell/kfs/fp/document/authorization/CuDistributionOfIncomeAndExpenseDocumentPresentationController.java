@@ -15,7 +15,7 @@ public class CuDistributionOfIncomeAndExpenseDocumentPresentationController exte
         Set<String> documentActions = super.getDocumentActions(document);
 
         DistributionOfIncomeAndExpenseDocument distributionOfIncomeAndExpenseDocument = (DistributionOfIncomeAndExpenseDocument) document;
-        String docInError = distributionOfIncomeAndExpenseDocument.getFinancialSystemDocumentHeader().getFinancialDocumentInErrorNumber();
+        String docInError = distributionOfIncomeAndExpenseDocument.getDocumentHeader().getFinancialDocumentInErrorNumber();
         
         if (StringUtils.isNotBlank(docInError)) {
             Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(

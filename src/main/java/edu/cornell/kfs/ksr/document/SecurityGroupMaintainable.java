@@ -19,7 +19,7 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.bo.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.sys.context.SpringContext;

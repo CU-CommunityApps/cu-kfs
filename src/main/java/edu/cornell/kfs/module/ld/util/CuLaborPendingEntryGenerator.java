@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -79,7 +80,7 @@ public class CuLaborPendingEntryGenerator {
                     String laborBenefitRateCategoryCode = positionObjectBenefit.getLaborBenefitRateCategoryCode();
                      // Use parameter default if labor benefit rate category code is blank
                     if(StringUtils.isBlank(laborBenefitRateCategoryCode)){
-                        laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class, LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER);
+                        laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.BENEFIT_RATE);
                     }
                 
                     //create a  map for the search criteria to lookup the fringe benefit percentage 

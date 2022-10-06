@@ -84,29 +84,6 @@ public final class PaymentRequestStatuses {
     private PaymentRequestStatuses() {
     }
 
-    public static Map<String, String> getAllAppDocStatuses() {
-        Map<String, String> appDocStatusMap = new HashMap<>();
-
-        appDocStatusMap.put(APPDOC_INITIATE, APPDOC_INITIATE);
-        appDocStatusMap.put(APPDOC_IN_PROCESS, APPDOC_IN_PROCESS);
-        appDocStatusMap.put(APPDOC_CANCELLED_IN_PROCESS, APPDOC_CANCELLED_IN_PROCESS);
-        appDocStatusMap.put(APPDOC_CANCELLED_POST_AP_APPROVE, APPDOC_CANCELLED_POST_AP_APPROVE);
-        appDocStatusMap.put(APPDOC_DEPARTMENT_APPROVED, APPDOC_DEPARTMENT_APPROVED);
-        appDocStatusMap.put(APPDOC_AUTO_APPROVED, APPDOC_AUTO_APPROVED);
-        appDocStatusMap.put(APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW);
-        appDocStatusMap.put(APPDOC_AWAITING_RECEIVING_REVIEW, APPDOC_AWAITING_RECEIVING_REVIEW);
-        appDocStatusMap.put(APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW);
-        appDocStatusMap.put(APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW);
-        appDocStatusMap.put(APPDOC_AWAITING_ORG_REVIEW, APPDOC_AWAITING_ORG_REVIEW);
-        appDocStatusMap.put(APPDOC_AWAITING_TAX_REVIEW, APPDOC_AWAITING_TAX_REVIEW);
-        // CU Customization: Added mapping for APPDOC_PAYMENT_METHOD_REVIEW
-        appDocStatusMap.put(APPDOC_PAYMENT_METHOD_REVIEW, APPDOC_PAYMENT_METHOD_REVIEW);
-        // End CU Customization
-        appDocStatusMap.put(APPDOC_PENDING_E_INVOICE, APPDOC_PENDING_E_INVOICE);
-
-        return appDocStatusMap;
-    }
-
     // keep these in the order of potential routing
     // Note it doesn't make much sense to compare auto_approved and dept_approved but this is
     // easier than two enums plus this should primarily be used for user enterred areas

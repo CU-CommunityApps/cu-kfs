@@ -4,7 +4,7 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util
                            http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
@@ -13,10 +13,6 @@
             <list merge="true">
                 <value>classpath:edu/cornell/kfs/kim/bo/datadictionary/*.xml</value>
                 <value>classpath:edu/cornell/kfs/kim/impl/identity/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/address/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/email/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/name/*.xml</value>
-                <value>classpath:edu/cornell/kfs/kim/impl/identity/phone/*.xml</value>
             </list>
         </property>
         <property name="packagePrefixes">
@@ -46,21 +42,6 @@
 
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
           class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
-    
-    <!-- backport changes for redis -->
-    <bean id="roleService" class="org.kuali.kfs.kim.impl.role.RoleServiceImpl"
-          p:roleDao-ref="kimRoleDao"
-          p:criteriaLookupService-ref="criteriaLookupService"
-          p:cacheManager-ref="cacheManager"/>
-          
-    <bean id="permissionService" class="org.kuali.kfs.kim.impl.permission.PermissionServiceImpl"
-          p:businessObjectService-ref="businessObjectService"
-          p:criteriaLookupService-ref="criteriaLookupService"
-          p:kimTypeInfoService-ref="kimTypeInfoService"
-          p:roleService-ref="roleService"
-          p:cacheManager-ref="cacheManager"
-          p:defaultPermissionTypeService-ref="kimPermissionTypeService"/>
-    <!-- end changes for redis -->
     
     <!-- KFSPTS-22142 Add local customization to fix Role lookup from a child/collection object on a maintenance doc -->
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">

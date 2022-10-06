@@ -2,16 +2,21 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop
-                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<bean id="financialSystemModuleConfiguration" parent="rsmartFinancialSystemModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.sys</value>
+            </list>
+        </property>
+        <property name="scriptConfigurationFilePaths">
+            <list merge="true">
+                <value>edu/cornell/kfs/sys/cu-dwr-sys.xml</value>
             </list>
         </property>
 		<property name="dataDictionaryPackages">
@@ -32,6 +37,7 @@
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
 				<value>awsSecretValidationJob</value>
+                <value>testISOFIPSConversionMappingsJob</value>
             </list>
         </property>
 		<property name="batchFileDirectories">
@@ -214,7 +220,9 @@
 
 	<!-- put back when we can make it work
 	-->
-	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean"/>
+	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean">
+	    <property name="parameterService" ref="parameterService" />
+	</bean>
 	<bean id="batchInputFileService" class="edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl" parent="batchInputFileService-parentBean"/>
 
     <bean id="autoDisapproveService" class="edu.cornell.kfs.sys.batch.service.impl.CuAutoDisapproveDocumentsServiceImpl" parent="autoDisapproveService-parentBean">
@@ -356,14 +364,6 @@
           abstract="true" class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"/>
 
 	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
-    
-    <!-- backport changes for redis -->
-    <bean id="menuService-parentBean" class="org.kuali.kfs.sys.service.MenuService" abstract="true" p:dao-ref="menuDao"
-          p:permissionService-ref="permissionService" p:documentDictionaryService-ref="documentDictionaryService"
-          p:documentTypeService-ref="documentTypeService" p:cacheManagerRegistry-ref="cacheManagerRegistry"
-          p:configurationService-ref="configurationService" p:institutionLogoDao-ref="logoDao"
-          p:reportsService-ref="reportsService"/>
-    <!-- end changes for redis -->
 
     <!--
         Complete overhaul of SchedulerService to allow it to be used without Quartz.
@@ -397,12 +397,56 @@
           p:scheduler-ref="scheduler"
           p:schedulerService-ref="schedulerService"
           p:useQuartzScheduling="${use.quartz.scheduling}"/>
-          
-    <bean id="isoFipsCountryMapDao" parent="platformAwareDao"
-        class="edu.cornell.kfs.sys.dataaccess.impl.ISOFIPSCountryMapDaoOjb" />
-        
-    <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
-        <property name="isoFipsCountryMapDao" ref="isoFipsCountryMapDao" />
+                   
+    <!-- CU Generic ISO-FIPS Country modification beans -->
+    <bean id="countryService" class="edu.cornell.kfs.sys.service.impl.CountryServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
+ 
+    <bean id="isoCountryService" class="edu.cornell.kfs.sys.service.impl.ISOCountryServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+    
+    <bean id="rice.ksb.scheduledThreadPool"
+         class="org.kuali.kfs.ksb.messaging.threadpool.KSBScheduledThreadPoolExecutor" lazy-init="true"/>
+
+    <bean id="isoFipsCountryMapService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSCountryMapServiceImpl">
+        <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+
+    <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">
+        <property name="isoFipsCountryMapService" ref="isoFipsCountryMapService" />
+        <property name="countryService" ref="countryService" />
+        <property name="isoCountryService" ref="isoCountryService" />
+        <property name="configurationService" ref="configurationService" />
+    </bean>
+
+    <bean id="testISOFIPSConversionMappingsJob" parent="testISOFIPSConversionMappingsJob-parentBean"/>
+    <bean id="testISOFIPSConversionMappingsJob-parentBean" parent="scheduledJobDescriptor" abstract="true">
+        <property name="steps">
+            <list>
+                <ref bean="testConvertingFIPStoISOStep"/>
+                <ref bean="testConvertingISOtoFIPSStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="testConvertingFIPStoISOStep" parent="testConvertingFIPStoISOStep-parentBean"/>
+    <bean id="testConvertingFIPStoISOStep-parentBean" parent="step"
+          class="edu.cornell.kfs.sys.batch.TestConvertingFIPStoISOStep" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:isoFipsConversionService-ref="isoFipsConversionService"
+    />
+    
+    <bean id="testConvertingISOtoFIPSStep" parent="testConvertingISOtoFIPSStep-parentBean"/>
+    <bean id="testConvertingISOtoFIPSStep-parentBean" parent="step"
+          class="edu.cornell.kfs.sys.batch.TestConvertingISOtoFIPSStep" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:isoFipsConversionService-ref="isoFipsConversionService"
+    />
+    <!-- CU Generic ISO-FIPS Country modification beans -->
 
 </beans>

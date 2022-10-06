@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/* Cornell Customization: backport redis; backport redis fix on FINP-8169*/
+/* Cornell Customization: backport redis fix on FINP-8169*/
 public class OrganizationServiceImpl implements OrganizationService {
     private static final Logger LOG = LogManager.getLogger();
 
@@ -258,7 +258,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     public String[] getRootOrganizationCode() {
         String rootChart = chartService.getUniversityChart().getChartOfAccountsCode();
         String selfReportsOrgType = parameterService.getParameterValueAsString(Organization.class,
-                COAParameterConstants.ORG_MUST_REPORT_TO_SELF_ORG_TYPES);
+                COAParameterConstants.REPORT_TO_SELF);
         String[] returnValues = {null, null};
 
         Map<String, Object> criteria = new HashMap<>();

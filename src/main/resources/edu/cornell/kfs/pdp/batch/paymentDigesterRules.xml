@@ -23,7 +23,7 @@
         <object-create-rule classname="org.kuali.kfs.pdp.businessobject.PaymentFileLoad" />
      
         <pattern value="header">
-            <call-method-rule pattern="chart" methodname="setChart" paramcount="0" />
+            <call-method-rule pattern="campus" methodname="setCampus" paramcount="0" />
             <call-method-rule pattern="unit" methodname="setUnit" paramcount="0" />
             <call-method-rule pattern="sub_unit" methodname="setSubUnit" paramcount="0" />
             <call-method-rule pattern="creation_date" methodname="setCreationDate" paramcount="0" />

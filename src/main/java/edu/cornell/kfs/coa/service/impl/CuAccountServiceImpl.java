@@ -23,9 +23,9 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
         //TODO rewrite to use parameter evaluator service
         
         // make sure the parameter exists
-        if (parameterService.parameterExists(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE)) {
+        if (parameterService.parameterExists(Account.class, COAParameterConstants.ACCOUNT_TYPE_BENEFIT_RATE)) {
             // retrieve the value(s) for the parameter
-            String paramValues = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_BY_ACCOUNT_TYPE);
+            String paramValues = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.ACCOUNT_TYPE_BENEFIT_RATE);
 
             // split the values of the parameter on the semi colon
             String[] paramValuesArray = paramValues.split(";");
@@ -43,8 +43,8 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
                 value = paramValuesMap.get(accountTypeCode);
             } else {
                 // make sure the system parameter exists
-                if (parameterService.parameterExists(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE)) {
-                    value = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.DEFAULT_BENEFIT_RATE_CATEGORY_CODE);
+                if (parameterService.parameterExists(Account.class, COAParameterConstants.BENEFIT_RATE)) {
+                    value = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.BENEFIT_RATE);
                 }
             }
         }

@@ -17,6 +17,7 @@ import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
 import edu.cornell.kfs.gl.service.CuBalanceService;
 
 public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanceService {
+	 public static final String INCEPTION_TO_DATE_SUB_FUNDS = "INCEPTION_TO_DATE_SUB_FUNDS";
 
     /**
      * Returns all of the balances to be forwarded for the organization reversion process

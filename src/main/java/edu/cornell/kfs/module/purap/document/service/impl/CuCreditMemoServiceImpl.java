@@ -156,7 +156,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
       * 
       * @param document - The document to be re-indexed.
       */
-     private void reIndexDocument(AccountsPayableDocument document) {
+     protected void reIndexDocument(AccountsPayableDocument document) {
          //force reindexing
           final DocumentAttributeIndexingQueue documentAttributeIndexingQueue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
 

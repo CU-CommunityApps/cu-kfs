@@ -36,7 +36,6 @@ import org.kuali.kfs.gl.GeneralLedgerConstants.BatchFileSystem;
 import org.kuali.kfs.kns.datadictionary.control.SelectControlDefinition;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.UserSession;
-import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.datadictionary.mask.MaskFormatterLiteral;
@@ -58,7 +57,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
@@ -418,7 +417,7 @@ public class PayeeACHAccountExtractServiceImplTest {
     private MaintenanceDocument createMockPAATDocument(InvocationOnMock invocation) throws Exception {
         MaintenanceDocument paatDocument = mock(FinancialSystemMaintenanceDocument.class, CALLS_REAL_METHODS);
         
-        paatDocument.setDocumentHeader(new FinancialSystemDocumentHeader());
+        paatDocument.setDocumentHeader(new DocumentHeader());
         paatDocument.setAdHocRoutePersons(new ArrayList<>());
         paatDocument.setAdHocRouteWorkgroups(new ArrayList<>());
         paatDocument.setNotes(new ArrayList<>());

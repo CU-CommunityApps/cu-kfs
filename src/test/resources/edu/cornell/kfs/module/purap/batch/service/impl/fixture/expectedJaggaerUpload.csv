@@ -1,0 +1,5 @@
+"PARTY","OverrideDupError","ERPNumber","SciQuestID","ContractPartyName","DoingBusinessAs","OtherNames","CountryOfOrigin","Active","ContractPartyType","Primary","LegalStructure","TaxIDType","TaxIdentificationNumber","VATRegistrationNumber","WebsiteURL"
+"ADDRESS","AddressID","SciQuestID","Name","AddressType","PrimaryType","Active","Country","StreetLine1","StreetLine2","StreetLine3","City/Town","State/Province","PostalCode","Phone","TollFreeNumber","Fax","Notes"
+"CONTACT","ContactID","SciQuestID","Name","FirstName","LastName","ContactType","PrimaryType","Active","Title","Email","Phone","MobilePhone","TollFreeNumber","Fax","Notes"
+"PARTY","False","66666-0","vendor SciQuest-id","Yankee Fan Company","Yankees","Babe Ruth's Team","US","active","Supplier","primary","Other","test tax type","353454","vat number","www.yankees.com"
+"ADDRESS","666666666","vendor address sciquest id","Yankees Fan Company","Fulfillment","primary type","Active","US","street line 1","street line 2","street line 3","city","NY","14850","6072559900","18002809900","fax","super awesome cool note"

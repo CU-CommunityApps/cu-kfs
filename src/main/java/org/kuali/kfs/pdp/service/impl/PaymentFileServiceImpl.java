@@ -161,7 +161,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
 
     @Override
     public void loadPayments(PaymentFileLoad paymentFile, LoadPaymentStatus status, String incomingFileName) {
-        status.setChart(paymentFile.getChart());
+        status.setChart(paymentFile.getCampus());
         status.setUnit(paymentFile.getUnit());
         status.setSubUnit(paymentFile.getSubUnit());
         status.setCreationDate(paymentFile.getCreationDate());
@@ -316,7 +316,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
 
         Batch batch = new Batch();
 
-        CustomerProfile customer = customerProfileService.get(paymentFile.getChart(), paymentFile.getUnit(),
+        CustomerProfile customer = customerProfileService.get(paymentFile.getCampus(), paymentFile.getUnit(),
                 paymentFile.getSubUnit());
         batch.setCustomerProfile(customer);
         batch.setCustomerFileCreateTimestamp(new Timestamp(paymentFile.getCreationDate().getTime()));

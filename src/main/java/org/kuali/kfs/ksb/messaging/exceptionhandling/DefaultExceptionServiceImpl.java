@@ -18,30 +18,27 @@
  */
 package org.kuali.kfs.ksb.messaging.exceptionhandling;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.kew.messaging.exceptionhandling.DocumentMessageExceptionHandler;
 import org.kuali.kfs.ksb.api.messaging.AsynchronousCall;
 import org.kuali.kfs.ksb.messaging.PersistedMessage;
 import org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJob;
 import org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJobListener;
 import org.kuali.kfs.ksb.service.KSBServiceLocator;
 import org.kuali.kfs.sys.batch.service.SchedulerService;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.Scheduler;
-import org.quartz.impl.JobDetailImpl;
-import org.quartz.impl.triggers.SimpleTriggerImpl;
-
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import edu.cornell.kfs.sys.batch.service.CuSchedulerService;
 
 /**
  * ====
  * CU Customization:
- * Overlayed this class to include an intermediate portion of the FINP-7647 changes from the 2021-09-30 release.
- * This overlay should be adjusted once we upgrade to the 2021-09-30 release or later.
- * 
- * Also updated this class to allow for processing exception messages without using Quartz.
+ * Updated this class to allow for processing exception messages without using Quartz.
  * ====
  * 
  * Default implementation of {@link ExceptionRoutingService}.  Just saves the message in the queue as is, which
@@ -55,41 +52,39 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
     private SchedulerService schedulerService;
     private boolean useQuartzScheduling;
 
-    public void placeInExceptionRouting(Throwable throwable, PersistedMessage message, Object service) throws
-            Exception {
+    public void placeInExceptionRouting(Throwable throwable, PersistedMessage message) throws Exception {
         LOG.error("Exception caught processing message " + message.getRouteQueueId() + " " +
                 message.getServiceName() + ": " + throwable);
 
-        AsynchronousCall methodCall = null;
+        AsynchronousCall methodCall;
         if (message.getMethodCall() != null) {
             methodCall = message.getMethodCall();
         } else {
             methodCall = message.getPayload().getMethodCall();
         }
         message.setMethodCall(methodCall);
-        MessageExceptionHandler exceptionHandler = new DocumentMessageExceptionHandler();
-        exceptionHandler.handleException(throwable, message, service);
+        MessageExceptionHandler exceptionHandler = new MessageExceptionHandler();
+        exceptionHandler.handleException(throwable, message);
     }
 
-    public void placeInExceptionRoutingLastDitchEffort(Throwable throwable, PersistedMessage message,
-            Object service) throws Exception {
+    public void placeInExceptionRoutingLastDitchEffort(Throwable throwable, PersistedMessage message) throws Exception {
         LOG.error("Exception caught processing message " + message.getRouteQueueId() + " " +
                 message.getServiceName() + ": " + throwable);
 
-        AsynchronousCall methodCall = null;
+        AsynchronousCall methodCall;
         if (message.getMethodCall() != null) {
             methodCall = message.getMethodCall();
         } else {
             methodCall = message.getPayload().getMethodCall();
         }
         message.setMethodCall(methodCall);
-        MessageExceptionHandler exceptionHandler = new DocumentMessageExceptionHandler();
-        exceptionHandler.handleExceptionLastDitchEffort(throwable, message, service);
+        MessageExceptionHandler exceptionHandler = new MessageExceptionHandler();
+        exceptionHandler.handleExceptionLastDitchEffort(throwable, message);
     }
 
-    // CU Customization: Allow for processing exception messages without using Quartz.
-    public void scheduleExecution(Throwable throwable, PersistedMessage message, String description) throws
-            Exception {
+    @Override
+ // CU Customization: Allow for processing exception messages without using Quartz.
+    public void scheduleExecution(Throwable throwable, PersistedMessage message, String description) throws Exception {
         KSBServiceLocator.getMessageQueueService().delete(message);
         PersistedMessage messageCopy = message.copy();
         if (!useQuartzScheduling) {
@@ -99,20 +94,22 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
         
         JobDataMap jobData = new JobDataMap();
         jobData.put(MessageServiceExecutorJob.MESSAGE_KEY, messageCopy);
-        JobDetailImpl jobDetail = new JobDetailImpl("Exception_Message_Job " + Math.random(), "Exception Messaging",
-                MessageServiceExecutorJob.class);
-        jobDetail.setJobDataMap(jobData);
-
-        if (StringUtils.isNotBlank(description)) {
-            jobDetail.setDescription(description);
-        }
+        JobDetail jobDetail = JobBuilder.newJob()
+                .ofType(MessageServiceExecutorJob.class)
+                .usingJobData(jobData)
+                .withDescription(description)
+                .withIdentity("Exception_Message_Job " + Math.random(), "Exception Messaging")
+                .build();
 
         scheduler.getListenerManager().addJobListener(new MessageServiceExecutorJobListener());
 
-        SimpleTriggerImpl trigger = new SimpleTriggerImpl("Exception_Message_Trigger " + Math.random(),
-                "Exception Messaging", messageCopy.getQueueDate());
-        // 1.6 bug required or derby will choke
-        trigger.setJobDataMap(jobData);
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .startAt(messageCopy.getQueueDate())
+                .usingJobData(jobData)
+                .withIdentity(
+                        TriggerKey.triggerKey("Exception_Message_Trigger " + Math.random(), "Exception Messaging")
+                )
+                    .build();
 
         scheduler.scheduleJob(jobDetail, trigger);
     }

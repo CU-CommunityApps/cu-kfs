@@ -243,7 +243,7 @@ public class PurchaseOrderDocumentPresentationController extends
         boolean can = PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(poDocument.getApplicationDocumentStatus());
         if (!can) {
             can = PurchaseOrderStatuses.APPDOC_OPEN.equals(poDocument.getApplicationDocumentStatus());
-            can = can && poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument().isFinal();
+            can = can && poDocument.getDocumentHeader().getWorkflowDocument().isFinal();
             can = can && poDocument.getPurchaseOrderLastTransmitTimestamp() == null;
             can = can && PurapConstants.POTransmissionMethods.PRINT.equals(
                     poDocument.getPurchaseOrderTransmissionMethodCode());
@@ -262,8 +262,8 @@ public class PurchaseOrderDocumentPresentationController extends
      */
     protected boolean canPreviewPrintPo(PurchaseOrderDocument poDocument) {
         // PO is saved or enroute
-        boolean can = poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument().isSaved()
-                || poDocument.getFinancialSystemDocumentHeader().getWorkflowDocument().isEnroute();
+        boolean can = poDocument.getDocumentHeader().getWorkflowDocument().isSaved()
+                || poDocument.getDocumentHeader().getWorkflowDocument().isEnroute();
 
         // transmission method must be one of those specified by the parameter
         if (can) {
