@@ -4,10 +4,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameterValue;
@@ -17,8 +15,6 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDaoBaseJdbc {
     private static final Logger LOG = LogManager.getLogger();
     private static final String PARAMETER_MESSAGE_FORMAT = "(Type: {0}, Value: {1})";
-    
-    protected ConfigurationService configurationService;
     
     protected <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
         return queryForValues(sqlQuery, rowMapper);
@@ -50,11 +46,5 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
     private String buildMessageForSingleParameter(SqlParameterValue parameter) {
         return MessageFormat.format(PARAMETER_MESSAGE_FORMAT, parameter.getSqlType(), parameter.getValue());
     }
-
-    public void setConfigurationService(ConfigurationService configurationService) {
-        this.configurationService = configurationService;
-    }
-    
-    
 
 }
