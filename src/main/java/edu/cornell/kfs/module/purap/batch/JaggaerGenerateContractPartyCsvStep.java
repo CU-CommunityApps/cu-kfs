@@ -28,10 +28,10 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
     public boolean execute(String jobName, Date jobRunDate) {
         JaggaerContractUploadProcessingMode processingMode = findJaggaerContractUploadProcessingMode();
         String processingDate = findProcessingDate(processingMode);
-        LOG.info("execute, processing mode: " + processingMode + " processing date: " + processingDate);
+        LOG.info("execute, processing mode: " + processingMode.modeCode + " processing date: " + processingDate);
         
         List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvService.getJaggerContractsDto(processingMode, processingDate);
-        jaggaerGenerateContractPartyCsvService.generateCsvFile(jaggaerUploadDtos);
+        jaggaerGenerateContractPartyCsvService.generateCsvFile(jaggaerUploadDtos, processingMode);
         if (processingMode == JaggaerContractUploadProcessingMode.VENDOR) {
             updateVendorProcessingDate();
         }

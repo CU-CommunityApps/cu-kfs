@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.kew.actionlist.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kew.actionlist.ActionListFilter;
 import org.kuali.kfs.kns.web.struts.form.KualiForm;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -249,7 +250,7 @@ public class ActionListFilterForm extends KualiForm {
             if (getLastModifiedDateTo() != null && getLastModifiedDateTo().length() != 0) {
                 filter.setLastModifiedDateTo(KFSConstants.getDefaultDateFormat().parse(getLastModifiedDateTo()));
             }
-            if (getDocTypeFullName() != null && !"".equals(getDocTypeFullName())) {
+            if (StringUtils.isNotEmpty(getDocTypeFullName())) {
                 filter.setDocumentType(getDocTypeFullName());
             }
         } catch (ParseException e) {

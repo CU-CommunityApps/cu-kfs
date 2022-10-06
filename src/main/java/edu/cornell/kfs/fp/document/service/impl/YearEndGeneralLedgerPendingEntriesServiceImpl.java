@@ -46,6 +46,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.document.service.YearEndGeneralLedgerPendingEntriesService;
+import edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl;
 
 public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGeneralLedgerPendingEntriesService{
 	private static final Logger LOG = LogManager.getLogger(YearEndGeneralLedgerPendingEntriesServiceImpl.class);
@@ -317,7 +318,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
         if (closingCharts.contains(postable.getChartOfAccountsCode())){
             //ANNUAL_CLOSING_CHARTS parameter was detected and contained values
         	List<String> generalForwardBalanceObjectTypes = objectTypeService.getGeneralForwardBalanceObjectTypes(fiscalYear);
-            Collection<String> generalBalanceForwardBalanceTypesArray = getParameterService().getParameterValuesAsString(BalanceForwardStep.class, GLParameterConstants.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_BALANCE_SHEET);
+            Collection<String> generalBalanceForwardBalanceTypesArray = getParameterService().getParameterValuesAsString(BalanceForwardStep.class, GLParameterConstants.BALANCE_SHEET_BALANCE_TYPES);
              
             if(generalBalanceForwardBalanceTypesArray.contains(postable.getBalanceTypeCode()) && generalForwardBalanceObjectTypes.contains(postable.getObjectCode().getFinancialObjectTypeCode())){
             	GeneralLedgerPendingEntry bbActivityEntry = generateGeneralForwardOriginEntry(document, postable, fiscalYear, sequenceHelper.getSequenceCounter());
@@ -332,13 +333,13 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
         } else if (closingCharts.contains(postable.getChartOfAccountsCode())) {
             // Accounting line contains a closing chart, check to see if line needs a CG balance forwarding entry generated.
             List<String> cumulativeForwardBalanceObjectTypes = objectTypeService.getCumulativeForwardBalanceObjectTypes(fiscalYear);
-            Collection<String> contractsAndGrantsDenotingValues = parameterService.getParameterValuesAsString(BalanceForwardStep.class, BalanceService.FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING);
+            Collection<String> contractsAndGrantsDenotingValues = parameterService.getParameterValuesAsString(BalanceForwardStep.class, BalanceService.INCEPTION_TO_DATE_FUNDS);
             Collection<String> cumulativeBalanceForwardBalanceTypesArray = getParameterService().getParameterValuesAsString(
-                    BalanceForwardStep.class, GLParameterConstants.BALANCE_TYPES_TO_ROLL_FORWARD_FOR_INCOME_EXPENSE);
+                    BalanceForwardStep.class, GLParameterConstants.INCEPTION_TO_DATE_BALANCE_TYPES);
             Collection<String> subFundGroupsForCumulativeBalanceForwardingArray = getParameterService().getParameterValuesAsString(
-                    BalanceForwardStep.class, BalanceServiceImpl.SUB_FUND_GROUPS_FOR_INCEPTION_TO_DATE_REPORTING);
+                    BalanceForwardStep.class, CuBalanceServiceImpl.INCEPTION_TO_DATE_SUB_FUNDS);
             Boolean fundGroupDenotesCGInd = getParameterService().getParameterValueAsBoolean(
-                    Account.class, COAParameterConstants.ACCOUNT_FUND_GROUP_DENOTES_CG);
+                    Account.class, COAParameterConstants.CG_FUND_IND);
             /*
              * NOTE: The base KFS code may have a bug where the contractsAndGrantsDenotingValues check does not normally
              * match anything unless the list contains only one value. The "if" block below has been coded to match the
@@ -376,7 +377,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 		List<String> expenseObjectCodeTypes = objectTypeService.getExpenseObjectTypes(fiscalYear);
 		String varNetExpenseObjectCode = getParameterService().getParameterValueAsString(NominalActivityClosingStep.class, "NET_EXPENSE_OBJECT_CODE");
 		String varNetRevenueObjectCode = getParameterService().getParameterValueAsString(NominalActivityClosingStep.class, "NET_REVENUE_OBJECT_CODE");
-		String currentDocumentTypeName = document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+		String currentDocumentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 
 		GeneralLedgerPendingEntry activityEntry = new GeneralLedgerPendingEntry();
 
@@ -444,7 +445,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 		String varFundBalanceObjectCode = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_CODE);
 		String varFundBalanceObjectTypeCode = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, ANNUAL_CLOSING_FUND_BALANCE_OBJECT_TYPE);
 		SystemOptions currentYearOptions = optionsService.getCurrentYearOptions();
-		String currentDocumentTypeName = document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+		String currentDocumentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 		String debitCreditCode = postable.getDebitCreditCode();
 
 		GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry();
@@ -490,7 +491,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
      */
     public GeneralLedgerPendingEntry generateGeneralForwardOriginEntry(AccountingDocumentBase document, AccountingLine postable, Integer closingFiscalYear, Integer sequenceNumber) {
     	SystemOptions currentYearOptions = optionsService.getCurrentYearOptions();
-    	String currentDocumentTypeName = document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+    	String currentDocumentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 
     	GeneralLedgerPendingEntry entry = new GeneralLedgerPendingEntry();
         entry.setUniversityFiscalYear(closingFiscalYear + 1);
@@ -559,7 +560,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 		String varFundBalanceObjectCode = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FUND_BALANCE_OBJECT_CODE);
 		String varFundBalanceObjectTypeCode = getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, ANNUAL_CLOSING_FUND_BALANCE_OBJECT_TYPE);
 		Integer closingFiscalYear = new Integer(getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
-		String currentDocumentTypeName = document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+		String currentDocumentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 
 		GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry();
 		offsetEntry.setUniversityFiscalYear(fiscalYear + 1);
@@ -616,7 +617,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 	public GeneralLedgerPendingEntry generateBBCashOffset(AccountingDocumentBase document, AccountingLine accountingLine, Integer sequenceNumber, String documentTypeCode, Integer fiscalYear){
 		
 		Integer closingFiscalYear = new Integer(getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
-		String currentDocumentTypeName = document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+		String currentDocumentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
 		OffsetDefinition cashOffsetDefinition = offsetDefinitionService.getByPrimaryId(fiscalYear, accountingLine.getChartOfAccountsCode(), documentTypeCode, KFSConstants.BALANCE_TYPE_ACTUAL);
 		ObjectCode cashObjectCode = cashOffsetDefinition.getFinancialObject();
 		String cashOffsetObjectCode = cashOffsetDefinition.getFinancialObjectCode();
@@ -717,7 +718,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
         
         // Continue with regular setup.
         entry.setUniversityFiscalPeriodCode(KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE);
-        entry.setFinancialDocumentTypeCode(document.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName());
+        entry.setFinancialDocumentTypeCode(document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
         entry.setFinancialSystemOriginationCode(homeOriginationService.getHomeOrigination().getFinSystemHomeOriginationCode());
         entry.setDocumentNumber(new StringBuilder(KFSConstants.BALANCE_TYPE_ACTUAL).append(postable.getAccountNumber()).toString());
         entry.setTransactionLedgerEntrySequenceNumber(sequenceNumber);

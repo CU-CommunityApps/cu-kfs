@@ -9,4 +9,7 @@ public interface ISOCountryService {
 
     public boolean isISOCountryInactive(String isoCountryCode);
 
+    public String findISOCountryNameByCountryCode(String isoCountryCode);
+
+    public boolean isoCountryExists(String isoCountryCode);
 }

@@ -13,7 +13,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 public class CuKFSInitializeListener extends KFSInitializeListener {
 
     @Override
-    public void contextInitialized(ServletContextEvent sce) {
+    public void contextInitialized(final ServletContextEvent sce) {
         super.contextInitialized(sce);
         if (shouldAllowLocalBatchExecution()) {
             if (isQuartzSchedulingEnabled()) {

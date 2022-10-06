@@ -34,7 +34,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
-import org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.Correctable;
@@ -96,8 +96,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
 
         if (accountingDocumentForValidation instanceof Correctable) {
-            final String errorDocumentNumber = ((FinancialSystemDocumentHeader) accountingDocumentForValidation
-                .getDocumentHeader()).getFinancialDocumentInErrorNumber();
+            final String errorDocumentNumber = accountingDocumentForValidation
+                .getDocumentHeader().getFinancialDocumentInErrorNumber();
             if (StringUtils.isNotBlank(errorDocumentNumber)) {
                 return true;
             }
@@ -321,7 +321,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_NUMBER,document.getDocumentNumber());
         roleQualifier.put(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME, document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
         roleQualifier.put(KimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
-                ((FinancialSystemDocumentHeader)document.getDocumentHeader()).getFinancialDocumentTotalAmount().toString());
+                document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());
         roleQualifier.put(KimAttributes.CHART_OF_ACCOUNTS_CODE,accountingLineForValidation.getChartOfAccountsCode());
         roleQualifier.put(KimAttributes.ACCOUNT_NUMBER,accountingLineForValidation.getAccountNumber());
               

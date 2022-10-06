@@ -15,7 +15,7 @@ public class CuBudgetAdjustmentDocumentPresentationController extends BudgetAdju
         Set<String> documentActions = super.getDocumentActions(document);
 
         BudgetAdjustmentDocument budgetAdjustmentDocument = (BudgetAdjustmentDocument) document;
-        String docInError = budgetAdjustmentDocument.getFinancialSystemDocumentHeader().getFinancialDocumentInErrorNumber();
+        String docInError = budgetAdjustmentDocument.getDocumentHeader().getFinancialDocumentInErrorNumber();
         
         if (StringUtils.isNotBlank(docInError)) {
             Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(

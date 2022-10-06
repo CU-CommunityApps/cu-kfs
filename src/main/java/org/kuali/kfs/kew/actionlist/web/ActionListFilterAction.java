@@ -19,7 +19,6 @@
 package org.kuali.kfs.kew.actionlist.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -75,7 +74,7 @@ public class ActionListFilterAction extends KualiAction {
         final ActionListFilter filter =
                 (ActionListFilter) uSession.retrieveObject(KewApiConstants.ACTION_LIST_FILTER_ATTR_NAME);
         if (filter != null) {
-            if (filterForm.getDocTypeFullName() != null && !"".equals(filterForm.getDocTypeFullName())) {
+            if (StringUtils.isNotEmpty(filterForm.getDocTypeFullName())) {
                 filter.setDocumentType(filterForm.getDocTypeFullName());
                 uSession.addObject(KewApiConstants.ACTION_LIST_FILTER_ATTR_NAME, filter);
                 filterForm.setFilter(filter);
@@ -149,8 +148,7 @@ public class ActionListFilterAction extends KualiAction {
         if (StringUtils.isNotBlank(filterForm.getBackLocation())) {
             String actionListUrl = SpringContext.getBean(ConfigurationService.class)
                     .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/ActionList.do";
-            URIBuilder uri = new URIBuilder(actionListUrl);
-            filterForm.setBackLocation(uri.build().toString());
+            filterForm.setBackLocation(actionListUrl);
         }
     }
 
@@ -183,4 +181,3 @@ public class ActionListFilterAction extends KualiAction {
     }
 
 }
-

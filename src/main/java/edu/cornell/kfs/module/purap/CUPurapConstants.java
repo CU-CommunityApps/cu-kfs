@@ -6,6 +6,8 @@ package edu.cornell.kfs.module.purap;
 import java.util.HashSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 
 /**
@@ -13,6 +15,7 @@ import org.kuali.kfs.module.purap.PaymentRequestStatuses;
  *
  */
 public class CUPurapConstants {
+    private static final Logger LOG = LogManager.getLogger();
     
     public static final String SPECIAL_HANDLING_NOTE_LINE_1_NAME = "Send Check To:";
     public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";
@@ -269,6 +272,9 @@ public class CUPurapConstants {
         public static final String VENDORS = "vendors";
     }
     
+    public static final String TRUE_STRING = "True";
+    public static final String FALSE_STRING = "False";
+    
     public enum JaggaerRoleSet {
         ESHOP(CUPurapPropertyConstants.ESHOP_LINK),
         CONTRACTS_PLUS(CUPurapPropertyConstants.CONTRACTS_PLUS_LINK),
@@ -309,7 +315,9 @@ public class CUPurapConstants {
         PARTNERSHIP("Partnership", "PT"),
         TRUST("Trust/Estate", "ET"),
         OTHER("Other", "OT"),
-        NON_US_COMPANY("Non-US Based Company", "IO");
+        GOVERNMENT(OTHER.jaggaerLegalStructureName, "GV"),
+        NON_PROFIT(OTHER.jaggaerLegalStructureName, "NP"),
+        NON_US_ENTITY("Non-US Based Entity", "IO");
         
         public final String jaggaerLegalStructureName;
         public final String kfsOwnerShipTypeCode;
@@ -325,6 +333,7 @@ public class CUPurapConstants {
                     return struct;
                 }
             }
+            LOG.error("findJaggaerLegalStructureByKFSOwnershipCode, could not find a Jaggaer legal structure for kfs ownership code " + ownerShipCode);
             return OTHER;
         }
     }
@@ -348,18 +357,21 @@ public class CUPurapConstants {
                     return addressType;
                 }
             }
+            LOG.error("findJaggaerAddressTypeFromKfsAddressTypeCode, could not find a Jaggaer address type for kfs address type " + kfsAddressTypeCode);
             return OTHER;
         }
     }
     
     public enum JaggaerContractUploadProcessingMode {
-        PO("PO"),
-        VENDOR("V");
+        PO("PO", "JaggaerUpload_found_by_PO_search"),
+        VENDOR("V", "JaggaerUpload_found_by_Vendor_search");
         
         public final String modeCode;
+        public final String csvFileName;
         
-        private JaggaerContractUploadProcessingMode(String modeCode) {
+        private JaggaerContractUploadProcessingMode(String modeCode, String csvFileName) {
             this.modeCode = modeCode;
+            this.csvFileName = csvFileName;
         }
         
         public static JaggaerContractUploadProcessingMode findJaggaerContractUploadProcessingModeByModeCode(String modeCode) {
@@ -370,5 +382,97 @@ public class CUPurapConstants {
             }
             throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
         }
+    }
+    
+    public enum JaggaerPartyHeader {
+        PARTY("PARTY"),
+        OVERRIDE_DUP_ERROR("OverrideDupError"),
+        ERP_NUMBER("ERPNumber"),
+        SCIQUEST_ID("SciQuestID"),
+        CONTRACT_PARTY_NAME("ContractPartyName"),
+        DOING_BUSINESS_AS("DoingBusinessAs"),
+        OTHER_NAMES("OtherNames"),
+        COUNTRY_OF_ORIGIN("CountryOfOrigin"),
+        ACTIVE("Active"),
+        CONTRACT_PARTY_TYPE("ContractPartyType"),
+        PRIMARY("Primary"),
+        LEGAL_STRUCTURE("LegalStructure"),
+        TAX_ID_TYPE("TaxIDType"),
+        TAX_IDENTIFICATION_NUMBER("TaxIdentificationNumber"),
+        VAT_REGISTRATION_NUMBER("VATRegistrationNumber"),
+        WEBSITE_URL("WebsiteURL");
+        
+        public final String headerName;
+        
+        private JaggaerPartyHeader(String headerName) {
+            this.headerName = headerName;
+        }
+        
+        public String getHeaderName() {
+            return headerName;
+        }
+        
+    }
+    
+    public enum JaggaerAddressHeader {
+        ADDRESS("ADDRESS"),
+        ADDRESS_ID("AddressID"),
+        SCIQUEST_ID(JaggaerPartyHeader.SCIQUEST_ID.headerName),
+        NAME("Name"),
+        ADDRESS_TYPE("AddressType"),
+        PRIMARY_TYPE("PrimaryType"),
+        ACTIVE(JaggaerPartyHeader.ACTIVE.headerName),
+        COUNTRY("Country"),
+        STREET_LINE_1("StreetLine1"),
+        STREET_LINE_2("StreetLine2"),
+        STREET_LINE_3("StreetLine3"),
+        CITY("City/Town"),
+        STATE("State/Province"),
+        POSTAL_CODE("PostalCode"),
+        PHONE("Phone"),
+        TOLL_FREE_NUMBER("TollFreeNumber"),
+        FAX("Fax"),
+        NOTES("Notes");
+        
+        public final String headerName;
+        
+        private JaggaerAddressHeader(String headerName) {
+            this.headerName = headerName;
+        }
+        
+        public String getHeaderName() {
+            return headerName;
+        }
+        
+    }
+    
+    public enum JaggaerContactHeader {
+        CONTACT("CONTACT"),
+        CONTACT_ID("ContactID"),
+        SCIQUEST_ID(JaggaerPartyHeader.SCIQUEST_ID.headerName),
+        NAME("Name"),
+        FIRST_NAME("FirstName"),
+        LAST_NAME("LastName"),
+        CONTACT_TYPE("ContactType"),
+        PRIMARY_TYPE("PrimaryType"),
+        ACTIVE(JaggaerPartyHeader.ACTIVE.headerName),
+        TITLE("Title"),
+        EMAIL("Email"),
+        PHONE("Phone"),
+        MOBILE_PHONE("MobilePhone"),
+        TOLL_FREE_NUMBER(JaggaerAddressHeader.TOLL_FREE_NUMBER.headerName),
+        FAX(JaggaerAddressHeader.FAX.headerName),
+        NOTES(JaggaerAddressHeader.NOTES.headerName);
+        
+        public final String headerName;
+        
+        private JaggaerContactHeader(String headerName) {
+            this.headerName = headerName;
+        }
+        
+        public String getHeaderName() {
+            return headerName;
+        }
+        
     }
 }

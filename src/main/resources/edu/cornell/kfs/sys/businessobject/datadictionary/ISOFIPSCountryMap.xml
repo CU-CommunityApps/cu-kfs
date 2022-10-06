@@ -167,7 +167,7 @@
     <bean abstract="true"
           id="ISOFIPSCountryMap-inquiryDefinition-parentBean"
           parent="InquiryDefinition"
-          p:title="ISO FIPS Country Map"
+          p:title="ISO FIPS Country Mapping"
     >
         <property name="sections">
             <list>
@@ -186,7 +186,7 @@
     <bean abstract="true"
           id="ISOFIPSCountryMap-sectionDefinition-parentBean"
           parent="sectionDefinition"
-          p:title="ISO FIPS Country Map"
+          p:title="ISO FIPS Country Mapping"
     >
         <property name="fields">
             <list>
@@ -204,7 +204,7 @@
           id="ISOFIPSCountryMap-inquirySectionDefinition-parentBean"
           parent="InquirySectionDefinition"
           p:numberOfColumns="1"
-          p:title="ISO FIPS Country Map Inquiry"
+          p:title="ISO FIPS Country Mapping Inquiry"
     >
         <property name="inquiryFields">
             <list>
@@ -219,7 +219,7 @@
     <bean abstract="true"
           id="ISOFIPSCountryMap-lookupDefinition-parentBean"
           parent="LookupDefinition"
-          p:title="ISO FIPS Country Lookup"
+          p:title="ISO FIPS Country Mapping Lookup"
     >
          <property name="defaultSort">
             <bean parent="SortDefinition">

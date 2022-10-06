@@ -1,19 +1,19 @@
 package edu.cornell.kfs.concur.batch.xmlObjects;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "chart",
+    "campus",
     "unit",
     "subUnit",
     "creationDate"
@@ -24,7 +24,7 @@ public class PdpFeedHeaderEntry {
     @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
-    protected String chart;
+    protected String campus;
     @XmlElement(namespace = ConcurConstants.PDP_XML_NAMESPACE, required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -38,12 +38,12 @@ public class PdpFeedHeaderEntry {
     @XmlSchemaType(name = "normalizedString")
     protected String creationDate;
 
-    public String getChart() {
-        return chart;
+    public String getCampus() {
+        return campus;
     }
 
-    public void setChart(String value) {
-        this.chart = value;
+    public void setCampus(String value) {
+        this.campus = value;
     }
 
     public String getUnit() {

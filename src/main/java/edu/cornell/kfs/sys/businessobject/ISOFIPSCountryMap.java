@@ -15,7 +15,7 @@ public class ISOFIPSCountryMap extends PersistableBusinessObjectBase implements 
 	private String fipsCountryCode;
 	private boolean active;
 	private Country fipsCountry;
-    private ISOCountry isoCountry;
+	private ISOCountry isoCountry;
 	
 	public ISOFIPSCountryMap() {
 	    super();

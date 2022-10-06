@@ -19,6 +19,7 @@
 package org.kuali.kfs.module.ld.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -149,7 +150,7 @@ public final class LaborPendingEntryGenerator {
                     // Use parameter default if labor benefit rate category code is blank
                     if (StringUtils.isBlank(laborBenefitRateCategoryCode)) {
                         laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class,
-                                LaborConstants.BenefitCalculation.DEFAULT_BENEFIT_RATE_CATEGORY_CODE_PARAMETER);
+                                 COAParameterConstants.BENEFIT_RATE);
                     }
 
                     //create a  map for the search criteria to lookup the fringe benefit percentage

@@ -129,41 +129,6 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	   
 	   // ==== End CU Customization ====
 
-    public ActionForward cancel(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-        ActionForward forward = super.cancel(mapping, form, request, response);
-        if (question == null) {
-            return forward;
-        } else {
-            Object buttonClicked = request.getParameter(KFSConstants.QUESTION_CLICKED_BUTTON);
-            if ((KFSConstants.DOCUMENT_CANCEL_QUESTION.equals(question)) && ConfirmationQuestion.NO.equals(buttonClicked)) {
-
-                // if no button clicked just reload the doc
-                return forward;
-            }
-            // else go to cancel logic below
-        }
-
-        // TODO : need to check note length ?
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        String reason = request.getParameter(KFSConstants.QUESTION_REASON_ATTRIBUTE_NAME);
-        if (StringUtils.isNotBlank(reason)) {
-            String noteText = "Reason for cancelling PO : " + reason;
-            Note newNote = new Note();
-            newNote.setNoteText(noteText);
-            newNote.setNoteTypeCode(KFSConstants.NoteTypeEnum.BUSINESS_OBJECT_NOTE_TYPE.getCode());
-            kualiDocumentFormBase.setNewNote(newNote);
-            try {
-                insertBONote(mapping, kualiDocumentFormBase, request, response);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return forward;
-    }
-
     /**
      * Overridden to perform the proper account-line-override setup
      * on POA items' account addLines, as well as on all of the items'

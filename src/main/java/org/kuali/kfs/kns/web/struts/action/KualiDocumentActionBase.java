@@ -78,7 +78,6 @@ import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.AdHocRouteWorkgroup;
 import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.bo.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.Document;
@@ -108,6 +107,7 @@ import org.kuali.kfs.krad.util.SessionTicket;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.springmodules.orm.ojb.OjbOperationException;
@@ -1204,11 +1204,11 @@ public class KualiDocumentActionBase extends KualiAction {
         for (Enumeration<String> i = request.getParameterNames(); i.hasMoreElements(); ) {
             String parameterName = i.nextElement();
             if ("newAdHocRouteWorkgroup.recipientName".equals(parameterName)
-                    && !"".equals(request.getParameter(parameterName))) {
+            		&& StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 //check for namespace
                 String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                if (request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode") != null
-                        && !"".equals(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim())) {
+                // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
+                if (StringUtils.isNotBlank(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode"))) {
                     namespace = request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim();
                 }
                 Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
@@ -1223,14 +1223,14 @@ public class KualiDocumentActionBase extends KualiAction {
                     return;
                 }
             }
-            if (parameterName.startsWith("adHocRouteWorkgroup[") && !"".equals(request.getParameter(parameterName))) {
+            if (parameterName.startsWith("adHocRouteWorkgroup[") && StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 if (parameterName.endsWith(".recipientName")) {
                     int lineNumber = Integer.parseInt(StringUtils.substringBetween(parameterName, "[", "]"));
                     //check for namespace
                     String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
                     String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                    if (request.getParameter(namespaceParam) != null
-                            && !"".equals(request.getParameter(namespaceParam).trim())) {
+                    // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
+                    if (StringUtils.isNotBlank(request.getParameter(namespaceParam))) {
                         namespace = request.getParameter(namespaceParam).trim();
                     }
                     Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(

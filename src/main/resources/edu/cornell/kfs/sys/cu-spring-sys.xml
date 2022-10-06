@@ -2,16 +2,21 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop
-                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<bean id="financialSystemModuleConfiguration" parent="rsmartFinancialSystemModuleConfiguration-parentBean">
 		<property name="packagePrefixes">
             <list merge="true">
                 <value>edu.cornell.kfs.sys</value>
+            </list>
+        </property>
+        <property name="scriptConfigurationFilePaths">
+            <list merge="true">
+                <value>edu/cornell/kfs/sys/cu-dwr-sys.xml</value>
             </list>
         </property>
 		<property name="dataDictionaryPackages">
@@ -215,7 +220,9 @@
 
 	<!-- put back when we can make it work
 	-->
-	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean"/>
+	<bean id="financialSystemDocumentService" class="edu.cornell.kfs.sys.document.service.impl.CUFinancialSystemDocumentServiceImpl" parent="financialSystemDocumentService-parentBean">
+	    <property name="parameterService" ref="parameterService" />
+	</bean>
 	<bean id="batchInputFileService" class="edu.cornell.kfs.sys.batch.service.impl.CuBatchInputFileServiceImpl" parent="batchInputFileService-parentBean"/>
 
     <bean id="autoDisapproveService" class="edu.cornell.kfs.sys.batch.service.impl.CuAutoDisapproveDocumentsServiceImpl" parent="autoDisapproveService-parentBean">
@@ -357,14 +364,6 @@
           abstract="true" class="edu.cornell.kfs.sys.service.impl.CuGeneralLedgerPendingEntryServiceImpl"/>
 
 	<bean id="cuApiJsonWebRequestReader" class="edu.cornell.kfs.sys.web.service.impl.CuApiJsonWebRequestReaderImpl" />
-    
-    <!-- backport changes for redis -->
-    <bean id="menuService-parentBean" class="org.kuali.kfs.sys.service.MenuService" abstract="true" p:dao-ref="menuDao"
-          p:permissionService-ref="permissionService" p:documentDictionaryService-ref="documentDictionaryService"
-          p:documentTypeService-ref="documentTypeService" p:cacheManagerRegistry-ref="cacheManagerRegistry"
-          p:configurationService-ref="configurationService" p:institutionLogoDao-ref="logoDao"
-          p:reportsService-ref="reportsService"/>
-    <!-- end changes for redis -->
 
     <!--
         Complete overhaul of SchedulerService to allow it to be used without Quartz.
@@ -409,9 +408,13 @@
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="configurationService" ref="configurationService" />
     </bean>
+    
+    <bean id="rice.ksb.scheduledThreadPool"
+         class="org.kuali.kfs.ksb.messaging.threadpool.KSBScheduledThreadPoolExecutor" lazy-init="true"/>
 
     <bean id="isoFipsCountryMapService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSCountryMapServiceImpl">
         <property name="businessObjectService" ref="businessObjectService" />
+        <property name="configurationService" ref="configurationService" />
     </bean>
 
     <bean id="isoFipsConversionService" class="edu.cornell.kfs.sys.service.impl.ISOFIPSConversionServiceImpl">

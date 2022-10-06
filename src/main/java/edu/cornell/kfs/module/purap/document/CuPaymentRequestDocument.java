@@ -183,7 +183,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     public void populateDocumentForRouting() {
     	super.populateDocumentForRouting();
     	// KFSPTS-1891
-    	if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed() && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
+    	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
 
     		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
     		String paymentMethodCode = getPaymentMethodCode();

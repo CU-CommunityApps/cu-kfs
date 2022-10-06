@@ -107,10 +107,10 @@
 		<reference-descriptor name="retirementReason" class-ref="org.kuali.kfs.module.cam.businessobject.AssetRetirementReason" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="retirementReasonCode" />
 		</reference-descriptor>
-		<reference-descriptor name="cashReceiptFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+		<reference-descriptor name="cashReceiptFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="cashReceiptFinancialDocumentNumber" />
 		</reference-descriptor>
-		<reference-descriptor name="transferOfFundsFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+		<reference-descriptor name="transferOfFundsFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 			<foreignkey field-ref="transferOfFundsFinancialDocumentNumber" />
 		</reference-descriptor>
 		<reference-descriptor name="condition" class-ref="org.kuali.kfs.module.cam.businessobject.AssetCondition" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
@@ -267,10 +267,10 @@
 	<reference-descriptor name="retirementReason" class-ref="org.kuali.kfs.module.cam.businessobject.AssetRetirementReason" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 		<foreignkey field-ref="retirementReasonCode" />
 	</reference-descriptor>
-	<reference-descriptor name="cashReceiptFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+	<reference-descriptor name="cashReceiptFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 		<foreignkey field-ref="cashReceiptFinancialDocumentNumber" />
 	</reference-descriptor>
-	<reference-descriptor name="transferOfFundsFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.FinancialSystemDocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+	<reference-descriptor name="transferOfFundsFinancialDocument" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
 		<foreignkey field-ref="transferOfFundsFinancialDocumentNumber" />
 	</reference-descriptor>
 	<reference-descriptor name="condition" class-ref="org.kuali.kfs.module.cam.businessobject.AssetCondition" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">

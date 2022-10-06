@@ -1,8 +1,8 @@
 package edu.cornell.kfs.fp.batch.xml;
 
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventHandler;
 
 public class AccountingXmlDocumentUnmarshalListener extends Unmarshaller.Listener implements ValidationEventHandler {
 

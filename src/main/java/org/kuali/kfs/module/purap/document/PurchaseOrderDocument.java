@@ -243,7 +243,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         String deliveryCampus = getDeliveryCampus() != null ? getDeliveryCampus().getCampus().getShortName() : "";
         String documentTitle = "";
 
-        Set<String> nodeNames = this.getFinancialSystemDocumentHeader().getWorkflowDocument().getCurrentNodeNames();
+        Set<String> nodeNames = this.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames();
 
         String routeLevel = "";
         if (CollectionUtils.isNotEmpty(nodeNames) && nodeNames.size() >= 1) {
@@ -434,7 +434,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
-        WorkflowDocument workFlowDocument = this.getFinancialSystemDocumentHeader().getWorkflowDocument();
+        WorkflowDocument workFlowDocument = this.getDocumentHeader().getWorkflowDocument();
         String documentType = workFlowDocument.getDocumentTypeName();
 
         if (documentType.equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT) ||
@@ -646,7 +646,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public List<String> getWorkflowEngineDocumentIdsToLock() {
         List<String> docIdStrings = new ArrayList<>();
         docIdStrings.add(getDocumentNumber());
-        String currentDocumentTypeName = this.getFinancialSystemDocumentHeader().getWorkflowDocument()
+        String currentDocumentTypeName = this.getDocumentHeader().getWorkflowDocument()
                 .getDocumentTypeName();
 
         List<PurchaseOrderView> relatedPoViews = getRelatedViews().getRelatedPurchaseOrderViews();
@@ -672,20 +672,20 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         LOG.debug("doRouteStatusChange() started");
         super.doRouteStatusChange(statusChangeEvent);
 
-        String currentDocumentTypeName = this.getFinancialSystemDocumentHeader().getWorkflowDocument()
+        String currentDocumentTypeName = this.getDocumentHeader().getWorkflowDocument()
                 .getDocumentTypeName();
         // child classes need to call super, but we don't want to inherit the post-processing done by this PO class
         // other than to the Split
         if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT.equals(currentDocumentTypeName)
                 || PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_SPLIT_DOCUMENT.equals(currentDocumentTypeName)) {
-            if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isProcessed()) {
+            if (this.getDocumentHeader().getWorkflowDocument().isProcessed()) {
                 SpringContext.getBean(PurchaseOrderService.class).completePurchaseOrder(this);
                 SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
-                        this.getFinancialSystemDocumentHeader().getWorkflowDocument());
-            } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isDisapproved()) {
+                        this.getDocumentHeader().getWorkflowDocument());
+            } else if (this.getDocumentHeader().getWorkflowDocument().isDisapproved()) {
                 // DOCUMENT DISAPPROVED
                 String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(
-                        this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+                        this.getDocumentHeader().getWorkflowDocument());
                 String disapprovalStatus = findDisapprovalStatus(nodeName);
 
                 if (ObjectUtils.isNotNull(disapprovalStatus)) {
@@ -696,7 +696,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                             nodeName + "'");
                 }
 
-            } else if (this.getFinancialSystemDocumentHeader().getWorkflowDocument().isCanceled()) {
+            } else if (this.getDocumentHeader().getWorkflowDocument().isCanceled()) {
                 // DOCUMENT CANCELED
                 updateAndSaveAppDocStatus(PurchaseOrderStatuses.APPDOC_CANCELLED);
             }
@@ -705,7 +705,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         if (shouldAdhocFyi()) {
 
             SpringContext.getBean(WorkflowDocumentService.class).saveRoutingData(
-                    this.getFinancialSystemDocumentHeader().getWorkflowDocument());
+                    this.getDocumentHeader().getWorkflowDocument());
             SpringContext.getBean(PurchaseOrderService.class).sendAdhocFyi(this);
         }
     }
@@ -1641,7 +1641,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
 
     public String getDocumentTitleForResult() {
         return KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(
-                this.getFinancialSystemDocumentHeader().getWorkflowDocument().getDocumentTypeName()).getLabel();
+                this.getDocumentHeader().getWorkflowDocument().getDocumentTypeName()).getLabel();
     }
 
     /**
