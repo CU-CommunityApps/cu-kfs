@@ -1207,7 +1207,7 @@ public class KualiDocumentActionBase extends KualiAction {
             		&& StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 //check for namespace
                 String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty as it is null safe
+                // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
                 if (StringUtils.isNotBlank(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode"))) {
                     namespace = request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim();
                 }
@@ -1229,7 +1229,7 @@ public class KualiDocumentActionBase extends KualiAction {
                     //check for namespace
                     String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
                     String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                    // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty as it is null safe
+                    // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
                     if (StringUtils.isNotBlank(request.getParameter(namespaceParam))) {
                         namespace = request.getParameter(namespaceParam).trim();
                     }
