@@ -235,8 +235,8 @@ public class CreateAccountingDocumentServiceImplTestBase {
         assertTrue("Document was not of the expected type of " + documentClass.getName(), documentClass.isAssignableFrom(actualDocument.getClass()));
         assertEquals("Wrong document number", expectedDocument.getDocumentNumber(), actualDocument.getDocumentNumber());
         
-        assertHeaderIsCorrect((DocumentHeader) expectedDocument.getDocumentHeader(),
-                (DocumentHeader) actualDocument.getDocumentHeader());
+        assertHeaderIsCorrect(expectedDocument.getDocumentHeader(),
+                actualDocument.getDocumentHeader());
         assertObjectListIsCorrect("source accounting lines",
                 expectedDocument.getSourceAccountingLines(), actualDocument.getSourceAccountingLines(), this::assertAccountingLineIsCorrect);
         assertObjectListIsCorrect("target accounting lines",

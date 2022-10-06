@@ -61,7 +61,7 @@ public class AccountingDocumentAuthorizerBase extends FinancialSystemTransaction
         super.addRoleQualification(dataObject, attributes);
         Document document = (Document) dataObject;
         // add the document amount
-        // CU customization: this line is a modified version of the FINP-8249 fix; it adds the cast to DocumentHeader
+        // CU customization: this line is a modified version of the FINP-8249 fix;
         if (document.getDocumentHeader().getFinancialDocumentTotalAmount() != null) {
             attributes.put(KimAttributes.FINANCIAL_DOCUMENT_TOTAL_AMOUNT,
                     document.getDocumentHeader().getFinancialDocumentTotalAmount().toString());

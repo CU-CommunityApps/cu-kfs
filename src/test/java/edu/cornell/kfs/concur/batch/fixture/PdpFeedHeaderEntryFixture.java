@@ -11,8 +11,8 @@ public enum PdpFeedHeaderEntryFixture {
     public final String unit;
     public final String subUnit;
 
-    private PdpFeedHeaderEntryFixture(String chart, String creationDate, String unit, String subUnit) {
-        this.campus = chart;
+    private PdpFeedHeaderEntryFixture(String campus, String creationDate, String unit, String subUnit) {
+        this.campus = campus;
         this.creationDate = creationDate;
         this.unit = unit;
         this.subUnit = subUnit;
