@@ -253,4 +253,5 @@ public class CUKFSKeyConstants {
     public static final String ERROR_MANY_FIPS_TO_ISO_MAPPINGS = "error.many.fips.to.iso.mappings";
     public static final String MESSAGE_ONE_TO_ONE_FIPS_TO_ISO_MAPPING = "message.one.to.one.fips.to.iso.mapping";
 
+    public static final String ERROR_INVALID_PRIMARY_DEPARTMENT_CODE = "error.ksr.securityrequestdocument.primaryDeptCode.regex";
 }

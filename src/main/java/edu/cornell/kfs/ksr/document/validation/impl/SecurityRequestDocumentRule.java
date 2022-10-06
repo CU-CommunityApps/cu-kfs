@@ -7,10 +7,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.core.api.criteria.PredicateFactory;
-import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.uif.AttributeError;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -57,7 +58,7 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
     @Override
     public boolean isDocumentAttributesValid(Document document, boolean validateRequired) {
         SecurityRequestDocument securityRequestDocument = (SecurityRequestDocument) document;
-        boolean success = validateDepartmentCode(securityRequestDocument);
+        boolean success = validateDepartmentCode(securityRequestDocument.getPrimaryDepartmentCode());
 
         for (int i = 0; i < securityRequestDocument.getSecurityRequestRoles().size(); i++) {
             SecurityRequestRole securityRequestRole = securityRequestDocument.getSecurityRequestRoles().get(i);
@@ -145,22 +146,26 @@ public class SecurityRequestDocumentRule extends TransactionalDocumentRuleBase  
         return success;
     }
 
-    protected boolean validateDepartmentCode(SecurityRequestDocument securityRequestDocument) {
+    protected boolean validateDepartmentCode(String primaryDepartmentCode) {
         boolean success = true;
+        String documentFieldName = KRADConstants.DOCUMENT_PROPERTY_NAME + ".primaryDepartmentCode";
 
         try {
-            String primaryDepartmentCode = securityRequestDocument.getPrimaryDepartmentCode();
-
             if (StringUtils.isBlank(primaryDepartmentCode) || StringUtils.contains(primaryDepartmentCode, " ")) {
-                GlobalVariables.getMessageMap().putError("document.primaryDepartmentCode", "Invalid Primary Department"); //todo cleanup
+                GlobalVariables.getMessageMap().putError("document.primaryDepartmentCode", CUKFSKeyConstants.ERROR_INVALID_PRIMARY_DEPARTMENT_CODE);
                 return false;
             }
 
-            //todo check for valid department (see regex property ksr.securityrequestdocument.primaryDeptCode.regex)
-        }
-        catch (Exception e) {
-            String documentFieldName = KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "primaryDepartmentCode";
-            GlobalVariables.getMessageMap().putInfo(documentFieldName, KSRKeyConstants.ERROR_SECURITY_REQUEST_DOC_SERVICE_EXCEPTION, new String[]{"SOME FILLER TEXT"});
+            Pattern pattern = Pattern.compile("([A-Z]{2}-[A-Z0-9]{4})", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(primaryDepartmentCode);
+            if (!matcher.matches()) {
+                GlobalVariables.getMessageMap().putError("document.primaryDepartmentCode", CUKFSKeyConstants.ERROR_INVALID_PRIMARY_DEPARTMENT_CODE);
+                return false;
+            }
+
+        } catch (Exception e) {
+            GlobalVariables.getMessageMap().putInfo(documentFieldName,
+                    KSRKeyConstants.ERROR_SECURITY_REQUEST_DOC_SERVICE_EXCEPTION, primaryDepartmentCode);
         }
 
         return success;
