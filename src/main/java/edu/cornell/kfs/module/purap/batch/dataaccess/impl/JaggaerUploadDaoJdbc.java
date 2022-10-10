@@ -58,7 +58,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 dto.setWebsiteURL(resultSet.getString(FIELD_NAMES.VNDR_URL_ADDR));
                 return dto;
             };
-            CuSqlQuery sqlQuery = buildVendorSqlCuSqlChunk(processingMode, processingDate).toQuery();
+            CuSqlQuery sqlQuery = buildVendorSql(processingMode, processingDate);
             logSQL(sqlQuery);
             return queryForValues(sqlQuery, rowMapper, false);
         } catch (Exception e) {
@@ -106,7 +106,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 
                 return dto;
             };
-            CuSqlQuery sqlQuery = buildVendorAddressSqlCuSqlChunk(processingMode, processingDate).toQuery();
+            CuSqlQuery sqlQuery = buildVendorAddressSql(processingMode, processingDate);
             logSQL(sqlQuery);
             return queryForValues(sqlQuery, rowMapper, false);
         } catch (Exception e) {
@@ -115,68 +115,69 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         }
     }
     
-    private CuSqlChunk buildVendorSqlCuSqlChunk(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    private CuSqlQuery buildVendorSql(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VH.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID, VD.VNDR_NM, VH.VNDR_CORP_CTZN_CNTRY_CD, VH.VNDR_OWNR_CD, VD.VNDR_URL_ADDR ",
-                buildFromClauseCuSqlChunk(false),
-                buildJoinClauseWithPOVendorsCuSqlChunk(false),
-                buildRestrictActiveRowsCuSqlChunk(false),
-                buildTimeFrameRestrictionClauseCuSqlChunk(processingMode, processingDate),
-                buildOrderByClauseCuSqlChunk());
-        return chunk;
+                buildFromClause(false),
+                buildJoinClauseWithPOVendor(false),
+                buildRestrictActiveRows(false),
+                buildTimeFrameRestrictionClause(processingMode, processingDate),
+                buildOrderByClause());
+        return chunk.toQuery();
     }
     
-    private CuSqlChunk buildVendorAddressSqlCuSqlChunk(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    private CuSqlQuery buildVendorAddressSql(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         Collection<String> addressTypes = Arrays.asList(CUPurapConstants.JaggaerAddressType.REMIT.kfsAddressTypeCode, 
                 CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode);
+        
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VA.VNDR_ADDR_GNRTD_ID, VA.VNDR_ADDR_TYP_CD, VA.VNDR_DFLT_ADDR_IND, VA.VNDR_CNTRY_CD, VA.VNDR_LN1_ADDR, ",
                 "VA.VNDR_LN2_ADDR, VA.VNDR_CTY_NM, VA.VNDR_ST_CD, VA.VNDR_ADDR_INTL_PROV_NM, VA.VNDR_ZIP_CD, VA.VNDR_HDR_GNRTD_ID, VA.VNDR_DTL_ASND_ID ",
-                buildFromClauseCuSqlChunk(true),
-                buildJoinClauseWithPOVendorsCuSqlChunk(true),
-                buildRestrictActiveRowsCuSqlChunk(true),
-                buildTimeFrameRestrictionClauseCuSqlChunk(processingMode, processingDate),
+                buildFromClause(true),
+                buildJoinClauseWithPOVendor(true),
+                buildRestrictActiveRows(true),
+                buildTimeFrameRestrictionClause(processingMode, processingDate),
                 "AND VA.VNDR_ADDR_TYP_CD in (",
                 CuSqlChunk.forStringParameters(addressTypes),
                 ") ",
-                buildOrderByClauseCuSqlChunk());
-        return chunk;
+                buildOrderByClause());
+        return chunk.toQuery();
     }
     
-    private CuSqlChunk buildFromClauseCuSqlChunk(boolean includeVendorAddress) {
-        CuSqlChunk chunk = CuSqlChunk.of("FROM KFS.PUR_VNDR_HDR_T VH, KFS.PUR_VNDR_DTL_T VD ");
+    private CuSqlChunk buildFromClause(boolean includeVendorAddress) {
+        CuSqlChunk chunk = CuSqlChunk.of("FROM KFS.PUR_VNDR_HDR_T VH, KFS.PUR_VNDR_DTL_T VD");
         if (includeVendorAddress) {
-            chunk.append(", KFS.PUR_VNDR_ADDR_T VA ");
+            chunk.append(", KFS.PUR_VNDR_ADDR_T VA");
         }
-        return chunk;
-    }
-    
-    private CuSqlChunk buildJoinClauseWithPOVendorsCuSqlChunk(boolean includeVendorAddress) {
-        CuSqlChunk chunk = CuSqlChunk.of("WHERE VH.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
-        if (includeVendorAddress) {
-            chunk.append("AND VA.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
-            chunk.append("AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
-        }
-        chunk.append("AND VH.VNDR_TYP_CD =");
-        chunk.append(CuSqlChunk.forParameter(CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode));
         chunk.append(StringUtils.SPACE);
         return chunk;
     }
     
-    private CuSqlChunk buildRestrictActiveRowsCuSqlChunk(boolean includeVendorAddress) {
-        CuSqlChunk chunk = CuSqlChunk.of("AND VD.DOBJ_MAINT_CD_ACTV_IND = ", 
-                CuSqlChunk.forParameter(KFSConstants.ACTIVE_INDICATOR), 
-                StringUtils.SPACE);
+    private CuSqlChunk buildJoinClauseWithPOVendor(boolean includeVendorAddress) {
+        CuSqlChunk chunk = CuSqlChunk.of("WHERE VH.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ");
         if (includeVendorAddress) {
-            chunk.append("AND VA.DOBJ_MAINT_CD_ACTV_IND = ");
-            chunk.append(CuSqlChunk.forParameter(KFSConstants.ACTIVE_INDICATOR));
-            chunk.append(StringUtils.SPACE);
+            chunk.append("AND VA.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ",
+                    "AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
         }
+        chunk.append("AND VH.VNDR_TYP_CD =", 
+                CuSqlChunk.forParameter(CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode),
+                StringUtils.SPACE);
         return chunk;
     }
     
-    private CuSqlChunk buildTimeFrameRestrictionClauseCuSqlChunk(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    private CuSqlChunk buildRestrictActiveRows(boolean includeVendorAddress) {
+        CuSqlChunk chunk = CuSqlChunk.of("AND VD.DOBJ_MAINT_CD_ACTV_IND = ", 
+                CuSqlChunk.forParameter(KFSConstants.ACTIVE_INDICATOR));
+        if (includeVendorAddress) {
+            chunk.append(" AND VA.DOBJ_MAINT_CD_ACTV_IND = ", 
+                    CuSqlChunk.forParameter(KFSConstants.ACTIVE_INDICATOR));
+        }
+        chunk.append(StringUtils.SPACE);
+        return chunk;
+    }
+    
+    private CuSqlChunk buildTimeFrameRestrictionClause(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
         if (processingMode == JaggaerContractUploadProcessingMode.PO) {
             CuSqlChunk chunk = CuSqlChunk.of("AND VH.VNDR_HDR_GNRTD_ID IN (",
-                    buildPurchaseOrderLimitSubQueryCuSqlChunk(processingDate),
+                    buildPurchaseOrderLimitSubQuery(processingDate),
                     ") ");
             return chunk;
         } else {
@@ -187,7 +188,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         }
     }
     
-    private CuSqlChunk buildPurchaseOrderLimitSubQueryCuSqlChunk(String processingDate) {
+    private CuSqlChunk buildPurchaseOrderLimitSubQuery(String processingDate) {
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VNDR_HDR_GNRTD_ID FROM (",
                 "SELECT VNDR_HDR_GNRTD_ID, COUNT(1) ",
                 "FROM KFS.PUR_PO_T ",
@@ -197,7 +198,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         return chunk;
     }
     
-    private CuSqlChunk buildOrderByClauseCuSqlChunk() {
+    private CuSqlChunk buildOrderByClause() {
         CuSqlChunk chunk = CuSqlChunk.of("ORDER BY VD.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID");
         return chunk;
     }

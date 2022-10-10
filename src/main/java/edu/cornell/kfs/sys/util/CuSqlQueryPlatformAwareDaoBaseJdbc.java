@@ -24,7 +24,7 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
         try {
             return getJdbcTemplate().query(sqlQuery.getQueryString(), rowMapper, sqlQuery.getParametersArray());
         } catch (RuntimeException e) {
-            if (logSQLOnError) {
+            if (logSQLOnError || LOG.isDebugEnabled()) {
                 logSQL(sqlQuery);
             }
             LOG.error("queryForValues, Unexpected error encountered while running query!", e);

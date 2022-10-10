@@ -58,6 +58,13 @@ public final class CuSqlChunk implements CharSequence {
         sqlChunk.switchToUnmodifiableState();
         return this;
     }
+    
+    public CuSqlChunk append(CharSequence... subChunks) {
+        for (CharSequence subChunk : subChunks) {
+            append(subChunk);
+        }
+        return this;
+    }
 
     public CuSqlQuery toQuery() {
         verifyState();
