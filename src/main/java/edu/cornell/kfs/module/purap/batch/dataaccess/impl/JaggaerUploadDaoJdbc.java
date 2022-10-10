@@ -1,7 +1,9 @@
 package edu.cornell.kfs.module.purap.batch.dataaccess.impl;
 
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.Collection;
+import java.sql.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,7 @@ import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SqlParameterValue;
 
 public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
     private static final Logger LOG = LogManager.getLogger();
@@ -33,7 +36,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
     protected ISOFIPSConversionService isoFipsConversionService;
     
     @Override
-    public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         try {
             RowMapper<JaggaerContractPartyUploadDto> rowMapper = (resultSet, rowNumber) -> {
                 if (rowNumber % 100 == 0) {
@@ -68,7 +71,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
     }
 
     @Override
-    public List<JaggaerContractAddressUploadDto> findJaggaerContractAddress(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    public List<JaggaerContractAddressUploadDto> findJaggaerContractAddress(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         try {
             RowMapper<JaggaerContractAddressUploadDto> rowMapper = (resultSet, rowNumber) -> {
                 if (rowNumber % 100 == 0) {
@@ -115,7 +118,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         }
     }
     
-    private CuSqlQuery buildVendorSql(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    private CuSqlQuery buildVendorSql(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VH.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID, VD.VNDR_NM, VH.VNDR_CORP_CTZN_CNTRY_CD, VH.VNDR_OWNR_CD, VD.VNDR_URL_ADDR ",
                 buildFromClause(false),
                 buildJoinClauseWithPOVendor(false),
@@ -125,7 +128,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         return chunk.toQuery();
     }
     
-    private CuSqlQuery buildVendorAddressSql(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    private CuSqlQuery buildVendorAddressSql(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         Collection<String> addressTypes = Arrays.asList(CUPurapConstants.JaggaerAddressType.REMIT.kfsAddressTypeCode, 
                 CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode);
         
@@ -174,27 +177,29 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         return chunk;
     }
     
-    private CuSqlChunk buildTimeFrameRestrictionClause(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    private CuSqlChunk buildTimeFrameRestrictionClause(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         if (processingMode == JaggaerContractUploadProcessingMode.PO) {
             CuSqlChunk chunk = CuSqlChunk.of("AND VH.VNDR_HDR_GNRTD_ID IN (",
                     buildPurchaseOrderLimitSubQuery(processingDate),
                     ") ");
             return chunk;
         } else {
-            CuSqlChunk chunk = CuSqlChunk.of("AND VD.LAST_UPDT_TS > TO_DATE(",
-                    CuSqlChunk.forParameter(processingDate),
-                    ", 'YYYY-MM-DD') ");
+            SqlParameterValue dateParameter = new SqlParameterValue(Types.DATE, processingDate);
+            CuSqlChunk chunk = CuSqlChunk.of("AND VD.LAST_UPDT_TS > ",
+                    new CuSqlChunk(dateParameter),
+                    StringUtils.SPACE);
             return chunk;
         }
     }
     
-    private CuSqlChunk buildPurchaseOrderLimitSubQuery(String processingDate) {
+    private CuSqlChunk buildPurchaseOrderLimitSubQuery(Date processingDate) {
+        SqlParameterValue dateParameter = new SqlParameterValue(Types.DATE, processingDate);
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VNDR_HDR_GNRTD_ID FROM (",
                 "SELECT VNDR_HDR_GNRTD_ID, COUNT(1) ",
                 "FROM KFS.PUR_PO_T ",
-                "WHERE PO_LST_TRNS_DT > TO_DATE(",
-                CuSqlChunk.forParameter(processingDate),
-                ", 'YYYY-MM-DD') GROUP BY VNDR_HDR_GNRTD_ID HAVING COUNT(1) > 1)");
+                "WHERE PO_LST_TRNS_DT > ",
+                new CuSqlChunk(dateParameter),
+                " GROUP BY VNDR_HDR_GNRTD_ID HAVING COUNT(1) > 1)");
         return chunk;
     }
     
