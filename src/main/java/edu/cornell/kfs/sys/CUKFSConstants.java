@@ -203,6 +203,8 @@ public class CUKFSConstants {
     public static final String CU_ALLOW_LOCAL_BATCH_EXECUTION_KEY = "cu.allow.local.batch.execution";
     public static final String EXCEPTION_MESSAGING_GROUP = "Exception Messaging";
     public static final String EXCEPTION_MESSAGE_JOB_NAME_PREFIX = "Exception_Message_Job ";
+    public static final String DELAYED_ASYNCHRONOUS_CALL_GROUP = "Delayed_Asynchronous_Call";
+    public static final String DELAYED_ASYNCHRONOUS_CALL_JOB_NAME_PREFIX = "Delayed_Asynchronous_Call-";
     
     public static final String RESTRICTED_DATA_PLACEHOLDER = "RestrictedData";
     

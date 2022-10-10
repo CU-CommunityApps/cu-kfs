@@ -1,12 +1,12 @@
 <xmlConversionTestCase>
 
 <oldData>
-<maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
   <newCollectionRecord>false</newCollectionRecord>
   <accountGlobalDetails/>
   <delegateGlobals/>
-</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
   <versionNumber>1</versionNumber>
   <newCollectionRecord>false</newCollectionRecord>
   <documentNumber>77766655</documentNumber>
@@ -153,17 +153,17 @@
       </accountDelegate>
     </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
   </delegateGlobals>
-</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </oldData>
 
 <expectedResult>
-<maintainableDocumentContents maintainableImplClass="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
   <newCollectionRecord>false</newCollectionRecord>
   <accountGlobalDetails/>
   <delegateGlobals/>
-</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
-</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
   <versionNumber>1</versionNumber>
   <newCollectionRecord>false</newCollectionRecord>
   <documentNumber>77766655</documentNumber>
@@ -210,7 +210,7 @@
       
     </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
   </delegateGlobals>
-</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
 </newMaintainableObject></maintainableDocumentContents>
 </expectedResult>
 
