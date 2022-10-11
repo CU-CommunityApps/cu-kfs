@@ -308,6 +308,7 @@
 		<property name="jaggaerGenerateContractPartyCsvService"
 			ref="jaggaerGenerateContractPartyCsvService" />
 		<property name="parameterService" ref="parameterService" />
+		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 
 	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc">
