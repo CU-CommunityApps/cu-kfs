@@ -252,16 +252,20 @@
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
                                 <exclude>WEB-INF/lib/lettuce-*.jar</exclude>
+                                <exclude>WEB-INF/lib/netty-*-4.*.jar</exclude>
                                 <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-aop-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-beans-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-support-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-core-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-data-commons-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-data-keyvalue-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-data-redis-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-expression-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-jdbc-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-orm-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-oxm-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-test-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-tx-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-web-*.jar</exclude>
@@ -644,6 +648,10 @@
               <exclusion>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
+              </exclusion>
+              <exclusion>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
@@ -2415,6 +2423,10 @@
             	<exclusion>
             		<groupId>com.fasterxml.jackson.core</groupId>
             		<artifactId>jackson-databind</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>com.google.guava</groupId>
+            		<artifactId>guava</artifactId>
             	</exclusion>
             </exclusions>
         </dependency>
