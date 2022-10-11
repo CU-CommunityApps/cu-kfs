@@ -60,10 +60,6 @@
   <bean id="SecurityRequestDocument-requestPerson.principalName" parent="SecurityRequestDocument-requestPerson.principalName-parentBean"/>
   <bean id="SecurityRequestDocument-requestPerson.principalName-parentBean" abstract="true" parent="PersonImpl-principalName">
     <property name="name" value="requestPerson.principalName"/>
-    <property name="validationPattern"><null /></property>
-    <property name="validCharactersConstraint">
-      <bean parent="AlphaNumericPatternConstraint" p:lowerCase="true" />
-    </property>
     <property name="description" value="The person's Cornell NetId.&lt;br /&gt;&lt;br /&gt;If partial matches are desired, then wildcards must be explicitly included in the search expression." />
   </bean>
   
@@ -72,9 +68,7 @@
         p:forceUppercase="true" p:label="Primary Department Code" p:shortLabel="Primary Department Code" p:maxLength="40">
     <property name="name" value="primaryDepartmentCode"/>
     <property name="required" value="true" />
-    <property name="validCharactersConstraint">
-      <bean parent="PrimaryDepartmentCodePatternConstraint"/>
-    </property>
+    <property name="validationPattern" ref="PrimaryDepartmentCodeValidation"/>
 	<property name="control">
 	  <bean parent="TextControlDefinition" p:size="20" />
 	</property>
@@ -85,9 +79,6 @@
   <bean id="SecurityRequestDocument-principalNameForSearch-parentBean" abstract="true" parent="PersonImpl-principalName">
     <property name="name" value="principalNameForSearch"/>
     <property name="required" value="false" />
-    <property name="validCharactersConstraint">
-      <bean parent="AlphaNumericPatternConstraint"/>
-    </property>
   </bean>
   
   <bean id="SecurityRequestDocument-roleIdForSearch" parent="SecurityRequestDocument-roleIdForSearch-parentBean"/>
