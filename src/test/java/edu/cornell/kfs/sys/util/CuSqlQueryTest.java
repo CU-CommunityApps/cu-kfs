@@ -154,6 +154,7 @@ public class CuSqlQueryTest {
     static Stream<Consumer<CuSqlChunk>> sqlChunkOperationsRequiringMutableState() {
         return Stream.of(
                 sqlChunk -> sqlChunk.append(" WHERE ROLE_NM IS NULL"),
+                sqlChunk -> sqlChunk.append(" WHERE ROLE_NM", " IS NULL"),
                 sqlChunk -> sqlChunk.append(new CuSqlChunk()),
                 sqlChunk -> sqlChunk.append(new SqlParameterValue(Types.VARCHAR, DOC_ID_123456)),
                 sqlChunk -> sqlChunk.toQuery());

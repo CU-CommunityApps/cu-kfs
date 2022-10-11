@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     private DateTimeService dateTimeService;
 
     @Override
-    public List<JaggaerContractUploadBaseDto> getJaggerContractsDto(JaggaerContractUploadProcessingMode processingMode, String processingDate) {
+    public List<JaggaerContractUploadBaseDto> getJaggaerContractsDto(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         List<JaggaerContractPartyUploadDto> vendors = jaggaerUploadDao.findJaggaerContractParty(processingMode, processingDate);
         int numberOfVendors = vendors.size();
         List<JaggaerContractAddressUploadDto> addresses = jaggaerUploadDao.findJaggaerContractAddress(processingMode, processingDate);
