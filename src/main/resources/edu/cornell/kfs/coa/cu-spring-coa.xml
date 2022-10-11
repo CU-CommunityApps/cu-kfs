@@ -57,10 +57,12 @@
 		</property>
 	</bean>
 	
-	<bean id="accountGlobalLookupableHelperService"
-		class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
-		scope="prototype" parent="lookupableHelperService"
-		p:accountGlobalSearchDao-ref="accountGlobalSearchDao" />
+    <bean id="accountGlobalLookupableHelperService"
+        class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
+        scope="prototype" parent="lookupableHelperService"
+        p:accountGlobalSearchDao-ref="accountGlobalSearchDao"
+        p:identityService-ref="identityService"
+        p:permissionService-ref="permissionService"/>
 
 	<bean id="accountGlobalLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
 		scope="prototype">
