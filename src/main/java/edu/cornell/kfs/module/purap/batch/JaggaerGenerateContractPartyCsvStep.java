@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.purap.batch;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -31,7 +32,11 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
         LOG.info("execute, processing mode: " + processingMode.modeCode + " processing date: " + processDateForOutput);
         
         List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvService.getJaggaerContractsDto(processingMode, processingDate);
-        jaggaerGenerateContractPartyCsvService.generateCsvFile(jaggaerUploadDtos, processingMode);
+        if (CollectionUtils.isNotEmpty(jaggaerUploadDtos)) {
+            jaggaerGenerateContractPartyCsvService.generateCsvFile(jaggaerUploadDtos, processingMode);
+        } else {
+            LOG.info("execute, there were no vendors found to upload to Jaggaer, so we are NOT generating a CSV file");
+        }
         if (processingMode == JaggaerContractUploadProcessingMode.VENDOR) {
             updateVendorProcessingDate();
         }
