@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
@@ -34,6 +37,7 @@ import edu.cornell.kfs.module.purap.batch.service.impl.fixture.VendorFixture;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractUploadBaseDto;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class JaggaerGenerateContractPartyCsvServiceImplTest {
     private JaggaerGenerateContractPartyCsvServiceImpl jaggaerGenerateContractPartyCsvServiceImpl;
@@ -66,11 +70,17 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         jaggaerGenerateContractPartyCsvServiceImpl = null;
     }
     
-    private JaggaerUploadDao buildMockJaggaerUploadDao() {
+    private JaggaerUploadDao buildMockJaggaerUploadDao() throws ParseException {
         JaggaerUploadDao dao = Mockito.mock(JaggaerUploadDao.class);
-        Mockito.when(dao.findJaggaerContractParty(JaggaerContractUploadProcessingMode.VENDOR, PROCESS_DATE)).thenReturn(getMockVendorDtos());
-        Mockito.when(dao.findJaggaerContractAddress(JaggaerContractUploadProcessingMode.VENDOR, PROCESS_DATE)).thenReturn(buildMockAddressDtos());
+        java.sql.Date processDate = buildSqlDate(PROCESS_DATE);
+        Mockito.when(dao.findJaggaerContractParty(JaggaerContractUploadProcessingMode.VENDOR, processDate)).thenReturn(getMockVendorDtos());
+        Mockito.when(dao.findJaggaerContractAddress(JaggaerContractUploadProcessingMode.VENDOR, processDate)).thenReturn(buildMockAddressDtos());
         return dao;
+    }
+    
+    protected java.sql.Date buildSqlDate(String dateString) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
+        return new java.sql.Date(dateFormat.parse(PROCESS_DATE).getTime());
     }
     
     private List<JaggaerContractPartyUploadDto> getMockVendorDtos() {
@@ -97,9 +107,10 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     @Test
-    void testGetJaggerContractsDto() {
+    void testGetJaggaerContractsDto() throws ParseException {
         jaggaerGenerateContractPartyCsvServiceImpl.setJaggaerUploadDao(buildMockJaggaerUploadDao());
-        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvServiceImpl.getJaggerContractsDto(JaggaerContractUploadProcessingMode.VENDOR, PROCESS_DATE);
+        java.sql.Date processDate = buildSqlDate(PROCESS_DATE);
+        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvServiceImpl.getJaggaerContractsDto(JaggaerContractUploadProcessingMode.VENDOR, processDate);
         assertEquals(4, jaggaerUploadDtos.size());
         
         JaggaerContractPartyUploadDto actualFirstElement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(0);
