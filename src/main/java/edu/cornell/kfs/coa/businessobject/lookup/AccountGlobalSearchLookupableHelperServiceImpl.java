@@ -24,8 +24,9 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.core.web.format.BooleanFormatter;
+import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -35,6 +36,8 @@ import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
 
 public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccountLookupableHelperServiceImpl {
     private AccountGlobalSearchDao accountGlobalSearchDao;
+    private IdentityService identityService;
+    private PermissionService permissionService;
 
     /**
      * @see org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl#getSearchResults(java.util.Map)
@@ -109,7 +112,7 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         final String principalName = parameters.get(userPrefix + CUKFSConstants.DELIMITER + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER);
 
         if (StringUtils.isNotBlank(principalName)) {
-            final Principal principal = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(principalName);
+            final Principal principal = identityService.getPrincipalByPrincipalName(principalName);
 
             if (principal == null) {
                 return false;
@@ -166,5 +169,22 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         this.accountGlobalSearchDao = accountGlobalSearchDao;
     }
 
+    public IdentityService getIdentityService() {
+        return identityService;
+    }
+
+    public void setIdentityService(IdentityService identityService) {
+        this.identityService = identityService;
+        super.setIdentityService(identityService);
+    }
+
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
+
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+        super.setPermissionService(permissionService);
+    }
 
 }
