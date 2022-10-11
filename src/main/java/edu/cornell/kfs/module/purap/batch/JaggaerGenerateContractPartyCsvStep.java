@@ -31,7 +31,7 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
         String processDateForOutput = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_dd_MMM_yyyy).format(processingDate);
         LOG.info("execute, processing mode: " + processingMode.modeCode + " processing date: " + processDateForOutput);
         
-        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvService.getJaggerContractsDto(processingMode, processingDate);
+        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvService.getJaggaerContractsDto(processingMode, processingDate);
         jaggaerGenerateContractPartyCsvService.generateCsvFile(jaggaerUploadDtos, processingMode);
         if (processingMode == JaggaerContractUploadProcessingMode.VENDOR) {
             updateVendorProcessingDate();
@@ -57,7 +57,7 @@ public class JaggaerGenerateContractPartyCsvStep extends AbstractStep {
         try {
             processDate = new java.sql.Date(findSimpleDateFormat().parse(dateString).getTime());
         } catch (ParseException e) {
-            LOG.error("Unable able to covert " + dateString + " to Date object.", e);
+            LOG.error("Unable to convert " + dateString + " to Date object.", e);
             throw new RuntimeException(e);
         }
         return processDate;

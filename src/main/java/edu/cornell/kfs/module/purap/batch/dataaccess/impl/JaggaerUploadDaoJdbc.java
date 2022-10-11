@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SqlParameterValue;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
@@ -159,7 +158,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
             chunk.append("AND VA.VNDR_HDR_GNRTD_ID = VD.VNDR_HDR_GNRTD_ID ",
                     "AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
         }
-        chunk.append("AND VH.VNDR_TYP_CD =", 
+        chunk.append("AND VH.VNDR_TYP_CD = ", 
                 CuSqlChunk.forParameter(CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode),
                 StringUtils.SPACE);
         return chunk;
@@ -183,21 +182,19 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                     ") ");
             return chunk;
         } else {
-            SqlParameterValue dateParameter = new SqlParameterValue(Types.DATE, processingDate);
             CuSqlChunk chunk = CuSqlChunk.of("AND VD.LAST_UPDT_TS > ",
-                    new CuSqlChunk(dateParameter),
+                    CuSqlChunk.forParameter(Types.DATE, processingDate),
                     StringUtils.SPACE);
             return chunk;
         }
     }
     
     private CuSqlChunk buildPurchaseOrderLimitSubQuery(Date processingDate) {
-        SqlParameterValue dateParameter = new SqlParameterValue(Types.DATE, processingDate);
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VNDR_HDR_GNRTD_ID FROM (",
                 "SELECT VNDR_HDR_GNRTD_ID, COUNT(1) ",
                 "FROM KFS.PUR_PO_T ",
                 "WHERE PO_LST_TRNS_DT > ",
-                new CuSqlChunk(dateParameter),
+                CuSqlChunk.forParameter(Types.DATE, processingDate),
                 " GROUP BY VNDR_HDR_GNRTD_ID HAVING COUNT(1) > 1)");
         return chunk;
     }

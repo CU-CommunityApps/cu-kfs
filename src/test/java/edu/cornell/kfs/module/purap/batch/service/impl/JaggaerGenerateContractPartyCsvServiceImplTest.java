@@ -107,10 +107,10 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
     }
 
     @Test
-    void testGetJaggerContractsDto() throws ParseException {
+    void testGetJaggaerContractsDto() throws ParseException {
         jaggaerGenerateContractPartyCsvServiceImpl.setJaggaerUploadDao(buildMockJaggaerUploadDao());
         java.sql.Date processDate = buildSqlDate(PROCESS_DATE);
-        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvServiceImpl.getJaggerContractsDto(JaggaerContractUploadProcessingMode.VENDOR, processDate);
+        List<JaggaerContractUploadBaseDto> jaggaerUploadDtos = jaggaerGenerateContractPartyCsvServiceImpl.getJaggaerContractsDto(JaggaerContractUploadProcessingMode.VENDOR, processDate);
         assertEquals(4, jaggaerUploadDtos.size());
         
         JaggaerContractPartyUploadDto actualFirstElement = (JaggaerContractPartyUploadDto) jaggaerUploadDtos.get(0);

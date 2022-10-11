@@ -8,7 +8,7 @@ import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractUploadB
 
 public interface JaggaerGenerateContractPartyCsvService {
     
-    public List<JaggaerContractUploadBaseDto> getJaggerContractsDto(JaggaerContractUploadProcessingMode processingMode, Date processingDate);
+    public List<JaggaerContractUploadBaseDto> getJaggaerContractsDto(JaggaerContractUploadProcessingMode processingMode, Date processingDate);
     
     public void generateCsvFile(List<JaggaerContractUploadBaseDto> jaggaerUploadDtos, JaggaerContractUploadProcessingMode processingMode);
 

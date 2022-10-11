@@ -39,7 +39,7 @@ public class JaggaerGenerateContractPartyCsvServiceImpl implements JaggaerGenera
     private DateTimeService dateTimeService;
 
     @Override
-    public List<JaggaerContractUploadBaseDto> getJaggerContractsDto(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
+    public List<JaggaerContractUploadBaseDto> getJaggaerContractsDto(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
         List<JaggaerContractPartyUploadDto> vendors = jaggaerUploadDao.findJaggaerContractParty(processingMode, processingDate);
         int numberOfVendors = vendors.size();
         List<JaggaerContractAddressUploadDto> addresses = jaggaerUploadDao.findJaggaerContractAddress(processingMode, processingDate);
