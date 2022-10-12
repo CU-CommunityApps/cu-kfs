@@ -13,18 +13,24 @@ public class ConcurEventNotificationProcessingResultsDTO {
     private ConcurEventNoticationVersion2EventType eventType;
     private ConcurEventNotificationVersion2ProcessingResults processingResults;
     private String reportNumber;
+    private String travelerName;
+    private String travelerEmail;
     private List<String> messages;
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber) {
-        this(eventType, processingResults, reportNumber, new ArrayList<String>());
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, 
+            String travelerName, String travelerEmail) {
+        this(eventType, processingResults, reportNumber, travelerName, travelerEmail, new ArrayList<String>());
     }
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, List<String> messages) {
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, 
+            String travelerName, String travelerEmail, List<String> messages) {
         this.eventType = eventType;
         this.processingResults = processingResults;
         this.reportNumber = reportNumber;
+        this.travelerName = travelerName;
+        this.travelerEmail = travelerEmail;
         this.messages = messages;
     }
 
@@ -50,6 +56,22 @@ public class ConcurEventNotificationProcessingResultsDTO {
 
     public void setReportNumber(String reportNumber) {
         this.reportNumber = reportNumber;
+    }
+
+    public String getTravelerName() {
+        return travelerName;
+    }
+
+    public void setTravelerName(String travelerName) {
+        this.travelerName = travelerName;
+    }
+
+    public String getTravelerEmail() {
+        return travelerEmail;
+    }
+
+    public void setTravelerEmail(String travelerEmail) {
+        this.travelerEmail = travelerEmail;
     }
 
     public List<String> getMessages() {
