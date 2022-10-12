@@ -10,22 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.cxf.jaxrs.client.ClientConfiguration;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
@@ -48,15 +44,14 @@ import edu.cornell.kfs.pmw.batch.xmlObjects.PaymentWorksNewVendorRequestsRootDTO
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
-import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 
-public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebServiceCallsService, Serializable {
+public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServiceImplBase implements PaymentWorksWebServiceCallsService, Serializable {
     private static final long serialVersionUID = -4282596886353845280L;
     private static final Logger LOG = LogManager.getLogger(PaymentWorksWebServiceCallsServiceImpl.class);
 
     protected PaymentWorksDtoToPaymentWorksVendorConversionService paymentWorksDtoToPaymentWorksVendorConversionService;
     protected WebServiceCredentialService webServiceCredentialService;
-    
+
     @Override
     public List<String> obtainPmwIdentifiersForApprovedNewVendorRequests() {
         LOG.info("obtainPmwIdentifiersForApprovedNewVendorRequests: Processing started.");
@@ -66,15 +61,18 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         LOG.info("obtainPmwIdentifiersForApprovedNewVendorRequests: Processing completed.");
         return pmwNewVendorIdentifiers;
     }
-    
+
+    @Override
+    protected Client getClient() {
+        return super.getClient(MultiPartFeature.class);
+    }
+
     private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksApprovedNewVendorRequests() {
-        Client clientForNewVendorRequestsRootResults = null;
         Response responseForNewVendorRequestsRootResults = null;
         List<PaymentWorksNewVendorRequestDTO> pmwNewVendorIdentifiers = new ArrayList<PaymentWorksNewVendorRequestDTO>();
         
         try{
-            clientForNewVendorRequestsRootResults = constructClientToUseForPagedResponses();
-            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildPaymentWorksApprovedNewVendorRequestsURI());
+            responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(), buildPaymentWorksApprovedNewVendorRequestsURI());
             PaymentWorksNewVendorRequestsRootDTO newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
             LOG.info("retrieveAllPaymentWorksApprovedNewVendorRequests: newVendorsRoot.getCount()=" + newVendorsRoot.getCount());
             
@@ -83,7 +81,7 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
                 closeResponseJustObtained(responseForNewVendorRequestsRootResults);
                 
                 if (additionalPagesOfPmwVendorIdsExist(newVendorsRoot)) {
-                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(clientForNewVendorRequestsRootResults, buildURI(newVendorsRoot.getNext()));
+                    responseForNewVendorRequestsRootResults = constructXmlResponseToUseForPagedData(getClient(), buildURI(newVendorsRoot.getNext()));
                     newVendorsRoot = responseForNewVendorRequestsRootResults.readEntity(PaymentWorksNewVendorRequestsRootDTO.class);
                 } else {
                     newVendorsRoot = null;
@@ -97,7 +95,6 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
             return pmwNewVendorIdentifiers;
             
         } finally {
-            CURestClientUtils.closeQuietly(clientForNewVendorRequestsRootResults);
             CURestClientUtils.closeQuietly(responseForNewVendorRequestsRootResults);
         }
     }
@@ -198,18 +195,10 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
     
     private Response buildJsonResponse(URI uri, String jsonString) {
-        Client client = null;
-        Response response = null;
-        try {
-            ClientConfig clientConfig = new ClientConfig();
-            client = ClientBuilder.newClient(clientConfig);
-            Invocation request = buildJsonClientRequest(client, uri, jsonString);
-            response = request.invoke();
-            response.bufferEntity();
-            return response;
-        } finally {
-            CURestClientUtils.closeQuietly(client);
-        }
+        Invocation request = buildJsonClientRequest(getClient(), uri, jsonString);
+        Response response = request.invoke();
+        response.bufferEntity();
+        return response;
     }
     
     private Invocation buildJsonClientRequest(Client client, URI uri, String jsonString) {
@@ -222,27 +211,12 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
     
     private Response buildXmlOutput(URI uri) {
-        Client client = null;
-        Response response = null;
-        try {
-            ClientConfig clientConfig = new ClientConfig();
-            client = ClientBuilder.newClient(clientConfig);
-            Invocation request = buildXmlClientRequest(client, uri);
-            response = request.invoke();
-            response.bufferEntity();
-            return response;
-        } finally {
-            CURestClientUtils.closeQuietly(client);
-        }
+        Invocation request = buildXmlClientRequest(getClient(), uri);
+        Response response = request.invoke();
+        response.bufferEntity();
+        return response;
     }
-    
-    private Client constructClientToUseForPagedResponses() {
-        Client client = null;
-        ClientConfig clientConfig = new ClientConfig();
-        client = ClientBuilder.newClient(clientConfig);
-        return client;
-    }
-    
+
     private  Response constructXmlResponseToUseForPagedData(Client client, URI uri) {
         Response response = null;
         Invocation request = buildXmlClientRequest(client, uri);
@@ -375,18 +349,8 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
     }
 
     private Response performSupplierUpload(InputStream vendorCsvDataStream) {
-        Client client = null;
-        
-        try {
-            ClientConfig clientConfig = new ClientConfig();
-            clientConfig.register(CuMultiPartWriter.class);
-            client = ClientBuilder.newClient(clientConfig);
-            
-            Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), vendorCsvDataStream);
-            return request.invoke();
-        } finally {
-            CURestClientUtils.closeQuietly(client);
-        }
+        Invocation request = buildMultiPartRequestForSupplierUpload(getClient(), buildSupplierUploadURI(), vendorCsvDataStream);
+        return request.invoke();
     }
 
     private URI buildSupplierUploadURI() {
@@ -404,27 +368,12 @@ public class PaymentWorksWebServiceCallsServiceImpl implements PaymentWorksWebSe
         
         WebTarget target = client.target(uri);
         Invocation.Builder requestBuilder = target.request();
-        disableRequestChunkingIfNecessary(client, requestBuilder);
         
         return requestBuilder
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .header(PaymentWorksWebServiceConstants.AUTHORIZATION_HEADER_KEY, 
                              PaymentWorksWebServiceConstants.AUTHORIZATION_TOKEN_VALUE_STARTER + getPaymentWorksAuthorizationToken())
                 .buildPost(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA_TYPE));
-    }
-
-    private void disableRequestChunkingIfNecessary(Client client, Invocation.Builder requestBuilder) {
-        if (client instanceof org.apache.cxf.jaxrs.client.spec.ClientImpl) {
-            LOG.info("disableRequestChunkingIfNecessary: Explicitly disabling chunking because KFS is using a JAX-RS client of CXF type "
-                    + client.getClass().getName());
-            ClientConfiguration cxfConfig = WebClient.getConfig(requestBuilder);
-            HTTPConduit conduit = cxfConfig.getHttpConduit();
-            HTTPClientPolicy clientPolicy = conduit.getClient();
-            clientPolicy.setAllowChunking(false);
-        } else {
-            LOG.info("disableRequestChunkingIfNecessary: There is no need to explicitly disable chunking for a JAX-RS client of type "
-                    + client.getClass().getName());
-        }
     }
 
     private int getReceivedSuppliersCountIfSupplierUploadSucceeded(String uploadResponse) {

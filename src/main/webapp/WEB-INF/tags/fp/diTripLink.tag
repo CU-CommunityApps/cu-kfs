@@ -3,9 +3,7 @@
 <c:if test="${KualiForm.canViewTrip}">
 	${kfunc:registerEditableProperty(KualiForm, "methodToCall")}
     <div class="center">
-        <a href='<c:out value="${KualiForm.tripUrl}"/>' target="blank">
-            <font color="red"><bean:message key="label.document.distributionIncomeExpense.openTrip"/> : ${KualiForm.tripID}</font>
-        </a>
+        <font color="red"><bean:message key="label.document.distributionIncomeExpense.legacyTrip"/> : ${KualiForm.tripID}</font>
     </div>
     <br>
 </c:if>

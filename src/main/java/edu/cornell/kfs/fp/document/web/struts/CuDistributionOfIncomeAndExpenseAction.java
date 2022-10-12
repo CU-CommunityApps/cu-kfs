@@ -7,6 +7,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.kuali.kfs.fp.document.web.struts.DistributionOfIncomeAndExpenseAction;
+import org.kuali.kfs.fp.document.web.struts.DistributionOfIncomeAndExpenseForm;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -22,7 +23,7 @@ public class CuDistributionOfIncomeAndExpenseAction extends DistributionOfIncome
     @SuppressWarnings("deprecation")
     @Override
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CuDistributionOfIncomeAndExpenseForm diForm = (CuDistributionOfIncomeAndExpenseForm) form;
+        DistributionOfIncomeAndExpenseForm diForm = (DistributionOfIncomeAndExpenseForm) form;
         Note newNote = diForm.getNewNote();
         
          if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(newNote, diForm.getDocument(), diForm.getAttachmentFile(),

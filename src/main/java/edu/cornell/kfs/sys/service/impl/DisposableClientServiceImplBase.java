@@ -4,6 +4,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.DisposableBean;
 
 import edu.cornell.kfs.sys.util.CURestClientUtils;
@@ -17,7 +18,7 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
         closeClientQuietly();
     }
     
-    protected Client getClient() {
+    protected Client getClient(Class<?> classToRegister) {
         // Use double-checked locking to lazy-load the Client object.
         // See effective java 2nd ed. pg. 71
         Client jerseyClient = client;
@@ -26,12 +27,19 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
                 jerseyClient = client;
                 if (jerseyClient == null) {
                     ClientConfig clientConfig = new ClientConfig();
+                    if (classToRegister != null) {
+                        clientConfig.register(classToRegister);
+                    }
                     jerseyClient = ClientBuilder.newClient(clientConfig);
                     client = jerseyClient;
                 }
             }
         }
         return jerseyClient;
+    }
+
+    protected Client getClient() {
+        return getClient(null);
     }
 
     protected void closeClientQuietly() {
