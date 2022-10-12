@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,9 +48,7 @@ import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
 import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.engine.RouteContext;
-import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
@@ -57,18 +56,15 @@ import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
-import edu.cornell.kfs.fp.document.interfaces.CULegacyTravelIntegrationInterface;
-import edu.cornell.kfs.fp.document.service.CULegacyTravelService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
-import edu.cornell.kfs.fp.document.service.impl.CULegacyTravelServiceImpl;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
 @COMPONENT(component = "DisbursementVoucher")
-public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument implements CULegacyTravelIntegrationInterface {
+public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LogManager.getLogger();
@@ -102,55 +98,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     public CuDisbursementVoucherDocument() {
         super();
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
-        tripAssociationStatusCode = CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC;
-    }
-
-    /**
-     * Overridden to interact with the Legacy Travel service
-     * @see <a href="https://jira.cornell.edu/browse/KFSPTS-2715">https://jira.cornell.edu/browse/KFSPTS-2715</a>
-     */
-    @Override
-    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-      // If the DV is Canceled or Disapproved, we need to reopen the trip in the Legacy Travel service.
-      if (getDocumentHeader().getWorkflowDocument().isCanceled() ||
-          getDocumentHeader().getWorkflowDocument().isDisapproved()) {        
-        boolean tripReOpened = false;
-        boolean isTravelDoc = false;
-        List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
-        String disapprovalReason = findDissapprovalReason(actionsTaken);
-
-        try {
-          CULegacyTravelService cuLegacyTravelService = SpringContext.getBean(CULegacyTravelService.class);
-          isTravelDoc = cuLegacyTravelService.isCULegacyTravelIntegrationInterfaceAssociatedWithTrip(this);
-          if(isTravelDoc) {
-            // This means the DV is a Travel DV
-            tripReOpened = cuLegacyTravelService.reopenLegacyTrip(this.getDocumentNumber(), disapprovalReason);
-            LOG.info("Trip successfully reopened : "+ tripReOpened);
-          } else {
-            LOG.info("DV is not a travel DV");
-          }
-        } catch (Exception ex) {
-          LOG.error("Exception occurred while trying to cancel a trip.", ex);
-        }
-        
-      }
-
-      super.doRouteStatusChange(statusChangeEvent);
-    }
-
-    private String findDissapprovalReason(List<ActionTaken> actionsTaken) {
-        String disapprovalReason = "";
-        if(actionsTaken.size() > 0) {
-          String annotation = actionsTaken.get(actionsTaken.size() - 1).getAnnotation();
-          if(StringUtils.isNotEmpty(annotation)) {
-              if(StringUtils.contains(annotation, DISAPPROVE_ANNOTATION_REASON_STARTER)) {
-                  disapprovalReason = annotation.substring(DISAPPROVE_ANNOTATION_REASON_STARTER.length());  
-              } else {
-                  disapprovalReason = annotation;
-              }
-          }
-        }
-        return disapprovalReason;
+        tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
     }
 
     @Override
@@ -664,7 +612,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     @Override
     protected void clearFieldsThatShouldNotBeCopied() {
         super.clearFieldsThatShouldNotBeCopied();
-        setTripAssociationStatusCode(CULegacyTravelServiceImpl.TRIP_ASSOCIATIONS.IS_NOT_TRIP_DOC);
+        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
         setTripId(null);
     }
 
@@ -954,6 +902,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
         return false;
     }
 
+    public boolean isLegacyTrip() {
+        return StringUtils.equals(getTripAssociationStatusCode(), CuFPConstants.IS_TRIP_DOC);
+    }
+
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
         return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
     }
@@ -970,7 +922,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument i
     public String getTripAssociationStatusCode() {
         return tripAssociationStatusCode;
     }
-
 
     public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
         this.tripAssociationStatusCode = tripAssociationStatusCode;

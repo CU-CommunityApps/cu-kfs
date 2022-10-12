@@ -128,6 +128,7 @@ public class PaymentWorksUploadSuppliersTest {
 //            this.server.shutdown(0L, TimeUnit.SECONDS);
 //        }
 //        deleteTemporaryFileDirectory();
+//        webServiceCallsService.destroy();
 //    }
 //
 //    private void deleteTemporaryFileDirectory() throws Exception {

@@ -2,18 +2,13 @@ package edu.cornell.kfs.fp.document.web.struts;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KfsAuthorizationConstants.DisbursementVoucherEditMode;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -25,7 +20,6 @@ import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherPaymentMaintenance
 public class RecurringDisbursementVoucherForm extends CuDisbursementVoucherForm {
 
     private static final long serialVersionUID = 7035540080454973823L;
-    private static final Logger LOG = LogManager.getLogger(RecurringDisbursementVoucherForm.class);
 
     private transient List<RecurringDisbursementVoucherPDPStatus> pdpStatuses;
     private transient RecurringDisbursementVoucherDocumentService recurringDisbursementVoucherDocumentService;
@@ -39,16 +33,6 @@ public class RecurringDisbursementVoucherForm extends CuDisbursementVoucherForm 
     @Override
     protected String getDefaultDocumentTypeName() {
         return CuFPConstants.RecurringDisbursementVoucherDocumentConstants.RECURRING_DV_DOCUMENT_TYPE_NAME;
-    }
-
-    @Override
-    public String getTripUrl() {
-        return StringUtils.EMPTY;
-    }
-
-    @Override
-    public String getTripID() {
-        return StringUtils.EMPTY;
     }
 
     public boolean isCancelPDPPaymentsActionAvailable() {
