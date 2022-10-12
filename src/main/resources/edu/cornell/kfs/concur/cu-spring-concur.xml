@@ -708,7 +708,6 @@
   <bean id="concurEventNotificationV2ReportService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationV2ReportServiceImpl" abstract="true">
       <property name="reportWriterService" ref="concurEventNotificationV2ReportWriterService"/>
       <property name="configurationService" ref="configurationService"/>
-      <property name="emailService" ref="emailService"/>
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
   </bean>
   

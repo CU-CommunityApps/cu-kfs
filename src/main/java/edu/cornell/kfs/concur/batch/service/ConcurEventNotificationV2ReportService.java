@@ -8,5 +8,4 @@ import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingR
 public interface ConcurEventNotificationV2ReportService {
     File generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults);
 
-    void sendResultsEmail(List<ConcurEventNotificationProcessingResultsDTO> processingResults, File reportFile);
 }

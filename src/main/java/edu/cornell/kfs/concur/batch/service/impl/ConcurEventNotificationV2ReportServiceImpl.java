@@ -12,8 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.mail.BodyMailMessage;
-import org.kuali.kfs.sys.service.EmailService;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
@@ -28,7 +26,6 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     
     private ReportWriterService reportWriterService;
     private ConfigurationService configurationService;
-    private EmailService emailService;
     private ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
@@ -114,64 +111,12 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
         reportWriterService.writeNewLines(2);
     }
 
-    @Override
-    public void sendResultsEmail(List<ConcurEventNotificationProcessingResultsDTO> processingResults, File reportFile) {
-        String body = readReportFileToString(reportFile);
-        String subject = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_EMAIL_SUBJECT);
-        sendEmail(subject, body);
-
-    }
-    
-    protected String readReportFileToString(File reportFile) {
-        String contents = concurBatchUtilityService.getFileContents(reportFile.getAbsolutePath());
-        if (StringUtils.isEmpty(contents)) {
-            LOG.error("readReportFileToString, could not read report file into a String");
-            contents = "Could not read the " + reportFile.getAbsolutePath() + " file.";
-        }
-        return contents;
-    }
-    
-    public void sendEmail(String subject, String body) {
-        BodyMailMessage message = buildBodyMailMessage(subject, body);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("sendEmail, from address: " + message.getFromAddress());
-            LOG.debug("sendEmail. Send email to: " + String.join(",", message.getToAddresses()));
-            LOG.debug("sendEmail, the email subject: " + subject);
-            LOG.debug("sendEmail, the email body: " + body);
-        }
-        
-        try {
-            emailService.sendMessage(message, false);
-        } catch (Exception e) {
-            LOG.error("sendEmail, the email could not be sent", e);
-        }
-    }
-    
-    private BodyMailMessage buildBodyMailMessage(String subject, String body) {
-        String toAddress = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_TO_ADDRESS);
-        String fromAddress = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_REPORT_EMAIL_FROM_ADDRESS);
-        List<String> toAddressList = new ArrayList<>();
-        toAddressList.add(toAddress);
-        
-        BodyMailMessage message = new BodyMailMessage();
-        message.setFromAddress(fromAddress);
-        message.setSubject(subject);
-        message.getToAddresses().addAll(toAddressList);
-        message.setMessage(body);
-        
-        return message;
-    }
-
     public void setReportWriterService(ReportWriterService reportWriterService) {
         this.reportWriterService = reportWriterService;
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    public void setEmailService(EmailService emailService) {
-        this.emailService = emailService;
     }
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {

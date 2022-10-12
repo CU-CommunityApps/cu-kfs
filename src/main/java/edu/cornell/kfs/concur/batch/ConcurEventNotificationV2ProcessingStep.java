@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur.batch;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +46,7 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
         if (processingResults.isEmpty()) {
             LOG.info("generateReport, no reports nor travel requests were validated");
         } else {
-            File reportFile = concurEventNotificationV2ReportService.generateReport(processingResults);
-            concurEventNotificationV2ReportService.sendResultsEmail(processingResults, reportFile);
+            concurEventNotificationV2ReportService.generateReport(processingResults);
         }
     }
 
