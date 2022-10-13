@@ -317,7 +317,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     @Override
     protected String processPlantIndebtedness(OriginEntryInformation scrubbedEntry, ScrubberReportData scrubberReport) {
         // Make sure plant indebtedness processing is enabled.
-        if (parameterService.getParameterValueAsBoolean(ScrubberStep.class, PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
+        if (parameterService.getParameterValueAsBoolean(ScrubberStep.class, PLANT_FUND_LIABILITY_IND, Boolean.FALSE).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
             ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(ScrubberStep.class,
                     CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());

@@ -251,7 +251,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     }
 
     @Override
-    public boolean isPastScheduleCutoffTime() {
+    public boolean isPastScheduleCutoffTime(Date startTime) {
         LOG.warn("isPastScheduleCutoffTime, This class does not support scheduled jobs");
         return false;
     }

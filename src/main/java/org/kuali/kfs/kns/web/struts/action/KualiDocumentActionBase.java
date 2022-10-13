@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,18 +37,14 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.datadictionary.legacy.DocumentDictionaryService;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
-import org.kuali.kfs.kew.actionrequest.service.ActionRequestService;
-import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.WorkflowRuntimeException;
 import org.kuali.kfs.kew.api.action.WorkflowDocumentActionsService;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
-import org.kuali.kfs.kew.engine.simulation.SimulationCriteria;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kew.util.Utilities;
 import org.kuali.kfs.kim.api.group.GroupService;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
@@ -114,15 +110,9 @@ import org.springmodules.orm.ojb.OjbOperationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,16 +123,7 @@ import java.util.Set;
  */
 /**
  * 
- * CU customization: backport FINP-8250.
- * 
- * Changes from FINP-8250 were applied in base financials to KualiAction.java in
- * the 2/22/2022 release. KualiAction.java has been merged with
- * KualiDocumentActionBase.java in the 1/5/2022 release. The fix has been
- * backported to a copy of KualiDocumentActionBase.java from the 1/28/2021
- * version of financials. This will need to be updated accordingly when we
- * upgrade to the 1/5/2022 version of financials so that changes are moved to
- * KualiAction.java. This backport can be removed when we upgrade to the
- * 2/22/2022 financials release.
+ * CU customization: fix issue introduced with 11/17/2021.
  *
  */
 public class KualiDocumentActionBase extends KualiAction {
@@ -170,7 +151,6 @@ public class KualiDocumentActionBase extends KualiAction {
     private static final String QUESTION_DISAPPROVE_DOCUMENT = "document.question.disapprove.text";
     private static final String QUESTION_RECALL_DOCUMENT = "document.question.recall.text";
     private static final String QUESTION_SENSITIVE_DATA_DOCUMENT = "document.question.sensitiveData.text";
-    private static Comparator<ActionRequest> ROUTE_LOG_ACTION_REQUEST_SORTER = new Utilities.RouteLogActionRequestSorter();
 
     // COMMAND constants which cause docHandler to load an existing document instead of creating a new one
     protected static final String[] DOCUMENT_LOAD_COMMANDS = {
@@ -1275,35 +1255,6 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     /**
-     * Handy method to stream the byte array to response object
-     *
-     * @param fileContents
-     * @param fileName
-     * @param fileContentType
-     * @param response
-     * @throws Exception
-     */
-    protected void streamToResponse(byte[] fileContents, String fileName, String fileContentType,
-            HttpServletResponse response) throws Exception {
-        ByteArrayOutputStream baos = null;
-        try {
-            baos = new ByteArrayOutputStream(fileContents.length);
-            baos.write(fileContents);
-            WebUtils.saveMimeOutputStreamAsFile(response, fileContentType, baos, fileName);
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.close();
-                    baos = null;
-                }
-            } catch (IOException ioEx) {
-                LOG.error("Error while downloading attachment");
-                throw new RuntimeException("IOException occurred while downloading attachment", ioEx);
-            }
-        }
-    }
-
-    /**
      * Downloads the selected attachment to the user's browser
      *
      * @param mapping
@@ -2157,201 +2108,6 @@ public class KualiDocumentActionBase extends KualiAction {
         return false;
     }
 
-    /*
-     * CU customization: backport FINP-8250 changes
-     */
-    protected void populateRouteLogFormActionRequests(final KualiForm form,
-            final DocumentRouteHeaderValue routeHeader) {
-    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-    	
-        final List<ActionRequest> rootRequests = getActionRequestService().getRootRequests(
-                routeHeader.getActionRequests());
-        rootRequests.sort(ROUTE_LOG_ACTION_REQUEST_SORTER);
-
-        List<ActionRequest> rootRequestsForDisplay = new ArrayList<>(rootRequests);
-
-        rootRequestsForDisplay = switchActionRequestPositionsIfPrimaryDelegatesPresent(rootRequestsForDisplay);
-        int arCount = 0;
-        for (final ActionRequest actionRequest : rootRequestsForDisplay) {
-            if (actionRequest.isPending()) {
-                arCount++;
-
-                if (actionRequest.isInitialized()) {
-                    actionRequest.setDisplayStatus("PENDING");
-                } else if (actionRequest.isActive()) {
-                    actionRequest.setDisplayStatus("IN ACTION LIST");
-                }
-            }
-        }
-        kualiDocumentFormBase.setRootRequests(rootRequestsForDisplay);
-        kualiDocumentFormBase.setPendingActionRequestCount(arCount);
-    }
-
-    @SuppressWarnings("unchecked")
-    private ActionRequest switchActionRequestPositionIfPrimaryDelegatePresent(ActionRequest actionRequest) {
-
-        /**
-         * KULRICE-4756 - The main goal here is to fix the regression of what happened in Rice 1.0.2 with the display
-         * of primary delegate requests.  The delegate is displayed at the top-most level correctly on action requests
-         * that are "rooted" at a "role" request.
-         *
-         * If they are rooted at a principal or group request, then the display of the primary delegator at the top-most
-         * level does not happen (instead it shows the delegator and you have to expand the request to see the primary
-         * delegate).
-         *
-         * Ultimately, the KAI group and Rice BA need to come up with a specification for how the Route Log should
-         * display delegate information.  For now, will fix this so that in the non "role" case, it will put the
-         * primary delegate as the outermost request *except* in the case where there is more than one primary delegate.
-         */
-
-        if (!actionRequest.isRoleRequest()) {
-            List<ActionRequest> primaryDelegateRequests = actionRequest.getPrimaryDelegateRequests();
-            // only display primary delegate request at top if there is only *one* primary delegate request
-            if (primaryDelegateRequests.size() != 1) {
-                return actionRequest;
-            }
-            ActionRequest primaryDelegateRequest = primaryDelegateRequests.get(0);
-            actionRequest.getChildrenRequests().remove(primaryDelegateRequest);
-            primaryDelegateRequest.setChildrenRequests(actionRequest.getChildrenRequests());
-            primaryDelegateRequest.setParentActionRequest(actionRequest.getParentActionRequest());
-
-            actionRequest.setChildrenRequests(new ArrayList<ActionRequest>(0));
-            actionRequest.setParentActionRequest(primaryDelegateRequest);
-
-            primaryDelegateRequest.getChildrenRequests().add(0, actionRequest);
-
-            for (ActionRequest delegateRequest : primaryDelegateRequest.getChildrenRequests()) {
-                delegateRequest.setParentActionRequest(primaryDelegateRequest);
-            }
-
-            return primaryDelegateRequest;
-        }
-
-        return actionRequest;
-    }
-
-    private List<ActionRequest> switchActionRequestPositionsIfPrimaryDelegatesPresent(Collection<ActionRequest> actionRequests) {
-        List<ActionRequest> results = new ArrayList<ActionRequest>(actionRequests.size());
-        for (ActionRequest actionRequest : actionRequests) {
-            results.add(switchActionRequestPositionIfPrimaryDelegatePresent(actionRequest));
-        }
-        return results;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void fixActionRequestsPositions(DocumentRouteHeaderValue routeHeader) {
-        for (ActionTaken actionTaken : routeHeader.getActionsTaken()) {
-            Collections.sort((List<ActionRequest>) actionTaken.getActionRequests(), ROUTE_LOG_ACTION_REQUEST_SORTER);
-            actionTaken.setActionRequests(actionTaken.getActionRequests());
-        }
-    }
-
-    /**
-     * executes a simulation of the future routing, and sets the futureRootRequests and futureActionRequestCount
-     * properties on the provided RouteLogForm.
-     *
-     * @param form the Form --used in a write-only fashion.
-     * @param document the DocumentRouteHeaderValue for the document whose future routing is being simulated.
-     * @throws Exception
-     */
-    /*
-     * CU customization: backport changes from FINP-8250
-     */
-    protected void populateRouteLogFutureRequests(final KualiForm form, final DocumentRouteHeaderValue document)
-            throws Exception {
-    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-    	
-        final SimulationCriteria criteria =
-                SimulationCriteria.createSimulationCritUsingDocumentId(document.getDocumentId());
-
-        // gather the IDs for action requests that predate the simulation
-        final Set<String> preexistingActionRequestIds = getActionRequestIds(document);
-
-        // run the simulation
-        final DocumentRouteHeaderValue documentRouteHeaderValue =
-                KewApiServiceLocator.getWorkflowDocumentActionsService().executeSimulation(criteria);
-        
-        // fabricate our ActionRequestValueS from the results
-        final List<ActionRequest> futureActionRequests =
-                reconstituteActionRequestValues(documentRouteHeaderValue, preexistingActionRequestIds);
-
-        futureActionRequests.sort(ROUTE_LOG_ACTION_REQUEST_SORTER);
-
-        List<ActionRequest> futureActionRequestsForDisplay = new ArrayList<>(futureActionRequests);
-
-        futureActionRequestsForDisplay =
-                switchActionRequestPositionsIfPrimaryDelegatesPresent(futureActionRequestsForDisplay);
-
-        int pendingActionRequestCount = 0;
-        for (final ActionRequest actionRequest : futureActionRequestsForDisplay) {
-            if (actionRequest.isPending()) {
-                pendingActionRequestCount++;
-
-                if (actionRequest.isInitialized()) {
-                    actionRequest.setDisplayStatus("PENDING");
-                } else if (actionRequest.isActive()) {
-                    actionRequest.setDisplayStatus("IN ACTION LIST");
-                }
-            }
-        }
-
-        kualiDocumentFormBase.setFutureRootRequests(futureActionRequestsForDisplay);
-        kualiDocumentFormBase.setFutureActionRequestCount(pendingActionRequestCount);
-    }
-
-    /**
-     * This utility method returns a Set of IDs for the ActionRequestValueS associated with
-     * this DocumentRouteHeaderValue.
-     */
-    @SuppressWarnings("unchecked")
-    private Set<String> getActionRequestIds(DocumentRouteHeaderValue document) {
-        Set<String> actionRequestIds = new HashSet<String>();
-
-        List<ActionRequest> actionRequests =
-                KEWServiceLocator.getActionRequestService().findAllActionRequestsByDocumentId(document.getDocumentId());
-
-        if (actionRequests != null) {
-            for (ActionRequest actionRequest : actionRequests) {
-                if (actionRequest.getActionRequestId() != null) {
-                    actionRequestIds.add(actionRequest.getActionRequestId());
-                }
-            }
-        }
-        return actionRequestIds;
-    }
-
-    /**
-     * This method creates ActionRequest objects from the DocumentRouteHeaderValue output from a workflow simulation.
-     *
-     * @param documentRouteHeaderValue    contains action requests from which the ActionRequestValues are reconstituted
-     * @param preexistingActionRequestIds this is a Set of ActionRequest IDs that will not be reconstituted
-     * @return the ActionRequestValueS that have been created
-     */
-    private List<ActionRequest> reconstituteActionRequestValues(DocumentRouteHeaderValue documentRouteHeaderValue,
-            Set<String> preexistingActionRequestIds) {
-
-        List<ActionRequest> actionRequestVOs = documentRouteHeaderValue.getActionRequests();
-        List<ActionRequest> futureActionRequests = new ArrayList<>();
-        if (actionRequestVOs != null) {
-            for (ActionRequest actionRequest : actionRequestVOs) {
-                if (actionRequest != null) {
-                    if (!preexistingActionRequestIds.contains(actionRequest.getActionRequestId())) {
-                        futureActionRequests.add(actionRequest);
-                    }
-                }
-            }
-        }
-        return futureActionRequests;
-    }
-
-    private ActionRequestService getActionRequestService() {
-        return KEWServiceLocator.getActionRequestService();
-    }
-
-    private UserSession getUserSession() {
-        return GlobalVariables.getUserSession();
-    }
-
     /**
      * Class that encapsulates the workflow for obtaining an reason from an action prompt.
      */
@@ -2504,4 +2260,3 @@ public class KualiDocumentActionBase extends KualiAction {
         }
     }
 }
-
