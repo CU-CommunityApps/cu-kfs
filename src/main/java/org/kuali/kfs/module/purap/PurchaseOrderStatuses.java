@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,7 @@ public final class PurchaseOrderStatuses {
     // Added for updating app doc status for disapproved
     public static final String APPDOC_DAPRVD_UNORDERED_ITEM = "Disapproved New Unordered Item Review";
     public static final String APPDOC_DAPRVD_PURCHASING = "Disapproved Purchasing";
+    public static final String APPDOC_DAPRVD_OBJECT_CODE = "Disapproved Object Code";
     public static final String APPDOC_DAPRVD_COMMODITY_CODE = "Disapproved Commodity Code";
     public static final String APPDOC_DAPRVD_CG_APPROVAL = "Disapproved C and G";
     public static final String APPDOC_DAPRVD_BUDGET = "Disapproved Budget";
@@ -47,6 +48,7 @@ public final class PurchaseOrderStatuses {
     public static final String APPDOC_AWAIT_CONTRACTS_GRANTS_REVIEW = "Awaiting C and G Approval";
     public static final String APPDOC_AWAIT_PURCHASING_REVIEW = "Awaiting Purchasing Approval";
     public static final String APPDOC_AWAIT_NEW_UNORDERED_ITEM_REVIEW = "Awaiting New Unordered Item Review";
+    public static final String APPDOC_AWAIT_OBJECT_CODE_REVIEW = "Awaiting Object Code Approval";
     public static final String APPDOC_AWAIT_COMMODITY_CODE_REVIEW = "Awaiting Commodity Code Approval";
     public static final String APPDOC_FAX_ERROR = "Error occurred sending fax";
     public static final String APPDOC_QUOTE = "Out for Quote";
@@ -72,6 +74,7 @@ public final class PurchaseOrderStatuses {
     public static final String NODE_CONTRACT_MANAGEMENT = "ContractManagement";
     public static final String NODE_AWAIT_NEW_UNORDERED_ITEM_REVIEW = "NewUnorderedItems";
     public static final String NODE_INTERNAL_PURCHASING_REVIEW = "ContractManagement";
+    public static final String NODE_OBJECT_CODE_REVIEW = "ObjectCode";
     public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
     // CU Customization: Added new CommodityAPO node
     public static final String NODE_COMMODITY_CODE_APO_REVIEW = "CommodityAPO";
@@ -97,6 +100,7 @@ public final class PurchaseOrderStatuses {
 
         appDocStatusMap.put(APPDOC_DAPRVD_UNORDERED_ITEM, APPDOC_DAPRVD_UNORDERED_ITEM);
         appDocStatusMap.put(APPDOC_DAPRVD_PURCHASING, APPDOC_DAPRVD_PURCHASING);
+        appDocStatusMap.put(APPDOC_DAPRVD_OBJECT_CODE, APPDOC_DAPRVD_OBJECT_CODE);
         appDocStatusMap.put(APPDOC_DAPRVD_COMMODITY_CODE, APPDOC_DAPRVD_COMMODITY_CODE);
         appDocStatusMap.put(APPDOC_DAPRVD_CG_APPROVAL, APPDOC_DAPRVD_CG_APPROVAL);
         appDocStatusMap.put(APPDOC_DAPRVD_BUDGET, APPDOC_DAPRVD_BUDGET);
@@ -114,6 +118,7 @@ public final class PurchaseOrderStatuses {
         appDocStatusMap.put(APPDOC_AWAIT_CONTRACTS_GRANTS_REVIEW, APPDOC_AWAIT_CONTRACTS_GRANTS_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_PURCHASING_REVIEW, APPDOC_AWAIT_PURCHASING_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_NEW_UNORDERED_ITEM_REVIEW, APPDOC_AWAIT_NEW_UNORDERED_ITEM_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_OBJECT_CODE_REVIEW, APPDOC_AWAIT_OBJECT_CODE_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_COMMODITY_CODE_REVIEW, APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
         appDocStatusMap.put(APPDOC_FAX_ERROR, APPDOC_FAX_ERROR);
         appDocStatusMap.put(APPDOC_QUOTE, APPDOC_QUOTE);
@@ -144,6 +149,7 @@ public final class PurchaseOrderStatuses {
         poAppDocStatusMap
                 .put(NODE_AWAIT_NEW_UNORDERED_ITEM_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_UNORDERED_ITEM);
         poAppDocStatusMap.put(NODE_INTERNAL_PURCHASING_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_PURCHASING);
+        poAppDocStatusMap.put(NODE_OBJECT_CODE_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_OBJECT_CODE);
         poAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
         // CU Customization: Added mapping for NODE_COMMODITY_CODE_APO_REVIEW
         poAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW, PurchaseOrderStatuses.APPDOC_DAPRVD_COMMODITY_CODE);
@@ -170,6 +176,7 @@ public final class PurchaseOrderStatuses {
         INCOMPLETE_STATUSES.add(APPDOC_AWAIT_CONTRACTS_GRANTS_REVIEW);
         INCOMPLETE_STATUSES.add(APPDOC_AWAIT_PURCHASING_REVIEW);
         INCOMPLETE_STATUSES.add(APPDOC_AWAIT_NEW_UNORDERED_ITEM_REVIEW);
+        INCOMPLETE_STATUSES.add(APPDOC_AWAIT_OBJECT_CODE_REVIEW);
         INCOMPLETE_STATUSES.add(APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
         INCOMPLETE_STATUSES.add(APPDOC_FAX_ERROR);
         INCOMPLETE_STATUSES.add(APPDOC_QUOTE);
@@ -191,6 +198,7 @@ public final class PurchaseOrderStatuses {
         COMPLETE_STATUSES.add(APPDOC_DISAPPROVED_CHANGE);
         COMPLETE_STATUSES.add(APPDOC_DAPRVD_BUDGET);
         COMPLETE_STATUSES.add(APPDOC_DAPRVD_CONTRACTS_GRANTS);
+        COMPLETE_STATUSES.add(APPDOC_DAPRVD_OBJECT_CODE);
         COMPLETE_STATUSES.add(APPDOC_DAPRVD_COMMODITY_CODE);
         COMPLETE_STATUSES.add(APPDOC_DAPRVD_PURCHASING);
         COMPLETE_STATUSES.add(APPDOC_DAPRVD_TAX);

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,6 +32,7 @@ public final class RequisitionStatuses {
     public static final String APPDOC_AWAIT_HAS_ACCOUNTING_LINES = "Awaiting Accounting Lines";
     public static final String APPDOC_AWAIT_SUB_ACCT_REVIEW = "Awaiting Sub Account";
     public static final String APPDOC_AWAIT_CHART_REVIEW = "Awaiting Base Org Review";
+    public static final String APPDOC_AWAIT_OBJECT_CODE_REVIEW = "Awaiting Object Code Review";
     // CU Customization: Changed doc status name to Awaiting Commodity Review
     public static final String APPDOC_AWAIT_COMMODITY_CODE_REVIEW = "Awaiting Commodity Review";
     // End CU Customization
@@ -46,6 +47,7 @@ public final class RequisitionStatuses {
     public static final String APPDOC_DAPRVD_SUB_ACCT = "Disapproved Sub Account";
     public static final String APPDOC_DAPRVD_FISCAL = "Disapproved Fiscal";
     public static final String APPDOC_DAPRVD_CHART = "Disapproved Base Org Review";
+    public static final String APPDOC_DAPRVD_OBJECT_CODE = "Disapproved Object Code Review";
     // CU Customization: Changed doc status name to Disapproved Commodity Review
     public static final String APPDOC_DAPRVD_COMMODITY_CODE = "Disapproved Commodity Review";
     // End CU Customization
@@ -60,6 +62,7 @@ public final class RequisitionStatuses {
     public static final String NODE_SUBACCOUNT = "SubAccount";
     public static final String NODE_SEPARATION_OF_DUTIES = "SeparationOfDuties";
     public static final String NODE_ACCOUNT = "Account";
+    public static final String NODE_OBJECT_CODE = "ObjectCode";
     public static final String NODE_HAS_ACCOUNTING_LINES = "Initiator";
     public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
     public static final String NODE_COMMODITY_CODE_REVIEW = "Commodity";
@@ -85,6 +88,7 @@ public final class RequisitionStatuses {
         appDocStatusMap.put(APPDOC_AWAIT_HAS_ACCOUNTING_LINES, APPDOC_AWAIT_HAS_ACCOUNTING_LINES);
         appDocStatusMap.put(APPDOC_AWAIT_SUB_ACCT_REVIEW, APPDOC_AWAIT_SUB_ACCT_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_CHART_REVIEW, APPDOC_AWAIT_CHART_REVIEW);
+        appDocStatusMap.put(APPDOC_AWAIT_OBJECT_CODE_REVIEW, APPDOC_AWAIT_OBJECT_CODE_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_COMMODITY_CODE_REVIEW, APPDOC_AWAIT_COMMODITY_CODE_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_SEP_OF_DUTY_REVIEW, APPDOC_AWAIT_SEP_OF_DUTY_REVIEW);
         appDocStatusMap.put(APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN, APPDOC_AWAIT_CONTRACT_MANAGER_ASSGN);
@@ -96,6 +100,7 @@ public final class RequisitionStatuses {
         appDocStatusMap.put(APPDOC_DAPRVD_SUB_ACCT, APPDOC_DAPRVD_SUB_ACCT);
         appDocStatusMap.put(APPDOC_DAPRVD_FISCAL, APPDOC_DAPRVD_FISCAL);
         appDocStatusMap.put(APPDOC_DAPRVD_CHART, APPDOC_DAPRVD_CHART);
+        appDocStatusMap.put(APPDOC_DAPRVD_OBJECT_CODE, APPDOC_DAPRVD_OBJECT_CODE);
         appDocStatusMap.put(APPDOC_DAPRVD_COMMODITY_CODE, APPDOC_DAPRVD_COMMODITY_CODE);
         appDocStatusMap.put(APPDOC_DAPRVD_SEP_OF_DUTY, APPDOC_DAPRVD_SEP_OF_DUTY);
 
@@ -113,6 +118,7 @@ public final class RequisitionStatuses {
         reqAppDocStatusMap.put(NODE_SUBACCOUNT, APPDOC_DAPRVD_SUB_ACCT);
         reqAppDocStatusMap.put(NODE_ACCOUNT, APPDOC_DAPRVD_FISCAL);
         reqAppDocStatusMap.put(NODE_ORG_REVIEW, APPDOC_DAPRVD_CHART);
+        reqAppDocStatusMap.put(NODE_OBJECT_CODE, APPDOC_DAPRVD_OBJECT_CODE);
         reqAppDocStatusMap.put(NODE_COMMODITY_CODE_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);
         // CU Customization: Added mapping for NODE_COMMODITY_CODE_APO_REVIEW
         reqAppDocStatusMap.put(NODE_COMMODITY_CODE_APO_REVIEW, APPDOC_DAPRVD_COMMODITY_CODE);

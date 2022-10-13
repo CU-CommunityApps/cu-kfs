@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -42,6 +42,7 @@ import org.kuali.kfs.kim.impl.common.attribute.KimAttributeData;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMemberAttributeData;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
+import org.kuali.kfs.kim.impl.group.Group;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.impl.permission.Permission;
 import org.kuali.kfs.kim.impl.responsibility.Responsibility;
@@ -176,7 +177,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(RoleMember.class, queryByCriteria, lc.build());
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleMember.CACHE_NAME, key = "'{getRoleTypeRoleMemberIds}' + 'roleId=' + #p0")
     @Override
     public Set<String> getRoleTypeRoleMemberIds(String roleId) throws IllegalArgumentException {
@@ -187,7 +187,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableSet(results);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleMembership.CACHE_NAME, key = "'memberType=' + #p0 + '|' + 'memberId=' + #p1")
     @Override
     public List<String> getMemberParentRoleIds(String memberType, String memberId) throws IllegalStateException {
@@ -205,7 +204,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return parentRoleIds;
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleResponsibility.CACHE_NAME, key = "'roleMemberId=' + #p0")
     @Override
     public List<RoleResponsibilityAction> getRoleMemberResponsibilityActions(String roleMemberId) throws
@@ -310,7 +308,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return result;
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = Role.CACHE_NAME, key = "'ids=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0)")
     @Override
     public List<RoleLite> getRoles(List<String> roleIds) throws IllegalStateException {
@@ -378,7 +375,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return role;
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = Role.CACHE_NAME,
             key = "'{getRoleIdByNamespaceCodeAndName}' + 'namespaceCode=' + #p0 + '|' + 'name=' + #p1")
     @Override
@@ -524,7 +520,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableSet(principalIds);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleMember.CACHE_NAME,
             key = "'getPrincipalIdSubListWithRole' + 'principalIds=' + " +
                 "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0) + '|' + 'roleNamespaceCode=' + #p1 + " +
@@ -582,7 +577,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableList(roleMemberships);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = DelegateMember.CACHE_NAME, key = "'{getDelegationMemberById}-id=' + #p0")
     @Override
     public DelegateMember getDelegationMemberById(String delegationMemberId) throws IllegalStateException {
@@ -591,7 +585,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getDelegateMember(delegationMemberId);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleResponsibility.CACHE_NAME, key = "'{getRoleResponsibilities}-roleId=' + #p0")
     @Override
     public List<RoleResponsibility> getRoleResponsibilities(String roleId) throws IllegalStateException {
@@ -603,7 +596,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 criteria);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = DelegateType.CACHE_NAME, key = "'roleId=' + #p0 + '|' + 'delegateType=' + #p1")
     @Override
     public DelegateType getDelegateTypeByRoleIdAndDelegateTypeCode(String roleId, DelegationType delegationType)
@@ -614,7 +606,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getDelegationOfType(roleId, delegationType);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = DelegateType.CACHE_NAME, key = "'delegationId=' + #p0")
     @Override
     public DelegateType getDelegateTypeByDelegationId(String delegationId) throws IllegalStateException {
@@ -1916,12 +1907,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
 
         //check member exists
-        String memberId = delegateMember.getMemberId();
-        incomingParamCheck(memberId, "memberId");
-        Principal kPrincipal = KimApiServiceLocator.getIdentityService().getPrincipal(memberId);
-        if (kPrincipal == null) {
-            throw new IllegalStateException("the user does not exist: " + memberId);
-        }
+        checkMemberExists(delegateMember);
 
         //create member delegate
         String kimTypeId = getRoleLite(delegate.getRoleId()).getKimTypeId();
@@ -1929,6 +1915,34 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 DelegateMemberAttributeData.class, delegateMember.getAttributes(), kimTypeId);
         delegateMember.setAttributeDetails(attrBos);
         return getResponsibilityInternalService().saveDelegateMember(delegateMember);
+    }
+
+    private void checkMemberExists(final DelegateMember delegateMember) {
+        final String memberId = delegateMember.getMemberId();
+        incomingParamCheck(memberId, "memberId");
+        final MemberType memberType = delegateMember.getType();
+        switch (memberType) {
+            case ROLE:
+                final RoleLite roleWithoutMembers = getRoleWithoutMembers(memberId);
+                if (roleWithoutMembers == null) {
+                    throw new IllegalStateException("the role does not exist: " + memberId);
+                }
+                break;
+            case GROUP:
+                final Group group = getGroupService().getGroup(memberId);
+                if (group == null) {
+                    throw new IllegalStateException("the group does not exist: " + memberId);
+                }
+                break;
+            case PRINCIPAL:
+                final Principal principal = KimApiServiceLocator.getIdentityService().getPrincipal(memberId);
+                if (principal == null) {
+                    throw new IllegalStateException("the user does not exist: " + memberId);
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unexpected memberType: " + memberType + " for memberId: " + memberId);
+        }
     }
 
     @CacheEvict(

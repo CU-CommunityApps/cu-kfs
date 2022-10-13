@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,6 +41,7 @@ public final class PaymentRequestStatuses {
     public static final String APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW = "Awaiting Sub-Account Manager Approval";
     public static final String APPDOC_AWAITING_FISCAL_REVIEW = "Awaiting Fiscal Officer Approval";
     public static final String APPDOC_AWAITING_ORG_REVIEW = "Awaiting Chart Approval";
+    public static final String APPDOC_AWAITING_OBJECT_CODE_REVIEW = "Awaiting Object Code Approval";
     public static final String APPDOC_AWAITING_TAX_REVIEW = "Awaiting Tax Approval";
     public static final String APPDOC_PENDING_E_INVOICE = "Pending Route Electronic Invoice";
     // CU Customization: Added new APPDOC status
@@ -52,6 +53,7 @@ public final class PaymentRequestStatuses {
     public static final String NODE_SUB_ACCOUNT_REVIEW = "SubAccount";
     public static final String NODE_ACCOUNT_REVIEW = "Account";
     public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
+    public static final String NODE_OBJECT_CODE_REVIEW = "ObjectCode";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
     // CU Customization: Added two new nodes for KFSUPGRADE-779 and KFSUPGRADE-500
     public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
@@ -67,7 +69,7 @@ public final class PaymentRequestStatuses {
         APPDOC_IN_PROCESS, APPDOC_DEPARTMENT_APPROVED, APPDOC_AUTO_APPROVED,
         APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_AWAITING_RECEIVING_REVIEW,
         APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, APPDOC_AWAITING_FISCAL_REVIEW, APPDOC_AWAITING_ORG_REVIEW,
-        APPDOC_AWAITING_TAX_REVIEW};
+        APPDOC_AWAITING_OBJECT_CODE_REVIEW, APPDOC_AWAITING_TAX_REVIEW};
 
     public static final Set<String> CANCELLED_STATUSES = new HashSet<>();
     public static final Set<String> STATUSES_DISALLOWING_HOLD = new HashSet<>();
@@ -97,6 +99,7 @@ public final class PaymentRequestStatuses {
         AWAITING_SUB_ACCT_MGR_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW, false),
         AWAITING_FISCAL_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_FISCAL_REVIEW, false),
         AWAITING_ORG_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_ORG_REVIEW, false),
+        AWAITING_OBJECT_CODE_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_OBJECT_CODE_REVIEW, false),
         AWAITING_TAX_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
         DEPARTMENT_APPROVED(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),
         // CU Customization: Added new PAYMENT_METHOD_REVIEW constant
@@ -173,6 +176,7 @@ public final class PaymentRequestStatuses {
         STATUSES_ENROUTE.add(APPDOC_AWAITING_SUB_ACCT_MGR_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_FISCAL_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_ORG_REVIEW);
+        STATUSES_ENROUTE.add(APPDOC_AWAITING_OBJECT_CODE_REVIEW);
         STATUSES_ENROUTE.add(APPDOC_AWAITING_TAX_REVIEW);
         // CU Customization: Added APPDOC_AWAITING_RECEIVING_REVIEW entry for KFSUPGRADE-500
         STATUSES_ENROUTE.add(APPDOC_AWAITING_RECEIVING_REVIEW);
@@ -192,6 +196,7 @@ public final class PaymentRequestStatuses {
         appDocStatusMap.put(NODE_SUB_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_ACCOUNT_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_ORG_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
+        appDocStatusMap.put(NODE_OBJECT_CODE_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         // CU Customization: Added two new mappings for KFSUPGRADE-500 and KFSUPGRADE-964
         appDocStatusMap.put(NODE_RECEIVING, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
