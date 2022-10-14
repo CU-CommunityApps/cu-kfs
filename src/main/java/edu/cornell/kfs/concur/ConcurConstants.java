@@ -181,27 +181,33 @@ public class ConcurConstants {
     }
     
     public enum ConcurEventNoticationVersion2EventType {
-        ExpenseReport("Expense Report"),
-        TravelRequest("Travel Request");
+        ExpenseReport("Expense Report", "Expense Report ID", true),
+        TravelRequest("Travel Request", "Request ID", false);
         
         public final String eventType;
+        public final String reportNumberDescription;
+        public final boolean displayTravelerEmail;
         
-        private ConcurEventNoticationVersion2EventType(String eventType) {
+        private ConcurEventNoticationVersion2EventType(String eventType, String reportNumberDescription, boolean displayTravelerEmail) {
             this.eventType = eventType;
+            this.reportNumberDescription = reportNumberDescription;
+            this.displayTravelerEmail = displayTravelerEmail;
         }
     }
     
     public enum ConcurEventNotificationVersion2ProcessingResults {
-        validAccounts("valid", true),
-        invalidAccounts("invalid", false),
-        processingError("processing error", false);
+        validAccounts("valid", true, "Valid Accounts"),
+        invalidAccounts("invalid", false, "Invalid Accounts"),
+        processingError("processing error", false, "Processing Errors");
         
         public final String status;
         public final boolean valid;
+        public final String statusForReport;
         
-        private ConcurEventNotificationVersion2ProcessingResults(String status, boolean valid) {
+        private ConcurEventNotificationVersion2ProcessingResults(String status, boolean valid, String statusForReport) {
             this.status = status;
             this.valid = valid;
+            this.statusForReport = statusForReport;
         }
     }
 
