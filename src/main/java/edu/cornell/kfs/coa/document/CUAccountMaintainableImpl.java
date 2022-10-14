@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.cornell.kfs.coa.document;
 
 import java.util.ArrayList;
