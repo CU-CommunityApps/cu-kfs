@@ -23,7 +23,7 @@ public class CuB2BDaoImpl extends B2BDaoImpl {
     /**
      * @see org.kuali.kfs.module.purap.dataaccess.impl.B2BDaoImpl#sendPunchOutRequest(java.lang.String, java.lang.String)
      */
-    public String sendPunchOutRequest(String request, String punchoutUrl) {
+    public String sendPunchOutRequest(final String request, final String punchoutUrl) {
         LOG.debug("sendPunchOutRequest() started");
 
         try {

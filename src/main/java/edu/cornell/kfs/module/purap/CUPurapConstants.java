@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.cornell.kfs.module.purap;
 
 import java.util.HashSet;
