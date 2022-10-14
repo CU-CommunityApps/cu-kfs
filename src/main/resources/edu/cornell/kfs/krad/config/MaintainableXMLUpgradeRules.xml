@@ -3,7 +3,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2021 Kuali, Inc.
+    Copyright 2005-2022 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -991,15 +991,19 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.GenericPermission</match>
-                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
+                <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.impl.permission.GenericPermissionBo</match>
-                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
+                <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.kim.impl.permission.GenericPermissionBo</match>
-                <replacement>org.kuali.kfs.kim.impl.permission.GenericPermission</replacement>
+                <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.permission.GenericPermission</match>
+                <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.KualiCodeBase</match>
@@ -1055,15 +1059,15 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.ReviewResponsibility</match>
-                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</replacement>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.Responsibility</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.impl.responsibility.ReviewResponsibilityBo</match>
-                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</replacement>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.Responsibility</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibilityBo</match>
-                <replacement>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</replacement>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.Responsibility</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kns.bo.Note</match>

@@ -119,6 +119,7 @@
     	<property name="routingTypeDefinitions">
     		<map>
     		<!--  TODO : can not use merge because 'Award' is deleted.  DD bean override only support 'List' delete -->
+    		    <entry key="ObjectCode" value-ref="RoutingType-PurchasingAccountsPayableDocument-ObjectCode"/>
     		    <entry key="Commodity" value-ref="RoutingType-PurchasingDocument-Commodity"/>
                 <entry key="Budget" value-ref="RoutingType-PurchaseOrderDocument-Budget"/>
                 <entry key="AccountingOrganizationHierarchy" value-ref="RoutingType-PurchasingAccountsPayableDocument-AccountingOrganizationHierarchy"/>
