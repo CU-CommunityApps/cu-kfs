@@ -66,7 +66,11 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, fullExpenseReport.getId());
             
-            validateExpenseAllocations(accessToken, processingResults, allocationItems, fullExpenseReport.getId());
+            String reportNumber = fullExpenseReport.getId();
+            String travelerName = fullExpenseReport.getOwnerName();
+            String travelerEmail = fullExpenseReport.getOwnerLoginID();
+            
+            validateExpenseAllocations(accessToken, processingResults, allocationItems, reportNumber, travelerName, travelerEmail);
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
@@ -110,14 +114,14 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
 
 
     protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults,
-            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportId) {
+            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportNumber, String travelerName, String travelerEmail) {
         boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
         ConcurEventNotificationVersion2ProcessingResults reportResults = ConcurEventNotificationVersion2ProcessingResults.validAccounts;
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
-                LOG.info("validateExpenseAllocations, for report " + reportId + " account info: " + info.toString());
+                LOG.info("validateExpenseAllocations, for report " + reportNumber + " account info: " + info.toString());
                 ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
                 reportValid &= results.isValid();
                 validationMessages.addAll(results.getMessages());
@@ -129,13 +133,13 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             reportValid = false;
             reportResults = ConcurEventNotificationVersion2ProcessingResults.processingError;
             validationMessages.add("Encountered an error validating this report");
-            LOG.error("validateExpenseAllocations, had an error validating report " + reportId, e);
+            LOG.error("validateExpenseAllocations, had an error validating report " + reportNumber, e);
         }
         
         ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
-                reportResults, reportId, validationMessages);
+                reportResults, reportNumber, travelerName, travelerEmail, validationMessages);
         processingResults.add(resultsDTO);
-        updateStatusInConcur(accessToken, reportId, reportValid, resultsDTO);
+        updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);
         
     }
     
