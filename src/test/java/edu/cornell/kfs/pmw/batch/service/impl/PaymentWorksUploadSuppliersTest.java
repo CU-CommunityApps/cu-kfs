@@ -42,8 +42,6 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.web.mock.MockLocalServerTestBase;
 
 public class PaymentWorksUploadSuppliersTest extends MockLocalServerTestBase {
-
-
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/pmw/suppliers/";
     private static final String DUMMY_AUTHORIZATION_TOKEN = "111122223333444455556666777788889999AAAA";
 

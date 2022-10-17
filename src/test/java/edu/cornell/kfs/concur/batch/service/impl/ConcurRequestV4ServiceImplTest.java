@@ -68,7 +68,6 @@ import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.web.mock.MockRemoteServerExtension;
 
 public class ConcurRequestV4ServiceImplTest {
-/* This is not working after the http client library version upgrade with 11/17/21. This will be fixed in a separate user story */
     private static final String US_EASTERN_TIME_ZONE = "US/Eastern";
     private static final String DEFAULT_MOCK_CURRENT_DATE = RequestV4Dates.DATE_2022_01_03;
     private static final String NONEXISTENT_REQUEST_ID = "AAAAAAAAAAAAAAAA0000000000000000";

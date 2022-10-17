@@ -28,7 +28,6 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.web.mock.MockLocalServerTestBase;
 
 public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends MockLocalServerTestBase {
-
     private static final String TEST_USERID_1 = "123ab";
     private static final String TEST_USERID_2 = "55555";
     private static final String INVALID_TOKEN = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";

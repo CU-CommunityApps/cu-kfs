@@ -13,7 +13,9 @@ import org.junit.After;
 import org.junit.Before;
 
 public class MockLocalServerTestBase {
-    public enum ProtocolScheme { http, https };
+    public enum ProtocolScheme {
+        http
+    };
 
     public static final String ORIGIN = "TEST/1.1";
 
@@ -35,21 +37,12 @@ public class MockLocalServerTestBase {
 
     @Before
     public void setUp() throws Exception {
-        final SocketConfig socketConfig = SocketConfig.custom()
-                .setSoTimeout(15000)
-                .build();
-        
-        serverBootstrap = ServerBootstrap.bootstrap()
-                .setSocketConfig(socketConfig)
-                .setServerInfo(ORIGIN);
-        
-        if (this.scheme.equals(ProtocolScheme.https)) {
-            this.serverBootstrap.setSslContext(SSLTestContexts.createServerSSLContext());
-        }
+        final SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(15000).build();
+
+        serverBootstrap = ServerBootstrap.bootstrap().setSocketConfig(socketConfig).setServerInfo(ORIGIN);
 
         this.connManager = new PoolingHttpClientConnectionManager();
-        this.clientBuilder = HttpClientBuilder.create()
-                .setDefaultSocketConfig(socketConfig)
+        this.clientBuilder = HttpClientBuilder.create().setDefaultSocketConfig(socketConfig)
                 .setConnectionManager(this.connManager);
     }
 
@@ -73,8 +66,4 @@ public class MockLocalServerTestBase {
 
         return new HttpHost("localhost", this.server.getLocalPort(), this.scheme.name());
     }
-    
-    
 }
-
-
