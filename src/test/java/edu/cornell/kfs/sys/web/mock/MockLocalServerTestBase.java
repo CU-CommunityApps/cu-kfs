@@ -33,22 +33,16 @@ public class MockLocalServerTestBase {
         this(ProtocolScheme.http);
     }
 
-    public String getSchemeName() {
-        return this.scheme.name();
-    }
-
     @Before
     public void setUp() throws Exception {
         final SocketConfig socketConfig = SocketConfig.custom()
                 .setSoTimeout(15000)
                 .build();
         
-        
-        this.serverBootstrap = ServerBootstrap.bootstrap()
+        serverBootstrap = ServerBootstrap.bootstrap()
                 .setSocketConfig(socketConfig)
-                .setServerInfo(ORIGIN)
-                .registerHandler("/echo/*", new EchoHandler())
-                .registerHandler("/random/*", new RandomHandler());
+                .setServerInfo(ORIGIN);
+        
         if (this.scheme.equals(ProtocolScheme.https)) {
             this.serverBootstrap.setSslContext(SSLTestContexts.createServerSSLContext());
         }
@@ -79,4 +73,8 @@ public class MockLocalServerTestBase {
 
         return new HttpHost("localhost", this.server.getLocalPort(), this.scheme.name());
     }
+    
+    
 }
+
+
