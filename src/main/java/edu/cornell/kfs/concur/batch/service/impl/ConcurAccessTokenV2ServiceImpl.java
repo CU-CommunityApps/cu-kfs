@@ -3,6 +3,7 @@ package edu.cornell.kfs.concur.batch.service.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -37,6 +38,8 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     
     protected WebServiceCredentialService webServiceCredentialService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
+    protected Pattern concurBaseUrlPattern;
+    protected String concurAccessTokenApiPath;
 
     @Override
     public String retrieveNewAccessBearerToken() {
@@ -198,6 +201,19 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
 
     public void setConcurBatchUtilityService(ConcurBatchUtilityService concurBatchUtilityService) {
         this.concurBatchUtilityService = concurBatchUtilityService;
+    }
+    
+    public void setConcurBaseUrlPattern(String concurBaseUrlPattern) {
+        Pattern pattern = Pattern.compile(concurBaseUrlPattern, Pattern.CASE_INSENSITIVE);
+        setConcurBaseUrlPattern(pattern);
+    }
+    
+    public void setConcurBaseUrlPattern(Pattern concurBaseUrlPattern) {
+        this.concurBaseUrlPattern = concurBaseUrlPattern;
+    }
+    
+    public void setConcurAccessTokenApiPath(String concurAccessTokenApiPath) {
+        this.concurAccessTokenApiPath = concurAccessTokenApiPath;
     }
     
     private class ConcurClientRequestHelper {
