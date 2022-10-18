@@ -26,13 +26,13 @@
 			</list>
 		</property>
 		<property name="jobNames">
-			<list merge="true">
+			<list>
 				<value>commodityCodeUpdateJob</value>
 				<value>vendorInactivateConvertBatchJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
-          <list merge="true">
+          <list>
             <value>${staging.directory}/vnd</value>
           </list>
         </property>
