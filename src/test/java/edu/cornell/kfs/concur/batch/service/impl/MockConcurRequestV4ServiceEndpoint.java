@@ -36,9 +36,9 @@ import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
+import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
-public class MockConcurRequestV4ServiceEndpoint extends MockServiceCore5EndpointBase {
+public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase {
 
     private static final String REQUESTS_ENDPOINT_HANDLER_PATTERN = "/travelrequest/v4/*";
 

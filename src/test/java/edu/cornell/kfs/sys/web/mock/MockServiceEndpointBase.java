@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.IOExceptionProneFunction;
 
-public abstract class MockServiceCore5EndpointBase implements HttpRequestHandler {
+public abstract class MockServiceEndpointBase implements HttpRequestHandler {
     private static final Logger LOG = LogManager.getLogger();
     
     protected String multiPartContentDirectory;

@@ -27,14 +27,14 @@ import edu.cornell.kfs.pmw.PaymentWorksTestConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
-import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
+import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
 /**
  * Utility class for mocking the behavior of the PaymentWorks endpoint for refreshing authorization tokens.
  * Note that the returned tokens, HTTP codes and response messages do not necessarily match the actual ones
  * that PaymentWorks would return under similar circumstances.
  */
-public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceCore5EndpointBase {
+public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBase {
 
     private static final String REFRESH_TOKEN_ENDPOINT_HANDLER_PATTERN = "/users/*";
     private static final String RELATIVE_REFRESH_TOKEN_ENDPOINT_URL_REGEX = "^/users/([a-zA-Z0-9]+)/refresh_auth_token/$";

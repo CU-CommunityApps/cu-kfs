@@ -18,14 +18,14 @@ public class MockRemoteServerExtension implements Closeable {
         this.serverUrl = Optional.empty();
     }
 
-    public void initialize(MockServiceCore5EndpointBase... endpoints) throws Exception {
+    public void initialize(MockServiceEndpointBase... endpoints) throws Exception {
         initialize(Arrays.asList(endpoints));
     }
 
-    public void initialize(List<? extends MockServiceCore5EndpointBase> endpoints) throws Exception {
+    public void initialize(List<? extends MockServiceEndpointBase> endpoints) throws Exception {
         String baseUrl = localServer.configureAndLaunchServer(endpoints);
         serverUrl = Optional.of(baseUrl);
-        for (MockServiceCore5EndpointBase endpoint : endpoints) {
+        for (MockServiceEndpointBase endpoint : endpoints) {
             endpoint.onServerInitialized(baseUrl);
         }
     }
@@ -48,9 +48,9 @@ public class MockRemoteServerExtension implements Closeable {
 
     private static class LocalServer extends CuLocalServerTestBase {
         
-        public String configureAndLaunchServer(List<? extends MockServiceCore5EndpointBase> endpoints) throws Exception {
+        public String configureAndLaunchServer(List<? extends MockServiceEndpointBase> endpoints) throws Exception {
             setUp();
-            for (MockServiceCore5EndpointBase endpoint : endpoints) {
+            for (MockServiceEndpointBase endpoint : endpoints) {
                 server.registerHandler(endpoint.getRelativeUrlPatternForHandlerRegistration(), endpoint);
             }
             HttpHost httpHost = start();

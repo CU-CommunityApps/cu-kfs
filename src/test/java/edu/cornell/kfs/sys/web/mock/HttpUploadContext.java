@@ -6,10 +6,9 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.fileupload.UploadContext;
 import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpRequest;
 
@@ -22,20 +21,12 @@ public class HttpUploadContext implements UploadContext {
     private String contentType;
     private long contentLength;
     private HttpEntity httpEntity;
-    private org.apache.hc.core5.http.HttpEntity core4HttpEntity;
-
-    public HttpUploadContext(HttpRequest request) {
-        this.characterEncoding = getHeaderValueOrUseDefault(request, HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8.displayName());
-        this.contentType = getHeaderValue(request, HttpHeaders.CONTENT_TYPE);
-        this.contentLength = Long.parseLong(getHeaderValueOrUseDefault(request, HttpHeaders.CONTENT_LENGTH, "-1"));
-        this.httpEntity = ((HttpEntityEnclosingRequest) request).getEntity();
-    }
     
     public HttpUploadContext(ClassicHttpRequest request) {
         this.characterEncoding = getHeaderValueOrUseDefault(request, HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8.displayName());
         this.contentType = getHeaderValue(request, HttpHeaders.CONTENT_TYPE);
         this.contentLength = Long.parseLong(getHeaderValueOrUseDefault(request, HttpHeaders.CONTENT_LENGTH, "-1"));
-        this.core4HttpEntity = request.getEntity();
+        this.httpEntity = request.getEntity();
     }
 
     private String getHeaderValue(HttpRequest request, String headerName) {
@@ -75,13 +66,7 @@ public class HttpUploadContext implements UploadContext {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        if (httpEntity != null) {
-            return httpEntity.getContent();
-        } else if (core4HttpEntity != null) {
-            return core4HttpEntity.getContent();
-        } else {
-            throw new IllegalStateException("No HTTP entity enetered");
-        }
+        return httpEntity.getContent();
     }
 
     @Override

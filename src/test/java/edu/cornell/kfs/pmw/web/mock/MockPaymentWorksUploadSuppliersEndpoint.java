@@ -33,7 +33,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.fixture.PaymentWorksVendorFixtur
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksSupplierUploadConstants;
-import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
+import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
 /**
  * Utility class that mocks the endpoint for uploading vendors back to PaymentWorks.
@@ -41,7 +41,7 @@ import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
  * Note that the returned error messages and status codes do not necessarily line up
  * with what PaymentWorks would return under similar circumstances.
  */
-public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceCore5EndpointBase {
+public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpointBase {
 
     private static final String UPLOAD_SUPPLIERS_ENDPOINT_HANDLER_PATTERN = "/suppliers/load/";
 
