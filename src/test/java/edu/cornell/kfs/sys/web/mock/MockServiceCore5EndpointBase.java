@@ -1,41 +1,50 @@
 package edu.cornell.kfs.sys.web.mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.IOExceptionProneFunction;
 
 public abstract class MockServiceCore5EndpointBase implements HttpRequestHandler {
     private static final Logger LOG = LogManager.getLogger();
@@ -98,6 +107,50 @@ public abstract class MockServiceCore5EndpointBase implements HttpRequestHandler
         }
         
         return jsonText;
+    }
+    
+    protected String getNonBlankValueFromRequestUrl(ClassicHttpRequest request, Pattern regex, int regexGroupIndex) {
+        return getValueOrFail(
+                () -> getNonBlankValueFromRequestUrlIfPresent(request, regex, regexGroupIndex),
+                "The request URL did not contain the expected non-blank fragment according to the given regex");
+    }
+    
+    protected Optional<String> getNonBlankValueFromRequestUrlIfPresent(ClassicHttpRequest request, Pattern regex, int regexGroupIndex) {
+        String requestUrl = request.getRequestUri();
+        Matcher urlMatcher = regex.matcher(requestUrl);
+        
+        if (regexGroupIndex < 0 || urlMatcher.groupCount() < regexGroupIndex) {
+            throw new IllegalArgumentException("Regex does not have a capturing group with an index of " + regexGroupIndex);
+        } else if (!urlMatcher.matches()) {
+            return Optional.empty();
+        } else {
+            return defaultToEmptyOptionalIfBlank(urlMatcher.group(regexGroupIndex));
+        }
+    }
+    
+    protected JsonNode getRequestContentAsJsonNodeTree(ClassicHttpRequest request) {
+        return getRequestContent(request,
+                (contentStream) -> new ObjectMapper().readTree(contentStream));
+    }
+    
+    protected <R> R getRequestContent(ClassicHttpRequest request, IOExceptionProneFunction<InputStream, R> entityContentConverter) {
+        assertTrue("The request should have contained an entity", request instanceof BasicClassicHttpRequest);
+        
+        BasicClassicHttpRequest entityRequest = (BasicClassicHttpRequest) request;
+        HttpEntity entity = entityRequest.getEntity();
+        InputStream entityContent = null;
+        R convertedContent = null;
+        
+        try {
+            entityContent = entity.getContent();
+            convertedContent = entityContentConverter.apply(entityContent);
+        } catch (Exception e) {
+            fail("Unexpected error reading request content: " + e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(entityContent);
+        }
+        
+        return convertedContent;
     }
     
     protected String getNonBlankHeaderValue(ClassicHttpRequest request, String headerName) {

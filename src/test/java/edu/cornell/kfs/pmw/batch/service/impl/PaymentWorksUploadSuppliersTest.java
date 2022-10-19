@@ -20,7 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
-//import org.apache.http.HttpHost;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +40,6 @@ import edu.cornell.kfs.pmw.web.mock.MockPaymentWorksUploadSuppliersEndpoint;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.web.mock.CuLocalServerTestBase;
-import edu.cornell.kfs.sys.web.mock.MockLocalServerTestBase;
 
 public class PaymentWorksUploadSuppliersTest extends CuLocalServerTestBase {
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/pmw/suppliers/";
