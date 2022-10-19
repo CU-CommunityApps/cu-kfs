@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -19,6 +20,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,40 +48,45 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.IOExceptionProneFunction;
 
+/**
+ * Base helper class for mocking an HTTP or RESTful remote service endpoint.
+ * Allows the use of JUnit assertions for convenience, but will convert
+ * the assertion errors into HTTP responses appropriately, to prevent
+ * "connection reset" errors on the client side.
+ */
 public abstract class MockServiceEndpointBase implements HttpRequestHandler {
-    private static final Logger LOG = LogManager.getLogger();
-    
+
+    private static final Logger LOG = LogManager.getLogger(MockServiceEndpointBase.class);
+
     protected String multiPartContentDirectory;
 
+    public abstract String getRelativeUrlPatternForHandlerRegistration();
+
     @Override
-    public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
-            throws HttpException, IOException {
+    public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context) throws HttpException, IOException {
         try {
             processRequest(request, response, context);
         } catch (AssertionError e) {
             LOG.error("handle(): An assertion failed during the web service call", e);
             prepareResponseForFailedAssertion(response, e);
         }
-        
     }
-    
-    public abstract String getRelativeUrlPatternForHandlerRegistration();
-    
+
     protected abstract void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context) throws HttpException, IOException;
-    
+
     protected void prepareResponseForFailedAssertion(ClassicHttpResponse response, AssertionError assertionError) throws HttpException, IOException {
         response.setCode(HttpStatus.SC_BAD_REQUEST);
         response.setReasonPhrase(assertionError.getMessage());
     }
-    
+
     protected void assertRequestHasCorrectHttpMethod(ClassicHttpRequest request, HttpMethod expectedMethod) {
         assertEquals("Wrong HTTP method for request", expectedMethod.name(), request.getMethod());
     }
-    
+
     protected void assertRequestHasCorrectContentType(ClassicHttpRequest request, ContentType expectedContentType) {
         assertRequestHasCorrectContentType(request, expectedContentType.getMimeType());
     }
-    
+
     protected void assertRequestHasCorrectContentType(ClassicHttpRequest request, String expectedContentType) {
         String actualContentType = getNonBlankHeaderValue(request, HttpHeaders.CONTENT_TYPE);
         if (StringUtils.equals(expectedContentType, ContentType.MULTIPART_FORM_DATA.getMimeType())
@@ -88,33 +95,32 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         }
         assertEquals("Wrong content type for request", expectedContentType, actualContentType);
     }
-    
+
     protected void assertHeaderHasNonBlankValue(ClassicHttpRequest request, String headerName) {
         getNonBlankHeaderValue(request, headerName);
     }
-    
-    protected String buildJsonTextFromNode(Consumer<ObjectNode> jsonNodeConfigurer) {
-        String jsonText = null;
-        
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
-            ObjectNode rootNode = nodeFactory.objectNode();
-            jsonNodeConfigurer.accept(rootNode);
-            jsonText = objectMapper.writeValueAsString(rootNode);
-        } catch (JsonProcessingException e) {
-            fail("Unexpected error when preparing JSON output: " + e.getMessage());
-        }
-        
-        return jsonText;
+
+    protected String getNonBlankHeaderValue(ClassicHttpRequest request, String headerName) {
+        return getValueOrFail(
+                () -> getNonBlankHeaderValueIfPresent(request, headerName),
+                "The request should have had a non-blank value for header " + headerName);
     }
-    
+
+    protected Optional<String> getNonBlankHeaderValueIfPresent(ClassicHttpRequest request, String headerName) {
+        Header header = request.getFirstHeader(headerName);
+        if (header == null) {
+            return Optional.empty();
+        } else {
+            return defaultToEmptyOptionalIfBlank(header.getValue());
+        }
+    }
+
     protected String getNonBlankValueFromRequestUrl(ClassicHttpRequest request, Pattern regex, int regexGroupIndex) {
         return getValueOrFail(
                 () -> getNonBlankValueFromRequestUrlIfPresent(request, regex, regexGroupIndex),
                 "The request URL did not contain the expected non-blank fragment according to the given regex");
     }
-    
+
     protected Optional<String> getNonBlankValueFromRequestUrlIfPresent(ClassicHttpRequest request, Pattern regex, int regexGroupIndex) {
         String requestUrl = request.getRequestUri();
         Matcher urlMatcher = regex.matcher(requestUrl);
@@ -127,12 +133,17 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
             return defaultToEmptyOptionalIfBlank(urlMatcher.group(regexGroupIndex));
         }
     }
-    
+
+    protected String getRequestContentAsString(ClassicHttpRequest request) {
+        return getRequestContent(request,
+                (contentStream) -> IOUtils.toString(contentStream, StandardCharsets.UTF_8));
+    }
+
     protected JsonNode getRequestContentAsJsonNodeTree(ClassicHttpRequest request) {
         return getRequestContent(request,
                 (contentStream) -> new ObjectMapper().readTree(contentStream));
     }
-    
+
     protected <R> R getRequestContent(ClassicHttpRequest request, IOExceptionProneFunction<InputStream, R> entityContentConverter) {
         assertTrue("The request should have contained an entity", request instanceof BasicClassicHttpRequest);
         
@@ -152,35 +163,7 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         
         return convertedContent;
     }
-    
-    protected String getNonBlankHeaderValue(ClassicHttpRequest request, String headerName) {
-        return getValueOrFail(
-                () -> getNonBlankHeaderValueIfPresent(request, headerName),
-                "The request should have had a non-blank value for header " + headerName);
-    }
-    
-    protected Optional<String> getNonBlankHeaderValueIfPresent(ClassicHttpRequest request, String headerName) {
-        Header header = request.getFirstHeader(headerName);
-        if (header == null) {
-            return Optional.empty();
-        } else {
-            return defaultToEmptyOptionalIfBlank(header.getValue());
-        }
-    }
-    
-    protected Optional<String> defaultToEmptyOptionalIfBlank(String value) {
-        String valueToWrap = StringUtils.defaultIfBlank(value, null);
-        return Optional.ofNullable(valueToWrap);
-    }
-    
-    protected <T> T getValueOrFail(Supplier<Optional<T>> valueRetriever, String failureMessage) {
-        Optional<T> value = valueRetriever.get();
-        if (!value.isPresent()) {
-            fail(failureMessage);
-        }
-        return value.get();
-    }
-    
+
     protected <T> T processMultiPartRequestContent(ClassicHttpRequest request, BiFunction<ClassicHttpRequest, List<FileItem>, T> requestContentHandler) {
         if (StringUtils.isBlank(multiPartContentDirectory)) {
             throw new IllegalStateException("Directory path to potentially store multipart content has not been specified");
@@ -191,7 +174,7 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         FileUpload fileUpload = new FileUpload(fileItemFactory);
         
         try {
-            HttpUploadContext context = new HttpUploadContext(request);
+            RequestContext context = new HttpUploadContext(request);
             fileItems = fileUpload.parseRequest(context);
             return requestContentHandler.apply(request, fileItems);
         } catch (FileUploadException e) {
@@ -203,7 +186,7 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
             }
         }
     }
-    
+
     protected void deleteFileItemQuietly(FileItem fileItem) {
         try {
             fileItem.delete();
@@ -211,7 +194,36 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
             LOG.warn("deleteFileItemQuietly: Unexpected exception when deleting file item", e);
         }
     }
-    
+
+    protected Optional<String> defaultToEmptyOptionalIfBlank(String value) {
+        String valueToWrap = StringUtils.defaultIfBlank(value, null);
+        return Optional.ofNullable(valueToWrap);
+    }
+
+    protected <T> T getValueOrFail(Supplier<Optional<T>> valueRetriever, String failureMessage) {
+        Optional<T> value = valueRetriever.get();
+        if (!value.isPresent()) {
+            fail(failureMessage);
+        }
+        return value.get();
+    }
+
+    protected String buildJsonTextFromNode(Consumer<ObjectNode> jsonNodeConfigurer) {
+        String jsonText = null;
+        
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
+            ObjectNode rootNode = nodeFactory.objectNode();
+            jsonNodeConfigurer.accept(rootNode);
+            jsonText = objectMapper.writeValueAsString(rootNode);
+        } catch (JsonProcessingException e) {
+            fail("Unexpected error when preparing JSON output: " + e.getMessage());
+        }
+        
+        return jsonText;
+    }
+
     protected void onServerInitialized(String baseUrl) {
         
     }
