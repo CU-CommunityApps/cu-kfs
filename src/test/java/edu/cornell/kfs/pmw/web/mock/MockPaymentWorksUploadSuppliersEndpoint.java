@@ -34,7 +34,6 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksSupplierUploadConstants;
 import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
-import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
 /**
  * Utility class that mocks the endpoint for uploading vendors back to PaymentWorks.

@@ -28,7 +28,6 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksCommonJsonConstants;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.PaymentWorksTokenRefreshConstants;
 import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
-import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
 /**
  * Utility class for mocking the behavior of the PaymentWorks endpoint for refreshing authorization tokens.
