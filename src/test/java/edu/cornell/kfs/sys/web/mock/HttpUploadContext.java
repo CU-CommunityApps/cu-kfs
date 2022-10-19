@@ -7,15 +7,17 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.fileupload.UploadContext;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.ProtocolException;
-import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpRequest;
+import org.apache.hc.core5.http.Header;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Custom UploadContext implementation that allows for integrating Apache HTTP Core/Client with Commons FileUpload.
  */
 public class HttpUploadContext implements UploadContext {
+    private static final Logger LOG = LogManager.getLogger();
 
     private String characterEncoding;
     private String contentType;
@@ -28,30 +30,19 @@ public class HttpUploadContext implements UploadContext {
         this.contentLength = Long.parseLong(getHeaderValueOrUseDefault(request, HttpHeaders.CONTENT_LENGTH, "-1"));
         this.httpEntity = request.getEntity();
     }
-
-    private String getHeaderValue(HttpRequest request, String headerName) {
-        return getHeaderValueOrUseDefault(request, headerName, null);
-    }
     
     private String getHeaderValue(ClassicHttpRequest request, String headerName) {
         return getHeaderValueOrUseDefault(request, headerName, null);
     }
-
-    private String getHeaderValueOrUseDefault(HttpRequest request, String headerName, String defaultValue) {
-        Header header = request.getFirstHeader(headerName);
-        return (header != null) ? header.getValue() : defaultValue;
-    }
     
     private String getHeaderValueOrUseDefault(ClassicHttpRequest request, String headerName, String defaultValue) {
         try {
-            org.apache.hc.core5.http.Header header = request.getHeader(headerName);
+            Header header = request.getHeader(headerName);
             return (header != null) ? header.getValue() : defaultValue;
         } catch (ProtocolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("getHeaderValueOrUseDefault, had and error getting the content", e);
             return defaultValue;
         }
-        
     }
 
     @Override

@@ -57,11 +57,6 @@ public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends CuLocalS
         webServiceCallsService.setWebServiceCredentialService(buildMockWebServiceCredentialService(mockPaymentWorksUrl));
     }
 
-    /**
-     * Overridden to force a zero-second grace period on the test server shutdown.
-     * 
-     * @see org.apache.http.localserver.LocalServerTestBase#shutDown()
-     */
     @Override
     @After
     public void shutDown() throws Exception {

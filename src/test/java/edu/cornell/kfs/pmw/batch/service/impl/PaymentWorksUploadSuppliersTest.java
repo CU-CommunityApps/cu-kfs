@@ -111,11 +111,6 @@ public class PaymentWorksUploadSuppliersTest extends CuLocalServerTestBase {
         }
     }
 
-    /**
-     * Overridden to force a zero-second grace period on the test server shutdown, and to include some other test-specific cleanup.
-     * 
-     * @see org.apache.http.localserver.LocalServerTestBase#shutDown()
-     */
     @Override
     @After
     public void shutDown() throws Exception {

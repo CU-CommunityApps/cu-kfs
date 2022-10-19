@@ -20,10 +20,13 @@ import org.apache.hc.core5.io.Closer;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.testing.classic.ClassicTestServer;
 import org.apache.hc.core5.util.Timeout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 
 public class CuLocalServerTestBase {
+    private static final Logger LOG = LogManager.getLogger();
 
     protected ClassicTestServer server;
     protected final URIScheme scheme;
@@ -50,10 +53,6 @@ public class CuLocalServerTestBase {
         connManager.setDefaultSocketConfig(SocketConfig.custom()
                 .setSoTimeout(TIMEOUT)
                 .build());
-        /*
-        connManager.setDefaultConnectionConfig(ConnectionConfig.custom()
-                .setConnectTimeout(TIMEOUT)
-                .build()); */
         
         clientBuilder = HttpClientBuilder.create()
                 .setDefaultRequestConfig(RequestConfig.custom()
@@ -68,7 +67,8 @@ public class CuLocalServerTestBase {
             try {
                 server.shutdown(CloseMode.IMMEDIATE);
                 server = null;
-            } catch (final Exception ignore) {
+            } catch (final Exception e) {
+                LOG.error("shutDown, had an error", e);
             }
         }
         
