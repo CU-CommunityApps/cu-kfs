@@ -14,12 +14,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+//import org.apache.http.HttpHost;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +40,10 @@ import edu.cornell.kfs.pmw.batch.service.PaymentWorksWebServiceConstants.Payment
 import edu.cornell.kfs.pmw.web.mock.MockPaymentWorksUploadSuppliersEndpoint;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
+import edu.cornell.kfs.sys.web.mock.CuLocalServerTestBase;
 import edu.cornell.kfs.sys.web.mock.MockLocalServerTestBase;
 
-public class PaymentWorksUploadSuppliersTest extends MockLocalServerTestBase {
+public class PaymentWorksUploadSuppliersTest extends CuLocalServerTestBase {
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/pmw/suppliers/";
     private static final String DUMMY_AUTHORIZATION_TOKEN = "111122223333444455556666777788889999AAAA";
 
@@ -59,7 +61,9 @@ public class PaymentWorksUploadSuppliersTest extends MockLocalServerTestBase {
         FileUtils.forceMkdir(uploadedSuppliersDirectory);
         this.uploadSuppliersEndpoint = new MockPaymentWorksUploadSuppliersEndpoint(TEMP_SUPPLIER_UPLOAD_DIRECTORY, DUMMY_AUTHORIZATION_TOKEN);
         
-        serverBootstrap.registerHandler(uploadSuppliersEndpoint.getRelativeUrlPatternForHandlerRegistration(), uploadSuppliersEndpoint);
+        String pattern = uploadSuppliersEndpoint.getRelativeUrlPatternForHandlerRegistration();
+        HttpRequestHandler handler = uploadSuppliersEndpoint;
+        server.registerHandler(pattern, handler);
         HttpHost httpHost = start();
         
         this.baseServerUrl = httpHost.toURI();
@@ -117,12 +121,7 @@ public class PaymentWorksUploadSuppliersTest extends MockLocalServerTestBase {
     @Override
     @After
     public void shutDown() throws Exception {
-        if (this.httpclient != null) {
-            this.httpclient.close();
-        }
-        if (this.server != null) {
-            this.server.shutdown(0L, TimeUnit.SECONDS);
-        }
+        super.shutDown();
         deleteTemporaryFileDirectory();
         webServiceCallsService.destroy();
     }
