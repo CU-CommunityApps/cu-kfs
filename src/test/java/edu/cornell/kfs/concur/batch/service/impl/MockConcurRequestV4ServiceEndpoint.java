@@ -14,13 +14,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.http.HttpMethod;
 
@@ -36,9 +36,10 @@ import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.web.mock.MockServiceCore5EndpointBase;
 import edu.cornell.kfs.sys.web.mock.MockServiceEndpointBase;
 
-public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase {
+public class MockConcurRequestV4ServiceEndpoint extends MockServiceCore5EndpointBase {
 
     private static final String REQUESTS_ENDPOINT_HANDLER_PATTERN = "/travelrequest/v4/*";
 
@@ -107,9 +108,9 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         }
         return baseRequestV4Url;
     }
-
+    
     @Override
-    protected void processRequest(HttpRequest request, HttpResponse response, HttpContext context)
+    protected void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
             throws HttpException, IOException {
         if (forceServerError) {
             markResponseAsEncounteringInternalServerError(response);
@@ -119,7 +120,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         assertEquals(getExpectedAuthorizationHeader(), actualAuthorizationHeader,
                 "Request has a malformed authorization header and/or an invalid token");
         
-        String url = request.getRequestLine().getUri();
+        String url = request.getRequestUri();
         Matcher endpointMatcher = REQUESTS_ENDPOINT_REGEX.matcher(url);
         if (!endpointMatcher.matches()) {
             fail("Invalid endpoint was invoked: " + url);
@@ -132,6 +133,7 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         } else {
             fail("The URL did not match one of the expected operations. Attempted endpoint: " + url);
         }
+        
     }
 
     private String getExpectedAuthorizationHeader() {
@@ -151,22 +153,22 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         return substringStartIndex >= 0;
     }
 
-    private void handleSearchForRequestListing(HttpRequest request, HttpResponse response, String url) {
+    private void handleSearchForRequestListing(ClassicHttpRequest request, ClassicHttpResponse response, String url) {
         assertRequestHasCorrectHttpMethod(request, HttpMethod.GET);
         Map<String, String> queryParameters = ConcurFixtureUtils.getQueryParametersFromUrl(url);
         try {
             ConcurRequestV4ListingDTO result = mockBackendServer.findRequests(queryParameters);
             String jsonResult = convertObjectToJsonString(result);
             response.setEntity(new StringEntity(jsonResult, ContentType.APPLICATION_JSON));
-            response.setStatusCode(HttpStatus.SC_OK);
+            response.setCode(HttpStatus.SC_OK);
         } catch (IllegalArgumentException e) {
             String errorResponse = buildErrorResponse(e.getMessage());
             response.setEntity(new StringEntity(errorResponse, ContentType.APPLICATION_JSON));
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            response.setCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
 
-    private void handleSearchForSingleRequest(HttpRequest request, HttpResponse response, Matcher endpointMatcher) {
+    private void handleSearchForSingleRequest(ClassicHttpRequest request, ClassicHttpResponse response, Matcher endpointMatcher) {
         assertRequestHasCorrectHttpMethod(request, HttpMethod.GET);
         String requestUuid = endpointMatcher.group(REQUEST_UUID_GROUP);
         assertTrue(StringUtils.isNotBlank(requestUuid), "Path parameter for Request UUID should have been non-blank");
@@ -175,11 +177,11 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         if (result.isPresent()) {
             String jsonResult = convertObjectToJsonString(result.get());
             response.setEntity(new StringEntity(jsonResult, ContentType.APPLICATION_JSON));
-            response.setStatusCode(HttpStatus.SC_OK);
+            response.setCode(HttpStatus.SC_OK);
         } else {
             String notFoundResponse = buildErrorResponse(NOT_FOUND_MESSAGE);
             response.setEntity(new StringEntity(notFoundResponse, ContentType.APPLICATION_JSON));
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
+            response.setCode(HttpStatus.SC_NOT_FOUND);
         }
     }
 
@@ -191,10 +193,10 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         }
     }
 
-    private void markResponseAsEncounteringInternalServerError(HttpResponse response) {
+    private void markResponseAsEncounteringInternalServerError(ClassicHttpResponse response) {
         String errorResponse = buildErrorResponse(INTERNAL_SERVER_ERROR_MESSAGE);
         response.setEntity(new StringEntity(errorResponse, ContentType.APPLICATION_JSON));
-        response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        response.setCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 
     private String buildErrorResponse(String message) {

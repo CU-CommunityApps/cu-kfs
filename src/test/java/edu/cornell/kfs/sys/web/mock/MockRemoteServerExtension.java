@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 
 public class MockRemoteServerExtension implements Closeable {
     private LocalServer localServer;
@@ -18,14 +18,14 @@ public class MockRemoteServerExtension implements Closeable {
         this.serverUrl = Optional.empty();
     }
 
-    public void initialize(MockServiceEndpointBase... endpoints) throws Exception {
+    public void initialize(MockServiceCore5EndpointBase... endpoints) throws Exception {
         initialize(Arrays.asList(endpoints));
     }
 
-    public void initialize(List<? extends MockServiceEndpointBase> endpoints) throws Exception {
+    public void initialize(List<? extends MockServiceCore5EndpointBase> endpoints) throws Exception {
         String baseUrl = localServer.configureAndLaunchServer(endpoints);
         serverUrl = Optional.of(baseUrl);
-        for (MockServiceEndpointBase endpoint : endpoints) {
+        for (MockServiceCore5EndpointBase endpoint : endpoints) {
             endpoint.onServerInitialized(baseUrl);
         }
     }
@@ -46,11 +46,12 @@ public class MockRemoteServerExtension implements Closeable {
         return serverUrl;
     }
 
-    private static class LocalServer extends MockLocalServerTestBase {
-        public String configureAndLaunchServer(List<? extends MockServiceEndpointBase> endpoints) throws Exception {
+    private static class LocalServer extends CuLocalServerTestBase {
+        
+        public String configureAndLaunchServer(List<? extends MockServiceCore5EndpointBase> endpoints) throws Exception {
             setUp();
-            for (MockServiceEndpointBase endpoint : endpoints) {
-                serverBootstrap.registerHandler(endpoint.getRelativeUrlPatternForHandlerRegistration(), endpoint);
+            for (MockServiceCore5EndpointBase endpoint : endpoints) {
+                server.registerHandler(endpoint.getRelativeUrlPatternForHandlerRegistration(), endpoint);
             }
             HttpHost httpHost = start();
             return httpHost.toURI();
@@ -58,12 +59,7 @@ public class MockRemoteServerExtension implements Closeable {
         
         @Override
         public void shutDown() throws Exception {
-            if (this.httpclient != null) {
-                this.httpclient.close();
-            }
-            if (this.server != null) {
-                this.server.shutdown(0L, TimeUnit.SECONDS);
-            }
+            super.shutDown();
         }
     }
 

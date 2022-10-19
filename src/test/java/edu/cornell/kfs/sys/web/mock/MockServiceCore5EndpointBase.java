@@ -211,5 +211,9 @@ public abstract class MockServiceCore5EndpointBase implements HttpRequestHandler
             LOG.warn("deleteFileItemQuietly: Unexpected exception when deleting file item", e);
         }
     }
+    
+    protected void onServerInitialized(String baseUrl) {
+        
+    }
 
 }
