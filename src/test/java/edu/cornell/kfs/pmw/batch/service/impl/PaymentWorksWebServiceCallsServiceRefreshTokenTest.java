@@ -10,8 +10,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
@@ -27,7 +25,6 @@ import edu.cornell.kfs.pmw.web.mock.MockPaymentWorksRefreshTokenEndpoint;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.web.mock.CuLocalServerTestBase;
-import edu.cornell.kfs.sys.web.mock.MockLocalServerTestBase;
 
 public class PaymentWorksWebServiceCallsServiceRefreshTokenTest extends CuLocalServerTestBase {
     private static final String TEST_USERID_1 = "123ab";
