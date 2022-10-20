@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,13 +28,19 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -72,8 +77,22 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     public void initializeStandaloneMockMvcWithControllers(Object... controllers) {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(controllers)
-                .addFilters(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), false, true))
+                .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
+                .addInterceptors(new ForceUTF8ResponseInterceptor())
+                .setMessageConverters(getDefaultMessageConverters())
                 .build();
+    }
+
+    private HttpMessageConverter<?>[] getDefaultMessageConverters() {
+        return new HttpMessageConverter<?>[] {
+            new ByteArrayHttpMessageConverter(),
+            new StringHttpMessageConverter(),
+            new ResourceHttpMessageConverter(),
+            new SourceHttpMessageConverter<>(),
+            new FormHttpMessageConverter(),
+            new CuXmlHttpMessageConverter(),
+            new MappingJackson2HttpMessageConverter()
+        };
     }
 
     public void setMockMvc(MockMvc mockMvc) {
@@ -82,7 +101,9 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
 
     @Override
     public void beforeTestExecution(ExtensionContext context) throws Exception {
-        Objects.requireNonNull(mockMvc, "MockMvc instance has not been initialized");
+        if (mockMvc == null) {
+            throw new IllegalStateException("MockMvc instance has not been initialized");
+        }
     }
 
     @Override
@@ -182,7 +203,6 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
         if (responseContent == null) {
             responseContent = new byte[0];
         }
-        System.out.println(contentMimeType + " --- " + charset);
         
         ContentType contentType = null;
         if (StringUtils.isNotBlank(contentMimeType)) {
