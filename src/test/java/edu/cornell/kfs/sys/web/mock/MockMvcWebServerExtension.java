@@ -98,7 +98,7 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(controllers)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
-                .addInterceptors(new ForceUTF8ResponseInterceptor())
+                .addInterceptors(new ForceUTF8TestResponseInterceptor())
                 .setMessageConverters(getDefaultMessageConverters())
                 .build();
     }
@@ -110,7 +110,7 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
             new ResourceHttpMessageConverter(),
             new SourceHttpMessageConverter<>(),
             new FormHttpMessageConverter(),
-            new CuXmlHttpMessageConverter(),
+            new TestXmlHttpMessageConverter(),
             new MappingJackson2HttpMessageConverter()
         };
     }

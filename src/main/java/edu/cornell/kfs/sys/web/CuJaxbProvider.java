@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -13,9 +13,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import org.apache.commons.lang3.StringUtils;
-
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import jakarta.xml.bind.JAXBException;
@@ -31,9 +28,8 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  */
 public class CuJaxbProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
 
-    private static final Set<String> XML_MEDIA_TYPES = Set.of(
-            MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML,
-            MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_XHTML_XML);
+    private static final Pattern XML_MEDIA_TYPES_PATTERN = Pattern.compile(
+            "^[^/]+/[^;]*xml[^;]*(;.*)?$", Pattern.CASE_INSENSITIVE);
 
     private CUMarshalService cuMarshalService = new CUMarshalServiceImpl();
 
@@ -48,11 +44,7 @@ public class CuJaxbProvider implements MessageBodyReader<Object>, MessageBodyWri
     }
 
     private boolean isXmlMediaType(MediaType mediaType) {
-        String mediaTypeString = StringUtils.lowerCase(mediaType.toString());
-        if (StringUtils.contains(mediaTypeString, CUKFSConstants.SEMICOLON)) {
-            mediaTypeString = StringUtils.substringBefore(mediaTypeString, CUKFSConstants.SEMICOLON);
-        }
-        return XML_MEDIA_TYPES.contains(mediaTypeString);
+        return XML_MEDIA_TYPES_PATTERN.matcher(mediaType.toString()).matches();
     }
 
     private boolean isAnnotatedWithXmlRootElement(Class<?> type) {

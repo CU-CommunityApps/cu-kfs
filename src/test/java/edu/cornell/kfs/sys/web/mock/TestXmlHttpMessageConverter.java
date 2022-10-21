@@ -25,11 +25,11 @@ import jakarta.xml.bind.annotation.XmlRootElement;
  * 
  * TODO: Reevaluate the need for this class when updating Production XML-related code to use Spring MVC.
  */
-public class CuXmlHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+public class TestXmlHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
 
     private CUMarshalService cuMarshalService;
 
-    public CuXmlHttpMessageConverter() {
+    public TestXmlHttpMessageConverter() {
         this.cuMarshalService = new CUMarshalServiceImpl();
         setSupportedMediaTypes(List.of(
                 MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_ATOM_XML,
