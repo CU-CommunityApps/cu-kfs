@@ -1,22 +1,30 @@
 package edu.cornell.kfs.sys.service.impl;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.CloseShieldInputStream;
+import org.apache.commons.io.output.CloseShieldOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import edu.cornell.kfs.sys.service.CUMarshalService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEventHandler;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import edu.cornell.kfs.sys.service.CUMarshalService;
 
 public class CUMarshalServiceImpl implements CUMarshalService {
 	private static final Logger LOG = LogManager.getLogger(CUMarshalServiceImpl.class);
@@ -36,6 +44,23 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         jaxbMarshaller.marshal(objectToMarshal, marshalledXml);
         LOG.debug("marshalObjectToXML, returning an XML file with the size of " + FileUtils.sizeOf(marshalledXml));
         return marshalledXml;
+    }
+
+    @Override
+    public void marshalObjectToXML(Object objectToMarshal, OutputStream outputStream)
+            throws JAXBException, IOException {
+        LOG.debug("marshalObjectToXML, entering");
+        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        try (
+            CloseShieldOutputStream wrappedStream = new CloseShieldOutputStream(outputStream);
+            OutputStreamWriter streamWriter = new OutputStreamWriter(wrappedStream, StandardCharsets.UTF_8);
+            BufferedWriter writer = new BufferedWriter(streamWriter);
+        ) {
+            jaxbMarshaller.marshal(objectToMarshal, writer);
+            writer.flush();
+        }
     }
 
     @Override
@@ -75,6 +100,31 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         StringReader reader = new StringReader(xmlString);
         return (T) unmarshaller.unmarshal(reader);
     }
+
+    @Override
+    public <T> T unmarshalStream(InputStream inputStream, Class<T> clazz)
+            throws JAXBException, IOException {
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.empty());
+        return unmarshalStream(inputStream, unmarshaller);
+    }
+
+    @Override
+    public <T> T unmarshalStream(InputStream inputStream, Class<T> clazz, Object listener)
+            throws JAXBException, IOException {
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.of(listener));
+        return unmarshalStream(inputStream, unmarshaller);
+    }
+
+    protected <T> T unmarshalStream(InputStream inputStream, Unmarshaller unmarshaller)
+            throws JAXBException, IOException {
+        try (
+            CloseShieldInputStream wrappedStream = new CloseShieldInputStream(inputStream);
+            InputStreamReader streamReader = new InputStreamReader(wrappedStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(streamReader);
+        ) {
+            return (T) unmarshaller.unmarshal(reader);
+        }
+    }    
 
     protected <T> Unmarshaller createUnmarshaller(Class<T> clazz, Optional<Object> listener) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
