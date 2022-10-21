@@ -17,6 +17,14 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Custom HTTP message converter for converting JAXB pojos that use
+ * the "jakarta.xml" annotations instead of the "javax.xml" annotations.
+ * We may be able to remove this class once we upgrade to a Spring version
+ * that has finished the javax-to-jakarta conversion.
+ * 
+ * TODO: Reevaluate the need for this class when updating Production XML-related code to use Spring MVC.
+ */
 public class CuXmlHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
 
     private CUMarshalService cuMarshalService;

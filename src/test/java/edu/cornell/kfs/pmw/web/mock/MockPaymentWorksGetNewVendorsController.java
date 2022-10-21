@@ -36,7 +36,8 @@ public class MockPaymentWorksGetNewVendorsController {
     @GetMapping(path = "/new-vendor-requests", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<PaymentWorksNewVendorRequestsRootDTO> getNewVendorRequests(
             @RequestParam(PaymentWorksWebServiceConstants.STATUS) int status,
-            @RequestHeader(PaymentWorksWebServiceConstants.AUTHORIZATION_HEADER_KEY) String authorizationHeader) {
+            @RequestHeader(PaymentWorksWebServiceConstants.AUTHORIZATION_HEADER_KEY) String authorizationHeader
+    ) {
         if (!StringUtils.equals(authorizationHeader, expectedAuthorizationHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else if (status != PaymentWorksConstants.PaymentWorksNewVendorRequestStatusType.APPROVED.code) {

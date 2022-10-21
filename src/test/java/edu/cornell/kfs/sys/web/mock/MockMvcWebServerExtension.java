@@ -44,6 +44,23 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
+/**
+ * Helper class that boots up a simple local HTTP server and delegates the handling
+ * of web requests to Spring MVC. This simplifies the process of testing KFS code
+ * that makes calls to remote web services (especially remote RESTful services),
+ * by allowing for the use of Spring MVC Controllers to handle the web requests.
+ * 
+ * This class is meant to be used as a *programmatically-configured* JUnit 5 extension.
+ * Your test class should set up an instance of this extension by declaring an appropriate
+ * non-private instance field annotated with "@RegisterExtension".
+ * 
+ * Prior to each test method being called, this class's internal MockMvc instance needs
+ * to be initialized by the caller. Such setup can happen within an annotated "@BeforeEach"
+ * method on the test class. The simplest way to perform the initialization is by calling
+ * the initializeStandaloneMockMvcWithControllers() method and passing in the MVC Controllers
+ * that you want to use. Alternatively, you can use the setMockMvc() method if you need
+ * finer control over the MockMvc instance's configuration.
+ */
 public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTestExecutionCallback, AfterEachCallback {
 
     private static final String BASE_URL_PREFIX = "http://localhost:";
