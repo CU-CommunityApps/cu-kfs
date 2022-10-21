@@ -29,7 +29,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 public class CuJaxbProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
 
     private static final Pattern XML_MEDIA_TYPES_PATTERN = Pattern.compile(
-            "^[^/]+/[^;]*xml[^;]*(;.*)?$", Pattern.CASE_INSENSITIVE);
+            "^[a-z\\-+*]+/[a-z\\-+*]*xml([\\-+*][a-z\\-+*]*)?(;.*)?$", Pattern.CASE_INSENSITIVE);
 
     private CUMarshalService cuMarshalService = new CUMarshalServiceImpl();
 
