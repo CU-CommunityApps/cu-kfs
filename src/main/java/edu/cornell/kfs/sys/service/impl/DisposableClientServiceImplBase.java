@@ -4,10 +4,10 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.DisposableBean;
 
 import edu.cornell.kfs.sys.util.CURestClientUtils;
+import edu.cornell.kfs.sys.web.CuJaxbProvider;
 
 public abstract class DisposableClientServiceImplBase implements DisposableBean {
     
@@ -27,6 +27,7 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
                 jerseyClient = client;
                 if (jerseyClient == null) {
                     ClientConfig clientConfig = new ClientConfig();
+                    clientConfig.register(CuJaxbProvider.class);
                     if (classToRegister != null) {
                         clientConfig.register(classToRegister);
                     }
