@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,6 +13,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
@@ -27,6 +30,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.web.mock.MockMvcWebServerExtension;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class PaymentWorksGetNewVendorRequestsTest {
 
     private static final String MOCK_USERID = "123ab";
@@ -104,8 +108,10 @@ public class PaymentWorksGetNewVendorRequestsTest {
         assertEquals(expectedIds.size(), actualIds.size(), "Wrong number of IDs found");
         
         Set<String> expectedIdsSet = Set.copyOf(expectedIds);
+        Set<String> encounteredIds = new HashSet<>();
         for (String actualId : actualIds) {
             assertTrue(expectedIdsSet.contains(actualId), "An unexpected request ID was found: " + actualId);
+            assertTrue(encounteredIds.add(actualId), "An unexpected duplicate request ID was found: " + actualId);
         }
     }
 

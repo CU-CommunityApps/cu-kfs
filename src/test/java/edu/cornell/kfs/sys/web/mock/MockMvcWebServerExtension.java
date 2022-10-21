@@ -60,6 +60,9 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * the initializeStandaloneMockMvcWithControllers() method and passing in the MVC Controllers
  * that you want to use. Alternatively, you can use the setMockMvc() method if you need
  * finer control over the MockMvc instance's configuration.
+ * 
+ * To retrieve the HTTP server's URL, call the getServerUrl() method from within your test class's
+ * "@BeforeEach"-annotated method(s). The returned URL will *not* contain a trailing slash.
  */
 public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTestExecutionCallback, AfterEachCallback {
 
