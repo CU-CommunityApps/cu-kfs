@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.function.Decorator;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.URIScheme;
@@ -25,7 +24,6 @@ public abstract class CuLocalServerTestBase {
 
     protected ClassicTestServer server;
     protected final URIScheme scheme;
-    protected PoolingHttpClientConnectionManager connManager;
     
     public static final Timeout TIMEOUT = Timeout.ofMinutes(1);
 
@@ -42,9 +40,6 @@ public abstract class CuLocalServerTestBase {
         SSLContext sslContext = null;
         SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(TIMEOUT).build();
         server = new ClassicTestServer(sslContext, socketConfig);
-        
-        connManager = new PoolingHttpClientConnectionManager();
-        connManager.setDefaultSocketConfig(socketConfig);
     }
 
     @After

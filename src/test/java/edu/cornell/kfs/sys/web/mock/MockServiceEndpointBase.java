@@ -1,7 +1,6 @@
 package edu.cornell.kfs.sys.web.mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -33,7 +32,6 @@ import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
-import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -145,8 +143,6 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
     }
 
     protected <R> R getRequestContent(ClassicHttpRequest request, IOExceptionProneFunction<InputStream, R> entityContentConverter) {
-        assertTrue("The request should have contained an entity", request instanceof BasicClassicHttpRequest);
-        
         HttpEntity entity = request.getEntity();
         InputStream entityContent = null;
         R convertedContent = null;
