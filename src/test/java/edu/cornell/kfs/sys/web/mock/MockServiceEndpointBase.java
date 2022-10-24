@@ -147,8 +147,7 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
     protected <R> R getRequestContent(ClassicHttpRequest request, IOExceptionProneFunction<InputStream, R> entityContentConverter) {
         assertTrue("The request should have contained an entity", request instanceof BasicClassicHttpRequest);
         
-        BasicClassicHttpRequest entityRequest = (BasicClassicHttpRequest) request;
-        HttpEntity entity = entityRequest.getEntity();
+        HttpEntity entity = request.getEntity();
         InputStream entityContent = null;
         R convertedContent = null;
         

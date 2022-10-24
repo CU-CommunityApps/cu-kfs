@@ -40,8 +40,8 @@ public class HttpUploadContext implements UploadContext {
             Header header = request.getHeader(headerName);
             return (header != null) ? header.getValue() : defaultValue;
         } catch (ProtocolException e) {
-            LOG.error("getHeaderValueOrUseDefault, had and error getting the content", e);
-            return defaultValue;
+            LOG.error("getHeaderValueOrUseDefault, had an error getting the content", e);
+            throw new RuntimeException(e);
         }
     }
 

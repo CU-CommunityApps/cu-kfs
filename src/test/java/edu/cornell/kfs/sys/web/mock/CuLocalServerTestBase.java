@@ -13,7 +13,6 @@ import org.apache.hc.core5.http.io.HttpServerRequestHandler;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.io.CloseMode;
-import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.testing.classic.ClassicTestServer;
 import org.apache.hc.core5.util.Timeout;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 
-public class CuLocalServerTestBase {
+public abstract class CuLocalServerTestBase {
     private static final Logger LOG = LogManager.getLogger();
 
     protected ClassicTestServer server;
@@ -40,13 +39,12 @@ public class CuLocalServerTestBase {
 
     @Before
     public void setUp() throws Exception {
-        server = new ClassicTestServer(scheme == URIScheme.HTTPS ? SSLTestContexts.createServerSSLContext() : null,
-                SocketConfig.custom().setSoTimeout(TIMEOUT).build());
+        SSLContext sslContext = null;
+        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(TIMEOUT).build();
+        server = new ClassicTestServer(sslContext, socketConfig);
         
         connManager = new PoolingHttpClientConnectionManager();
-        connManager.setDefaultSocketConfig(SocketConfig.custom()
-                .setSoTimeout(TIMEOUT)
-                .build());
+        connManager.setDefaultSocketConfig(socketConfig);
     }
 
     @After
@@ -75,24 +73,6 @@ public class CuLocalServerTestBase {
 
     public HttpHost start() throws Exception {
         return start(null, null, null);
-    }
-
-    protected static class SSLTestContexts {
-
-        public static SSLContext createServerSSLContext() throws Exception {
-            return SSLContexts.custom()
-                    .loadTrustMaterial(SSLTestContexts.class.getResource("/test.keystore"), "nopassword".toCharArray())
-                    .loadKeyMaterial(SSLTestContexts.class.getResource("/test.keystore"), "nopassword".toCharArray(),
-                            "nopassword".toCharArray())
-                    .build();
-        }
-
-        public static SSLContext createClientSSLContext() throws Exception {
-            return SSLContexts.custom()
-                    .loadTrustMaterial(SSLTestContexts.class.getResource("/test.keystore"), "nopassword".toCharArray())
-                    .build();
-        }
-
     }
 
 }
