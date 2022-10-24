@@ -29,6 +29,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.businessobjects.ConcurOAuth2PersistedValues;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurOAuth2TokenResponseDTO;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
@@ -38,14 +39,14 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     
     protected WebServiceCredentialService webServiceCredentialService;
     protected ConcurBatchUtilityService concurBatchUtilityService;
-    protected Pattern concurBaseUrlPattern;
-    protected String concurAccessTokenApiPath;
+    protected Pattern concurGeolocationUrlPattern;
 
     @Override
     public String retrieveNewAccessBearerToken() {
         ConcurOAuth2PersistedValues credentialValues = getConcurOAuth2PersistedValuesFromWebServiceCredentials();
         ConcurOAuth2TokenResponseDTO tokenResponse = getConcurOAuth2TokenResponseDTOFromConcurEndpoint(credentialValues, 
                 this::buildRefreshAccessTokenClientRequest);
+        updateAndValidateGeolocationIfRequired(tokenResponse);
         updateRefreshTokenIfRequired(credentialValues, tokenResponse);
         return tokenResponse.getAccess_token();
     }
@@ -58,6 +59,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         if (StringUtils.equals(credentialValues.getRefreshToken(), tokenResponse.getRefresh_token())) {
             throw new RuntimeException("Did NOT retrieve a new refresh token.");
         }
+        updateAndValidateGeolocationIfRequired(tokenResponse);
         updateRefreshTokenIfRequired(credentialValues, tokenResponse);
     }
     
@@ -100,9 +102,23 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     }
     
     protected String findAccessTokenEndpoint() {
+        String geolocation = findGeolocationUrl();
+        String relativeEndpoint = findRelativeAccessTokenEndpoint();
+        String fullEndpoint = geolocation + relativeEndpoint;
+        LOG.info("findAccessTokenEndpoint, the full access token endpoint is " + fullEndpoint);
+        return fullEndpoint;
+    }
+    
+    protected String findRelativeAccessTokenEndpoint() {
         String endpoint = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_ACCESS_TOKEN_ENDPOINT);
-        LOG.info("findAccessTokenEndpoint, the access token endpoint is " + endpoint);
+        LOG.info("findRelativeAccessTokenEndpoint, the relative access token endpoint is " + endpoint);
         return endpoint;
+    }
+
+    protected String findGeolocationUrl() {
+        String geolocation = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_GEOLOCATION_URL);
+        LOG.info("findGeolocationUrl, the geolocation URL is " + geolocation);
+        return geolocation;
     }
 
     protected String callConcurAccessTokenEndpoint(ConcurOAuth2PersistedValues credentialValues, Function<ConcurClientRequestHelper, Response> concurEndpointBuilder) {
@@ -173,6 +189,30 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
                 .post(Entity.form(entity));
     }
     
+    protected void updateAndValidateGeolocationIfRequired(ConcurOAuth2TokenResponseDTO tokenResponse) {
+        String currentGeolocationUrl = findGeolocationUrl();
+        String newGeolocationUrl = tokenResponse.getGeolocation();
+        if (StringUtils.endsWith(newGeolocationUrl, CUKFSConstants.SLASH)) {
+            newGeolocationUrl = StringUtils.chop(newGeolocationUrl);
+        }
+        
+        if (StringUtils.isBlank(newGeolocationUrl)) {
+            LOG.error("updateAndValidateGeolocationIfRequired, Concur sent a blank geolocation");
+            throw new RuntimeException("Blank geolocation returned from Concur");
+        } else if (StringUtils.equalsIgnoreCase(currentGeolocationUrl, newGeolocationUrl)) {
+            LOG.info("updateAndValidateGeolocationIfRequired, Geolocation from Concur is the same as we have "
+                    + "in storage; no need to update");
+        } else if (concurGeolocationUrlPattern.matcher(newGeolocationUrl).matches()) {
+            LOG.info("updateAndValidateGeolocationIfRequired, Concur sent a new geolocation; updating stored value");
+            concurBatchUtilityService.setConcurParameterValue(
+                    ConcurParameterConstants.CONCUR_GEOLOCATION_URL, newGeolocationUrl);
+        } else {
+            LOG.error("updateAndValidateGeolocationIfRequired, Concur sent a geolocation with an unexpected path: "
+                    + newGeolocationUrl);
+            throw new RuntimeException("Bad geolocation returned from Concur; see logs for details");
+        }
+    }
+    
     private void updateRefreshTokenIfRequired(ConcurOAuth2PersistedValues credentialValues, ConcurOAuth2TokenResponseDTO tokenResponse) {
         if (StringUtils.equals(credentialValues.getRefreshToken(), tokenResponse.getRefresh_token())) {
             LOG.info("updateRefreshTokenIfRequired, refresh token from Concur is the same as we have in storage, no need to update");
@@ -203,17 +243,13 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
     
-    public void setConcurBaseUrlPattern(String concurBaseUrlPattern) {
-        Pattern pattern = Pattern.compile(concurBaseUrlPattern, Pattern.CASE_INSENSITIVE);
-        setConcurBaseUrlPattern(pattern);
+    public void setConcurGeolocationUrlPattern(String concurGeolocationUrlPattern) {
+        Pattern pattern = Pattern.compile(concurGeolocationUrlPattern, Pattern.CASE_INSENSITIVE);
+        setConcurGeolocationUrlPattern(pattern);
     }
     
-    public void setConcurBaseUrlPattern(Pattern concurBaseUrlPattern) {
-        this.concurBaseUrlPattern = concurBaseUrlPattern;
-    }
-    
-    public void setConcurAccessTokenApiPath(String concurAccessTokenApiPath) {
-        this.concurAccessTokenApiPath = concurAccessTokenApiPath;
+    public void setConcurGeolocationUrlPattern(Pattern concurGeolocationUrlPattern) {
+        this.concurGeolocationUrlPattern = concurGeolocationUrlPattern;
     }
     
     private class ConcurClientRequestHelper {

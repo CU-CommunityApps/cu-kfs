@@ -58,6 +58,16 @@ public class ConcurTestConstants {
     public static final String REQUEST_TRAVEL_TYPE_LABEL = "Travel";
     public static final String REQUEST_EXCEPTION_LEVEL_NONE = "NONE";
 
+    public static final String CONCUR_GEOLOCATION_PATTERN_CONCURSOLUTIONS
+            = "^https://[\\w-]+(\\.[\\w-]+)*\\.concursolutions\\.com/?$";
+    public static final String CONCUR_GEOLOCATION_PATTERN_LOCALHOST
+            = "^http://localhost:[0-9]+/[\\w-]+(\\.[\\w-]+)*\\.concursolutions\\.com/?$";
+
+    public static final String CONCUR_GEOLOCATION_CONCURSOLUTIONS = "https://us.api.concursolutions.com";
+    public static final String CONCUR_GEOLOCATION_LOCALHOST_SUFFIX = "/us.api.concursolutions.com";
+    public static final String CONCUR_GEOLOCATION_CONCURSOLUTIONS2 = "https://us2.api.concursolutions.com";
+    public static final String CONCUR_GEOLOCATION_LOCALHOST_SUFFIX2 = "/us2.api.concursolutions.com";
+
     public static class PropertyTestValues {
         public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
         public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
