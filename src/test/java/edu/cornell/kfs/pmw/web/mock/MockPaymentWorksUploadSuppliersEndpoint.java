@@ -14,14 +14,14 @@ import java.util.List;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.springframework.http.HttpMethod;
 
@@ -71,9 +71,10 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
     public boolean isCalledUploadSuppliersService() {
         return calledUploadSuppliersService;
     }
-
+    
     @Override
-    protected void processRequest(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+    protected void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+            throws HttpException, IOException {
         this.calledUploadSuppliersService = true;
         assertRequestHasCorrectHttpMethod(request, HttpMethod.POST);
         assertRequestHasCorrectContentType(request, ContentType.MULTIPART_FORM_DATA);
@@ -90,9 +91,10 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
         } else {
             setupErrorResponse(response, (String) processingResult.getValue());
         }
+        
     }
 
-    private Pair<Boolean, Object> validateAndProcessMultiPartContent(HttpRequest request, List<FileItem> fileItems) {
+    private Pair<Boolean, Object> validateAndProcessMultiPartContent(ClassicHttpRequest request, List<FileItem> fileItems) {
         assertEquals("Wrong number of multipart sections in upload-suppliers request", 1, fileItems.size());
         FileItem csvSection = fileItems.get(0);
         assertEquals("Wrong field name for multipart section", PaymentWorksSupplierUploadConstants.SUPPLIERS_FIELD, csvSection.getFieldName());
@@ -164,7 +166,7 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
         }
     }
 
-    private void setupSuccessResponse(HttpResponse response, Integer numReceivedSuppliers) {
+    private void setupSuccessResponse(ClassicHttpResponse response, Integer numReceivedSuppliers) {
         Integer numReceivedSuppliersToReturn = forceVendorCountMismatch
                 ? Integer.valueOf(numReceivedSuppliers.intValue() - 1) : numReceivedSuppliers;
         
@@ -173,22 +175,22 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
             rootNode.put(PaymentWorksSupplierUploadConstants.NUM_RCVD_SUPPLIERS_FIELD, numReceivedSuppliersToReturn);
         });
         
-        response.setStatusCode(HttpStatus.SC_OK);
+        response.setCode(HttpStatus.SC_OK);
         response.setEntity(new StringEntity(jsonText, ContentType.TEXT_HTML));
     }
 
-    private void setupErrorResponse(HttpResponse response, String errorMessage) {
+    private void setupErrorResponse(ClassicHttpResponse response, String errorMessage) {
         String jsonText = buildJsonTextFromNode((rootNode) -> {
             rootNode.put(PaymentWorksCommonJsonConstants.STATUS_FIELD, PaymentWorksSupplierUploadConstants.ERROR_FIELD);
             rootNode.put(PaymentWorksSupplierUploadConstants.ERROR_FIELD, errorMessage);
         });
         
-        response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+        response.setCode(HttpStatus.SC_BAD_REQUEST);
         response.setEntity(new StringEntity(jsonText, ContentType.TEXT_HTML));
     }
-
-    @Override
-    protected void prepareResponseForFailedAssertion(HttpResponse response, AssertionError assertionError) throws HttpException, IOException {
+    
+    @Override 
+    protected void prepareResponseForFailedAssertion(ClassicHttpResponse response, AssertionError assertionError) throws HttpException, IOException {
         setupErrorResponse(response, assertionError.getMessage());
     }
 
