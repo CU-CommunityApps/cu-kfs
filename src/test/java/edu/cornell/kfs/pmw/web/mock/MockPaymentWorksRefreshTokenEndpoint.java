@@ -12,13 +12,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -68,9 +68,10 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
     public String getCurrentTokenForUser(String userId) {
         return authorizationTokenMap.get(userId);
     }
-
+    
     @Override
-    protected void processRequest(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+    protected void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+            throws HttpException, IOException {
         assertRequestHasCorrectHttpMethod(request, HttpMethod.PUT);
         assertRequestHasCorrectContentType(request, ContentType.APPLICATION_JSON);
         assertJsonContentIsWellFormed(request);
@@ -92,29 +93,30 @@ public class MockPaymentWorksRefreshTokenEndpoint extends MockServiceEndpointBas
             String newToken = generateNewTokenForUser(userId);
             setupRefreshSuccessResponse(response, newToken);
         }
+        
     }
 
-    private void assertJsonContentIsWellFormed(HttpRequest request) {
+    private void assertJsonContentIsWellFormed(ClassicHttpRequest request) {
         JsonNode rootNode = getRequestContentAsJsonNodeTree(request);
         assertNotNull("Request should have contained well-formed JSON content", rootNode);
     }
 
-    private void setupRefreshSuccessResponse(HttpResponse response, String authorizationToken) {
+    private void setupRefreshSuccessResponse(ClassicHttpResponse response, String authorizationToken) {
         String jsonText = buildJsonTextFromNode((rootNode) -> {
             rootNode.put(PaymentWorksCommonJsonConstants.STATUS_FIELD, PaymentWorksCommonJsonConstants.STATUS_OK);
             rootNode.put(PaymentWorksTokenRefreshConstants.AUTH_TOKEN_FIELD, authorizationToken);
         });
         
-        response.setStatusCode(HttpStatus.SC_OK);
+        response.setCode(HttpStatus.SC_OK);
         response.setEntity(new StringEntity(jsonText, ContentType.APPLICATION_JSON));
     }
 
-    private void setupRefreshFailureResponse(HttpResponse response, String message) {
+    private void setupRefreshFailureResponse(ClassicHttpResponse response, String message) {
         String jsonText = buildJsonTextFromNode((rootNode) -> {
             rootNode.put(PaymentWorksCommonJsonConstants.DETAIL_FIELD, message);
         });
         
-        response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+        response.setCode(HttpStatus.SC_BAD_REQUEST);
         response.setEntity(new StringEntity(jsonText, ContentType.APPLICATION_JSON));
     }
 

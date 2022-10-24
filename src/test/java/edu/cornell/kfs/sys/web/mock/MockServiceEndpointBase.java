@@ -1,7 +1,6 @@
 package edu.cornell.kfs.sys.web.mock;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -24,20 +23,18 @@ import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.RequestLine;
-import org.apache.http.entity.ContentType;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.springframework.http.HttpMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -57,14 +54,14 @@ import edu.cornell.kfs.sys.util.IOExceptionProneFunction;
  */
 public abstract class MockServiceEndpointBase implements HttpRequestHandler {
 
-	private static final Logger LOG = LogManager.getLogger(MockServiceEndpointBase.class);
+    private static final Logger LOG = LogManager.getLogger(MockServiceEndpointBase.class);
 
     protected String multiPartContentDirectory;
 
     public abstract String getRelativeUrlPatternForHandlerRegistration();
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
+    public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context) throws HttpException, IOException {
         try {
             processRequest(request, response, context);
         } catch (AssertionError e) {
@@ -73,23 +70,22 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         }
     }
 
-    protected abstract void processRequest(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException;
+    protected abstract void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context) throws HttpException, IOException;
 
-    protected void prepareResponseForFailedAssertion(HttpResponse response, AssertionError assertionError) throws HttpException, IOException {
-        response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+    protected void prepareResponseForFailedAssertion(ClassicHttpResponse response, AssertionError assertionError) throws HttpException, IOException {
+        response.setCode(HttpStatus.SC_BAD_REQUEST);
         response.setReasonPhrase(assertionError.getMessage());
     }
 
-    protected void assertRequestHasCorrectHttpMethod(HttpRequest request, HttpMethod expectedMethod) {
-        RequestLine requestLine = request.getRequestLine();
-        assertEquals("Wrong HTTP method for request", expectedMethod.name(), requestLine.getMethod());
+    protected void assertRequestHasCorrectHttpMethod(ClassicHttpRequest request, HttpMethod expectedMethod) {
+        assertEquals("Wrong HTTP method for request", expectedMethod.name(), request.getMethod());
     }
 
-    protected void assertRequestHasCorrectContentType(HttpRequest request, ContentType expectedContentType) {
+    protected void assertRequestHasCorrectContentType(ClassicHttpRequest request, ContentType expectedContentType) {
         assertRequestHasCorrectContentType(request, expectedContentType.getMimeType());
     }
 
-    protected void assertRequestHasCorrectContentType(HttpRequest request, String expectedContentType) {
+    protected void assertRequestHasCorrectContentType(ClassicHttpRequest request, String expectedContentType) {
         String actualContentType = getNonBlankHeaderValue(request, HttpHeaders.CONTENT_TYPE);
         if (StringUtils.equals(expectedContentType, ContentType.MULTIPART_FORM_DATA.getMimeType())
                 && StringUtils.contains(actualContentType, CUKFSConstants.SEMICOLON)) {
@@ -98,17 +94,17 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         assertEquals("Wrong content type for request", expectedContentType, actualContentType);
     }
 
-    protected void assertHeaderHasNonBlankValue(HttpRequest request, String headerName) {
+    protected void assertHeaderHasNonBlankValue(ClassicHttpRequest request, String headerName) {
         getNonBlankHeaderValue(request, headerName);
     }
 
-    protected String getNonBlankHeaderValue(HttpRequest request, String headerName) {
+    protected String getNonBlankHeaderValue(ClassicHttpRequest request, String headerName) {
         return getValueOrFail(
                 () -> getNonBlankHeaderValueIfPresent(request, headerName),
                 "The request should have had a non-blank value for header " + headerName);
     }
 
-    protected Optional<String> getNonBlankHeaderValueIfPresent(HttpRequest request, String headerName) {
+    protected Optional<String> getNonBlankHeaderValueIfPresent(ClassicHttpRequest request, String headerName) {
         Header header = request.getFirstHeader(headerName);
         if (header == null) {
             return Optional.empty();
@@ -117,15 +113,14 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         }
     }
 
-    protected String getNonBlankValueFromRequestUrl(HttpRequest request, Pattern regex, int regexGroupIndex) {
+    protected String getNonBlankValueFromRequestUrl(ClassicHttpRequest request, Pattern regex, int regexGroupIndex) {
         return getValueOrFail(
                 () -> getNonBlankValueFromRequestUrlIfPresent(request, regex, regexGroupIndex),
                 "The request URL did not contain the expected non-blank fragment according to the given regex");
     }
 
-    protected Optional<String> getNonBlankValueFromRequestUrlIfPresent(HttpRequest request, Pattern regex, int regexGroupIndex) {
-        RequestLine requestLine = request.getRequestLine();
-        String requestUrl = requestLine.getUri();
+    protected Optional<String> getNonBlankValueFromRequestUrlIfPresent(ClassicHttpRequest request, Pattern regex, int regexGroupIndex) {
+        String requestUrl = request.getRequestUri();
         Matcher urlMatcher = regex.matcher(requestUrl);
         
         if (regexGroupIndex < 0 || urlMatcher.groupCount() < regexGroupIndex) {
@@ -137,21 +132,18 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         }
     }
 
-    protected String getRequestContentAsString(HttpRequest request) {
+    protected String getRequestContentAsString(ClassicHttpRequest request) {
         return getRequestContent(request,
                 (contentStream) -> IOUtils.toString(contentStream, StandardCharsets.UTF_8));
     }
 
-    protected JsonNode getRequestContentAsJsonNodeTree(HttpRequest request) {
+    protected JsonNode getRequestContentAsJsonNodeTree(ClassicHttpRequest request) {
         return getRequestContent(request,
                 (contentStream) -> new ObjectMapper().readTree(contentStream));
     }
 
-    protected <R> R getRequestContent(HttpRequest request, IOExceptionProneFunction<InputStream, R> entityContentConverter) {
-        assertTrue("The request should have contained an entity", request instanceof HttpEntityEnclosingRequest);
-        
-        HttpEntityEnclosingRequest entityRequest = (HttpEntityEnclosingRequest) request;
-        HttpEntity entity = entityRequest.getEntity();
+    protected <R> R getRequestContent(ClassicHttpRequest request, IOExceptionProneFunction<InputStream, R> entityContentConverter) {
+        HttpEntity entity = request.getEntity();
         InputStream entityContent = null;
         R convertedContent = null;
         
@@ -167,7 +159,7 @@ public abstract class MockServiceEndpointBase implements HttpRequestHandler {
         return convertedContent;
     }
 
-    protected <T> T processMultiPartRequestContent(HttpRequest request, BiFunction<HttpRequest, List<FileItem>, T> requestContentHandler) {
+    protected <T> T processMultiPartRequestContent(ClassicHttpRequest request, BiFunction<ClassicHttpRequest, List<FileItem>, T> requestContentHandler) {
         if (StringUtils.isBlank(multiPartContentDirectory)) {
             throw new IllegalStateException("Directory path to potentially store multipart content has not been specified");
         }
