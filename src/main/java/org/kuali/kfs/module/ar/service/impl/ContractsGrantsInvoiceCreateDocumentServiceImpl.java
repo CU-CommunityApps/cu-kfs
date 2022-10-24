@@ -94,6 +94,9 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
+import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -416,6 +419,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
     }
 
+    /*
+     * CU Customization KFSPTS-23690:
+     * Set Award transient attribute creationProcessType so value is available for downstream processing.
+     */
     /**
      * Generates and then saves a Contracts & Grants Invoice Document
      *
@@ -432,13 +439,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
                 awd.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
                 KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
-        /*
-         * CU Customization (KFSPTS-23675):
-         * Include creationProcessType in the method call.
-         */
+
+        /* CU Customization KFSPTS-23690 */
+        awd.setCreationProcessType(creationProcessType);
+
         ContractsGrantsInvoiceDocument cgInvoiceDocument = createCGInvoiceDocumentByAwardInfo(awd, validAwardAccounts,
                 chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode(), errorMessages,
-                accountDetails, locCreationType, creationProcessType);
+                accountDetails, locCreationType);
         if (ObjectUtils.isNotNull(cgInvoiceDocument)) {
             if (cgInvoiceDocument.getTotalInvoiceAmount().isPositive()
                 || getContractsGrantsInvoiceDocumentService().getInvoiceMilestoneTotal(cgInvoiceDocument).isPositive()
@@ -465,14 +472,20 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     }
 
     /*
-     * CU Customization (KFSPTS-23675):
-     * Added creationProcessType argument and its usage of it.
+     * CU Customization KFSPTS-23690 NOTE:
+     * Currently, this method is only called from within this class from protected method
+     * generateAndSaveContractsAndGrantsInvoiceDocument which sets the Award transient
+     * attribute createProcessType needed by downstream routines.
+     * This method is declared as public and there is the potential for it to generate compile or run time
+     * errors when method ContractsGrantsInvoiceDocumentService.updateSuspensionCategoriesOnDocument is
+     * called should any new or existing suspensionCategory.shouldSuspend routines rely on the Award
+     * transient attribute createProcessType for its downstream processing.
      */
     @Override
     public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd,
             List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
             List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
-            String locCreationType, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+            String locCreationType) {
         ContractsGrantsInvoiceDocument cgInvoiceDocument = null;
         if (ObjectUtils.isNotNull(accounts) && !accounts.isEmpty()) {
             if (chartOfAccountsCode != null && organizationCode != null) {
@@ -512,7 +525,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
                 cgInvoiceDocument.setAccountsReceivableDocumentHeader(accountsReceivableDocumentHeader);
 
-                populateInvoiceFromAward(awd, accounts, cgInvoiceDocument, accountDetails, locCreationType, creationProcessType);
+                populateInvoiceFromAward(awd, accounts, cgInvoiceDocument, accountDetails, locCreationType);
                 contractsGrantsInvoiceDocumentService.createSourceAccountingLines(cgInvoiceDocument, accounts);
 
                 if (ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail().getAward())) {
@@ -554,10 +567,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         return StringUtils.left(description, descriptionMaxLength);
     }
 
-    /*
-     * CU Customization (KFSPTS-23675):
-     * Added creationProcessType argument and its usage of it.
-     */
     /**
      * This method takes all the applicable attributes from the associated award object and sets those attributes into
      * their corresponding invoice attributes.
@@ -571,8 +580,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      */
     protected void populateInvoiceFromAward(ContractsAndGrantsBillingAward award,
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsGrantsInvoiceDocument document,
-            List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType,
-            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+            List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails, String locCreationType) {
         if (ObjectUtils.isNotNull(award)) {
             InvoiceGeneralDetail invoiceGeneralDetail = new InvoiceGeneralDetail();
             invoiceGeneralDetail.setDocumentNumber(document.getDocumentNumber());
@@ -583,7 +591,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             java.sql.Date today = new java.sql.Date(ts.getTime());
             AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
             BillingPeriod billingPeriod = verifyBillingFrequencyService
-                    .getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod, creationProcessType);
+                    .getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod);
             invoiceGeneralDetail.setBillingPeriod(getDateTimeService().toDateString(billingPeriod.getStartDate()) +
                     " to " + getDateTimeService().toDateString(billingPeriod.getEndDate()));
             invoiceGeneralDetail.setLastBilledDate(billingPeriod.getEndDate());
@@ -1652,6 +1660,14 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         return qualifiedAwards;
     }
 
+    /*
+     * CU Customization: KFSPTS-23675
+     * Allow for using excluded-from-invoicing awards when creating a manual invoice.
+     *
+     * CU Customization: KFSPTS-23690
+     * Set transient attribute creationProcessType on Award so that data is available in the
+     * VerifyBillingFrequencyService.validateBillingFrequency method.
+     */
     /**
      * Perform all validation checks on the awards passed in to determine if CGB Invoice documents can be
      * created for the given awards.
@@ -1668,7 +1684,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         for (ContractsAndGrantsBillingAward award : awards) {
             List<String> errorList = new ArrayList<>();
 
-            if (award.isExcludedFromInvoicing()) {
+            // CUMod: KFSPTS-23675 (portion for excluded-from-invoicing handling)
+            if (award.isExcludedFromInvoicing()
+                    && ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType) {
                 errorList.add(configurationService.getPropertyValueAsString(
                         ArKeyConstants.CGINVOICE_CREATION_AWARD_EXCLUDED_FROM_INVOICING));
             } else if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType
@@ -1690,10 +1708,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                                     .isValueOfBillingFrequencyValid(award)) {
                             boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
                             /*
-                             * CU Customization (KFSPTS-23675):
-                             * Include creationProcessType in the method call.
+                             * CU Customization KFSPTS-23690 (portion for billing frequency handling)
                              */
-                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod, creationProcessType)) {
+                            award.setCreationProcessType(creationProcessType);
+                            if (verifyBillingFrequencyService.validateBillingFrequency(award, checkGracePeriod)) {
                                 validateAward(errorList, award, creationProcessType);
                             } else {
                                 errorList.add(configurationService.getPropertyValueAsString(
@@ -1832,6 +1850,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
     }
 
+    /**
+     * CU Customization:
+     * Fixes NullPointerException that can occur when getting the award total amount.
+     * award.getAwardTotalAmount().bigDecimalValue() causes the NullPointerException if the total amount returned null.
+     */
     protected void storeValidationErrors(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
             Collection<ContractsGrantsInvoiceDocumentErrorLog> contractsGrantsInvoiceDocumentErrorLogs,
             String creationProcessTypeCode) {
@@ -1848,8 +1871,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 contractsGrantsInvoiceDocumentErrorLog.setProposalNumber(award.getProposalNumber());
                 contractsGrantsInvoiceDocumentErrorLog.setAwardBeginningDate(beginningDate);
                 contractsGrantsInvoiceDocumentErrorLog.setAwardEndingDate(endingDate);
-                contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(award.getAwardTotalAmount()
-                        .bigDecimalValue());
+                /*
+                 * CU Customization
+                 */
+                KualiDecimal awardTotalAmount = award.getAwardTotalAmount() == null ? KualiDecimal.ZERO : award.getAwardTotalAmount();
+                contractsGrantsInvoiceDocumentErrorLog.setAwardTotalAmount(awardTotalAmount.bigDecimalValue());
+
                 if (ObjectUtils.isNotNull(award.getAwardPrimaryFundManager())) {
                     contractsGrantsInvoiceDocumentErrorLog.setPrimaryFundManagerPrincipalId(
                             award.getAwardPrimaryFundManager().getPrincipalId());
@@ -2076,6 +2103,17 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         }
     }
 
+    /*
+     * CU Customization: KFSPTS-13256
+     * Added evaluation of account sub-fund not being an expenditure to existing base code evaluation
+     * of billing frequency and invoice document status when determining valid award accounts.
+     * Expenditure sub-funds associated to accounts to exclude are defined in CG system parameter
+     * CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS.
+     *
+     *
+     * CU Customization KFSPTS-23690
+     * Set transient creationProcessType attribute on Award so value is available in called method.
+     */
     /**
      * @param awardAccounts
      * @param creationProcessType invoice document creation process type
@@ -2084,6 +2122,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     protected List<ContractsAndGrantsBillingAwardAccount> getValidAwardAccounts(
             List<ContractsAndGrantsBillingAwardAccount> awardAccounts, ContractsAndGrantsBillingAward award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+        LOG.info("getValidAwardAccounts: CU Customization invoked with creationProcessTypeCode = " + ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType.getName(creationProcessType.getCode()));
         if (!ArConstants.BillingFrequencyValues.isMilestone(award)
                 && !ArConstants.BillingFrequencyValues.isPredeterminedBilling(award)) {
             List<ContractsAndGrantsBillingAwardAccount> validAwardAccounts = new ArrayList<>();
@@ -2093,11 +2132,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             for (ContractsAndGrantsBillingAwardAccount awardAccount : awardAccounts) {
                 if (!invalidAccounts.contains(awardAccount.getAccount())) {
                     boolean checkGracePeriod = ContractsAndGrantsInvoiceDocumentCreationProcessType.MANUAL != creationProcessType;
-                    /*
-                     * CU Customization (KFSPTS-23675):
-                     * Include creationProcessType in the method call.
-                     */
-                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod, creationProcessType)) {
+                    /* CU Customizations: KFSPTS-13256, KFSPTS-23690 */
+                    award.setCreationProcessType(creationProcessType);
+                    if (verifyBillingFrequencyService.validateBillingFrequency(award, awardAccount, checkGracePeriod)
+                            && isNotExpenditureAccount(awardAccount)) {
+                        LOG.info("getValidAwardAccounts: Evaluation of account sub-fund not being an expenditure was performed.");
                         validAwardAccounts.add(awardAccount);
                     }
                 }
@@ -2107,6 +2146,31 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         } else {
             return awardAccounts;
         }
+    }
+    
+    /*
+     * CU Customization: KFSPTS-13256
+     */
+    protected boolean isNotExpenditureAccount(ContractsAndGrantsBillingAwardAccount billingAwardAccount) {
+        Account accountLinkedToAward = getAccountService().getByPrimaryId(billingAwardAccount.getChartOfAccountsCode(), billingAwardAccount.getAccountNumber());
+        if (ObjectUtils.isNotNull(accountLinkedToAward)) {
+            return !isExpenditureSubFund(accountLinkedToAward.getSubFundGroupCode());
+        }
+        return true;
+    }
+    
+    /*
+     * CU Customization: KFSPTS-13256
+     */
+    protected boolean isExpenditureSubFund(String subFundGroupCode) {
+        if (StringUtils.isNotBlank(subFundGroupCode)) {
+            Collection<String> acceptedValuesForExpenditureSubFundCodes = parameterService.getParameterValuesAsString(KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE,
+                    CUKFSParameterKeyConstants.ALL_COMPONENTS, CuArParameterKeyConstants.CG_INVOICING_EXCLUDE_EXPENSES_SUB_FUNDS);
+            if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(acceptedValuesForExpenditureSubFundCodes)) {
+                return acceptedValuesForExpenditureSubFundCodes.stream().anyMatch(subFundGroupCode::equalsIgnoreCase);
+            }
+        }
+        return false;
     }
 
     /**

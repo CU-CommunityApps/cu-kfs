@@ -24,8 +24,8 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants;
-import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.ar.batch.service.VerifyBillingFrequencyService;
 import org.kuali.kfs.module.ar.businessobject.BillingFrequency;
 import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
@@ -54,36 +54,21 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
         invalidPeriodCodes.add(KFSConstants.PERIOD_CODE_CG_BEGINNING_BALANCE);
     }
 
-    /*
-     * CU Customization (KFSPTS-23675):
-     * Added creationProcessType argument and its usage of it.
-     */
     @Override
-    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, boolean checkBillingPeriodEnd,
-            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
-        return validateBillingFrequency(award, award.getLastBilledDate(), checkBillingPeriodEnd, creationProcessType);
+    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, boolean checkBillingPeriodEnd) {
+        return validateBillingFrequency(award, award.getLastBilledDate(), checkBillingPeriodEnd);
     }
 
-    /*
-     * CU Customization (KFSPTS-23675):
-     * Added creationProcessType argument and its usage of it.
-     */
     @Override
-    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount, boolean checkBillingPeriodEnd,
-            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
-        return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate(), checkBillingPeriodEnd, creationProcessType);
+    public boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, ContractsAndGrantsBillingAwardAccount awardAccount, boolean checkBillingPeriodEnd) {
+        return validateBillingFrequency(award, awardAccount.getCurrentLastBilledDate(), checkBillingPeriodEnd);
     }
 
-    /*
-     * CU Customization (KFSPTS-23675):
-     * Added creationProcessType argument and its usage of it.
-     */
-    private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate, boolean checkBillingPeriodEnd,
-            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+    private boolean validateBillingFrequency(ContractsAndGrantsBillingAward award, Date lastBilledDate, boolean checkBillingPeriodEnd) {
         final Date today = getDateTimeService().getCurrentSqlDate();
         AccountingPeriod currPeriod = accountingPeriodService.getByDate(today);
 
-        BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod, creationProcessType);
+        BillingPeriod billingPeriod = getStartDateAndEndDateOfPreviousBillingPeriod(award, currPeriod);
         if (!billingPeriod.isBillable()) {
             return false;
         }
@@ -120,13 +105,17 @@ public class VerifyBillingFrequencyServiceImpl implements VerifyBillingFrequency
     }
 
     /*
-     * CU Customization (KFSPTS-23675):
-     * Added creationProcessType argument and its usage of it.
+     * CU Customization: KFSPTS-23690
+     * When creating CINV documents, obtain creationProcessType transient attribute from Award input parameter and use it;
+     * otherwise, execute base code version of the method for viewing and editing CINV.
      */
     @Override
-    public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, AccountingPeriod currPeriod,
-            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
-        return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), this.dateTimeService.getCurrentSqlDate(), award.getLastBilledDate(), ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), this.accountingPeriodService, creationProcessType);
+    public BillingPeriod getStartDateAndEndDateOfPreviousBillingPeriod(ContractsAndGrantsBillingAward award, AccountingPeriod currPeriod) {
+        /* KFSPTS-23690 */
+        if (ObjectUtils.isNotNull(award.getCreationProcessType())) {
+            return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), this.dateTimeService.getCurrentSqlDate(), award.getLastBilledDate(), ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), this.accountingPeriodService, award.getCreationProcessType());
+        }
+        return BillingPeriod.determineBillingPeriodPriorTo(award.getAwardBeginningDate(), this.dateTimeService.getCurrentSqlDate(), award.getLastBilledDate(), ArConstants.BillingFrequencyValues.fromCode(award.getBillingFrequencyCode()), this.accountingPeriodService);
     }
 
     protected Date calculateDaysBeyond(Date date, int daysBeyond) {
