@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.function.Decorator;
 import org.apache.hc.core5.http.HttpHost;
@@ -16,7 +13,6 @@ import org.apache.hc.core5.http.io.HttpServerRequestHandler;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.io.CloseMode;
-import org.apache.hc.core5.io.Closer;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.testing.classic.ClassicTestServer;
 import org.apache.hc.core5.util.Timeout;
@@ -30,8 +26,6 @@ public class CuLocalServerTestBase {
 
     protected ClassicTestServer server;
     protected final URIScheme scheme;
-    protected HttpClientBuilder clientBuilder;
-    protected CloseableHttpClient httpclient;
     protected PoolingHttpClientConnectionManager connManager;
     
     public static final Timeout TIMEOUT = Timeout.ofMinutes(1);
@@ -53,12 +47,6 @@ public class CuLocalServerTestBase {
         connManager.setDefaultSocketConfig(SocketConfig.custom()
                 .setSoTimeout(TIMEOUT)
                 .build());
-        
-        clientBuilder = HttpClientBuilder.create()
-                .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectionRequestTimeout(TIMEOUT)
-                        .build())
-                .setConnectionManager(connManager);
     }
 
     @After
@@ -71,18 +59,11 @@ public class CuLocalServerTestBase {
                 LOG.error("shutDown, had an error", e);
             }
         }
-        
-        Closer.closeQuietly(httpclient);
-        httpclient = null;
     }
 
     public HttpHost start(final Http1Config http1Config, final HttpProcessor httpProcessor,
             final Decorator<HttpServerRequestHandler> handlerDecorator) throws IOException {
         this.server.start(http1Config, httpProcessor, handlerDecorator);
-
-        if (this.httpclient == null) {
-            this.httpclient = this.clientBuilder.build();
-        }
 
         return new HttpHost(this.scheme.name(), "localhost", this.server.getPort());
     }
