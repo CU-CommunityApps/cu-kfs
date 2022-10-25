@@ -37,6 +37,7 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.KualiModuleService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -172,7 +173,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     private String letterOfCreditFundGroupCode;
     private LetterOfCreditFundGroup letterOfCreditFundGroup;
     private transient String invoiceLink;
-    private transient String cgInvoiceDocumentCreationProcessTypeCode;
+    private transient ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType;
 
     public Award() {
         // Must use ArrayList because its get() method automatically grows the array for Struts.
@@ -1251,6 +1252,20 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     public void setInvoiceLink(String invoiceLink) {
         this.invoiceLink = invoiceLink;
+    }
+
+    /*
+     * CU Customization (KFSPTS-23690)
+     */
+    public ContractsAndGrantsInvoiceDocumentCreationProcessType getCreationProcessType() {
+        return creationProcessType;
+    }
+    
+    /*
+     * CU Customization (KFSPTS-23690)
+     */
+    public void setCreationProcessType(ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
+        this.creationProcessType = creationProcessType;
     }
 
 }
