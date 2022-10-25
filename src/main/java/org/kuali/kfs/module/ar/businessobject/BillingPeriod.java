@@ -58,6 +58,22 @@ public abstract class BillingPeriod {
     public Date getEndDate() {
         return endDate;
     }
+    
+    public static BillingPeriod determineBillingPeriodPriorTo(Date awardStartDate, Date currentDate, Date lastBilledDate, ArConstants.BillingFrequencyValues billingFrequency, AccountingPeriodService accountingPeriodService) {
+        BillingPeriod billingPeriod;
+        if (ArConstants.BillingFrequencyValues.LETTER_OF_CREDIT.equals(billingFrequency)) {
+            billingPeriod = new LetterOfCreditBillingPeriod(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
+        } else {
+            billingPeriod = new TimeBasedBillingPeriod(billingFrequency, awardStartDate, currentDate, lastBilledDate, accountingPeriodService);
+        }
+        billingPeriod.billable = billingPeriod.canThisBeBilled();
+        if (billingPeriod.billable) {
+            billingPeriod.startDate = billingPeriod.determineStartDate();
+            billingPeriod.endDate = billingPeriod.determineEndDateByFrequency();
+        }
+
+        return billingPeriod;
+    }
 
     /*
      * CU Customization (KFSPTS-23675):
