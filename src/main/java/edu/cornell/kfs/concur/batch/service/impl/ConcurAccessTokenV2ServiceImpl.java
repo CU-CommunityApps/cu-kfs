@@ -103,15 +103,10 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     
     protected String findAccessTokenEndpoint() {
         String geolocation = findGeolocationUrl();
-        String relativeEndpoint = findRelativeAccessTokenEndpoint();
-        String fullEndpoint = geolocation + relativeEndpoint;
-        LOG.info("findAccessTokenEndpoint, the full access token endpoint is " + fullEndpoint);
-        return fullEndpoint;
-    }
-    
-    protected String findRelativeAccessTokenEndpoint() {
         String endpoint = concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_ACCESS_TOKEN_ENDPOINT);
-        LOG.info("findRelativeAccessTokenEndpoint, the relative access token endpoint is " + endpoint);
+        String fullEndpoint = geolocation + endpoint;
+        LOG.info("findAccessTokenEndpoint, the access token endpoint is " + endpoint);
+        LOG.info("findAccessTokenEndpoint, the full access token endpoint is " + fullEndpoint);
         return endpoint;
     }
 
