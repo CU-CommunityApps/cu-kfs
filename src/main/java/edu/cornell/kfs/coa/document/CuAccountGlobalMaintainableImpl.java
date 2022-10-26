@@ -8,14 +8,18 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
 import org.kuali.kfs.coa.service.SubAccountTrickleDownInactivationService;
 import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -25,6 +29,7 @@ import edu.cornell.kfs.coa.businessobject.CuAccountGlobal;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
 
 public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableImpl {
+    private static final Logger LOG = LogManager.getLogger();
 
     private transient SubAccountTrickleDownInactivationService subAccountTrickleDownInactivationService;
     private transient SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService;
@@ -178,6 +183,18 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     public void setAccountReversionTrickleDownInactivationService(
             AccountReversionTrickleDownInactivationService accountReversionTrickleDownInactivationService) {
         this.accountReversionTrickleDownInactivationService = accountReversionTrickleDownInactivationService;
+    }
+    
+    @Override
+    public void processAfterRetrieve() {
+        LOG.info("processAfterRetrieve");
+        super.processAfterRetrieve();
+    }
+    
+    @Override
+    public void processAfterPost(MaintenanceDocument document, Map<String, String[]> parameters) {
+        LOG.info("processAfterPost");
+        super.processAfterPost(document, parameters);
     }
 
 }
