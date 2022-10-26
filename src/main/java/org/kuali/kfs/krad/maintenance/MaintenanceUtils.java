@@ -61,7 +61,7 @@ public final class MaintenanceUtils {
      *                               if false only an error will be added
      */
     public static void checkForLockingDocument(MaintenanceDocument document, boolean throwExceptionIfLocked) {
-        LOG.info("starting checkForLockingDocument (by MaintenanceDocument)");
+        LOG.info("starting checkForLockingDocument (by MaintenanceDocument), for document number " + document.getDocumentNumber() + " document class: " + document.getClass());
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
         String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
@@ -69,6 +69,7 @@ public final class MaintenanceUtils {
     }
 
     public static void checkDocumentBlockingDocumentId(String blockingDocId, boolean throwExceptionIfLocked) {
+        LOG.info("checkDocumentBlockingDocumentId, blockingDocId: " + blockingDocId);
         // if we got nothing, then no docs are blocking, and we're done
         if (StringUtils.isBlank(blockingDocId)) {
             return;
