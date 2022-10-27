@@ -38,7 +38,8 @@
     <bean id="contractsGrantsInvoiceCreateDocumentService" 
           class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
           parent="contractsGrantsInvoiceCreateDocumentService-parentBean"
-          p:cuContractsGrantsInvoiceDocumentService-ref="cuContractsGrantsInvoiceDocumentService"/>
+          p:cuContractsGrantsInvoiceDocumentService-ref="cuContractsGrantsInvoiceDocumentService"
+          p:cuCustomerAddressHelperService-ref="cuCustomerAddressHelperService"/>
 
     <bean id="cuContractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService" />
     

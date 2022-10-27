@@ -94,7 +94,9 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import edu.cornell.kfs.module.ar.CuArKeyConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
+import edu.cornell.kfs.module.ar.service.CuCustomerAddressHelperService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 import java.io.File;
@@ -151,6 +153,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     protected OptionsService optionsService;
     protected FinancialSystemUserService financialSystemUserService;
     private CustomerAddressService customerAddressService;
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    private CuCustomerAddressHelperService cuCustomerAddressHelperService;
 
     public static final String REPORT_LINE_DIVIDER = "--------------------------------------------------------------------------------------------------------------";
 
@@ -1756,6 +1763,15 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 .flatMap(entry -> entry.getValue().stream()).collect(Collectors.toSet());
     }
 
+    /*
+     * CU Customization: KFSPTS-26393
+     * When creationProcessType is batch, validate whether a customer address exists for the customer
+     * number and address id associated to the award, presenting an error when that composite key
+     * does not find a corresponding customer address. Prior to this customization, the batch job would
+     * stack trace in method ContractsGrantsInvoiceCreateDocumentServiceImpl.buildInvoiceAddressDetails
+     * when the attempting to retrive the customer address due to one of those primary composite
+     * key values not being valid.
+     */
     /**
      * Perform validation for an award to determine if a CGB Invoice document can be created for the award.
      *
@@ -1764,7 +1780,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * @param creationProcessType invoice document creation process type
      */
     protected void validateAward(List<String> errorList, ContractsAndGrantsBillingAward award, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
-
         if (!award.isActive()) {
             errorList.add(configurationService.getPropertyValueAsString(
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_INACTIVE_ERROR));
@@ -1822,6 +1837,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             errorList.add(configurationService.getPropertyValueAsString(
                     ArKeyConstants.ContractsGrantsInvoiceConstants.ERROR_NO_MATCHING_CONTRACT_GRANTS_INVOICE_OBJECT_CODE)
                     .replace("{0}", award.getProposalNumber()));
+        }
+        /*
+         * CU Customization: KFSPTS-26393
+         */
+        if (!getCuCustomerAddressHelperService().hasValidCustomerAddress(award, creationProcessType)) {
+            errorList.add(configurationService.getPropertyValueAsString(
+                    CuArKeyConstants.ERROR_CG_INVOICE_CREATE_DOCUMENT_CUSTOMER_ADDRESS_INVALID));
         }
     }
 
@@ -2392,5 +2414,19 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     public void setCustomerAddressService(CustomerAddressService customerAddressService) {
         this.customerAddressService = customerAddressService;
+    }
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    public CuCustomerAddressHelperService getCuCustomerAddressHelperService() {
+        return cuCustomerAddressHelperService;
+    }
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    public void setCuCustomerAddressHelperService(CuCustomerAddressHelperService cuCustomerAddressHelperService) {
+        this.cuCustomerAddressHelperService = cuCustomerAddressHelperService;
     }
 }
