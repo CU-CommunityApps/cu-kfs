@@ -248,9 +248,7 @@
                             	<exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
-                                <exclude>WEB-INF/lib/lettuce-*.jar</exclude>
                                 <exclude>WEB-INF/lib/netty-*-4.*.jar</exclude>
-                                <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-aop-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-beans-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-*.jar</exclude>
