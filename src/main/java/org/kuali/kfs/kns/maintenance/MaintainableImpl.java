@@ -65,6 +65,7 @@ import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.valuefinder.DefaultValueFinder;
+import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.core.api.CoreApiServiceLocator;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.core.web.format.FormatException;
@@ -99,8 +100,6 @@ public class MaintainableImpl implements Maintainable {
 
     private static final Logger LOG = LogManager.getLogger();
     
-    public static final String CACHE_NAME = "MaintainableImpl";
-
     private String documentNumber;
     private Object dataObject;
     private Class<?> dataObjectClass;
@@ -1398,7 +1397,7 @@ public class MaintainableImpl implements Maintainable {
      * CU Customization to cache this function
      */
     @Override
-    @Cacheable(value = CACHE_NAME, key = "'lockingDocumentId-'+#root.target.documentNumber")
+    @Cacheable(value = Account.CACHE_NAME, key = "'globaldoc-lockingDocumentId-'+#root.target.documentNumber")
     public String getLockingDocumentId() {
         return getMaintenanceDocumentService().getLockingDocumentId(this, documentNumber);
     }

@@ -134,8 +134,7 @@ public class CacheConfiguration {
                 RuleAttribute.CACHE_NAME,
                 SubAccount.CACHE_NAME,
                 SystemOptions.CACHE_NAME,
-                UniversityDate.CACHE_NAME,
-                MaintainableImpl.CACHE_NAME
+                UniversityDate.CACHE_NAME
         );
     }
 
