@@ -99,7 +99,7 @@ public class MaintainableImpl implements Maintainable {
 
     private static final Logger LOG = LogManager.getLogger();
     
-    public static final String CACHE_NAME = "Maintainable";
+    public static final String CACHE_NAME = "MaintainableImpl";
 
     private String documentNumber;
     private Object dataObject;
