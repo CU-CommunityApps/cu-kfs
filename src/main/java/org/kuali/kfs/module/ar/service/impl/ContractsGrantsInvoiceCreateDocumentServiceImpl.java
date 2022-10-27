@@ -1765,12 +1765,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     /*
      * CU Customization: KFSPTS-26393
-     * When creationProcessType is batch, validate whether a customer address exists for the customer
-     * number and address id associated to the award, presenting an error when that composite key
-     * does not find a corresponding customer address. Prior to this customization, the batch job would
-     * stack trace in method ContractsGrantsInvoiceCreateDocumentServiceImpl.buildInvoiceAddressDetails
-     * when the attempting to retrive the customer address due to one of those primary composite
-     * key values not being valid.
+     * Base code method ContractsGrantsBillingAwardVerificationService.owningAgencyHasCustomerRecord only verifies
+     * that a record exists for the customer associated to the agency that is associated to the award.
+     * i.e. award.getAgency().getCustomerNumber()
+     *
+     * Need to add validation that customer number on the award as part if the customer address composite
+     * key matches the customer number associated to the agency associated to the award.
      */
     /**
      * Perform validation for an award to determine if a CGB Invoice document can be created for the award.
@@ -1812,9 +1812,15 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_NO_VALID_BILLS));
         }
 
+        /*
+         * CU Customization: KFSPTS-26393
+         */
         if (!getContractsGrantsBillingAwardVerificationService().owningAgencyHasCustomerRecord(award)) {
             errorList.add(configurationService.getPropertyValueAsString(
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_AGENCY_NO_CUSTOMER_RECORD));
+        } else if (!getCuCustomerAddressHelperService().awardCustomerMatchesAddressCustomer(award, creationProcessType)) {
+                errorList.add(configurationService.getPropertyValueAsString(
+                        CuArKeyConstants.ERROR_CG_INVOICE_CREATE_DOCUMENT_AGENCY_CUSTOMER_MISMATCH));
         }
 
         if (!hasBillableAccounts(award, creationProcessType)) {
@@ -1838,13 +1844,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     ArKeyConstants.ContractsGrantsInvoiceConstants.ERROR_NO_MATCHING_CONTRACT_GRANTS_INVOICE_OBJECT_CODE)
                     .replace("{0}", award.getProposalNumber()));
         }
-        /*
-         * CU Customization: KFSPTS-26393
-         */
-        if (!getCuCustomerAddressHelperService().hasValidCustomerAddress(award, creationProcessType)) {
-            errorList.add(configurationService.getPropertyValueAsString(
-                    CuArKeyConstants.ERROR_CG_INVOICE_CREATE_DOCUMENT_CUSTOMER_ADDRESS_INVALID));
-        }
+
     }
 
     protected void writeErrorToFile(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,

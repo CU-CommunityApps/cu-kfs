@@ -7,6 +7,6 @@ import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCrea
  * CU Customization: KFSPTS-26393
  */
 public interface CuCustomerAddressHelperService {
-    boolean hasValidCustomerAddress(ContractsAndGrantsBillingAward award,
-            ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
+    boolean awardCustomerMatchesAddressCustomer(ContractsAndGrantsBillingAward award,
+                ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
 }

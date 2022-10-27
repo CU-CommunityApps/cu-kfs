@@ -15,46 +15,34 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
     
     /*
      * CU Customization: KFSPTS-26393
-     * When creationProcessType is BATCH, validate whether a customer address exists for the customer
-     * number and address id associated to the award, presenting an error when that composite key
-     * does not find a corresponding customer address. Prior to this customization, the batch job would
-     * stack trace in method ContractsGrantsInvoiceCreateDocumentServiceImpl.buildInvoiceAddressDetails
-     * when the attempting to retrive the customer address due to one of those primary composite
-     * key values not being valid.
+     * When creationProcessType is BATCH, validate that the customer number on the award as part if the customer
+     * address composite key matches the customer number associated to the agency associated to the award.
      */
-    public boolean hasValidCustomerAddress(ContractsAndGrantsBillingAward award,
+    public boolean awardCustomerMatchesAddressCustomer(ContractsAndGrantsBillingAward award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         
         if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType) {
-            if (StringUtils.isNotBlank(obtainAgencyCustomerNumberFromAward(award)) &&
-                    StringUtils.isNotBlank(award.getCustomerNumber()) && 
+            if (ObjectUtils.isNotNull(award.getAgency().getCustomer().getCustomerNumber()) &&
+                    ObjectUtils.isNotNull(award.getCustomerNumber()) &&
                     ObjectUtils.isNotNull(award.getCustomerAddressIdentifier()) &&
-                    obtainAgencyCustomerNumberFromAward(award).equalsIgnoreCase(award.getCustomerNumber())) {
+                    StringUtils.isNotBlank(award.getAgency().getCustomer().getCustomerNumber()) &&
+                    StringUtils.isNotBlank(award.getCustomerNumber()) &&
+                    award.getAgency().getCustomer().getCustomerNumber().equalsIgnoreCase(award.getCustomerNumber())) {
+                LOG.info("awardCustomerMatchesAddressCustomer: ");
                 return true;
             } else {
-                LOG.info("hasValidCustomerAddress: Invalid customer address detected for award : " +
-                        "Award.Agency.CustomerNumber = " + obtainAgencyCustomerNumberFromAward(award) +
-                        " Award.CustomerNumber = " + award.getCustomerNumber() + " Award.CustomerAddressId = " +
+                LOG.info("awardCustomerMatchesAddressCustomer: Mismatched Customer records detected for " +
+                         "Award.Agency and Award.CustomerAddress : Award.Agency.CustomerNumber = " +
+                            (ObjectUtils.isNull(award.getAgency()) ? "null" : award.getAgency().getCustomer()) +
+                        " Award.CustomerNumber = " + award.getCustomerNumber() +
+                        " Award.CustomerAddressId = " +
                          (ObjectUtils.isNull(award.getCustomerAddressIdentifier()) ? "null" : award.getCustomerAddressIdentifier().intValue()));
                 return false;
             } 
         } else {
-            LOG.info("hasValidCustomerAddress: Customer address validation bypassed due to creationProcessType being " + creationProcessType.getName());
+            LOG.info("awardCustomerMatchesAddressCustomer: Validation bypassed due to creationProcessType being " + creationProcessType.getName());
             return true;
         }
     }
-    
-    /*
-     * CU Customization: KFSPTS-26393
-     */
-    private String obtainAgencyCustomerNumberFromAward(ContractsAndGrantsBillingAward award) {
-         if (ObjectUtils.isNull(award.getAgency())) {
-             return null;
-         }
-         if (ObjectUtils.isNull(award.getAgency().getCustomer())) {
-             return null;
-         }
-         return award.getAgency().getCustomer().getCustomerNumber();
-    }
-    
+
 }
