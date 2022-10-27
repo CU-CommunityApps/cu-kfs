@@ -33,6 +33,10 @@
 	<bean id="customerLoadService" parent="customerLoadService-parentBean"
 		class="edu.cornell.kfs.module.ar.batch.service.impl.CuCustomerLoadServiceImpl" />
         
+    <bean id="cuCustomerAddressHelperService" parent="cuCustomerAddressHelperService-parentBean"/>
+    <bean id="cuCustomerAddressHelperService-parentBean" abstract="true"
+          class="edu.cornell.kfs.module.ar.service.impl.CuCustomerAddressHelperServiceImpl"/>
+        
     <bean id="cuContractsGrantsInvoiceCreateDocumentService" parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
 
     <bean id="contractsGrantsInvoiceCreateDocumentService" 
