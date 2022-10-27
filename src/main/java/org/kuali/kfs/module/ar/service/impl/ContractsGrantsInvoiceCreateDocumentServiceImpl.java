@@ -94,7 +94,9 @@ import org.kuali.kfs.sys.service.UniversityDateService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import edu.cornell.kfs.module.ar.CuArKeyConstants;
 import edu.cornell.kfs.module.ar.CuArParameterKeyConstants;
+import edu.cornell.kfs.module.ar.service.CuCustomerAddressHelperService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 import java.io.File;
@@ -151,6 +153,11 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
     protected OptionsService optionsService;
     protected FinancialSystemUserService financialSystemUserService;
     private CustomerAddressService customerAddressService;
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    private CuCustomerAddressHelperService cuCustomerAddressHelperService;
 
     public static final String REPORT_LINE_DIVIDER = "--------------------------------------------------------------------------------------------------------------";
 
@@ -1647,7 +1654,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         if (ObjectUtils.isNull(contractsGrantsInvoiceDocumentErrorLogs)) {
             contractsGrantsInvoiceDocumentErrorLogs = new ArrayList<>();
         }
-
+       
         performAwardValidation(awards, invalidGroup, qualifiedAwards, creationProcessType);
 
         if (!CollectionUtils.isEmpty(invalidGroup)) {
@@ -1756,6 +1763,24 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 .flatMap(entry -> entry.getValue().stream()).collect(Collectors.toSet());
     }
 
+    /*
+     * CU Customization: KFSPTS-26393
+     * Base code method ContractsGrantsBillingAwardVerificationService.owningAgencyHasCustomerRecord only verifies
+     * that a record exists for the customer associated to the agency that is associated to the award.
+     *
+     * Processing after that validation in method buildInvoiceAddressDetails then uses the customer number that is
+     * directly associated to the award for its processing. That award customer number is used to look up the customer
+     * address in various ways resulting in stacktraces being generated when there is a mismtach between the two
+     * customer identifiers (award-agency-customer and award-customer) OR when that downstream method presumes a
+     * customer address is obtained even though one is not. Validation checks to report these two conditions for the
+     * BATCH creationProcessType have been added so that the batch job will successfully complete and report to the user
+     * what data needs to be fixed. These validation chacks are NOT performed for any other creationProcessType.
+     *
+     * Validate that the customer number on the award as part if the customer address composite key matches the
+     * customer number associated to the agency associated to the award.
+     *
+     * Validate that a customer address identifier exists.
+     */
     /**
      * Perform validation for an award to determine if a CGB Invoice document can be created for the award.
      *
@@ -1764,7 +1789,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * @param creationProcessType invoice document creation process type
      */
     protected void validateAward(List<String> errorList, ContractsAndGrantsBillingAward award, ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
-
         if (!award.isActive()) {
             errorList.add(configurationService.getPropertyValueAsString(
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_INACTIVE_ERROR));
@@ -1797,9 +1821,19 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_NO_VALID_BILLS));
         }
 
+        /*
+         * CU Customization: KFSPTS-26393
+         */
         if (!getContractsGrantsBillingAwardVerificationService().owningAgencyHasCustomerRecord(award)) {
             errorList.add(configurationService.getPropertyValueAsString(
                     ArKeyConstants.CGINVOICE_CREATION_AWARD_AGENCY_NO_CUSTOMER_RECORD));
+        } else if (!getCuCustomerAddressHelperService().agencyCustomerMatchesAwardCustomer(award, creationProcessType)) {
+                errorList.add(configurationService.getPropertyValueAsString(
+                        CuArKeyConstants.CGINVOICE_CREATION_AGENCY_CUSTOMER_MISMATCH));
+        } else if (!getCuCustomerAddressHelperService().customerAddressIdentifierExists(award, creationProcessType)) {
+            errorList.add(configurationService.getPropertyValueAsString(
+                    CuArKeyConstants.CGINVOICE_CREATION_CUSTOMER_ADDRESS_ID_INVALID));
+            
         }
 
         if (!hasBillableAccounts(award, creationProcessType)) {
@@ -1823,6 +1857,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     ArKeyConstants.ContractsGrantsInvoiceConstants.ERROR_NO_MATCHING_CONTRACT_GRANTS_INVOICE_OBJECT_CODE)
                     .replace("{0}", award.getProposalNumber()));
         }
+
     }
 
     protected void writeErrorToFile(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
@@ -2392,5 +2427,19 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     public void setCustomerAddressService(CustomerAddressService customerAddressService) {
         this.customerAddressService = customerAddressService;
+    }
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    public CuCustomerAddressHelperService getCuCustomerAddressHelperService() {
+        return cuCustomerAddressHelperService;
+    }
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    public void setCuCustomerAddressHelperService(CuCustomerAddressHelperService cuCustomerAddressHelperService) {
+        this.cuCustomerAddressHelperService = cuCustomerAddressHelperService;
     }
 }
