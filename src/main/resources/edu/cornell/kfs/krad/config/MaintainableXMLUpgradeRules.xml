@@ -900,10 +900,10 @@
                 <match>edu.cornell.kfs.module.cg.businessobject.CuAward</match>
                 <replacement>org.kuali.kfs.module.cg.businessobject.Award</replacement>
             </pattern>
-            <!-- Re-map Account Delegate Global BOs to our CU-specific subclass. -->
+            <!-- Re-map CU-specific subclass for Account Delegate Global BOs to Account Delegate Global. -->
             <pattern>
-                <match>org.kuali.kfs.coa.businessobject.AccountDelegateGlobal</match>
-                <replacement>edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal</replacement>
+                <match>edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal</match>
+                <replacement>org.kuali.kfs.coa.businessobject.AccountDelegateGlobal</replacement>
             </pattern>
             <!-- We no longer have a CU Higher Ed Function subclass, so re-map it to the base financials one. -->
             <pattern>
