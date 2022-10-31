@@ -73,6 +73,7 @@ import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.beans.PropertyDescriptor;
@@ -1397,8 +1398,9 @@ public class MaintainableImpl implements Maintainable {
      * CU Customization to cache this function
      */
     @Override
-    @Cacheable(value = Account.CACHE_NAME, key = "'globaldoc-lockingDocumentId-'+#root.target.documentNumber")
+    @Cacheable(value=SystemOptions.CACHE_NAME, key="'{getLockingDocumentId}'+#root.target.documentNumber")
     public String getLockingDocumentId() {
+        LOG.info("getLockingDocumentId, entering");
         return getMaintenanceDocumentService().getLockingDocumentId(this, documentNumber);
     }
 
