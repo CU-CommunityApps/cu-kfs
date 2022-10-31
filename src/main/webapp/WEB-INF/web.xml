@@ -338,6 +338,11 @@
         </web-resource-collection>
         <auth-constraint/>
     </security-constraint>
+    
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>WEB-INF/classes/edu/cornell/kfs/webservice.xml</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>dataobjects</servlet-name>
