@@ -48,6 +48,8 @@
              </list>
          </property>
 	</bean>
+	
+	<bean id="accountVerificationWebService" class="edu.cornell.kfs.coa.service.impl.AccountVerificationWebServiceImpl"/>
 
 	<bean id="accountService"  parent="accountService-parentBean" class="edu.cornell.kfs.coa.service.impl.CuAccountServiceImpl">
 			<property name="noteService">
