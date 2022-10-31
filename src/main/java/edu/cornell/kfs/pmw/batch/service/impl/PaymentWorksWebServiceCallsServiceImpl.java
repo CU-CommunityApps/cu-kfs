@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
@@ -25,7 +24,6 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
@@ -71,7 +69,7 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
 
     @Override
     protected Client getClient() {
-        return super.getClient(MultiPartFeature.class);
+        return super.getClient(CuMultiPartWriter.class);
     }
 
     private List<PaymentWorksNewVendorRequestDTO> retrieveAllPaymentWorksApprovedNewVendorRequests() {
@@ -356,18 +354,8 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
 
     private Response performSupplierUpload(InputStream vendorCsvDataStream) {
-        Client client = null;
-
-        try {
-            ClientConfig clientConfig = new ClientConfig();
-            clientConfig.register(CuMultiPartWriter.class);
-            client = ClientBuilder.newClient(clientConfig);
-
-            Invocation request = buildMultiPartRequestForSupplierUpload(client, buildSupplierUploadURI(), vendorCsvDataStream);
-            return request.invoke();
-        } finally {
-            CURestClientUtils.closeQuietly(client);
-        }
+        Invocation request = buildMultiPartRequestForSupplierUpload(getClient(), buildSupplierUploadURI(), vendorCsvDataStream);
+        return request.invoke();
     }
 
     private URI buildSupplierUploadURI() {
