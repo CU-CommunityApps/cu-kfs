@@ -73,6 +73,7 @@
         <jta.version>1.1</jta.version>
         <log4j.version>2.17.1</log4j.version>
         <cxf.version>3.3.10</cxf.version>
+        <wss4j.version>2.2.5</wss4j.version>
     </properties>
 
     <profiles>
@@ -2795,6 +2796,40 @@
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-common</artifactId>
+            <version>${wss4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.geronimo.javamail</groupId>
+                    <artifactId>geronimo-javamail_1.4_mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wss4j</groupId>
+            <artifactId>wss4j-ws-security-dom</artifactId>
+            <version>${wss4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.xml.bind</groupId>
+                    <artifactId>jakarta.xml.bind-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
