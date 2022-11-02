@@ -24,7 +24,6 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
         if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType) {
             if (StringUtils.isNotBlank(obtainCustomerNumberFromAwardAgencyCustomer(award)) &&
                     StringUtils.isNotBlank(award.getCustomerNumber()) &&
-                    ObjectUtils.isNotNull(award.getCustomerAddressIdentifier()) &&
                     obtainCustomerNumberFromAwardAgencyCustomer(award).equalsIgnoreCase(award.getCustomerNumber())) {
                 return true;
             } else {
@@ -53,7 +52,12 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
             if (ObjectUtils.isNotNull(award.getCustomerAddressIdentifier())) {
                 return true;
             } else {
-                LOG.info("customerAddressIdentifierExists: Award.CustomerAddressIdentifier is null. ");
+                LOG.info("customerAddressIdentifierExists: Mismatched Customer records detected for " +
+                         "Award.Agency and Award.CustomerAddress : Award.Agency.CustomerNumber = " +
+                         (StringUtils.isBlank(obtainCustomerNumberFromAwardAgencyCustomer(award)) ? null : obtainCustomerNumberFromAwardAgencyCustomer(award)) +
+                         " Award.CustomerNumber = " + award.getCustomerNumber() +
+                         " Award.CustomerAddressIdentifier = " +
+                         (ObjectUtils.isNull(award.getCustomerAddressIdentifier()) ? "null" : award.getCustomerAddressIdentifier().intValue()));
                 return false;
             } 
         } else {
