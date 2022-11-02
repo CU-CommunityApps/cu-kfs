@@ -22,18 +22,17 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         
         if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType) {
-            if (ObjectUtils.isNotNull(award.getAgency().getCustomer().getCustomerNumber()) &&
-                    ObjectUtils.isNotNull(award.getCustomerNumber()) &&
-                    StringUtils.isNotBlank(award.getAgency().getCustomer().getCustomerNumber()) &&
+            if (StringUtils.isNotBlank(obtainCustomerNumberFromAwardAgencyCustomer(award)) &&
                     StringUtils.isNotBlank(award.getCustomerNumber()) &&
-                    award.getAgency().getCustomer().getCustomerNumber().equalsIgnoreCase(award.getCustomerNumber())) {
+                    ObjectUtils.isNotNull(award.getCustomerAddressIdentifier()) &&
+                    obtainCustomerNumberFromAwardAgencyCustomer(award).equalsIgnoreCase(award.getCustomerNumber())) {
                 return true;
             } else {
                 LOG.info("agencyCustomerMatchesAwardCustomer: Mismatched Customer records detected for " +
                          "Award.Agency and Award.CustomerAddress : Award.Agency.CustomerNumber = " +
-                            (ObjectUtils.isNull(award.getAgency()) ? "null" : (ObjectUtils.isNull(award.getAgency().getCustomer().getCustomerNumber()) ? "null" : award.getAgency().getCustomer().getCustomerNumber())) +
-                        " Award.CustomerNumber = " + award.getCustomerNumber() +
-                        " Award.CustomerAddressIdentifier = " +
+                         (StringUtils.isBlank(obtainCustomerNumberFromAwardAgencyCustomer(award)) ? null : obtainCustomerNumberFromAwardAgencyCustomer(award)) +
+                         " Award.CustomerNumber = " + award.getCustomerNumber() +
+                         " Award.CustomerAddressIdentifier = " +
                          (ObjectUtils.isNull(award.getCustomerAddressIdentifier()) ? "null" : award.getCustomerAddressIdentifier().intValue()));
                 return false;
             } 
@@ -61,6 +60,22 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
             LOG.info("customerAddressIdentifierExists: Validation bypassed due to creationProcessType being " + creationProcessType.getName());
             return true;
         }
+    }
+
+    /*
+     * CU Customization: KFSPTS-26393
+     */
+    private String obtainCustomerNumberFromAwardAgencyCustomer(ContractsAndGrantsBillingAward award) {
+        if (ObjectUtils.isNull(award)) {
+           return null;
+        }
+        if (ObjectUtils.isNull(award.getAgency())) {
+           return null;
+        }
+        if (ObjectUtils.isNull(award.getAgency().getCustomer())) {
+           return null;
+        }
+        return award.getAgency().getCustomer().getCustomerNumber();
     }
 
 }
