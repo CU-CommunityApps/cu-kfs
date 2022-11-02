@@ -1398,10 +1398,11 @@ public class MaintainableImpl implements Maintainable {
      * CU Customization to cache this function
      */
     @Override
-    @Cacheable(value=SystemOptions.CACHE_NAME, key="'{getLockingDocumentId}'+#root.target.documentNumber")
+    @Cacheable(cacheNames = SystemOptions.CACHE_NAME, key="'{getLockingDocumentId}'+#root.target.documentNumber")
     public String getLockingDocumentId() {
-        LOG.info("getLockingDocumentId, entering");
-        return getMaintenanceDocumentService().getLockingDocumentId(this, documentNumber);
+        String lockDocId = getMaintenanceDocumentService().getLockingDocumentId(this, documentNumber);
+        LOG.info("getLockingDocumentId, entering, doc number " + documentNumber + " locking doc id " + lockDocId);
+        return lockDocId;
     }
 
     @Override

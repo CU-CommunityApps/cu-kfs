@@ -59,7 +59,6 @@ import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.impl.role.RoleResponsibility;
 import org.kuali.kfs.kim.impl.type.KimType;
-import org.kuali.kfs.kns.maintenance.MaintainableImpl;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.HomeOrigination;
