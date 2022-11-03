@@ -229,7 +229,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(DelegateMember.class, queryByCriteria, lc.build());
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{" + Role.CACHE_NAME + "}id=' + #p0")
     @Override
     public RoleLite getRoleWithoutMembers(String roleId) throws IllegalStateException {
@@ -346,7 +345,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return new ArrayList<>(roleMap.values());
     }
 
-    // bacport redis annotation; backport fix on FINP-8169
+    // backport fix on FINP-8169
     @Cacheable(cacheNames = Role.CACHE_NAME,
             key = "'{" + Role.CACHE_NAME + "}-namespaceCode=' + #p0 + '|' + 'name='+ #p1")
     @Override
@@ -391,7 +390,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = Role.CACHE_NAME, key = "'{isRoleActive}' + 'id=' + #p0")
     @Override
     public boolean isRoleActive(String roleId) throws IllegalStateException {
@@ -495,7 +493,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return Collections.unmodifiableList(results);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleMember.CACHE_NAME,
             key = "'namespaceCode=' + #p0 + '|' + 'roleName=' + #p1 + '|' + 'qualification=' +" +
                     "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).mapKey(#p2)",
@@ -551,7 +548,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return getCriteriaLookupService().lookup(RoleLite.class, queryByCriteria);
     }
 
-    // backport redis annotations
     @Cacheable(cacheNames = RoleMembership.CACHE_NAME,
             key = "'roleIds=' + T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0)")
     @Override

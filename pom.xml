@@ -254,6 +254,7 @@
                                 <exclude>WEB-INF/lib/spring-context-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-support-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-core-*.jar</exclude>
+                                <exclude>WEB-INF/lib/spring-expression-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-jdbc-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-orm-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-oxm-*.jar</exclude>
@@ -516,10 +517,6 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
-                <exclusion>
                 	<groupId>io.netty</groupId>
                 	<artifactId>netty-common</artifactId>
                 </exclusion>
@@ -729,10 +726,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -910,10 +903,6 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1097,10 +1086,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1279,10 +1264,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1461,10 +1442,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1643,10 +1620,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1823,10 +1796,6 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
