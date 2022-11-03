@@ -33,8 +33,11 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.businessobject.SystemOptions;
-import org.springframework.cache.annotation.Cacheable;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +50,11 @@ public final class MaintenanceUtils {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String WARNING_MAINTENANCE_LOCKED = "warning.maintenance.locked";
+    
+    private static final String LOCKING_DOC_ID_CACHE_NAME = "lockdingDocumentCache";
+    
+    private static CacheManager cacheManager;
+    private static Cache blockingCache;
 
     /**
      * Private Constructor since this is a util class that should never be instantiated.
@@ -63,22 +71,42 @@ public final class MaintenanceUtils {
      *                               if false only an error will be added
      */
     public static void checkForLockingDocument(MaintenanceDocument document, boolean throwExceptionIfLocked) {
-        LOG.info("starting checkForLockingDocument (by MaintenanceDocument), document number: " + document.getDocumentNumber());
+        LOG.info("starting checkForLockingDocument (by MaintenanceDocument) for document " + document.getDocumentNumber());
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
-        String blockingDocId = findLockingDocumentId(document);
+        String blockingDocId = findLockingDocId(document);
         checkDocumentBlockingDocumentId(blockingDocId, throwExceptionIfLocked);
     }
+
+    public static String findLockingDocId(MaintenanceDocument document) {
+        Cache cache = getBlockingCache();
+        Element element = cache.get(document.getDocumentNumber());
+        if (element == null) {
+            String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+            LOG.info("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
+            cache.put(new Element(document.getDocumentNumber(), lockingDocId));
+            return lockingDocId;
+        } else {
+            String lockingDocId = (String) element.getValue();
+            LOG.info("findLockingDocId, found locking ID in cache: " + lockingDocId);
+            return lockingDocId;
+        }
+        
+        //String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+        //return blockingDocId;
+    }
     
-    @Cacheable(cacheNames = SystemOptions.CACHE_NAME, key = "'{" + SystemOptions.CACHE_NAME + "}|documentid=' + #p0.documentNumber")
-    public static String findLockingDocumentId(MaintenanceDocument document) {
-        String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
-        LOG.info("findLockingDocumentId, lockingDocId: " + lockingDocId);
-        return lockingDocId;
+    
+    private static Cache getBlockingCache() {
+        if (blockingCache == null) {
+            cacheManager = CacheManager.getInstance();
+            cacheManager.addCache(LOCKING_DOC_ID_CACHE_NAME);
+            blockingCache = cacheManager.getCache(LOCKING_DOC_ID_CACHE_NAME);
+        }
+        return blockingCache;
     }
 
     public static void checkDocumentBlockingDocumentId(String blockingDocId, boolean throwExceptionIfLocked) {
-        LOG.info("checkDocumentBlockingDocumentId, blockingDocId: " + blockingDocId);
         // if we got nothing, then no docs are blocking, and we're done
         if (StringUtils.isBlank(blockingDocId)) {
             return;
