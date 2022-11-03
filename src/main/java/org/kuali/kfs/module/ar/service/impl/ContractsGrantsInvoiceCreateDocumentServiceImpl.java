@@ -1774,12 +1774,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
      * customer identifiers (award-agency-customer and award-customer) OR when that downstream method presumes a
      * customer address is obtained even though one is not. Validation checks to report these two conditions for the
      * BATCH creationProcessType have been added so that the batch job will successfully complete and report to the user
-     * what data needs to be fixed. These validation chacks are NOT performed for any other creationProcessType.
+     * what data needs to be fixed. These validation checks are NOT performed for any other creationProcessType.
      *
      * Validate that the customer number on the award as part if the customer address composite key matches the
      * customer number associated to the agency associated to the award.
      *
-     * Validate that a customer address identifier exists.
+     * Validate that a customer address for invoicing purposes can be obtained in the same manner that method
+     * buildInvoiceAddressDetails obtains the customer address.
      */
     /**
      * Perform validation for an award to determine if a CGB Invoice document can be created for the award.
@@ -1830,9 +1831,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         } else if (!getCuCustomerAddressHelperService().agencyCustomerMatchesAwardCustomer(award, creationProcessType)) {
                 errorList.add(configurationService.getPropertyValueAsString(
                         CuArKeyConstants.CGINVOICE_CREATION_AGENCY_CUSTOMER_MISMATCH));
-        } else if (!getCuCustomerAddressHelperService().customerAddressIdentifierExists(award, creationProcessType)) {
+        } else if (!getCuCustomerAddressHelperService().invoicingCustomerAddressExists(award, creationProcessType)) {
             errorList.add(configurationService.getPropertyValueAsString(
-                    CuArKeyConstants.CGINVOICE_CREATION_CUSTOMER_ADDRESS_ID_INVALID));
+                    CuArKeyConstants.CGINVOICE_CREATION_CUSTOMER_INVOICING_ADDRESS_MISSING));
             
         }
 

@@ -35,7 +35,8 @@
         
     <bean id="cuCustomerAddressHelperService" parent="cuCustomerAddressHelperService-parentBean"/>
     <bean id="cuCustomerAddressHelperService-parentBean" abstract="true"
-          class="edu.cornell.kfs.module.ar.service.impl.CuCustomerAddressHelperServiceImpl"/>
+          class="edu.cornell.kfs.module.ar.service.impl.CuCustomerAddressHelperServiceImpl"
+          p:customerAddressService-ref="customerAddressService"/>
         
     <bean id="cuContractsGrantsInvoiceCreateDocumentService" parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
 

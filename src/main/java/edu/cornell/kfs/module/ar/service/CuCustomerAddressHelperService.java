@@ -10,6 +10,6 @@ public interface CuCustomerAddressHelperService {
     boolean agencyCustomerMatchesAwardCustomer(ContractsAndGrantsBillingAward award,
                 ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
     
-    boolean customerAddressIdentifierExists(ContractsAndGrantsBillingAward award,
+    boolean invoicingCustomerAddressExists(ContractsAndGrantsBillingAward award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType);
 }

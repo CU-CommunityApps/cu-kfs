@@ -6,12 +6,16 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
+import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
+import org.kuali.kfs.module.ar.document.service.CustomerAddressService;
 
 import edu.cornell.kfs.module.ar.service.CuCustomerAddressHelperService;
 
 public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelperService {
     
     private static final Logger LOG = LogManager.getLogger();
+    
+    private CustomerAddressService customerAddressService;
     
     /*
      * CU Customization: KFSPTS-26393
@@ -43,25 +47,37 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
     
     /*
      * CU Customization: KFSPTS-26393
-     * When creationProcessType is BATCH, validate that the customer address identifier on the award exists.
+     * When creationProcessType is BATCH, validate that a customer address exists in the same manner that it is
+     * obtained by downstream processing in ContractsGrantsInvoiceCreateDocumentServiceImpl.buildInvoiceAddressDetails.
      */
-    public boolean customerAddressIdentifierExists(ContractsAndGrantsBillingAward award,
+    public boolean invoicingCustomerAddressExists(ContractsAndGrantsBillingAward award,
             ContractsAndGrantsInvoiceDocumentCreationProcessType creationProcessType) {
         
+        CustomerAddress customerAddress = null;
+        
         if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType) {
-            if (ObjectUtils.isNotNull(award.getCustomerAddressIdentifier())) {
+            if (ObjectUtils.isNotNull(award.getCustomerAddressIdentifier()) &&
+                    ObjectUtils.isNotNull(award.getCustomerNumber())) {
+                customerAddress = customerAddressService.getByPrimaryKey(award.getCustomerNumber(),
+                        award.getCustomerAddressIdentifier());
+            }
+            if (ObjectUtils.isNull(customerAddress) && 
+                    ObjectUtils.isNotNull(award.getCustomerNumber())) {
+                customerAddress = customerAddressService.getPrimaryAddress(award.getCustomerNumber());
+            }
+            if (ObjectUtils.isNotNull(customerAddress)) {
                 return true;
             } else {
-                LOG.info("customerAddressIdentifierExists: Mismatched Customer records detected for " +
-                         "Award.Agency and Award.CustomerAddress : Award.Agency.CustomerNumber = " +
-                         (StringUtils.isBlank(obtainCustomerNumberFromAwardAgencyCustomer(award)) ? null : obtainCustomerNumberFromAwardAgencyCustomer(award)) +
+                LOG.info("invoicingCustomerAddressExists: Could not obtain valid customer address by neither "
+                        + "customer address composite key nor customer primary address for" +
+                         "Award.CustomerNumber and Award.CustomerAddressIdentifier = " +
                          " Award.CustomerNumber = " + award.getCustomerNumber() +
                          " Award.CustomerAddressIdentifier = " +
                          (ObjectUtils.isNull(award.getCustomerAddressIdentifier()) ? "null" : award.getCustomerAddressIdentifier().intValue()));
-                return false;
+                 return false;
             } 
         } else {
-            LOG.info("customerAddressIdentifierExists: Validation bypassed due to creationProcessType being " + creationProcessType.getName());
+            LOG.info("invoicingCustomerAddressExists: Validation bypassed due to creationProcessType being " + creationProcessType.getName());
             return true;
         }
     }
@@ -80,6 +96,14 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
            return null;
         }
         return award.getAgency().getCustomer().getCustomerNumber();
+    }
+
+    public CustomerAddressService getCustomerAddressService() {
+        return customerAddressService;
+    }
+
+    public void setCustomerAddressService(CustomerAddressService customerAddressService) {
+        this.customerAddressService = customerAddressService;
     }
 
 }
