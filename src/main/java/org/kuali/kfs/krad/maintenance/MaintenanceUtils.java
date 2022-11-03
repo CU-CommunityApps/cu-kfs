@@ -33,6 +33,8 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.businessobject.SystemOptions;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,8 +66,15 @@ public final class MaintenanceUtils {
         LOG.info("starting checkForLockingDocument (by MaintenanceDocument), document number: " + document.getDocumentNumber());
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
-        String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+        String blockingDocId = findLockingDocumentId(document);
         checkDocumentBlockingDocumentId(blockingDocId, throwExceptionIfLocked);
+    }
+    
+    @Cacheable(cacheNames = SystemOptions.CACHE_NAME, key = "'{" + SystemOptions.CACHE_NAME + "}|documentid=' + #p0.documentNumber")
+    public static String findLockingDocumentId(MaintenanceDocument document) {
+        String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+        LOG.info("findLockingDocumentId, lockingDocId: " + lockingDocId);
+        return lockingDocId;
     }
 
     public static void checkDocumentBlockingDocumentId(String blockingDocId, boolean throwExceptionIfLocked) {
