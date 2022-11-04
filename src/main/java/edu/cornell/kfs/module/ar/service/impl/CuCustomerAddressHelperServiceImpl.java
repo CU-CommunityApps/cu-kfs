@@ -57,12 +57,12 @@ public class CuCustomerAddressHelperServiceImpl implements CuCustomerAddressHelp
         
         if (ContractsAndGrantsInvoiceDocumentCreationProcessType.BATCH == creationProcessType) {
             if (ObjectUtils.isNotNull(award.getCustomerAddressIdentifier()) &&
-                    ObjectUtils.isNotNull(award.getCustomerNumber())) {
+                    StringUtils.isNotBlank(award.getCustomerNumber())) {
                 customerAddress = customerAddressService.getByPrimaryKey(award.getCustomerNumber(),
                         award.getCustomerAddressIdentifier());
             }
             if (ObjectUtils.isNull(customerAddress) && 
-                    ObjectUtils.isNotNull(award.getCustomerNumber())) {
+                    StringUtils.isNotBlank(award.getCustomerNumber())) {
                 customerAddress = customerAddressService.getPrimaryAddress(award.getCustomerNumber());
             }
             if (ObjectUtils.isNotNull(customerAddress)) {
