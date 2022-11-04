@@ -385,7 +385,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</class>
+            <class>org.kuali.kfs.kim.impl.responsibility.Responsibility</class>
             <pattern>
                 <match>responsibilityId</match>
                 <replacement>id</replacement>
@@ -994,6 +994,10 @@
                 <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
             </pattern>
             <pattern>
+                <match>org.kuali.kfs.kim.impl.permission.GenericPermission</match>
+                <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
+            </pattern>
+            <pattern>
                 <match>org.kuali.rice.kim.impl.permission.GenericPermissionBo</match>
                 <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
             </pattern>
@@ -1059,6 +1063,10 @@
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.ReviewResponsibility</match>
+                <replacement>org.kuali.kfs.kim.impl.responsibility.Responsibility</replacement>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.responsibility.ReviewResponsibility</match>
                 <replacement>org.kuali.kfs.kim.impl.responsibility.Responsibility</replacement>
             </pattern>
             <pattern>

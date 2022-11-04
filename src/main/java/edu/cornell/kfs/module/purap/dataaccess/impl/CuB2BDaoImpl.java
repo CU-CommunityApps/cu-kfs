@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.dataaccess.impl;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -17,6 +18,8 @@ import org.kuali.kfs.module.purap.dataaccess.impl.B2BDaoImpl;
 import org.kuali.kfs.module.purap.exception.B2BConnectionException;
 import org.springframework.http.MediaType;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+
 public class CuB2BDaoImpl extends B2BDaoImpl {
     private static final Logger LOG = LogManager.getLogger();
 
@@ -31,13 +34,17 @@ public class CuB2BDaoImpl extends B2BDaoImpl {
              if (request.contains("MIME_BOUNDARY_FOR_ATTACHMENTS")) {
             	// KFSPTS-794 : for attachments
                  httpPost.addHeader(HttpHeaders.ACCEPT, MediaType.MULTIPART_RELATED);
-                 httpPost.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_RELATED);
+                 httpPost.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_RELATED + "; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
+                 httpPost.setEntity(new StringEntity(request, StandardCharsets.ISO_8859_1));
+                 LOG.info("content-type is multipart/related; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
              }
              else {
-             httpPost.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
-             httpPost.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML);
+                 httpPost.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
+                 httpPost.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML);
+                 httpPost.setEntity(new StringEntity(request));
+                 LOG.info("content-type is text/xml");
              }
-             httpPost.setEntity(new StringEntity(request));
+             
 
              try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                  final HttpEntity entity = response.getEntity();

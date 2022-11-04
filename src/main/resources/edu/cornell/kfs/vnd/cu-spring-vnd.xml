@@ -26,7 +26,7 @@
 			</list>
 		</property>
 		<property name="jobNames">
-			<list>
+			<list merge="true">
 				<value>commodityCodeUpdateJob</value>
 				<value>vendorInactivateConvertBatchJob</value>
 			</list>
