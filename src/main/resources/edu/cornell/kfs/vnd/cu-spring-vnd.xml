@@ -32,7 +32,7 @@
 			</list>
 		</property>
         <property name="batchFileDirectories">
-          <list>
+          <list merge="true">
             <value>${staging.directory}/vnd</value>
           </list>
         </property>

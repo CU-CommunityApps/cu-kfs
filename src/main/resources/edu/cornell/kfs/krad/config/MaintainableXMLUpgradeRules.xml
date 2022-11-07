@@ -295,7 +295,7 @@
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.kfs.kim.impl.permission.GenericPermission</class>
+            <class>org.kuali.kfs.kim.impl.permission.Permission</class>
             <pattern>
                 <match>permissionId</match>
                 <replacement>id</replacement>
@@ -1003,10 +1003,6 @@
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.kim.impl.permission.GenericPermissionBo</match>
-                <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
-            </pattern>
-            <pattern>
-                <match>org.kuali.kfs.kim.impl.permission.GenericPermission</match>
                 <replacement>org.kuali.kfs.kim.impl.permission.Permission</replacement>
             </pattern>
             <pattern>

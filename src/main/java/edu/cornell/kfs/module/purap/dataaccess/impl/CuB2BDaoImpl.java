@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.purap.dataaccess.impl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -33,15 +35,15 @@ public class CuB2BDaoImpl extends B2BDaoImpl {
              final HttpPost httpPost = new HttpPost(punchoutUrl);
              if (request.contains("MIME_BOUNDARY_FOR_ATTACHMENTS")) {
             	// KFSPTS-794 : for attachments
-                 httpPost.addHeader(HttpHeaders.ACCEPT, MediaType.MULTIPART_RELATED);
-                 httpPost.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_RELATED + "; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
+                 Map<String, String> parameters = new HashMap<String, String>();
+                 parameters.put("boundary", CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
+                 httpPost.addHeader(HttpHeaders.CONTENT_TYPE, new MediaType(MediaType.MULTIPART_RELATED, parameters));
                  httpPost.setEntity(new StringEntity(request, StandardCharsets.ISO_8859_1));
                  LOG.info("content-type is multipart/related; boundary=" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
              }
              else {
-                 httpPost.addHeader(HttpHeaders.ACCEPT, MediaType.TEXT_XML);
                  httpPost.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_XML);
-                 httpPost.setEntity(new StringEntity(request));
+                 httpPost.setEntity(new StringEntity(request,  StandardCharsets.UTF_8));
                  LOG.info("content-type is text/xml");
              }
              
