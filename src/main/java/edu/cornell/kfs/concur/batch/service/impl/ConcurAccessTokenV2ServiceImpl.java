@@ -107,7 +107,7 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
         String fullEndpoint = geolocation + endpoint;
         LOG.info("findAccessTokenEndpoint, the access token endpoint is " + endpoint);
         LOG.info("findAccessTokenEndpoint, the full access token endpoint is " + fullEndpoint);
-        return endpoint;
+        return fullEndpoint;
     }
 
     protected String findGeolocationUrl() {

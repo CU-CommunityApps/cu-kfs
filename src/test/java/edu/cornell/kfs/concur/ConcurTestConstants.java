@@ -68,6 +68,20 @@ public class ConcurTestConstants {
     public static final String CONCUR_GEOLOCATION_CONCURSOLUTIONS2 = "https://us2.api.concursolutions.com";
     public static final String CONCUR_GEOLOCATION_LOCALHOST_SUFFIX2 = "/us2.api.concursolutions.com";
 
+    public static final String CONCUR_TOKEN_API_PATH = "/oauth2/v0/token";
+
+    public static final class CredentialTestValues {
+        public static final String CLIENT_ID = "ab22cd33-6x6x-yy77-z8z8-q0r0s0t0uuvv";
+        public static final String CLIENT_SECRET = "ggg555h7-jjjj-9999-8d8d-z6y5x4w3v2u1";
+        public static final String USERNAME = "cncr_mock_user";
+        public static final String SCOPE = "expense.report.read expense.report.readwrite";
+        public static final int EXPIRES_IN = 3600;
+        public static final int REFRESH_EXPIRES_IN = 1500600700;
+        public static final String ID_TOKEN = "Aa0.Bb1-Cc2_Dd3.Ee4-Ff5_Gg6.Hh7-Ii8_Jj9";
+        public static final String REFRESH_TOKEN = "AceGIKm08642hh77y6y6y6qrs456";
+        public static final String PASSWORD = "PqRRs76tUVV8w9xX1";
+    }
+
     public static class PropertyTestValues {
         public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
         public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
