@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,6 @@ import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowRuntimeException;
 import org.kuali.kfs.kew.api.exception.InvalidActionTakenException;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kew.engine.node.ProcessDefinition;
 import org.kuali.kfs.kew.engine.node.RequestsNode;
 import org.kuali.kfs.kew.engine.node.RouteNode;
 import org.kuali.kfs.kew.engine.node.RouteNodeInstance;
@@ -234,13 +233,6 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
     private boolean isNodeNameInPath(String nodeName, RouteNode node, Set<String> inspected) {
         boolean isInPath = !inspected.contains(node.getRouteNodeId()) && node.getRouteNodeName().equals(nodeName);
         inspected.add(node.getRouteNodeId());
-        if (helper.isSubProcessNode(node)) {
-            ProcessDefinition subProcess = node.getDocumentType().getNamedProcess(node.getRouteNodeName());
-            RouteNode subNode = subProcess.getInitialRouteNode();
-            if (subNode != null) {
-                isInPath = isInPath || isNodeNameInPath(nodeName, subNode, inspected);
-            }
-        }
         for (RouteNode nextNode : node.getNextNodes()) {
             isInPath = isInPath || isNodeNameInPath(nodeName, nextNode, inspected);
         }

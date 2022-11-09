@@ -23,7 +23,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2021-11-17</kfs.version>
+        <kfs.version>2022-01-05</kfs.version>
 
         <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
@@ -39,16 +39,11 @@
         <jsp-api.version>2.3.1</jsp-api.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.7.2</junit.version>
-        <!--Cornell Customization: backport redis-->
-        <lettuce.version>6.1.5.RELEASE</lettuce.version>
         <ojdbc6.version>11.2.0.4</ojdbc6.version>
         <opencsv.version>4.1</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
         <mockito.version>4.0.0</mockito.version>
         <powermock.version>2.0.7</powermock.version>
-        <!--Cornell Customization: backport redis-->
-        <spring-data-redis.version>2.6.0</spring-data-redis.version>
-        <slf4j-api.version>1.7.32</slf4j-api.version>
         <squiggly-filter-jackson.version>1.3.16</squiggly-filter-jackson.version>
         <spring.version>5.3.20</spring.version>
         <spring-security.version>5.6.5</spring-security.version>
@@ -253,17 +248,12 @@
                             	<exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
-                                <exclude>WEB-INF/lib/lettuce-*.jar</exclude>
                                 <exclude>WEB-INF/lib/netty-*-4.*.jar</exclude>
-                                <exclude>WEB-INF/lib/slf4j-api-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-aop-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-beans-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-context-support-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-core-*.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-data-commons-*.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-data-keyvalue-*.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-data-redis-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-expression-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-jdbc-*.jar</exclude>
                                 <exclude>WEB-INF/lib/spring-orm-*.jar</exclude>
@@ -527,14 +517,6 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
-                <exclusion>
                 	<groupId>io.netty</groupId>
                 	<artifactId>netty-common</artifactId>
                 </exclusion>
@@ -744,14 +726,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -929,14 +903,6 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1120,14 +1086,6 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1306,14 +1264,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1492,14 +1442,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1678,14 +1620,6 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1862,14 +1796,6 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>org.springframework.data</groupId>
-                	<artifactId>spring-data-redis</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>biz.paluch.redis</groupId>
-                	<artifactId>lettuce</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2232,114 +2158,12 @@
 					<artifactId>log4j-web</artifactId>
 					<version>${log4j.version}</version>
 				</dependency>
-    
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <version>${spring-data-redis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-aop</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-beans</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context-support</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-expression</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-jdbc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-orm</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-oxm</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-test</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-tx</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
+				
         <dependency>
         	<groupId>org.springframework.security</groupId>
     		<artifactId>spring-security-core</artifactId>
     		<version>${spring-security.version}</version>
 		</dependency>
-        
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>${lettuce.version}</version>
-            <exclusions>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-common</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-transport</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-buffer</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-handler</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>io.netty</groupId>
-            		<artifactId>netty-codec</artifactId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-api.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>

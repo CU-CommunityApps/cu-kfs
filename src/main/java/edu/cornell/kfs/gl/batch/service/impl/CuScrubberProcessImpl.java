@@ -34,6 +34,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     private static final Logger LOG = LogManager.getLogger(CuScrubberProcessImpl.class);
 
     private static final int CONTINUATION_ACCOUNT_DEPTH_LIMIT = 10;
+    private static final String SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT = "ScrubberJobPlantFundIndebtedness";
 
     /**
      * Overridden to update cost share source account entries so that they will post to the
@@ -317,7 +318,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     @Override
     protected String processPlantIndebtedness(OriginEntryInformation scrubbedEntry, ScrubberReportData scrubberReport) {
         // Make sure plant indebtedness processing is enabled.
-        if (parameterService.getParameterValueAsBoolean(ScrubberStep.class, PLANT_INDEBTEDNESS_IND, Boolean.FALSE).booleanValue()) {
+        if (parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.GL, SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT, PLANT_FUND_LIABILITY_IND).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
             ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(ScrubberStep.class,
                     CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());

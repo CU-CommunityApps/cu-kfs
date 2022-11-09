@@ -17,7 +17,7 @@ import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryRateDetail;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.gl.GLParameterConstants;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
-import org.kuali.kfs.gl.batch.PosterIndirectCostRecoveryEntriesStep;
+import org.kuali.kfs.gl.batch.PosterIcrGenerationStep;
 import org.kuali.kfs.gl.batch.service.PosterService;
 import org.kuali.kfs.gl.batch.service.impl.IndirectCostRecoveryGenerationMetadata;
 import org.kuali.kfs.gl.batch.service.impl.PosterServiceImpl;
@@ -93,7 +93,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
             return;
         }
 
-        e.setFinancialDocumentTypeCode(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, GL_INDIRECT_COST_RECOVERY));
+        e.setFinancialDocumentTypeCode(parameterService.getParameterValueAsString(PosterIcrGenerationStep.class, DOCUMENT_TYPE));
         e.setFinancialSystemOriginationCode(parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.GL_ORIGINATION_CODE));
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING, Locale.US);
         /*CUMod - start*/
@@ -134,7 +134,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
         }
 
         if (et.getBalanceTypeCode().equals(et.getOption().getExtrnlEncumFinBalanceTypCd()) || et.getBalanceTypeCode().equals(et.getOption().getIntrnlEncumFinBalanceTypCd()) || et.getBalanceTypeCode().equals(et.getOption().getPreencumbranceFinBalTypeCd()) || et.getBalanceTypeCode().equals(et.getOption().getCostShareEncumbranceBalanceTypeCd())) {
-            e.setDocumentNumber(parameterService.getParameterValueAsString(PosterIndirectCostRecoveryEntriesStep.class, GL_INDIRECT_COST_RECOVERY));
+            e.setDocumentNumber(parameterService.getParameterValueAsString(PosterIcrGenerationStep.class, DOCUMENT_TYPE));
         }
         e.setProjectCode(et.getProjectCode());
         if (GeneralLedgerConstants.getDashOrganizationReferenceId().equals(et.getOrganizationReferenceId())) {
