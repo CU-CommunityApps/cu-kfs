@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -84,7 +84,6 @@ import edu.cornell.kfs.sys.cache.RedisEventListenerLazyInitProxy;
 
 /*
  * Cornell Customizations:
- * -- Backported redis caching changes, including the version upgrades for Lettuce and Spring Data Redis.
  * -- Updated caching to use an Ehcache-and-Redis hybrid setup.
  */
 @Configuration
@@ -94,7 +93,7 @@ public class CacheConfiguration {
     @Bean
     public Set<String> cacheNames() {
         return Set.of(
-                Account.CACHE_NAME ,
+                Account.CACHE_NAME,
                 AccountingPeriod.CACHE_NAME,
                 AccountsReceivableCustomerInvoiceDetail.CACHE_NAME,
                 BalanceType.CACHE_NAME,

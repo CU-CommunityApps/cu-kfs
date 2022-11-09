@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2022 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -83,7 +83,8 @@ public final class LaborPendingEntryGenerator {
 
         final boolean generateA2Entries = SpringContext.getBean(ParameterService.class)
                 .getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION,
-                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.GENERATE_A2_ENTRIES);
+                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.A2_ENTRIES_IND
+                );
         if (generateA2Entries) {
             LaborLedgerPendingEntry expenseA21PendingEntry = laborPendingEntryConverterService
                     .getExpenseA21PendingEntry(document, accountingLine, sequenceHelper);
@@ -150,7 +151,7 @@ public final class LaborPendingEntryGenerator {
                     // Use parameter default if labor benefit rate category code is blank
                     if (StringUtils.isBlank(laborBenefitRateCategoryCode)) {
                         laborBenefitRateCategoryCode = parameterService.getParameterValueAsString(Account.class,
-                                 COAParameterConstants.BENEFIT_RATE);
+                                COAParameterConstants.BENEFIT_RATE);
                     }
 
                     //create a  map for the search criteria to lookup the fringe benefit percentage
@@ -202,7 +203,8 @@ public final class LaborPendingEntryGenerator {
 
         final boolean generateA2Entries = SpringContext.getBean(ParameterService.class)
                 .getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION,
-                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.GENERATE_A2_ENTRIES);
+                        KfsParameterConstants.DOCUMENT_COMPONENT, LaborParameterConstants.A2_ENTRIES_IND
+                );
         if (generateA2Entries) {
             LaborLedgerPendingEntry benefitA21PendingEntry = laborPendingEntryConverterService
                     .getBenefitA21PendingEntry(document, accountingLine, sequenceHelper, benefitAmount,
