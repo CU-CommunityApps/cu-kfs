@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
@@ -16,13 +17,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurTestConstants.CredentialTestValues;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.concur.util.MockConcurUtils;
 import edu.cornell.kfs.concur.web.mock.MockConcurAuthenticationEndpointController;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.web.mock.MockMvcWebServerExtension;
@@ -35,76 +36,56 @@ public class ConcurAccessTokenV2ServiceImplTest {
     @RegisterExtension
     MockMvcWebServerExtension webServerExtension = new MockMvcWebServerExtension();
 
-    private String currentRefreshToken;
-    private String currentGeolocation;
     private WebServiceCredentialService mockWebServiceCredentialService;
+    private ConcurBatchUtilityService mockConcurBatchUtilityService;
     private ConcurAccessTokenV2ServiceImpl concurAccessTokenV2Service;
     private MockConcurAuthenticationEndpointController mockEndpoint;
 
     @BeforeEach
     void setUp() throws Exception {
-        this.currentRefreshToken = CredentialTestValues.REFRESH_TOKEN;
-        this.currentGeolocation = webServerExtension.getServerUrl()
+        String defaultRefreshToken = CredentialTestValues.REFRESH_TOKEN;
+        String defaultGeolocation = webServerExtension.getServerUrl()
                 + ConcurTestConstants.CONCUR_GEOLOCATION_LOCALHOST_SUFFIX;
-        this.mockWebServiceCredentialService = createMockWebServiceCredentialService();
+        this.mockWebServiceCredentialService = createMockWebServiceCredentialService(defaultRefreshToken);
+        this.mockConcurBatchUtilityService = createMockConcurBatchUtilityService(defaultGeolocation);
         
         this.concurAccessTokenV2Service = new ConcurAccessTokenV2ServiceImpl();
         concurAccessTokenV2Service.setWebServiceCredentialService(mockWebServiceCredentialService);
-        concurAccessTokenV2Service.setConcurBatchUtilityService(createMockConcurBatchUtilityService());
+        concurAccessTokenV2Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
         concurAccessTokenV2Service.setConcurGeolocationUrlPattern(
                 ConcurTestConstants.CONCUR_GEOLOCATION_PATTERN_LOCALHOST);
         
         this.mockEndpoint = new MockConcurAuthenticationEndpointController();
-        mockEndpoint.setCurrentRefreshToken(currentRefreshToken);
-        mockEndpoint.setCurrentGeolocation(currentGeolocation);
+        mockEndpoint.setCurrentRefreshToken(defaultRefreshToken);
+        mockEndpoint.setCurrentGeolocation(defaultGeolocation);
         
         webServerExtension.initializeStandaloneMockMvcWithControllers(mockEndpoint);
     }
 
-    private WebServiceCredentialService createMockWebServiceCredentialService() {
-        String[][] staticCredentials = {
-                {WebServiceCredentialKeys.CLIENT_ID, CredentialTestValues.CLIENT_ID},
-                {WebServiceCredentialKeys.SECRET_ID, CredentialTestValues.CLIENT_SECRET},
-                {WebServiceCredentialKeys.USER_NAME, CredentialTestValues.USERNAME},
-                {WebServiceCredentialKeys.REQUEST_TOKEN, CredentialTestValues.PASSWORD},
-        };
-        WebServiceCredentialService credentialService = Mockito.mock(WebServiceCredentialService.class);
-        for (String[] staticCredential : staticCredentials) {
-            Mockito.when(credentialService.getWebServiceCredentialValue(
-                    WebServiceCredentialKeys.GROUP_CODE, staticCredential[0]))
-                    .thenReturn(staticCredential[1]);
-        }
-        Mockito.when(credentialService.getWebServiceCredentialValue(
-                WebServiceCredentialKeys.GROUP_CODE, WebServiceCredentialKeys.REFRESH_TOKEN))
-                .then(invocation -> currentRefreshToken);
-        Mockito.doAnswer(invocation -> currentRefreshToken = invocation.getArgument(2))
-                .when(credentialService).updateWebServiceCredentialValue(
-                        Mockito.eq(WebServiceCredentialKeys.GROUP_CODE),
-                        Mockito.eq(WebServiceCredentialKeys.REFRESH_TOKEN), Mockito.anyString());
-        return credentialService;
+    private WebServiceCredentialService createMockWebServiceCredentialService(String defaultRefreshToken) {
+        return MockConcurUtils.createMockWebServiceCredentialServiceBackedByCredentials(
+                WebServiceCredentialKeys.GROUP_CODE,
+                Map.entry(WebServiceCredentialKeys.CLIENT_ID, CredentialTestValues.CLIENT_ID),
+                Map.entry(WebServiceCredentialKeys.SECRET_ID, CredentialTestValues.CLIENT_SECRET),
+                Map.entry(WebServiceCredentialKeys.USER_NAME, CredentialTestValues.USERNAME),
+                Map.entry(WebServiceCredentialKeys.REQUEST_TOKEN, CredentialTestValues.PASSWORD),
+                Map.entry(WebServiceCredentialKeys.REFRESH_TOKEN, defaultRefreshToken));
     }
 
-    private ConcurBatchUtilityService createMockConcurBatchUtilityService() {
-        ConcurBatchUtilityService utilityService = Mockito.mock(ConcurBatchUtilityService.class);
-        Mockito.when(utilityService.getConcurParameterValue(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES))
-                .thenReturn(String.valueOf(1));
-        Mockito.when(utilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_ACCESS_TOKEN_ENDPOINT))
-                .thenReturn(ConcurTestConstants.CONCUR_TOKEN_API_PATH);
-        Mockito.when(utilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_GEOLOCATION_URL))
-                .then(invocation -> currentGeolocation);
-        Mockito.doAnswer(invocation -> currentGeolocation = invocation.getArgument(1))
-                .when(utilityService).setConcurParameterValue(
-                        Mockito.eq(ConcurParameterConstants.CONCUR_GEOLOCATION_URL), Mockito.anyString());
-        return utilityService;
+    private ConcurBatchUtilityService createMockConcurBatchUtilityService(String defaultGeolocation) {
+        return MockConcurUtils.createMockConcurBatchUtilityServiceBackedByParameters(
+                Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)),
+                Map.entry(ConcurParameterConstants.CONCUR_ACCESS_TOKEN_ENDPOINT,
+                        ConcurTestConstants.CONCUR_TOKEN_API_PATH),
+                Map.entry(ConcurParameterConstants.CONCUR_GEOLOCATION_URL, defaultGeolocation));
     }
 
     @AfterEach
     void tearDown() throws Exception {
         mockEndpoint = null;
         concurAccessTokenV2Service = null;
+        mockConcurBatchUtilityService = null;
         mockWebServiceCredentialService = null;
-        currentGeolocation = null;
-        currentRefreshToken = null;
     }
 
     @Test
@@ -114,17 +95,17 @@ public class ConcurAccessTokenV2ServiceImplTest {
 
     @Test
     void testRetrieveAccessTokenAndNewGeolocation() throws Exception {
-        String oldGeolocation = currentGeolocation;
+        String oldGeolocation = getCurrentGeolocation();
         String newGeolocation = webServerExtension.getServerUrl()
                 + ConcurTestConstants.CONCUR_GEOLOCATION_LOCALHOST_SUFFIX2;
         
         mockEndpoint.setCurrentGeolocation(newGeolocation);
         assertAccessTokenRetrievalSucceeds(false, true);
         
-        currentGeolocation = oldGeolocation;
+        setCurrentGeolocation(oldGeolocation);
         assertAccessTokenRetrievalFails();
         
-        currentGeolocation = newGeolocation;
+        setCurrentGeolocation(newGeolocation);
         assertAccessTokenRetrievalSucceeds(false, false);
     }
 
@@ -142,18 +123,18 @@ public class ConcurAccessTokenV2ServiceImplTest {
     }
 
     private void testRetrieveAccessTokenAndNewRefreshToken(boolean alsoExpectNewGeolocation) {
-        String oldRefreshToken = currentRefreshToken;
+        String oldRefreshToken = getCurrentRefreshToken();
         String newRefreshToken;
         
         mockEndpoint.setForceNewRefreshToken(true);
         assertAccessTokenRetrievalSucceeds(true, alsoExpectNewGeolocation);
         
-        newRefreshToken = currentRefreshToken;
+        newRefreshToken = getCurrentRefreshToken();
         mockEndpoint.setForceNewRefreshToken(false);
-        currentRefreshToken = oldRefreshToken;
+        setCurrentRefreshToken(oldRefreshToken);
         assertAccessTokenRetrievalFails();
         
-        currentRefreshToken = newRefreshToken;
+        setCurrentRefreshToken(newRefreshToken);
         assertAccessTokenRetrievalSucceeds(false, false);
     }
 
@@ -174,16 +155,15 @@ public class ConcurAccessTokenV2ServiceImplTest {
     @ParameterizedTest
     @MethodSource("invalidCredentialsForRetrievingAccessToken")
     void testBadClientRequestWhenRetrievingAccessToken(String credentialKey, String credentialValue) throws Exception {
-        Mockito.when(mockWebServiceCredentialService.getWebServiceCredentialValue(
-                WebServiceCredentialKeys.GROUP_CODE, credentialKey))
-                .thenReturn(credentialValue);
+        mockWebServiceCredentialService.updateWebServiceCredentialValue(
+                WebServiceCredentialKeys.GROUP_CODE, credentialKey, credentialValue);
         assertAccessTokenRetrievalFails();
     }
 
     @Test
     void testCannotRetrieveAccessTokenFromInvalidEndpoint() throws Exception {
         String invalidGeolocation = webServerExtension.getServerUrl() + INVALID_GEOLOCATION_SUFFIX;
-        currentGeolocation = invalidGeolocation;
+        setCurrentGeolocation(invalidGeolocation);
         assertAccessTokenRetrievalFails();
     }
 
@@ -201,17 +181,17 @@ public class ConcurAccessTokenV2ServiceImplTest {
 
     @Test
     void testRetrieveNewRefreshTokenAndNewGeolocation() throws Exception {
-        String oldGeolocation = currentGeolocation;
+        String oldGeolocation = getCurrentGeolocation();
         String newGeolocation = webServerExtension.getServerUrl()
                 + ConcurTestConstants.CONCUR_GEOLOCATION_LOCALHOST_SUFFIX2;
         
         mockEndpoint.setCurrentGeolocation(newGeolocation);
         assertNewRefreshTokenRetrievalSucceeds(true);
         
-        currentGeolocation = oldGeolocation;
+        setCurrentGeolocation(oldGeolocation);
         assertNewRefreshTokenRetrievalFails();
         
-        currentGeolocation = newGeolocation;
+        setCurrentGeolocation(newGeolocation);
         assertNewRefreshTokenRetrievalSucceeds(false);
     }
 
@@ -239,16 +219,15 @@ public class ConcurAccessTokenV2ServiceImplTest {
     @MethodSource("invalidCredentialsForRetrievingNewRefreshToken")
     void testBadClientRequestWhenRetrievingNewRefreshToken(String credentialKey, String credentialValue)
             throws Exception {
-        Mockito.when(mockWebServiceCredentialService.getWebServiceCredentialValue(
-                WebServiceCredentialKeys.GROUP_CODE, credentialKey))
-                .thenReturn(credentialValue);
+        mockWebServiceCredentialService.updateWebServiceCredentialValue(
+                WebServiceCredentialKeys.GROUP_CODE, credentialKey, credentialValue);
         assertNewRefreshTokenRetrievalFails();
     }
 
     @Test
     void testCannotRetrieveNewRefreshTokenFromInvalidEndpoint() throws Exception {
         String invalidGeolocation = webServerExtension.getServerUrl() + INVALID_GEOLOCATION_SUFFIX;
-        currentGeolocation = invalidGeolocation;
+        setCurrentGeolocation(invalidGeolocation);
         assertNewRefreshTokenRetrievalFails();
     }
 
@@ -261,58 +240,65 @@ public class ConcurAccessTokenV2ServiceImplTest {
 
     private void assertAccessTokenRetrievalSucceeds(boolean expectRefreshTokenToChange,
             boolean expectGeolocationToChange) {
-        String oldGeolocation = currentGeolocation;
-        String oldRefreshToken = currentRefreshToken;
+        String oldGeolocation = getCurrentGeolocation();
+        String oldRefreshToken = getCurrentRefreshToken();
+        
         String newAccessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
+        
+        String newGeolocation = getCurrentGeolocation();
+        String newRefreshToken = getCurrentRefreshToken();
         
         assertTrue(mockEndpoint.isAccessTokenActive(newAccessToken),
                 "The retrieved access token does not match the one recorded by the mock server");
-        assertEquals(mockEndpoint.getCurrentRefreshToken(), currentRefreshToken,
+        assertEquals(mockEndpoint.getCurrentRefreshToken(), newRefreshToken,
                 "Mismatched refresh tokens between client and server");
-        assertEquals(mockEndpoint.getCurrentGeolocation(), currentGeolocation,
+        assertEquals(mockEndpoint.getCurrentGeolocation(), newGeolocation,
                 "Mismatched geolocations between client and server");
         
         if (expectRefreshTokenToChange) {
-            assertNotEquals(oldRefreshToken, currentRefreshToken, "A new refresh token should have been returned");
+            assertNotEquals(oldRefreshToken, newRefreshToken, "A new refresh token should have been returned");
         } else {
-            assertEquals(oldRefreshToken, currentRefreshToken, "The refresh token in storage should not have changed");
+            assertEquals(oldRefreshToken, newRefreshToken, "The refresh token in storage should not have changed");
         }
         
         if (expectGeolocationToChange) {
-            assertNotEquals(oldGeolocation, currentGeolocation, "A new geolocation should have been returned");
+            assertNotEquals(oldGeolocation, newGeolocation, "A new geolocation should have been returned");
         } else {
-            assertEquals(oldGeolocation, currentGeolocation, "The geolocation in storage should not have changed");
+            assertEquals(oldGeolocation, newGeolocation, "The geolocation in storage should not have changed");
         }
     }
 
     private void assertAccessTokenRetrievalFails() {
-        String oldRefreshToken = currentRefreshToken;
-        String oldGeolocation = currentGeolocation;
+        String oldRefreshToken = getCurrentRefreshToken();
+        String oldGeolocation = getCurrentGeolocation();
         assertThrows(RuntimeException.class, () -> concurAccessTokenV2Service.retrieveNewAccessBearerToken(),
                 "The service should have failed to retrieve a new access token");
-        assertEquals(oldRefreshToken, currentRefreshToken,
+        assertEquals(oldRefreshToken, getCurrentRefreshToken(),
                 "The stored refresh token should not have changed after failing to retrieve a new access token");
-        assertEquals(oldGeolocation, currentGeolocation,
+        assertEquals(oldGeolocation, getCurrentGeolocation(),
                 "The stored geolocation should not have changed after failing to retrieve a new access token");
     }
 
     private void assertNewRefreshTokenRetrievalSucceeds(boolean expectGeolocationToChange) {
-        String oldGeolocation = currentGeolocation;
-        String oldRefreshToken = currentRefreshToken;
+        String oldGeolocation = getCurrentGeolocation();
+        String oldRefreshToken = getCurrentRefreshToken();
         mockEndpoint.setForceNewRefreshToken(true);
         
         concurAccessTokenV2Service.retrieveAndPersistNewRefreshToken();
         
-        assertEquals(mockEndpoint.getCurrentRefreshToken(), currentRefreshToken,
+        String newGeolocation = getCurrentGeolocation();
+        String newRefreshToken = getCurrentRefreshToken();
+        
+        assertEquals(mockEndpoint.getCurrentRefreshToken(), newRefreshToken,
                 "Mismatched refresh tokens between client and server");
-        assertEquals(mockEndpoint.getCurrentGeolocation(), currentGeolocation,
+        assertEquals(mockEndpoint.getCurrentGeolocation(), newGeolocation,
                 "Mismatched geolocations between client and server");
-        assertNotEquals(oldRefreshToken, currentRefreshToken, "A new refresh token should have been returned");
+        assertNotEquals(oldRefreshToken, newRefreshToken, "A new refresh token should have been returned");
         
         if (expectGeolocationToChange) {
-            assertNotEquals(oldGeolocation, currentGeolocation, "A new geolocation should have been returned");
+            assertNotEquals(oldGeolocation, newGeolocation, "A new geolocation should have been returned");
         } else {
-            assertEquals(oldGeolocation, currentGeolocation, "The geolocation in storage should not have changed");
+            assertEquals(oldGeolocation, newGeolocation, "The geolocation in storage should not have changed");
         }
     }
 
@@ -321,15 +307,34 @@ public class ConcurAccessTokenV2ServiceImplTest {
     }
 
     private void assertNewRefreshTokenRetrievalFails(boolean forceNewRefreshToken) {
-        String oldGeolocation = currentGeolocation;
-        String oldRefreshToken = currentRefreshToken;
+        String oldGeolocation = getCurrentGeolocation();
+        String oldRefreshToken = getCurrentRefreshToken();
         mockEndpoint.setForceNewRefreshToken(forceNewRefreshToken);
         assertThrows(RuntimeException.class, () -> concurAccessTokenV2Service.retrieveAndPersistNewRefreshToken(),
                 "The service should have failed to retrieve a new refresh token");
-        assertEquals(oldRefreshToken, currentRefreshToken,
+        assertEquals(oldRefreshToken, getCurrentRefreshToken(),
                 "The stored refresh token should not have changed after failing to retrieve a new refresh token");
-        assertEquals(oldGeolocation, currentGeolocation,
+        assertEquals(oldGeolocation, getCurrentGeolocation(),
                 "The stored geolocation should not have changed after failing to retrieve a new refresh token");
+    }
+
+    private String getCurrentRefreshToken() {
+        return mockWebServiceCredentialService.getWebServiceCredentialValue(
+                WebServiceCredentialKeys.GROUP_CODE, WebServiceCredentialKeys.REFRESH_TOKEN);
+    }
+
+    private void setCurrentRefreshToken(String currentRefreshToken) {
+        mockWebServiceCredentialService.updateWebServiceCredentialValue(
+                WebServiceCredentialKeys.GROUP_CODE, WebServiceCredentialKeys.REFRESH_TOKEN, currentRefreshToken);
+    }
+
+    private String getCurrentGeolocation() {
+        return mockConcurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_GEOLOCATION_URL);
+    }
+
+    private void setCurrentGeolocation(String currentGeolocation) {
+        mockConcurBatchUtilityService.setConcurParameterValue(
+                ConcurParameterConstants.CONCUR_GEOLOCATION_URL, currentGeolocation);
     }
 
 }

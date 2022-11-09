@@ -8,15 +8,14 @@ import java.util.stream.Stream;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public final class MockConcurUtils {
 
     @SafeVarargs
     public static ConcurBatchUtilityService createMockConcurBatchUtilityServiceBackedByParameters(
             Map.Entry<String, String>... parameters) {
-        Map<String, String> parameterMap = Stream.of(parameters)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (val1, val2) -> val2, HashMap::new));
+        Map<String, String> parameterMap = createMutableMap(parameters);
         return createMockConcurBatchUtilityServiceBackedByParameterMap(parameterMap);
     }
 
@@ -28,6 +27,31 @@ public final class MockConcurUtils {
         Mockito.doAnswer(invocation -> parameterMap.put(invocation.getArgument(0), invocation.getArgument(1)))
                 .when(mockService).setConcurParameterValue(Mockito.any(), Mockito.any());
         return mockService;
+    }
+
+    @SafeVarargs
+    public static WebServiceCredentialService createMockWebServiceCredentialServiceBackedByCredentials(
+            String groupCode, Map.Entry<String, String>... credentials) {
+        Map<String, String> credentialMap = createMutableMap(credentials);
+        return createMockWebServiceCredentialServiceBackedByCredentialMap(groupCode, credentialMap);
+    }
+
+    public static WebServiceCredentialService createMockWebServiceCredentialServiceBackedByCredentialMap(
+            String groupCode, Map<String, String> credentialMap) {
+        WebServiceCredentialService mockService = Mockito.mock(WebServiceCredentialService.class);
+        Mockito.when(mockService.getWebServiceCredentialValue(Mockito.eq(groupCode), Mockito.any()))
+                .then(invocation -> credentialMap.get(invocation.getArgument(1)));
+        Mockito.doAnswer(invocation -> credentialMap.put(invocation.getArgument(1), invocation.getArgument(2)))
+                .when(mockService).updateWebServiceCredentialValue(
+                        Mockito.eq(groupCode), Mockito.any(), Mockito.any());
+        return mockService;
+    }
+
+    @SafeVarargs
+    private static Map<String, String> createMutableMap(Map.Entry<String, String>... entries) {
+        return Stream.of(entries)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (val1, val2) -> val2, HashMap::new));
     }
 
 }
