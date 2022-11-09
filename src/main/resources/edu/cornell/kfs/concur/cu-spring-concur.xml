@@ -680,6 +680,7 @@
   <bean id="concurAccessTokenV2Service-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurAccessTokenV2ServiceImpl" abstract="true">
       <property name="webServiceCredentialService" ref="webServiceCredentialService"/>
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
+      <property name="concurGeolocationUrlPattern" value="${cncr.geolocation.url.pattern}"/>
   </bean>
   
   <bean id="concurExpenseV3Service" parent="concurExpenseV3Service-parentBean" />

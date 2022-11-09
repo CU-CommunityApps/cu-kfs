@@ -255,7 +255,9 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected String getRequestV4Endpoint() {
-        return getNonBlankConcurParameterValue(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT);
+        String geolocation = getNonBlankConcurParameterValue(ConcurParameterConstants.CONCUR_GEOLOCATION_URL);
+        String requestV4Path = getNonBlankConcurParameterValue(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT);
+        return geolocation + requestV4Path;
     }
 
     protected int getRequestV4QueryPageSize() {

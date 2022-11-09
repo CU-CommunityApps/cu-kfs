@@ -239,6 +239,10 @@ public class ConcurAccessTokenV2ServiceImpl implements ConcurAccessTokenV2Servic
     }
     
     public void setConcurGeolocationUrlPattern(String concurGeolocationUrlPattern) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("setConcurGeolocationUrlPattern, Initializing case-insensitive pattern for string: "
+                    + concurGeolocationUrlPattern);
+        }
         Pattern pattern = Pattern.compile(concurGeolocationUrlPattern, Pattern.CASE_INSENSITIVE);
         setConcurGeolocationUrlPattern(pattern);
     }
