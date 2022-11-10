@@ -70,7 +70,7 @@ public final class MaintenanceUtils {
      *                               if false only an error will be added
      */
     public static void checkForLockingDocument(MaintenanceDocument document, boolean throwExceptionIfLocked) {
-        LOG.info("starting checkForLockingDocument (by MaintenanceDocument) for document " + document.getDocumentNumber());
+        LOG.info("starting checkForLockingDocument (by MaintenanceDocument)");
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
         String blockingDocId = findLockingDocId(document);
@@ -79,41 +79,46 @@ public final class MaintenanceUtils {
 
     public static String findLockingDocId(MaintenanceDocument document) {
         if (shouldUseCache(document)) {
-            LOG.info("findLockingDocId, allow cache for this document type");
+            LOG.debug("findLockingDocId, allow cache for this document type");
             Cache cache = getBlockingCache();
-            String cacheKey = "lockingDocumentId_" + document.getDocumentNumber();
+            String cacheKey = buildLockingDocumentCacheKey(document.getDocumentNumber());
             ValueWrapper valueWrapper = cache.get(cacheKey);
             if (valueWrapper == null) {
                 String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
-                LOG.info("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
+                }
                 cache.put(cacheKey, lockingDocId);
                 
                 return lockingDocId;
             } else {
                 String lockingDocId = (String) valueWrapper.get();
-                LOG.info("findLockingDocId, found locking ID in cache: " + lockingDocId);
+                LOG.debug("findLockingDocId, found locking ID in cache: " + lockingDocId);
                 return lockingDocId;
             }
         } else {
-            LOG.info("findLockingDocId, DO NOT allow cache for this document type");
+            LOG.debug("findLockingDocId, DO NOT allow cache for this document type");
             String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
             return blockingDocId;
         }
     }
     
-    private static boolean shouldUseCache(MaintenanceDocument document) {
+    /*
+     * If additional document types are added, logic needs to be added to clear the cache when new maintenance locks are added.
+     * See CuAccountGlobalMaintainableImpl.generateMaintenanceLocks for axample
+     */
+    public static boolean shouldUseCache(MaintenanceDocument document) {
         String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();
-        LOG.info("shouldUseCache, docType: " + docType);
         return StringUtils.equalsIgnoreCase(docType, CUKFSConstants.FinancialDocumentTypeCodes.ACCOUNT_GLOBAL);
     }
     
+    public static String buildLockingDocumentCacheKey(String documentNumber) {
+        return CUKFSConstants.LOCKING_DOCUMENT_CACHE_KEY + documentNumber;
+    }
     
-    private static Cache getBlockingCache() {
+    
+    public static Cache getBlockingCache() {
         if (blockingCache == null) {
-            for (CacheManager cm : CoreImplServiceLocator.getCacheManagerRegistry().getCacheManagers()) {
-                LOG.info("getBlockingCache, " + StringUtils.join(cm.getCacheNames(), ", "));
-            }
-            
             CacheManager cm = CoreImplServiceLocator.getCacheManagerRegistry()
                     .getCacheManagerByCacheName(SystemOptions.CACHE_NAME);
             blockingCache = cm.getCache(SystemOptions.CACHE_NAME);

@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
@@ -16,15 +18,18 @@ import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.springframework.cache.Cache;
 
 import edu.cornell.kfs.coa.businessobject.CuAccountGlobal;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
 
 public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableImpl {
+    private static final Logger LOG = LogManager.getLogger();
 
     private transient SubAccountTrickleDownInactivationService subAccountTrickleDownInactivationService;
     private transient SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService;
@@ -41,6 +46,13 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
                 .map(accountDetail -> buildTemporaryAccountForMaintenanceLocks(accountDetail, closedStatusForLocks))
                 .filter(account -> isClosingAccount(account, oldAccountClosedStatuses))
                 .flatMap(this::generateTrickleDownMaintenanceLocks);
+        
+        Cache cache = MaintenanceUtils.getBlockingCache();
+        String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("generateMaintenanceLocks, clear cache id: " + cacheKey);
+        }
+        cache.evictIfPresent(cacheKey);
         
         return Stream.concat(accountLocks.stream(), trickleDownLocks)
                 .collect(Collectors.toUnmodifiableList());
