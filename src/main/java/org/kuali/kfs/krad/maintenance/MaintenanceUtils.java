@@ -21,6 +21,7 @@ package org.kuali.kfs.krad.maintenance;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.impl.services.CoreImplServiceLocator;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.identity.Person;
@@ -33,11 +34,12 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.businessobject.SystemOptions;
+import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
+import org.springframework.cache.CacheManager;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,9 +53,6 @@ public final class MaintenanceUtils {
     private static final Logger LOG = LogManager.getLogger();
     private static final String WARNING_MAINTENANCE_LOCKED = "warning.maintenance.locked";
     
-    private static final String LOCKING_DOC_ID_CACHE_NAME = "lockdingDocumentCache";
-    
-    private static CacheManager cacheManager;
     private static Cache blockingCache;
 
     /**
@@ -79,29 +78,45 @@ public final class MaintenanceUtils {
     }
 
     public static String findLockingDocId(MaintenanceDocument document) {
-        Cache cache = getBlockingCache();
-        Element element = cache.get(document.getDocumentNumber());
-        if (element == null) {
-            String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
-            LOG.info("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
-            cache.put(new Element(document.getDocumentNumber(), lockingDocId));
-            return lockingDocId;
+        if (shouldUseCache(document)) {
+            LOG.info("findLockingDocId, allow cache for this document type");
+            Cache cache = getBlockingCache();
+            String cacheKey = "lockingDocumentId_" + document.getDocumentNumber();
+            ValueWrapper valueWrapper = cache.get(cacheKey);
+            if (valueWrapper == null) {
+                String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+                LOG.info("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
+                cache.put(cacheKey, lockingDocId);
+                
+                return lockingDocId;
+            } else {
+                String lockingDocId = (String) valueWrapper.get();
+                LOG.info("findLockingDocId, found locking ID in cache: " + lockingDocId);
+                return lockingDocId;
+            }
         } else {
-            String lockingDocId = (String) element.getValue();
-            LOG.info("findLockingDocId, found locking ID in cache: " + lockingDocId);
-            return lockingDocId;
+            LOG.info("findLockingDocId, DO NOT allow cache for this document type");
+            String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+            return blockingDocId;
         }
-        
-        //String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
-        //return blockingDocId;
+    }
+    
+    private static boolean shouldUseCache(MaintenanceDocument document) {
+        String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();
+        LOG.info("shouldUseCache, docType: " + docType);
+        return StringUtils.equalsIgnoreCase(docType, CUKFSConstants.FinancialDocumentTypeCodes.ACCOUNT_GLOBAL);
     }
     
     
     private static Cache getBlockingCache() {
         if (blockingCache == null) {
-            cacheManager = CacheManager.getInstance();
-            cacheManager.addCache(LOCKING_DOC_ID_CACHE_NAME);
-            blockingCache = cacheManager.getCache(LOCKING_DOC_ID_CACHE_NAME);
+            for (CacheManager cm : CoreImplServiceLocator.getCacheManagerRegistry().getCacheManagers()) {
+                LOG.info("getBlockingCache, " + StringUtils.join(cm.getCacheNames(), ", "));
+            }
+            
+            CacheManager cm = CoreImplServiceLocator.getCacheManagerRegistry()
+                    .getCacheManagerByCacheName(SystemOptions.CACHE_NAME);
+            blockingCache = cm.getCache(SystemOptions.CACHE_NAME);
         }
         return blockingCache;
     }
