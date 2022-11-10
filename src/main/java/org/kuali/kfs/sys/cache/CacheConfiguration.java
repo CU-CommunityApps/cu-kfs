@@ -24,8 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.BalanceType;
@@ -61,7 +59,6 @@ import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.impl.role.RoleResponsibility;
 import org.kuali.kfs.kim.impl.type.KimType;
-import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.HomeOrigination;
@@ -92,8 +89,6 @@ import edu.cornell.kfs.sys.cache.RedisEventListenerLazyInitProxy;
 @Configuration
 @EnableCaching
 public class CacheConfiguration {
-    
-    private static final Logger LOG = LogManager.getLogger();
 
     @Bean
     public Set<String> cacheNames() {
@@ -242,7 +237,6 @@ public class CacheConfiguration {
             RedisEventListenerLazyInitProxy redisEventListener,
             EhcacheEventListenerForUpdatingRedis ehcacheEventListener
     ) {
-        LOG.info("cacheManager, entering");
         EhCacheManagerFactoryBean ehcacheManagerFactory = new EhCacheManagerFactoryBean();
         ehcacheManagerFactory.setConfigLocation(ehcacheConfigLocation);
         ehcacheManagerFactory.afterPropertiesSet();
