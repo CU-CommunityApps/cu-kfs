@@ -17,6 +17,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -174,6 +177,17 @@ public class ConcurAccessTokenV2ServiceImplTest {
         assertAccessTokenRetrievalFails();
     }
 
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {
+            KFSConstants.EMPTY_STRING,
+            KFSConstants.BLANK_SPACE
+    })
+    void testBlankGeolocationReturnedFromServerWhenRetrievingAccessToken(String invalidGeolocation) throws Exception {
+        mockEndpoint.setCurrentGeolocation(invalidGeolocation);
+        assertAccessTokenRetrievalFails();
+    }
+
     @Test
     void testRetrieveNewRefreshToken() throws Exception {
         assertNewRefreshTokenRetrievalSucceeds(false);
@@ -234,6 +248,18 @@ public class ConcurAccessTokenV2ServiceImplTest {
     @Test
     void testInvalidGeolocationReturnedFromServerWhenRetrievingNewRefreshToken() throws Exception {
         String invalidGeolocation = webServerExtension.getServerUrl() + INVALID_GEOLOCATION_SUFFIX;
+        mockEndpoint.setCurrentGeolocation(invalidGeolocation);
+        assertNewRefreshTokenRetrievalFails();
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {
+            KFSConstants.EMPTY_STRING,
+            KFSConstants.BLANK_SPACE
+    })
+    void testBlankGeolocationReturnedFromServerWhenRetrievingNewRefreshToken(String invalidGeolocation)
+            throws Exception {
         mockEndpoint.setCurrentGeolocation(invalidGeolocation);
         assertNewRefreshTokenRetrievalFails();
     }
