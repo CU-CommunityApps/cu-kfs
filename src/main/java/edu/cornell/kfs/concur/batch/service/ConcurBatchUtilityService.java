@@ -81,6 +81,14 @@ public interface ConcurBatchUtilityService {
     String getConcurParameterValue(String parameterName);
     
     /**
+     * Sets the value of the given Concur-namespaced parameter.
+     * 
+     * @param parameterName The name of the Concur-namespaced parameter to update
+     * @param parameterValue The new value to set
+     */
+    void setConcurParameterValue(String parameterName, String parameterValue);
+    
+    /**
      * Parses a physical file on the file system specified by fullyQualifiedFileName
      * into the Java object associated to the batchInputFileType by the flatFileSpecification.
      * This configuration needs to be setup in Spring for the business object

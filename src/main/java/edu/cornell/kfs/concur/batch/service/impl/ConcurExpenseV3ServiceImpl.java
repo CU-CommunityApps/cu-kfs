@@ -52,10 +52,11 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
 
     protected String findDefaultExpenseListingEndPoint() {
+        String geolocation = findGeolocationUrl();
         String baseUrl = concurBatchUtilityService
                 .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_LISTING_ENDPOINT);
         baseUrl = baseUrl + !isProduction();
-        return baseUrl;
+        return geolocation + baseUrl;
     }
 
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList,
@@ -167,15 +168,21 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
 
     protected String findBaseExpenseReportEndPoint() {
+        String geolocation = findGeolocationUrl();
         String reportUrl = concurBatchUtilityService
                 .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_REPORT_ENDPOINT);
-        return reportUrl;
+        return geolocation + reportUrl;
     }
     
     protected String findBaseAllocationEndPoint() {
+        String geolocation = findGeolocationUrl();
         String allocationUrl = concurBatchUtilityService
                 .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_ALLOCATION_ENDPOINT);
-        return allocationUrl;
+        return geolocation + allocationUrl;
+    }
+
+    protected String findGeolocationUrl() {
+        return concurBatchUtilityService.getConcurParameterValue(ConcurParameterConstants.CONCUR_GEOLOCATION_URL);
     }
 
     protected boolean isProduction() {

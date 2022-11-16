@@ -46,6 +46,7 @@ public class ConcurParameterConstants {
     public static final String CONCUR_REPORT_EMAIL_TO_ADDRESS = "CONCUR_REPORT_EMAIL_TO_ADDRESS";
     
     public static final String WEBSERVICE_MAX_RETRIES = "WEBSERVICE_MAX_RETRIES";
+    public static final String CONCUR_GEOLOCATION_URL = "CONCUR_GEOLOCATION_URL";
     public static final String CONCUR_ACCESS_TOKEN_ENDPOINT = "CONCUR_ACCESS_TOKEN_ENDPOINT";
     public static final String EXPENSE_V3_LISTING_ENDPOINT = "EXPENSE_V3_LISTING_ENDPOINT";
     public static final String EXPENSE_V3_REPORT_ENDPOINT = "EXPENSE_V3_REPORT_ENDPOINT";
