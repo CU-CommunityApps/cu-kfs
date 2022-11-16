@@ -107,7 +107,11 @@ public class MockConcurRequestV4ServiceEndpoint extends MockServiceEndpointBase 
         }
         return baseRequestV4Url;
     }
-    
+
+    public String getRequestV4RelativeUrl() {
+        return ParameterTestValues.REQUEST_V4_RELATIVE_ENDPOINT;
+    }
+
     @Override
     protected void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
             throws HttpException, IOException {

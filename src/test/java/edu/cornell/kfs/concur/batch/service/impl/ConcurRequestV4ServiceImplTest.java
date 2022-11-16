@@ -107,8 +107,9 @@ public class ConcurRequestV4ServiceImplTest {
         mockHttpServer = new MockRemoteServerExtension();
         mockHttpServer.initialize(mockConcurEndpoint);
         baseRequestV4Url = mockConcurEndpoint.getBaseRequestV4Url();
+        String requestV4RelativeUrl = mockConcurEndpoint.getRequestV4RelativeUrl();
         
-        concurParameters = buildTestParameters(baseRequestV4Url);
+        concurParameters = buildTestParameters(baseRequestV4Url, requestV4RelativeUrl);
         concurProperties = buildTestProperties();
         
         ConcurBatchUtilityService mockConcurBatchUtilityService = buildMockConcurBatchUtilityService();
@@ -146,12 +147,14 @@ public class ConcurRequestV4ServiceImplTest {
         return StringUtils.strip(UUID.randomUUID().toString(), KFSConstants.DASH);
     }
 
-    private Map<String, String> buildTestParameters(String requestV4Endpoint) {
+    private Map<String, String> buildTestParameters(String requestV4FullEndpoint, String requestV4RelativeUrl) {
+        String geolocation = StringUtils.substringBeforeLast(requestV4FullEndpoint, requestV4RelativeUrl);
         Map<String, String> parameters = new HashMap<>();
         parameters.put(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, ParameterTestValues.MAX_RETRIES_1);
         parameters.put(ConcurParameterConstants.DEFAULT_TRAVEL_REQUEST_OBJECT_CODE,
                 ParameterTestValues.DEFAULT_OBJECT_CODE_5500);
-        parameters.put(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT, requestV4Endpoint);
+        parameters.put(ConcurParameterConstants.CONCUR_GEOLOCATION_URL, geolocation);
+        parameters.put(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT, requestV4RelativeUrl);
         parameters.put(ConcurParameterConstants.REQUEST_V4_QUERY_PAGE_SIZE,
                 ParameterTestValues.REQUEST_V4_PAGE_SIZE_2);
         parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_USERS, buildDefaultTestUsersParameterValue());
