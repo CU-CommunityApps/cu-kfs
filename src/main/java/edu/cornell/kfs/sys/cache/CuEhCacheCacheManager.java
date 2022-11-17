@@ -6,14 +6,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 
+import edu.cornell.kfs.sys.util.CuRedisUtils;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.event.NotificationScope;
 import net.sf.ehcache.event.RegisteredEventListeners;
 
@@ -27,6 +28,7 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
     private Set<String> cacheNames;
     private Set<String> cachesIgnoringRedisEvents;
     private Set<String> cachesToClearOnRedisConnectionChange;
+    private long defaultTimeToLive;
 
     private Set<String> redisAwareCacheNames;
 
@@ -39,10 +41,17 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
         Objects.requireNonNull(cachesIgnoringRedisEvents, "cachesIgnoringRedisEvents cannot be null");
         Objects.requireNonNull(cachesToClearOnRedisConnectionChange,
                 "cachesToClearOnRedisConnectionChange cannot be null");
+        if (defaultTimeToLive <= 0) {
+            throw new IllegalStateException("defaultTimeToLive cannot be non-positive");
+        }
         
         if (!cacheNames.containsAll(cachesIgnoringRedisEvents)) {
+            LOG.error("afterPropertiesSet, The following Redis-ignored caches were not in the cacheNames Set: "
+                    + findCacheNamesNotIncludedInMainSet(cacheNames, cachesIgnoringRedisEvents));
             throw new IllegalStateException("cachesIgnoringRedisEvents references caches not found in cacheNames");
         } else if (!cacheNames.containsAll(cachesToClearOnRedisConnectionChange)) {
+            LOG.error("afterPropertiesSet, The following on-connection-change caches were not in the cacheNames Set: "
+                    + findCacheNamesNotIncludedInMainSet(cacheNames, cachesToClearOnRedisConnectionChange));
             throw new IllegalStateException(
                     "cachesToClearOnRedisConnectionChange references caches not found in cacheNames");
         }
@@ -55,9 +64,16 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
         
         redisAwareCacheNames.stream()
                 .map(this::getLocalCache)
+                .peek(this::overrideTimeToLiveOnRedisAwareCacheIfNecessary)
                 .forEach(this::addEventListenerToLocalCache);
         
         redisEventListenerProxy.setActualEventListener(this);
+    }
+
+    private Set<String> findCacheNamesNotIncludedInMainSet(Set<String> namesSet, Set<String> namesSubset) {
+        return namesSubset.stream()
+                .filter(cacheName -> !namesSet.contains(cacheName))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private Ehcache getLocalCache(String cacheName) {
@@ -66,6 +82,17 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
             throw new IllegalStateException("Could not find named cache: " + cacheName);
         }
         return localCache;
+    }
+
+    private void overrideTimeToLiveOnRedisAwareCacheIfNecessary(Ehcache localCache) {
+        CacheConfiguration cacheConfiguration = localCache.getCacheConfiguration();
+        long cacheTimeToLive = cacheConfiguration.getTimeToLiveSeconds();
+        if (cacheTimeToLive <= 0) {
+            LOG.warn("overrideTimeToLiveOnRedisAwareCacheIfNecessary, Cache " + localCache.getName()
+                    + " is Redis-aware but has an infinite/undefined time-to-live; overriding time-to-live to "
+                    + defaultTimeToLive + " seconds. Please consider updating this cache's EhCache configuration.");
+            cacheConfiguration.setTimeToLiveSeconds(defaultTimeToLive);
+        }
     }
 
     private void addEventListenerToLocalCache(Ehcache localCache) {
@@ -103,24 +130,25 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
     }
 
     private void removeKeyFromCache(String redisCacheKey) {
-        CuCompositeCacheKey compositeKey = CuCompositeCacheKey.fromRedisCacheKey(redisCacheKey);
-        if (shouldRemoveKeyFromCache(redisCacheKey, compositeKey)) {
+        CuRedisCacheKeyWrapper wrappedKey = CuRedisUtils.wrapRedisCacheKey(redisCacheKey);
+        if (shouldRemoveKeyFromCache(wrappedKey)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("removeKeyFromCache, Removing the following entry from the local cache: " + compositeKey);
+                LOG.debug("removeKeyFromCache, Removing the following entry from the local cache: "
+                        + wrappedKey.getCacheName() + " --- " + wrappedKey.getLocalCacheKey());
             }
-            getLocalCache(compositeKey.getCacheName())
-                    .remove(compositeKey.getLocalCacheKey(), true);
+            getLocalCache(wrappedKey.getCacheName())
+                    .remove(wrappedKey.getLocalCacheKey(), true);
         }
     }
 
-    private boolean shouldRemoveKeyFromCache(String originalRedisKey, CuCompositeCacheKey compositeKey) {
-        if (StringUtils.isBlank(compositeKey.getCacheName()) || StringUtils.isBlank(compositeKey.getLocalCacheKey())) {
+    private boolean shouldRemoveKeyFromCache(CuRedisCacheKeyWrapper wrappedKey) {
+        if (!wrappedKey.hasExpectedKeyFormat()) {
             LOG.warn("shouldRemoveKeyFromCache, Redis invalidated a cache key with an unexpected format: "
-                    + originalRedisKey);
+                    + wrappedKey.getFullCacheKey());
             return false;
-        } else if (!redisAwareCacheNames.contains(compositeKey.getCacheName())) {
+        } else if (!redisAwareCacheNames.contains(wrappedKey.getCacheName())) {
             LOG.warn("shouldRemoveKeyFromCache, Redis invalidated a cache key with an unexpected cache name prefix: "
-                    + originalRedisKey);
+                    + wrappedKey.getFullCacheKey());
             return false;
         } else {
             return true;
@@ -129,16 +157,11 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
 
     private void removeKeysFromCache(List<String> redisCacheKeys) {
         redisCacheKeys.stream()
-                .map(this::convertRedisCacheKeyForBulkRemoval)
-                .filter(compositeKey -> compositeKey != CuCompositeCacheKey.EMPTY)
-                .collect(Collectors.groupingBy(CuCompositeCacheKey::getCacheName,
-                        Collectors.mapping(CuCompositeCacheKey::getLocalCacheKey, Collectors.toUnmodifiableList())))
+                .map(CuRedisUtils::wrapRedisCacheKey)
+                .filter(this::shouldRemoveKeyFromCache)
+                .collect(Collectors.groupingBy(CuRedisCacheKeyWrapper::getCacheName,
+                        Collectors.mapping(CuRedisCacheKeyWrapper::getLocalCacheKey, Collectors.toUnmodifiableList())))
                 .forEach(this::removeKeysFromCache);
-    }
-
-    private CuCompositeCacheKey convertRedisCacheKeyForBulkRemoval(String redisCacheKey) {
-        CuCompositeCacheKey compositeKey = CuCompositeCacheKey.fromRedisCacheKey(redisCacheKey);
-        return shouldRemoveKeyFromCache(redisCacheKey, compositeKey) ? compositeKey : CuCompositeCacheKey.EMPTY;
     }
 
     private void removeKeysFromCache(String cacheName, List<String> localCacheKeys) {
@@ -186,6 +209,10 @@ public class CuEhCacheCacheManager extends EhCacheCacheManager implements RedisE
 
     public void setCachesToClearOnRedisConnectionChange(Collection<String> cachesToClearOnRedisConnectionChange) {
         this.cachesToClearOnRedisConnectionChange = Set.copyOf(cachesToClearOnRedisConnectionChange);
+    }
+
+    public void setDefaultTimeToLive(long defaultTimeToLive) {
+        this.defaultTimeToLive = defaultTimeToLive;
     }
 
 }

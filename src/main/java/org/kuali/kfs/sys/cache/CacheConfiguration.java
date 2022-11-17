@@ -223,17 +223,17 @@ public class CacheConfiguration {
 
     @Bean
     public EhcacheEventListenerForUpdatingRedis ehcacheEventListener(
-            @Value("${redis.default.ttl}") Long redisDefaultTtl,
             RedisTemplate<String, String> redisTemplate
     ) {
         EhcacheEventListenerForUpdatingRedis ehcacheEventListener = new EhcacheEventListenerForUpdatingRedis(
-                redisTemplate, redisDefaultTtl);
+                redisTemplate);
         return ehcacheEventListener;
     }
 
     @Bean
     public CuEhCacheCacheManager cacheManager(
             @Value("${kfs.ehcache.config.location}") Resource ehcacheConfigLocation,
+            @Value("${redis.default.ttl}") Long redisDefaultTtl,
             RedisEventListenerLazyInitProxy redisEventListener,
             EhcacheEventListenerForUpdatingRedis ehcacheEventListener
     ) {
@@ -248,6 +248,7 @@ public class CacheConfiguration {
         cacheManager.setCacheNames(cacheNames());
         cacheManager.setCachesIgnoringRedisEvents(cachesIgnoringRedisEvents());
         cacheManager.setCachesToClearOnRedisConnectionChange(cachesToClearOnRedisConnectionChange());
+        cacheManager.setDefaultTimeToLive(redisDefaultTtl);
         
         return cacheManager;
     }

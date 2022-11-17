@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.KeyScanOptions;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
+import edu.cornell.kfs.sys.util.CuRedisUtils;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -34,15 +35,12 @@ public class EhcacheEventListenerForUpdatingRedis implements CacheEventListener,
     private static final int KEY_BATCH_SIZE = 50;
 
     private final RedisTemplate<String, String> redisTemplate;
-    private final long defaultTimeToLive;
     private final ExecutorService redisExecutor;
 
-    public EhcacheEventListenerForUpdatingRedis(RedisTemplate<String, String> redisTemplate, Long defaultTimeToLive) {
+    public EhcacheEventListenerForUpdatingRedis(RedisTemplate<String, String> redisTemplate) {
         Objects.requireNonNull(redisTemplate, "redisTemplate cannot be null");
-        Objects.requireNonNull(defaultTimeToLive, "defaultTimeToLive cannot be null");
         int poolSize = Runtime.getRuntime().availableProcessors();
         this.redisTemplate = redisTemplate;
-        this.defaultTimeToLive = defaultTimeToLive;
         this.redisExecutor = new ThreadPoolExecutor(poolSize, poolSize, 0L, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>());
     }
@@ -63,7 +61,7 @@ public class EhcacheEventListenerForUpdatingRedis implements CacheEventListener,
         long timeToLive = determineTimeToLiveForCache(cache);
         
         redisExecutor.execute(() -> {
-            String redisCacheKey = CuCompositeCacheKey.buildRedisCacheKey(cacheName, localCacheKey);
+            String redisCacheKey = CuRedisUtils.buildRedisCacheKey(cacheName, localCacheKey);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("addCacheKeyPlaceholderInRedisIfAbsent, Adding placeholder value in redis for key: "
                         + redisCacheKey);
@@ -75,7 +73,12 @@ public class EhcacheEventListenerForUpdatingRedis implements CacheEventListener,
 
     private long determineTimeToLiveForCache(Ehcache cache) {
         long timeToLive = cache.getCacheConfiguration().getTimeToLiveSeconds();
-        return (timeToLive > 0) ? timeToLive : defaultTimeToLive;
+        if (timeToLive <= 0) {
+            throw new IllegalStateException("Redis-aware cache " + cache.getName()
+                    + " has an infinite/undefined time-to-live but this class requires a finite time-to-live value; "
+                    + "this should NEVER happen!");
+        }
+        return timeToLive;
     }
 
     @Override
@@ -98,7 +101,7 @@ public class EhcacheEventListenerForUpdatingRedis implements CacheEventListener,
         String localCacheKey = Objects.toString(element.getObjectKey());
         
         redisExecutor.execute(() -> {
-            String redisCacheKey = CuCompositeCacheKey.buildRedisCacheKey(cacheName, localCacheKey);
+            String redisCacheKey = CuRedisUtils.buildRedisCacheKey(cacheName, localCacheKey);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("removeCacheKeyPlaceholderFromRedis, Deleting placeholder value in redis for key: "
                         + redisCacheKey);
