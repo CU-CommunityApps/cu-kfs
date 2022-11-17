@@ -364,17 +364,6 @@
         <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>dataobjects</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>dataobjects</servlet-name>
-        <url-pattern>/dataobjects/*</url-pattern>
-    </servlet-mapping>
-
     <error-page>
         <exception-type>org.kuali.kfs.krad.exception.AuthenticationException</exception-type>
         <location>/autherror.html</location>
