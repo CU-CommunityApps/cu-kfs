@@ -34,7 +34,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
@@ -54,6 +53,7 @@ public final class MaintenanceUtils {
     private static final String WARNING_MAINTENANCE_LOCKED = "warning.maintenance.locked";
     
     private static Cache blockingCache;
+    public static final String LOCKING_ID_CACHE_NAME = "LockingIdCache";
 
     /**
      * Private Constructor since this is a util class that should never be instantiated.
@@ -105,7 +105,7 @@ public final class MaintenanceUtils {
     
     /*
      * If additional document types are added, logic needs to be added to clear the cache when new maintenance locks are added.
-     * See CuAccountGlobalMaintainableImpl.generateMaintenanceLocks for axample
+     * See CuAccountGlobalMaintainableImpl.generateMaintenanceLocks for example
      */
     public static boolean shouldUseCache(MaintenanceDocument document) {
         String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();
@@ -120,8 +120,8 @@ public final class MaintenanceUtils {
     public static Cache getBlockingCache() {
         if (blockingCache == null) {
             CacheManager cm = CoreImplServiceLocator.getCacheManagerRegistry()
-                    .getCacheManagerByCacheName(SystemOptions.CACHE_NAME);
-            blockingCache = cm.getCache(SystemOptions.CACHE_NAME);
+                    .getCacheManagerByCacheName(LOCKING_ID_CACHE_NAME);
+            blockingCache = cm.getCache(LOCKING_ID_CACHE_NAME);
         }
         return blockingCache;
     }

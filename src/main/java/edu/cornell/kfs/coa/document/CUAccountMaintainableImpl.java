@@ -13,6 +13,7 @@ import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.AccountMaintainableImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.springframework.cache.Cache;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -20,6 +21,7 @@ import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
@@ -141,6 +143,13 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
         if (isClosingAccount()) {
             maintenanceLocks.addAll(SpringContext.getBean(AccountReversionTrickleDownInactivationService.class).generateTrickleDownMaintenanceLocks((Account) getBusinessObject(), getDocumentNumber()));
         }
+        
+        Cache cache = MaintenanceUtils.getBlockingCache();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("generateMaintenanceLocks, clear all blocking cache ");
+        }
+        cache.clear();
+        
         return maintenanceLocks;
     }
 

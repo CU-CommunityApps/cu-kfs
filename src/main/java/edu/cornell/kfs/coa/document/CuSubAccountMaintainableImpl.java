@@ -18,8 +18,11 @@ import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.springframework.cache.Cache;
 import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -460,6 +463,20 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
             && hasA21IndirectCostRecoveryAccounts(newAccount)
             && (oldAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size()
                 < newAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size());
+    }
+    
+    @Override
+    public List<MaintenanceLock> generateMaintenanceLocks() {
+        List<MaintenanceLock> maintenanceLocks = super.generateMaintenanceLocks();
+        
+        Cache cache = MaintenanceUtils.getBlockingCache();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("generateMaintenanceLocks, clear all blocking cache ");
+        }
+        cache.clear();
+        
+        return maintenanceLocks;
+        
     }
 
 }
