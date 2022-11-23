@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import org.apache.ojb.broker.query.Criteria;
 
-import edu.cornell.kfs.concur.ConcurPropertyConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 import edu.cornell.kfs.sys.batch.service.TableLookupCriteriaPurgeService;
