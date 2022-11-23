@@ -11,11 +11,12 @@ import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
 
 /**
  * Transient BO representing the a parsed line from a Payee ACH Account Extract .csv file.
  */
-public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase {
+public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase implements PurgeableBusinessObjectInterface {
     private static final long serialVersionUID = -2028073232803324343L;
     
     private KualiInteger id;
@@ -191,6 +192,11 @@ public class PayeeACHAccountExtractDetail extends PersistableBusinessObjectBase 
         } else {
             return StringUtils.EMPTY;
         }
+    }
+
+    @Override
+    public String buildObjectSpecificPurgeableRecordData() {
+        return toString();
     }
     
 }
