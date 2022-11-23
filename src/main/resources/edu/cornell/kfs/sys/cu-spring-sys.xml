@@ -306,6 +306,7 @@
                   <ref bean="concurEventNotificationTableDetailsForPurge"/>
                   <ref bean="positionDataWorkdayTableDetailsForPurge"/>
                   <ref bean="paymentWorksVendorTableDetailsForPurge"/>
+                  <ref bean="payeeAchAccountExtractTableDetailsForPurge"/>
               </list>
           </property>
     </bean>
@@ -345,6 +346,18 @@
           p:component=""
           p:parameterName=""
           p:serviceImplForPurgeTableLookupCriteria-ref="paymentWorksVendorLookupCriteriaPurgeService"/>
+          
+    <bean id="payeeACHAccountExtractDetailPurgeServiceImpl"
+          class="edu.cornell.kfs.pdp.batch.service.impl.PayeeACHAccountExtractDetailPurgeServiceImpl"/>
+    
+    <bean id="payeeAchAccountExtractTableDetailsForPurge" class="edu.cornell.kfs.sys.businessobject.TableDetailsForPurge"
+          p:businessObjectForRecordsTablePurge="edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail"
+          p:tableToPurge="CU_PDP_ACH_ACCT_EXTR_DTL_T"
+          p:useDefaultDaysBeforePurgeParameter="true"
+          p:nameSpaceCode=""
+          p:component=""
+          p:parameterName=""
+          p:serviceImplForPurgeTableLookupCriteria-ref="payeeACHAccountExtractDetailPurgeServiceImpl"/>
 
     <bean id="tablePurgeRecordsDao" parent="tablePurgeRecordsDao-parentBean"/>
     <bean id="tablePurgeRecordsDao-parentBean" parent="platformAwareDao"
