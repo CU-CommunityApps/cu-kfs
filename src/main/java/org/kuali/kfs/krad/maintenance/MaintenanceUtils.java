@@ -105,7 +105,7 @@ public final class MaintenanceUtils {
     
     /*
      * If additional document types are added, logic needs to be added to clear the cache when new maintenance locks are added.
-     * See CuAccountGlobalMaintainableImpl.generateMaintenanceLocks for example
+     * See CuAccountGlobalMaintainableImpl.doRouteStatusChange for example
      */
     public static boolean shouldUseCache(MaintenanceDocument document) {
         String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();

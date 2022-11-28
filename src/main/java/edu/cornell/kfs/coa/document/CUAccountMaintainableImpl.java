@@ -144,7 +144,6 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
         if (isClosingAccount()) {
             maintenanceLocks.addAll(SpringContext.getBean(AccountReversionTrickleDownInactivationService.class).generateTrickleDownMaintenanceLocks((Account) getBusinessObject(), getDocumentNumber()));
         }
-        
         return maintenanceLocks;
     }
 
