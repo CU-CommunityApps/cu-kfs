@@ -73,5 +73,5 @@
     <cache name="ExtensionDefinitionType" maxEntriesLocalHeap="5000" timeToLiveSeconds="3600"/>
     
     <!-- CU custom cache -->
-    <cache name="LockingIdCache" maxEntriesLocalHeap="10000"/>
+    <cache name="LockingIdCache" maxEntriesLocalHeap="10000" timeToLiveSeconds="1800"/>
 </ehcache>

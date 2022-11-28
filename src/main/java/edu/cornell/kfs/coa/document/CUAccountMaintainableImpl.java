@@ -12,6 +12,7 @@ import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.AccountMaintainableImpl;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.cache.Cache;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
@@ -144,12 +145,6 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
             maintenanceLocks.addAll(SpringContext.getBean(AccountReversionTrickleDownInactivationService.class).generateTrickleDownMaintenanceLocks((Account) getBusinessObject(), getDocumentNumber()));
         }
         
-        Cache cache = MaintenanceUtils.getBlockingCache();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("generateMaintenanceLocks, clear all blocking cache ");
-        }
-        cache.clear();
-        
         return maintenanceLocks;
     }
 
@@ -220,6 +215,17 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
 			}
 		}
 	}
+    
+    @Override
+    public void doRouteStatusChange(DocumentHeader documentHeader) {
+        super.doRouteStatusChange(documentHeader);
+        
+        Cache cache = MaintenanceUtils.getBlockingCache();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("generateMaintenanceLocks, clear all blocking cache ");
+        }
+        cache.clear();
+    }
     
     /**
      * creates a new bo note and sets the timestamp.

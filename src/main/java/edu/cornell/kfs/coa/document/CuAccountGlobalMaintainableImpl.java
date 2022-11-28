@@ -22,6 +22,7 @@ import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.cache.Cache;
 
@@ -47,15 +48,20 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
                 .filter(account -> isClosingAccount(account, oldAccountClosedStatuses))
                 .flatMap(this::generateTrickleDownMaintenanceLocks);
         
+        return Stream.concat(accountLocks.stream(), trickleDownLocks)
+                .collect(Collectors.toUnmodifiableList());
+    }
+    
+    @Override
+    public void doRouteStatusChange(DocumentHeader documentHeader) {
+        super.doRouteStatusChange(documentHeader);
+        
         Cache cache = MaintenanceUtils.getBlockingCache();
         String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("generateMaintenanceLocks, clear cache id: " + cacheKey);
+            LOG.debug("doRouteStatusChange, clear cache id: " + cacheKey);
         }
         cache.evictIfPresent(cacheKey);
-        
-        return Stream.concat(accountLocks.stream(), trickleDownLocks)
-                .collect(Collectors.toUnmodifiableList());
     }
 
     private boolean getAccountClosedStatusForMaintenanceLocks(CuAccountGlobal accountGlobal) {

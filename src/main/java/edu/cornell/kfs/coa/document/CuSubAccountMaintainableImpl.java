@@ -17,6 +17,7 @@ import org.kuali.kfs.coa.document.SubAccountMaintainableImpl;
 import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.cache.Cache;
 import org.kuali.kfs.kns.maintenance.Maintainable;
@@ -466,17 +467,14 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     }
     
     @Override
-    public List<MaintenanceLock> generateMaintenanceLocks() {
-        List<MaintenanceLock> maintenanceLocks = super.generateMaintenanceLocks();
+    public void doRouteStatusChange(DocumentHeader documentHeader) {
+        super.doRouteStatusChange(documentHeader);
         
         Cache cache = MaintenanceUtils.getBlockingCache();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("generateMaintenanceLocks, clear all blocking cache ");
+            LOG.debug("doRouteStatusChange, clear all blocking cache ");
         }
         cache.clear();
-        
-        return maintenanceLocks;
-        
     }
 
 }
