@@ -28,6 +28,11 @@
            </list>
        </property>
    </bean>
+
+	<bean id="RequisitionDocument-documentHeader.documentDescription"
+		  parent="RequisitionDocument-documentHeader.documentDescription-parentBean">
+		<property name="maxLength" value="254"/>
+	</bean>
    
 <!-- KFSUPGRADE-407 -->
    <bean id="RequisitionDocument-deliveryInstructionText" parent="RequisitionDocument-deliveryInstructionText-parentBean">
