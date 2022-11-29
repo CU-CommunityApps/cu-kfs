@@ -468,7 +468,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
         if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
-            MaintenanceUtils.clearAllBlockingCache();
+            MaintenanceUtils.clearBlockingCache();
         }
     }
 

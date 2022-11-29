@@ -127,10 +127,10 @@ public final class MaintenanceUtils {
         return blockingCache;
     }
     
-    public static void clearAllBlockingCache() {
+    public static void clearBlockingCache() {
         Cache cache = getBlockingCache();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("clearAllBlockingCache, clear all blocking cache ");
+            LOG.debug("clearBlockingCache, clear all blocking cache ");
         }
         cache.clear();
     }

@@ -10,7 +10,7 @@ public class CuSubObjectCodeMaintainableImpl extends FinancialSystemMaintainable
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
         if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
-            MaintenanceUtils.clearAllBlockingCache();
+            MaintenanceUtils.clearBlockingCache();
         }
     }
 
