@@ -15,6 +15,7 @@ import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
 import org.kuali.kfs.coa.service.SubAccountTrickleDownInactivationService;
 import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
@@ -56,13 +57,30 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
         if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
-            Cache cache = MaintenanceUtils.getBlockingCache();
-            String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("doRouteStatusChange, clear cache id: " + cacheKey);
-            }
-            cache.evictIfPresent(cacheKey);
+            clearBlockingCacheForCurrentDocument();
         }
+    }
+
+    public void clearBlockingCacheForCurrentDocument() {
+        Cache cache = MaintenanceUtils.getBlockingCache();
+        String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("clearBlockingCacheForCurrentDocument, clear cache id: " + cacheKey);
+        }
+        cache.evictIfPresent(cacheKey);
+    }
+    
+    @Override
+    public void addMultipleValueLookupResults(MaintenanceDocument document, String collectionName,
+            Collection<PersistableBusinessObject> rawValues, boolean needsBlank, PersistableBusinessObject bo) {
+        super.addMultipleValueLookupResults(document, collectionName, rawValues, needsBlank, bo);
+        clearBlockingCacheForCurrentDocument();
+    }
+    
+    @Override
+    public void addNewLineToCollection(String collectionName) {
+        super.addNewLineToCollection(collectionName);
+        clearBlockingCacheForCurrentDocument();
     }
 
     private boolean getAccountClosedStatusForMaintenanceLocks(CuAccountGlobal accountGlobal) {
