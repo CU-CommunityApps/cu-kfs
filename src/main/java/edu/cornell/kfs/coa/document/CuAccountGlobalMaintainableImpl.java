@@ -55,13 +55,14 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     @Override
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
-        
-        Cache cache = MaintenanceUtils.getBlockingCache();
-        String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("doRouteStatusChange, clear cache id: " + cacheKey);
+        if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
+            Cache cache = MaintenanceUtils.getBlockingCache();
+            String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("doRouteStatusChange, clear cache id: " + cacheKey);
+            }
+            cache.evictIfPresent(cacheKey);
         }
-        cache.evictIfPresent(cacheKey);
     }
 
     private boolean getAccountClosedStatusForMaintenanceLocks(CuAccountGlobal accountGlobal) {

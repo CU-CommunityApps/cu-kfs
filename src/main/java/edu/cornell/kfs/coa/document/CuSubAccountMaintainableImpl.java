@@ -16,17 +16,15 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.document.SubAccountMaintainableImpl;
 import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.springframework.cache.Cache;
-import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 
 @SuppressWarnings("deprecation")
 public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
@@ -469,12 +467,9 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     @Override
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
-        
-        Cache cache = MaintenanceUtils.getBlockingCache();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("doRouteStatusChange, clear all blocking cache ");
+        if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
+            MaintenanceUtils.clearAllBlockingCache();
         }
-        cache.clear();
     }
 
 }

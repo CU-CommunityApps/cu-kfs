@@ -22,12 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
-import org.springframework.cache.Cache;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.kns.web.ui.Field;
@@ -37,6 +31,9 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 
 import edu.cornell.kfs.coa.businessobject.AccountReversion;
 import edu.cornell.kfs.coa.businessobject.AccountReversionDetail;
@@ -52,8 +49,6 @@ import edu.cornell.kfs.coa.service.AccountReversionService;
  */
 public class AccountReversionMaintainableImpl extends FinancialSystemMaintainable {
 	private transient AccountReversionService accountReversionService;
-	
-	private static final Logger LOG = LogManager.getLogger();
 
     /**
      * This comparator is used internally for sorting the list of categories
@@ -266,12 +261,9 @@ public class AccountReversionMaintainableImpl extends FinancialSystemMaintainabl
     @Override
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
-        
-        Cache cache = MaintenanceUtils.getBlockingCache();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("doRouteStatusChange, clear all blocking cache ");
+        if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
+            MaintenanceUtils.clearAllBlockingCache();
         }
-        cache.clear();
     }
     
 }

@@ -5,16 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.IndirectCostRecoveryAccount;
 import org.kuali.kfs.coa.document.AccountMaintainableImpl;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.springframework.cache.Cache;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
@@ -30,6 +25,9 @@ import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 import edu.cornell.kfs.coa.businessobject.AppropriationAccount;
@@ -218,12 +216,9 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
     @Override
     public void doRouteStatusChange(DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
-        
-        Cache cache = MaintenanceUtils.getBlockingCache();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("generateMaintenanceLocks, clear all blocking cache ");
+        if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
+            MaintenanceUtils.clearAllBlockingCache();
         }
-        cache.clear();
     }
     
     /**

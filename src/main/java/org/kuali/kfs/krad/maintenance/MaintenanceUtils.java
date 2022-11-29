@@ -18,6 +18,9 @@
  */
 package org.kuali.kfs.krad.maintenance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,14 +37,12 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides static utility methods for use within the maintenance framework
@@ -124,6 +125,19 @@ public final class MaintenanceUtils {
             blockingCache = cm.getCache(LOCKING_ID_CACHE_NAME);
         }
         return blockingCache;
+    }
+    
+    public static void clearAllBlockingCache() {
+        Cache cache = getBlockingCache();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("clearAllBlockingCache, clear all blocking cache ");
+        }
+        cache.clear();
+    }
+    
+    public static boolean shouldClearCacheOnStatusChange(DocumentHeader documentHeader) {
+        WorkflowDocument wd = documentHeader.getWorkflowDocument();
+        return wd.isEnroute() || wd.isProcessed() || wd.isCanceled() || wd.isDisapproved() || wd.isFinal();
     }
 
     public static void checkDocumentBlockingDocumentId(String blockingDocId, boolean throwExceptionIfLocked) {
