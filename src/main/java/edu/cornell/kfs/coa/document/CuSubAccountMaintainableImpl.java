@@ -16,13 +16,15 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.document.SubAccountMaintainableImpl;
 import org.kuali.kfs.coa.service.A21SubAccountService;
 import org.kuali.kfs.coa.service.AccountService;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
 
 @SuppressWarnings("deprecation")
 public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
@@ -460,6 +462,14 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
             && hasA21IndirectCostRecoveryAccounts(newAccount)
             && (oldAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size()
                 < newAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size());
+    }
+    
+    @Override
+    public void doRouteStatusChange(DocumentHeader documentHeader) {
+        super.doRouteStatusChange(documentHeader);
+        if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
+            MaintenanceUtils.clearBlockingCache();
+        }
     }
 
 }
