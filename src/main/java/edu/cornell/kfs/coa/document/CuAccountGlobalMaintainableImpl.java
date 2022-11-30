@@ -15,7 +15,6 @@ import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
 import org.kuali.kfs.coa.service.SubAccountTrickleDownInactivationService;
 import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
-import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
@@ -30,6 +29,7 @@ import org.springframework.cache.Cache;
 import edu.cornell.kfs.coa.businessobject.CuAccountGlobal;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
 
+@SuppressWarnings("deprecation")
 public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableImpl {
     private static final Logger LOG = LogManager.getLogger();
 
@@ -71,16 +71,9 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     }
     
     @Override
-    public void addMultipleValueLookupResults(MaintenanceDocument document, String collectionName,
-            Collection<PersistableBusinessObject> rawValues, boolean needsBlank, PersistableBusinessObject bo) {
-        super.addMultipleValueLookupResults(document, collectionName, rawValues, needsBlank, bo);
+    public void prepareForSave() {
         clearBlockingCacheForCurrentDocument();
-    }
-    
-    @Override
-    public void addNewLineToCollection(String collectionName) {
-        super.addNewLineToCollection(collectionName);
-        clearBlockingCacheForCurrentDocument();
+        super.prepareForSave();
     }
 
     private boolean getAccountClosedStatusForMaintenanceLocks(CuAccountGlobal accountGlobal) {
