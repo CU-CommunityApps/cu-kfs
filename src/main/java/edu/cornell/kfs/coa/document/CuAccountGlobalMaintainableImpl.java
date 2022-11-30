@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
@@ -16,15 +18,20 @@ import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.maintenance.MaintenanceUtils;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.springframework.cache.Cache;
 
 import edu.cornell.kfs.coa.businessobject.CuAccountGlobal;
 import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationService;
 
+@SuppressWarnings("deprecation")
 public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableImpl {
+    private static final Logger LOG = LogManager.getLogger();
 
     private transient SubAccountTrickleDownInactivationService subAccountTrickleDownInactivationService;
     private transient SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService;
@@ -44,6 +51,29 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
         
         return Stream.concat(accountLocks.stream(), trickleDownLocks)
                 .collect(Collectors.toUnmodifiableList());
+    }
+    
+    @Override
+    public void doRouteStatusChange(DocumentHeader documentHeader) {
+        super.doRouteStatusChange(documentHeader);
+        if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
+            clearBlockingCacheForCurrentDocument();
+        }
+    }
+
+    public void clearBlockingCacheForCurrentDocument() {
+        Cache cache = MaintenanceUtils.getBlockingCache();
+        String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("clearBlockingCacheForCurrentDocument, clear cache id: " + cacheKey);
+        }
+        cache.evictIfPresent(cacheKey);
+    }
+    
+    @Override
+    public void prepareForSave() {
+        clearBlockingCacheForCurrentDocument();
+        super.prepareForSave();
     }
 
     private boolean getAccountClosedStatusForMaintenanceLocks(CuAccountGlobal accountGlobal) {

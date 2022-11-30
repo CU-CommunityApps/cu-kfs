@@ -1,0 +1,77 @@
+<!--
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+    Copyright 2005-2022 Kuali, Inc.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+         updateCheck="false"
+         name="cacheManager">
+
+    <diskStore path="java.io.tmpdir"/>
+
+    <defaultCache maxElementsInMemory="10000" maxEntriesLocalHeap="10000" overflowToDisk="false"/>
+
+    <!-- Cache with copyOnRead (replacement for @Cached) -->
+    <cache name="Account" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="AccountingPeriod" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="Organization" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="SubAccount" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="ProjectCode" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="CustomerInvoiceDetail" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="OrgReviewRole" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+    <cache name="Bank" maxEntriesLocalHeap="10000" copyOnRead="true" copyOnWrite="true"/>
+
+    <!-- Cache (replacement for @CacheNoCopy)-->
+    <cache name="BatchFile" maxEntriesLocalHeap="10000"/>
+    <cache name="Chart" maxEntriesLocalHeap="10000"/>
+    <cache name="UniversityDate" maxEntriesLocalHeap="10000"/>
+    <cache name="SystemOptions" maxEntriesLocalHeap="10000"/>
+    <cache name="ObjectCode" maxEntriesLocalHeap="10000"/>
+    <cache name="ObjectType" maxEntriesLocalHeap="10000"/>
+    <cache name="BalanceType" maxEntriesLocalHeap="10000"/>
+    <cache name="HomeOrigination" maxEntriesLocalHeap="10000"/>
+    <cache name="AssetObjectCode" maxEntriesLocalHeap="10000"/>
+    <cache name="MileageRate" maxEntriesLocalHeap="10000" statistics="true"/>
+    <cache name="MenuLinks" maxEntriesLocalHeap="10000" timeToLiveSeconds="86760"/>
+
+    <cache name="KimTypeType" maxEntriesLocalHeap="5000" timeToLiveSeconds="1800"/>
+    <cache name="ResponsibilityType" maxEntriesLocalHeap="10000" timeToLiveSeconds="1800"/>
+    <cache name="ResponsibilityTemplate" maxEntriesLocalHeap="1000" timeToLiveSeconds="1800"/>
+    <cache name="GroupType" maxEntriesLocalHeap="25000" timeToLiveSeconds="1800"/>
+    <cache name="GroupHistoryType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
+    <cache name="GroupMemberType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
+    <cache name="EntityType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
+    <cache name="EntityNameType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
+    <cache name="PrincipalType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
+    <cache name="EntityPrivacyPreferencesType" maxEntriesLocalHeap="50000" timeToLiveSeconds="1800"/>
+    <cache name="CodedAttributeType" maxEntriesLocalHeap="100" timeToLiveSeconds="1800"/>
+    <cache name="PermissionType" maxEntriesLocalHeap="50000" timeToLiveSeconds="1800"/>
+    <cache name="PermissionTemplate" maxEntriesLocalHeap="10000" timeToLiveSeconds="1800"/>
+    <cache name="RoleType" maxEntriesLocalHeap="50000" timeToLiveSeconds="1800"/>
+    <cache name="RoleMembershipType" maxEntriesLocalHeap="200000" timeToLiveSeconds="1800"/>
+    <cache name="RoleMemberType" maxEntriesLocalHeap="200000" timeToLiveSeconds="1800"/>
+    <cache name="DelegateMemberType" maxEntriesLocalHeap="200000" timeToLiveSeconds="1800"/>
+    <cache name="RoleResponsibilityType" maxEntriesLocalHeap="200000" timeToLiveSeconds="1800"/>
+    <cache name="DelegateTypeType" maxEntriesLocalHeap="50000" timeToLiveSeconds="1800"/>
+    <cache name="KimAttributeType" maxEntriesLocalHeap="500" timeToLiveSeconds="1800"/>
+
+    <cache name="ParameterType" maxEntriesLocalHeap="2500" timeToLiveSeconds="3600"/>
+    <cache name="NamespaceType" maxEntriesLocalHeap="500" timeToLiveSeconds="3600"/>
+
+    <cache name="DocumentTypeType" maxEntriesLocalHeap="25000" timeToLiveSeconds="3600"/>
+    <cache name="RoutePathType" maxEntriesLocalHeap="25000" timeToLiveSeconds="3600"/>
+    <cache name="ExtensionDefinitionType" maxEntriesLocalHeap="5000" timeToLiveSeconds="3600"/>
+    
+    <!-- CU custom cache -->
+    <cache name="LockingIdCache" maxEntriesLocalHeap="10000" timeToLiveSeconds="1800"/>
+</ehcache>
