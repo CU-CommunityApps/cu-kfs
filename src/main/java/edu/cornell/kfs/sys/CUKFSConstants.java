@@ -212,6 +212,8 @@ public class CUKFSConstants {
     public static final class Config {
     	public static final String FIXED_POOL_SIZE = "ksb.fixedPoolSize";
     }
+    
+    public static final String LOCKING_DOCUMENT_CACHE_KEY = "lockingForDocumentId_";
 
     //** CU Generic ISO-FIPS Country modification items **
     public static final boolean MAPPING_ACTIVE = true;

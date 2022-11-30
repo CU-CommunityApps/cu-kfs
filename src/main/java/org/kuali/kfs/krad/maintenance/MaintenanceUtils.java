@@ -18,9 +18,13 @@
  */
 package org.kuali.kfs.krad.maintenance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.impl.services.CoreImplServiceLocator;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.identity.Person;
@@ -33,9 +37,12 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.springframework.cache.Cache;
+import org.springframework.cache.Cache.ValueWrapper;
+import org.springframework.cache.CacheManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 /**
  * Provides static utility methods for use within the maintenance framework
@@ -45,6 +52,9 @@ public final class MaintenanceUtils {
 
     private static final Logger LOG = LogManager.getLogger();
     private static final String WARNING_MAINTENANCE_LOCKED = "warning.maintenance.locked";
+    
+    private static Cache blockingCache;
+    public static final String LOCKING_ID_CACHE_NAME = "LockingIdCache";
 
     /**
      * Private Constructor since this is a util class that should never be instantiated.
@@ -64,8 +74,70 @@ public final class MaintenanceUtils {
         LOG.info("starting checkForLockingDocument (by MaintenanceDocument)");
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
-        String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+        String blockingDocId = findLockingDocId(document);
         checkDocumentBlockingDocumentId(blockingDocId, throwExceptionIfLocked);
+    }
+
+    public static String findLockingDocId(MaintenanceDocument document) {
+        if (shouldUseCache(document)) {
+            LOG.debug("findLockingDocId, allow cache for this document type");
+            Cache cache = getBlockingCache();
+            String cacheKey = buildLockingDocumentCacheKey(document.getDocumentNumber());
+            ValueWrapper valueWrapper = cache.get(cacheKey);
+            if (valueWrapper == null) {
+                String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
+                }
+                cache.put(cacheKey, lockingDocId);
+                
+                return lockingDocId;
+            } else {
+                String lockingDocId = (String) valueWrapper.get();
+                LOG.debug("findLockingDocId, found locking ID in cache: " + lockingDocId);
+                return lockingDocId;
+            }
+        } else {
+            LOG.debug("findLockingDocId, DO NOT allow cache for this document type");
+            String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+            return blockingDocId;
+        }
+    }
+    
+    /*
+     * If additional document types are added, logic needs to be added to clear the cache when new maintenance locks are added.
+     * See CuAccountGlobalMaintainableImpl.doRouteStatusChange for example
+     */
+    public static boolean shouldUseCache(MaintenanceDocument document) {
+        String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();
+        return StringUtils.equalsIgnoreCase(docType, CUKFSConstants.FinancialDocumentTypeCodes.ACCOUNT_GLOBAL);
+    }
+    
+    public static String buildLockingDocumentCacheKey(String documentNumber) {
+        return CUKFSConstants.LOCKING_DOCUMENT_CACHE_KEY + documentNumber;
+    }
+    
+    
+    public static Cache getBlockingCache() {
+        if (blockingCache == null) {
+            CacheManager cm = CoreImplServiceLocator.getCacheManagerRegistry()
+                    .getCacheManagerByCacheName(LOCKING_ID_CACHE_NAME);
+            blockingCache = cm.getCache(LOCKING_ID_CACHE_NAME);
+        }
+        return blockingCache;
+    }
+    
+    public static void clearBlockingCache() {
+        Cache cache = getBlockingCache();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("clearBlockingCache, clear all blocking cache ");
+        }
+        cache.clear();
+    }
+    
+    public static boolean shouldClearCacheOnStatusChange(DocumentHeader documentHeader) {
+        WorkflowDocument wd = documentHeader.getWorkflowDocument();
+        return wd.isEnroute() || wd.isProcessed() || wd.isCanceled() || wd.isDisapproved() || wd.isFinal();
     }
 
     public static void checkDocumentBlockingDocumentId(String blockingDocId, boolean throwExceptionIfLocked) {
