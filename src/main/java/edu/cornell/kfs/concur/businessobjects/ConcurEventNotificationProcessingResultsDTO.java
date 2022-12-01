@@ -2,9 +2,11 @@ package edu.cornell.kfs.concur.businessobjects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
@@ -80,6 +82,10 @@ public class ConcurEventNotificationProcessingResultsDTO {
 
     public void setMessages(List<String> messages) {
         this.messages = messages;
+    }
+    
+    public String getFlattenedMessages() {
+        return messages.stream().collect(Collectors.joining(KFSConstants.NEWLINE));
     }
     
     @Override
