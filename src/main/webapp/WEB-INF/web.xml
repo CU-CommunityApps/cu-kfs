@@ -372,5 +372,13 @@
     <error-page>
         <location>/ErrorHandlerServlet</location>
     </error-page>
+    
+    <!-- backport FINP-8908 -->
+    <mime-mapping>
+        <!-- Ensures that browsers interpret JS resources as UTF-8 no matter the encoding of the page that requested
+             the resource. -->
+        <extension>js</extension>
+        <mime-type>application/javascript;charset=utf-8</mime-type>
+    </mime-mapping>
 
 </web-app>
