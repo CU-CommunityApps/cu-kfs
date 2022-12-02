@@ -166,8 +166,9 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 ? ConcurConstants.APPROVE_COMMENT
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
         ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
-        String logMessageDetail = MessageFormat.format(
-                ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV4_EXPENSE_REPORT_WORKFLOW, workflowAction, reportId);
+        String expenseV4WorkflowMessageFormat = configurationService.getPropertyValueAsString(
+                ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV4_EXPENSE_REPORT_WORKFLOW);
+        String logMessageDetail = MessageFormat.format(expenseV4WorkflowMessageFormat, workflowAction, reportId);
         
         ConcurWebRequest<Void> webRequest = ConcurWebRequestBuilder.forRequestExpectingEmptyResponse()
                 .withUrl(workflowActionUrl)

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -69,7 +70,7 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     private static final String BASE_URL_PREFIX = "http://localhost:";
     private static final String ALL_URL_PATHS_PATTERN = "*";
     private static final Set<String> RESPONSE_DISALLOWED_AUTO_COPY_HEADERS = Set.of(
-            HttpHeaders.CONTENT_TYPE, HttpHeaders.CONTENT_LENGTH);
+            HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.US), HttpHeaders.CONTENT_LENGTH.toLowerCase(Locale.US));
 
     private ClassicTestServer testServer;
     private MockMvc mockMvc;
@@ -200,7 +201,7 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     private void populateHttpResponseHeadersFromServletResponse(ClassicHttpResponse response,
             MockHttpServletResponse servletResponse) {
         for (String headerName : servletResponse.getHeaderNames()) {
-            if (RESPONSE_DISALLOWED_AUTO_COPY_HEADERS.contains(headerName)) {
+            if (RESPONSE_DISALLOWED_AUTO_COPY_HEADERS.contains(StringUtils.lowerCase(headerName, Locale.US))) {
                 continue;
             }
             List<Object> headerValues = servletResponse.getHeaderValues(headerName);
@@ -231,15 +232,11 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
                     : ContentType.create(contentMimeType);
         }
         
-        if (contentType == null) {
-            if (responseContent.length == 0) {
-                response.setEntity(NullEntity.INSTANCE);
-            } else {
-                throw new IllegalStateException("Response had non-empty content but had no Content-Type defined");
-            }
-        } else {
+        if (contentType != null) {
             ByteArrayEntity entity = new ByteArrayEntity(responseContent, contentType, false);
             response.setEntity(entity);
+        } else if (responseContent.length > 0) {
+            throw new IllegalStateException("Response had non-empty content but had no Content-Type defined");
         }
     }
 
