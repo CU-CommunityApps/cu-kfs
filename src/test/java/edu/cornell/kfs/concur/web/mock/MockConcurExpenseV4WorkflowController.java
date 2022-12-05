@@ -20,9 +20,10 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurV4WorkflowDTO;
+import edu.cornell.kfs.sys.web.mock.ResettableController;
 
 @RestController
-public class MockConcurExpenseV4WorkflowController {
+public class MockConcurExpenseV4WorkflowController implements ResettableController {
 
     private static final String REPORT_ID_VARIABLE = "reportId";
     private static final String ACTION_VARIABLE = "action";
@@ -41,6 +42,12 @@ public class MockConcurExpenseV4WorkflowController {
         this.forceInternalServerError = new AtomicBoolean(false);
     }
 
+    @Override
+    public void reset() {
+        reportActions.clear();
+        forceInternalServerError.set(false);
+    }
+
     @PatchMapping(
             path = "/expensereports/v4/reports/{reportId}/{action}",
             consumes = MediaType.APPLICATION_JSON_VALUE
@@ -51,7 +58,7 @@ public class MockConcurExpenseV4WorkflowController {
             @PathVariable(REPORT_ID_VARIABLE) String reportId,
             @PathVariable(ACTION_VARIABLE) String workflowAction
     ) {
-        if (!StringUtils.equalsAnyIgnoreCase(workflowAction,
+        if (!StringUtils.equalsAny(workflowAction,
                 ConcurWorkflowActions.APPROVE, ConcurWorkflowActions.SEND_BACK)) {
             return ResponseEntity.notFound().build();
         } else if (forceInternalServerError.get()) {
@@ -110,6 +117,10 @@ public class MockConcurExpenseV4WorkflowController {
         for (String reportId : reportIds) {
             reportActions.put(reportId, ConcurTestWorkflowInfo.EMPTY);
         }
+    }
+
+    public boolean doesReportExistOnMockServer(String reportId) {
+        return reportActions.containsKey(reportId);
     }
 
     public ConcurTestWorkflowInfo getWorkflowInfoForReport(String reportId) {
