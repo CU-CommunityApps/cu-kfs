@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.fixture;
 
-import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
 
 /**
@@ -34,7 +33,34 @@ public enum B2BShoppingCartItemFixture {
             "true",
             "true",
             "true"
-    );     
+    ),
+    B2B_ITEM_WITH_LONG_DESCRIPTION(
+            "10", // quantity
+            "A0125156", // supplierPartId
+            "1012273985063\1", // supplierPartAuxiliaryId
+            "252.60", // unitPrice
+            "USD", // unitPriceCurrency
+            "01:00 Kensington Microsaver Laptop Lock - security cable lock 01:00 Kensington Microsaver Laptop Lock - security cable lock 01:00 Kensington"
+                + " Microsaver Laptop Lock - security cable lock Microsaver Laptop Lock - security cable lock Microsaver Laptop Lock - security cable lock",
+            "EA", // unitOfMeasure
+            "64068F", // manufacturerPartID
+            "Dell", // manufacturerName
+            "4130-0", // externalSupplierId - vendorID
+            "Punchout", // productSource
+            "", // systemProductID
+            "002617843", // SupplierID-DUNS: value from SciQuest
+            "14035", // SupplierID-SystemSupplierID
+            "Cart name", // Cart Name
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true",
+            "true"
+    );
 
     public String quantity;
     public String supplierPartId;

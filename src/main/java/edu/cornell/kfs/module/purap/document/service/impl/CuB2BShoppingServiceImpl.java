@@ -428,6 +428,12 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     protected RequisitionItem createRequisitionItem(B2BShoppingCartItem item,
     		Integer itemLine, String defaultCommodityCode) {
     	 RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
+
+         final int requisitionItemDescriptionMaxLength = CUPurapConstants.REQUISITION_ITEM_DESCRIPTION_MAX_LENGTH;
+         if (StringUtils.isNotBlank(reqItem.getItemDescription()) && reqItem.getItemDescription().length() > requisitionItemDescriptionMaxLength) {
+             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to 254 characters");
+             reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
+         }
     	 
          boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 

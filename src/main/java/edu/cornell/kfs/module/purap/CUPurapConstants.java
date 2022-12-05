@@ -21,6 +21,8 @@ public class CUPurapConstants {
     public static final String PAYMENT_METHODL_REVIEW = "PTMA";
     public static final String B2B_HIGHER_LIMIT_PERMISSION = "B2B Higher APO Limit";
 
+    public static final int REQUISITION_ITEM_DESCRIPTION_MAX_LENGTH = 254;
+
     public static class RequisitionStatuses {
         public static final String AWAIT_CONTRACTS_GRANTS_REVIEW = "WCG";
         public static final String DAPRVD_CONTRACTS_GRANTS = "DCG";
