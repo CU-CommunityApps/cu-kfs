@@ -320,10 +320,10 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
         // Make sure plant indebtedness processing is enabled.
         if (parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.GL, SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT, PLANT_FUND_LIABILITY_IND).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
-			ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(
-					KFSConstants.CoreModuleNamespaces.GL, SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT,
-					CuGeneralLedgerConstants.CuGlScrubberGroupRules.DOCUMENT_TYPES,
-					scrubbedEntry.getFinancialDocumentTypeCode());
+            ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(
+                    KFSConstants.CoreModuleNamespaces.GL, SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT,
+                    CuGeneralLedgerConstants.CuGlScrubberGroupRules.DOCUMENT_TYPES,
+                    scrubbedEntry.getFinancialDocumentTypeCode());
             if (plantIndebtednessDocTypes.evaluationSucceeds()) {
                 return super.processPlantIndebtedness(scrubbedEntry, scrubberReport);
             }
