@@ -310,7 +310,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
 
     /**
      * Overridden to also restrict plant indebtedness based on document type,
-     * by means of a custom PLANT_INDEBTEDNESS_DOCUMENT_TYPES parameter.
+     * by means of a custom DOCUMENT_TYPES parameter.
      * 
      * @see org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl#processPlantIndebtedness(
      * org.kuali.kfs.gl.businessobject.OriginEntryInformation, org.kuali.kfs.gl.service.ScrubberReportData)
@@ -320,8 +320,10 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
         // Make sure plant indebtedness processing is enabled.
         if (parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.GL, SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT, PLANT_FUND_LIABILITY_IND).booleanValue()) {
             // Make sure the entry was from a document that supports plant indebtedness, similar to the logic from the processCapitalization() method.
-            ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(ScrubberStep.class,
-                    CuGeneralLedgerConstants.CuGlScrubberGroupRules.PLANT_INDEBTEDNESS_DOC_TYPE_CODES, scrubbedEntry.getFinancialDocumentTypeCode());
+			ParameterEvaluator plantIndebtednessDocTypes = getParameterEvaluatorService().getParameterEvaluator(
+					KFSConstants.CoreModuleNamespaces.GL, SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT,
+					CuGeneralLedgerConstants.CuGlScrubberGroupRules.DOCUMENT_TYPES,
+					scrubbedEntry.getFinancialDocumentTypeCode());
             if (plantIndebtednessDocTypes.evaluationSucceeds()) {
                 return super.processPlantIndebtedness(scrubbedEntry, scrubberReport);
             }
