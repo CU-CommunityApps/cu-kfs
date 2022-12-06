@@ -20,6 +20,11 @@
 
 -->
 
+<bean id="AccountDelegateGlobalMaintenanceDocument" parent="AccountDelegateGlobalMaintenanceDocument-parentBean">
+  <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal"/>
+  <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl"/>
+</bean>
+
 <!-- Maintenance Section Definitions -->
 <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
 
