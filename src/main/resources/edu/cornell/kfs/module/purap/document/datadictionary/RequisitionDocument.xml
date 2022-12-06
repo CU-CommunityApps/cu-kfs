@@ -28,7 +28,7 @@
            </list>
        </property>
    </bean>
-
+   
 <!-- KFSUPGRADE-407 -->
    <bean id="RequisitionDocument-deliveryInstructionText" parent="RequisitionDocument-deliveryInstructionText-parentBean">
     <property name="maxLength" value="100"/>

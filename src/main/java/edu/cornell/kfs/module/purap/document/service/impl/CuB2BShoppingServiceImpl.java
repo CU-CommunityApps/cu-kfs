@@ -21,6 +21,7 @@ import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
@@ -58,6 +59,8 @@ import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
 import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
+
+import static org.kuali.kfs.kns.service.KNSServiceLocator.getDataDictionaryService;
 
 public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements CuB2BShoppingService {
     private static final Logger LOG = LogManager.getLogger();
@@ -429,9 +432,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     		Integer itemLine, String defaultCommodityCode) {
     	 RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
 
-         final int requisitionItemDescriptionMaxLength = CUPurapConstants.REQUISITION_ITEM_DESCRIPTION_MAX_LENGTH;
+        Integer requisitionItemDescriptionMaxLength = getDataDictionaryService().getAttributeMaxLength(RequisitionItem.class, PurapPropertyConstants.ITEM_DESCRIPTION);
          if (StringUtils.isNotBlank(reqItem.getItemDescription()) && reqItem.getItemDescription().length() > requisitionItemDescriptionMaxLength) {
-             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to 254 characters");
+             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to " + requisitionItemDescriptionMaxLength + " characters");
              reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
          }
     	 
