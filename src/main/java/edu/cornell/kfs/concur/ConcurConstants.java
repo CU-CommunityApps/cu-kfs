@@ -211,6 +211,11 @@ public class ConcurConstants {
         }
     }
 
+    public static final class ConcurWorkflowActions {
+        public static final String APPROVE = "approve";
+        public static final String SEND_BACK = "sendBack";
+    }
+
     public static final class ConcurApiParameters {
         public static final String VIEW = "view";
         public static final String START = "start";

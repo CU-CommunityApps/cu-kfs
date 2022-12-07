@@ -16,6 +16,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurUtils {
@@ -128,6 +130,18 @@ public class ConcurUtils {
             return false;
         }
         return true;
+    }
+
+    public static String buildValidationErrorMessageForWorkflowAction(
+            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        if (resultsDTO.getProcessingResults() == ConcurEventNotificationVersion2ProcessingResults.validAccounts) {
+            throw new IllegalArgumentException("resultsDTO should not represent a successful validation");
+        }
+        String fullMessage = resultsDTO.getFlattenedMessages();
+        if (StringUtils.isNotBlank(fullMessage)) {
+            fullMessage = ConcurConstants.ERROR_MESSAGE_HEADER + fullMessage;
+        }
+        return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
     }
 
 }

@@ -10,12 +10,19 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.krad.util.UrlFactory;
+import org.kuali.kfs.sys.KFSConstants;
+import org.springframework.http.HttpMethod;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
+import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.batch.ConcurWebRequest;
+import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
@@ -27,7 +34,9 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItem
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListingDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseV3ListingDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurV4WorkflowDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     private static final Logger LOG = LogManager.getLogger();
@@ -144,11 +153,47 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         
     }
     
-    
     protected void updateStatusInConcur(String accessToken, String reportId, boolean reportValid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
         LOG.info("updateStatusInConcur, for report id " + reportId + " the over all validation status will be set to " + reportValid);
+        if (!shouldUpdateStatusInConcur()) {
+            LOG.info("updateStatusInConcur, Concur workflow actions are currently disabled in this KFS environment");
+            return;
+        }
+
+        String workflowAction = reportValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.SEND_BACK;
+        String workflowActionUrl = buildFullUrlForExpenseWorkflowAction(reportId, workflowAction);
+        String workflowComment = reportValid
+                ? ConcurConstants.APPROVE_COMMENT
+                : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
+        ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
+        String expenseV4WorkflowMessageFormat = configurationService.getPropertyValueAsString(
+                ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV4_EXPENSE_REPORT_WORKFLOW);
+        String logMessageDetail = MessageFormat.format(expenseV4WorkflowMessageFormat, workflowAction, reportId);
         
-        LOG.info("updateStatusInConcur, update of status in Concur not implemented yet");
+        ConcurWebRequest<Void> webRequest = ConcurWebRequestBuilder.forRequestExpectingEmptyResponse()
+                .withUrl(workflowActionUrl)
+                .withHttpMethod(HttpMethod.PATCH)
+                .withJsonBody(workflowDTO)
+                .build();
+        
+        concurEventNotificationV2WebserviceService.callConcurEndpoint(
+                accessToken, webRequest, logMessageDetail);
+    }
+    
+    protected boolean shouldUpdateStatusInConcur() {
+        return isProduction() || shouldUpdateStatusInConcurForNonProductionEnvironment();
+    }
+    
+    protected boolean shouldUpdateStatusInConcurForNonProductionEnvironment() {
+        String concurTestWorkflowIndicator = concurBatchUtilityService.getConcurParameterValue(
+                ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND);
+        return StringUtils.equalsIgnoreCase(concurTestWorkflowIndicator, KFSConstants.ACTIVE_INDICATOR);
+    }
+    
+    protected String buildFullUrlForExpenseWorkflowAction(String reportId, String workflowAction) {
+        String baseWorkflowUrl = findBaseWorkflowEndPoint();
+        return StringUtils.joinWith(CUKFSConstants.SLASH,
+                baseWorkflowUrl, UrlFactory.encode(reportId), UrlFactory.encode(workflowAction));
     }
     
     protected ConcurAccountInfo buildConcurAccountInfo(ConcurExpenseAllocationV3ListItemDTO allocationItem) {
@@ -179,6 +224,13 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String allocationUrl = concurBatchUtilityService
                 .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V3_ALLOCATION_ENDPOINT);
         return geolocation + allocationUrl;
+    }
+
+    protected String findBaseWorkflowEndPoint() {
+        String geolocation = findGeolocationUrl();
+        String workflowUrl = concurBatchUtilityService
+                .getConcurParameterValue(ConcurParameterConstants.EXPENSE_V4_WORKFLOW_ENDPOINT);
+        return geolocation + workflowUrl;
     }
 
     protected String findGeolocationUrl() {
