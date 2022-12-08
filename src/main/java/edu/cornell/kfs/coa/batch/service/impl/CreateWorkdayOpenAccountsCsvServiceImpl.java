@@ -94,7 +94,7 @@ public class CreateWorkdayOpenAccountsCsvServiceImpl implements CreateWorkdayOpe
     private String generateCsvOutputFileName() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
         StringBuilder filename = new StringBuilder(CuCoaBatchConstants.WorkdayOpenAccountsFileCreationConstants.OUTPUT_FILE_NAME);
-        filename.append("_").append(sdf.format(dateTimeService.getCurrentDate())).append(CUKFSConstants.FILE_EXTENSIONS.CSV_FILE_EXTENSION);
+        filename.append("_").append(sdf.format(dateTimeService.getCurrentDate())).append(CUKFSConstants.FileExtensions.CSV);
         return filename.toString();
     }
     
