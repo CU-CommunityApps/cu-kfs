@@ -54,13 +54,15 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
     private static final String LAST_ACTION_TAKEN_DATE_QUERY =
             "select max(ACTN_DT) from KREW_ACTN_TKN_T where DOC_HDR_ID=? and ACTN_CD=?";
 
+    @Override
     public void deleteActionTaken(ActionTaken actionTaken) {
-        LOG.debug("deleting ActionTaken " + actionTaken.getActionTakenId());
+        LOG.debug("deleting ActionTaken {}", actionTaken::getActionTakenId);
         this.getPersistenceBrokerTemplate().delete(actionTaken);
     }
 
+    @Override
     public ActionTaken findByActionTakenId(String actionTakenId) {
-        LOG.debug("finding Action Taken by actionTakenId " + actionTakenId);
+        LOG.debug("finding Action Taken by actionTakenId {}", actionTakenId);
         Criteria criteria = new Criteria();
         criteria.addEqualTo("actionTakenId", actionTakenId);
         criteria.addEqualTo("currentIndicator", Boolean.TRUE);
@@ -68,8 +70,9 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
                 ActionTaken.class, criteria));
     }
 
+    @Override
     public Collection<ActionTaken> findByDocumentId(String documentId) {
-        LOG.debug("finding Action Takens by documentId " + documentId);
+        LOG.debug("finding Action Takens by documentId {}", documentId);
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         criteria.addEqualTo("currentIndicator", Boolean.TRUE);
@@ -81,8 +84,9 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         return (Collection<ActionTaken>) this.getPersistenceBrokerTemplate().getCollectionByQuery(qByCrit);
     }
 
+    @Override
     public List<ActionTaken> findByDocumentIdWorkflowId(String documentId, String principalId) {
-        LOG.debug("finding Action Takens by documentId " + documentId + " and principalId" + principalId);
+        LOG.debug("finding Action Takens by documentId {} and principalId{}", documentId, principalId);
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         criteria.addEqualTo("principalId", principalId);
@@ -91,8 +95,9 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
                 ActionTaken.class, criteria));
     }
 
+    @Override
     public List findByDocumentIdIgnoreCurrentInd(String documentId) {
-        LOG.debug("finding ActionsTaken ignoring currentInd by documentId:" + documentId);
+        LOG.debug("finding ActionsTaken ignoring currentInd by documentId:{}", documentId);
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         QueryByCriteria qByCrit = new QueryByCriteria(ActionTaken.class, criteria);
@@ -101,6 +106,7 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         return (List) this.getPersistenceBrokerTemplate().getCollectionByQuery(qByCrit);
     }
 
+    @Override
     public void saveActionTaken(ActionTaken actionTaken) {
         LOG.debug("saving ActionTaken");
         checkNull(actionTaken.getDocumentId(), "Document ID");
@@ -114,8 +120,12 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         if (actionTaken.getCurrentIndicator() == null) {
             actionTaken.setCurrentIndicator(Boolean.TRUE);
         }
-        LOG.debug("saving ActionTaken: routeHeader " + actionTaken.getDocumentId() +
-                ", actionTaken " + actionTaken.getActionTaken() + ", principalId " + actionTaken.getPrincipalId());
+        LOG.debug(
+                "saving ActionTaken: routeHeader {}, actionTaken {}, principalId {}",
+                actionTaken::getDocumentId,
+                actionTaken::getActionTaken,
+                actionTaken::getPrincipalId
+        );
         this.getPersistenceBrokerTemplate().store(actionTaken);
     }
 
@@ -126,6 +136,7 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         }
     }
 
+    @Override
     public boolean hasUserTakenAction(String principalId, String documentId) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
@@ -135,8 +146,10 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         return count > 0;
     }
 
+    @Override
     public Timestamp getLastActionTakenDate(final String documentId, final WorkflowAction workflowAction) {
         return (Timestamp) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
+            @Override
             public Object doInPersistenceBroker(PersistenceBroker broker) {
                 PreparedStatement statement = null;
                 ResultSet resultSet = null;

@@ -113,6 +113,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
     /**
      * search - sets the values of the data entered on the form on the jsp into a map and then searches for the results.
      */
+    @Override
     public ActionForward search(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         BalanceInquiryLookupForm lookupForm = (BalanceInquiryLookupForm) form;
@@ -202,6 +203,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param response
      * @return none of the selected results and redirects back to the lookup caller.
      */
+    @Override
     public ActionForward prepareToReturnNone(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) {
         MultipleValueLookupForm multipleValueLookupForm = (MultipleValueLookupForm) form;
@@ -230,6 +232,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param response
      * @return
      */
+    @Override
     public ActionForward prepareToReturnSelectedResults(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
         MultipleValueLookupForm multipleValueLookupForm = (MultipleValueLookupForm) form;
@@ -319,6 +322,7 @@ public class BalanceInquiryLookupAction extends KualiMultipleValueLookupAction {
      * @param bounded                whether the results will be bounded
      * @return the list of result BOs, possibly bounded by size
      */
+    @Override
     protected Collection performMultipleValueLookup(MultipleValueLookupForm multipleValueLookupForm,
             List<ResultRow> resultTable, int maxRowsPerPage, boolean bounded) {
         Lookupable lookupable = multipleValueLookupForm.getLookupable();

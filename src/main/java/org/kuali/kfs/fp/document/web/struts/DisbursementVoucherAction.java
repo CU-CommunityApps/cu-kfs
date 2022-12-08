@@ -255,7 +255,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                         "fields are filled in before attempting to calculate the per diem amount.";
             }
 
-            LOG.error("Error in calculating travel per diem: " + errorMessage);
+            LOG.error("Error in calculating travel per diem: {}", errorMessage);
             GlobalVariables.getMessageMap().putError("DVNonEmployeeTravelErrors",
                     KFSKeyConstants.ERROR_CUSTOM, errorMessage);
         }
@@ -770,7 +770,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             dvForm.setOldPayeeType(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
 
         } else {
-            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
+            LOG.error("Exception while attempting to retrieve universal user by universal user id {}", payeeIdNumber);
         }
     }
 
@@ -791,8 +791,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                 dvForm.setOldPayeeType(KFSConstants.PaymentPayeeTypes.VENDOR);
 
             } catch (Exception e) {
-                LOG.error("Exception while attempting to retrieve vendor address for vendor address id " +
-                        payeeAddressIdentifier + ": " + e);
+                LOG.error(
+                        "Exception while attempting to retrieve vendor address for vendor address id {}: {}",
+                        payeeAddressIdentifier,
+                        e
+                );
             }
         }
 

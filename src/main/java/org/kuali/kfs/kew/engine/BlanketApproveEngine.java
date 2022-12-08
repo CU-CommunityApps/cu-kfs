@@ -71,6 +71,7 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
      * the Set of node names. If there are no node names, then the document will be blanket approved past the terminal
      * node(s) in the document.
      */
+    @Override
     public void process(String documentId, String nodeInstanceId) throws Exception {
         if (documentId == null) {
             throw new IllegalArgumentException("Cannot process a null document id.");
@@ -84,9 +85,7 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
             }
 
             KEWServiceLocator.getRouteHeaderService().lockRouteHeader(documentId, true);
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Processing document for Blanket Approval: " + documentId + " : " + nodeInstanceId);
-            }
+            LOG.info("Processing document for Blanket Approval: {} : {}", documentId, nodeInstanceId);
             DocumentRouteHeaderValue document = getRouteHeaderService().getRouteHeader(documentId, true);
             if (!document.isRoutable()) {
                 //KULRICE-12283: Modified this message so it appears at a WARN level so we get better feedback if this

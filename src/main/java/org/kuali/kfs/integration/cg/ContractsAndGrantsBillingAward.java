@@ -193,6 +193,7 @@ public interface ContractsAndGrantsBillingAward extends Billable, ContractsAndGr
     /**
      * @return Returns the billingFrequencyCode.
      */
+    @Override
     String getBillingFrequencyCode();
 
     /**

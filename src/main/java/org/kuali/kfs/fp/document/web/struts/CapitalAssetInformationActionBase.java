@@ -100,9 +100,7 @@ public abstract class CapitalAssetInformationActionBase extends KualiAccountingD
                     }
                 }
                 // Retrieving selected data from table.
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Asking segmentation service for object ids " + segmentedSelection.keySet());
-                }
+                LOG.debug("Asking segmentation service for object ids {}", segmentedSelection::keySet);
                 rawValues = SpringContext.getBean(SegmentedLookupResultsService.class)
                         .retrieveSelectedResultBOs(lookupResultsSequenceNumber, segmentedSelection.keySet(),
                                 Asset.class, GlobalVariables.getUserSession().getPerson().getPrincipalId());

@@ -73,18 +73,20 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                     + "         group by  ASND_DT,doc_hdr_id "
                     + "       ) T";
 
+    @Override
     public Collection<ActionItemActionListExtension> getActionList(String principalId, ActionListFilter filter) {
         return getActionItemsInActionList(ActionItemActionListExtension.class, principalId, filter);
     }
 
+    @Override
     public Collection<ActionItemActionListExtension> getActionListForSingleDocument(String documentId) {
-        LOG.debug("getting action list for document id " + documentId);
+        LOG.debug("getting action list for document id {}", documentId);
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         Collection<ActionItemActionListExtension> collection =
                 this.getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(
                         ActionItemActionListExtension.class, criteria));
-        LOG.debug("found " + collection.size() + " action items for document id " + documentId);
+        LOG.debug("found {} action items for document id {}", collection::size, () -> documentId);
         return createActionListForRouteHeader(collection);
     }
 
@@ -415,8 +417,10 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         filterDescription += labelToAdd;
     }
 
+    @Override
     public int getCount(final String workflowId) {
         return (Integer) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
+            @Override
             public Object doInPersistenceBroker(PersistenceBroker broker) {
                 PreparedStatement statement = null;
                 ResultSet resultSet = null;
@@ -493,7 +497,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
 
     private <T extends ActionItemActionListExtension> Collection<T> getActionItemsInActionList(
             Class<T> objectsToRetrieve, String principalId, ActionListFilter filter) {
-        LOG.debug("getting action list for user " + principalId);
+        LOG.debug("getting action list for user {}", principalId);
         Criteria crit;
         if (filter == null) {
             crit = new Criteria();
@@ -501,13 +505,14 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         } else {
             crit = setUpActionListCriteria(principalId, filter);
         }
-        LOG.debug("running query to get action list for criteria " + crit);
+        LOG.debug("running query to get action list for criteria {}", crit);
         Collection<T> collection = this.getPersistenceBrokerTemplate()
                 .getCollectionByQuery(new QueryByCriteria(objectsToRetrieve, crit));
-        LOG.debug("found " + collection.size() + " action items for user " + principalId);
+        LOG.debug("found {} action items for user {}", collection::size, () -> principalId);
         return createActionListForUser(collection);
     }
 
+    @Override
     public Collection<OutboxItemActionListExtension> getOutbox(String principalId, ActionListFilter filter) {
         return getActionItemsInActionList(OutboxItemActionListExtension.class, principalId, filter);
     }
@@ -515,6 +520,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     /**
      * Deletes all outbox items specified by the list of ids
      */
+    @Override
     public void removeOutboxItems(String principalId, List<String> outboxItems) {
         Criteria criteria = new Criteria();
         criteria.addIn("id", outboxItems);
@@ -528,6 +534,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         this.getPersistenceBrokerTemplate().store(outboxItem);
     }
 
+    @Override
     public OutboxItemActionListExtension getOutboxByDocumentIdUserId(String documentId, String userId) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
