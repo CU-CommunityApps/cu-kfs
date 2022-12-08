@@ -87,6 +87,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
         documentPresentationControllerClass = MaintenanceDocumentPresentationControllerBase.class;
     }
 
+    @Override
     public Class<? extends PromptBeforeValidation> getPromptBeforeValidationClass() {
         return promptBeforeValidationClass;
     }
@@ -95,6 +96,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * The promptBeforeValidationClass element is the full class name of the java class which determines whether the
      * user should be asked any questions prior to running validation.
      */
+    @Override
     public void setPromptBeforeValidationClass(Class<? extends PromptBeforeValidation> preRulesCheckClass) {
         this.promptBeforeValidationClass = preRulesCheckClass;
     }
@@ -159,6 +161,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
     /**
      * Directly validate simple fields, call completeValidation on Definition fields.
      */
+    @Override
     public void completeValidation() {
         if (!MaintenanceDocumentRule.class.isAssignableFrom(getBusinessRulesClass())) {
             throw new DataDictionaryException("ERROR: Business rules class for KNS Maintenance document entry " +
@@ -190,6 +193,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
         }
     }
 
+    @Override
     public String toString() {
         return "MaintenanceDocumentEntry for documentType " + getDocumentTypeName();
     }
@@ -294,10 +298,12 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
         return super.getDocumentPresentationControllerClass();
     }
 
+    @Override
     public List<HeaderNavigation> getHeaderNavigationList() {
         return headerNavigationList;
     }
 
+    @Override
     public List<String> getWebScriptFiles() {
         return webScriptFiles;
     }
@@ -306,6 +312,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * The webScriptFile element defines the name of javascript files that are necessary for processing the document.
      * The specified javascript files will be included in the generated html.
      */
+    @Override
     public void setWebScriptFiles(List<String> webScriptFiles) {
         this.webScriptFiles = webScriptFiles;
     }
@@ -313,26 +320,32 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
     /**
      * The headerNavigation element defines a set of additional tabs which will appear on the document.
      */
+    @Override
     public void setHeaderNavigationList(List<HeaderNavigation> headerNavigationList) {
         this.headerNavigationList = headerNavigationList;
     }
 
+    @Override
     public boolean isSessionDocument() {
         return this.sessionDocument;
     }
 
+    @Override
     public void setSessionDocument(boolean sessionDocument) {
         this.sessionDocument = sessionDocument;
     }
 
+    @Override
     public Class<? extends DerivedValuesSetter> getDerivedValuesSetterClass() {
         return this.derivedValuesSetterClass;
     }
 
+    @Override
     public void setDerivedValuesSetterClass(Class<? extends DerivedValuesSetter> derivedValuesSetter) {
         this.derivedValuesSetterClass = derivedValuesSetter;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         /*
          * CU Customization (KFSPTS-23970):

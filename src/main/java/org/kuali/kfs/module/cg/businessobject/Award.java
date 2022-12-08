@@ -853,6 +853,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         this.routingOrg = primaryAwardOrganization.getOrganizationCode();
     }
 
+    @Override
     public InstrumentType getInstrumentType() {
         return instrumentType;
     }

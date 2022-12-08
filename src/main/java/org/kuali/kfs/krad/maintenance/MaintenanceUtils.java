@@ -146,9 +146,7 @@ public final class MaintenanceUtils {
             return;
         }
 
-        if (MaintenanceUtils.LOG.isInfoEnabled()) {
-            MaintenanceUtils.LOG.info("Locking document found:  docId = " + blockingDocId + ".");
-        }
+        LOG.info("Locking document found:  docId = {}.", blockingDocId);
 
         // load the blocking locked document
         WorkflowDocument lockedDocument = null;
@@ -176,14 +174,17 @@ public final class MaintenanceUtils {
             }
         } catch (Exception ex) {
             // clean up the lock and notify the admins
-            MaintenanceUtils.LOG.error("Unable to retrieve locking document specified in the maintenance lock " +
-                    "table: " + blockingDocId, ex);
+            MaintenanceUtils.LOG.error(
+                    "Unable to retrieve locking document specified in the maintenance lock table: {}",
+                    blockingDocId,
+                    ex
+            );
 
             cleanOrphanLocks(blockingDocId, ex);
             return;
         }
         if (lockedDocument == null) {
-            MaintenanceUtils.LOG.warn("Locking document header for " + blockingDocId + "came back null.");
+            MaintenanceUtils.LOG.warn("Locking document header for {}came back null.", blockingDocId);
             cleanOrphanLocks(blockingDocId, null);
         }
 
@@ -199,11 +200,8 @@ public final class MaintenanceUtils {
         String blockingUrl = UrlFactory.parameterizeUrl(KRADServiceLocator.getKualiConfigurationService()
                 .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/" + KRADConstants.DOC_HANDLER_ACTION,
                 parameters);
-        if (MaintenanceUtils.LOG.isDebugEnabled()) {
-            MaintenanceUtils.LOG.debug("blockingUrl = '" + blockingUrl + "'");
-            MaintenanceUtils.LOG.debug("Maintenance record: " + lockedDocument.getApplicationDocumentId() +
-                    "is locked.");
-        }
+        LOG.debug("blockingUrl = '{}'", blockingUrl);
+        LOG.debug("Maintenance record: {}is locked.", lockedDocument::getApplicationDocumentId);
         String[] errorParameters = {blockingUrl, blockingDocId};
 
         // If specified, add an error to the ErrorMap and throw an exception; otherwise, just add a warning to the

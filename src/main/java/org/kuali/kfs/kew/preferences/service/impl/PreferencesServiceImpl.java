@@ -94,10 +94,9 @@ public class PreferencesServiceImpl implements PreferencesService {
         USER_OPTION_KEY_DEFAULT_MAP.put(Preferences.KEYS.SHOW_LAST_MODIFIED_DATE, "userOptions.default.showLastModifiedDate");
     }
 
+    @Override
     public Preferences getPreferences(String principalId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("start preferences fetch user " + principalId);
-        }
+        LOG.debug("start preferences fetch user {}", principalId);
         Collection<UserOptions> options = getUserOptionService().findByWorkflowUser(principalId);
         Map<String, UserOptions> optionMap = new HashMap<>();
         Map<String, String> optionValueMap = new HashMap<>();
@@ -120,16 +119,15 @@ public class PreferencesServiceImpl implements PreferencesService {
         for (Map.Entry<String, String> entry : USER_OPTION_KEY_DEFAULT_MAP.entrySet()) {
             String optionKey = entry.getKey();
             String defaultValue = kcs.getPropertyValueAsString(entry.getValue());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("start fetch option " + optionKey + " user " + principalId);
-            }
+            LOG.debug("start fetch option {} user {}", optionKey, principalId);
 
             UserOptions option = optionMap.get(optionKey);
             if (option == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("User option '" + optionKey + "' on user " + principalId +
-                            " has no stored value.  Preferences will require save.");
-                }
+                LOG.debug(
+                        "User option '{}' on user {} has no stored value.  Preferences will require save.",
+                        optionKey,
+                        principalId
+                );
                 option = new UserOptions();
                 option.setWorkflowId(principalId);
                 option.setOptionId(optionKey);
@@ -144,9 +142,7 @@ public class PreferencesServiceImpl implements PreferencesService {
                     }
                 }
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("End fetch option " + optionKey + " user " + principalId);
-            }
+            LOG.debug("End fetch option {} user {}", optionKey, principalId);
 
             optionValueMap.put(optionKey, option.getOptionVal());
         }
@@ -155,11 +151,10 @@ public class PreferencesServiceImpl implements PreferencesService {
                 .build();
     }
 
+    @Override
     public void savePreferences(String principalId, Preferences preferences) {
         // NOTE: this previously displayed the principalName.  Now it's just the id
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("saving preferences user " + principalId);
-        }
+        LOG.debug("saving preferences user {}", principalId);
 
         validate(preferences);
         Map<String, String> optionsMap = new HashMap<>(50);
@@ -210,9 +205,7 @@ public class PreferencesServiceImpl implements PreferencesService {
                         principalId));
             }
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("saved preferences user " + principalId);
-        }
+        LOG.debug("saved preferences user {}", principalId);
     }
 
     private void validate(Preferences preferences) {
@@ -243,9 +236,6 @@ public class PreferencesServiceImpl implements PreferencesService {
     }
 
     public UserOptionsService getUserOptionService() {
-    	return KEWServiceLocator.getService(KEWServiceLocator.USER_OPTIONS_SRV);
+        return KEWServiceLocator.getService(KEWServiceLocator.USER_OPTIONS_SRV);
     }
-
 }
-
-

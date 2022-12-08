@@ -47,7 +47,6 @@ import java.util.Map;
  * CU Customization (KFSPTS-23531):
  * 
  * Updated the generation of the cache keys for improved compatibility with Redis.
- * Backported redis fix on FINP-8169
  */
 public class AttributeValidationHelper {
 
@@ -109,7 +108,7 @@ public class AttributeValidationHelper {
             if (attrib != null) {
                 m.put(attrib.getAttributeName(), data.getAttributeValue());
             } else {
-                LOG.error("Unable to get attribute name for ID:" + data.getKimAttributeId());
+                LOG.error("Unable to get attribute name for ID:{}", data::getKimAttributeId);
             }
         }
         return m;
@@ -123,7 +122,7 @@ public class AttributeValidationHelper {
             if (attrib != null) {
                 m.put(attrib.getAttributeName(), data.getAttrVal());
             } else {
-                LOG.error("Unable to get attribute name for ID:" + data.getKimAttrDefnId());
+                LOG.error("Unable to get attribute name for ID:{}", data::getKimAttrDefnId);
             }
         }
         return m;
@@ -136,7 +135,7 @@ public class AttributeValidationHelper {
             if (attrib != null) {
                 m.put(attrib.getAttributeName(), "");
             } else {
-                LOG.error("Unable to get attribute name for ID:" + attribute.getId());
+                LOG.error("Unable to get attribute name for ID:{}", attribute::getId);
             }
         }
         return m;
@@ -151,7 +150,7 @@ public class AttributeValidationHelper {
             if (attrib != null) {
                 m.put(attrib.getAttributeName(), Integer.toString(i));
             } else {
-                LOG.error("Unable to get attribute name for ID:" + data.getKimAttrDefnId());
+                LOG.error("Unable to get attribute name for ID:{}", data::getKimAttrDefnId);
             }
             i++;
         }
