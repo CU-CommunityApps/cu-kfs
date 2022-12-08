@@ -672,11 +672,11 @@
             </pattern>
         </pattern>
         <!--
-            Later KualiCo releases specifically use PersonImpl as the data type for the "accountDelegate" property
+            Later KualiCo releases specifically use Person as the data type for the "accountDelegate" property
             on the AccountDelegateGlobalDetail object. We have added a conversion rule to explicitly remove
             the "accountDelegate" property from the XML, given that our other rules fully remove Person objects,
             and since the newer "accountDelegate" properties might not have a "class" attribute that references
-            the PersonImpl class.
+            the Person class.
          -->
         <pattern>
             <class>org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail</class>
@@ -776,23 +776,23 @@
             </pattern>
             <pattern>
                 <match>assetRepresentative(REFERENCE)</match>
-                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+                <replacement>org.kuali.kfs.kim.impl.identity.Person</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.bo.impl.PersonImpl</match>
-                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+                <replacement>org.kuali.kfs.kim.impl.identity.Person</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.rice.kim.impl.identity.PersonImpl</match>
-                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+                <replacement>org.kuali.kfs.kim.impl.identity.Person</replacement>
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.kim.impl.identity.PersonImpl</match>
-                <replacement>org.kuali.kfs.kim.impl.identity.PersonImpl</replacement>
+                <replacement>org.kuali.kfs.kim.impl.identity.Person</replacement>
             </pattern>
         </pattern>
         <pattern>
-            <class>org.kuali.kfs.kim.impl.identity.PersonImpl</class>
+            <class>org.kuali.kfs.kim.impl.identity.Person</class>
             <pattern>
                 <match>baseSalaryAmount</match>
                 <replacement>baseSalaryAmount</replacement>
@@ -1023,6 +1023,10 @@
             </pattern>
             <pattern>
                 <match>org.kuali.kfs.kim.impl.identity.PersonImpl</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.identity.Person</match>
                 <replacement/>
             </pattern>
             <pattern>
@@ -1309,7 +1313,7 @@
 
     <!-- Rules for any class nodes to be removed from the document entirely.
          Class node removals should only be used for reference objects that can be materialized from
-         a reference ID, anyway.  A good example is PersonImpl, whose structure has changed so much that it
+         a reference ID, anyway.  A good example is Person, whose structure has changed so much that it
          cannot be converted without significantly more complex logic.
 
          ====
