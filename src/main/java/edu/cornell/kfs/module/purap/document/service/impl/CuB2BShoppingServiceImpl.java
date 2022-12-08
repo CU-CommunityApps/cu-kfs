@@ -15,12 +15,14 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.PersistenceService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
+import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.RequisitionStatuses;
 import org.kuali.kfs.module.purap.businessobject.B2BInformation;
 import org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem;
@@ -429,7 +431,13 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     protected RequisitionItem createRequisitionItem(B2BShoppingCartItem item,
     		Integer itemLine, String defaultCommodityCode) {
     	 RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
-    	 
+
+        Integer requisitionItemDescriptionMaxLength = KNSServiceLocator.getDataDictionaryService().getAttributeMaxLength(RequisitionItem.class, PurapPropertyConstants.ITEM_DESCRIPTION);
+        if (StringUtils.isNotBlank(reqItem.getItemDescription()) && reqItem.getItemDescription().length() > requisitionItemDescriptionMaxLength) {
+            LOG.info("createRequisitionItem: Truncating RequisitionItem Description to " + requisitionItemDescriptionMaxLength + " characters");
+            reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
+        }
+
          boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
          if (commCodeParam) {

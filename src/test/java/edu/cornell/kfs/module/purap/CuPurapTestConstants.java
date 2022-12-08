@@ -24,4 +24,6 @@ public final class CuPurapTestConstants {
     public static final String XMLNS_XSI_ATTRIBUTE = "xmlns:xsi";
     public static final String EINVOICE_NAMESPACE_URL = "http://www.kuali.org/kfs/purap/electronicInvoice";
     public static final String XSI_NAMESPACE_URL = "http://www.w3.org/2001/XMLSchema-instance";
+
+    public static final int REQUISITION_ITEM_DESCRIPTION_MAX_LENGTH = 254;
 }
