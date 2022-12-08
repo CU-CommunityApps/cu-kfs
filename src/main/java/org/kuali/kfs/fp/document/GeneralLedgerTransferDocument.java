@@ -44,6 +44,7 @@ import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.service.OptionsService;
+import org.kuali.kfs.sys.service.UniversityDateService;
 
 import java.sql.Timestamp;
 /* CU customization: This file was overlayed to backport changes in FINP-8266 on top of the 11/17/21
@@ -65,15 +66,19 @@ public class GeneralLedgerTransferDocument extends CapitalAccountingLinesDocumen
     private transient String accountNumber;
     private transient String financialObjectCode;
     private transient String lookupDocumentNumber;
+    private transient String universityFiscalAccountingPeriod;
 
     private transient AccountService accountService;
     private transient ChartService chartService;
     private transient ObjectCodeService objectCodeService;
     private transient OptionsService optionsService;
     private transient GeneralLedgerTransferService generalLedgerTransferService;
+    private transient UniversityDateService universityDateService;
 
     public GeneralLedgerTransferDocument() {
         setUniversityFiscalYear(getOptionsService().getCurrentYearOptions().getUniversityFiscalYear());
+        setUniversityFiscalAccountingPeriod(getUniversityDateService().getCurrentUniversityDate()
+                .getUniversityFiscalAccountingPeriod());
     }
 
     @Override
@@ -91,7 +96,9 @@ public class GeneralLedgerTransferDocument extends CapitalAccountingLinesDocumen
         super.postProcessSave(event);
 
         if (event instanceof RouteDocumentEvent || event instanceof BlanketApproveDocumentEvent) {
-            getGeneralLedgerTransferService().updateGeneralLedgerTransferEntry(getSourceAccountingLines(), documentNumber);
+            getGeneralLedgerTransferService().updateGeneralLedgerTransferEntry(getSourceAccountingLines(),
+                    documentNumber
+            );
         }
     }
 
@@ -108,9 +115,13 @@ public class GeneralLedgerTransferDocument extends CapitalAccountingLinesDocumen
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(FULL_ROUTING_SPLIT)) {
-            return getGeneralLedgerTransferService().newAccountOnTarget(getSourceAccountingLines(), getTargetAccountingLines())
-                || getGeneralLedgerTransferService().newObjectCodeOnTarget(getSourceAccountingLines(), getTargetAccountingLines())
-                || getGeneralLedgerTransferService().costSharePresent(getSourceAccountingLines(), getTargetAccountingLines());
+            return getGeneralLedgerTransferService().newAccountOnTarget(getSourceAccountingLines(),
+                    getTargetAccountingLines()
+            ) || getGeneralLedgerTransferService().newObjectCodeOnTarget(getSourceAccountingLines(),
+                    getTargetAccountingLines()
+            ) || getGeneralLedgerTransferService().costSharePresent(getSourceAccountingLines(),
+                    getTargetAccountingLines()
+            );
         }
 
         return super.answerSplitNodeQuestion(nodeName);
@@ -289,6 +300,14 @@ public class GeneralLedgerTransferDocument extends CapitalAccountingLinesDocumen
         return getObjectCodeService().getByPrimaryId(universityFiscalYear, chartOfAccountsCode, financialObjectCode);
     }
 
+    public String getUniversityFiscalAccountingPeriod() {
+        return universityFiscalAccountingPeriod;
+    }
+
+    public void setUniversityFiscalAccountingPeriod(final String universityFiscalAccountingPeriod) {
+        this.universityFiscalAccountingPeriod = universityFiscalAccountingPeriod;
+    }
+
     public AccountService getAccountService() {
         if (accountService == null) {
             accountService = SpringContext.getBean(AccountService.class);
@@ -329,14 +348,24 @@ public class GeneralLedgerTransferDocument extends CapitalAccountingLinesDocumen
         return generalLedgerTransferService;
     }
 
-    protected boolean statusChangeRequiringGeneralLedgerEntryDocumentNumberRemoval(WorkflowDocument workflowDocument,
-            DocumentRouteStatusChange statusChangeEvent) {
+    public UniversityDateService getUniversityDateService() {
+        if (universityDateService == null) {
+            universityDateService = SpringContext.getBean(UniversityDateService.class);
+        }
+
+        return universityDateService;
+    }
+
+    protected boolean statusChangeRequiringGeneralLedgerEntryDocumentNumberRemoval(
+            WorkflowDocument workflowDocument, DocumentRouteStatusChange statusChangeEvent
+    ) {
         return workflowDocument.isCanceled() || workflowDocument.isDisapproved() || workflowDocument.isRecalled()
-                || workflowDocument.isException() || documentIsBeingRecalled(statusChangeEvent);
+               || workflowDocument.isException() || documentIsBeingRecalled(statusChangeEvent);
     }
 
     private boolean documentIsBeingRecalled(DocumentRouteStatusChange eventStatusChange) {
         return eventStatusChange.getOldRouteStatus().equals(DocumentStatus.ENROUTE.getCode())
-                && eventStatusChange.getNewRouteStatus().equals(DocumentStatus.SAVED.getCode());
+               && eventStatusChange.getNewRouteStatus().equals(DocumentStatus.SAVED.getCode());
     }
+
 }
