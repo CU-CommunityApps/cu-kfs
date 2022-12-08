@@ -28,7 +28,7 @@ import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.identity.entity.Entity;

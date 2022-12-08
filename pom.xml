@@ -20,7 +20,9 @@
         <job.name>${project.artifactId}</job.name>
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
-        <kfs.version>2022-01-05</kfs.version>
+
+        <kfs.version>2022-02-23</kfs.version>
+
         <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>8.43</checkstyle.version>

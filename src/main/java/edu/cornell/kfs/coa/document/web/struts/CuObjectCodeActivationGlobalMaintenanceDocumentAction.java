@@ -12,7 +12,7 @@ import org.kuali.kfs.kns.web.struts.form.KualiMaintenanceForm;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.coa.businessobject.CuObjectCodeActivationGlobal;
 import edu.cornell.kfs.sys.document.web.struts.CuFinancialMaintenanceDocumentAction;

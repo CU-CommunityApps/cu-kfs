@@ -1,7 +1,7 @@
 package edu.cornell.kfs.fp.service;
 
 import org.kuali.kfs.pdp.service.PaymentMaintenanceService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public interface RecurringDisbursementVoucherPaymentMaintenanceService {
     

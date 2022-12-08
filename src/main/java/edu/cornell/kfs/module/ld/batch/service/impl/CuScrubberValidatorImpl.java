@@ -96,7 +96,7 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
             }
 
             boolean suspenseAccountLogicInd = parameterService.getParameterValueAsBoolean(
-                    LaborScrubberStep.class, LaborParameterConstants.SUSPENSE_ACCOUNT_LOGIC);
+                    LaborScrubberStep.class, LaborParameterConstants.SUSPENSE_ACCOUNT_IND);
             if (suspenseAccountLogicInd) {
                 return useSuspenseAccount(laborWorkingEntry);
             }

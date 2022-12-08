@@ -1,7 +1,7 @@
 package edu.cornell.kfs.pdp.businessobject;
 
 import org.kuali.kfs.pdp.businessobject.ACHPayee;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 /**
  * Custom subclass of ACHPayee that has an extra netID/principalName property.

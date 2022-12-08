@@ -50,7 +50,7 @@ import org.kuali.kfs.sys.document.validation.event.UpdateAccountingLineEvent;
 import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import java.util.ArrayList;

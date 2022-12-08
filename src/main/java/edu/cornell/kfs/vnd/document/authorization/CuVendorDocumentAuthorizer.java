@@ -3,7 +3,7 @@ package edu.cornell.kfs.vnd.document.authorization;
 import java.util.Set;
 
 import org.kuali.kfs.vnd.document.authorization.VendorDocumentAuthorizer;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.KRADConstants;
 

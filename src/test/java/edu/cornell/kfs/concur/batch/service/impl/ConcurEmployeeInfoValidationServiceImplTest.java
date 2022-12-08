@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.identity.PersonServiceImpl;
 
 import edu.cornell.kfs.concur.batch.service.impl.fixture.ConcurPersonFixture;

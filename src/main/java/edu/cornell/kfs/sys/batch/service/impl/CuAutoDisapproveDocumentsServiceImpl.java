@@ -18,7 +18,7 @@ import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;

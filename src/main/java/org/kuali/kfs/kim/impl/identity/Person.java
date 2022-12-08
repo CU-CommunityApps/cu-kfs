@@ -24,7 +24,6 @@ import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.IdentityService;
-import org.kuali.kfs.kim.api.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
@@ -58,7 +57,7 @@ import java.util.Map;
  * CU Customization:
  * Fixed a few areas that were not referencing the unmasked values as expected.
  */
-public class PersonImpl extends TransientBusinessObjectBase implements MutableInactivatable, Person {
+public class Person extends TransientBusinessObjectBase implements MutableInactivatable {
 
     private static final long serialVersionUID = 1L;
 
@@ -115,18 +114,18 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
     protected static IdentityService identityService;
     protected static PersonService personService;
 
-    public PersonImpl() {
+    public Person() {
     }
 
-    public PersonImpl(Principal principal, String personEntityTypeCode) {
+    public Person(Principal principal, String personEntityTypeCode) {
         this(principal, null, personEntityTypeCode);
     }
 
-    public PersonImpl(Principal principal, Entity entity, String personEntityTypeCode) {
+    public Person(Principal principal, Entity entity, String personEntityTypeCode) {
         setPrincipal(principal, entity, personEntityTypeCode);
     }
 
-    public PersonImpl(String principalId, String personEntityTypeCode) {
+    public Person(String principalId, String personEntityTypeCode) {
         this(getIdentityService().getPrincipal(principalId), personEntityTypeCode);
     }
 
@@ -397,17 +396,14 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return str;
     }
 
-    @Override
     public String getEntityId() {
         return entityId;
     }
 
-    @Override
     public String getPrincipalId() {
         return principalId;
     }
 
-    @Override
     public String getPrincipalName() {
         return principalName;
     }
@@ -416,7 +412,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.principalName = principalName;
     }
 
-    @Override
     public String getFirstName() {
         if (suppressName) {
             return KimConstants.RESTRICTED_DATA_MASK;
@@ -424,12 +419,10 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return firstName;
     }
 
-    @Override
     public String getFirstNameUnmasked() {
         return firstName;
     }
 
-    @Override
     public String getMiddleName() {
         if (suppressName) {
             return KimConstants.RESTRICTED_DATA_MASK;
@@ -437,12 +430,10 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return middleName;
     }
 
-    @Override
     public String getMiddleNameUnmasked() {
         return middleName;
     }
 
-    @Override
     public String getLastName() {
         if (suppressName) {
             return KimConstants.RESTRICTED_DATA_MASK;
@@ -450,12 +441,10 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return lastName;
     }
 
-    @Override
     public String getLastNameUnmasked() {
         return lastName;
     }
 
-    @Override
     public String getName() {
         if (suppressName) {
             return KimConstants.RESTRICTED_DATA_MASK;
@@ -467,12 +456,10 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.name = name;
     }
 
-    @Override
     public String getNameUnmasked() {
         return this.name;
     }
 
-    @Override
     public String getPhoneNumber() {
         if (suppressPhone) {
             return KimConstants.RESTRICTED_DATA_MASK;
@@ -480,12 +467,10 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return phoneNumber;
     }
 
-    @Override
     public String getPhoneNumberUnmasked() {
         return phoneNumber;
     }
 
-    @Override
     public String getEmailAddress() {
         if (suppressEmail) {
             return KimConstants.RESTRICTED_DATA_MASK;
@@ -493,7 +478,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         return emailAddress;
     }
 
-    @Override
     public String getEmailAddressUnmasked() {
         return emailAddress;
     }
@@ -546,7 +530,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.affiliations = affiliations;
     }
 
-    @Override
     public String getExternalId(String externalIdentifierTypeCode) {
         return externalIdentifiers.get(externalIdentifierTypeCode);
     }
@@ -554,112 +537,90 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
     /**
      * @return the campus code from the default affiliation for the identity; null if no default affiliation is set.
      */
-    @Override
     public String getCampusCode() {
         return campusCode;
     }
 
-    @Override
     public Map<String, String> getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    @Override
     public String getAddressLine1() {
         return address.getLine1();
     }
 
-    @Override
     public String getAddressLine1Unmasked() {
         return address.getLine1Unmasked();
     }
 
-    @Override
     public String getAddressLine2() {
         return address.getLine2();
     }
 
-    @Override
     public String getAddressLine2Unmasked() {
         return address.getLine2Unmasked();
     }
 
-    @Override
     public String getAddressLine3() {
         return address.getLine3();
     }
 
-    @Override
     public String getAddressLine3Unmasked() {
         return address.getLine3Unmasked();
     }
 
-    @Override
     public String getAddressCity() {
         return address.getCity();
     }
 
-    @Override
     public String getAddressCityUnmasked() {
         return address.getCityUnmasked();
     }
 
-    @Override
     public String getAddressStateProvinceCode() {
         return address.getStateProvinceCode();
     }
 
-    @Override
     public String getAddressStateProvinceCodeUnmasked() {
         return address.getStateProvinceCodeUnmasked();
     }
 
-    @Override
     public String getAddressPostalCode() {
         return address.getPostalCode();
     }
 
-    @Override
     public String getAddressPostalCodeUnmasked() {
         return address.getPostalCodeUnmasked();
     }
 
-    @Override
     public String getAddressCountryCode() {
         return address.getCountryCode();
     }
 
-    @Override
     public String getAddressCountryCodeUnmasked() {
         return address.getCountryCodeUnmasked();
     }
 
-    @Override
     public String getEmployeeStatusCode() {
         return this.employeeStatusCode;
     }
 
-    @Override
     public String getEmployeeTypeCode() {
         return this.employeeTypeCode;
     }
 
-    @Override
     public KualiDecimal getBaseSalaryAmount() {
         return this.baseSalaryAmount;
     }
 
-    @Override
     public String getEmployeeId() {
         return this.employeeId;
     }
 
-    @Override
     public String getPrimaryDepartmentCode() {
         return this.primaryDepartmentCode;
     }
 
-    @Override
     public String getEntityTypeCode() {
         return this.entityTypeCode;
     }
@@ -682,7 +643,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.active = active;
     }
 
-    @Override
     public String getLookupRoleNamespaceCode() {
         return this.lookupRoleNamespaceCode;
     }
@@ -691,7 +651,6 @@ public class PersonImpl extends TransientBusinessObjectBase implements MutableIn
         this.lookupRoleNamespaceCode = lookupRoleNamespaceCode;
     }
 
-    @Override
     public String getLookupRoleName() {
         return this.lookupRoleName;
     }

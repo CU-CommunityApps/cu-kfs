@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.impl.services.CoreImplServiceLocator;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.KRADServiceLocator;

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.document.DocumentPresentationController;

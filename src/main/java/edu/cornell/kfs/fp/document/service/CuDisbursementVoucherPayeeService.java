@@ -2,7 +2,7 @@ package edu.cornell.kfs.fp.document.service;
 
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
 

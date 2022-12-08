@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.exception.FileStorageException;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,7 +1,7 @@
 package edu.cornell.kfs.pdp.batch.service;
 
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 

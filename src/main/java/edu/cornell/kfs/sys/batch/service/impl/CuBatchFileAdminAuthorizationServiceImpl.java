@@ -9,7 +9,7 @@ import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 

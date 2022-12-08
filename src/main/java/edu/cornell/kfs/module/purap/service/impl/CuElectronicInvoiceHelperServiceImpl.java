@@ -54,7 +54,7 @@ import org.kuali.kfs.kew.api.document.search.DocumentSearchResult;
 import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.bo.Attachment;

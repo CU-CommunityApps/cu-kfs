@@ -17,7 +17,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroupHistory;
 import org.kuali.kfs.pdp.service.impl.PaymentMaintenanceServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.transaction.annotation.Transactional;

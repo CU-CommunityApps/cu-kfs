@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -165,7 +165,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             req.setVendorName(vendor.getVendorName());
             req.setVendorRestrictedIndicator(vendor.getVendorRestrictedIndicator());
             req.setItems(itemsForVendor);
-            req.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
+            req.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.FUNDING_SOURCE));
             req.setRequisitionSourceCode(PurapConstants.RequisitionSources.B2B);
 
             req.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_IN_PROCESS);

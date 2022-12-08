@@ -24,7 +24,7 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.kim.bo.impl.KimAttributes;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import java.util.Map;
 

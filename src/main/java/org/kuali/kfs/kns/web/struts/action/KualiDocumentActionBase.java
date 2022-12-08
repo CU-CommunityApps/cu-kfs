@@ -46,7 +46,7 @@ import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.group.Group;

@@ -49,7 +49,7 @@ import org.kuali.kfs.datadictionary.LookupDictionary;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.kns.service.BusinessObjectMetaDataService;

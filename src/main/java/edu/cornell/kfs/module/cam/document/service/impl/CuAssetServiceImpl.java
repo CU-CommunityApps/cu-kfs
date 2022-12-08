@@ -20,7 +20,7 @@ import org.kuali.kfs.module.cam.document.service.impl.AssetServiceImpl;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetService {
 
