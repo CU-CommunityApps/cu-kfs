@@ -334,9 +334,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     @Override
     public boolean isExpired(Calendar testDate) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("entering isExpired(" + testDate + ")");
-        }
+        LOG.debug("entering isExpired({})", testDate);
 
         // dont even bother trying to test if the accountExpirationDate is null
         if (accountExpirationDate == null) {

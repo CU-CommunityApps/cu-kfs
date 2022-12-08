@@ -365,7 +365,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 				throw new RuntimeException( "CONFIGURATION ERROR: No responsible module found for EBO class.  Unable to proceed." );
 			}
 
-			success = !ObjectUtils.isNull(cfda);
+			success = ObjectUtils.isNotNull(cfda);
 			if (!success) {
 				putFieldError(KFSPropertyConstants.CATALOG_OF_DOMESTIC_ASSISTANCE_NUMBER, COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_CFDA_NUMBER_INVALID);
 			}
@@ -386,11 +386,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	protected boolean checkAllAccountUsers(AccountGlobal doc, Person newFiscalOfficer, Person newManager, Person newSupervisor) {
 		boolean success = true;
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("newSupervisor: " + newSupervisor);
-			LOG.debug("newFiscalOfficer: " + newFiscalOfficer);
-			LOG.debug("newManager: " + newManager);
-		}
+		LOG.debug("newSupervisor: {}", newSupervisor);
+		LOG.debug("newFiscalOfficer: {}", newFiscalOfficer);
+		LOG.debug("newManager: {}", newManager);
 		// only need to do this check if at least one of the user fields is non null
 		if (newSupervisor != null || newFiscalOfficer != null || newManager != null) {
 			// loop over all AccountGlobalDetail records
@@ -425,11 +423,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			detail.refreshReferenceObject("account");
 			Account account = detail.getAccount();
             if (ObjectUtils.isNotNull(account)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("old-Supervisor: " + account.getAccountSupervisoryUser());
-                    LOG.debug("old-FiscalOfficer: " + account.getAccountFiscalOfficerUser());
-                    LOG.debug("old-Manager: " + account.getAccountManagerUser());
-                }
+                LOG.debug("old-Supervisor: {}", account::getAccountSupervisoryUser);
+                LOG.debug("old-FiscalOfficer: {}", account::getAccountFiscalOfficerUser);
+                LOG.debug("old-Manager: {}", account::getAccountManagerUser);
                 // only need to check if they are not being overridden by the change document
                 if (newSupervisor != null && newSupervisor.getPrincipalId() != null) {
                     if (areTwoUsersTheSame(newSupervisor, account.getAccountFiscalOfficerUser())) {
@@ -470,8 +466,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
                     }
                 }
             } else {
-                LOG.warn("AccountGlobalDetail object has null account object:" + detail.getChartOfAccountsCode() +
-                        "-" + detail.getAccountNumber());
+                LOG.warn(
+                        "AccountGlobalDetail object has null account object:{}-{}",
+                        detail::getChartOfAccountsCode,
+                        detail::getAccountNumber
+                        );
             }
         }
 		

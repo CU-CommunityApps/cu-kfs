@@ -11,6 +11,7 @@ public class YesNoValuesFinder extends KeyValuesBase {
 
 	private static final long serialVersionUID = 1L;
 
+	@Override
     public List<KeyValue> getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<>();
         

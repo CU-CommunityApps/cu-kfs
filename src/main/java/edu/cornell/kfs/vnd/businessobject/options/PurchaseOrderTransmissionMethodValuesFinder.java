@@ -14,6 +14,7 @@ public class PurchaseOrderTransmissionMethodValuesFinder extends KeyValuesBase {
 	private static final long serialVersionUID = 1L;
 	protected KeyValuesService keyValuesService;
 
+	@Override
     public List<KeyValue> getKeyValues() {
         Collection<PurchaseOrderTransmissionMethod> methods = keyValuesService.findAll(PurchaseOrderTransmissionMethod.class);
         List<KeyValue> labels = new ArrayList<>();
