@@ -161,21 +161,10 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         }
 
         String workflowAction = reportValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.SEND_BACK;
-        String workflowActionUrl = buildFullUrlForExpenseWorkflowAction(reportId, workflowAction);
-        String workflowComment = reportValid
-                ? ConcurConstants.APPROVE_COMMENT
-                : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
-        ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
-        String expenseV4WorkflowMessageFormat = configurationService.getPropertyValueAsString(
-                ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV4_EXPENSE_REPORT_WORKFLOW);
-        String logMessageDetail = MessageFormat.format(expenseV4WorkflowMessageFormat, workflowAction, reportId);
-        
-        ConcurWebRequest<Void> webRequest = ConcurWebRequestBuilder.forRequestExpectingEmptyResponse()
-                .withUrl(workflowActionUrl)
-                .withHttpMethod(HttpMethod.PATCH)
-                .withJsonBody(workflowDTO)
-                .build();
-        
+        String logMessageDetail = buildLogMessageDetailForExpenseWorkflowAction(workflowAction, reportId);
+        ConcurWebRequest<Void> webRequest = buildWebRequestForExpenseWorkflowAction(
+                workflowAction, reportId, resultsDTO);
+
         concurEventNotificationV2WebserviceService.callConcurEndpoint(
                 accessToken, webRequest, logMessageDetail);
     }
@@ -188,6 +177,27 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String concurTestWorkflowIndicator = concurBatchUtilityService.getConcurParameterValue(
                 ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND);
         return StringUtils.equalsIgnoreCase(concurTestWorkflowIndicator, KFSConstants.ACTIVE_INDICATOR);
+    }
+    
+    protected String buildLogMessageDetailForExpenseWorkflowAction(String workflowAction, String reportId) {
+        String expenseV4WorkflowMessageFormat = configurationService.getPropertyValueAsString(
+                ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV4_EXPENSE_REPORT_WORKFLOW);
+        return MessageFormat.format(expenseV4WorkflowMessageFormat, workflowAction, reportId);
+    }
+    
+    protected ConcurWebRequest<Void> buildWebRequestForExpenseWorkflowAction(String workflowAction, String reportId,
+            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
+                ? ConcurConstants.APPROVE_COMMENT
+                : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
+        ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
+        String workflowActionUrl = buildFullUrlForExpenseWorkflowAction(reportId, workflowAction);
+        
+        return ConcurWebRequestBuilder.forRequestExpectingEmptyResponse()
+                .withUrl(workflowActionUrl)
+                .withHttpMethod(HttpMethod.PATCH)
+                .withJsonBody(workflowDTO)
+                .build();
     }
     
     protected String buildFullUrlForExpenseWorkflowAction(String reportId, String workflowAction) {
