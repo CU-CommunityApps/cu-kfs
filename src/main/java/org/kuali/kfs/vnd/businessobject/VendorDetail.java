@@ -809,4 +809,3 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
 }
-

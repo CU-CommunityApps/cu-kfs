@@ -95,6 +95,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         hideStateTag.setProperty("hideDetails");
     }
 
+    @Override
     public void clear() {
         cellCount = 1;
         accountingLineGroupDefinition = null;
@@ -141,6 +142,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         hideDetails = false;
     }
 
+    @Override
     public void render(PageContext pageContext, Tag parentTag) throws JspException {
         try {
             //KFSPTS-985 : add favorite account selection
@@ -530,6 +532,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param cellCount The cellCount value to set.
      */
+    @Override
     public void setCellCount(int cellCount) {
         this.cellCount = cellCount;
     }

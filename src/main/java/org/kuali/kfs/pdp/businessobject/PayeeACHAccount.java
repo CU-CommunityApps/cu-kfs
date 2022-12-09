@@ -426,7 +426,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     public void setPayeeIdNumber(String payeeIdNumber) {
         this.payeeIdNumber = payeeIdNumber;
     }
-    
+
     public String getStandardEntryClass() {
         return standardEntryClass;
     }

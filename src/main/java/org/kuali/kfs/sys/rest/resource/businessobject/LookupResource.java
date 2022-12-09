@@ -126,8 +126,10 @@ public class LookupResource {
         }
         SearchService searchService = getLookupDictionary().getSearchService(classForType);
         if (searchService == null) {
-            LOG.error(businessObjectEntry.getName() + " seems to be missing a SearchService! A lookup cannot " +
-                    "be queried without a SearchService.");
+            LOG.error(
+                    "{} seems to be missing a SearchService! A lookup cannot be queried without a SearchService.",
+                    businessObjectEntry::getName
+            );
             throw new InternalServerErrorException("The requested lookup is currently unavailable.");
         }
 
@@ -232,15 +234,22 @@ public class LookupResource {
                 // need for special VF type eventually
                 String valuesFinderName = control.getValuesFinderName();
                 if (StringUtils.isBlank(valuesFinderName)) {
-                    LOG.warn("A tree control without ValuesFinder name is most likely a mistake. BOE: " +
-                            businessObjectEntry.getName() + " attribute: " + singleAttributeName);
+                    LOG.warn(
+                            "A tree control without ValuesFinder name is most likely a mistake. BOE: {} attribute: {}",
+                            businessObjectEntry::getName,
+                            () -> singleAttributeName
+                    );
                     continue;
                 }
                 HierarchicalControlValuesFinder valuesFinder = getDataDictionaryService()
                         .getDDBean(HierarchicalControlValuesFinder.class, valuesFinderName);
                 if (valuesFinder == null) {
-                    LOG.warn("A tree control without a valid HierarchicalControlValuesFinder is most likely a " +
-                            "mistake. BOE:" + businessObjectEntry.getName() + " attribute: " + singleAttributeName);
+                    LOG.warn(
+                            "A tree control without a valid HierarchicalControlValuesFinder is most likely a mistake."
+                            + " BOE:{} attribute: {}",
+                            businessObjectEntry::getName,
+                            () -> singleAttributeName
+                    );
                     continue;
                 }
                 List<HierarchicalData> values = valuesFinder.getHierarchicalControlValues();
@@ -287,7 +296,7 @@ public class LookupResource {
         BusinessObjectAdminService adminService = getBusinessObjectDictionaryService().getBusinessObjectAdminService(
                 classForType);
         if (adminService == null) {
-            LOG.debug(classForType.getSimpleName() + "doesn't have a BusinessObjectAdminService!");
+            LOG.debug("{}doesn't have a BusinessObjectAdminService!", classForType::getSimpleName);
             return false;
         }
 

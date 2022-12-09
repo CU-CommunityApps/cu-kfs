@@ -194,8 +194,10 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         try {
             updatedLine = updatedAccountingLine.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LOG.warn("Exception trying to create a new instance of the updatedLine ("
-                + updatedAccountingLine.getClass() + ").");
+            LOG.warn(
+                    "Exception trying to create a new instance of the updatedLine ({}).",
+                    updatedAccountingLine::getClass
+            );
             return false;
         }
 
