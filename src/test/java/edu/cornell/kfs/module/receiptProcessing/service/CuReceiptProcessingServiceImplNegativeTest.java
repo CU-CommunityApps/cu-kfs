@@ -36,7 +36,7 @@ public class CuReceiptProcessingServiceImplNegativeTest {
         receiptProcessingService.setBatchInputFileTypes(setupBatchInputFileTypes());
 
         createDirectory(BATCH_DIRECTORY);
-        copyFile(DATA_FILE_PATH, BATCH_DIRECTORY + "/receiptProcessing_test.csv");
+        copyFile(DATA_FILE_PATH, BATCH_DIRECTORY + "/receiptProcessing_kfs_test_20220102030405.csv");
         createDoneFile();
     }
 
@@ -63,7 +63,7 @@ public class CuReceiptProcessingServiceImplNegativeTest {
     }
 
     private void createDoneFile() throws IOException {
-        String doneFileName = BATCH_DIRECTORY + "/receiptProcessing_test.done";
+        String doneFileName = BATCH_DIRECTORY + "/receiptProcessing_kfs_test_20220102030405.done";
         File doneFile = new File(doneFileName);
         if (!doneFile.exists()) {
             LOG.info("Creating done file: " + doneFile.getAbsolutePath());
