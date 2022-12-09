@@ -174,9 +174,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
         if (testMode) {
             files = files + "," + ConfigContext.getCurrentContextConfig().getProperty("spring.test.files");
         }
-        if (LOG.isInfoEnabled()) {
-            LOG.info("KFS Spring Files Requested.  Returning: " + files);
-        }
+        LOG.info("KFS Spring Files Requested.  Returning: {}", files);
         return files == null ? Collections.emptyList() : parseFileList(files);
     }
 

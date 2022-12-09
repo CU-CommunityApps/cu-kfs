@@ -75,17 +75,13 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      */
     @Override
     public boolean extractPayments() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("extractPayments() started");
-        }
+        LOG.debug("extractPayments() started");
         final Date processRunDate = dateTimeService.getCurrentDate();
 
         final Principal user = KimApiServiceLocator.getIdentityService()
                 .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
         if (user == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
-            }
+            LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
         }
 
@@ -110,14 +106,12 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      */
     @Override
     public void extractImmediatePayments() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("extractImmediatePayments() started");
-        }
+        LOG.debug("extractImmediatePayments() started");
         final Date processRunDate = dateTimeService.getCurrentDate();
         final Principal uuser = KimApiServiceLocator.getIdentityService()
                 .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
         if (uuser == null) {
-            LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
+            LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
         }
 
@@ -141,9 +135,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      */
     protected void extractPaymentsForCampus(String campusCode, String principalId, Date processRunDate,
             List<? extends PaymentSource> documents) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("extractPaymentsForCampus() started for campus: " + campusCode);
-        }
+        LOG.debug("extractPaymentsForCampus() started for campus: {}", campusCode);
 
         Batch batch = createBatch(campusCode, principalId, processRunDate);
         int count = 0;
@@ -173,7 +165,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      */
     protected void extractImmediatePaymentsForCampus(String campusCode, String principalId, Date processRunDate,
             List<? extends PaymentSource> documents) {
-        LOG.debug("extractImmediatePaymentsForCampus() started for campus: " + campusCode);
+        LOG.debug("extractImmediatePaymentsForCampus() started for campus: {}", campusCode);
 
         if (!documents.isEmpty()) {
             Batch batch = createBatch(campusCode, principalId, processRunDate);
@@ -205,7 +197,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      * @param processRunDate The date the batch file is to post.
      */
     protected void addPayment(PaymentSource document, Batch batch, Date processRunDate, boolean immediate) {
-        LOG.info("addPayment() started for document number=" + document.getDocumentNumber());
+        LOG.info("addPayment() started for document number={}", document::getDocumentNumber);
 
         final java.sql.Date sqlProcessRunDate = new java.sql.Date(processRunDate.getTime());
         PaymentGroup pg = getPaymentSourceToExtractService().createPaymentGroup(document, sqlProcessRunDate);
@@ -282,8 +274,12 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      */
     protected Collection<DisbursementVoucherDocument> getListByDocumentStatusCodeCampus(String statusCode,
             String campusCode, boolean immediatesOnly) {
-        LOG.info("getListByDocumentStatusCodeCampus(statusCode=" + statusCode + ", campusCode=" + campusCode +
-                ", immediatesOnly=" + immediatesOnly + ") started");
+        LOG.info(
+                "getListByDocumentStatusCodeCampus(statusCode={}, campusCode={}, immediatesOnly={}) started",
+                statusCode,
+                campusCode,
+                immediatesOnly
+        );
 
         Collection<DisbursementVoucherDocument> list = new ArrayList<>();
 
@@ -309,15 +305,13 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
      */
     @Override
     public void extractSingleImmediatePayment(PaymentSource paymentSource) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("extractImmediatePayment(DisbursementVoucherDocument) started");
-        }
+        LOG.debug("extractImmediatePayment(DisbursementVoucherDocument) started");
         if (getPaymentSourceToExtractService().shouldExtractPayment(paymentSource)) {
             final Date processRunDate = dateTimeService.getCurrentDate();
             final Principal principal = KimApiServiceLocator.getIdentityService()
                     .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
             if (principal == null) {
-                LOG.debug("extractPayments() Unable to find user " + KFSConstants.SYSTEM_USER);
+                LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
                 throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
             }
 

@@ -85,9 +85,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
 
         for (String incomingFileName : fileNamesToLoad) {
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("processPaymentFiles() Processing " + incomingFileName);
-                }
+                LOG.debug("processPaymentFiles() Processing {}", incomingFileName);
 
                 // collect various information for status of load
                 LoadPaymentStatus status = new LoadPaymentStatus();
@@ -104,12 +102,14 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
                     //if we encounter an error for the payment file, we will remove the .done file so it will not be
                     // parse again
                     LOG.error(
-                            "Encounter a problem while processing payment file: " + incomingFileName +
-                                    " .  Removing the done file to stop re-process.");
+                            "Encounter a problem while processing payment file: {} .  Removing the done file to stop "
+                            + "re-process.",
+                            incomingFileName
+                    );
                     removeDoneFile(incomingFileName);
                 }
             } catch (RuntimeException e) {
-                LOG.error("Caught exception trying to load payment file: " + incomingFileName, e);
+                LOG.error("Caught exception trying to load payment file: {}", incomingFileName, e);
                 // swallow exception so we can continue processing files, the errors have been reported by email
             }
         }
@@ -210,7 +210,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         try {
             fileContents = new FileInputStream(incomingFileName);
         } catch (FileNotFoundException e1) {
-            LOG.error("file to load not found " + incomingFileName, e1);
+            LOG.error("file to load not found {}", incomingFileName, e1);
             throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
         }
 
@@ -220,10 +220,10 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             paymentFile = (PaymentFileLoad) batchInputFileService.parse(paymentInputFileType, fileByteContent);
         } catch (IOException e) {
-            LOG.error("error while getting file bytes:  " + e.getMessage(), e);
+            LOG.error("error while getting file bytes:  {}", e::getMessage, () -> e);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
         } catch (ParseException e1) {
-            LOG.error("Error parsing xml " + e1.getMessage());
+            LOG.error("Error parsing xml {}", e1::getMessage);
             errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                     e1.getMessage());
         }
@@ -403,4 +403,3 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         return List.of(outgoingDirectoryName);
     }
 }
-

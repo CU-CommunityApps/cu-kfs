@@ -79,8 +79,11 @@ public class BatchFileSearchService extends SearchService {
                 .getBusinessObjectAdminService(businessObjectClass);
 
         if (!batchFileAdminService.allowsDownload(null, null)) {
-            LOG.debug("Requested BO does not support download : bo={}; batchFileAdminServiceName={}",
-                    businessObjectClass.getSimpleName(), batchFileAdminService.getClass().getSimpleName());
+            LOG.debug(
+                    "Requested BO does not support download : bo={}; batchFileAdminServiceName={}",
+                    businessObjectClass::getSimpleName,
+                    () -> batchFileAdminService.getClass().getSimpleName()
+            );
             throw new NotAllowedException("The requested business object does not support GETs with the supplied " +
                     "media type.");
         }

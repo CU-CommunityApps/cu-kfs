@@ -71,7 +71,7 @@ public final class BatchStepRunner {
 
             String jobName = args.length >= 2 ? args[1] : KFSConstants.BATCH_STEP_RUNNER_JOB_NAME;
             Date jobRunDate = dateTimeService.getCurrentDate();
-            LOG.info("Executing job: " + jobName + " steps: " + Arrays.toString(stepNames));
+            LOG.info("Executing job: {} steps: {}", () -> jobName, () -> Arrays.toString(stepNames));
             for (int i = 0; i < stepNames.length; ++i) {
                 Step step = BatchSpringContext.getStep(stepNames[i]);
                 if (step != null) {
@@ -90,7 +90,7 @@ public final class BatchStepRunner {
                         ThreadContext.put(KFSConstants.BATCH_LOGGER_THREAD_CONTEXT_KEY, nestedDiagnosticContext);
                         ndcSet = true;
                     } catch (Exception ex) {
-                        LOG.warn("Could not initialize custom logging for step: " + step.getName(), ex);
+                        LOG.warn("Could not initialize custom logging for step: {}", step::getName, () -> ex);
                     }
                     try {
                         if (!Job.runStep(parameterService, jobName, i, step, jobRunDate)) {
@@ -105,7 +105,7 @@ public final class BatchStepRunner {
                     throw new IllegalArgumentException("Unable to find step: " + stepNames[i]);
                 }
             }
-            LOG.info("Finished executing job: " + jobName + " steps: " + Arrays.toString(stepNames));
+            LOG.info("Finished executing job: {} steps: {}", () -> jobName, () -> Arrays.toString(stepNames));
             System.exit(0);
         } catch (Throwable t) {
             System.err.println("ERROR: Exception caught: ");
