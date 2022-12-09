@@ -222,7 +222,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         Date todayAtMidnight = dateTimeService.getCurrentSqlDateMidnight();
         List<String> docNumbers = paymentRequestDao.getEligibleForAutoApproval(todayAtMidnight);
-        LOG.info(" -- Initial filtering complete, returned {}  docs.", docNumbers.size());
+        LOG.info(" -- Initial filtering complete, returned {}  docs.", docNumbers::size);
 
         String samt = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
                 PurapParameterConstants.PURAP_DEFAULT_NEGATIVE_PAYMENT_REQUEST_APPROVAL_LIMIT);
@@ -258,7 +258,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             // to make us return an error code, so just skip the document
             LOG.warn("Payment Request Document {} could not be auto-approved because it has either been placed on" +
                     " hold, requested cancel, or does not have one of the PREQ statuses for auto-approve.",
-                    paymentRequestDocument.getDocumentNumber());
+                    paymentRequestDocument::getDocumentNumber);
             return true;
         }
         if (autoApprovePaymentRequest(paymentRequestDocument, defaultMinimumLimit)) {
@@ -298,7 +298,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             // set the auto approved indicator to true so that doRouteStatus method can use to change the app doc
             // status.
             doc.setAutoApprovedIndicator(true);
-            LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()={}", doc.getDocumentNumber());
+            LOG.info("About to blanketApproveDocument, doc.getDocumentNumber()={}", doc::getDocumentNumber);
             // su approve rather than blanket approve, so no ACK notifications would be generated
             documentService.superUserApproveDocument(doc, "auto-approving: Total is below threshold.");
         }
@@ -320,21 +320,21 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
     protected boolean isEligibleForAutoApproval(PaymentRequestDocument document, KualiDecimal defaultMinimumLimit) {
         // Check if vendor is foreign.
         if (document.getVendorDetail().getVendorHeader().getVendorForeignIndicator()) {
-            LOG.info(" -- PayReq [{}] skipped due to a Foreign Vendor.", document.getDocumentNumber());
+            LOG.info(" -- PayReq [{}] skipped due to a Foreign Vendor.", document::getDocumentNumber);
             return false;
         }
 
         // check to make sure the payment request isn't scheduled to stop in tax review.
         if (purapWorkflowIntegrationService.willDocumentStopAtGivenFutureRouteNode(document,
                 PaymentRequestStatuses.NODE_VENDOR_TAX_REVIEW)) {
-            LOG.info(" -- PayReq [{}] skipped due to requiring Tax Review.", document.getDocumentNumber());
+            LOG.info(" -- PayReq [{}] skipped due to requiring Tax Review.", document::getDocumentNumber);
             return false;
         }
 
         // Change to not auto approve if positive approval required indicator set to Yes
         if (document.isPaymentRequestPositiveApprovalIndicator()) {
             LOG.info(" -- PayReq [{}] skipped due to a Positive Approval Required Indicator set to Yes.",
-                    document.getDocumentNumber());
+                    document::getDocumentNumber);
             return false;
         }
 
@@ -354,12 +354,13 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             AutoApproveExclude autoApproveExclude = businessObjectService.findByPrimaryKey(AutoApproveExclude.class,
                     autoApproveMap);
             if (autoApproveExclude != null) {
-                LOG.info(" -- PayReq [{}}] skipped due to source accounting line {} using Chart/Account [{}-{}], which" +
-                        " is excluded in the Auto Approve Exclusions table.",
-                        document.getDocumentNumber(),
-                        line.getSequenceNumber(),
-                        line.getChartOfAccountsCode(),
-                        line.getAccountNumber());
+                LOG.info(
+                        " -- PayReq [{}}] skipped due to source accounting line {} using Chart/Account [{}-{}], which is excluded in the Auto Approve Exclusions table.",
+                        document::getDocumentNumber,
+                        line::getSequenceNumber,
+                        line::getChartOfAccountsCode,
+                        line::getAccountNumber
+                );
                 return false;
             }
 
@@ -373,8 +374,11 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         // If Receiving required is set, it's not needed to check the negative payment request approval limit
         if (document.isReceivingDocumentRequiredIndicator()) {
-            LOG.info(" -- PayReq [{}] auto-approved (ignored dollar limit) due to Receiving Document Required" +
-                    " Indicator set to Yes.", document.getDocumentNumber());
+            LOG.info(
+                    " -- PayReq [{}] auto-approved (ignored dollar limit) due to Receiving Document Required "
+                    + "Indicator set to Yes.",
+                    document::getDocumentNumber
+            );
             return true;
         }
 
@@ -385,20 +389,25 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
         // The document is eligible for auto-approval if the document total is below the limit.
         final String autoApprovalLimitLabel = minimumAmount.equals(defaultMinimumLimit) ? "Default" : "Configured";
+        final KualiDecimal loggableMinimumAmount = minimumAmount;
         if (document.getDocumentHeader().getFinancialDocumentTotalAmount().isLessThan(minimumAmount)) {
-            LOG.info(" -- PayReq [{}] auto-approved due to document Total [{}] being less than {} Auto-Approval Limit" +
-                            " of {}.",
-                    document.getDocumentNumber(),
-                    document.getDocumentHeader().getFinancialDocumentTotalAmount(),
-                    autoApprovalLimitLabel,
-                    minimumAmount);
+            LOG.info(
+                    " -- PayReq [{}] auto-approved due to document Total [{}] being less than {} Auto-Approval Limit "
+                    + "of {}.",
+                    document::getDocumentNumber,
+                    () -> document.getDocumentHeader().getFinancialDocumentTotalAmount(),
+                    () -> autoApprovalLimitLabel,
+                    () -> loggableMinimumAmount
+            );
             return true;
         }
-        LOG.info(" -- PayReq [{}] skipped due to document Total [{}] being greater than {} Auto-Approval Limit of {}.",
-                document.getDocumentNumber(),
-                document.getDocumentHeader().getFinancialDocumentTotalAmount(),
-                autoApprovalLimitLabel,
-                minimumAmount);
+        LOG.info(
+                " -- PayReq [{}] skipped due to document Total [{}] being greater than {} Auto-Approval Limit of {}.",
+                document::getDocumentNumber,
+                () -> document.getDocumentHeader().getFinancialDocumentTotalAmount(),
+                () -> autoApprovalLimitLabel,
+                () -> loggableMinimumAmount
+        );
 
         return false;
     }
@@ -1318,7 +1327,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
 
     @Override
     public boolean isExtracted(PaymentRequestDocument document) {
-        return !ObjectUtils.isNull(document.getExtractedTimestamp());
+        return ObjectUtils.isNotNull(document.getExtractedTimestamp());
     }
 
     @Override
@@ -1344,7 +1353,7 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
         accountsPayableService.cancelAccountsPayableDocument(paymentRequest, "");
 
         LOG.debug("cancelExtractedPaymentRequest() PREQ {} Cancelled Without Workflow",
-                paymentRequest.getPurapDocumentIdentifier());
+                paymentRequest::getPurapDocumentIdentifier);
         LOG.debug("cancelExtractedPaymentRequest() ended");
     }
 
@@ -1366,8 +1375,10 @@ public class PaymentRequestServiceImpl implements PaymentRequestService {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
         }
         purapService.saveDocumentNoValidation(paymentRequest);
-        LOG.debug("resetExtractedPaymentRequest() PREQ {} Reset from Extracted status",
-                paymentRequest.getPurapDocumentIdentifier());
+        LOG.debug(
+                "resetExtractedPaymentRequest() PREQ {} Reset from Extracted status",
+                paymentRequest::getPurapDocumentIdentifier
+        );
     }
 
     @Override

@@ -39,9 +39,9 @@ import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -660,10 +660,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
                 docIdStrings.add(poView.getDocumentNumber());
             }
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("***** getWorkflowEngineDocumentIdsToLock(" + this.documentNumber + ") = '" + docIdStrings +
-                    "'");
-        }
+        LOG.debug("***** getWorkflowEngineDocumentIdsToLock({}) = '{}'", this.documentNumber, docIdStrings);
         return docIdStrings;
     }
 
