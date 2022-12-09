@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,7 +25,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
+import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.AttachmentService;
@@ -33,14 +38,12 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao;
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;
 import edu.cornell.kfs.module.receiptProcessing.service.ReceiptProcessingService;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
@@ -49,6 +52,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
     public static final String RESULT_FILE_HEADER_LINE_WITH_EXTRA_FIELDS = "\"cardHolder\",\"amount\",\"purchasedate\",\"filePath\",\"filename\",\"cardHolderNetID\",\"sourceUniqueID\",\"eDocNumber\",\"Success\"\n";  
     public static final String RESULT_FILE_HEADER_LINE = "\"cardHolder\",\"amount\",\"purchasedate\",\"filePath\",\"filename\",\"Success\"\n";  
     public static final String CUSTOMER_PDF_SUBFOLDER_SUFFIX = "-input-csv";
+    public static final String CSV_OUTPUT_FILENAME_PREFIX = "CIT_OUT_";
     
     private BatchInputFileService batchInputFileService;    
     private ProcurementCardDocumentDao procurementCardDocumentDao;
@@ -310,7 +314,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
 		String outputCsv = processResults.toString();
 		// this is CALS output folder and it has to stay unchanged
 		String reportDropFolder = pdfDirectory + "/CIT-csv-archive/";
-		getcsvWriter(outputCsv, reportDropFolder);
+		writeToCsvFile(outputCsv, reportDropFolder);
 	}
     
 	/**
@@ -474,7 +478,7 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-		getcsvWriter(outputCsv, reportDropFolder);
+        writeToCsvFile(outputCsv, reportDropFolder);
 
     }
     
@@ -485,24 +489,44 @@ public class ReceiptProcessingServiceImpl implements ReceiptProcessingService {
      * @param csvDoc
      * @param reportDropFolder
      */
-    protected void getcsvWriter(String csvDoc, String reportDropFolder) {
+    protected void writeToCsvFile(String csvDoc, String reportDropFolder) {
+        String csvFileNameDateChunk = formatCurrentDateForInclusionInCsvFileName();
+        String fileName = StringUtils.join(
+                CSV_OUTPUT_FILENAME_PREFIX, csvFileNameDateChunk, FileExtensions.CSV);
+        File reportFile = new File(reportDropFolder + fileName);
         
-        String fileName = "CIT_OUT_" +
-            new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS, Locale.US).format(dateTimeService.getCurrentDate()) + ".csv";
+        try (
+            FileWriter fileWriter = new FileWriter(reportFile, StandardCharsets.UTF_8);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+        ) {
+            writer.write(csvDoc);
+            writer.flush();
+        } catch (IOException e) {
+            LOG.error("writeToCsvFile, IOException when trying to write report file", e);
+            throw new UncheckedIOException(e);
+        }
         
-         //  setup the writer
-         File reportFile = new File(reportDropFolder + fileName);
-         BufferedWriter writer = null;
-         try {
-             writer = new BufferedWriter(new FileWriter(reportFile));
-             writer.write(csvDoc);
-             writer.close();
-         } catch (IOException e1) {
-             LOG.error("IOException when trying to write report file");
-             e1.printStackTrace();
-         }         
-                         
-     }
+        createDoneFileForNewCsvFile(fileName, reportDropFolder);
+    }
+    
+    private String formatCurrentDateForInclusionInCsvFileName() {
+        SimpleDateFormat csvFileNameDateFormat = new SimpleDateFormat(
+                CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS, Locale.US);
+        java.util.Date currentDate = dateTimeService.getCurrentDate();
+        return csvFileNameDateFormat.format(currentDate);
+    }
+    
+    private void createDoneFileForNewCsvFile(String csvFileName, String reportDropFolder) {
+        String fileNameWithoutExtension = StringUtils.substringBeforeLast(csvFileName, KFSConstants.DELIMITER);
+        String doneFileName = fileNameWithoutExtension + FileExtensions.DONE;
+        File doneFile = new File(reportDropFolder + doneFileName);
+        try {
+            FileUtils.touch(doneFile);
+        } catch (IOException e) {
+            LOG.error("createDoneFileForNewCsvFile, IOException when trying to create .done file", e);
+            throw new UncheckedIOException(e);
+        }
+    }
     
     /**
      * Gets the customer name from the input file name. Files other than cals files will have the file name in this format: receiptProcessing_kfs_${customerName}_${date}.csv
