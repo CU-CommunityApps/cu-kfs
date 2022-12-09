@@ -24,6 +24,7 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
     /**
      * @see org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl#trickleDownInactivateSubAccounts(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
      */
+	@Override
     public void trickleDownInactivateSubAccounts(Account inactivatedAccount, String documentNumber) {
         List<SubAccount> inactivatedSubAccounts = new ArrayList<>();
         Map<SubAccount, String> alreadyLockedSubAccounts = new HashMap<>();
