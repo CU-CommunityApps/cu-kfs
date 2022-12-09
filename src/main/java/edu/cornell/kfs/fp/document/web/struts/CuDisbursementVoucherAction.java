@@ -193,7 +193,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
 
         }
         else {
-            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
+            LOG.error("Exception while attempting to retrieve universal user by universal user id {}", payeeIdNumber);
         }
     }
     

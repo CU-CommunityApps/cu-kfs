@@ -139,9 +139,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             }
             catch (InvalidFlexibleOffsetException e) {
                 Message m = new Message(e.getMessage(), Message.TYPE_FATAL);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("generateCostShareEntries() Cost Share Transfer Flexible Offset Error: " + e.getMessage());
-                }
+                LOG.debug("generateCostShareEntries() Cost Share Transfer Flexible Offset Error: {}", e::getMessage);
                 return new ScrubberProcessTransactionError(costShareEntry, m);
             }
 
@@ -246,9 +244,10 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             }
             catch (InvalidFlexibleOffsetException e) {
                 Message m = new Message(e.getMessage(), Message.TYPE_FATAL);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("generateCostShareEntries() Cost Share Transfer Account Flexible Offset Error: " + e.getMessage());
-                }
+                LOG.debug(
+                        "generateCostShareEntries() Cost Share Transfer Account Flexible Offset Error: {}",
+                        e::getMessage
+                );
                 return new ScrubberProcessTransactionError(costShareEntry, m);
             }
 
@@ -257,7 +256,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
 
             scrubCostShareAmount = KualiDecimal.ZERO;
         } catch (IOException ioe) {
-            LOG.error("generateCostShareEntries() Stopped: " + ioe.getMessage());
+            LOG.error("generateCostShareEntries() Stopped: {}", ioe::getMessage);
             throw new RuntimeException("generateCostShareEntries() Stopped: " + ioe.getMessage(), ioe);
         }
         LOG.debug("generateCostShareEntries() successful");

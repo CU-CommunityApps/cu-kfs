@@ -25,6 +25,7 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
     
     protected AccountingDocument accountingDocumentForValidation;
     
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         LOG.debug("validate start");        
         boolean isValid = true;
