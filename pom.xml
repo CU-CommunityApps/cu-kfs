@@ -45,7 +45,7 @@
         <mockito.version>4.0.0</mockito.version>
         <powermock.version>2.0.7</powermock.version>
         <squiggly-filter-jackson.version>1.3.16</squiggly-filter-jackson.version>
-        <spring.version>5.3.20</spring.version>
+        <spring.version>6.0.0</spring.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
 
