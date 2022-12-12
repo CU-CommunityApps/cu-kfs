@@ -85,6 +85,7 @@ public class ConcurTestConstants {
     public static class PropertyTestValues {
         public static final String ORPHANED_CASH_ADVANCE_MESSAGE = "Cash Advance with key {0} had no matching Request Extract entry.";
         public static final String GROUP_WITH_ORPHANED_CASH_ADVANCE_MESSAGE = "Line not processed due to orphaned Cash Advance with same Report ID.";
+        public static final String EXPENSEV4_REPORT_WORKFLOW_MESSAGE = "Expense report {0} action for report id {1}";
         public static final String REQUESTV4_REQUEST_LIST_SEARCH_MESSAGE = "Travel Request Listing (page {0})";
         public static final String REQUESTV4_SINGLE_REQUEST_SEARCH_MESSAGE = "Travel Request {0}";
     }
@@ -121,6 +122,7 @@ public class ConcurTestConstants {
         public static final String COLLECTOR_ATM_FEE_DEBIT_OBJECT_CODE = "6699";
         public static final String COLLECTOR_UNUSED_ATM_OFFSET_OBJECT_CODE = "1488";
         public static final String DEFAULT_OBJECT_CODE_5500 = "5500";
+        public static final String EXPENSE_V4_WORKFLOW_ENDPOINT = "/expensereports/v4/reports";
         public static final String REQUEST_V4_RELATIVE_ENDPOINT = "/travelrequest/v4/requests";
         public static final String REQUEST_V4_PAGE_SIZE_2 = "2";
         public static final String REQUEST_V4_DAYS_OLD_1 = "1";
