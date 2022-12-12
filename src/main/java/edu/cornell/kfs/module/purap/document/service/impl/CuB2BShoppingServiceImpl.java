@@ -118,7 +118,11 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
                 }
             }
             else {
-                LOG.error("createRequisitionsFromCxml() Contract is missing for vendor " + vendor.getVendorName() + " (" + vendor.getVendorNumber() + ")");
+                LOG.error(
+                        "createRequisitionsFromCxml() Contract is missing for vendor {} ({})",
+                        vendor::getVendorName,
+                        vendor::getVendorNumber
+                );
                 throw new B2BShoppingException(PurapConstants.B2B_VENDOR_CONTRACT_NOT_FOUND_ERROR_MESSAGE);
             }
 

@@ -16,7 +16,16 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
    /**
     * @see org.kuali.kfs.integration.pdp.service.PurchasingAccountsPayableModuleService#handlePurchasingBatchCancels(java.lang.String)
     */
+    @Override
    public void handlePurchasingBatchCancels(String documentNumber, String documentTypeCode, boolean primaryCancel, boolean disbursedPayment, boolean crCancel) {
+       LOG.info(
+               "Begin handlePurchasingBatchCancels(documentNumber={}, documentTypeCode={}, primaryCancel={}, "
+               + "disbursedPayment={}",
+               documentNumber,
+               documentTypeCode,
+               primaryCancel,
+               disbursedPayment
+       );
        String preqCancelNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
                PurapParameterConstants.PURAP_PDP_PREQ_CANCEL_NOTE);
        String preqResetNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
@@ -39,7 +48,12 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
                }
            }
            else {
-               LOG.error("processPdpCancels() DOES NOT EXIST, CANNOT PROCESS - Payment Request with doc type of " + documentTypeCode + " with id " + documentNumber);
+               LOG.error(
+                       "processPdpCancels() DOES NOT EXIST, CANNOT PROCESS - Payment Request with doc type of {} "
+                       + "with id {}",
+                       documentTypeCode,
+                       documentNumber
+               );
            }
        }
        else if (PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(documentTypeCode)) {
@@ -55,7 +69,12 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
                }
            }
            else {
-               LOG.error("processPdpCancels() DOES NOT EXIST, CANNOT PROCESS - Credit Memo with doc type of " + documentTypeCode + " with id " + documentNumber);
+               LOG.error(
+                       "processPdpCancels() DOES NOT EXIST, CANNOT PROCESS - Credit Memo with doc type of {} with id"
+                       + " {}",
+                       documentTypeCode,
+                       documentNumber
+               );
            }
        }
    }
