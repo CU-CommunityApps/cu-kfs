@@ -16,6 +16,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToTradeInValidation {
 
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         
         boolean foundTradeIn = false;
