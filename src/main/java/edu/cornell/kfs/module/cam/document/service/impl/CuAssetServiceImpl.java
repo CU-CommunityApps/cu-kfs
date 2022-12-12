@@ -29,6 +29,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
     private DateTimeService dateTimeService;
     private PersonServiceImpl personService;
 
+    @Override
     public List<Asset> findActiveAssetsMatchingTagNumber(String campusTagNumber) {
         List<Asset> activeMatches = new ArrayList<>();
         // find all assets matching this tag number
