@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -23,7 +26,9 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.testing.classic.ClassicTestServer;
 import org.apache.hc.core5.util.Timeout;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -52,31 +57,59 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  * 
  * This class is meant to be used as a *programmatically-configured* JUnit 5 extension.
  * Your test class should set up an instance of this extension by declaring an appropriate
- * non-private instance field annotated with "@RegisterExtension".
+ * non-private instance field or static field annotated with "@RegisterExtension".
  * 
  * Prior to each test method being called, this class's internal MockMvc instance needs
- * to be initialized by the caller. Such setup can happen within an annotated "@BeforeEach"
- * method on the test class. The simplest way to perform the initialization is by calling
+ * to be initialized by the caller. Such setup can happen within a test class's annotated
+ * "@BeforeEach" method (for an instance-level extension) or its "@BeforeAll" method
+ * (for a class-level extension). The simplest way to perform the initialization is by calling
  * the initializeStandaloneMockMvcWithControllers() method and passing in the MVC Controllers
  * that you want to use. Alternatively, you can use the setMockMvc() method if you need
  * finer control over the MockMvc instance's configuration.
  * 
  * To retrieve the HTTP server's URL, call the getServerUrl() method from within your test class's
- * "@BeforeEach"-annotated method(s). The returned URL will *not* contain a trailing slash.
+ * "@BeforeEach"-annotated or "@BeforeAll"-annotated method(s). The returned URL will *not* contain
+ * a trailing slash.
+ * 
+ * If the extension is set up at the class level, the test server will be initialized prior to
+ * running the class's test suite and will be shut down after running the suite. If the configured
+ * controller instances need to reset their state in between test methods, they can implement
+ * the ResettableController interface and then this extension will reset them after each run
+ * of a test method. (Note that this auto-reset feature is ignored if the extension was set up
+ * as an instance variable or if the MVC configuration was set up via the setMockMvc() method.)
+ * 
+ * Note that if this extension is set up at the class/static level, it is strongly recommended
+ * that the test class be configured for SAME_THREAD execution mode so that the test methods
+ * don't interfere with each other.
  */
-public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTestExecutionCallback, AfterEachCallback {
+public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTestExecutionCallback, AfterEachCallback,
+        BeforeAllCallback, AfterAllCallback {
 
     private static final String BASE_URL_PREFIX = "http://localhost:";
     private static final String ALL_URL_PATHS_PATTERN = "*";
     private static final Set<String> RESPONSE_DISALLOWED_AUTO_COPY_HEADERS = Set.of(
-            HttpHeaders.CONTENT_TYPE, HttpHeaders.CONTENT_LENGTH);
+            HttpHeaders.CONTENT_TYPE.toLowerCase(Locale.US), HttpHeaders.CONTENT_LENGTH.toLowerCase(Locale.US));
 
+    private boolean staticExtension;
+    private List<ResettableController> resettableControllers;
     private ClassicTestServer testServer;
     private MockMvc mockMvc;
     private String serverUrl;
 
     @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        staticExtension = true;
+        initializeTestServer();
+    }
+
+    @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        if (!staticExtension) {
+            initializeTestServer();
+        }
+    }
+
+    private void initializeTestServer() throws Exception {
         this.testServer = new ClassicTestServer(null,
                 SocketConfig.custom()
                         .setSoTimeout(Timeout.ofMinutes(1L))
@@ -95,6 +128,12 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     }
 
     public void initializeStandaloneMockMvcWithControllers(Object... controllers) {
+        if (staticExtension) {
+            this.resettableControllers = Stream.of(controllers)
+                    .filter(controller -> controller instanceof ResettableController)
+                    .map(controller -> (ResettableController) controller)
+                    .collect(Collectors.toUnmodifiableList());
+        }
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(controllers)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
@@ -127,11 +166,27 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     }
 
     @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        shutDown();
+    }
+
+    @Override
     public void afterEach(ExtensionContext context) throws Exception {
+        if (staticExtension) {
+            for (ResettableController controller : resettableControllers) {
+                controller.reset();
+            }
+        } else {
+            shutDown();
+        }
+    }
+
+    private void shutDown() throws Exception {
         shutDownServerQuietly();
         serverUrl = null;
         mockMvc = null;
         testServer = null;
+        resettableControllers = null;
     }
 
     private void shutDownServerQuietly() {
@@ -200,7 +255,7 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
     private void populateHttpResponseHeadersFromServletResponse(ClassicHttpResponse response,
             MockHttpServletResponse servletResponse) {
         for (String headerName : servletResponse.getHeaderNames()) {
-            if (RESPONSE_DISALLOWED_AUTO_COPY_HEADERS.contains(headerName)) {
+            if (RESPONSE_DISALLOWED_AUTO_COPY_HEADERS.contains(StringUtils.lowerCase(headerName, Locale.US))) {
                 continue;
             }
             List<Object> headerValues = servletResponse.getHeaderValues(headerName);
@@ -231,15 +286,11 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
                     : ContentType.create(contentMimeType);
         }
         
-        if (contentType == null) {
-            if (responseContent.length == 0) {
-                response.setEntity(NullEntity.INSTANCE);
-            } else {
-                throw new IllegalStateException("Response had non-empty content but had no Content-Type defined");
-            }
-        } else {
+        if (contentType != null) {
             ByteArrayEntity entity = new ByteArrayEntity(responseContent, contentType, false);
             response.setEntity(entity);
+        } else if (responseContent.length > 0) {
+            throw new IllegalStateException("Response had non-empty content but had no Content-Type defined");
         }
     }
 
