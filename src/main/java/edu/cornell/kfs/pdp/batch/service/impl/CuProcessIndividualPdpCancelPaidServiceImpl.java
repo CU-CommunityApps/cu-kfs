@@ -53,8 +53,11 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
                     }
                 }
             } else {
-                LOG.warn("processPdpCancel() Unknown document type (" + documentTypeCode + ") for document ID: " +
-                        documentNumber);
+                LOG.warn(
+                        "processPdpCancels() Unknown document type ({}) for document ID: {}",
+                        documentTypeCode,
+                        documentNumber
+                );
                 return;
             }
         }
