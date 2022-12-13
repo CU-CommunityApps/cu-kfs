@@ -40,7 +40,7 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         LOG.debug("startFormatProcess() started");
 
         for (CustomerProfile element : customers) {
-            LOG.debug("startFormatProcess() Customer: " + element);
+            LOG.debug("startFormatProcess() Customer: {}", element);
         }
 
         // Create the process
@@ -73,9 +73,9 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         c.set(Calendar.AM_PM, Calendar.PM);
         Timestamp paydateTs = new Timestamp(c.getTime().getTime());
 
-        LOG.debug("startFormatProcess() last update = " + now);
-        LOG.debug("startFormatProcess() entered paydate = " + paydate);
-        LOG.debug("startFormatProcess() actual paydate = " + paydateTs);
+        LOG.debug("startFormatProcess() last update = {}", now);
+        LOG.debug("startFormatProcess() entered paydate = {}", paydate);
+        LOG.debug("startFormatProcess() actual paydate = {}", paydateTs);
 
         PaymentStatus format = this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.FORMAT);
 
