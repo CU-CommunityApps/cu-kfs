@@ -15,7 +15,7 @@ import org.kuali.kfs.kew.api.exception.WorkflowException;
 import edu.cornell.kfs.module.ld.document.CuSalaryExpenseTransferDocument;
 import edu.cornell.kfs.module.ld.fixture.CuSalaryExpenseTransferDocumentFixture;
 
-@ConfigureContext(session = UserNameFixture.amg49)
+@ConfigureContext(session = UserNameFixture.bs622)
 public class CuLaborPendingEntryConverterServiceImplTest extends KualiIntegTestBase {
 
     private LaborPendingEntryConverterService laborPendingEntryConverterService;
