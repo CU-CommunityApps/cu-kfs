@@ -58,4 +58,5 @@
               files="BatchLookupableHelperService|DictionaryValidationServiceImpl|MaintainableImpl|MaintenanceDocumentServiceImpl|PaymentDetailLookupableHelperService|PreScrubberServiceImpl|SectionBridge" />
     <suppress checks="SuperClone"
               files="BaseAttributeValueReader|DictionaryObjectAttributeValueReader|SingleAttributeValueReader|ViewAttributeValueReader" />
+    <suppress checks=".*" files="HttpInvokerServiceExporter" />
 </suppressions>
