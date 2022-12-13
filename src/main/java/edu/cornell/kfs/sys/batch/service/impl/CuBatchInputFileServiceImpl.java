@@ -44,7 +44,7 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
         // construct the file object and check for existence
         File fileToSave = new File(saveFileName);
         if (fileToSave.exists()) {
-            LOG.error("cannot store file, name already exists " + saveFileName);
+            LOG.error("cannot store file, name already exists {}", saveFileName);
             throw new FileStorageException("Cannot store file because the name " + saveFileName + " already exists on the file system.");
         }
 
@@ -68,7 +68,7 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
             batchInputFileType.process(saveFileName, parsedObject);
             
         } catch (IOException e) {
-            LOG.error("unable to save contents to file " + saveFileName, e);
+            LOG.error("unable to save contents to file {}", saveFileName, e);
             throw new RuntimeException("errors encountered while writing file " + saveFileName, e);
         }
 

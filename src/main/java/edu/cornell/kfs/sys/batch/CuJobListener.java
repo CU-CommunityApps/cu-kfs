@@ -42,8 +42,11 @@ public class CuJobListener extends JobListener  {
                 emailService.sendMessage(mailMessage, false);
             }
         } catch (Exception iae) {
-            LOG.error("Caught exception while trying to send job completion notification e-mail for " +
-                    jobExecutionContext.getJobDetail().getKey().getName(), iae);
+            LOG.error(
+                    "Caught exception while trying to send job completion notification e-mail for {}",
+                    () -> jobExecutionContext.getJobDetail().getKey().getName(),
+                    () -> iae
+            );
         }
     }
 	
