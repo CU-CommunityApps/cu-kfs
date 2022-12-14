@@ -29,7 +29,7 @@
         <field name="org.kuali.kfs.pdp.businessobject.ProcessSummary::lastUpdatedTimestamp" alias="summary.lastUpdatedTimestamp" />
         <!-- ==== Fields from PDP_CUST_PRFL_T ==== -->
         <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::id" alias="customer.id" />
-        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::chartCode" alias="customer.chartCode" />
+        <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::campusCode" alias="customer.campusCode" />
         <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::unitCode" alias="unitCode" />
         <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::subUnitCode" alias="subUnitCode" />
         <field name="org.kuali.kfs.pdp.businessobject.CustomerProfile::achPaymentDescription" alias="achPaymentDescription" />

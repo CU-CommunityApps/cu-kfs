@@ -159,7 +159,7 @@ abstract class TaxTableRow {
         final TaxTableField summaryLastUpdatedTimestamp;
         // Fields from PDP_CUST_PRFL_T (CustomerProfile)
         final TaxTableField customerId;
-        final TaxTableField customerChartCode;
+        final TaxTableField customerCampusCode;
         final TaxTableField unitCode;
         final TaxTableField subUnitCode;
         final TaxTableField achPaymentDescription;
@@ -204,7 +204,7 @@ abstract class TaxTableRow {
             this.summaryProcessId = getAliasedField(CommonPdpSourceFieldNames.SUMMARY_PROCESS_ID);
             this.summaryLastUpdatedTimestamp = getAliasedField(CommonPdpSourceFieldNames.SUMMARY_LAST_UPDATED_TIMESTAMP);
             this.customerId = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_ID);
-            this.customerChartCode = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_CHART_CODE);
+            this.customerCampusCode = getAliasedField(CommonPdpSourceFieldNames.CUSTOMER_CAMPUS_CODE);
             this.unitCode = getAliasedField(CommonPdpSourceFieldNames.UNIT_CODE);
             this.subUnitCode = getAliasedField(CommonPdpSourceFieldNames.SUB_UNIT_CODE);
             this.achPaymentDescription = getAliasedField(CommonPdpSourceFieldNames.ACH_PAYMENT_DESCRIPTION);
