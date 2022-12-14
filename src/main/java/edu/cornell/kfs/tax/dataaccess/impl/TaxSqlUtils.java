@@ -516,7 +516,7 @@ final class TaxSqlUtils {
         appendQuery(selectSql,
                 SqlText.SELECT, docNoteRow.orderedFields, SqlText.FROM, docNoteRow.tables,
                 SqlText.WHERE,
-                        docNoteRow.remoteObjectIdentifier, SqlText.EQUALS, "(SELECT OBJ_ID FROM KRNS_DOC_HDR_T WHERE DOC_HDR_ID = ?)");
+                        docNoteRow.remoteObjectIdentifier, SqlText.EQUALS, "(SELECT OBJ_ID FROM KFS.FS_DOC_HEADER_T WHERE FDOC_NBR = ?)");
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {

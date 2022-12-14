@@ -62,7 +62,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                 SqlText.AND,
                         pdpRow.summaryCustomerId, SqlText.EQUALS, pdpRow.customerId,
                 SqlText.AND, SqlText.NOT, SqlText.PAREN_OPEN,
-                                pdpRow.customerChartCode, SqlText.EQUALS, "'IT'",
+                                pdpRow.customerCampusCode, SqlText.EQUALS, "'IT'",
                         SqlText.AND,
                                 pdpRow.unitCode, SqlText.EQUALS, "'KUAL'",
                         SqlText.AND,
@@ -187,9 +187,6 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             /*
              * Prepare to insert another transaction detail row.
              * 
-             * NOTE: To prepare for the second pass, the chart code from CPT_FIN_COA_CD
-             * will be temporarily stored in the DOC_TITLE field.
-             * 
              * NOTE: It is expected that subclasses use the "doTaxSpecificRowSetup"
              * method to populate the following prepared statement arguments:
              * 
@@ -217,7 +214,6 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
             insertStatement.setInt(detailRow.financialDocumentLineNumber.index - offset, rs.getInt(pdpRow.accountDetailId.index));
             insertStatement.setString(detailRow.finObjectCode.index - offset, financialObjectCode);
             insertStatement.setBigDecimal(detailRow.netPaymentAmount.index - offset, netPaymentAmount);
-            insertStatement.setString(detailRow.documentTitle.index - offset, rs.getString(pdpRow.customerChartCode.index));
             insertStatement.setString(detailRow.vendorTaxNumber.index - offset, rs.getString(pdpRow.vendorTaxNumber.index));
             insertStatement.setString(detailRow.payeeId.index - offset, rs.getString(pdpRow.payeeId.index));
             insertStatement.setString(detailRow.vendorTypeCode.index - offset, rs.getString(pdpRow.vendorTypeCode.index));
@@ -272,6 +268,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
      * Overridden to also insert nulls for the following field placeholders:
      * 
      * <ul>
+     *   <li>documentTitle</li>
      *   <li>dvCheckStubText</li>
      *   <li>incomeTaxTreatyExemptIndicator</li>
      *   <li>foreignSourceIncomeIndicator</li>
@@ -285,6 +282,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
     @Override
     void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
         super.insertNullsForTransactionRow(insertStatement, detailRow, offset);
+        insertStatement.setString(detailRow.documentTitle.index - offset, null);
         insertStatement.setString(detailRow.dvCheckStubText.index - offset, null);
         insertStatement.setString(detailRow.incomeTaxTreatyExemptIndicator.index - offset, null);
         insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, null);
@@ -320,9 +318,9 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                     initiatorPrincipalId = document.getInitiatorPrincipalId();
                 }
                 
-                // Check for null objects as needed, and get the initiator's principal name. (NOTE: Uses temp chart from doc title field.)
+                // Check for null objects as needed, and get the initiator's principal name.
                 initiatorPrincipalName = checkForEntityAndAccountAndOrgExistence(initiatorPrincipalId,
-                        rs.getString(detailRow.documentTitle.index), rs.getString(detailRow.accountNumber.index), summary);
+                        rs.getString(detailRow.chartCode.index), rs.getString(detailRow.accountNumber.index), summary);
                 
                 // If vendor tax number is blank, then replace with a generated value accordingly.
                 if (StringUtils.isBlank(vendorTaxNumber)) {
