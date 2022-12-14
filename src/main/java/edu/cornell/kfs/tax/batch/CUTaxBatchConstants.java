@@ -105,7 +105,7 @@ public final class CUTaxBatchConstants {
         public static final String SUMMARY_LAST_UPDATED_TIMESTAMP = "summary.lastUpdatedTimestamp";
         // Fields from PDP_CUST_PRFL_T (CustomerProfile)
         public static final String CUSTOMER_ID = "customer.id";
-        public static final String CUSTOMER_CHART_CODE = "customer.chartCode";
+        public static final String CUSTOMER_CAMPUS_CODE = "customer.campusCode";
         public static final String UNIT_CODE = "unitCode";
         public static final String SUB_UNIT_CODE = "subUnitCode";
         public static final String ACH_PAYMENT_DESCRIPTION = "achPaymentDescription";
