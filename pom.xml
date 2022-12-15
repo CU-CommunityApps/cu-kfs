@@ -2331,6 +2331,10 @@
                     <groupId>javax.activation</groupId>
                     <artifactId>activation</artifactId>
                 </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2378,6 +2382,10 @@
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2409,6 +2417,10 @@
                     <groupId>org.ow2.asm</groupId>
                     <artifactId>asm</artifactId>
                 </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2435,6 +2447,10 @@
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2471,6 +2487,10 @@
                     <groupId>org.ow2.asm</groupId>
                     <artifactId>asm</artifactId>
                 </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2497,6 +2517,10 @@
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2525,6 +2549,10 @@
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2551,6 +2579,10 @@
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2611,6 +2643,10 @@
                 	<groupId>org.ehcache</groupId>
                 	<artifactId>ehcache</artifactId>
                 </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2654,6 +2690,10 @@
                 <exclusion>
                     <groupId>com.sun.activation</groupId>
                     <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                  <groupId>com.sun.activation</groupId>
+                  <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
