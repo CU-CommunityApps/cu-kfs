@@ -66,7 +66,8 @@
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
         <log4j.version>2.17.1</log4j.version>
-        <cxf.version>3.3.10</cxf.version>
+        <ehcache.version>2.10.6</ehcache.version>
+        <cxf.version>3.4.10</cxf.version>
         <wss4j.version>2.2.5</wss4j.version>
     </properties>
 
@@ -527,6 +528,10 @@
                 	<groupId>io.netty</groupId>
                 	<artifactId>netty-handler</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -725,6 +730,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -902,6 +911,10 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1085,6 +1098,10 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1263,6 +1280,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1441,6 +1462,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1619,6 +1644,10 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1795,6 +1824,10 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2570,6 +2603,14 @@
                     <groupId>jakarta.xml.bind</groupId>
                     <artifactId>jakarta.xml.bind-api</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2648,7 +2689,16 @@
                     <groupId>jakarta.xml.bind</groupId>
                     <artifactId>jakarta.xml.bind-api</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>net.sf.ehcache</groupId>
+                	<artifactId>ehcache</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${ehcache.version}</version>
         </dependency>
 
     </dependencies>
