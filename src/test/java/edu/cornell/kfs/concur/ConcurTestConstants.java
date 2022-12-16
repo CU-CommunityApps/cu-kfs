@@ -88,6 +88,7 @@ public class ConcurTestConstants {
         public static final String EXPENSEV4_REPORT_WORKFLOW_MESSAGE = "Expense report {0} action for report id {1}";
         public static final String REQUESTV4_REQUEST_LIST_SEARCH_MESSAGE = "Travel Request Listing (page {0})";
         public static final String REQUESTV4_SINGLE_REQUEST_SEARCH_MESSAGE = "Travel Request {0}";
+        public static final String REQUESTV4_WORKFLOW_MESSAGE = "Travel Request {0} action for Request ID {1} with UUID {2}";
     }
 
     public static final class RequestV4Dates {
