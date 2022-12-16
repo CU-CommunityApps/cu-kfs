@@ -1,6 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl.fixture;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
@@ -48,6 +49,10 @@ public enum RequestV4PersonFixture {
     public String getNameForParameterEntry() {
         return StringUtils.startsWithIgnoreCase(firstName, ConcurTestConstants.TEST_NAME_PREFIX)
                 ? firstName : firstName + lastName;
+    }
+
+    public String getFullName() {
+        return StringUtils.joinWith(KFSConstants.BLANK_SPACE, firstName, middleInitial, lastName);
     }
 
 }
