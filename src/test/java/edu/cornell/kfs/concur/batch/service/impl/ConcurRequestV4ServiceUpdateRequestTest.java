@@ -2,10 +2,14 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,6 +18,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -23,15 +28,15 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
-import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
-import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
+import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
@@ -49,6 +54,21 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
     private static final String INVALID_WORKFLOW_ENDPOINT = "/travelrequest/v4/unknown";
     private static final String MESSAGE_INACTIVE_CHART = "Chart code is inactive";
     private static final String MESSAGE_MISSING_ACCOUNT = "Account number is missing";
+
+    private enum WorkflowOutcome {
+        SUCCESS(true),
+        SKIP(false),
+        ERROR_ON_ACTION(false),
+        ERROR_ON_ACTION_FOR_MISSING_REQUEST(false),
+        ERROR_ON_DUPLICATE_ACTION(false),
+        ERROR_ANALYZING_RESPONSE(true);
+        
+        public final boolean expectsActionTaken;
+        
+        private WorkflowOutcome(boolean expectsActionTaken) {
+            this.expectsActionTaken = expectsActionTaken;
+        }
+    }
 
     @RegisterExtension
     static MockMvcWebServerExtension webServerExtension = new MockMvcWebServerExtension();
@@ -117,74 +137,239 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         return concurEventNotificationV2WebserviceService;
     }
 
-    static Stream<RequestV4DetailFixture> regularTravelRequests() {
+    private void adjustProductionMode(RequestV4DetailFixture requestFixture) {
+        concurRequestV4Service.setSimulateProduction(!requestFixture.isOwnedByTestUser());
+    }
+
+    static Stream<RequestV4DetailFixture> travelRequests() {
         return Stream.of(
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_JOHN_DOE,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_REGULAR_REQUEST_BOB_SMITH,
-                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH);
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_REGULAR_REQUEST_BOB_SMITH,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_INVALID_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST);
+    }
+
+    static Stream<RequestV4DetailFixture> nonExistentTravelRequests() {
+        return Stream.of(
+                RequestV4DetailFixture.NOT_SUBMITTED_REGULAR_REQUEST_BOB_SMITH,
+                RequestV4DetailFixture.PENDING_COST_APPROVAL_REGULAR_REQUEST_BOB_SMITH,
+                RequestV4DetailFixture.APPROVED_TEST_REQUEST_JANE_DOE,
+                RequestV4DetailFixture.CANCELED_TEST_REQUEST_JOHN_TEST);
     }
 
     @ParameterizedTest
-    @MethodSource("regularTravelRequests")
-    void testUpdateStatusesForRegularRequests(RequestV4DetailFixture requestFixture) throws Exception {
-        assertRequestWorkflowUpdateSucceeds(requestFixture);
+    @MethodSource("travelRequests")
+    void testUpdateStatusesForRequests(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.SUCCESS);
     }
 
-    private void assertRequestWorkflowUpdateSucceeds(RequestV4DetailFixture requestFixture) {
-        ConcurEventNotificationProcessingResultsDTO resultsDTO = createProcessingResultsForRequest(requestFixture);
-        assertRequestWorkflowUpdateSucceeds(requestFixture, requestFixture.getExpectedProcessingResult(), resultsDTO);
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testUpdateStatusesForRequestsWithProcessingErrors(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        ConcurEventNotificationProcessingResultsDTO resultsDTO = createProcessingErrorResultsForRequest(
+                requestFixture);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.SUCCESS, resultsDTO);
     }
 
-    private void assertRequestWorkflowUpdateSucceeds(RequestV4DetailFixture requestFixture,
-            ConcurEventNotificationVersion2ProcessingResults expectedOutcome,
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
-        boolean requestValid =
-                (resultsDTO.getProcessingResults() == ConcurEventNotificationVersion2ProcessingResults.validAccounts);
-        String expectedWorkflowAction = requestValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.SEND_BACK;
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testActionHandlingWhenTestWorkflowParameterIsOff(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        mockConcurBatchUtilityService.setConcurParameterValue(
+                ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND, KFSConstants.ParameterValues.NO);
+        WorkflowOutcome expectedOutcome = requestFixture.isOwnedByTestUser()
+                ? WorkflowOutcome.SKIP : WorkflowOutcome.SUCCESS;
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, expectedOutcome);
+    }
+
+    @ParameterizedTest
+    @MethodSource("nonExistentTravelRequests")
+    void testCannotUpdateStatusesForNonExistentRequests(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture,
+                WorkflowOutcome.ERROR_ON_ACTION_FOR_MISSING_REQUEST);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testCannotUpdateStatusesWhenCallingInvalidEndpoint(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        mockConcurBatchUtilityService.setConcurParameterValue(ConcurParameterConstants.REQUEST_V4_REQUESTS_ENDPOINT,
+                INVALID_WORKFLOW_ENDPOINT);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.ERROR_ON_ACTION);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testCannotUpdateStatusesWhenUsingInvalidAccessToken(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        accessToken = INVALID_BEARER_TOKEN;
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.ERROR_ON_ACTION);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testCannotUpdateStatusesWhenServerMalfunctions(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        mockEndpoint.setForceInternalServerError(true);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.ERROR_ON_ACTION);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testHandleMalformedResponseAfterSuccessfulAction(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        mockEndpoint.setForceMalformedResponse(true);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.ERROR_ANALYZING_RESPONSE);
+    }
+
+    @ParameterizedTest
+    @MethodSource("travelRequests")
+    void testCannotTakeActionTwiceOnSameRequest(RequestV4DetailFixture requestFixture) throws Exception {
+        adjustProductionMode(requestFixture);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.SUCCESS);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, WorkflowOutcome.ERROR_ON_DUPLICATE_ACTION);
+    }
+
+    @Test
+    void testUpdateStatusesOfMultipleRequests() throws Exception {
+        RequestV4DetailFixture[] requestFixtures = Stream.concat(travelRequests(), nonExistentTravelRequests())
+                .filter(fixture -> !fixture.isOwnedByTestUser())
+                .toArray(RequestV4DetailFixture[]::new);
+        Set<RequestV4DetailFixture> nonExistentRequests = nonExistentTravelRequests()
+                .filter(fixture -> !fixture.isOwnedByTestUser())
+                .collect(Collectors.toUnmodifiableSet());
         
-        ConcurTestWorkflowInfo workflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestFixture.id);
-        assertNotNull(workflowInfo, "A placeholder workflow object should have been present for request "
-                + requestFixture.id);
-        assertTrue(StringUtils.isBlank(workflowInfo.getActionTaken()),
-                "No workflow action should have been recorded yet for request " + requestFixture.id);
-        assertTrue(StringUtils.isBlank(workflowInfo.getComment()),
-                "No workflow comment should have been recorded yet for request " + requestFixture.id);
-        int oldVersionNumber = workflowInfo.getVersionNumber();
-        
-        concurRequestV4Service.updateRequestStatusInConcur(accessToken, requestFixture.id, resultsDTO);
-        
-        workflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestFixture.id);
-        assertNotNull(workflowInfo, "Workflow action data should have been present for request " + requestFixture.id);
-        assertTrue(StringUtils.isNotBlank(workflowInfo.getActionTaken()),
-                "A workflow action should have been recorded for request " + requestFixture.id);
-        assertEquals(expectedWorkflowAction, workflowInfo.getActionTaken(),
-                "Wrong workflow action was taken for request " + requestFixture.id);
-        assertTrue(StringUtils.isNotBlank(workflowInfo.getComment()),
-                "A workflow comment should have been recorded for request " + requestFixture.id);
-        if (requestValid) {
-            assertEquals(ConcurConstants.APPROVE_COMMENT, workflowInfo.getComment(),
-                    "Wrong workflow comment was recorded for request " + requestFixture.id);
+        for (RequestV4DetailFixture requestFixture : requestFixtures) {
+            WorkflowOutcome expectedOutcome = nonExistentRequests.contains(requestFixture)
+                    ? WorkflowOutcome.ERROR_ON_ACTION_FOR_MISSING_REQUEST : WorkflowOutcome.SUCCESS;
+            assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, expectedOutcome);
         }
-        assertEquals(oldVersionNumber + 1, workflowInfo.getVersionNumber(),
-                "Wrong version number on workflow object for request " + requestFixture.id);
-        
-        assertResultsDTOHasExpectedData(requestFixture, expectedOutcome, resultsDTO);
     }
 
-    private void assertResultsDTOHasExpectedData(RequestV4DetailFixture requestFixture,
-            ConcurEventNotificationVersion2ProcessingResults expectedOutcome,
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
-        assertEquals(ConcurEventNoticationVersion2EventType.TravelRequest, resultsDTO.getEventType(),
+    private void assertRequestWorkflowAttemptHasExpectedOutcome(RequestV4DetailFixture requestFixture,
+            WorkflowOutcome expectedOutcome) {
+        ConcurEventNotificationProcessingResultsDTO resultsDTO = createProcessingResultsForRequest(requestFixture);
+        assertRequestWorkflowAttemptHasExpectedOutcome(requestFixture, expectedOutcome, resultsDTO);
+    }
+
+    private void assertRequestWorkflowAttemptHasExpectedOutcome(RequestV4DetailFixture requestFixture,
+            WorkflowOutcome expectedOutcome, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        String requestUuid = requestFixture.id;
+        ConcurEventNotificationProcessingResultsDTO oldResultsDTO = new ConcurEventNotificationProcessingResultsDTO(
+                resultsDTO);
+        boolean requestIsPresent = expectedOutcome != WorkflowOutcome.ERROR_ON_ACTION_FOR_MISSING_REQUEST;
+        
+        ConcurTestWorkflowInfo oldWorkflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestUuid);
+        if (expectedOutcome == WorkflowOutcome.ERROR_ON_DUPLICATE_ACTION) {
+            assertWorkflowActionWasRecorded(requestUuid, oldResultsDTO, oldWorkflowInfo.getVersionNumber());
+        } else if (requestIsPresent) {
+            assertTravelRequestIsAwaitingAction(requestUuid, oldWorkflowInfo);
+        } else {
+            assertNull(oldWorkflowInfo, "The mock server should not have had an entry for request " + requestUuid);
+        }
+        
+        assertWorkflowAttemptSucceedsOrFailsAsExpected(requestUuid, expectedOutcome, resultsDTO);
+        
+        if (expectedOutcome.expectsActionTaken) {
+            assertWorkflowActionWasRecorded(requestUuid, oldResultsDTO, oldWorkflowInfo.getVersionNumber() + 1);
+        } else {
+            assertWorkflowActionWasNotRecorded(requestUuid, expectedOutcome, oldWorkflowInfo);
+        }
+        assertResultsDTOHasExpectedData(expectedOutcome, oldResultsDTO, resultsDTO);
+    }
+
+    private void assertTravelRequestIsAwaitingAction(
+            String requestUuid, ConcurTestWorkflowInfo workflowInfo) {
+        assertNotNull(workflowInfo, "A placeholder workflow object should have been present for request "
+                + requestUuid);
+        assertTrue(StringUtils.isBlank(workflowInfo.getActionTaken()),
+                "No workflow action should have been recorded yet for request " + requestUuid);
+        assertTrue(StringUtils.isBlank(workflowInfo.getComment()),
+                "No workflow comment should have been recorded yet for request " + requestUuid);
+    }
+
+    private void assertWorkflowAttemptSucceedsOrFailsAsExpected(String requestUuid,
+            WorkflowOutcome expectedOutcome, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        switch (expectedOutcome) {
+            case ERROR_ON_ACTION:
+            case ERROR_ON_ACTION_FOR_MISSING_REQUEST:
+            case ERROR_ON_DUPLICATE_ACTION:
+                assertThrows(RuntimeException.class,
+                        () -> concurRequestV4Service.updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO),
+                        "An exception should have been thrown when attempting action for request " + requestUuid);
+                break;
+            
+            default:
+                concurRequestV4Service.updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
+                break;
+        }
+    }
+
+    private void assertWorkflowActionWasRecorded(String requestUuid,
+            ConcurEventNotificationProcessingResultsDTO oldResultsDTO, int expectedVersionNumber) {
+        ConcurTestWorkflowInfo newWorkflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestUuid);
+        boolean requestValid = oldResultsDTO.getProcessingResults() ==
+                ConcurEventNotificationVersion2ProcessingResults.validAccounts;
+        String expectedWorkflowAction = requestValid ? ConcurWorkflowActions.APPROVE
+                : ConcurWorkflowActions.SEND_BACK;
+        
+        assertNotNull(newWorkflowInfo, "Workflow action data should have been present for request " + requestUuid);
+        assertTrue(StringUtils.isNotBlank(newWorkflowInfo.getActionTaken()),
+                "A workflow action should have been recorded for request " + requestUuid);
+        assertEquals(expectedWorkflowAction, newWorkflowInfo.getActionTaken(),
+                "Wrong workflow action was taken for request " + requestUuid);
+        assertTrue(StringUtils.isNotBlank(newWorkflowInfo.getComment()),
+                "A workflow comment should have been recorded for request " + requestUuid);
+        if (requestValid) {
+            assertEquals(ConcurConstants.APPROVE_COMMENT, newWorkflowInfo.getComment(),
+                    "Wrong workflow comment was recorded for request " + requestUuid);
+        }
+        assertEquals(expectedVersionNumber, newWorkflowInfo.getVersionNumber(),
+                "Wrong version number on workflow object for request " + requestUuid);
+    }
+
+    private void assertWorkflowActionWasNotRecorded(
+            String requestUuid, WorkflowOutcome expectedOutcome, ConcurTestWorkflowInfo oldWorkflowInfo) {
+        ConcurTestWorkflowInfo newWorkflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestUuid);
+        if (expectedOutcome == WorkflowOutcome.ERROR_ON_ACTION_FOR_MISSING_REQUEST) {
+            assertNull(newWorkflowInfo, "No workflow data should have been recorded for request " + requestUuid);
+            return;
+        }
+        
+        assertNotNull(newWorkflowInfo, "Workflow action data should have been present for request " + requestUuid);
+        assertEquals(oldWorkflowInfo.getActionTaken(), newWorkflowInfo.getActionTaken(),
+                "Previous workflow action (possibly blank) was not preserved for request " + requestUuid);
+        assertEquals(oldWorkflowInfo.getComment(), newWorkflowInfo.getComment(),
+                "Previous workflow comment (possibly blank) was not preserved for request " + requestUuid);
+        assertEquals(oldWorkflowInfo.getVersionNumber(), newWorkflowInfo.getVersionNumber(),
+                "Previous workflow version number was not preserved for request " + requestUuid);
+    }
+
+    private void assertResultsDTOHasExpectedData(WorkflowOutcome expectedOutcome,
+            ConcurEventNotificationProcessingResultsDTO oldResultsDTO,
+            ConcurEventNotificationProcessingResultsDTO newResultsDTO) {
+        assertEquals(ConcurEventNoticationVersion2EventType.TravelRequest, newResultsDTO.getEventType(),
                 "Wrong event type");
-        assertEquals(expectedOutcome, resultsDTO.getProcessingResults(), "Wrong processing result outcome");
-        assertEquals(requestFixture.requestId, resultsDTO.getReportNumber(), "Wrong Request ID");
-        assertEquals(requestFixture.owner.getFullName(), resultsDTO.getTravelerName(), "Wrong traveler name");
-        assertTrue(StringUtils.isBlank(resultsDTO.getTravelerEmail()), "Traveler email should have been blank");
-        if (expectedOutcome == ConcurEventNotificationVersion2ProcessingResults.validAccounts) {
-            assertTrue(CollectionUtils.isEmpty(resultsDTO.getMessages()),
+        assertEquals(oldResultsDTO.getReportNumber(), newResultsDTO.getReportNumber(), "Wrong Request ID");
+        assertEquals(oldResultsDTO.getTravelerName(), newResultsDTO.getTravelerName(), "Wrong traveler name");
+        assertTrue(StringUtils.isBlank(newResultsDTO.getTravelerEmail()), "Traveler email should have been blank");
+        
+        ConcurEventNotificationVersion2ProcessingResults expectedProcessingResults =
+                (expectedOutcome == WorkflowOutcome.ERROR_ANALYZING_RESPONSE)
+                        ? ConcurEventNotificationVersion2ProcessingResults.processingError
+                        : oldResultsDTO.getProcessingResults();
+        
+        assertEquals(expectedProcessingResults, newResultsDTO.getProcessingResults(), "Wrong processing results");
+        if (expectedProcessingResults == ConcurEventNotificationVersion2ProcessingResults.validAccounts) {
+            assertTrue(CollectionUtils.isEmpty(newResultsDTO.getMessages()),
                     "No error messages should have been present for a valid-accounts result");
         } else {
-            assertTrue(CollectionUtils.isNotEmpty(resultsDTO.getMessages()),
+            assertTrue(CollectionUtils.isNotEmpty(newResultsDTO.getMessages()),
                     "One or more error messages should have been present for an invalid-accounts or error result");
         }
     }
