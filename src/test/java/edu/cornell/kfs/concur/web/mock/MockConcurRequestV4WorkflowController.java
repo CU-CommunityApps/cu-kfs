@@ -38,6 +38,7 @@ public class MockConcurRequestV4WorkflowController implements ResettableControll
     private final ConcurrentMap<String, RequestV4DetailFixture> travelRequests;
     private final ConcurrentMap<String, ConcurTestWorkflowInfo> requestActions;
     private final AtomicBoolean forceInternalServerError;
+    private final AtomicBoolean forceMalformedResponse;
 
     public MockConcurRequestV4WorkflowController(String expectedAccessToken, String httpServerUrl) {
         if (StringUtils.isBlank(expectedAccessToken)) {
@@ -49,6 +50,7 @@ public class MockConcurRequestV4WorkflowController implements ResettableControll
         this.travelRequests = new ConcurrentHashMap<>();
         this.requestActions = new ConcurrentHashMap<>();
         this.forceInternalServerError = new AtomicBoolean(false);
+        this.forceMalformedResponse = new AtomicBoolean(false);
     }
 
     @Override
@@ -56,6 +58,7 @@ public class MockConcurRequestV4WorkflowController implements ResettableControll
         travelRequests.clear();
         requestActions.clear();
         forceInternalServerError.set(false);
+        forceMalformedResponse.set(false);
     }
 
     @PostMapping(
@@ -86,6 +89,9 @@ public class MockConcurRequestV4WorkflowController implements ResettableControll
         requestActions.put(travelRequest.id, newWorkflowInfo);
         
         ConcurRequestV4ReportDTO requestDTO = createDTOForResponse(travelRequest, newWorkflowInfo);
+        if (forceMalformedResponse.get()) {
+            requestDTO.setApprovalStatus(null);
+        }
         return ResponseEntity.ok(requestDTO);
     }
 
@@ -164,6 +170,10 @@ public class MockConcurRequestV4WorkflowController implements ResettableControll
 
     public void setForceInternalServerError(boolean forceInternalServerError) {
         this.forceInternalServerError.set(forceInternalServerError);
+    }
+
+    public void setForceMalformedResponse(boolean forceMalformedResponse) {
+        this.forceMalformedResponse.set(forceMalformedResponse);
     }
 
     public void addTravelRequestsAwaitingAction(RequestV4DetailFixture... requestFixtures) {

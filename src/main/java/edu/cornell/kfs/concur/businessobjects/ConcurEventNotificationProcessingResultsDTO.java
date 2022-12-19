@@ -25,6 +25,11 @@ public class ConcurEventNotificationProcessingResultsDTO {
         this(eventType, processingResults, reportNumber, travelerName, travelerEmail, new ArrayList<String>());
     }
     
+    public ConcurEventNotificationProcessingResultsDTO(ConcurEventNotificationProcessingResultsDTO dtoToCopy) {
+        this(dtoToCopy.getEventType(), dtoToCopy.getProcessingResults(), dtoToCopy.getReportNumber(),
+                dtoToCopy.getTravelerName(), dtoToCopy.getTravelerEmail(), new ArrayList<>(dtoToCopy.getMessages()));
+    }
+    
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
             ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, 
             String travelerName, String travelerEmail, List<String> messages) {
