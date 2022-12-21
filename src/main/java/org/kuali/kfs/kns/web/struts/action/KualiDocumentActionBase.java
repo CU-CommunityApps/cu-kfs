@@ -46,10 +46,10 @@ import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.group.Group;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
@@ -209,7 +209,7 @@ public class KualiDocumentActionBase extends KualiAction {
                 OptimisticLockException ole = (OptimisticLockException) cause;
                 GlobalVariables.getMessageMap().putError(KRADConstants.DOCUMENT_ERRORS,
                         KFSKeyConstants.ERROR_OPTIMISTIC_LOCK);
-                logOjbOptimisticLockException(ole);
+                LOG.info("{}", () -> createOjbOptimisticLockExceptionLogMsg(ole));
             } else {
                 // if exceptions are from 'save'
                 throw e;
@@ -355,10 +355,10 @@ public class KualiDocumentActionBase extends KualiAction {
         }
 
         // attach any extra JS from the data dictionary
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("kualiDocumentFormBase.getAdditionalScriptFiles(): " +
-                    kualiDocumentFormBase.getAdditionalScriptFiles());
-        }
+        LOG.debug(
+                "kualiDocumentFormBase.getAdditionalScriptFiles(): {}",
+                kualiDocumentFormBase::getAdditionalScriptFiles
+        );
         if (kualiDocumentFormBase.getAdditionalScriptFiles().isEmpty()) {
             DocumentEntry docEntry = getDocumentDictionaryService().getDocumentEntry(
                     kualiDocumentFormBase.getDocument().getDocumentHeader().getWorkflowDocument()
@@ -717,9 +717,7 @@ public class KualiDocumentActionBase extends KualiAction {
                 document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName()));
         // prepareForRouteReport() method should populate document header workflow document application content xml
         String xml = document.getXmlForRouteReport();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("XML being used for Routing Report is: " + xml);
-        }
+        LOG.debug("XML being used for Routing Report is: {}", xml);
         generalRouteReportFormParameters.add(new ConcreteKeyValue(KewApiConstants.DOCUMENT_CONTENT_ATTRIBUTE_NAME, xml));
 
         // set up the variables for the form if java script is working (includes a close button variable and no back url)
@@ -1184,7 +1182,7 @@ public class KualiDocumentActionBase extends KualiAction {
         for (Enumeration<String> i = request.getParameterNames(); i.hasMoreElements(); ) {
             String parameterName = i.nextElement();
             if ("newAdHocRouteWorkgroup.recipientName".equals(parameterName)
-            		&& StringUtils.isNotEmpty(request.getParameter(parameterName))) {
+                    && StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 //check for namespace
                 String namespace = KFSConstants.CoreModuleNamespaces.KFS;
                 // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
@@ -1568,27 +1566,25 @@ public class KualiDocumentActionBase extends KualiAction {
      *
      * @param e
      */
-    private void logOjbOptimisticLockException(OptimisticLockException e) {
-        if (LOG.isInfoEnabled()) {
-            StringBuffer message = new StringBuffer("caught OptimisticLockException, caused by ");
-            Object sourceObject = e.getSourceObject();
-            String infix;
-            try {
-                // try to add instance details
-                infix = sourceObject.toString();
-            } catch (Exception e2) {
-                // just use the class name
-                infix = sourceObject.getClass().getName();
-            }
-            message.append(infix);
-
-            if (sourceObject instanceof PersistableBusinessObject) {
-                PersistableBusinessObject persistableObject = (PersistableBusinessObject) sourceObject;
-                message.append(" [versionNumber = ").append(persistableObject.getVersionNumber()).append("]");
-            }
-
-            LOG.info(message.toString(), e);
+    private String createOjbOptimisticLockExceptionLogMsg(final OptimisticLockException e) {
+        StringBuffer message = new StringBuffer("caught OptimisticLockException, caused by ");
+        Object sourceObject = e.getSourceObject();
+        String infix;
+        try {
+            // try to add instance details
+            infix = sourceObject.toString();
+        } catch (Exception e2) {
+            // just use the class name
+            infix = sourceObject.getClass().getName();
         }
+        message.append(infix);
+
+        if (sourceObject instanceof PersistableBusinessObject) {
+            PersistableBusinessObject persistableObject = (PersistableBusinessObject) sourceObject;
+            message.append(" [versionNumber = ").append(persistableObject.getVersionNumber()).append("]");
+        }
+
+        return message.toString();
     }
 
     /**
@@ -1626,9 +1622,7 @@ public class KualiDocumentActionBase extends KualiAction {
         /* callback to any pre rules check class */
         Class<? extends PromptBeforeValidation> promptBeforeValidationClass =
                 getDataDictionaryService().getPromptBeforeValidationClass(kualiDocumentFormBase.getDocTypeName());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PromptBeforeValidationClass: " + promptBeforeValidationClass);
-        }
+        LOG.debug("PromptBeforeValidationClass: {}", promptBeforeValidationClass);
         if (promptBeforeValidationClass != null) {
             PromptBeforeValidation promptBeforeValidation = promptBeforeValidationClass.newInstance();
             PromptBeforeValidationEvent event = new PromptBeforeValidationEvent("Pre Maint route Check",
