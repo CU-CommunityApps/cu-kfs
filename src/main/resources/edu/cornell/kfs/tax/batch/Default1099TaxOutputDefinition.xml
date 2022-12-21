@@ -51,14 +51,14 @@
         <field name="HDR_MISC_BOX9" length="40" type="STATIC" value="BOX9_CROP_INSURANCE_PROCEEDS"/>
         <field name="HDR_MISC_BOX10" length="40" type="STATIC" value="BOX10_GROSS_PROCEEDS_ATTORNEY"/>
         <field name="HDR_MISC_BOX12" length="40" type="STATIC" value="BOX12_SECTION_409A_DEFERRAL"/>
-        <field name="HDR_MISC_BOX13" length="40" type="STATIC" value="BOX14_GOLDEN_PARACHUTE"/>
-        <field name="HDR_MISC_BOX14" length="40" type="STATIC" value="BOX15_NONQUALIFIED_DEFERRED_COMPENSATION"/>
-        <field name="HDR_MISC_BOX15_1" length="40" type="STATIC" value="BOX16_STATE_TAX_WITHHELD1"/>
-        <field name="HDR_MISC_BOX15_2" length="40" type="STATIC" value="BOX16_STATE_TAX_WITHHELD2"/>
-        <field name="HDR_MISC_BOX16_1" length="40" type="STATIC" value="BOX17_PAYER_STATE_NUMBER1"/>
-        <field name="HDR_MISC_BOX16_2" length="40" type="STATIC" value="BOX17_PAYER_STATE_NUMBER2"/>
-        <field name="HDR_MISC_BOX17_1" length="40" type="STATIC" value="BOX18_STATE_INCOME1"/>
-        <field name="HDR_MISC_BOX17_2" length="40" type="STATIC" value="BOX18_STATE_INCOME2"/>
+        <field name="HDR_MISC_BOX14" length="40" type="STATIC" value="BOX14_GOLDEN_PARACHUTE"/>
+        <field name="HDR_MISC_BOX15" length="40" type="STATIC" value="BOX15_NONQUALIFIED_DEFERRED_COMPENSATION"/>
+        <field name="HDR_MISC_BOX16_1" length="40" type="STATIC" value="BOX16_STATE_TAX_WITHHELD1"/>
+        <field name="HDR_MISC_BOX16_2" length="40" type="STATIC" value="BOX16_STATE_TAX_WITHHELD2"/>
+        <field name="HDR_MISC_BOX17_1" length="40" type="STATIC" value="BOX17_PAYER_STATE_NUMBER1"/>
+        <field name="HDR_MISC_BOX17_2" length="40" type="STATIC" value="BOX17_PAYER_STATE_NUMBER2"/>
+        <field name="HDR_MISC_BOX18_1" length="40" type="STATIC" value="BOX18_STATE_INCOME1"/>
+        <field name="HDR_MISC_BOX18_2" length="40" type="STATIC" value="BOX18_STATE_INCOME2"/>
         <field name="HDR_MISC_FATCA_REQ" length="40" type="STATIC" value="BOX_13_FATCA_REQUIREMENT"/>
         <field name="HDR_MISC_2ND_TIN_NOT_IND" length="40" type="STATIC" value="BOX_2ND_TIN_NOT_IND"/>
         <field name="HDR_MISC_1099_YEAR" length="40" type="STATIC" value="1099_YEAR"/>
