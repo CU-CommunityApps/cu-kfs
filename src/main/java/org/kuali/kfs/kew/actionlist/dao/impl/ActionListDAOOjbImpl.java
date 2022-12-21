@@ -530,6 +530,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     /**
      * Saves an outbox item
      */
+    @Override
     public void saveOutboxItem(OutboxItemActionListExtension outboxItem) {
         this.getPersistenceBrokerTemplate().store(outboxItem);
     }

@@ -444,6 +444,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyPrimaryDelegation = notifyPrimaryDelegation;
         }
 
+        @Override
         public synchronized String getNotifySecondaryDelegation() {
             return notifySecondaryDelegation;
         }
