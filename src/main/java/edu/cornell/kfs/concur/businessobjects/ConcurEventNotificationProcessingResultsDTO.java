@@ -15,22 +15,24 @@ public class ConcurEventNotificationProcessingResultsDTO {
     private ConcurEventNoticationVersion2EventType eventType;
     private ConcurEventNotificationVersion2ProcessingResults processingResults;
     private String reportNumber;
+    private String reportName;
     private String travelerName;
     private String travelerEmail;
     private List<String> messages;
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, 
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName,
             String travelerName, String travelerEmail) {
-        this(eventType, processingResults, reportNumber, travelerName, travelerEmail, new ArrayList<String>());
+        this(eventType, processingResults, reportNumber, reportName, travelerName, travelerEmail, new ArrayList<String>());
     }
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, 
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName,
             String travelerName, String travelerEmail, List<String> messages) {
         this.eventType = eventType;
         this.processingResults = processingResults;
         this.reportNumber = reportNumber;
+        this.reportName = reportName;
         this.travelerName = travelerName;
         this.travelerEmail = travelerEmail;
         this.messages = messages;
@@ -58,6 +60,14 @@ public class ConcurEventNotificationProcessingResultsDTO {
 
     public void setReportNumber(String reportNumber) {
         this.reportNumber = reportNumber;
+    }
+
+    public String getReportName() {
+        return reportName;
+    }
+
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
     }
 
     public String getTravelerName() {
