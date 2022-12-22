@@ -316,7 +316,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         boolean requestValid = oldResultsDTO.getProcessingResults() ==
                 ConcurEventNotificationVersion2ProcessingResults.validAccounts;
         String expectedWorkflowAction = requestValid ? ConcurWorkflowActions.APPROVE
-                : ConcurWorkflowActions.SEND_BACK;
+                : ConcurWorkflowActions.REQUEST_V4_SEND_BACK;
         
         assertNotNull(newWorkflowInfo, "Workflow action data should have been present for request " + requestUuid);
         assertTrue(StringUtils.isNotBlank(newWorkflowInfo.getActionTaken()),
