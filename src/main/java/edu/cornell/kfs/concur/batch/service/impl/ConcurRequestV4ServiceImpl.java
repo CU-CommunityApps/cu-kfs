@@ -187,13 +187,14 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         
         String reportNumber = requestAsListItem.getRequestId();
         String reportName = requestAsListItem.getName();
+        String reportStatus = requestAsListItem.getApprovalStatus() != null   ? requestAsListItem.getApprovalStatus().getName() : CUKFSConstants.NULL;
         String travelerName = String.join(StringUtils.SPACE, requestAsListItem.getOwner().getFirstName(),
                 requestAsListItem.getOwner().getMiddleInitial(), requestAsListItem.getOwner().getLastName());
         String travelerEmail = StringUtils.EMPTY;
         
         ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(
                 ConcurEventNoticationVersion2EventType.TravelRequest, processingResult,
-                reportNumber, reportName, travelerName, travelerEmail, validationMessages);
+                reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
         updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
         
         return resultsDTO;

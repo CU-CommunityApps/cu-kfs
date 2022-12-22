@@ -16,18 +16,19 @@ public class ConcurEventNotificationProcessingResultsDTO {
     private ConcurEventNotificationVersion2ProcessingResults processingResults;
     private String reportNumber;
     private String reportName;
+    private String reportStatus;
     private String travelerName;
     private String travelerEmail;
     private List<String> messages;
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName,
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName,String reportStatus,
             String travelerName, String travelerEmail) {
-        this(eventType, processingResults, reportNumber, reportName, travelerName, travelerEmail, new ArrayList<String>());
+        this(eventType, processingResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, new ArrayList<String>());
     }
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName,
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportStatus, String reportName,
             String travelerName, String travelerEmail, List<String> messages) {
         this.eventType = eventType;
         this.processingResults = processingResults;
@@ -68,6 +69,14 @@ public class ConcurEventNotificationProcessingResultsDTO {
 
     public void setReportName(String reportName) {
         this.reportName = reportName;
+    }
+
+    public String getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(String reportStatus) {
+        this.reportStatus = reportStatus;
     }
 
     public String getTravelerName() {
