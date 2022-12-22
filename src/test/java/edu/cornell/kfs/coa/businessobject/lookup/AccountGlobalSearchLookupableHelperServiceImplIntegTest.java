@@ -42,7 +42,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplIntegTest extends Kua
 
     public void testGetSearchResultsFiscalOfficer() {
         setupSearchValues();
-        fieldValues.put("accountFiscalOfficerUser.principalName", "tjv9");
+        fieldValues.put("accountFiscalOfficerUser.principalName", "sld8");
 
         List<Account> accounts = (List<Account>) lookupableHelperServiceImpl.getSearchResults(fieldValues);
         assertTrue("should have results", accounts.size() > 0);
@@ -50,7 +50,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplIntegTest extends Kua
 
     public void testGetSearchResultsAccountManager() {
         setupSearchValues();
-        fieldValues.put("accountManagerUser.principalName", "slk38");
+        fieldValues.put("accountManagerUser.principalName", "tms1");
 
         List<Account> accounts = (List<Account>) lookupableHelperServiceImpl.getSearchResults(fieldValues);
         assertTrue("should have results", accounts.size() > 0);
@@ -58,7 +58,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplIntegTest extends Kua
 
     public void testGetSearchResultsAccountSupervisor() {
         setupSearchValues();
-        fieldValues.put("accountSupervisoryUser.principalName", "tjs33");
+        fieldValues.put("accountSupervisoryUser.principalName", "bal232");
 
         List<Account> accounts = (List<Account>) lookupableHelperServiceImpl.getSearchResults(fieldValues);
         assertTrue("should have results", accounts.size() > 0);
@@ -74,7 +74,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplIntegTest extends Kua
         fieldValues.clear();
         fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "Y");
-        fieldValues.put("closed", "N");
+        fieldValues.put("closed", "Y");
 
         lookupableHelperServiceImpl.validateSearchParameters(fieldValues);
         assertTrue("should have error for chart code", GlobalVariables.getMessageMap().getErrorMessages().containsKey(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE));
@@ -84,7 +84,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplIntegTest extends Kua
         fieldValues.clear();
         fieldValues.put("chartOfAccountsCode", "IT");
         fieldValues.put("useOrgHierarchy", "Y");
-        fieldValues.put("closed", "N");
+        fieldValues.put("closed", "Y");
 
         lookupableHelperServiceImpl.validateSearchParameters(fieldValues);
         assertTrue("should have error for org code", GlobalVariables.getMessageMap().getErrorMessages().containsKey(KFSPropertyConstants.ORGANIZATION_CODE));
@@ -96,7 +96,7 @@ public class AccountGlobalSearchLookupableHelperServiceImplIntegTest extends Kua
         fieldValues.put("chartOfAccountsCode", "IT");
         fieldValues.put("organizationCode", "0121");
         fieldValues.put("useOrgHierarchy", "Y");
-        fieldValues.put("closed", "N");
+        fieldValues.put("closed", "Y");
     }
 
 }
