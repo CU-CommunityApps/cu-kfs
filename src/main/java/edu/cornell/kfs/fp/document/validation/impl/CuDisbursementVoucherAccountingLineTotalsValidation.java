@@ -34,9 +34,7 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
 
     @Override
     public boolean validate(AttributedDocumentEvent event) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("validate start");
-        }
+        LOG.debug("validate start");
 
         DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) event.getDocument();
 

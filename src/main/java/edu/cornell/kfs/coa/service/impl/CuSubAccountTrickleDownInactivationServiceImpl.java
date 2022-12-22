@@ -65,7 +65,7 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
                             inactivatedSubAccounts.add(subAccount);
                         }
                         catch (RuntimeException e) {
-                            LOG.error("Unable to trickle-down inactivate sub-account " + subAccount.toString(), e);
+                            LOG.error("Unable to trickle-down inactivate sub-account {}", subAccount, e);
                             errorPersistingSubAccounts.add(subAccount);
                         }
                     }

@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.fp.document.ProcurementCardDocument;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
@@ -38,9 +38,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.dataaccess.ProcurementCardDocumentDao;
 import edu.cornell.kfs.module.receiptProcessing.businessobject.ReceiptProcessing;

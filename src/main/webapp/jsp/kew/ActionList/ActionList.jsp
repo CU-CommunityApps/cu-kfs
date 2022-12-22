@@ -176,7 +176,8 @@
 
             <c:if test="${helpDeskActionList != null}">
                 <!--<p> Testing is this shows up on the screen </p> -->
-                    <html-el:text property="helpDeskActionListUserName" size="12" />
+                    <html-el:text property="helpDeskActionListUserName" size="12"
+                                  onkeypress="submitHelpDeskUser(event);" />
                     <html-el:submit property="methodToCall.helpDeskActionListLogin" styleClass="btn btn-default">Help Desk</html-el:submit>
                 <c:if test="${userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] != null}">
                     <a href="

@@ -22,6 +22,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class CuSubAccountPreRules extends SubAccountPreRules {
 
   @SuppressWarnings("deprecation")
+  @Override
   protected boolean doCustomPreRules(MaintenanceDocument document) {
     boolean preRulesOK = super.doCustomPreRules(document);
     preRulesOK &= checkOffCampus(document);
