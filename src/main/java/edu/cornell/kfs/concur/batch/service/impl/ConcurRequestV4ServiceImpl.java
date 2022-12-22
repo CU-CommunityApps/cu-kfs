@@ -240,7 +240,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
         
         String requestId = resultsDTO.getReportNumber();
-        String workflowAction = isValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.SEND_BACK;
+        String workflowAction = isValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.REQUEST_V4_SEND_BACK;
         String logMessageDetail = buildLogMessageDetailForRequestWorkflowAction(
                 workflowAction, requestId, requestUuid);
         
