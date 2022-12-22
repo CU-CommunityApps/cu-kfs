@@ -73,7 +73,7 @@
 
     <profiles>
         <profile>
-            <id>skip-integration-tests</id>
+            <id>run-only-unit-tests</id>
             <properties>
                 <test.excludes>**/*IntegTest.java,**/*IntegrationTest.java</test.excludes>
             </properties>
