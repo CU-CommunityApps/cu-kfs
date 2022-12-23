@@ -22,7 +22,8 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
     private static final String NOT_PROPERLY_FORMATTED  = "The following file user identifer was not properly formatted: ";
     
     @Override
-    public String save(Person user, BatchInputFileType batchInputFileType, String fileUserIdentifier, 
+    public String save(
+            Person user, BatchInputFileType batchInputFileType, String fileUserIdentifier, 
             InputStream fileContents, Object parsedObject) throws FileStorageException {
         if (user == null || batchInputFileType == null || fileContents == null) {
             LOG.error(INVALID_ARGUEMENT);

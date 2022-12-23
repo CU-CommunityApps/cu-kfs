@@ -232,9 +232,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 if (poItem != null) {
                     // KFSUPGRADE-893 recumber $0 item too
                     if (poItem.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("reencumberEncumbrance() " + logItmNbr + " Calculate encumbrance based on quantity");
-                        }
+                        LOG.debug("reencumberEncumbrance() {} Calculate encumbrance based on quantity", logItmNbr);
 
                         // Do disencumbrance calculations based on quantity
                         KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();

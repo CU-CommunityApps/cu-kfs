@@ -450,7 +450,7 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
 
     @Override
     public void updateStatus(JobDetail jobDetail, String jobStatus) {
-        LOG.info("updateStatus, Updating status of job '" + jobDetail.getKey().getName() + "' to '" + jobStatus + "'");
+        LOG.info("Updating status of job: {}={}", () -> jobDetail.getKey().getName(), () -> jobStatus);
         CuJobEntry jobEntry = getExistingJob(jobDetail.getKey().getName());
         jobEntry.setJobStatus(jobStatus);
     }
