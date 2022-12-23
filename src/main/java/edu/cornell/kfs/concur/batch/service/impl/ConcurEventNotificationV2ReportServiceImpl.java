@@ -81,8 +81,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
                         eventType, resultsType);
                 if (CollectionUtils.isNotEmpty(filteredDtos)) {
                     String sectionTitle = MessageFormat.format(detailSummaryFormat, eventType.eventType, resultsType.statusForReport);
-                    buildDetailSection(filteredDtos, sectionTitle, reportNumberDescription, eventType.displayTravelerEmail);
-                    
+                    buildDetailSection(filteredDtos, sectionTitle, eventType);
                 }
             }
         }
