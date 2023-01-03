@@ -34,6 +34,7 @@ public class ConcurEventNotificationProcessingResultsDTO {
         this.processingResults = processingResults;
         this.reportNumber = reportNumber;
         this.reportName = reportName;
+        this.reportStatus = reportStatus;
         this.travelerName = travelerName;
         this.travelerEmail = travelerEmail;
         this.messages = messages;
