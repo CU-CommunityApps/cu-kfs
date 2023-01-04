@@ -52,7 +52,7 @@
           p:label="Appropriation Account Number"
           p:shortLabel="Approp. Acct Nbr"
           p:maxLength="10"
-          p:validationPattern-ref="TenCharacterAlphaNumericValidationPattern"
+          p:validationPattern-ref="TenCharacterAlphaNumericValidation"
           p:control-ref="TwelveCharacterTextControl">
     </bean>
 
@@ -62,7 +62,7 @@
           p:label="Appropriation Account Name"
           p:shortLabel="Approp. Acct Name"
           p:maxLength="40"
-          p:validationPattern-ref="AnyCharacterAndWhitespaceValidationPattern"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation"
           p:control-ref="FortyTwoCharacterTextControl"/>
 
     <bean id="AppropriationAccount-subFundGroupCode" parent="AppropriationAccount-subFundGroupCode-parentBean"/>
@@ -75,13 +75,14 @@
           p:label="Project Number"
           p:shortLabel="Project Number"
           p:maxLength="15"
-          p:validationPattern-ref="FifteenCharacterAlphaNumericValidationPattern"
+          p:validationPattern-ref="FifteenCharacterAlphaNumericValidation"
           p:control-ref="FifteenCharacterTextControl">
     </bean>
 
     <bean id="AppropriationAccount-active" parent="AppropriationAccount-active-parentBean"/>
     <bean id="AppropriationAccount-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
-          p:name="active">
+          p:name="active"
+          p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl">
     </bean>
 
 

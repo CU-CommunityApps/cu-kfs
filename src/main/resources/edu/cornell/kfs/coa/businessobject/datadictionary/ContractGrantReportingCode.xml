@@ -47,7 +47,7 @@
           p:maxLength="4"
           p:shortLabel="CG Rptg Code"
           p:control-ref="FourCharacterTextControl"
-          p:validationPattern-ref="FourCharacterAlphaNumericValidationPattern">   
+          p:validationPattern-ref="FourCharacterAlphaNumericValidation">
     </bean>
     
     
@@ -57,7 +57,7 @@
           p:name="name"
           p:maxLength="40"
           p:shortLabel="CG Rptg Code Name"
-          p:validationPattern-ref="AnyCharacterAndWhitespaceValidationPattern"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation"
           p:control-ref="FortyFiveCharacterTextControl">    
     </bean>
     

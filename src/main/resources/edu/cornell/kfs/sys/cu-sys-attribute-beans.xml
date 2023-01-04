@@ -5,16 +5,14 @@
     xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">                      
 
     <!-- Text Control size defintions -->
-    <bean id="FourCharacterTextControl"      parent="TextControlDefinition" p:size="4"/>
     <bean id="TwelveCharacterTextControl"    parent="TextControlDefinition" p:size="12"/>
     <bean id="FifteenCharacterTextControl"   parent="TextControlDefinition" p:size="15"/>
     <bean id="FortyTwoCharacterTextControl"  parent="TextControlDefinition" p:size="42"/>
     <bean id="FortyFiveCharacterTextControl" parent="TextControlDefinition" p:size="45"/>   
 
     <!-- Text Control validation patterns -->
-    <bean id="AnyCharacterAndWhitespaceValidationPattern" parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
-    <bean id="FourCharacterAlphaNumericValidationPattern"    parent="AlphaNumericValidationPattern" p:maxLength="4"/>
-    <bean id="TenCharacterAlphaNumericValidationPattern"     parent="AlphaNumericValidationPattern" p:maxLength="10"/>
-    <bean id="FifteenCharacterAlphaNumericValidationPattern" parent="AnyCharacterValidationPattern" p:maxLength="15"/>
+    <bean id="FourCharacterAlphaNumericValidation"    parent="AlphaNumericValidation" p:maxLength="4"/>
+    <bean id="TenCharacterAlphaNumericValidation"     parent="AlphaNumericValidation" p:maxLength="10"/>
+    <bean id="FifteenCharacterAlphaNumericValidation" parent="AnyCharacterValidation" p:maxLength="15"/>
     
 </beans>
