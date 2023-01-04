@@ -7,26 +7,32 @@
     <import resource="classpath:org/kuali/kfs/sys/sys-lookup-beans.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-sys-attribute-beans.xml"/>
     
-    <bean id="AccountGlobalSearch" parent="Account"
+    <bean id="AccountGlobalSearch" parent="AccountGlobalSearch-parent"/>
+    <bean id="AccountGlobalSearch-parent" abstract="true" parent="Account"
+          p:actionsProvider-ref="businessObjectActionsProvider"
           p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AccountGlobalSearch"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:searchService-ref="defaultSearchService"
           p:lookupDefinition-ref="AccountGlobalSearch-lookupDefinition">
         <property name="attributes">
             <list merge="true">
-                <ref bean="AccountGlobalSearch-orgHierarchy"/>
+                <ref bean="AccountGlobalSearch-useOrgHierarchy"/>
             </list>
         </property>
     </bean>
   
     <!-- Attribute Definitions -->
-    <bean id="AccountGlobalSearch-orgHierarchy" parent="AccountGlobalSearch-orgHierarchy-parentBean"/>
-    <bean id="AccountGlobalSearch-orgHierarchy-parentBean" abstract="true" parent="activeIndicatorAttributeDefinition"
+       
+    <bean id="AccountGlobalSearch-useOrgHierarchy" parent="AccountGlobalSearch-useOrgHierarchy-parentBean"/>
+    <bean id="AccountGlobalSearch-useOrgHierarchy-parentBean" abstract="true" parent="GenericAttributes-genericBoolean"
+          p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
           p:name="useOrgHierarchy"
           p:label="Search by Organization Hierarchy"
           p:shortLabel="useOrgHierarchy"
-          p:required="false">
+          p:required="false"
+          p:defaultValue="N"
+          p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter">
     </bean>
-
-    <bean id="AccountGlobalSearch-orgHierarchy-defaultNo" parent="AccountGlobalSearch-orgHierarchy" p:defaultValue="N"/>
     
     <!-- Business Object Lookup Definition -->
   
@@ -40,7 +46,7 @@
                 <ref bean="Account-accountNumber"/>
                 <ref bean="Account-accountName"/>
                 <ref bean="Account-organizationCode"/>
-                <ref bean="AccountGlobalSearch-orgHierarchy-defaultNo"/>
+                <ref bean="AccountGlobalSearch-useOrgHierarchy"/>
                 <ref bean="Account-accountTypeCode"/>
                 <ref bean="Account-subFundGroupCode"/>
                 <ref bean="Account-extension-majorReportingCategoryCode"/>

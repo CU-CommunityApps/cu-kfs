@@ -22,6 +22,8 @@ public class AccountGlobalSearch extends Account {
 		this.useOrgHierarchy = useOrgHierarchy;
 	}
 	
-	
+	public boolean getUseOrgHierarchy() {
+	    return useOrgHierarchy;
+	}
 	
 }
