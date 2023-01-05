@@ -73,17 +73,9 @@
 
     <profiles>
         <profile>
-            <id>fastLocalTests</id>
+            <id>run-only-unit-tests</id>
             <properties>
-                <test.excludes>
-                    **/CuDisbursementVoucherPayeeServiceImplTest.java,
-                    **/CuB2BPurchaseOrderSciquestServiceImplTest.java,
-                    **/CuPaymentRequestServiceImplTest.java,
-                    **/CuPurchase*Test.java,
-                    **/CuRequisitionServiceImplTest.java,
-                    **/IWantDocumentServiceImplTest.java,
-                    **/CuElectronicInvoiceHelperServiceImplTest.java,
-                </test.excludes>
+                <test.excludes>**/*IntegTest.java,**/*IntegrationTest.java</test.excludes>
             </properties>
         </profile>
     </profiles>
