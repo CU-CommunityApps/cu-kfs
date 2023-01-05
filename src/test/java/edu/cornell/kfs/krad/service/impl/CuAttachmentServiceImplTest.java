@@ -83,9 +83,13 @@ public class CuAttachmentServiceImplTest {
     
     @After
     public void tearDown() throws IOException {
+        IOUtils.closeQuietly(virusInputStream);
+        IOUtils.closeQuietly(goodInputStream);
+        IOUtils.closeQuietly(errorInputStream);
         FileUtils.forceDelete(new File(TEST_PATH).getAbsoluteFile());
         virusInputStream = null;
         goodInputStream = null;
+        errorInputStream = null;
         noteVirus = null;
         attachmentService = null;
     }
@@ -186,7 +190,6 @@ public class CuAttachmentServiceImplTest {
         validateRetrieveAttachmentContents(attachment, VIRUS_FILE_CONTENTS);
     }
 
-
     @Test
     public void retrieveAttachmentContentsNoNoteRemoteObjectId() throws Exception {
         attachment.setNote(null);
@@ -194,9 +197,12 @@ public class CuAttachmentServiceImplTest {
     }
 
     private void validateRetrieveAttachmentContents(Attachment attachment, String expected) throws IOException {
-        InputStream inputStream = attachmentService.retrieveAttachmentContents(attachment);
-        String fileContents = IOUtils.toString(inputStream, "UTF-8");
-        Assert.assertEquals(expected, fileContents);
+        try (
+            InputStream inputStream = attachmentService.retrieveAttachmentContents(attachment);
+        ) {
+            String fileContents = IOUtils.toString(inputStream, "UTF-8");
+            Assert.assertEquals(expected, fileContents);
+        }
     }
 
     @Test
@@ -206,8 +212,14 @@ public class CuAttachmentServiceImplTest {
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
 
         Attachment createdAttachment = attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 10, goodInputStream, "txt");
-        InputStream createdInputStream = new BufferedInputStream(new FileInputStream(buildDocumentDirectory(pbo.getObjectId()) + File.separator + createdAttachment.getAttachmentIdentifier()));
-        String fileContents = IOUtils.toString(createdInputStream, "UTF-8");
+        String filePath = buildDocumentDirectory(pbo.getObjectId()) + File.separator + createdAttachment.getAttachmentIdentifier();
+        String fileContents;
+        try (
+            InputStream fileStream = new FileInputStream(filePath);
+            InputStream createdInputStream = new BufferedInputStream(fileStream);
+        ) {
+            fileContents = IOUtils.toString(createdInputStream, "UTF-8");
+        }
 
         Assert.assertEquals(GOOD_FILE_CONTENTS, fileContents);
         Assert.assertEquals(GOOD_FILE_NAME, createdAttachment.getAttachmentFileName());
