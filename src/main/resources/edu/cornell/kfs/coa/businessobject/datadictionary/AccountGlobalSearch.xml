@@ -20,9 +20,9 @@
             </list>
         </property>
     </bean>
-  
+    
     <!-- Attribute Definitions -->
-       
+    
     <bean id="AccountGlobalSearch-useOrgHierarchy" parent="AccountGlobalSearch-useOrgHierarchy-parentBean"/>
     <bean id="AccountGlobalSearch-useOrgHierarchy-parentBean" abstract="true" parent="GenericAttributes-genericBoolean"
           p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
@@ -30,12 +30,16 @@
           p:label="Search by Organization Hierarchy"
           p:shortLabel="useOrgHierarchy"
           p:required="false"
-          p:defaultValue="N"
-          p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter">
+          p:defaultValue="N">
+    </bean>
+    
+    <bean id="AccountGlobalSearch-Account-closed-lookupControl" parent="AccountGlobalSearch-Account-closed-lookupControl-parentBean"/>
+    <bean id="AccountGlobalSearch-Account-closed-lookupControl-parentBean" abstract="true" parent="Account-closed"
+          p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl">
     </bean>
     
     <!-- Business Object Lookup Definition -->
-  
+    
     <bean id="AccountGlobalSearch-lookupDefinition" parent="Account-lookupDefinition"
           p:title="Account Global Lookup"
           p:lookupableID="accountGlobalLookupable"
@@ -55,7 +59,7 @@
                 <ref bean="Account-accountFiscalOfficerUser.principalName"/>
                 <ref bean="Account-accountManagerUser.principalName"/>
                 <ref bean="Account-accountSupervisoryUser.principalName"/>
-                <ref bean="Account-closed"/>
+                <ref bean="AccountGlobalSearch-Account-closed-lookupControl"/>
             </list>
         </property>
         <property name="displayAttributeDefinitions">
@@ -77,50 +81,6 @@
                 <ref bean="Account-accountExpirationDate"/>
             </list>
         </property>
-    <!-- Legacy setup -->    
-<!--    <property name="lookupFields">
-        <list>
-            <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
-            <bean parent="FieldDefinition" p:attributeName="accountNumber"
-                p:noLookup="true" />
-            <bean parent="FieldDefinition" p:attributeName="accountName" />
-            <bean parent="FieldDefinition" p:attributeName="organizationCode" />
-            <bean parent="FieldDefinition" p:attributeName="useOrgHierarchy" 
-                p:defaultValue="N"/>
-            <bean parent="FieldDefinition" p:attributeName="accountTypeCode" />
-            <bean parent="FieldDefinition" p:attributeName="subFundGroupCode" />
-            <bean parent="FieldDefinition" p:attributeName="extension.majorReportingCategoryCode"/>
-            <bean parent="FieldDefinition" p:attributeName="extension.programCode"/>
-            <bean parent="FieldDefinition" p:attributeName="extension.appropriationAccountNumber"/>
-            <bean parent="FieldDefinition" p:attributeName="accountFiscalOfficerUser.principalName" />
-            <bean parent="FieldDefinition" p:attributeName="accountManagerUser.principalName" />
-            <bean parent="FieldDefinition" p:attributeName="accountSupervisoryUser.principalName" />
-            <bean parent="FieldDefinition" p:attributeName="closed"
-                p:defaultValue="N" />
-        </list>
-    </property>
-    <property name="resultFields">
-        <list>
-            <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
-            <bean parent="FieldDefinition" p:attributeName="accountNumber" />
-            <bean parent="FieldDefinition" p:attributeName="accountName" />
-            <bean parent="FieldDefinition" p:attributeName="organizationCode" />
-            <bean parent="FieldDefinition" p:attributeName="accountTypeCode" />
-            <bean parent="FieldDefinition" p:attributeName="subFundGroupCode" />
-            <bean parent="FieldDefinition" p:attributeName="extension.majorReportingCategoryCode"/>
-            <bean parent="FieldDefinition" p:attributeName="extension.programCode"/>
-            <bean parent="FieldDefinition" p:attributeName="extension.appropriationAccountNumber"/>
-            <bean parent="FieldDefinition" p:attributeName="accountFiscalOfficerUser.name"
-                p:forceInquiry="true" />
-            <bean parent="FieldDefinition" p:attributeName="accountManagerUser.name"
-                p:forceInquiry="true" />
-            <bean parent="FieldDefinition" p:attributeName="accountSupervisoryUser.name"
-                p:forceInquiry="true" />
-            <bean parent="FieldDefinition" p:attributeName="closed" />
-            <bean parent="FieldDefinition" p:attributeName="accountCreateDate" />
-            <bean parent="FieldDefinition" p:attributeName="accountExpirationDate" />
-        </list>
-    </property>-->
     </bean>
-  
+    
 </beans>
