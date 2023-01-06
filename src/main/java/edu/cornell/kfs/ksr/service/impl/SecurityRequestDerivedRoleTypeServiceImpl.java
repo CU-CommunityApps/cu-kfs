@@ -9,14 +9,12 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kim.api.KimConstants.AttributeConstants;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kns.kim.role.DerivedRoleTypeServiceBase;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
 import org.kuali.kfs.krad.util.KRADPropertyConstants;
@@ -230,9 +228,14 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
 
         return false;
     }
-
-    protected BusinessObjectService geBusinessObjectService() {
-        return KRADServiceLocator.getBusinessObjectService();
+    
+    @Override
+    public boolean dynamicRoleMembership(String namespaceCode, String roleName) {
+    	if (LOG.isDebugEnabled()) {
+    		LOG.debug("dynamicRoleMembership, returning true, namespaceCode: " + namespaceCode + " roleName: " + roleName);
+    	}
+    	//prevent KFS from attempting to cache its derived memberships.
+    	return true;
     }
 
 }
