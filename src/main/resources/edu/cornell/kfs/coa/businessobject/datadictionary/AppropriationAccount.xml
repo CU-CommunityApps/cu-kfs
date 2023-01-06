@@ -81,8 +81,7 @@
 
     <bean id="AppropriationAccount-active" parent="AppropriationAccount-active-parentBean"/>
     <bean id="AppropriationAccount-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
-          p:name="active"
-          p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl">
+          p:name="active">
     </bean>
 
 
