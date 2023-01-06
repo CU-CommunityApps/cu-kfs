@@ -231,10 +231,17 @@ public class SecurityRequestDerivedRoleTypeServiceImpl extends DerivedRoleTypeSe
     
     @Override
     public boolean dynamicRoleMembership(String namespaceCode, String roleName) {
+    	if (StringUtils.isBlank(namespaceCode)) {
+            throw new IllegalArgumentException("namespaceCode was null or blank");
+        }
+        if (StringUtils.isBlank(roleName)) {
+            throw new IllegalArgumentException("roleName was null or blank");
+        }
+        
     	if (LOG.isDebugEnabled()) {
+    		LOG.debug("dynamicRoleMembership, prevent KFS from attempting to cache its derived memberships.");
     		LOG.debug("dynamicRoleMembership, returning true, namespaceCode: " + namespaceCode + " roleName: " + roleName);
     	}
-    	//prevent KFS from attempting to cache its derived memberships.
     	return true;
     }
 
