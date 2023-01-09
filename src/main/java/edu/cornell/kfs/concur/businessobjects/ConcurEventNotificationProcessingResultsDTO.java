@@ -22,13 +22,13 @@ public class ConcurEventNotificationProcessingResultsDTO {
     private List<String> messages;
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName,String reportStatus,
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName, String reportStatus,
             String travelerName, String travelerEmail) {
         this(eventType, processingResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, new ArrayList<String>());
     }
     
     public ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType eventType, 
-            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportStatus, String reportName,
+            ConcurEventNotificationVersion2ProcessingResults processingResults, String reportNumber, String reportName, String reportStatus,
             String travelerName, String travelerEmail, List<String> messages) {
         this.eventType = eventType;
         this.processingResults = processingResults;
