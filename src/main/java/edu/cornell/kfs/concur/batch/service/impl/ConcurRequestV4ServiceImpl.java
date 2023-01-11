@@ -187,7 +187,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         
         String reportNumber = requestAsListItem.getRequestId();
         String reportName = requestAsListItem.getName();
-        String reportStatus = requestAsListItem.getApprovalStatus() != null   ? requestAsListItem.getApprovalStatus().getName() : CUKFSConstants.NULL;
+        String reportStatus = requestAsListItem.getApprovalStatus() != null   ? requestAsListItem.getApprovalStatus().getName() : KFSConstants.EMPTY_STRING;
         String travelerName = String.join(StringUtils.SPACE, requestAsListItem.getOwner().getFirstName(),
                 requestAsListItem.getOwner().getMiddleInitial(), requestAsListItem.getOwner().getLastName());
         String travelerEmail = StringUtils.EMPTY;
