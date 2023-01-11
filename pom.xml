@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.cornell.kfs</groupId>
     <artifactId>kfs-war</artifactId>
@@ -15,16 +15,12 @@
         <name>Cornell University</name>
         <url>http://www.cornell.edu/</url>
     </organization>
-
     <properties>
         <buildNumber>6.0.1-SNAPSHOT</buildNumber>
         <job.name>${project.artifactId}</job.name>
-
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
-
         <kfs.version>2022-01-05</kfs.version>
-
         <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>8.43</checkstyle.version>
@@ -48,7 +44,6 @@
         <spring.version>5.3.20</spring.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
-
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <project.java.version>1.11</project.java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,7 +65,6 @@
         <cxf.version>3.4.10</cxf.version>
         <wss4j.version>2.2.5</wss4j.version>
     </properties>
-
     <profiles>
         <profile>
             <id>run-only-unit-tests</id>
@@ -79,7 +73,6 @@
             </properties>
         </profile>
     </profiles>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -100,7 +93,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -113,7 +106,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -228,16 +221,16 @@
                             <artifactId>kfs-web</artifactId>
                             <filtered>false</filtered>
                             <excludes>
-                            	<exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>  
-                            	<exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
-                            	<exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-1.2-api-2.13.*.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-api-2.13.*.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-core-2.13.*.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-jcl-2.13.*.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-jul-2.13.*.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.*.jar</exclude>
-                            	<exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
+                                <exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-1.2-api-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-api-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-core-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-jcl-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-jul-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
                                 <exclude>WEB-INF/lib/netty-*-4.*.jar</exclude>
@@ -263,13 +256,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${plugin.checkstyle.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>${checkstyle.version}</version>
-                        </dependency>
-                    </dependencies>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>validate</id>
@@ -295,7 +288,6 @@
             </plugin>
         </plugins>
     </build>
-
     <repositories>
         <repository>
             <id>cornell-internal</id>
@@ -353,7 +345,6 @@
             </releases>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>cornell-internal</id>
@@ -411,7 +402,6 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
-    
     <dependencies>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
@@ -420,38 +410,38 @@
             <type>jar</type>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -509,20 +499,20 @@
                     <artifactId>gson</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>io.netty</groupId>
-                	<artifactId>netty-common</artifactId>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>io.netty</groupId>
-                	<artifactId>netty-transport</artifactId>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>io.netty</groupId>
-                	<artifactId>netty-handler</artifactId>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -533,147 +523,38 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-handler</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-              </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.kuali.kfs</groupId>
-            <artifactId>kfs-cam</artifactId>
-            <version>${kfs.version}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-            <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -723,8 +604,24 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -732,130 +629,41 @@
             <groupId>org.kuali.kfs</groupId>
             <artifactId>kfs-cam</artifactId>
             <version>${kfs.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-            <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.kuali.kfs</groupId>
-            <artifactId>kfs-cg</artifactId>
-            <version>${kfs.version}</version>
             <type>jar</type>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -905,8 +713,190 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.kfs</groupId>
+            <artifactId>kfs-cam</artifactId>
+            <version>${kfs.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kuali.kfs</groupId>
+            <artifactId>kfs-cg</artifactId>
+            <version>${kfs.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -917,86 +907,86 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1006,38 +996,38 @@
             <type>jar</type>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -1091,8 +1081,8 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1103,86 +1093,86 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1192,38 +1182,38 @@
             <type>jar</type>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -1273,8 +1263,8 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1285,86 +1275,86 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1374,38 +1364,38 @@
             <type>jar</type>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -1455,8 +1445,8 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1467,86 +1457,86 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1556,38 +1546,38 @@
             <type>jar</type>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -1637,8 +1627,8 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1649,86 +1639,86 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1737,38 +1727,38 @@
             <version>${kfs.version}</version>
             <type>war</type>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-core</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-web</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jcl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-slf4j-impl</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-1.2-api</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-jul</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-aop</artifactId>
@@ -1818,8 +1808,8 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1830,89 +1820,88 @@
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>xml-apis</groupId>
-            		<artifactId>xml-apis</artifactId>
-            	</exclusion>
-            	<exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jcl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-              </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jcl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-jul</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-test</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>secretsmanager</artifactId>
@@ -1923,7 +1912,7 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
@@ -2017,12 +2006,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.apache.httpcomponents.core5</groupId>
-        	<artifactId>httpcore5-testing</artifactId>
-        	<version>${httpcore.version}</version>
-        	<scope>test</scope>
-      	</dependency>
-
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-testing</artifactId>
+            <version>${httpcore.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
@@ -2100,7 +2088,7 @@
                 <exclusion>
                     <groupId>com.oracle</groupId>
                     <artifactId>ojdbc7</artifactId>
-                </exclusion>    
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -2134,154 +2122,133 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
-        
         <dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-api</artifactId>
-					<version>${log4j.version}</version>
-				</dependency>
-
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-core</artifactId>
-					<version>${log4j.version}</version>
-				</dependency>
-			
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-1.2-api</artifactId>
-					<version>${log4j.version}</version>
-				</dependency>
-			
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-jcl</artifactId>
-					<version>${log4j.version}</version>
-				</dependency>
-			
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-jul</artifactId>
-					<version>${log4j.version}</version>
-				</dependency>
-			
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-slf4j-impl</artifactId>
-					<version>${log4j.version}</version>
-					<exclusions>
-						<exclusion>
-							<groupId>org.slf4j</groupId>
-							<artifactId>slf4j-api</artifactId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-			
-				<dependency>
-					<groupId>org.apache.logging.log4j</groupId>
-					<artifactId>log4j-web</artifactId>
-					<version>${log4j.version}</version>
-				</dependency>
-				
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jul</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
             <exclusions>
-               <exclusion>
-                   <groupId>org.springframework</groupId>
-                   <artifactId>spring-jcl</artifactId>
-               </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jcl</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>com.github.bohnman</groupId>
             <artifactId>squiggly-filter-jackson</artifactId>
             <version>${squiggly-filter-jackson.version}</version>
             <exclusions>
-            	<exclusion>
-            		<groupId>commons-beanutils</groupId>
-            		<artifactId>commons-beanutils</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>com.fasterxml.jackson.core</groupId>
-            		<artifactId>jackson-databind</artifactId>
-            	</exclusion>
-            	<exclusion>
-            		<groupId>com.google.guava</groupId>
-            		<artifactId>guava</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-        
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
@@ -2324,8 +2291,8 @@
                     <artifactId>activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2375,8 +2342,8 @@
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2410,8 +2377,8 @@
                     <artifactId>asm</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2441,8 +2408,8 @@
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2480,8 +2447,8 @@
                     <artifactId>asm</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2511,8 +2478,8 @@
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2542,8 +2509,8 @@
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2573,8 +2540,8 @@
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2628,16 +2595,16 @@
                     <artifactId>jakarta.xml.bind-api</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>org.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>org.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2684,8 +2651,8 @@
                     <artifactId>javax.activation</artifactId>
                 </exclusion>
                 <exclusion>
-                  <groupId>com.sun.activation</groupId>
-                  <artifactId>jakarta.activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2722,8 +2689,8 @@
                     <artifactId>jakarta.xml.bind-api</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>net.sf.ehcache</groupId>
-                	<artifactId>ehcache</artifactId>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -2732,9 +2699,7 @@
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
         </dependency>
-
     </dependencies>
-
     <distributionManagement>
         <repository>
             <id>cornell-internal</id>
