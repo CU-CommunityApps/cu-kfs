@@ -77,10 +77,12 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, fullExpenseReport.getId());
             
             String reportNumber = fullExpenseReport.getId();
+            String reportName = fullExpenseReport.getName();
+            String reportStatus = fullExpenseReport.getApprovalStatusName();
             String travelerName = fullExpenseReport.getOwnerName();
             String travelerEmail = fullExpenseReport.getOwnerLoginID();
             
-            validateExpenseAllocations(accessToken, processingResults, allocationItems, reportNumber, travelerName, travelerEmail);
+            validateExpenseAllocations(accessToken, processingResults, allocationItems, reportNumber, reportName, reportStatus, travelerName, travelerEmail);
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
@@ -124,7 +126,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
 
 
     protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults,
-            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportNumber, String travelerName, String travelerEmail) {
+            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportNumber, String reportName, String reportStatus, String travelerName,
+            String travelerEmail) {
         boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
         ConcurEventNotificationVersion2ProcessingResults reportResults = ConcurEventNotificationVersion2ProcessingResults.validAccounts;
@@ -147,7 +150,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         }
         
         ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
-                reportResults, reportNumber, travelerName, travelerEmail, validationMessages);
+                reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
         processingResults.add(resultsDTO);
         updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);
         
