@@ -52,6 +52,8 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     private static final String NON_EXISTING_REPORT_ID_1 = "aEiOuYYYYYYYYYY";
     private static final String NON_EXISTING_REPORT_ID_2 = "bcdFGHjklmnPQRS";
     private static final String NON_EXISTING_REPORT_ID_3 = "777777777777777";
+    private static final String REPORT_NAME_E3_CONFERENCE = "John Doe E3 Conference";
+    private static final String REPORT_STATUS_APPROVED = "Approved";
     private static final String TRAVELER_NAME_JOHN_DOE = "John Doe";
     private static final String TRAVELER_EMAIL_JOHN_DOE = "johndoe123@somedomain.com";
     private static final String MESSAGE_ACTION_TAKEN = "Action has been taken";
@@ -161,7 +163,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     private static ConcurEventNotificationProcessingResultsDTO createResultsDTO(
             String reportId, ConcurEventNotificationVersion2ProcessingResults reportResults, String... messages) {
         return new ConcurEventNotificationProcessingResultsDTO(
-                ConcurEventNoticationVersion2EventType.ExpenseReport, reportResults, reportId,
+                ConcurEventNoticationVersion2EventType.ExpenseReport, reportResults, reportId, REPORT_NAME_E3_CONFERENCE, REPORT_STATUS_APPROVED,
                 TRAVELER_NAME_JOHN_DOE, TRAVELER_EMAIL_JOHN_DOE, Arrays.asList(messages));
     }
 

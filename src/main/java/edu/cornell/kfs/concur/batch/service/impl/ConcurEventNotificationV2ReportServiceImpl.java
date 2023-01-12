@@ -81,16 +81,14 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
                         eventType, resultsType);
                 if (CollectionUtils.isNotEmpty(filteredDtos)) {
                     String sectionTitle = MessageFormat.format(detailSummaryFormat, eventType.eventType, resultsType.statusForReport);
-                    String reportNumberDescription = eventType.reportNumberDescription;
-                    buildDetailSection(filteredDtos, sectionTitle, reportNumberDescription, eventType.displayTravelerEmail);
-                    
+                    buildDetailSection(filteredDtos, sectionTitle, eventType);
                 }
             }
         }
     }
-    
-    private void buildDetailSection(List<ConcurEventNotificationProcessingResultsDTO> filteredDtos, String sectionTitle, String reportNumberDescription, 
-            boolean displayTravlerEmail) {
+
+    private void buildDetailSection(List<ConcurEventNotificationProcessingResultsDTO> filteredDtos, String sectionTitle,
+                                    ConcurEventNoticationVersion2EventType eventType) {
         String detailItemFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_ITEM);
         
         reportWriterService.writeFormattedMessageLine(MessageFormat.format(configurationService.getPropertyValueAsString(
@@ -100,10 +98,12 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
             if (reportIndex > 0 ) {
                 reportWriterService.writeNewLines(2);
             }
-            
-            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, reportNumberDescription, dto.getReportNumber()));
+
+            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, eventType.reportNumberDescription, dto.getReportNumber()));
+            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, eventType.reportNameDescription, dto.getReportName()));
+            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, eventType.reportStatusDescription, dto.getReportStatus()));
             reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, "Traveler Name", dto.getTravelerName()));
-            if (displayTravlerEmail) {
+            if (eventType.displayTravelerEmail) {
                 reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, "Traveler Email", dto.getTravelerEmail()));
             }
             String messageListHeader = "Messages";
