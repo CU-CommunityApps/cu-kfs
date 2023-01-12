@@ -1,164 +1,148 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-<bean id="AppropriationAccount" parent="AppropriationAccount-parentBean"/>
-<bean id="AppropriationAccount-parentBean" abstract="true" parent="BusinessObjectEntry">
-    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AppropriationAccount"/>
-    <property name="objectLabel" value="AppropriationAccount"/>
+    <import resource="classpath:org/kuali/kfs/sys/sys-lookup-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-sys-attribute-beans.xml"/>
 
-	<property name="titleAttribute" value="AppropriationAccount"/>
-
-	 <property name="inquiryDefinition">
-      <ref bean="AppropriationAccount-inquiryDefinition"/>
-    </property>
-    <property name="lookupDefinition">
-      <ref bean="AppropriationAccount-lookupDefinition"/>
-    </property>
-
-	<property name="attributes">
-      <list>
-	    	<ref bean="AppropriationAccount-appropriationAccountNumber"/>
-	   		<ref bean="AppropriationAccount-appropriationAccountName"/>
-	   		<ref bean="AppropriationAccount-subFundGroupCode"/>
-	    	<ref bean="AppropriationAccount-projectNumber"/>
-	    	<ref bean="AppropriationAccount-active"/>
-	  </list>
-	</property>
-	<property name="relationships">
-		<list>
-			<bean parent="RelationshipDefinition" p:objectAttributeName="subFundGroup" p:targetClass="org.kuali.kfs.coa.businessobject.SubFundGroup">
-	            <property name="primitiveAttributes">
-	                <list>
-	                    <bean parent="PrimitiveAttributeDefinition"
-	                          p:sourceName="subFundGroupCode" p:targetName="subFundGroupCode"/>
-	                </list>
-	            </property>
-	        </bean>
-        </list>
-    </property>
-</bean>
-            
-    <bean id="AppropriationAccount-appropriationAccountNumber" parent="AppropriationAccount-appropriationAccountNumber-parentBean"/>
-    
-    <bean id="AppropriationAccount-appropriationAccountNumber-parentBean" abstract="true" parent="AttributeDefinition">
-    	<property name="name" value="appropriationAccountNumber"/>
-    	<property name="label" value="Appropriation Account Number"/>
-    	<property name="shortLabel" value="Approp. Acct Nbr"/>
-    	<property name="maxLength" value="10"/>
-    	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
-      			<property name="maxLength" value="10"/>
-      		</bean>
-    	</property>
-    	<property name="control">
-    	  	<bean parent="TextControlDefinition" p:size="12"/>
-    	</property>
-    </bean>
-    
-  	<bean id="AppropriationAccount-appropriationAccountName" parent="AppropriationAccount-appropriationAccountName-parentBean"/>
-    
-    <bean id="AppropriationAccount-appropriationAccountName-parentBean" abstract="true" parent="AttributeDefinition">
-    	<property name="name" value="appropriationAccountName"/>
-    	<property name="label" value="Appropriation Account Name"/>
-    	<property name="shortLabel" value="Approp. Acct Name"/>
-    	<property name="maxLength" value="40"/>
-    	<property name="validationPattern">
-      		<bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
-    	</property>
-    	<property name="control">
-    	  	<bean parent="TextControlDefinition" p:size="42"/>
-    	</property>
-    </bean>
-    
-    <bean id="AppropriationAccount-subFundGroupCode" parent="AppropriationAccount-subFundGroupCode-parentBean"/>
-    <bean id="AppropriationAccount-subFundGroupCode-parentBean" abstract="true" parent="SubFundGroup-subFundGroupCode">
-        <property name="shortLabel" value="SubFundGrpCd"/>
-    </bean>
-      
-  	<bean id="AppropriationAccount-projectNumber" parent="AppropriationAccount-projectNumber-parentBean"/>
-  	
-  	<bean id="AppropriationAccount-projectNumber-parentBean" abstract="true" parent="AttributeDefinition">
-    	<property name="name" value="projectNumber"/>
-    	<property name="label" value="Project Number"/>
-    	<property name="shortLabel" value="Project Number"/>
-    	<property name="maxLength" value="15"/>
-    	<property name="control">
-      		<bean parent="TextControlDefinition" p:size="15"/>
-    	</property>
-    	<property name="validationPattern">
-      		<bean parent="AlphaNumericValidationPattern">
-      			<property name="maxLength" value="15"/>
-      		</bean>
-    	</property>
-  </bean>
-  
- 
-  <bean id="AppropriationAccount-active" parent="AppropriationAccount-active-parentBean"/>
-  <bean id="AppropriationAccount-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
-    <property name="name" value="active"/>
-  </bean>  
-
-	
-	<!-- Business Object Inquiry Definition -->
-
-
-  <bean id="AppropriationAccount-inquiryDefinition" parent="AppropriationAccount-inquiryDefinition-parentBean"/>
-
-  <bean id="AppropriationAccount-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-    <property name="title" value="Sub-Fund Program Inquiry"/>
-    <property name="inquirySections">
-      <list>
-        <bean parent="InquirySectionDefinition">
-          <property name="title" value=""/>
-          <property name="numberOfColumns" value="1"/>
-          <property name="inquiryFields">
+    <bean id="AppropriationAccount" parent="AppropriationAccount-parentBean"/>
+    <bean id="AppropriationAccount-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:boNotesEnabled="true"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AppropriationAccount"
+          p:inquiryDefinition-ref="AppropriationAccount-inquiryDefinition"
+          p:lookupDefinition-ref="AppropriationAccount-lookupDefinition"
+          p:objectLabel="AppropriationAccount"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="AppropriationAccount">
+        <property name="attributes">
             <list>
-              <bean parent="FieldDefinition" p:attributeName="appropriationAccountNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="appropriationAccountName"/>
-              <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
-              <bean parent="FieldDefinition" p:attributeName="projectNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="active"/>
+                <ref bean="AppropriationAccount-appropriationAccountNumber"/>
+                <ref bean="AppropriationAccount-appropriationAccountName"/>
+                <ref bean="AppropriationAccount-subFundGroupCode"/>
+                <ref bean="AppropriationAccount-projectNumber"/>
+                <ref bean="AppropriationAccount-active"/>
             </list>
-          </property>
-        </bean>
-      </list>
-    </property>
-  </bean>
-
-<!-- Business Object Lookup Definition -->
-
-
-  <bean id="AppropriationAccount-lookupDefinition" parent="AppropriationAccount-lookupDefinition-parentBean"/>
-
-  <bean id="AppropriationAccount-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="Appropriation Account Lookup"/>
-    
-    <property name="defaultSort">
-      <bean parent="SortDefinition">
-        <property name="attributeNames">
-          <list>
-            <value>appropriationAccountNumber</value>
-          </list>
         </property>
-        <property name="sortAscending" value="false"/>
-      </bean>
-    </property>
-    <property name="lookupFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="appropriationAccountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="appropriationAccountName"/>
-        <bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
-        <bean parent="FieldDefinition" p:attributeName="projectNumber"/>
-        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
-      </list>
-    </property>
-    <property name="resultFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="appropriationAccountNumber"/>
-     	<bean parent="FieldDefinition" p:attributeName="appropriationAccountName"/>
-     	<bean parent="FieldDefinition" p:attributeName="subFundGroupCode"/>
-        <bean parent="FieldDefinition" p:attributeName="projectNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
-  </bean>
+        <property name="relationships">
+            <list>
+                <bean parent="RelationshipDefinition" p:objectAttributeName="subFundGroup"
+                    p:targetClass="org.kuali.kfs.coa.businessobject.SubFundGroup">
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition"
+                                p:sourceName="subFundGroupCode"
+                                p:targetName="subFundGroupCode"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <!-- Attribute Definitions -->
+    
+    <bean id="AppropriationAccount-appropriationAccountNumber" parent="AppropriationAccount-appropriationAccountNumber-parentBean"/>
+    <bean id="AppropriationAccount-appropriationAccountNumber-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="appropriationAccountNumber"
+          p:label="Appropriation Account Number"
+          p:shortLabel="Approp. Acct Nbr"
+          p:maxLength="10"
+          p:validationPattern-ref="TenCharacterAlphaNumericValidation"
+          p:control-ref="TwelveCharacterTextControl">
+    </bean>
+
+    <bean id="AppropriationAccount-appropriationAccountName" parent="AppropriationAccount-appropriationAccountName-parentBean"/>
+    <bean id="AppropriationAccount-appropriationAccountName-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="appropriationAccountName"
+          p:label="Appropriation Account Name"
+          p:shortLabel="Approp. Acct Name"
+          p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation"
+          p:control-ref="FortyTwoCharacterTextControl"/>
+
+    <bean id="AppropriationAccount-subFundGroupCode" parent="AppropriationAccount-subFundGroupCode-parentBean"/>
+    <bean id="AppropriationAccount-subFundGroupCode-parentBean" abstract="true" parent="SubFundGroup-subFundGroupCode"
+          p:shortLabel="SubFundGrpCd"/>
+
+    <bean id="AppropriationAccount-projectNumber" parent="AppropriationAccount-projectNumber-parentBean"/>
+    <bean id="AppropriationAccount-projectNumber-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="projectNumber"
+          p:label="Project Number"
+          p:shortLabel="Project Number"
+          p:maxLength="15"
+          p:validationPattern-ref="FifteenCharacterAlphaNumericValidation"
+          p:control-ref="FifteenCharacterTextControl">
+    </bean>
+
+    <bean id="AppropriationAccount-active" parent="AppropriationAccount-active-parentBean"/>
+    <bean id="AppropriationAccount-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
+          p:name="active">
+    </bean>
+
+
+    <!-- Business Object Inquiry Definition -->
+    
+    <bean id="AppropriationAccount-sectionDefinition" parent="AppropriationAccount-sectionDefinition-parentBean"/>
+    <bean id="AppropriationAccount-sectionDefinition-parentBean" parent="sectionDefinition" abstract="true" p:title="">
+        <property name="fields">
+            <list>
+                <ref bean="AppropriationAccount-appropriationAccountNumber"/>
+                <ref bean="AppropriationAccount-appropriationAccountName"/>
+                <ref bean="AppropriationAccount-subFundGroupCode"/>
+                <ref bean="AppropriationAccount-projectNumber"/>
+                <ref bean="AppropriationAccount-active"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="AppropriationAccount-inquiryDefinition" parent="AppropriationAccount-inquiryDefinition-parentBean"/>
+    <bean id="AppropriationAccount-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Sub-Fund Program Inquiry">
+        <property name="sections">
+            <list>
+                <ref bean="AppropriationAccount-sectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="AppropriationAccount-lookupDefinition" parent="AppropriationAccount-lookupDefinition-parentBean"/>
+    <bean id="AppropriationAccount-lookupDefinition-parentBean" abstract="true" parent="AppropriationAccount-lookupDefinition-base-parentBean"/>
+    <bean id="AppropriationAccount-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Appropriation Account Lookup"> 
+        <property name="defaultSort">
+            <bean parent="SortDefinition" p:sortAscending="true">
+                <property name="attributeNames">
+                    <list>
+                        <value>appropriationAccountNumber</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="AppropriationAccount-appropriationAccountNumber"/>
+                <ref bean="AppropriationAccount-appropriationAccountName"/>
+                <ref bean="AppropriationAccount-subFundGroupCode"/>
+                <ref bean="AppropriationAccount-projectNumber"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="AppropriationAccount-appropriationAccountNumber"/>
+                <ref bean="AppropriationAccount-appropriationAccountName"/>
+                <ref bean="AppropriationAccount-subFundGroupCode"/>
+                <ref bean="AppropriationAccount-projectNumber"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
 </beans>

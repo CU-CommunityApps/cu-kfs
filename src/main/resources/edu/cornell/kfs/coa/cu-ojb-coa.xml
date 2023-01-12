@@ -39,6 +39,12 @@
 			jdbc-type="VARCHAR"
 			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
+        
+        <reference-descriptor name="subFundGroup"
+            class-ref="org.kuali.kfs.coa.businessobject.SubFundGroup" auto-retrieve="true"
+            auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="subFundGroupCode" />
+        </reference-descriptor>
 	</class-descriptor>
 
 	<class-descriptor
