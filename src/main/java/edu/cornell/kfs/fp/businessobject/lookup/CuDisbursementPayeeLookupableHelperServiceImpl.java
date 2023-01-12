@@ -172,7 +172,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
        boolean warningExists = false;
         
         for (Person personDetail : persons) {
-            for(EntityAffiliation entityAffiliation : ((Person)personDetail).getAffiliations()) {
+            for(EntityAffiliation entityAffiliation : (personDetail).getAffiliations()) {
                 if(entityAffiliation.isDefaultValue()) {
                     if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
                         CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);

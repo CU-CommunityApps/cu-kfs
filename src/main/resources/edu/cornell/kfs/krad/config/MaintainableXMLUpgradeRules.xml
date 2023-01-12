@@ -790,6 +790,10 @@
                 <match>org.kuali.kfs.kim.impl.identity.PersonImpl</match>
                 <replacement>org.kuali.kfs.kim.impl.identity.Person</replacement>
             </pattern>
+            <pattern>
+                <match>org.kuali.kfs.kim.impl.identity.Person</match>
+                <replacement>org.kuali.kfs.kim.impl.identity.Person</replacement>
+            </pattern>
         </pattern>
         <pattern>
             <class>org.kuali.kfs.kim.impl.identity.Person</class>
