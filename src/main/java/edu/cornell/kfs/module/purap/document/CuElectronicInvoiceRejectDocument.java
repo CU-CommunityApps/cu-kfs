@@ -72,13 +72,13 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
             for (ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
                 KualiDecimal toAddAmount = new KualiDecimal(eiri.getInvoiceItemNetAmount());
                 LOG.debug(
-                        "getTotalAmount() setting returnValue with arithmetic => '{}' + '{}'",
+                        "getGrandTotalAmount() setting returnValue with arithmetic => '{}' + '{}'",
                         returnValue::doubleValue,
                         toAddAmount::doubleValue
                 );
                 returnValue = returnValue.add(toAddAmount);
             }
-            LOG.debug("getTotalAmount() returning amount {}", returnValue::doubleValue);
+            LOG.debug("getGrandTotalAmount() returning amount {}", returnValue::doubleValue);
 
             if (this.getInvoiceItemSpecialHandlingAmount() != null && zero.compareTo(this.getInvoiceItemSpecialHandlingAmount()) != 0) {
                 returnValue = returnValue.add(new KualiDecimal(this.getInvoiceItemSpecialHandlingAmount()));
@@ -93,13 +93,13 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
             if (this.getInvoiceItemDiscountAmount() != null && zero.compareTo(this.getInvoiceItemDiscountAmount()) != 0) {
                 returnValue = returnValue.subtract(new KualiDecimal(this.getInvoiceItemDiscountAmount()));
             }
-            LOG.debug("getTotalAmount() returning amount {}", returnValue::doubleValue);
+            LOG.debug("getGrandTotalAmount() returning amount {}", returnValue::doubleValue);
             return returnValue;
         }
         catch (NumberFormatException n) {
             // do nothing this is already rejected
             LOG.error(
-                    "getTotalAmount() Error attempting to calculate total amount for invoice with filename {}",
+                    "getGrandTotalAmount() Error attempting to calculate total amount for invoice with filename {}",
                     this.invoiceFileName
             );
             return new KualiDecimal(zero);
@@ -116,7 +116,7 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
                 for (ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
                     BigDecimal toAddAmount = eiri.getInvoiceItemTaxAmount();
                     LOG.debug(
-                            "getTotalAmount() setting returnValue with arithmetic => '{}' + '{}'",
+                            "getInvoiceItemTaxAmount() setting returnValue with arithmetic => '{}' + '{}'",
                             returnValue::doubleValue,
                             toAddAmount::doubleValue
                     );
@@ -127,13 +127,13 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
                 returnValue = returnValue.add(this.invoiceItemTaxAmount);
             }
 
-            LOG.debug("getTotalAmount() returning amount {}", returnValue::doubleValue);
+            LOG.debug("getInvoiceItemTaxAmount() returning amount {}", returnValue::doubleValue);
 //            return returnValue;
         }
         catch (NumberFormatException n) {
             // do nothing this is already rejected
             LOG.error(
-                    "getTotalAmount() Error attempting to calculate total amount for invoice with filename {}",
+                    "getInvoiceItemTaxAmount() Error attempting to calculate total amount for invoice with filename {}",
                     this.invoiceFileName
             );
             return zero;

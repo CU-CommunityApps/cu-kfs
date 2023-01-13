@@ -149,7 +149,7 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 reportService.generateDepreciationReport(reportLog, errorMsg, depreciationDateParameter);
             }
 
-            LOG.debug("*******" + CamsConstants.Depreciation.DEPRECIATION_BATCH + " HAS ENDED *******");
+            LOG.debug("*******{} HAS ENDED *******", CamsConstants.Depreciation.DEPRECIATION_BATCH);
         }
     }
 }
