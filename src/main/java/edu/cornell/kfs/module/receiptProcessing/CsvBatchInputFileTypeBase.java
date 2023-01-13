@@ -60,6 +60,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
         this.csvEnumClass = csvEnumClass;
     }
 
+    @Override
     public void process(String fileName, Object parsedFileContents) {
         // default impl does nothing
     }
@@ -67,6 +68,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     /**
      * @return parsed object in structure - List<Map<String, String>>
      */
+    @Override
     public Object parse(byte[] fileByteContent) throws ParseException {
         // handle null objects and zero byte contents
         String errorMessage = fileByteContent == null ? "an invalid(null) argument was given" :
@@ -106,7 +108,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
 
             parsedContents = dataMapList;
         } catch (IOException ex) {
-            LOG.error(ex.getMessage(), ex);
+            LOG.error(ex);
             throw new ParseException(ex.getMessage(), ex);
         }
         return convertParsedObjectToVO(parsedContents);

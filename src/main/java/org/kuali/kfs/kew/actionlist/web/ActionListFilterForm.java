@@ -125,10 +125,12 @@ public class ActionListFilterForm extends KualiForm {
         return filter;
     }
 
+    @Override
     public String getMethodToCall() {
         return methodToCall;
     }
 
+    @Override
     public void setMethodToCall(String methodToCall) {
         this.methodToCall = methodToCall;
     }

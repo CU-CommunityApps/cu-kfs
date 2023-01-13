@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.exception.FileStorageException;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +22,8 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
     private static final String NOT_PROPERLY_FORMATTED  = "The following file user identifer was not properly formatted: ";
     
     @Override
-    public String save(Person user, BatchInputFileType batchInputFileType, String fileUserIdentifier, 
+    public String save(
+            Person user, BatchInputFileType batchInputFileType, String fileUserIdentifier, 
             InputStream fileContents, Object parsedObject) throws FileStorageException {
         if (user == null || batchInputFileType == null || fileContents == null) {
             LOG.error(INVALID_ARGUEMENT);
@@ -44,7 +45,7 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
         // construct the file object and check for existence
         File fileToSave = new File(saveFileName);
         if (fileToSave.exists()) {
-            LOG.error("cannot store file, name already exists " + saveFileName);
+            LOG.error("cannot store file, name already exists {}", saveFileName);
             throw new FileStorageException("Cannot store file because the name " + saveFileName + " already exists on the file system.");
         }
 
@@ -68,7 +69,7 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
             batchInputFileType.process(saveFileName, parsedObject);
             
         } catch (IOException e) {
-            LOG.error("unable to save contents to file " + saveFileName, e);
+            LOG.error("unable to save contents to file {}", saveFileName, e);
             throw new RuntimeException("errors encountered while writing file " + saveFileName, e);
         }
 

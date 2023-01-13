@@ -203,8 +203,10 @@ public interface PurchasingAccountsPayableDocument extends AccountingDocument, P
 
     void setPurapDocumentIdentifier(Integer identifier);
 
+    @Override
     String getApplicationDocumentStatus();
 
+    @Override
     void setApplicationDocumentStatus(String appDocStatus);
 
     String getVendorCityName();

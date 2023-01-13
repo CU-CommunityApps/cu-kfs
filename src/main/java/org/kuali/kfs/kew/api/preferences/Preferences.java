@@ -349,6 +349,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.documentTypeNotificationPreferences = documentTypeNotificationPreferences;
         }
 
+        @Override
         public org.kuali.kfs.kew.api.preferences.Preferences build() {
             return new org.kuali.kfs.kew.api.preferences.Preferences(this);
         }
@@ -416,6 +417,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                     documentTypeNotificationPreferences, requiresSave);
         }
 
+        @Override
         public synchronized boolean isRequiresSave() {
             return requiresSave;
         }
@@ -424,6 +426,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.requiresSave = requiresSave;
         }
 
+        @Override
         public synchronized String getEmailNotification() {
             return emailNotification;
         }
@@ -432,6 +435,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.emailNotification = emailNotification;
         }
 
+        @Override
         public synchronized String getNotifyPrimaryDelegation() {
             return notifyPrimaryDelegation;
         }
@@ -440,6 +444,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyPrimaryDelegation = notifyPrimaryDelegation;
         }
 
+        @Override
         public synchronized String getNotifySecondaryDelegation() {
             return notifySecondaryDelegation;
         }
@@ -448,6 +453,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifySecondaryDelegation = notifySecondaryDelegation;
         }
 
+        @Override
         public synchronized String getOpenNewWindow() {
             return openNewWindow;
         }
@@ -456,6 +462,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.openNewWindow = openNewWindow;
         }
 
+        @Override
         public synchronized String getShowActionRequested() {
             return showActionRequested;
         }
@@ -464,6 +471,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showActionRequested = showActionRequested;
         }
 
+        @Override
         public synchronized String getShowDateCreated() {
             return showDateCreated;
         }
@@ -472,6 +480,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showDateCreated = showDateCreated;
         }
 
+        @Override
         public synchronized String getShowDocumentStatus() {
             return showDocumentStatus;
         }
@@ -480,6 +489,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showDocumentStatus = showDocumentStatus;
         }
 
+        @Override
         public synchronized String getShowAppDocStatus() {
             return showAppDocStatus;
         }
@@ -488,6 +498,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showAppDocStatus = showAppDocStatus;
         }
 
+        @Override
         public synchronized String getShowDocType() {
             return showDocType;
         }
@@ -496,6 +507,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showDocType = showDocType;
         }
 
+        @Override
         public synchronized String getShowInitiator() {
             return showInitiator;
         }
@@ -504,6 +516,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showInitiator = showInitiator;
         }
 
+        @Override
         public synchronized String getShowDocTitle() {
             return showDocTitle;
         }
@@ -512,6 +525,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showDocTitle = showDocTitle;
         }
 
+        @Override
         public synchronized String getShowWorkgroupRequest() {
             return showWorkgroupRequest;
         }
@@ -520,6 +534,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showWorkgroupRequest = showWorkgroupRequest;
         }
 
+        @Override
         public synchronized String getShowDelegator() {
             return showDelegator;
         }
@@ -528,6 +543,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showDelegator = showDelegator;
         }
 
+        @Override
         public synchronized String getShowClearFyi() {
             return showClearFyi;
         }
@@ -536,6 +552,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showClearFyi = showClearFyi;
         }
 
+        @Override
         public synchronized String getPageSize() {
             return pageSize;
         }
@@ -544,6 +561,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.pageSize = pageSize;
         }
 
+        @Override
         public synchronized String getRefreshRate() {
             return refreshRate;
         }
@@ -552,6 +570,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.refreshRate = refreshRate;
         }
 
+        @Override
         public synchronized String getDelegatorFilter() {
             return delegatorFilter;
         }
@@ -560,6 +579,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.delegatorFilter = delegatorFilter;
         }
 
+        @Override
         public synchronized String getUseOutbox() {
             return useOutbox;
         }
@@ -568,6 +588,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.useOutbox = useOutbox;
         }
 
+        @Override
         public synchronized String getShowDateApproved() {
             return showDateApproved;
         }
@@ -576,6 +597,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showDateApproved = showDateApproved;
         }
 
+        @Override
         public synchronized String getShowCurrentNode() {
             return showCurrentNode;
         }
@@ -584,6 +606,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showCurrentNode = showCurrentNode;
         }
 
+        @Override
         public synchronized String getPrimaryDelegateFilter() {
             return primaryDelegateFilter;
         }
@@ -592,6 +615,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.primaryDelegateFilter = primaryDelegateFilter;
         }
 
+        @Override
         public synchronized String getNotifyAcknowledge() {
             return this.notifyAcknowledge;
         }
@@ -600,6 +624,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyAcknowledge = notifyAcknowledge;
         }
 
+        @Override
         public synchronized String getNotifyApprove() {
             return this.notifyApprove;
         }
@@ -608,6 +633,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyApprove = notifyApprove;
         }
 
+        @Override
         public synchronized String getNotifyComplete() {
             return this.notifyComplete;
         }
@@ -616,6 +642,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyComplete = notifyComplete;
         }
 
+        @Override
         public synchronized String getNotifyFYI() {
             return this.notifyFYI;
         }
@@ -624,6 +651,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.notifyFYI = notifyFYI;
         }
 
+        @Override
         public synchronized String getShowNotes() {
             return this.showNotes;
         }
@@ -632,6 +660,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.showNotes = showNotes;
         }
         
+        @Override
         public synchronized String getShowLastModifiedDate() {
             return this.showLastModifiedDate;
         }
@@ -639,7 +668,6 @@ public final class Preferences implements PreferencesContract, Serializable {
         public synchronized void setShowLastModifiedDate(String showLastModifiedDate) {
             this.showLastModifiedDate = showLastModifiedDate;
         }
-
 
         public synchronized String getDocumentTypeNotificationPreference(String documentType) {
             String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
@@ -655,6 +683,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             this.documentTypeNotificationPreferences.put(documentType, preference);
         }
 
+        @Override
         public synchronized Map<String, String> getDocumentTypeNotificationPreferences() {
             if (this.documentTypeNotificationPreferences == null) {
                 this.documentTypeNotificationPreferences = new HashMap<>();

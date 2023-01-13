@@ -1653,7 +1653,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 valid = false;
             }
         } else if (StringUtils.isNotBlank(vDetail.getVendorHeader().getVendorW8TypeCode())
-                || !ObjectUtils.isNull(vDetail.getVendorHeader().getVendorW8SignedDate())) {
+                || ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW8SignedDate())) {
             putFieldError(VendorPropertyConstants.VENDOR_W8_BEN_RECEIVED_INDICATOR,
                     VendorKeyConstants.ERROR_VENDOR_W8TYPE_AND_SIGNED_DATE_INVALID);
             valid = false;

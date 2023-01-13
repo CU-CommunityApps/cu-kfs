@@ -41,6 +41,7 @@ public class CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl
     /**
      * Gets search results and passes to access security service to apply access restrictions
      */
+    @Override
     public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
         List<? extends BusinessObject> results = super.getSearchResults(fieldValues);
 
@@ -56,6 +57,7 @@ public class CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl
     /**
      * Gets search results and passes to access security service to apply access restrictions
      */
+    @Override
     public List<? extends BusinessObject> getSearchResultsUnbounded(Map<String, String> fieldValues) {
         List<? extends BusinessObject> results = super.getSearchResultsUnbounded(fieldValues);
 

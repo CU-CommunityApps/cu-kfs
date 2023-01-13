@@ -297,7 +297,7 @@
   </bean>
   <bean id="IWantDocVendorDetail-vendorRestrictedPersonIdentifier" parent="IWantDocVendorDetail-vendorRestrictedPersonIdentifier-parentBean"/>
 
-  <bean id="IWantDocVendorDetail-vendorRestrictedPersonIdentifier-parentBean" abstract="true" parent="PersonImpl-principalId">
+  <bean id="IWantDocVendorDetail-vendorRestrictedPersonIdentifier-parentBean" abstract="true" parent="Person-principalId">
     <property name="name" value="vendorRestrictedPersonIdentifier"/>
     <property name="label" value="Restricted Person Identifier"/>
     <property name="shortLabel" value="Restricted Person ID"/>
@@ -309,7 +309,7 @@
   </bean>
   <bean id="IWantDocVendorDetail-vendorRestrictedPerson.principalName" parent="IWantDocVendorDetail-vendorRestrictedPerson.principalName-parentBean"/>
 
-  <bean id="IWantDocVendorDetail-vendorRestrictedPerson.principalName-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="IWantDocVendorDetail-vendorRestrictedPerson.principalName-parentBean" abstract="true" parent="Person-principalName">
     <property name="name" value="vendorRestrictedPerson.principalName"/>
     <property name="label" value="Restricted By Principal Name"/>
     <property name="shortLabel" value="Restricted By"/>
@@ -320,7 +320,7 @@
   </bean>
   <bean id="IWantDocVendorDetail-vendorRestrictedPerson.name" parent="IWantDocVendorDetail-vendorRestrictedPerson.name-parentBean"/>
 
-  <bean id="IWantDocVendorDetail-vendorRestrictedPerson.name-parentBean" abstract="true" parent="PersonImpl-name">
+  <bean id="IWantDocVendorDetail-vendorRestrictedPerson.name-parentBean" abstract="true" parent="Person-name">
     <property name="name" value="vendorRestrictedPerson.name"/>
     <property name="label" value="Restricted Person Name"/>
     <property name="shortLabel" value="Restricted Person Name"/>

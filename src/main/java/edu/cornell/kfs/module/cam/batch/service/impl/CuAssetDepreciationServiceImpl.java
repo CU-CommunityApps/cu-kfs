@@ -52,7 +52,7 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
         try {
             executeJob = runAssetDepreciation();
             if (executeJob) {
-                LOG.info("*******" + CamsConstants.Depreciation.DEPRECIATION_BATCH + " HAS BEGUN *******");
+                LOG.info("*******{} HAS BEGUN *******", CamsConstants.Depreciation.DEPRECIATION_BATCH);
                 if (parameterService.parameterExists(AssetDepreciationStep.class, CamsParameterConstants.DEPRECIATION_DATE_PARAMETER)) {
                     depreciationDateParameter = parameterService.getParameterValueAsString(AssetDepreciationStep.class,
                             CamsParameterConstants.DEPRECIATION_DATE_PARAMETER);
@@ -70,7 +70,11 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                                 kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.INVALID_DEPRECIATION_DATE_FORMAT));
                     }
                 }
-                LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Depreciation run date: " + depreciationDateParameter);
+                LOG.info(
+                        "{}Depreciation run date: {}",
+                        CamsConstants.Depreciation.DEPRECIATION_BATCH,
+                        depreciationDateParameter
+                );
 
                 /**
                  * CU Customization to use java.sql.Date
@@ -85,7 +89,12 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 fiscalMonth = new Integer(universityDate.getUniversityFiscalAccountingPeriod());
                 assetObjectCodes = getAssetObjectCodes(fiscalYear);
                 // If the depreciation date is not = to the system date then, the depreciation process cannot run.
-                LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Fiscal Year = " + fiscalYear + " & Fiscal Period=" + fiscalMonth);
+                LOG.info(
+                        "{}Fiscal Year = {} & Fiscal Period={}",
+                        CamsConstants.Depreciation.DEPRECIATION_BATCH,
+                        fiscalYear,
+                        fiscalMonth
+                );
 
                 int fiscalStartMonth = Integer.parseInt(optionsService.getCurrentYearOptions().getUniversityFiscalYearStartMo());
                 reportLog.addAll(depreciableAssetsDao.generateStatistics(true, null, fiscalYear, fiscalMonth, depreciationDate,
@@ -94,7 +103,10 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 // depreciationBatchDao.updateAssetsCreatedInLastFiscalPeriod(fiscalMonth, fiscalYear);
                 updateAssetsDatesForLastFiscalPeriod(fiscalMonth, fiscalYear);
                 // Retrieving eligible asset payment details
-                LOG.info(CamsConstants.Depreciation.DEPRECIATION_BATCH + "Getting list of asset payments " + "eligible for depreciation.");
+                LOG.info(
+                        "{}Getting list of asset payments eligible for depreciation.",
+                        CamsConstants.Depreciation.DEPRECIATION_BATCH
+                );
                 Collection<AssetPaymentInfo> depreciableAssetsCollection = depreciationBatchDao.getListOfDepreciableAssetPaymentInfo(fiscalYear, fiscalMonth,
                         depreciationDate);
                 // if we have assets eligible for depreciation then, calculate depreciation and create glpe's
@@ -110,9 +122,20 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
             }
         } catch (Exception e) {
             LOG.error("Error occurred");
-            LOG.error(CamsConstants.Depreciation.DEPRECIATION_BATCH + "**************************************************************************");
-            LOG.error(CamsConstants.Depreciation.DEPRECIATION_BATCH + "AN ERROR HAS OCCURRED! - ERROR: " + e.getMessage(), e);
-            LOG.error(CamsConstants.Depreciation.DEPRECIATION_BATCH + "**************************************************************************");
+            LOG.error(
+                    "{}**************************************************************************",
+                    CamsConstants.Depreciation.DEPRECIATION_BATCH
+            );
+            LOG.error(
+                    "{}AN ERROR HAS OCCURRED! - ERROR: {}",
+                    () -> CamsConstants.Depreciation.DEPRECIATION_BATCH,
+                    e::getMessage,
+                    () -> e
+            );
+            LOG.error(
+                    "{}**************************************************************************",
+                    CamsConstants.Depreciation.DEPRECIATION_BATCH
+            );
             hasErrors = true;
             errorMsg = "Depreciation process ran unsuccessfully.\nReason:" + e.getMessage();
         } finally {
@@ -126,7 +149,7 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 reportService.generateDepreciationReport(reportLog, errorMsg, depreciationDateParameter);
             }
 
-            LOG.debug("*******" + CamsConstants.Depreciation.DEPRECIATION_BATCH + " HAS ENDED *******");
+            LOG.debug("*******{} HAS ENDED *******", CamsConstants.Depreciation.DEPRECIATION_BATCH);
         }
     }
 }

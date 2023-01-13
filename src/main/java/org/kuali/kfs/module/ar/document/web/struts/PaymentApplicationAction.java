@@ -18,8 +18,6 @@
  */
 package org.kuali.kfs.module.ar.document.web.struts;
 
-import static java.util.Map.entry;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +59,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -70,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static java.util.Map.entry;
 
 /*
  * CU Customization (KFSPTS-13246): Added the ability to delete lines
@@ -191,7 +190,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         InvoicePaidApplied paidApplied = detailApplication.generatePaidApplied();
 
         // validate the paidApplied, but ignore any failures (other than the error message)
-        LOG.debug("Validating the generated paidApplied " + paidApplied.getDocumentNumber());
+        LOG.debug("Validating the generated paidApplied {}", paidApplied::getDocumentNumber);
         PaymentApplicationDocumentRuleUtil.validateInvoicePaidApplied(paidApplied, fieldName, document);
 
         // return the generated paidApplied
@@ -203,7 +202,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         doApplicationOfFunds((PaymentApplicationForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-    
+
     public ActionForward clearUnapplied(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
@@ -348,8 +347,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
                 // generate and validate the paidApplied, and always add it to the list, even if
                 // it fails validation. Validation failures will stop routing.
-                LOG.debug("Generating paid applied for detail application " +
-                        detailApplication.getInvoiceDocumentNumber());
+                LOG.debug(
+                        "Generating paid applied for detail application {}",
+                        detailApplication::getInvoiceDocumentNumber
+                );
                 InvoicePaidApplied invoicePaidApplied = generateAndValidateNewPaidApplied(detailApplication,
                         fieldName, paymentApplicationDocument);
                 GlobalVariables.getMessageMap().addToErrorPath(

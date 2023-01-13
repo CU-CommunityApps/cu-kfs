@@ -103,12 +103,8 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
 
     @Override
     protected List<Row> getSearchingRows(String documentTypeName) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("getSearchingRows( " + documentTypeName + " )");
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Stack Trace at point of call", new Throwable());
-            }
-        }
+        LOG.debug("getSearchingRows( {} )", documentTypeName);
+        LOG.trace("Stack Trace at point of call", Throwable::new);
 
         List<Row> docSearchRows = super.getSearchingRows(documentTypeName);
 
@@ -200,18 +196,14 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
 
         Row resultType = createSearchResultDisplayTypeRow();
         docSearchRows.add(resultType);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Returning Rows: " + docSearchRows);
-        }
+        LOG.debug("Returning Rows: {}", docSearchRows);
         return docSearchRows;
     }
 
     @Override
     public List<DocumentAttribute> extractDocumentAttributes(RuleAttribute ruleAttribute,
             DocumentRouteHeaderValue document) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("extractDocumentAttributes( " + ruleAttribute + ", " + document + " )");
-        }
+        LOG.debug("ruleAttributes( {}, {} )", ruleAttribute, document);
         List<DocumentAttribute> searchAttrValues = super.extractDocumentAttributes(ruleAttribute, document);
 
         String docId = document.getDocumentId();
@@ -262,9 +254,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     @Override
     public List<AttributeError> validateDocumentAttributeCriteria(RuleAttribute ruleAttribute,
             DocumentSearchCriteria documentSearchCriteria) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("validateDocumentAttributeCriteria( " + ruleAttribute + ", " + documentSearchCriteria + " )");
-        }
+        LOG.debug("validateDocumentAttributeCriteria( {}, {} )", ruleAttribute, documentSearchCriteria);
         // this list is irrelevant. the validation errors are put on the stack in the validationService.
         List<AttributeError> errors = super.validateDocumentAttributeCriteria(ruleAttribute,
                 documentSearchCriteria);
@@ -351,7 +341,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
     protected void addSearchableAttributesForAccountingLine(List<DocumentAttribute> searchAttrValues,
             AccountingLine accountingLine) {
         DocumentAttributeString searchableAttributeValue;
-        if (!ObjectUtils.isNull(accountingLine)) {
+        if (ObjectUtils.isNotNull(accountingLine)) {
             if (StringUtils.isNotBlank(accountingLine.getChartOfAccountsCode())) {
                 searchableAttributeValue = new DocumentAttributeString(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
                         accountingLine.getChartOfAccountsCode());
@@ -364,7 +354,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                 searchAttrValues.add(searchableAttributeValue);
             }
 
-            if (!ObjectUtils.isNull(accountingLine.getAccount())
+            if (ObjectUtils.isNotNull(accountingLine.getAccount())
                     && StringUtils.isNotBlank(accountingLine.getAccount().getOrganizationCode())) {
                 searchableAttributeValue = new DocumentAttributeString(KFSPropertyConstants.ORGANIZATION_CODE,
                         accountingLine.getAccount().getOrganizationCode());

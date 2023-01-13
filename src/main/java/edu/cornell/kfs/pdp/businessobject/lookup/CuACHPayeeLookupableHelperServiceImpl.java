@@ -13,7 +13,7 @@ import org.kuali.kfs.pdp.businessobject.ACHPayee;
 import org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.kns.lookup.CollectionIncomplete;

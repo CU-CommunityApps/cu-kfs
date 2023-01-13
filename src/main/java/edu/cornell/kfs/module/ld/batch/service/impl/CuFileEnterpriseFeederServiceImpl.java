@@ -42,17 +42,15 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 				enterpriseFeedPs = new PrintStream(enterpriseFeedFile, StandardCharsets.UTF_8);
 			}
 			catch (IOException e) {
-				LOG.error("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
+				LOG.error("enterpriseFeedFile doesn't exist {}", enterpriseFeedFileName);
 				throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
 			}
-
-			if ( LOG.isInfoEnabled() ) {
-			    LOG.info("New File created for enterprise feeder service run: " + enterpriseFeedFileName);
-			}
+			
+			LOG.info("New File created for enterprise feeder service run: {}", enterpriseFeedFileName);
 
 			File directory = new File(directoryName);
 			if (!directory.exists() || !directory.isDirectory()) {
-				LOG.error("Directory doesn't exist and or it's not really a directory " + directoryName);
+			    LOG.error("Directory doesn't exist and or it's not really a directory {}", directoryName);
 				throw new RuntimeException("Directory doesn't exist and or it's not really a directory " + directoryName);
 			}
 
@@ -80,14 +78,14 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 				statusAndErrors.setFileNames(dataFile, reconFile, doneFile);
 
 				if (dataFile == null) {
-					LOG.error("Unable to find data file for done file: " + doneFile.getAbsolutePath());
+					LOG.error("Unable to find data file for done file: {}", doneFile::getAbsolutePath);
 					statusAndErrors.getErrorMessages().add(
 							new Message("Unable to find data file for done file: " + doneFile.getAbsolutePath(), Message.TYPE_FATAL));
 					statusAndErrors.setStatus(new RequiredFilesMissingStatus());
 				}
 
 				if (reconFile == null) {
-					LOG.error("Unable to find recon file for done file: " + doneFile.getAbsolutePath());
+				    LOG.error("Unable to find recon file for done file: {}", doneFile::getAbsolutePath);
 					statusAndErrors.getErrorMessages().add(
 							new Message("Unable to find recon file for done file: " + doneFile.getAbsolutePath(), Message.TYPE_FATAL));
 					statusAndErrors.setStatus(new RequiredFilesMissingStatus());
@@ -95,10 +93,8 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 
 				try {
 					if (dataFile != null && reconFile != null) {
-					    if ( LOG.isInfoEnabled() ) {
-					        LOG.info("Data file: " + dataFile.getAbsolutePath());
-	                        LOG.info("Reconciliation File: " + reconFile.getAbsolutePath());
-					    }
+					    LOG.info("Data file: {}", dataFile::getAbsolutePath);
+					    LOG.info("Reconciliation File: {}", reconFile::getAbsolutePath);
 
 						fileEnterpriseFeederHelperService.feedOnFile(doneFile, dataFile, reconFile, enterpriseFeedPs, processName,
 								reconciliationTableId, statusAndErrors, ledgerSummaryReport, errorStatisticsReport, feederReportData);
@@ -106,7 +102,7 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 				}
 				catch (RuntimeException e) {
 					// we need to be extremely resistant to a file load failing so that it doesn't prevent other files from loading
-					LOG.error("Caught exception when feeding done file: " + doneFile.getAbsolutePath());
+				    LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
 					fatal = true;
 				}
 				finally {
@@ -150,12 +146,10 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 			}
 
 			// write out totals to log file
-			if ( LOG.isInfoEnabled() ) {
-	            LOG.info("Total records read: " + feederReportData.getNumberOfRecordsRead());
-	            LOG.info("Total amount read: " + feederReportData.getTotalAmountRead());
-	            LOG.info("Total records written: " + feederReportData.getNumberOfRecordsRead());
-	            LOG.info("Total amount written: " + feederReportData.getTotalAmountWritten());
-			}
+            LOG.info("Total records read: {}", feederReportData::getNumberOfRecordsRead);
+            LOG.info("Total amount read: {}", feederReportData::getTotalAmountRead);
+            LOG.info("Total records written: {}", feederReportData::getNumberOfRecordsRead);
+            LOG.info("Total amount written: {}", feederReportData::getTotalAmountWritten);
 
 			generateReport(enterpriseFeedFileCreated, feederReportData, statusAndErrorsList, ledgerSummaryReport,
 					laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);

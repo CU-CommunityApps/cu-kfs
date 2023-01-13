@@ -17,7 +17,7 @@ import org.kuali.kfs.vnd.businessobject.VendorCommodityCode;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
@@ -41,10 +41,12 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
         KualiDecimal apoLimit = ((CuPurapService) purapService).getApoLimit(requisition);
         requisition.setOrganizationAutomaticPurchaseOrderLimit(apoLimit);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("isAPO() reqId = " + requisition.getPurapDocumentIdentifier() + "; apoLimit = " + apoLimit +
-                    "; reqTotal = " + reqTotal);
-        }
+        LOG.debug(
+                "isAPO() reqId = {}; apoLimit = {}; reqTotal = {}",
+                requisition::getPurapDocumentIdentifier,
+                () -> apoLimit,
+                () -> reqTotal
+        );
         if (apoLimit == null) {
             return "APO limit is empty.";
         } else {
@@ -57,10 +59,11 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
             return "Requisition total is not greater than zero.";
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("isAPO() vendor #" + requisition.getVendorHeaderGeneratedIdentifier() + "-" +
-                    requisition.getVendorDetailAssignedIdentifier());
-        }
+        LOG.debug(
+                "isAPO() vendor #{}-{}",
+                requisition::getVendorHeaderGeneratedIdentifier,
+                requisition::getVendorDetailAssignedIdentifier
+        );
         if (requisition.getVendorHeaderGeneratedIdentifier() == null
                 || requisition.getVendorDetailAssignedIdentifier() == null) {
             return "Vendor was not selected from the vendor database.";

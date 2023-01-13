@@ -58,7 +58,7 @@
 <!-- Attribute Definitions -->
 
   <bean id="SecurityRequestDocument-requestPerson.principalName" parent="SecurityRequestDocument-requestPerson.principalName-parentBean"/>
-  <bean id="SecurityRequestDocument-requestPerson.principalName-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="SecurityRequestDocument-requestPerson.principalName-parentBean" abstract="true" parent="Person-principalName">
     <property name="name" value="requestPerson.principalName"/>
     <property name="description" value="The person's Cornell NetId.&lt;br /&gt;&lt;br /&gt;If partial matches are desired, then wildcards must be explicitly included in the search expression." />
   </bean>
@@ -76,7 +76,7 @@
   </bean>  
   
   <bean id="SecurityRequestDocument-principalNameForSearch" parent="SecurityRequestDocument-principalNameForSearch-parentBean"/>
-  <bean id="SecurityRequestDocument-principalNameForSearch-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="SecurityRequestDocument-principalNameForSearch-parentBean" abstract="true" parent="Person-principalName">
     <property name="name" value="principalNameForSearch"/>
     <property name="required" value="false" />
   </bean>

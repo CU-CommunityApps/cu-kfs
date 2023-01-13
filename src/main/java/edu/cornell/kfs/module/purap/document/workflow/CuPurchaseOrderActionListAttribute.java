@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CuPurchaseOrderActionListAttribute extends PurchaseOrderActionListAttribute {
+    @Override
     public ActionSet getLegalActions(String principalId, org.kuali.kfs.kew.actionitem.ActionItem actionItem) throws Exception {
         List<String> actionSetList = new ArrayList<>();
         actionSetList.add(KewApiConstants.ACTION_TAKEN_FYI_CD);        

@@ -3,7 +3,7 @@ package edu.cornell.kfs.ksr.service;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityRequestRole;

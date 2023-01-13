@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.util.AutoPopulatingList;
 
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;

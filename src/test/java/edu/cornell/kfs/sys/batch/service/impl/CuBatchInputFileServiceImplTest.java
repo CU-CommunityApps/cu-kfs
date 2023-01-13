@@ -18,8 +18,7 @@ import org.kuali.kfs.sys.ConfigureContext;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.sys.batch.AccountReversionInputFileType;
 import edu.cornell.kfs.vnd.batch.VendorInactivateConvertBatchCsvInputFileType;
@@ -92,7 +91,7 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
      */
     public void testIllegalArguments() {
         runTestIllegalArgument();
-        user = new PersonImpl();
+        user = new Person();
         runTestIllegalArgument();
         batchInputFileType = new VendorInactivateConvertBatchCsvInputFileType();
         runTestIllegalArgument();
@@ -126,7 +125,7 @@ public class CuBatchInputFileServiceImplTest extends TestCase {
      * This is based on BatchInputFileTypeServiceTest
      */
     public final void testSave() throws Exception {
-        user = new PersonImpl(); //GlobalVariables.getUserSession().getPerson();
+        user = new Person(); //GlobalVariables.getUserSession().getPerson();
         String savedFileName = batchInputFileService.save(user, pcdoBatchInputFileType, testFileIdentifier, validPcdoFileContents, new ArrayList());
 
         File expectedFile = new File(savedFileName);

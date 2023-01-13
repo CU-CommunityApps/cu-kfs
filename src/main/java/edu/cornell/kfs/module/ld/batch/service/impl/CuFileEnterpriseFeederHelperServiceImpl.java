@@ -50,7 +50,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             String feederProcessName, String reconciliationTableId,
             EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors, LedgerSummaryReport ledgerSummaryReport,
             ReportWriterService errorStatisticsReport, EnterpriseFeederReportData feederReportData) {
-        LOG.info("Processing done file: " + doneFile.getAbsolutePath());
+        LOG.info("Processing done file: {}", doneFile::getAbsolutePath);
 
         List<Message> errorMessages = statusAndErrors.getErrorMessages();
         BufferedReader dataFileReader = null;
@@ -81,7 +81,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                     reconReader.close();
                 }
                 catch (IOException e) {
-                    LOG.error("Error occured trying to close recon file: " + reconFile.getAbsolutePath(), e);
+                    LOG.error("Error occurred  trying to close recon file: {}", reconFile::getAbsolutePath, () -> e);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             }
         }
         catch (Exception e) {
-            LOG.error("Caught exception when reconciling/loading done file: " + doneFile, e);
+            LOG.error("Caught exception when reconciling/loading done file: {}", doneFile, e);
             statusAndErrors.setStatus(new ExceptionCaughtStatus());
             errorMessages.add(new Message("Caught exception attempting to reconcile/load done file: " + doneFile + ".  File contents are NOT loaded", Message.TYPE_FATAL));
             // re-throw the exception rather than returning a value so that Spring will auto-rollback

@@ -344,7 +344,7 @@
               <offCampusAddress>1 Test Research Center</offCampusAddress>
               <offCampusCityName>Main Road, Someplace</offCampusCityName>
               <offCampusCountryCode>AA</offCampusCountryCode>
-              <assetRepresentative class="org.kuali.kfs.kim.impl.identity.PersonImpl">
+              <assetRepresentative class="org.kuali.kfs.kim.impl.identity.Person">
               
                 <baseSalaryAmount>
                   <value>0.00</value>

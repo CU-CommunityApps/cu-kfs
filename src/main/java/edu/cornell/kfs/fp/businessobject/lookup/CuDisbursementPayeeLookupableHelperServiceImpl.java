@@ -16,10 +16,9 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
 import org.kuali.kfs.kim.impl.identity.affiliation.EntityAffiliation;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
@@ -173,7 +172,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
        boolean warningExists = false;
         
         for (Person personDetail : persons) {
-            for(EntityAffiliation entityAffiliation : ((PersonImpl)personDetail).getAffiliations()) {
+            for(EntityAffiliation entityAffiliation : (personDetail).getAffiliations()) {
                 if(entityAffiliation.isDefaultValue()) {
                     if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
                         CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);

@@ -1572,7 +1572,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         if (federalFunding) {
             this.setDocumentFundingSourceCode(CUPurapConstants.PurapFundingSources.FEDERAL_FUNDING_SOURCE);
         } else {
-            this.setDocumentFundingSourceCode(SpringContext.getBean(ParameterService.class).getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
+            this.setDocumentFundingSourceCode(SpringContext.getBean(ParameterService.class).getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.FUNDING_SOURCE));
         }
     }
 

@@ -36,7 +36,7 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
 import org.kuali.kfs.kim.impl.identity.entity.Entity;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;

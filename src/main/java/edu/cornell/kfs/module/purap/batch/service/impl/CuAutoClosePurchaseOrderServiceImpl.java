@@ -30,7 +30,10 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
                     //TODO: can the following be replaced with this one line?
                     // autoClosePurchaseOrder(poAutoClose);
 
-                    LOG.info("autoCloseFullyDisencumberedOrders() PO ID " + poAutoClose.getPurapDocumentIdentifier() + " with total " + poAutoClose.getTotalAmount().doubleValue() + " will be closed");
+                    LOG.info("autoCloseFullyDisencumberedOrders() PO ID {} with total {} will be closed",
+                            poAutoClose::getPurapDocumentIdentifier,
+                            () -> poAutoClose.getTotalAmount().doubleValue()
+                    );
                     String newStatus = PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
                     String annotation = "This PO was automatically closed in batch.";
                     String documentType = PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT;

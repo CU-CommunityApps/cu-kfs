@@ -152,6 +152,7 @@ public class GeneralLedgerTransferEntryDaoOjb extends PlatformAwareDaoBaseOjb im
         return criteria;
     }
 
+    @Override
     public boolean hasTransferredEntries(String documentNumber) {
         Criteria criteria = new Criteria();
         criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_NUMBER, documentNumber);

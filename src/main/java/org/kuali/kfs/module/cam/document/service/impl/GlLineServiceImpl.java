@@ -686,7 +686,6 @@ public class GlLineServiceImpl implements GlLineService {
         }
 
         if (expenseObjectTypes.contains(entry.getFinancialObjectTypeCode())
-                && KFSConstants.SOURCE_ACCT_LINE_TYPE_CODE.equals(accountingLine.getFinancialDocumentLineTypeCode())
                 && KFSConstants.GL_CREDIT_CODE.equals(entry.getTransactionDebitCreditCode())
                 && accountLineAmount.compareTo(KualiDecimal.ZERO) > 0) {
             return accountLineAmount.negated();

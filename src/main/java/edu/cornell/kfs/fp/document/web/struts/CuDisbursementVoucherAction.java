@@ -36,7 +36,7 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
@@ -193,7 +193,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
 
         }
         else {
-            LOG.error("Exception while attempting to retrieve universal user by universal user id " + payeeIdNumber);
+            LOG.error("Exception while attempting to retrieve universal user by universal user id {}", payeeIdNumber);
         }
     }
     

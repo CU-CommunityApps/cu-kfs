@@ -9,7 +9,7 @@ import org.kuali.kfs.gl.batch.EnterpriseFeederFileSetType;
 import org.kuali.kfs.module.ld.batch.service.EnterpriseFeederService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 

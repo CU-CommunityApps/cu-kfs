@@ -23,6 +23,7 @@ import edu.cornell.kfs.module.purap.businessobject.CuAutoClosePurchaseOrderView;
 public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
     private static final Logger LOG = LogManager.getLogger();
 
+    @Override
     public List<AutoClosePurchaseOrderView> getAllOpenPurchaseOrders(List<String> excludedVendorChoiceCodes) {
         LOG.info("getAllOpenPurchaseOrders() started");
         Criteria criteria = new Criteria();
@@ -34,7 +35,7 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
             criteria.addNotEqualTo(PurapPropertyConstants.VENDOR_CHOICE_CODE, excludeCode);
         }
         QueryByCriteria qbc = new QueryByCriteria(CuAutoClosePurchaseOrderView.class, criteria);
-        LOG.info("getAllOpenPurchaseOrders() Query criteria is " + criteria.toString());
+        LOG.info("getAllOpenPurchaseOrders() Query criteria is {}", criteria);
         
         // KFSUPGRADE-363
         limitResultSize(qbc);

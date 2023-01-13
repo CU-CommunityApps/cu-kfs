@@ -1,7 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl.fixture;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public enum ConcurPersonFixture {
     JOHN_STATE_COUNTRY("101", "John", "Doe", "NY", "US"),

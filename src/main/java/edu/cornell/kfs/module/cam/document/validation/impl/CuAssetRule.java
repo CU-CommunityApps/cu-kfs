@@ -41,14 +41,18 @@ public class CuAssetRule extends AssetRule {
                                     new String[]{newAsset.getCampusTagNumber(), asset.getCapitalAssetNumber().toString(),
                                             newAsset.getCapitalAssetNumber().toString()});
                             valid = false;
-                            LOG.info("The asset tag number [" + newAsset.getCampusTagNumber().toUpperCase(Locale.US) +
-                                    "] is a duplicate of asset number [" + asset.getCapitalAssetNumber().toString() +
-                                    "]'s tag number");
+                            LOG.info(
+                                    "The asset tag number [{}] is a duplicate of asset number [{}]'s tag number",
+                                    () -> newAsset.getCampusTagNumber().toUpperCase(Locale.US),
+                                    asset::getCapitalAssetNumber
+                            );
                         } else {
-                            LOG.info("Although the asset tag number [" +
-                                    newAsset.getCampusTagNumber().toUpperCase(Locale.US) +
-                                    "] is a duplicate of asset number [" + asset.getCapitalAssetNumber().toString() +
-                                    "]'s tag number, the old asset has already been retired");
+                            LOG.info(
+                                    "Although the asset tag number [{}] is a duplicate of asset number [{}]'s tag "
+                                    + "number, the old asset has already been retired",
+                                    () -> newAsset.getCampusTagNumber().toUpperCase(Locale.US),
+                                    asset::getCapitalAssetNumber
+                            );
                         }
 
                     }

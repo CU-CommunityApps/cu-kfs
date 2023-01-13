@@ -29,6 +29,7 @@ public class CuBudgetAdjustmentDocumentBalancedValidation extends BudgetAdjustme
 
     static final String INCOME_STREAM_CHART_ACCOUNT_DELIMITER = "|";
     
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         boolean balanced = true;
 

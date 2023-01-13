@@ -223,13 +223,17 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             checkFilePrefix = PdpConstants.RESEARCH_PARTICIPANT_FILE_PREFIX + KFSConstants.DASH + checkFilePrefix;
             filename = getOutputFile(checkFilePrefix, processDate);
         }
+        
+        List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId,
+                PdpConstants.DisbursementTypeCodes.CHECK);
+        if (bankCodes.isEmpty()) {
+            return;
+        }
 
         try {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
             
             writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId, notificationEmailAddresses);
-            List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId,
-                    PdpConstants.DisbursementTypeCodes.CHECK);
 
             for (String bankCode : bankCodes) {
                 List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
@@ -396,7 +400,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             
             
         } catch (IOException ie) {
-            LOG.error("extractChecks() Problem reading file:  " + filename, ie);
+            LOG.error("extractChecks() Problem reading file:  {}", filename, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
         } finally {
             // Close file
@@ -2133,7 +2137,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                 paymentFileEmailService.sendAchSummaryEmail(unitCounts, unitTotals, dateTimeService.getCurrentDate());
             }
         } catch (IOException ie) {
-            LOG.error("extractAchPayments() Problem reading file:  " + filename, ie);
+            LOG.error("extractAchPayments() Problem reading file:  {}", filename, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
         } finally {
             // Close file

@@ -2,8 +2,7 @@ package edu.cornell.kfs.sys.util;
 
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.sys.util.fixture.TestUserFixture;
 
@@ -29,7 +28,7 @@ public class MockPersonUtil {
     }
 
     public static Person createMockPerson(UserNameFixture userNameFixture) {
-        Person person = spy(PersonImpl.class);
+        Person person = spy(Person.class);
         when(person.getPrincipalName()).thenReturn(userNameFixture.toString());
         when(person.getPrincipalId()).thenReturn(userNameFixture.toString());
         when(person.getCampusCode()).thenReturn(userNameFixture.toString());
@@ -37,7 +36,7 @@ public class MockPersonUtil {
     }
     
     public static Person createMockPerson(TestUserFixture userFixture) {
-        Person person = spy(PersonImpl.class);
+        Person person = spy(Person.class);
         when(person.getPrincipalName()).thenReturn(userFixture.principleName);
         when(person.getPrincipalId()).thenReturn(userFixture.principleId);
         when(person.getCampusCode()).thenReturn(userFixture.campusCode);

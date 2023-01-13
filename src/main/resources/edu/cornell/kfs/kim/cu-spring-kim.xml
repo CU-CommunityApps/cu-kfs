@@ -47,7 +47,8 @@
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
             <bean class="edu.cornell.kfs.kim.lookup.CuRoleLookupableHelperServiceImpl"
-                  parent="lookupableHelperService">
+                  parent="lookupableHelperService"
+                  p:permissionService-ref="permissionService">
             </bean>
         </property>
     </bean>

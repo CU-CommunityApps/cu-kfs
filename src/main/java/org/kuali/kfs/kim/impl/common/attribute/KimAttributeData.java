@@ -90,8 +90,11 @@ public abstract class KimAttributeData extends PersistableBusinessObjectBase imp
             KimTypeAttribute attr = getKimTypeInfoService().getKimType(kimTypeId).getAttributeDefinitionByName(
                     it.getKey());
             if (attr == null) {
-                LOG.error("Attribute " + it.getKey() + " was not found for kimType " +
-                        getKimTypeInfoService().getKimType(kimTypeId).getName());
+                LOG.error(
+                        "Attribute {} was not found for kimType {}",
+                        it::getKey,
+                        () -> getKimTypeInfoService().getKimType(kimTypeId).getName()
+                );
             }
             KimType theType = getKimTypeInfoService().getKimType(kimTypeId);
             if (attr != null && StringUtils.isNotBlank(it.getValue())) {
@@ -104,7 +107,7 @@ public abstract class KimAttributeData extends PersistableBusinessObjectBase imp
                     newDetail.setAttributeValue(it.getValue());
                     attrs.add(newDetail);
                 } catch (InstantiationException | IllegalAccessException e) {
-                    LOG.error(e.getMessage(), e);
+                    LOG.error(e);
                 }
             }
         }

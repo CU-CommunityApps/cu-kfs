@@ -307,7 +307,7 @@
   </bean>
   <bean id="IWantDocument-initiatorNetID" parent="IWantDocument-initiatorNetID-parentBean"/>
 
-  <bean id="IWantDocument-initiatorNetID-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="IWantDocument-initiatorNetID-parentBean" abstract="true" parent="Person-principalName">
     <property name="shortLabel" value=" Net ID"/>
     <property name="maxLength" value="30"/>
     <property name="required" value="false"/>
@@ -370,7 +370,7 @@
   </bean>
   <bean id="IWantDocument-deliverToNetID" parent="IWantDocument-deliverToNetID-parentBean"/>
 
-  <bean id="IWantDocument-deliverToNetID-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="IWantDocument-deliverToNetID-parentBean" abstract="true" parent="Person-principalName">
     <property name="shortLabel" value="Net ID"/>
     <property name="maxLength" value="30"/>
     <property name="required" value="false"/>
@@ -618,7 +618,7 @@
     	</property>
   </bean>
   <bean id="IWantDocument-currentRouteToNetId" parent="IWantDocument-currentRouteToNetId-parentBean"/>
-  <bean id="IWantDocument-currentRouteToNetId-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="IWantDocument-currentRouteToNetId-parentBean" abstract="true" parent="Person-principalName">
     <property name="shortLabel" value="Net ID"/>
     <property name="maxLength" value="30"/>
     <property name="required" value="false"/>

@@ -144,7 +144,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      */
     public void addNotes(List<PaymentNoteText> pnts) {
         pnts.forEach(n -> {
-            LOG.debug("addNotes() Creating check stub text note: " + n.getCustomerNoteText());
+            LOG.debug("addNotes() Creating check stub text note: {}", n::getCustomerNoteText);
             addNote(n);
         });
     }
@@ -211,8 +211,10 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             pnt.setPaymentDetail(this);
             notes.add(pnt);
         } else {
-            LOG.warn("Did not add note to payment detail build from Document #: " + (!StringUtils.isBlank(
-                    custPaymentDocNbr) ? custPaymentDocNbr : "") + " because note was empty");
+            LOG.warn(
+                    "Did not add note to payment detail build from Document #: {} because note was empty",
+                    StringUtils.isNotBlank(custPaymentDocNbr) ? custPaymentDocNbr : ""
+            );
         }
     }
 

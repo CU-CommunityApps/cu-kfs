@@ -16,7 +16,7 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
@@ -143,7 +143,7 @@ public final class MockDocumentUtils {
         PowerMockito.suppress(PowerMockito.constructor(AdHocRoutePerson.class));
         TestAdHocRoutePerson adHocPerson = PowerMockito.spy(new TestAdHocRoutePerson());
         adHocPerson.setType(AdHocRouteRecipient.PERSON_TYPE);
-        adHocPerson.setPerson(new PersonImpl());
+        adHocPerson.setPerson(new Person());
         return adHocPerson;
     }
 

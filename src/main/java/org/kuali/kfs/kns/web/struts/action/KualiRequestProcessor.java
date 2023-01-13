@@ -85,12 +85,14 @@ public class KualiRequestProcessor extends RequestProcessor {
     private PlatformTransactionManager transactionManager;
     private CsrfService csrfService;
 
+    @Override
     public void process(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
             ServletException {
-        if (LOG.isInfoEnabled()) {
-            LOG.info(new StringBuffer("Started processing request: '").append(request.getRequestURI()).append(
-                    "' w/ query string: '").append(request.getQueryString()).append("'"));
-        }
+        LOG.info(
+                "Started processing request: '{}' w/ query string: '{}'",
+                request::getRequestURI,
+                request::getQueryString
+        );
 
         strutsProcess(request, response);
         KNSGlobalVariables.setKualiForm(null);
@@ -127,10 +129,11 @@ public class KualiRequestProcessor extends RequestProcessor {
                 }
             }
 
-            if (LOG.isInfoEnabled()) {
-                LOG.info(new StringBuffer("Finished processing request: '").append(request.getRequestURI())
-                        .append("' w/ query string: '").append(request.getQueryString()).append("'"));
-            }
+            LOG.info(
+                    "Finished processing request: '{}' w/ query string: '{}'",
+                    request::getRequestURI,
+                    request::getQueryString
+            );
         } finally {
             // MDC docId key is set above, and also during super.process() in the call to processActionForm
             ThreadContext.remove(MDC_DOC_ID);
@@ -173,9 +176,7 @@ public class KualiRequestProcessor extends RequestProcessor {
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Processing a '" + request.getMethod() + "' for path '" + path + "'");
-        }
+        LOG.debug("Processing a '{}' for path '{}'", request::getMethod, () -> path);
 
         // Select a Locale for the current user if requested
         processLocale(request, response);
@@ -212,7 +213,7 @@ public class KualiRequestProcessor extends RequestProcessor {
 
         // need to make sure that we don't check CSRF until after the form is populated so that Struts will parse the
         // multipart parameters into the request if it's a multipart request
-        LOG.debug("context path = " + request.getRequestURI());
+        LOG.debug("context path = {}", request::getRequestURI);
         if (!getCsrfService().validateCsrfIfNecessary(request, response)) {
             LOG.error("Did not pass CSRF validation");
             return;
@@ -311,9 +312,7 @@ public class KualiRequestProcessor extends RequestProcessor {
             }
             // Was this request cancelled?
             if (request.getAttribute(Globals.CANCEL_KEY) != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(" Cancelled transaction, skipping validation");
-                }
+                LOG.debug(" Cancelled transaction, skipping validation");
                 return true;
             }
 
@@ -330,9 +329,7 @@ public class KualiRequestProcessor extends RequestProcessor {
         if (!GlobalVariables.getMessageMap().hasNoErrors()) {
             // Special handling for multipart request
             if (form.getMultipartRequestHandler() != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("  Rolling back multipart request");
-                }
+                LOG.debug("  Rolling back multipart request");
                 form.getMultipartRequestHandler().rollback();
             }
 
@@ -344,9 +341,7 @@ public class KualiRequestProcessor extends RequestProcessor {
             // Was an input path (or forward) specified for this mapping?
             String input = mapping.getInput();
             if (input == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("  Validation failed but no input form available");
-                }
+                LOG.debug("  Validation failed but no input form available");
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         getInternal().getMessage("noInput", mapping.getPath()));
                 return false;
@@ -685,7 +680,7 @@ public class KualiRequestProcessor extends RequestProcessor {
         String name = mapping.getName();
         FormBeanConfig config = moduleConfig.findFormBeanConfig(name);
         if (config == null) {
-            LOG.warn("No FormBeanConfig found under '" + name + "'");
+            LOG.warn("No FormBeanConfig found under '{}'", name);
             return null;
         }
         ActionForm instance = RequestUtils.createActionForm(config, servlet);

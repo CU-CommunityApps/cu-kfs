@@ -28,8 +28,10 @@ public class CuDelimitedFlatFileSpecification extends DelimitedFlatFileSpecifica
                 String lineSegment = lineSegments[delimitedPropertySpecification.getLineSegmentIndex()];
                 propertySpecification.setProperty(lineSegment, parseIntoObject, lineNumber);
             } catch (ArrayIndexOutOfBoundsException e) {
-                LOG.debug("parseLineIntoObject: Unable to set property " + propertySpecification.getPropertyName()
-                        + " since lineSegmentIndex does not exist for line");
+                LOG.debug(
+                        "parseLineIntoObject: Unable to set property {} since lineSegmentIndex does not exist for line",
+                        propertySpecification::getPropertyName
+                );
             }
         }
     }

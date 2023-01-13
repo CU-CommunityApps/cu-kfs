@@ -38,6 +38,7 @@ public class OrganizationReversionUnitOfWorkServiceImpl extends ReversionUnitOfW
      * you call this method, for this method is both powerful and deadly and also gets called to clear out
      * those tables before every single org reversion run.
      */
+    @Override
     public void destroyAllUnitOfWorkSummaries() {
         orgReversionUnitOfWorkDao.destroyAllUnitOfWorkSummaries();
     }
