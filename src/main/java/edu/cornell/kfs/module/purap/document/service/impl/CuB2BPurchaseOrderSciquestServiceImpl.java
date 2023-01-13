@@ -116,14 +116,15 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             LOG.debug("sendPurchaseOrder() Generating cxml");
             String cxml = getCxml(purchaseOrder, requisitionInitiatorPrincipalId, getB2bPurchaseOrderPassword(), contractManager, contractManagerEmail, vendorDuns, true);
 
-            LOG.info("sendPurchaseOrder() Sending cxml\n{}", cxml);
+            LOG.debug("sendPurchaseOrder() Sending cxml\n{}", cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, getB2bPurchaseOrderURL());
+            String responseCxmlForLogging = responseCxml;
             LOG.info("b2bPurchaseOrderURL " + getB2bPurchaseOrderURL());
-
+            
             LOG.info(
                     "sendPurchaseOrder(): Response cXML for po #{}:\n{}",
-                    purchaseOrder.getPurapDocumentIdentifier(),
-                    responseCxml
+                    purchaseOrder::getPurapDocumentIdentifier,
+                    () -> responseCxmlForLogging
             );
             
             // allow PO to use old form, then POA use new form for testing
