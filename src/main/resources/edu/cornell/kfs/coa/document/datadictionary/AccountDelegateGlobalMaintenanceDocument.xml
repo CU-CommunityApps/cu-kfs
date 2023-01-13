@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
@@ -19,57 +19,61 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
-<bean id="AccountDelegateGlobalMaintenanceDocument" parent="AccountDelegateGlobalMaintenanceDocument-parentBean">
-  <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal"/>
-  <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl"/>
-</bean>
-
-<!-- Maintenance Section Definitions -->
-<bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
-
-  <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition">
-    <property name="id" value="Edit List of Accounts"/>
-    <property name="title" value="Edit List of Accounts"/>
-    <property name="maintainableItems">
-      <list>
-        <bean parent="MaintainableCollectionDefinition">
-          <property name="name" value="accountGlobalDetails"/>
-          <property name="businessObjectClass" value="org.kuali.kfs.coa.businessobject.AccountGlobalDetail"/>
-          <property name="sourceClassName" value="edu.cornell.kfs.coa.businessobject.AccountGlobalSearch"/>
-          <property name="summaryTitle" value="Account"/>
-          <property name="summaryFields">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    
+    <bean id="AccountDelegateGlobalMaintenanceDocument" parent="AccountDelegateGlobalMaintenanceDocument-parentBean"
+          p:businessObjectClass="edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal"
+          p:maintainableClass="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl">
+    </bean>
+    
+    <!-- Maintenance Section Definitions -->
+    <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
+    <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean" abstract="true" parent="MaintainableSectionDefinition"
+          p:id="Edit List of Accounts" p:title="Edit List of Accounts">
+        <property name="maintainableItems">
             <list>
-              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
-              <bean parent="MaintainableFieldDefinition" p:name="account.accountName"/>
+                <bean parent="MaintainableCollectionDefinition" p:name="accountGlobalDetails"
+                      p:businessObjectClass="org.kuali.kfs.coa.businessobject.AccountGlobalDetail"
+                      p:sourceClassName="edu.cornell.kfs.coa.businessobject.AccountGlobalSearch"
+                      p:summaryTitle="Account"
+                      p:newLookup="true">
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="account.accountName"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:template="chartOfAccountsCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="loadAccountName"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="account.accountName" p:unconditionallyReadOnly="true" p:template="accountName"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+                        </list>
+                    </property>
+                    <property name="duplicateIdentificationFields">
+                         <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
+                         </list>
+                    </property>
+                </bean>
             </list>
-          </property>
-          <property name="maintainableFields">
-            <list>
-              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:template="chartOfAccountsCode"/>
-              <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="loadAccountName"/>
-              <bean parent="MaintainableFieldDefinition" p:name="account.accountName" p:unconditionallyReadOnly="true" p:template="accountName"/>
-              <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
-            </list>
-          </property>
-          <property name="duplicateIdentificationFields">
-          	<list>
-          		<bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
-          		<bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
-          	</list>
-          </property>
-        </bean>
-      </list>
-    </property>
-  </bean>
-
-  <bean id="AccountDelegateGlobalMaintenanceDocument-workflowAttributes" parent="AccountDelegateGlobalMaintenanceDocument-workflowAttributes-parentBean">
-    <property name="routingTypeDefinitions">
-    		<map>
-    			<entry key="OrganizationHierarchy" value-ref="AccountDelegateGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
-    			<entry key="Account" value-ref="AccountDelegateGlobalMaintenanceDocument-RoutingType-Account" />
-    		</map>
-		</property>		
-	</bean>				
+        </property>
+    </bean>
+    
+    <bean id="AccountDelegateGlobalMaintenanceDocument-workflowAttributes" parent="AccountDelegateGlobalMaintenanceDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="OrganizationHierarchy" value-ref="AccountDelegateGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+                <entry key="Account" value-ref="AccountDelegateGlobalMaintenanceDocument-RoutingType-Account" />
+            </map>
+        </property>
+    </bean>
 </beans>
