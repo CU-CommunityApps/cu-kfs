@@ -49,6 +49,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
     private BusinessObjectService businessObjectService;
     private PurchasingCommodityCodeValidation commodityCodeValidation;
     
+    @Override
     public boolean validate(AttributedDocumentEvent event) {     
         GlobalVariables.getMessageMap().addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
         //refresh itemType

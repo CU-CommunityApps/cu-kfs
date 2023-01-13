@@ -41,7 +41,7 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
 
         ElectronicInvoiceTestForm testForm = (ElectronicInvoiceTestForm)form;
         String poDocNumber = testForm.getPoDocNumber();
-        LOG.info("Generating Electronic Invoice XML file for Purchase Order Document " + poDocNumber);
+        LOG.info("Generating Electronic Invoice XML file for Purchase Order Document {}", poDocNumber);
         PurchaseOrderService poService = SpringContext.getBean(PurchaseOrderService.class);
         PurchaseOrderDocument po = null;
         

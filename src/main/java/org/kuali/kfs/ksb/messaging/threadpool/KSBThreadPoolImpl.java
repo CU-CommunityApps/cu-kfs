@@ -49,20 +49,24 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
                         ClassLoaderUtils.getDefaultClassLoader()), new ThreadPoolExecutor.AbortPolicy());
     }
 
+    @Override
     public void setCorePoolSize(int corePoolSize) {
-        LOG.info("Setting core pool size to " + corePoolSize + " threads.");
+        LOG.info("Setting core pool size to {} threads.", corePoolSize);
         super.setCorePoolSize(corePoolSize);
         this.poolSizeSet = true;
     }
 
+    @Override
     public long getKeepAliveTime() {
         return super.getKeepAliveTime(TimeUnit.MILLISECONDS);
     }
 
+    @Override
     public boolean isStarted() {
         return this.started;
     }
 
+    @Override
     public void start() {
         LOG.info("Starting the KSB thread pool...");
         loadSettings();
@@ -70,14 +74,19 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
         LOG.info("...KSB thread pool successfully started.");
     }
 
+    @Override
     public void stop() throws Exception {
         if (isStarted()) {
             LOG.info("Shutting down KSB thread pool...");
             int pendingTasks = this.shutdownNow().size();
-            LOG.info(pendingTasks + " pending tasks...");
-            LOG.info("awaiting termination: " + this.awaitTermination(20, TimeUnit.SECONDS));
-            LOG.info("...KSB thread pool successfully stopped, isShutdown=" + this.isShutdown() + ", isTerminated=" +
-                    this.isTerminated());
+            LOG.info("{} pending tasks...", pendingTasks);
+            final boolean terminated = awaitTermination(20, TimeUnit.SECONDS);
+            LOG.info("awaiting termination: {}", terminated);
+            LOG.info(
+                    "...KSB thread pool successfully stopped, isShutdown={}, isTerminated={}",
+                    this::isShutdown,
+                    this::isTerminated
+            );
             this.started = false;
             LOG.info("...KSB thread pool successfully shut down.");
         }
@@ -93,7 +102,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
             try {
                 poolSize = Integer.parseInt(threadPoolSizeStr);
             } catch (NumberFormatException nfe) {
-                LOG.error("loadSettings(): Unable to parse the pool size: '" + threadPoolSizeStr + "'");
+                LOG.error("loadSettings(): Unable to parse the pool size: '{}'", threadPoolSizeStr);
             }
             // CU Customization: If necessary, update the maximum pool size before updating the core pool size,
             // to prevent an exception from the parent ThreadPoolExecutor in Java 11.
@@ -104,6 +113,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
         }
     }
 
+    @Override
     public Object getInstance() {
         return this;
     }
@@ -132,6 +142,7 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
             factorySequence++;
         }
 
+        @Override
         public Thread newThread(Runnable runnable) {
             threadSequence++;
             Thread thread = this.defaultThreadFactory.newThread(runnable);

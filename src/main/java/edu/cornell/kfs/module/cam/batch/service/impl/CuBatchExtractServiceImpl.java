@@ -328,7 +328,10 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                     purApDocuments.add(cabPurapDoc);
                 }
             } else {
-                LOG.error("Could not create a valid PurchasingAccountsPayableDocument object for document number " + entry.getDocumentNumber());
+                LOG.error(
+                        "Could not create a valid PurchasingAccountsPayableDocument object for document number {}",
+                        entry::getDocumentNumber
+                );
             }
         }
         updateProcessLog(processLog, getReconciliationService());

@@ -99,9 +99,8 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         WorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();
         String requisitionInitiatorPrincipalId = getRequisitionInitiatorPrincipal(reqWorkflowDoc.getInitiatorPrincipalId());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("sendPurchaseOrder(): b2bPurchaseOrderURL is " + getB2bPurchaseOrderURL());
-        }
+        LOG.debug("sendPurchaseOrder(): b2bPurchaseOrderURL is {}", getB2bPurchaseOrderURL());
+        
         if (!PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
             prepareNonB2BPurchaseOrderForTransmission(purchaseOrder);
         }
@@ -117,12 +116,16 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             LOG.debug("sendPurchaseOrder() Generating cxml");
             String cxml = getCxml(purchaseOrder, requisitionInitiatorPrincipalId, getB2bPurchaseOrderPassword(), contractManager, contractManagerEmail, vendorDuns, true);
 
-            LOG.debug("sendPurchaseOrder() Sending cxml\n" + cxml);
-            LOG.debug("sendPurchaseOrder() Sending cxml\n" + cxml);
+            LOG.debug("sendPurchaseOrder() Sending cxml\n{}", cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, getB2bPurchaseOrderURL());
+            String responseCxmlForLogging = responseCxml;
             LOG.info("b2bPurchaseOrderURL " + getB2bPurchaseOrderURL());
-
-            LOG.info("sendPurchaseOrder(): Response cXML for po #" + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + responseCxml);
+            
+            LOG.info(
+                    "sendPurchaseOrder(): Response cXML for po #{}:\n{}",
+                    purchaseOrder::getPurapDocumentIdentifier,
+                    () -> responseCxmlForLogging
+            );
             
             // allow PO to use old form, then POA use new form for testing
             if (!responseCxml.contains("Success") && responseCxml.contains("No custom field found") && responseCxml.contains("document configuration (DeliveryEmail)")) {               
@@ -138,11 +141,13 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 
             PurchaseOrderResponse poResponse = B2BParserHelper.getInstance().parsePurchaseOrderResponse(responseCxml);
             String statusText = poResponse.getStatusText();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("sendPurchaseOrder(): statusText is " + statusText);
-            }
+            LOG.debug("sendPurchaseOrder(): statusText is {}", statusText);
             if (ObjectUtils.isNull(statusText) || !"success".equalsIgnoreCase(statusText.trim())) {
-                LOG.error("sendPurchaseOrder(): PO cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + " failed sending to SciQuest:\n" + statusText);
+                LOG.error(
+                        "sendPurchaseOrder(): PO cXML for po number {} failed sending to SciQuest:\n{}",
+                        purchaseOrder::getPurapDocumentIdentifier,
+                        () -> statusText
+                );
                 transmitErrors.append("Unable to send Purchase Order: " + statusText);
 
                 // find any additional error messages that might have been sent
@@ -151,7 +156,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                     for (Iterator iter = errorMessages.iterator(); iter.hasNext();) {
                         String errorMessage = (String) iter.next();
                         if (ObjectUtils.isNotNull(errorMessage)) {
-                            LOG.error("sendPurchaseOrder(): SciQuest error message for po number " + purchaseOrder.getPurapDocumentIdentifier() + ": " + errorMessage);
+                            LOG.error(
+                                    "sendPurchaseOrder(): SciQuest error message for po number {}: {}",
+                                    purchaseOrder::getPurapDocumentIdentifier,
+                                    () -> errorMessage
+                            );
                             transmitErrors.append("Error sending Purchase Order: " + errorMessage);
                         }
                     }
@@ -291,7 +300,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 	            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber().substring(3)).append("</Number>\n");
 	        }
 	        else {
-	            LOG.error("getCxml() The phone number is invalid for this contract manager: " + contractManager.getContractManagerUserIdentifier() + " " + contractManager.getContractManagerName());
+	            LOG.error(
+	                    "getCxml() The phone number is invalid for this contract manager: {} {}",
+	                    contractManager::getContractManagerUserIdentifier,
+	                    contractManager::getContractManagerName
+	            );
 	            cxml.append("              <AreaCode>555</AreaCode>\n");
 	            cxml.append("              <Number>").append(contractManager.getContractManagerPhoneNumber()).append("</Number>\n");
 	        }
@@ -704,7 +717,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("  </PurchaseOrder>\n");
         cxml.append("</PurchaseOrderMessage>\r\n");
         
-        LOG.debug("getCxml(): cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":\n" + cxml.toString());
+        LOG.debug(
+                "getCxml(): cXML for po number {}:\n{}",
+                purchaseOrder::getPurapDocumentIdentifier,
+                () -> cxml
+        );
         
         /*KFSPTS-794: Start new code: Add each attachment as raw binary data. */
         //*****************************************************************************************************************
@@ -868,30 +885,49 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                 }
                 // CU : added B2B & nonqty Check
                 if (!nonQuantityOrder && StringUtils.isEmpty(poi.getItemCatalogNumber())  && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-                    LOG.error("verifyCxmlPOData()  The Catalog Number for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
+                    LOG.error(
+                            "verifyCxmlPOData()  The Catalog Number for item number {} is required for the cXML PO but is missing.",
+                            poi::getItemLineNumber
+                    );
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Catalog Number\n");
                 }
                 if (StringUtils.isEmpty(poi.getItemDescription())) {
-                    LOG.error("verifyCxmlPOData()  The Description for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
+                    LOG.error(
+                            "verifyCxmlPOData()  The Description for item number {} is required for the cXML PO but is missing.",
+                            poi::getItemLineNumber
+                    );
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Description\n");
                 }
                 // CU : added nonqtyorder check
                 if (!nonQuantityOrder && StringUtils.isEmpty(poi.getItemUnitOfMeasureCode())) {
-                    LOG.error("verifyCxmlPOData()  The Unit Of Measure Code for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
+                    LOG.error(
+                            "verifyCxmlPOData()  The Unit Of Measure Code for item number {} is required for the cXML PO but is missing.",
+                            poi::getItemLineNumber
+                    );
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Unit Of Measure\n");
                 }
                 // CU : added B2B Check
                 if (StringUtils.isEmpty(poi.getExternalOrganizationB2bProductTypeName()) && PurapConstants.RequisitionSources.B2B.equals(purchaseOrder.getRequisitionSourceCode())) {
-                    LOG.error("verifyCxmlPOData()  The External Org B2B Product Type Name for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
+                    LOG.error(
+                            "verifyCxmlPOData()  The External Org B2B Product Type Name for item number {} is required for the cXML PO but is missing.",
+                            poi::getItemLineNumber
+                    );
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - External Org B2B Product Type Name\n");
                 }
                 // CU : added nonqtyorder check
                 if (!nonQuantityOrder && poi.getItemQuantity() == null) {
-                    LOG.error("verifyCxmlPOData()  The Order Quantity for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
+                    LOG.error(
+                            "verifyCxmlPOData()  The Order Quantity for item number {} is required for the cXML PO "
+                            + "but is missing.",
+                            poi::getItemLineNumber
+                    );
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Order Quantity\n");
                 }
                 if (poi.getItemUnitPrice() == null) {
-                    LOG.error("verifyCxmlPOData()  The Unit Price for item number " + poi.getItemLineNumber() + " is required for the cXML PO but is missing.");
+                    LOG.error(
+                            "verifyCxmlPOData()  The Unit Price for item number {} is required for the cXML PO but is missing.",
+                            poi::getItemLineNumber
+                    );
                     errors.append("Missing Data: Item#" + poi.getItemLineNumber() + " - Unit Price\n");
                 }
             }

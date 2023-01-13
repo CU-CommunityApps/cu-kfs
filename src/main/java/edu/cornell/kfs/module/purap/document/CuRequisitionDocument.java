@@ -49,7 +49,7 @@ import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 

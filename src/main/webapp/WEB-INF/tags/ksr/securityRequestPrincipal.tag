@@ -24,7 +24,7 @@
                           readOnly="true"
                           hasErrors="${hasErrors}"/>
                     <c:if test="${!readOnly}">
-                        <kul:lookup boClassName="org.kuali.kfs.kim.impl.identity.PersonImpl"
+                        <kul:lookup boClassName="org.kuali.kfs.kim.impl.identity.Person"
                               fieldConversions="principalName:document.requestPerson.principalName,principalId:document.principalId,name:document.requestPerson.name"
                               lookupParameters="document.requestPerson.principalName:principalName,document.principalId:principalId,document.requestPerson.name:name"
                               fieldLabel="${securityRequestAttributes['requestPerson.principalName'].label}"

@@ -54,7 +54,7 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
 import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
@@ -307,7 +307,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         requisitionDocument.setPurchaseOrderTransmissionMethodCode(parameterService.getParameterValueAsString(
                 RequisitionDocument.class, PurapParameterConstants.PURAP_DEFAULT_PO_TRANSMISSION_CODE));
         requisitionDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(
-                RequisitionDocument.class, PurapParameterConstants.DEFAULT_FUNDING_SOURCE));
+                RequisitionDocument.class, PurapParameterConstants.FUNDING_SOURCE));
         requisitionDocument.setUseTaxIndicator(SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(requisitionDocument));
         
         // if org doc number present on I Want doc, copy it to REQ

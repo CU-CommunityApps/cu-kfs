@@ -75,8 +75,6 @@ import static java.util.Map.entry;
 /**
  * CU Customization:
  * Updated the member-removal methods to properly convert the qualifiers where needed.
- * 
- * Backported redis fixes on FINP-8169
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
@@ -254,7 +252,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(String id) {
         Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        // backport FINP-8169
         Cache.ValueWrapper cachedValue = cache.get("{" + Role.CACHE_NAME + "}id=" + id);
         if (cachedValue != null) {
             return (RoleLite) cachedValue.get();
@@ -264,7 +261,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     protected RoleLite getRoleFromCache(String namespaceCode, String name) {
         Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-        // backport FINP-8169
         final String key = "{" + Role.CACHE_NAME + "}namespaceCode=" + namespaceCode + "|name=" + name;
         Cache.ValueWrapper cachedValue = cache.get(key);
         if (cachedValue != null) {
@@ -276,7 +272,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     protected void putRoleInCache(RoleLite role) {
         if (role != null) {
             Cache cache = cacheManager.getCache(Role.CACHE_NAME);
-            // backport FINP-8169
             String idKey = "{" + Role.CACHE_NAME + "}id=" + role.getId();
             String nameKey = "{" + Role.CACHE_NAME + "}namespaceCode=" + role.getNamespaceCode() + "|name="
                      + role.getName();
@@ -345,7 +340,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return new ArrayList<>(roleMap.values());
     }
 
-    // backport fix on FINP-8169
     @Cacheable(cacheNames = Role.CACHE_NAME,
             key = "'{" + Role.CACHE_NAME + "}-namespaceCode=' + #p0 + '|' + 'name='+ #p1")
     @Override
@@ -461,8 +455,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                 roleLite.getNamespaceCode(), roleLite.getName(), nestedRole.getNamespaceCode(),
                                 nestedRole.getName(), qualification);
                     } catch (Exception ex) {
-                        LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " +
-                                roleLite.getId(), ex);
+                        LOG.warn(
+                                "Not able to retrieve RoleTypeService from remote system for role Id: {}",
+                                roleLite::getId,
+                                () -> ex
+                        );
                     }
                 }
                 List<String> nestedRoleId = new ArrayList<>(1);
@@ -486,8 +483,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                     results.add(roleMembership.getQualifier());
                 }
             } catch (Exception ex) {
-                LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " + entry.getKey(),
-                        ex);
+                LOG.warn(
+                        "Not able to retrieve RoleTypeService from remote system for role Id: {}",
+                        entry::getKey,
+                        () -> ex
+                );
             }
         }
         return Collections.unmodifiableList(results);
@@ -742,8 +742,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                         }
                     }
                 } catch (Exception ex) {
-                    LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " +
-                            entry.getKey(), ex);
+                    LOG.warn(
+                            "Not able to retrieve RoleTypeService from remote system for role Id: {}",
+                            entry::getKey,
+                            () -> ex
+                    );
                 }
             }
         }
@@ -770,7 +773,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                     }
                 }
             } catch (Exception ex) {
-                LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " + roleId, ex);
+                LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: {}", roleId, ex);
             }
         }
 
@@ -804,7 +807,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                         results = roleTypeService.sortRoleMembers(results);
                     }
                 } catch (Exception ex) {
-                    LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " + roleId, ex);
+                    LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: {}", roleId, ex);
                 }
             } else if (matchingRoleIds.size() > 1) {
                 // if more than one, check if there is only a single role type service
@@ -829,11 +832,13 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                             results = kimRoleTypeService.sortRoleMembers(results);
                         }
                     } catch (Exception ex) {
-                        LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " + roleId, ex);
+                        LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: {}", roleId, ex);
                     }
                 } else {
-                    LOG.warn("Did not sort role members - multiple role type services found.  Role Ids: " +
-                            matchingRoleIds);
+                    LOG.warn(
+                            "Did not sort role members - multiple role type services found.  Role Ids: {}",
+                            matchingRoleIds
+                    );
                 }
             }
         }
@@ -957,11 +962,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
 
         boolean hasRole = getProxiedRoleService().principalHasRole(principalId, roleIds, qualification, true);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Result: " + hasRole);
-        }
-
+        LOG.debug("Result: {}", hasRole);
         return hasRole;
     }
 
@@ -1083,7 +1084,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                         checkDelegations);
                             }
                         } catch (Exception ex) {
-                            LOG.warn("Unable to find role type service with id: " + role.getKimTypeId());
+                            LOG.warn("Unable to find role type service with id: {}", role::getKimTypeId);
                         }
                     }
                 }
@@ -1123,8 +1124,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                             }
                         }
                     } catch (Exception ex) {
-                        LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " +
-                                roleMember.getRoleId(), ex);
+                        LOG.warn(
+                                "Not able to retrieve RoleTypeService from remote system for role Id: {}",
+                                roleMember::getRoleId,
+                                () -> ex
+                        );
                     }
                 } else {
                     // no qualifiers - role is always used - check membership
@@ -1165,8 +1169,11 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                         }
                     }
                 } catch (Exception ex) {
-                    LOG.warn("Not able to retrieve RoleTypeService from remote system for role Id: " + role.getId(),
-                            ex);
+                    LOG.warn(
+                            "Not able to retrieve RoleTypeService from remote system for role Id: {}",
+                            role::getId,
+                            () -> ex
+                    );
                 }
             }
 
@@ -1239,7 +1246,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         try {
             return dynamicRoleMembership(service, getRoleWithoutMembers(roleId));
         } catch (Exception e) {
-            LOG.warn("Caught exception while invoking a role type service for role " + roleId, e);
+            LOG.warn("Caught exception while invoking a role type service for role {}", roleId, e);
             // Returning true so the role won't be cached
             return true;
         }
@@ -1345,9 +1352,13 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                             continue;
                         }
                     } catch (Exception ex) {
-                        LOG.warn("Unable to call doesRoleQualifierMatchQualification on role type service for " +
-                                "role Id: " + delegation.getRoleId() + " / " + qualification + " / " +
-                                delegateMember.getQualifier(), ex);
+                        LOG.warn(
+                                "Unable to call doesRoleQualifierMatchQualification on role type service for role Id: {} / {} / {}",
+                                delegation::getRoleId,
+                                () -> qualification,
+                                delegateMember::getQualifier,
+                                () -> ex
+                        );
                         continue;
                     }
 
@@ -1385,15 +1396,22 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                     continue;
                                 }
                             } catch (Exception ex) {
-                                LOG.warn("Unable to call doesRoleQualifierMatchQualification on role type " +
-                                        "service for role Id: " + delegation.getRoleId() + " / " + qualification +
-                                        " / " + roleQualifier, ex);
+                                LOG.warn(
+                                        "Unable to call doesRoleQualifierMatchQualification on role type service for role Id: {} / {} / {}",
+                                        delegation::getRoleId,
+                                        () -> qualification,
+                                        () -> roleQualifier,
+                                        () -> ex
+                                );
                                 continue;
                             }
                         } else {
                             LOG.warn("Unknown role member ID cited in the delegateType member table:");
-                            LOG.warn("       assignedToId: " + delegateMember.getDelegationMemberId() +
-                                    " / roleMemberId: " + delegateMember.getRoleMemberId());
+                            LOG.warn(
+                                    "       assignedToId: {} / roleMemberId: {}",
+                                    delegateMember::getDelegationMemberId,
+                                    delegateMember::getRoleMemberId
+                            );
                         }
                     }
                     // If we've made it here then all of the tests pass so the principal must belong to this
@@ -1458,9 +1476,12 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             if (tempService instanceof DelegationTypeService) {
                 service = (DelegationTypeService) tempService;
             } else {
-                LOG.error("Service returned for type " + kimType + "(" + kimType.getName() +
-                        ") was not a DelegationTypeService.  Was a " +
-                        (tempService != null ? tempService.getClass() : "(null)"));
+                LOG.error(
+                        "Service returned for type {}({}) was not a DelegationTypeService.  Was a {}",
+                        () -> kimType,
+                        kimType::getName,
+                        () -> tempService != null ? tempService.getClass() : "(null)"
+                );
             }
         } else {
             // delegateType has no type - default to role type if possible
@@ -1518,7 +1539,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                 populateQualifiersForExactMatch(qualification, attributesForExactMatch)));
                     }
                 } catch (Exception e) {
-                    LOG.warn("Caught exception when attempting to invoke a role type service for role " + roleId, e);
+                    LOG.warn("Caught exception when attempting to invoke a role type service for role {}", roleId, e);
                 }
             }
         }
@@ -1553,7 +1574,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                 populateQualifiersForExactMatch(qualification, attributesForExactMatch)));
                     }
                 } catch (Exception e) {
-                    LOG.warn("Caught exception when attempting to invoke a role type service for role " + roleId, e);
+                    LOG.warn("Caught exception when attempting to invoke a role type service for role {}", roleId, e);
                 }
             }
         }
@@ -2178,8 +2199,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S, RolePermission.class);
 
         if (nextSeq == null) {
-            LOG.error("Unable to get new role permission id from sequence " +
-                    KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S);
+            LOG.error(
+                    "Unable to get new role permission id from sequence {}",
+                    KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S
+            );
             throw new RuntimeException("Unable to get new role permission id from sequence " +
                     KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S);
         }
@@ -2287,7 +2310,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         if (LOG.isTraceEnabled()) {
             LOG.trace(sb.append(ExceptionUtils.getStackTrace(new Throwable())));
         } else {
-            LOG.debug(sb.toString());
+            LOG.debug(sb);
         }
     }
 

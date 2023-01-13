@@ -18,7 +18,7 @@ import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.PredicateUtils;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kns.lookup.LookupUtils;

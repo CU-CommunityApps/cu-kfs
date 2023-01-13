@@ -50,6 +50,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
     private ParameterService parameterService;
     public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
   
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         boolean valid = true;
         GlobalVariables.getMessageMap().clearErrorPath();                

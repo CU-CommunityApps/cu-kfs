@@ -65,10 +65,12 @@ public class PreferencesForm extends KualiForm {
         this.returnMapping = returnMapping;
     }
 
+    @Override
     public String getMethodToCall() {
         return methodToCall;
     }
 
+    @Override
     public void setMethodToCall(String methodToCall) {
         Pattern p = Pattern.compile("\\w");
         if (StringUtils.isNotBlank(methodToCall)) {
@@ -99,10 +101,12 @@ public class PreferencesForm extends KualiForm {
         this.showOutbox = showOutbox;
     }
 
+    @Override
     public String getBackLocation() {
         return WebUtils.sanitizeBackLocation(this.backLocation);
     }
 
+    @Override
     public void setBackLocation(String backLocation) {
         this.backLocation = backLocation;
     }

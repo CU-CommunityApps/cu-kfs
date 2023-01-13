@@ -115,8 +115,15 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
 
         ObjectCode oc = objectCodeService.getByPrimaryId(e.getUniversityFiscalYear(), e.getChartOfAccountsCode(), e.getFinancialObjectCode());
         if (oc == null) {
-            LOG.warn(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND_FOR) + e.getUniversityFiscalYear() + "," + e.getChartOfAccountsCode() + "," + e.getFinancialObjectCode());
-            // this will be written out the ICR file. Then, when that file attempts to post, the transaction won't validate and will end up in the icr error file
+            LOG.warn(
+                    "{}{},{},{}",
+                    () -> configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_OBJECT_CODE_NOT_FOUND_FOR),
+                    e::getUniversityFiscalYear,
+                    e::getChartOfAccountsCode,
+                    e::getFinancialObjectCode
+            );
+            // this will be written out the ICR file. Then, when that file attempts to post, the transaction won't
+            // validate and will end up in the icr error file
             e.setFinancialObjectCode(icrRateDetail.getFinancialObjectCode()); 
         } else {
             e.setFinancialObjectTypeCode(oc.getFinancialObjectTypeCode());
@@ -146,7 +153,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
         try {
             createOutputEntry(e, group);
         } catch (IOException ioe) {
-            LOG.error("generateTransactions Stopped: " + ioe.getMessage());
+            LOG.error("generateTransactions Stopped: {}", ioe::getMessage);
             throw new RuntimeException("generateTransactions Stopped: " + ioe.getMessage(), ioe);
         }
 
@@ -183,13 +190,13 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
             List<Message> warnings = new ArrayList<Message>();
             warnings.add(new Message("FAILED TO GENERATE FLEXIBLE OFFSETS " + ex.getMessage(), Message.TYPE_WARNING));
             reportWriterService.writeError(et, warnings);
-            LOG.warn("FAILED TO GENERATE FLEXIBLE OFFSETS FOR EXPENDITURE TRANSACTION " + et.toString(), ex);
+            LOG.warn("FAILED TO GENERATE FLEXIBLE OFFSETS FOR EXPENDITURE TRANSACTION {}", et, ex);
         }
 
         try {
             createOutputEntry(e, group);
         } catch (IOException ioe) {
-            LOG.error("generateTransactions Stopped: " + ioe.getMessage());
+            LOG.error("generateTransactions Stopped: {}", ioe::getMessage);
             throw new RuntimeException("generateTransactions Stopped: " + ioe.getMessage(), ioe);
         }
     }

@@ -21,6 +21,7 @@ package org.kuali.kfs.sec.document.web;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.sec.SecConstants;
@@ -32,7 +33,7 @@ import org.kuali.kfs.sys.document.datadictionary.AccountingLineGroupDefinition;
 import org.kuali.kfs.sys.document.web.DefaultAccountingLineGroupImpl;
 import org.kuali.kfs.sys.document.web.RenderableAccountingLineContainer;
 import org.kuali.kfs.sys.document.web.renderers.GroupErrorsRenderer;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;

@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
-public class ConcurTestablePerson implements Person {
+public class ConcurTestablePerson extends Person {
     private static final long serialVersionUID = 156464309384726378L;
     
     private String employeeId;

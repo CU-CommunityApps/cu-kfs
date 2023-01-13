@@ -14,6 +14,7 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 
 public class CuLineItemQuantityNotZero extends LineItemQuantityNotZero {
 
+    @Override
     public boolean validate(AttributedDocumentEvent event) 
     {
         boolean valid = true;

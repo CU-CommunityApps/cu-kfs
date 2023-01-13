@@ -176,7 +176,8 @@
 
             <c:if test="${helpDeskActionList != null}">
                 <!--<p> Testing is this shows up on the screen </p> -->
-                    <html-el:text property="helpDeskActionListUserName" size="12" />
+                    <html-el:text property="helpDeskActionListUserName" size="12"
+                                  onkeypress="submitHelpDeskUser(event);" />
                     <html-el:submit property="methodToCall.helpDeskActionListLogin" styleClass="btn btn-default">Help Desk</html-el:submit>
                 <c:if test="${userSession.objectMap[KewApiConstants.HELP_DESK_ACTION_LIST_PERSON_ATTR_NAME] != null}">
                     <a href="
@@ -337,7 +338,7 @@
                                                     <c:if test="${preferences.showInitiator == KewApiConstants.PREFERENCES_YES_VAL}">
                                                         <display:column sortable="true" title="${initiatorLabel}"
                                                                                         sortProperty="routeHeader.initiatorName" class="infocell">
-                                                            <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.PersonImpl"
+                                                            <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person"
                                                                          keyValues="principalId=${result.routeHeader.initiatorPrincipalId}"
                                                                          render="true">
                                                             <c:out value="${result.routeHeader.initiatorName}" />
@@ -348,7 +349,7 @@
                                                         <display:column sortable="true" title="${delegatorLabel}" sortProperty="delegatorName" class="infocell">
                                                             <c:choose>
                                                                 <c:when test="${result.delegatorPrincipalId != null}">
-                                                                <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.PersonImpl"
+                                                                <kul:inquiry boClassName="org.kuali.kfs.kim.impl.identity.Person"
                                                                              keyValues="principalId=${result.delegatorPrincipalId}"
                                                                              render="true">
                                                                     <c:out value="${result.delegatorName}" />

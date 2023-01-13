@@ -21,7 +21,7 @@ package org.kuali.kfs.integration.cg;
 import org.kuali.kfs.integration.ar.AccountsReceivableBillingFrequency;
 import org.kuali.kfs.integration.ar.Billable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 
 import java.sql.Date;
@@ -193,6 +193,7 @@ public interface ContractsAndGrantsBillingAward extends Billable, ContractsAndGr
     /**
      * @return Returns the billingFrequencyCode.
      */
+    @Override
     String getBillingFrequencyCode();
 
     /**

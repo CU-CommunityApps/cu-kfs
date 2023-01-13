@@ -6,13 +6,13 @@
 
     <import resource="classpath:edu/cornell/kfs/kim/cu-kim-attribute-beans.xml"/>
 
-    <bean id="PersonImpl-phoneNumber" parent="PersonImpl-phoneNumber-parentBean">
+    <bean id="Person-phoneNumber" parent="Person-phoneNumber-parentBean">
         <property name="validationPattern">
             <bean parent="CuKimPhoneNumberValidationPattern"/>
         </property>
     </bean>
 
-    <bean id="PersonImpl-inquiryDefinition" parent="PersonImpl-inquiryDefinition-parentBean"
+    <bean id="Person-inquiryDefinition" parent="Person-inquiryDefinition-parentBean"
           p:inquirableClass="edu.cornell.kfs.kim.inquiry.CuPersonInquirableImpl"/>
 
 </beans>

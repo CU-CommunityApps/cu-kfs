@@ -26,7 +26,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;

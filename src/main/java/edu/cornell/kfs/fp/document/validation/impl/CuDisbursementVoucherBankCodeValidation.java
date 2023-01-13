@@ -12,6 +12,7 @@ import edu.cornell.kfs.sys.document.validation.impl.CuBankCodeValidation;
 public class CuDisbursementVoucherBankCodeValidation extends DisbursementVoucherBankCodeValidation {
     private static final Logger LOG = LogManager.getLogger();
 
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         LOG.debug("validate start");        
         DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) getAccountingDocumentForValidation();      

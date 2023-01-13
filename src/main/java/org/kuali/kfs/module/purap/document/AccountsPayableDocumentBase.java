@@ -21,6 +21,7 @@ package org.kuali.kfs.module.purap.document;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
@@ -39,7 +40,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.CampusParameter;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
-import org.kuali.kfs.kim.api.identity.Person;
 
 import java.sql.Timestamp;
 import java.util.List;

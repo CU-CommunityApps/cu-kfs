@@ -11,7 +11,7 @@ import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 

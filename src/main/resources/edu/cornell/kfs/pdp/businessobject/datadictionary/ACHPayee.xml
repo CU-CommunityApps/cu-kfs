@@ -26,7 +26,7 @@
   </bean>
 
   <bean id="ACHPayee-principalName" parent="ACHPayee-principalName-parentBean" />
-  <bean id="ACHPayee-principalName-parentBean" parent="PersonImpl-principalName" abstract="true" />
+  <bean id="ACHPayee-principalName-parentBean" parent="Person-principalName" abstract="true" />
 
   <bean parent="DataDictionaryBeanOverride">
     <property name="beanName" value="ACHPayee-lookupDefinition" />

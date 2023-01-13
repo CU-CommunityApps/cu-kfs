@@ -12,7 +12,7 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAccountingLineAuthorizer {
 

@@ -466,7 +466,7 @@ abstract class RoleServiceBase {
         try {
             return (RoleTypeService) KimImplServiceLocator.getService(serviceName);
         } catch (Exception ex) {
-            LOG.warn("Unable to find role type service with name: " + serviceName, ex);
+            LOG.warn("Unable to find role type service with name: {}", serviceName, ex);
             return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
         }
     }
@@ -494,7 +494,7 @@ abstract class RoleServiceBase {
             try {
                 return (RoleTypeService) KimImplServiceLocator.getService(serviceName);
             } catch (Exception ex) {
-                LOG.error("Unable to find role type service with name: " + serviceName, ex);
+                LOG.error("Unable to find role type service with name: {}", serviceName, ex);
                 return (RoleTypeService) KimImplServiceLocator.getService("kimNoMembersRoleTypeService");
             }
         }

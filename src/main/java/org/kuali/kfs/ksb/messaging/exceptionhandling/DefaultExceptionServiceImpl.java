@@ -52,9 +52,14 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
     private SchedulerService schedulerService;
     private boolean useQuartzScheduling;
 
+    @Override
     public void placeInExceptionRouting(Throwable throwable, PersistedMessage message) throws Exception {
-        LOG.error("Exception caught processing message " + message.getRouteQueueId() + " " +
-                message.getServiceName() + ": " + throwable);
+        LOG.error(
+                "Exception caught processing message {} {}: {}",
+                message::getRouteQueueId,
+                message::getServiceName,
+                () -> throwable
+        );
 
         AsynchronousCall methodCall;
         if (message.getMethodCall() != null) {
@@ -67,9 +72,14 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
         exceptionHandler.handleException(throwable, message);
     }
 
+    @Override
     public void placeInExceptionRoutingLastDitchEffort(Throwable throwable, PersistedMessage message) throws Exception {
-        LOG.error("Exception caught processing message " + message.getRouteQueueId() + " " +
-                message.getServiceName() + ": " + throwable);
+        LOG.error(
+                "Exception caught processing message {} {}: {}",
+                message::getRouteQueueId,
+                message::getServiceName,
+                () -> throwable
+        );
 
         AsynchronousCall methodCall;
         if (message.getMethodCall() != null) {

@@ -8,7 +8,7 @@ import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.web.AccountingLineRenderingContext;
 import org.kuali.kfs.sys.document.web.AccountingLineViewAction;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public class CuSalaryExpenseTransferAccountingLineAuthorizer extends
     SalaryExpenseTransferAccountingLineAuthorizer {

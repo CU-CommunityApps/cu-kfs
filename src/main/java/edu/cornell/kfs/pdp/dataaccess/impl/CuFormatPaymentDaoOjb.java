@@ -19,6 +19,7 @@ import edu.cornell.kfs.pdp.dataaccess.CuFormatPaymentDao;
 public class CuFormatPaymentDaoOjb extends FormatPaymentDaoOjb implements CuFormatPaymentDao {
     private static final Logger LOG = LogManager.getLogger();
    
+    @Override
     public Iterator markPaymentsForFormat(List customerIds, Timestamp paydateTs, String paymentTypes, String paymentDistribution) {
         LOG.debug("markPaymentsForFormat() started");
 

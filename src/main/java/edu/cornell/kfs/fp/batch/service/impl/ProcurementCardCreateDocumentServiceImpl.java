@@ -235,9 +235,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
                     + targetLine.getChartOfAccountsCode() + " Object Code " + targetLine.getFinancialObjectCode() 
                     + " is invalid; using default Object Code.";
             
-            if (LOG.isInfoEnabled()) {
-                LOG.info(tempErrorText);
-            }
+            LOG.info(tempErrorText);
             
             errorText += " " + tempErrorText;
             
@@ -264,9 +262,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Object Code " 
                     + transaction.getFinancialObjectCode() + " is invalid; using default error Object Code.";
             
-            if (LOG.isInfoEnabled()) {
-                LOG.info(tempErrorText);
-            }
+            LOG.info(tempErrorText);
             errorText += " " + tempErrorText;
 
             transaction.setFinancialObjectCode(getErrorObjectCode());

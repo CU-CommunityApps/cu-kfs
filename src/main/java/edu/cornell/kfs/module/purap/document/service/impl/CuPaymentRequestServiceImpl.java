@@ -171,7 +171,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         accountsPayableService.cancelAccountsPayableDocument(paymentRequest, ""); 
 
         LOG.debug("cancelExtractedPaymentRequest() PREQ {} Cancelled Without Workflow",
-                paymentRequest.getPurapDocumentIdentifier());
+                paymentRequest::getPurapDocumentIdentifier);
         LOG.debug("cancelExtractedPaymentRequest() ended");
 
         //force reindexing
@@ -200,8 +200,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
         }
         purapService.saveDocumentNoValidation(paymentRequest);
-        LOG.debug("resetExtractedPaymentRequest() PREQ {} Reset from Extracted status",
-                paymentRequest.getPurapDocumentIdentifier());
+        LOG.debug(
+                "resetExtractedPaymentRequest() PREQ {} Reset from Extracted status",
+                paymentRequest::getPurapDocumentIdentifier
+        );
         //force reindexing
         reIndexDocument(paymentRequest);
     }

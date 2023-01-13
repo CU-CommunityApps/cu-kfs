@@ -311,6 +311,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      * @param glPendingTransaction PDP entry created for payment detail
      * @param sequenceHelper       holds current entry sequence value
      */
+    @Override
     public void populateBankOffsetEntry(PaymentGroup paymentGroup, GlPendingTransaction glPendingTransaction, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         GlPendingTransaction bankPendingTransaction = new GlPendingTransaction();
 

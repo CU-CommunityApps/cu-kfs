@@ -9,7 +9,7 @@ import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.service.BatchFileAdminAuthorizationService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -28,7 +28,7 @@ public class CuBatchFileAdminAuthorizationServiceImpl extends BatchFileAdminAuth
      * in addition to calling the superclass method to check the "Administer Batch File" template.
      * 
      * @see org.kuali.kfs.sys.batch.service.impl.BatchFileAdminAuthorizationServiceImpl#canDownload(
-     * org.kuali.kfs.sys.batch.BatchFile, org.kuali.kfs.kim.api.identity.Person)
+     * org.kuali.kfs.sys.batch.BatchFile, org.kuali.kfs.kim.impl.identity.Person)
      */
     @SuppressWarnings("deprecation")
     @Override

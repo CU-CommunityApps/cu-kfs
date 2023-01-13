@@ -54,7 +54,7 @@
   
   <bean id="DisbursementVoucherBatch-processUser.name" parent="DisbursementVoucherBatch-processUser.name-parentBean" />
 
-  <bean id="DisbursementVoucherBatch-processUser.name-parentBean" abstract="true" parent="PersonImpl-name">
+  <bean id="DisbursementVoucherBatch-processUser.name-parentBean" abstract="true" parent="Person-name">
     <property name="name" value="processUser.name" />
     <property name="label" value="Process User Name" />
     <property name="shortLabel" value="Name" />

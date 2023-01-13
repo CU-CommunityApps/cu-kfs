@@ -239,7 +239,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         if (canUseApoLimitFromOrganizationOrContract(purchasingDocument)) {
             purchaseOrderTotalLimit = vendorService.getApoLimitFromContract(vendorContractGeneratedIdentifier, chart, org);
 
-            if (ObjectUtils.isNull(purchaseOrderTotalLimit) && !ObjectUtils.isNull(chart) && !ObjectUtils.isNull(org)) {
+            if (ObjectUtils.isNull(purchaseOrderTotalLimit) && ObjectUtils.isNotNull(chart) && ObjectUtils.isNotNull(org)) {
                 OrganizationParameter organizationParameter = new OrganizationParameter();
                 organizationParameter.setChartOfAccountsCode(chart);
                 organizationParameter.setOrganizationCode(org);

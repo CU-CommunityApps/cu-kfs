@@ -44,14 +44,17 @@ public class ActionTakenServiceImpl implements ActionTakenService {
 
     private ActionTakenDAO actionTakenDAO;
 
+    @Override
     public ActionTaken findByActionTakenId(String actionTakenId) {
         return getActionTakenDAO().findByActionTakenId(actionTakenId);
     }
 
+    @Override
     public ActionTaken getPreviousAction(ActionRequest actionRequest) {
         return getPreviousAction(actionRequest, null);
     }
 
+    @Override
     public ActionTaken getPreviousAction(
             ActionRequest actionRequest, List<ActionTaken> simulatedActionsTaken) {
         GroupService ims = KimApiServiceLocator.getGroupService();
@@ -85,22 +88,27 @@ public class ActionTakenServiceImpl implements ActionTakenService {
         return foundActionTaken;
     }
 
+    @Override
     public Collection<ActionTaken> findByDocumentId(String documentId) {
         return getActionTakenDAO().findByDocumentId(documentId);
     }
 
+    @Override
     public List<ActionTaken> findByDocumentIdWorkflowId(String documentId, String workflowId) {
         return getActionTakenDAO().findByDocumentIdWorkflowId(documentId, workflowId);
     }
 
+    @Override
     public List findByDocumentIdIgnoreCurrentInd(String documentId) {
         return getActionTakenDAO().findByDocumentIdIgnoreCurrentInd(documentId);
     }
 
+    @Override
     public void saveActionTaken(ActionTaken actionTaken) {
         this.getActionTakenDAO().saveActionTaken(actionTaken);
     }
 
+    @Override
     public void delete(ActionTaken actionTaken) {
         getActionTakenDAO().deleteActionTaken(actionTaken);
     }
@@ -113,10 +121,12 @@ public class ActionTakenServiceImpl implements ActionTakenService {
         this.actionTakenDAO = actionTakenDAO;
     }
 
+    @Override
     public boolean hasUserTakenAction(String principalId, String documentId) {
         return getActionTakenDAO().hasUserTakenAction(principalId, documentId);
     }
 
+    @Override
     public Timestamp getLastApprovedDate(String documentId) {
     	return getActionTakenDAO().getLastActionTakenDate(documentId, WorkflowAction.APPROVE);
     }

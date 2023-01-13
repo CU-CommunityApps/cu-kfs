@@ -35,7 +35,7 @@
   
   <!-- KFSPTS-1737 added -->
   <bean id="DisbursementPayee-principalName" parent="DisbursementPayee-principalName-parentBean"/>
-  <bean id="DisbursementPayee-principalName-parentBean" parent="PersonImpl-principalName" abstract="true">
+  <bean id="DisbursementPayee-principalName-parentBean" parent="Person-principalName" abstract="true">
     <property name="label" value="NetID"/>
   </bean>
   

@@ -8,7 +8,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.datadictionary.DocumentEntry;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;

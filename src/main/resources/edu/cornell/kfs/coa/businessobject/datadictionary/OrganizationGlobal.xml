@@ -83,7 +83,7 @@
   </bean>
 
   <bean id="OrganizationGlobal-organizationManagerUniversalId" parent="OrganizationGlobal-organizationManagerUniversalId-parentBean" />
-  <bean id="OrganizationGlobal-organizationManagerUniversalId-parentBean" abstract="true" parent="PersonImpl-principalId">
+  <bean id="OrganizationGlobal-organizationManagerUniversalId-parentBean" abstract="true" parent="Person-principalId">
     <property name="name" value="organizationManagerUniversalId" />
     <property name="label" value="Organization Manager UserID" />
     <property name="shortLabel" value="Manager UserID" />
@@ -92,7 +92,7 @@
 
   <bean id="OrganizationGlobal-organizationManagerUniversal.principalName"
       parent="OrganizationGlobal-organizationManagerUniversal.principalName-parentBean" />
-  <bean id="OrganizationGlobal-organizationManagerUniversal.principalName-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="OrganizationGlobal-organizationManagerUniversal.principalName-parentBean" abstract="true" parent="Person-principalName">
     <property name="name" value="organizationManagerUniversal.principalName" />
     <property name="label" value="Organization Manager Principal Name" />
     <property name="shortLabel" value="OrgMgr Principal Name" />
@@ -106,7 +106,7 @@
   </bean>
 
   <bean id="OrganizationGlobal-organizationManagerUniversal.name" parent="OrganizationGlobal-organizationManagerUniversal.name-parentBean" />
-  <bean id="OrganizationGlobal-organizationManagerUniversal.name-parentBean" abstract="true" parent="PersonImpl-name">
+  <bean id="OrganizationGlobal-organizationManagerUniversal.name-parentBean" abstract="true" parent="Person-name">
     <property name="name" value="organizationManagerUniversal.name" />
     <property name="label" value="Organization Manager Name" />
     <property name="required" value="false" />

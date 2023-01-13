@@ -32,6 +32,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
     // locationService is protected for sake of known customization
     protected LocationService locationService;
 
+    @Override
     public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode,
             String statePropertyConstant, String postalCodePropertyConstant) {
         boolean valid = true;

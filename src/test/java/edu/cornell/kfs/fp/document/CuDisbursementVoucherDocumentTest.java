@@ -49,7 +49,7 @@ import org.kuali.kfs.vnd.businessobject.VendorRoutingComparable;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;

@@ -141,7 +141,7 @@
  -->
   <bean id="UserProcurementProfile-principalId" parent="UserProcurementProfile-principalId-parentBean"/>
 
-  <bean id="UserProcurementProfile-principalId-parentBean"  abstract="true" parent="PersonImpl-principalId">
+  <bean id="UserProcurementProfile-principalId-parentBean"  abstract="true" parent="Person-principalId">
     <property name="name" value="principalId"/>
     <property name="forceUppercase" value="true"/>
     <property name="label" value="Person Universal Identifier"/>
@@ -165,7 +165,7 @@
   <bean id="UserProcurementProfile-profileUser.principalName"
         parent="UserProcurementProfile-profileUser.principalName-parentBean"/>
   <bean id="UserProcurementProfile-profileUser.principalName-parentBean" abstract="true"
-        parent="PersonImpl-principalName"
+        parent="Person-principalName"
         p:name="profileUser.principalName" p:label="User Principal Name"
         p:shortLabel="Principal Name" p:required="false">
       <property name="control">
@@ -178,7 +178,7 @@
   <bean id="UserProcurementProfile-profileUser.name"
         parent="UserProcurementProfile-profileUser.name-parentBean"/>
   <bean id="UserProcurementProfile-profileUser.name-parentBean" abstract="true"
-        parent="PersonImpl-name"
+        parent="Person-name"
         p:name="profileUser.name" p:label="Person Name"
         p:shortLabel="Person Name" p:required="false">
       <property name="control">

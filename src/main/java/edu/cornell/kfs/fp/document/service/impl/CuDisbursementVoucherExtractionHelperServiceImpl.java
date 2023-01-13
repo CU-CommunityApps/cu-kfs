@@ -54,9 +54,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
     @Override
     public PaymentGroup createPaymentGroup(DisbursementVoucherDocument document, Date processRunDate) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("createPaymentGroupForDisbursementVoucher() started");
-        }
+        LOG.debug("createPaymentGroupForDisbursementVoucher() started");
 
         PaymentGroup pg = new PaymentGroup();
         pg.setCombineGroups(Boolean.TRUE);
@@ -162,9 +160,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
     }
 
     protected PaymentDetail buildPaymentDetail(DisbursementVoucherDocument document, Date processRunDate) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("buildPaymentDetail() started");
-        }
+        LOG.debug("buildPaymentDetail() started");
         final String maxNoteLinesParam = parameterService.getParameterValueAsString(
                 KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
 
@@ -250,45 +246,35 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Send Check To: " + dvSpecialHandlingPersonName);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating special handling person name note: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("Creating special handling person name note: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
         }
         if (StringUtils.isNotEmpty(dvSpecialHandlingLine1Address)) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS1 + dvSpecialHandlingLine1Address);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating special handling address 1 note: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("Creating special handling address 1 note: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
         }
         if (StringUtils.isNotEmpty(dvSpecialHandlingLine2Address)) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS2 + dvSpecialHandlingLine2Address);
-           if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating special handling address 2 note: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("Creating special handling address 2 note: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
         }
         if (StringUtils.isNotEmpty(dvSpecialHandlingCity)) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText(CuDisbursementVoucherConstants.DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS3 + dvSpecialHandlingCity + ", " + dvSpecialHandlingState + " " + dvSpecialHandlingZip);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating special handling city note: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("Creating special handling city note: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
         }
         if (document.isDisbVchrAttachmentCode()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Attachment Included");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("create attachment note: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("create attachment note: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
         }
 
@@ -300,18 +286,14 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Reimbursement associated with " + dvnet.getDisbVchrServicePerformedDesc());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating non employee travel notes: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("Creating non employee travel notes: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
 
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("The total per diem amount for your daily expenses is " +
                     dvnet.getDisbVchrPerdiemActualAmount());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating non employee travel notes: "+pnt.getCustomerNoteText());
-            }
+            LOG.debug("Creating non employee travel notes: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
 
             if (dvnet.getDisbVchrPersonalCarAmount() != null && dvnet.getDisbVchrPersonalCarAmount().compareTo(KualiDecimal.ZERO) != 0) {
@@ -319,9 +301,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                 pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
                 pnt.setCustomerNoteText("The total dollar amount for your vehicle mileage is " +
                         dvnet.getDisbVchrPersonalCarAmount());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Creating non employee travel vehicle note: "+pnt.getCustomerNoteText());
-                }
+                LOG.debug("Creating non employee travel vehicle note: {}", pnt::getCustomerNoteText);
                 pd.addNote(pnt);
 
                 for (DisbursementVoucherNonEmployeeExpense exp : (List<DisbursementVoucherNonEmployeeExpense>)dvnet.getDvNonEmployeeExpenses()) {
@@ -329,9 +309,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                         pnt = new PaymentNoteText();
                         pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
                         pnt.setCustomerNoteText(exp.getDisbVchrExpenseCompanyName() + " " + exp.getDisbVchrExpenseAmount());
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Creating non employee travel expense note: "+pnt.getCustomerNoteText());
-                        }
+                        LOG.debug("Creating non employee travel expense note: {}", pnt::getCustomerNoteText);
                         pd.addNote(pnt);
                     }
                 }
@@ -342,9 +320,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
             pd.addNote(pnt);
-            if (LOG.isDebugEnabled()) {
-                LOG.info("Creating prepaid travel note note: "+pnt.getCustomerNoteText());
-            }
+            LOG.info("Creating prepaid travel note note: {}", pnt::getCustomerNoteText);
 
             DisbursementVoucherPreConferenceDetail dvpcd = document.getDvPreConferenceDetail();
 
@@ -354,9 +330,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                     pnt = new PaymentNoteText();
                     pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
                     pnt.setCustomerNoteText(dvpcr.getDvConferenceRegistrantName() + " " + dvpcr.getDisbVchrExpenseAmount());
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Creating pre-paid conference registrants note: "+pnt.getCustomerNoteText());
-                    }
+                    LOG.debug("Creating pre-paid conference registrants note: {}", pnt::getCustomerNoteText);
                     pd.addNote(pnt);
                 }
             }
@@ -371,9 +345,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
     }
 
     public Map<String, List<DisbursementVoucherDocument>> retrievePaymentSourcesByCampus(boolean immediatesOnly) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("retrievePaymentSourcesByCampus() started");
-        }
+        LOG.debug("retrievePaymentSourcesByCampus() started");
 
         if (immediatesOnly) {
             throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal " +

@@ -34,7 +34,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;

@@ -18,7 +18,7 @@ import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
@@ -46,7 +46,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     @Override
     protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
         Collection<DocumentHeader> documentList = getDocumentsToDisapprove();
-        LOG.info("Total documents to process " + documentList.size());
+        LOG.info("Total documents to process {}", documentList::size);
         String documentHeaderId = null;
 
         // CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
@@ -62,10 +62,13 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
                        String successMessage = buildSuccessMessage(document);
                        autoDisapprovalYearEndDocument(document, annotation);
                        sendAcknowledgement(document.getDocumentHeader(), annotation);
-                       LOG.info("The document with header id: " + documentHeaderId + " is automatically disapproved by this job.");
+                       LOG.info(
+                               "The document with header id: {} is automatically disapproved by this job.",
+                               documentHeaderId
+                       );
                        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
                    } catch (Exception e) {
-                       LOG.error("Exception encountered trying to auto disapprove the document " + e.getMessage());
+                       LOG.error("Exception encountered trying to auto disapprove the document {}", e::getMessage);
                        String message = "Exception encountered trying to auto disapprove the document: ".concat(documentHeaderId);
                        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
                    }

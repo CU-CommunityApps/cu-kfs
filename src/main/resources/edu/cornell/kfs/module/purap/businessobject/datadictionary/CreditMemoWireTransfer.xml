@@ -199,7 +199,7 @@
   </bean>
   <bean id="CreditMemoWireTransfer-cmPayeeAccountName" parent="CreditMemoWireTransfer-cmPayeeAccountName-parentBean"/>
 
-  <bean id="CreditMemoWireTransfer-cmPayeeAccountName-parentBean" abstract="true" parent="PersonImpl-principalName">
+  <bean id="CreditMemoWireTransfer-cmPayeeAccountName-parentBean" abstract="true" parent="Person-principalName">
     <property name="name" value="cmPayeeAccountName"/>
     <property name="forceUppercase" value="false"/>
     <property name="label" value="Bank Acct in the Name of"/>

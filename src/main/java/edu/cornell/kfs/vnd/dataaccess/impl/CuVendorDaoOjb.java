@@ -35,6 +35,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
 
     private static final String ACTIVE_INDICATOR = "activeIndicator";
     
+    @Override
     public VendorContract getVendorB2BContract(VendorDetail vendorDetail, String campus, Date currentSqlDate) {
        Criteria header = new Criteria();
         Criteria detail = new Criteria();

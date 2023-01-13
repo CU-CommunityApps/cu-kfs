@@ -91,10 +91,12 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
         this.customActions = customActions;
     }
 
+    @Override
     public String getRowStyleClass() {
         return rowStyleClass;
     }
 
+    @Override
     public void setRowStyleClass(String rowStyleClass) {
         this.rowStyleClass = rowStyleClass;
     }

@@ -8,8 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.inquiry.PersonInquirableImpl;
 import org.kuali.kfs.kim.service.UiDocumentService;
 import org.kuali.kfs.kns.web.ui.Field;
@@ -72,8 +71,8 @@ public class CuPersonInquirableImpl extends PersonInquirableImpl {
             }
         }
 
-        if (person != null && person instanceof PersonImpl) {
-            ((PersonImpl) person).populateMembers();
+        if (person != null && person instanceof Person) {
+            ((Person) person).populateMembers();
         }
         return person;
 

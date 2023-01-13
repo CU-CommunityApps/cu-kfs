@@ -19,7 +19,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.krad.bo.KualiCode;
 import org.kuali.kfs.krad.service.BusinessObjectService;

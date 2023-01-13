@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.kuali.kfs.datadictionary.Action;
 import org.kuali.kfs.datadictionary.BusinessObjectAdminService;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.UrlFactory;

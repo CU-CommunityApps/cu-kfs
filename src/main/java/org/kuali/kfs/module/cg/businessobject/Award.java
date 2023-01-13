@@ -30,7 +30,7 @@ import org.kuali.kfs.integration.cg.CGIntegrationConstants;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsLetterOfCreditFund;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -159,13 +159,13 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * Dummy value used to facilitate lookups
      */
     private transient String lookupProjectDirectorUniversalIdentifier;
-    private transient PersonImpl lookupProjectDirector;
+    private transient Person lookupProjectDirector;
 
     private final String userLookupRoleNamespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
     private final String userLookupRoleName = KFSConstants.SysKimApiConstants.CONTRACTS_AND_GRANTS_PROJECT_DIRECTOR;
 
     private transient String lookupFundMgrPersonUniversalIdentifier;
-    private transient PersonImpl lookupFundMgrPerson;
+    private transient Person lookupFundMgrPerson;
 
     private transient String scheduleInquiryTitle;
 
@@ -853,6 +853,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         this.routingOrg = primaryAwardOrganization.getOrganizationCode();
     }
 
+    @Override
     public InstrumentType getInstrumentType() {
         return instrumentType;
     }
@@ -896,11 +897,11 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public PersonImpl getLookupProjectDirector() {
+    public Person getLookupProjectDirector() {
         return lookupProjectDirector;
     }
 
-    public void setLookupProjectDirector(PersonImpl lookupProjectDirector) {
+    public void setLookupProjectDirector(Person lookupProjectDirector) {
         this.lookupProjectDirector = lookupProjectDirector;
     }
 
@@ -915,7 +916,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     @Override
     public String getLookupProjectDirectorUniversalIdentifier() {
-        lookupProjectDirector = (PersonImpl) SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
+        lookupProjectDirector = (Person) SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
                 lookupProjectDirectorUniversalIdentifier, lookupProjectDirector);
         return lookupProjectDirectorUniversalIdentifier;
     }
@@ -1144,11 +1145,11 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public PersonImpl getLookupFundMgrPerson() {
+    public Person getLookupFundMgrPerson() {
         return lookupFundMgrPerson;
     }
 
-    public void setLookupFundMgrPerson(PersonImpl lookupFundMgrPerson) {
+    public void setLookupFundMgrPerson(Person lookupFundMgrPerson) {
         this.lookupFundMgrPerson = lookupFundMgrPerson;
     }
 

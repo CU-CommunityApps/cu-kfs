@@ -9,7 +9,7 @@ import org.kuali.kfs.module.ar.businessobject.CustomerAddress;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.service.impl.AREmailServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public class CuAREmailServiceImpl extends AREmailServiceImpl {
     

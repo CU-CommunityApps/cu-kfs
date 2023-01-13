@@ -49,7 +49,7 @@ import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;

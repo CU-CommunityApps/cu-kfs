@@ -26,7 +26,7 @@ import org.kuali.kfs.module.purap.document.service.impl.PurchaseOrderServiceImpl
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
@@ -121,9 +121,12 @@ public class CuPurchaseOrderServiceImpl extends PurchaseOrderServiceImpl {
 //            String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(po.getPurchaseOrderTransmissionMethodCode());
           // Forcing all the POs to transmit via Electronic, so they all route to SciQuest for transmission, regardless of value provided.
           String newStatusCode = PurchaseOrderStatuses.STATUSES_BY_TRANSMISSION_TYPE.get(PurapConstants.POTransmissionMethods.ELECTRONIC);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("setupDocumentForPendingFirstTransmission() Purchase Order Transmission Type is '" + po.getPurchaseOrderTransmissionMethodCode() + "' setting status to '" + newStatusCode + "'");
-            }
+          LOG.debug(
+                  "setupDocumentForPendingFirstTransmission() Purchase Order Transmission Type is '{}' setting "
+                  + "status to '{}'",
+                  po::getPurchaseOrderTransmissionMethodCode,
+                  () -> newStatusCode
+          );
           po.updateAndSaveAppDocStatus(newStatusCode);
         }
     }

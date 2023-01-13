@@ -28,7 +28,7 @@ import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.util.ObjectUtils;

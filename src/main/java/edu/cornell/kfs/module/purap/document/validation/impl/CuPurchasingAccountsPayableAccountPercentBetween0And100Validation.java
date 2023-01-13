@@ -15,6 +15,7 @@ public class CuPurchasingAccountsPayableAccountPercentBetween0And100Validation e
 
 private PurApAccountingLine accountingLine;
     
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         boolean valid = true;
         double pct = accountingLine.getAccountLinePercent().doubleValue();

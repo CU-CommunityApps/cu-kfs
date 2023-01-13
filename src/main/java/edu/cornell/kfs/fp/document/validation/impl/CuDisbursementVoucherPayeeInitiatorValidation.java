@@ -12,7 +12,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
@@ -25,6 +25,7 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
     
     protected AccountingDocument accountingDocumentForValidation;
     
+    @Override
     public boolean validate(AttributedDocumentEvent event) {
         LOG.debug("validate start");        
         boolean isValid = true;

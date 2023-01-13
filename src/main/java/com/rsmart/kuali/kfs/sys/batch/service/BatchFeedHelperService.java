@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.report.ReportInfo;
-import org.kuali.kfs.kim.api.identity.Person;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.document.Document;

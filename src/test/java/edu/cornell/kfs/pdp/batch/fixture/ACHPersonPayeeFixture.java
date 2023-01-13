@@ -1,8 +1,7 @@
 package edu.cornell.kfs.pdp.batch.fixture;
 
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.kim.api.identity.Person;
-import org.kuali.kfs.kim.impl.identity.PersonImpl;
+import org.kuali.kfs.kim.impl.identity.Person;
 
 public enum ACHPersonPayeeFixture {
     JOHN_DOE("1234567", "jad987", "2345678", "Doe, John A.", "1122333", "jad987@someplace.edu"),
@@ -32,7 +31,7 @@ public enum ACHPersonPayeeFixture {
         return new MockACHPerson(this);
     }
 
-    public static final class MockACHPerson extends PersonImpl {
+    public static final class MockACHPerson extends Person {
         private static final long serialVersionUID = 1L;
         
         public MockACHPerson(ACHPersonPayeeFixture fixture) {

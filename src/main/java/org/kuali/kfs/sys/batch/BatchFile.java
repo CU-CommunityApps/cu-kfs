@@ -29,6 +29,7 @@ import java.util.Base64;
 import java.util.Date;
 
 public class BatchFile extends TransientBusinessObjectBase {
+
     private static final Logger LOG = LogManager.getLogger();
     public static final String CACHE_NAME = "BatchFile";
 
@@ -56,15 +57,19 @@ public class BatchFile extends TransientBusinessObjectBase {
             file = new File(BatchFileUtils.resolvePathToAbsolutePath(fullPath));
         } catch (UnsupportedOperationException uoe) {
             String msg = "Unable to locate a batch file corresponding to id: " + id;
-            LOG.error(msg + ". Resolved path for this id: " + fullPath + ". This may be indicative of a location " +
-                    "outside permitted batch file locations.");
+            LOG.error(
+                    "{}. Resolved path for this id: {}. This may be indicative of a location outside permitted batch "
+                    + "file locations.",
+                    msg,
+                    fullPath
+            );
             FileNotFoundException fnfe = new FileNotFoundException(msg);
             fnfe.initCause(uoe);
             throw fnfe;
         }
         if (!file.exists()) {
             String msg = "Unable to locate a batch file corresponding to id: " + id;
-            LOG.error(msg + ". Resolved path for this id: " + fullPath);
+            LOG.error("{}. Resolved path for this id: {}", msg, fullPath);
             throw new FileNotFoundException(msg);
         }
     }
