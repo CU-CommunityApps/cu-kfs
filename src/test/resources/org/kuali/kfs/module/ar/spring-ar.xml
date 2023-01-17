@@ -1,0 +1,1668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2022 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="arModuleConfiguration" parent="arModuleConfiguration-parentBean"/>
+    <bean id="arModuleConfiguration-parentBean" class="org.kuali.kfs.sys.FinancialSystemModuleConfiguration"
+          abstract="true" p:namespaceCode="KFS-AR" p:initializeDataDictionary="true">
+        <property name="packagePrefixes">
+            <list>
+                <value>org.kuali.kfs.module.ar</value>
+                <value>org.kuali.kfs.integration.ar</value>
+            </list>
+        </property>
+        <property name="externalizableBusinessObjectImplementations">
+            <map>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomer"
+                       value="org.kuali.kfs.module.ar.businessobject.Customer"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress"
+                       value="org.kuali.kfs.module.ar.businessobject.CustomerAddress"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddressEmail"
+                       value="org.kuali.kfs.module.ar.businessobject.CustomerAddressEmail"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddressType"
+                       value="org.kuali.kfs.module.ar.businessobject.CustomerAddressType"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomerInvoiceDetail"
+                       value="org.kuali.kfs.module.ar.businessobject.CustomerInvoiceDetail"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomerType"
+                       value="org.kuali.kfs.module.ar.businessobject.CustomerType"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableDocumentHeader"
+                       value="org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableDunningCampaign"
+                       value="org.kuali.kfs.module.ar.businessobject.DunningCampaign"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableMilestoneSchedule"
+                       value="org.kuali.kfs.module.ar.businessobject.MilestoneSchedule"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableOrganizationOptions"
+                       value="org.kuali.kfs.module.ar.businessobject.OrganizationOptions"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivablePredeterminedBillingSchedule"
+                       value="org.kuali.kfs.module.ar.businessobject.PredeterminedBillingSchedule"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableSystemInformation"
+                       value="org.kuali.kfs.module.ar.businessobject.SystemInformation"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableCustomerInvoiceRecurrenceDetails"
+                       value="org.kuali.kfs.module.ar.businessobject.CustomerInvoiceRecurrenceDetails"/>
+                <entry key="org.kuali.kfs.integration.ar.AccountsReceivableBillingFrequency"
+                       value="org.kuali.kfs.module.ar.businessobject.BillingFrequency"/>
+            </map>
+        </property>
+        <property name="dataDictionaryPackages">
+            <list>
+                <value>classpath:org/kuali/kfs/module/ar/businessobject/datadictionary/*.xml</value>
+                <value>classpath:org/kuali/kfs/module/ar/document/datadictionary/*.xml</value>
+            </list>
+        </property>
+        <property name="databaseRepositoryFilePaths">
+            <list>
+                <value>org/kuali/kfs/module/ar/ojb-ar.xml</value>
+            </list>
+        </property>
+        <property name="jobNames">
+            <list>
+                <value>lockboxJob</value>
+                <value>customerLoadJob</value>
+                <value>invoiceRecurrenceJob</value>
+                <value>customerInvoiceWriteoffBatchJob</value>
+                <value>letterOfCreditJob</value>
+                <value>contractsGrantsInvoiceDocumentJob</value>
+                <value>upcomingMilestoneNotificationJob</value>
+                <value>clearContractsGrantsInvoiceDocumentErrorLogJob</value>
+            </list>
+        </property>
+        <property name="triggerNames">
+            <list>
+                <value>lockboxJobTrigger</value>
+                <value>invoiceRecurrenceJobTrigger</value>
+            </list>
+        </property>
+        <property name="scriptConfigurationFilePaths">
+            <list>
+                <value>org/kuali/kfs/module/ar/dwr-ar.xml</value>
+            </list>
+        </property>
+        <property name="fiscalYearMakers">
+            <list>
+                <ref bean="systemInformationFiscalYearMaker"/>
+                <ref bean="organizationAccountingDefaultFiscalYearMaker"/>
+                <ref bean="cgbInvoiceObjectCodeFiscalYearMaker"/>
+            </list>
+        </property>
+        <property name="batchFileDirectories">
+            <list>
+                <value>${reports.directory}/ar</value>
+                <value>${staging.directory}/ar/customer</value>
+                <value>${staging.directory}/ar/invoiceWriteoff</value>
+                <value>${staging.directory}/ar/lockbox</value>
+            </list>
+        </property>
+        <property name="templateFileDirectories">
+            <map>
+                <entry key="templates.directory" value="${templates.directory}/ar"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="arModuleService" parent="arModuleService-parentBean"/>
+    <bean id="arModuleService-parentBean" class="org.kuali.kfs.sys.service.impl.KfsModuleServiceImpl" abstract="true"
+          p:moduleConfiguration-ref="arModuleConfiguration"/>
+
+    <bean id="accountsReceivablePdfHelperService" parent="accountsReceivablePdfHelperService-parentBean"/>
+    <bean id="accountsReceivablePdfHelperService-parentBean"
+          class="org.kuali.kfs.module.ar.service.impl.AccountsReceivablePdfHelperServiceImpl" abstract="true"/>
+
+    <bean id="accountsReceivableModuleService" parent="accountsReceivableModuleService-parentBean"/>
+    <bean id="accountsReceivableModuleService-parentBean"
+          class="org.kuali.kfs.module.ar.service.impl.AccountsReceivableModuleServiceImpl" abstract="true"
+          p:accountsReceivablePendingEntryService-ref="accountsReceivablePendingEntryService"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"
+          p:businessObjectService-ref="businessObjectService" p:customerAddressService-ref="customerAddressService"
+          p:customerCreditMemoDetailService-ref="customerCreditMemoDetailService"
+          p:customerDocumentService-ref="customerDocumentService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:customerInvoiceDetailService-ref="customerInvoiceDetailService"
+          p:customerLookupable-ref="customerLookupable" p:customerService-ref="customerService"
+          p:documentService-ref="documentService"
+          p:electronicPaymentClaimingDocumentGenerationStrategy-ref="cashControlElectronicPaymentClaimingDocumentHelper"
+          p:financialSystemUserService-ref="financialSystemUserService" p:kualiModuleService-ref="kualiModuleService"
+          p:parameterService-ref="parameterService"  p:systemInformationService-ref="systemInformationService"/>
+
+    <bean id="accountsReceivableModuleBillingService" parent="accountsReceivableModuleBillingService-parentBean"/>
+    <bean id="accountsReceivableModuleBillingService-parentBean"
+          class="org.kuali.kfs.module.ar.service.impl.AccountsReceivableModuleBillingServiceImpl" abstract="true"
+          p:parameterService-ref="parameterService" p:businessObjectService-ref="businessObjectService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:configurationService-ref="configurationService" p:kualiModuleService-ref="kualiModuleService"/>
+          
+    <bean id="ArAuthorizationConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap"
+          p:constantClass="org.kuali.kfs.module.ar.ArAuthorizationConstants"/>
+
+    <bean id="ArConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap"
+          p:constantClass="org.kuali.kfs.module.ar.ArConstants"/>
+
+    <bean id="ArKeyConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap"
+          p:constantClass="org.kuali.kfs.module.ar.ArKeyConstants"/>
+
+    <bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
+        <property name="attributes">
+            <map>
+                <entry key="ArAuthorizationConstants" value-ref="ArAuthorizationConstants"/>
+                <entry key="ArConstants" value-ref="ArConstants"/>
+                <entry key="ArKeyConstants" value-ref="ArKeyConstants"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--  AR DAOs  -->
+    <bean id="lockboxDao" parent="platformAwareDao" class="org.kuali.kfs.module.ar.dataaccess.impl.LockboxDaoOjb"/>
+    <bean id="customerInvoiceDocumentDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.CustomerInvoiceDocumentDaoOjb"/>
+    <bean id="accountsReceivableDocumentHeaderDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.AccountsReceivableDocumentHeaderDaoOjb"/>
+    <bean id="customerInvoiceDetailDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.CustomerInvoiceDetailDaoOjb"/>
+    <bean id="cashControlDetailDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.CashControlDetailDaoOjb"/>
+    <bean id="nonAppliedHoldingDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.NonAppliedHoldingDaoOjb"/>
+    <bean id="customerAgingReportDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.dataaccess.impl.CustomerAgingReportDaoOjb"/>
+    <bean id="contractsGrantsInvoiceDocumentDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.ContractsGrantsInvoiceDocumentDaoOjb"/>
+    <bean id="awardAccountObjectCodeTotalBilledDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.dataaccess.impl.AwardAccountObjectCodeTotalBilledDaoOjb"/>
+    <bean id="cashControlDocumentDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.document.dataaccess.impl.CashControlDocumentDaoOjb"/>
+    <bean id="milestoneDao" parent="platformAwareDao"
+          class="org.kuali.kfs.module.ar.dataaccess.impl.MilestoneDaoOjb"/>
+
+    <bean id="contractsGrantsInvoiceCreateDocumentService"
+          parent="contractsGrantsInvoiceCreateDocumentService-parentBean"/>
+    <bean id="contractsGrantsInvoiceCreateDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.service.impl.ContractsGrantsInvoiceCreateDocumentServiceImpl" abstract="true"
+          p:accountService-ref="accountService"
+          p:accountingPeriodService-ref="accountingPeriodService"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"
+          p:awardAccountObjectCodeTotalBilledDao-ref="awardAccountObjectCodeTotalBilledDao"
+          p:businessObjectService-ref="businessObjectService"
+          p:configurationService-ref="configurationService"
+          p:contractsGrantsBillingAwardVerificationService-ref="contractsGrantsBillingAwardVerificationService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:contractsGrantsBillingUtilityService-ref="contractsGrantsBillingUtilityService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:costCategoryService-ref="costCategoryService"
+          p:customerService-ref="customerService"
+          p:customerAddressService-ref="customerAddressService"
+          p:dateTimeService-ref="dateTimeService"
+          p:dataDictionaryService-ref="dataDictionaryService"
+          p:documentService-ref="documentService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"
+          p:kualiModuleService-ref="kualiModuleService"
+          p:parameterService-ref="parameterService"
+          p:verifyBillingFrequencyService-ref="verifyBillingFrequencyService"
+          p:workflowDocumentService-ref="workflowDocumentService"
+          p:universityDateService-ref="universityDateService"
+          p:optionsService-ref="optionsService"
+          p:financialSystemUserService-ref="financialSystemUserService"/>
+
+    <bean id="contractsGrantsInvoiceBatchCreateDocumentService"
+          parent="contractsGrantsInvoiceBatchCreateDocumentService-parentBean"/>
+    <bean id="contractsGrantsInvoiceBatchCreateDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.ContractsGrantsInvoiceBatchCreateDocumentServiceImpl"
+          abstract="true"
+          p:contractsGrantsInvoiceCreateDocumentService-ref="contractsGrantsInvoiceCreateDocumentService"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="letterOfCreditJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="letterOfCreditCreateAndRouteDocumentsStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="upcomingMilestoneNotificationJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="upcomingMilestoneNotificationStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="arEmailService" parent="arEmailService-parentBean"/>
+    <bean id="arEmailService-parentBean" class="org.kuali.kfs.module.ar.service.impl.AREmailServiceImpl" abstract="true"
+          p:emailService-ref="emailService" p:parameterService-ref="parameterService"
+          p:dataDictionaryService-ref="dataDictionaryService"
+          p:kualiConfigurationService-ref="configurationService"
+          p:businessObjectService-ref="businessObjectService" p:documentService-ref="documentService"
+          p:noteService-ref="noteService" p:kualiModuleService-ref="kualiModuleService"
+          p:contractsGrantsBillingUtilityService-ref="contractsGrantsBillingUtilityService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
+
+    <bean id="contractsGrantsInvoiceDocumentBatchStep"
+          class="org.kuali.kfs.module.ar.batch.ContractsGrantsInvoiceDocumentBatchStep" parent="step"
+          p:accountsReceivableModuleBillingService-ref="accountsReceivableModuleBillingService"
+          p:cgInvoiceBatchDocumentCreateService-ref="contractsGrantsInvoiceBatchCreateDocumentService"
+          p:dateTimeService-ref="dateTimeService" p:batchFileDirectoryName="${reports.directory}/ar"/>
+
+    <bean id="contractsGrantsInvoiceRouteDocumentsStep"
+          class="org.kuali.kfs.module.ar.batch.ContractsGrantsInvoiceRouteDocumentsStep" parent="step"
+          p:accountsReceivableModuleBillingService-ref="accountsReceivableModuleBillingService"
+          p:cgInvoiceDocumentCreateService-ref="contractsGrantsInvoiceCreateDocumentService"/>
+
+    <bean id="contractsGrantsInvoiceDocumentJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="contractsGrantsInvoiceDocumentBatchStep"/>
+                <ref bean="contractsGrantsInvoiceRouteDocumentsStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsBillingUtilityService" parent="contractsGrantsBillingUtilityService-parentBean"/>
+    <bean id="contractsGrantsBillingUtilityService-parentBean"
+          class="org.kuali.kfs.module.ar.service.impl.ContractsGrantsBillingUtilityServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="contractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean"/>
+    <bean id="contractsGrantsInvoiceDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsInvoiceDocumentServiceImpl" abstract="true"
+          p:accountsReceivablePendingEntryService-ref="accountsReceivablePendingEntryService"
+          p:attachmentService-ref="attachmentService"
+          p:businessObjectService-ref="businessObjectService"
+          p:configurationService-ref="configurationService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:contractsGrantsBillingUtilityService-ref="contractsGrantsBillingUtilityService"
+          p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"
+          p:costCategoryService-ref="costCategoryService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:dateTimeService-ref="dateTimeService"
+          p:documentService-ref="documentService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"
+          p:identityService-ref="identityService"
+          p:kualiModuleService-ref="kualiModuleService"
+          p:kualiRuleService-ref="kualiRuleService"
+          p:noteService-ref="noteService"
+          p:objectCodeService-ref="objectCodeService"
+          p:personService-ref="personService"
+          p:parameterService-ref="parameterService"
+          p:permissionService-ref="permissionService"
+          p:universityDateService-ref="universityDateService"
+          p:accountingPeriodService-ref="accountingPeriodService"
+          p:objectTypeService-ref="objectTypeService"
+    >
+        <property name="suspensionCategories">
+            <list>
+                <ref bean="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory"/>
+                <ref bean="invoiceAmountLessThanInvoiceMinimumSuspensionCategory"/>
+                <ref bean="reportsRequiredSuspensionCategory"/>
+                <ref bean="awardStopDateSuspensionCategory"/>
+                <ref bean="costCategoryCodesSuspensionCategory"/>
+                <ref bean="letterOfCreditRemainingAmountSuspensionCategory"/>
+                <ref bean="activeExpiredAccountsSuspensionCategory"/>
+                <ref bean="closedAccountWithCurrentExpendituresSuspensionCategory"/>
+                <ref bean="awardStopWorkSuspensionCategory"/>
+                <ref bean="awardStartDateSuspensionCategory"/>
+                <ref bean="autoApproveIsNoSuspensionCategory"/>
+                <ref bean="invoiceBillingPeriodSuspensionCategory"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory"
+          parent="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory-parentBean"/>
+    <bean id="totalAmountBilledToDateExceedsTotalBudgetSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.TotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory"
+          abstract="true" p:code="1"/>
+
+    <bean id="invoiceAmountLessThanInvoiceMinimumSuspensionCategory"
+          parent="invoiceAmountLessThanInvoiceMinimumSuspensionCategory-parentBean"/>
+    <bean id="invoiceAmountLessThanInvoiceMinimumSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.InvoiceAmountLessThanInvoiceMinimumSuspensionCategory"
+          abstract="true" p:code="2"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
+
+    <bean id="reportsRequiredSuspensionCategory" parent="reportsRequiredSuspensionCategory-parentBean"/>
+    <bean id="reportsRequiredSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.ReportsRequiredSuspensionCategory" abstract="true"
+          p:code="3"/>
+
+    <bean id="awardStopDateSuspensionCategory" parent="awardStopDateSuspensionCategory-parentBean"/>
+    <bean id="awardStopDateSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.AwardStopDateSuspensionCategory" abstract="true"
+          p:code="6" p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="costCategoryCodesSuspensionCategory" parent="costCategoryCodesSuspensionCategory-parentBean"/>
+    <bean id="costCategoryCodesSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.CostCategoryCodesSuspensionCategory" abstract="true"
+          p:code="7"/>
+
+    <bean id="letterOfCreditRemainingAmountSuspensionCategory"
+          parent="letterOfCreditRemainingAmountSuspensionCategory-parentBean"/>
+    <bean id="letterOfCreditRemainingAmountSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.LetterOfCreditRemainingAmountSuspensionCategory"
+          abstract="true" p:code="8"/>
+
+    <bean id="activeExpiredAccountsSuspensionCategory" parent="activeExpiredAccountsSuspensionCategory-parentBean"/>
+    <bean id="activeExpiredAccountsSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.ActiveExpiredAccountsSuspensionCategory"
+          abstract="true" p:code="9" p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="closedAccountWithCurrentExpendituresSuspensionCategory"
+          parent="closedAccountWithCurrentExpendituresSuspensionCategory-parentBean"/>
+    <bean id="closedAccountWithCurrentExpendituresSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.ClosedAccountWithCurrentExpendituresSuspensionCategory"
+          abstract="true" p:code="11" p:accountService-ref="accountService"/>
+
+    <bean id="awardStopWorkSuspensionCategory" parent="awardStopWorkSuspensionCategory-parentBean"/>
+    <bean id="awardStopWorkSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.AwardStopWorkSuspensionCategory" abstract="true"
+          p:code="12"/>
+
+    <bean id="awardStartDateSuspensionCategory" parent="awardStartDateSuspensionCategory-parentBean"/>
+    <bean id="awardStartDateSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.AwardStartDateSuspensionCategory" abstract="true"
+          p:code="13" p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="autoApproveIsNoSuspensionCategory" parent="autoApproveIsNoSuspensionCategory-parentBean"/>
+    <bean id="autoApproveIsNoSuspensionCategory-parentBean"
+          class="org.kuali.kfs.module.ar.document.validation.impl.AutoApproveIsNoSuspensionCategory" abstract="true"
+          p:code="14"/>
+
+    <bean id="invoiceBillingPeriodSuspensionCategory" parent="invoiceBillingPeriodSuspensionCategory-parentBean"/>
+    <bean id="invoiceBillingPeriodSuspensionCategory-parentBean"
+          abstract="true"
+          class="org.kuali.kfs.module.ar.document.validation.impl.InvoiceBillingPeriodSuspensionCategory"
+          p:code="15"
+          p:accountingPeriodService-ref="accountingPeriodService"
+          p:dateTimeService-ref="dateTimeService"
+          p:verifyBillingFrequencyService-ref="verifyBillingFrequencyService"/>
+
+    <bean id="verifyBillingFrequencyService" parent="verifyBillingFrequencyService-parentBean"/>
+    <bean id="verifyBillingFrequencyService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.VerifyBillingFrequencyServiceImpl" abstract="true"
+          p:universityDateService-ref="universityDateService" p:businessObjectService-ref="businessObjectService"
+          p:accountingPeriodService-ref="accountingPeriodService" p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="contractsGrantsInvoiceLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsInvoiceLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService"
+          p:contractsGrantsInvoiceReportService-ref="contractsGrantsInvoiceReportService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:permissionService-ref="permissionService"/>
+
+    <bean id="invoiceRecurrenceLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype"
+          p:lookupableHelperService-ref="invoiceRecurrenceLookupableHelperService" />
+
+    <bean id="invoiceRecurrenceLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.InvoiceRecurrenceLookupableHelperServiceImpl"
+          scope="prototype"
+          parent="lookupableHelperService"
+          p:identityService-ref="identityService" />
+
+    <bean id="contractsGrantsInvoiceLookupResultLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="contractsGrantsInvoiceLookupableHelperService"/>
+
+    <bean id="generateDunningLettersLookupableHelperService"
+          parent="generateDunningLettersLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="generateDunningLettersLookupableHelperService-parentBean" abstract="true"
+          parent="lookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.GenerateDunningLettersLookupableHelperServiceImpl"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:accountService-ref="accountService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:dunningLetterService-ref="dunningLetterService" p:personService-ref="personService"
+          p:parameterService-ref="parameterService"/>
+
+    <bean id="generateDunningLettersLookupResultLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="generateDunningLettersLookupableHelperService"/>
+
+    <bean id="letterOfCreditCreateAndRouteDocumentsStep"
+          class="org.kuali.kfs.module.ar.batch.LetterOfCreditCreateAndRouteDocumentsStep" parent="step"
+          p:accountsReceivableModuleBillingService-ref="accountsReceivableModuleBillingService"
+          p:letterOfCreditCreateService-ref="letterOfCreditCreateService"
+          p:batchFileDirectoryName="${reports.directory}/ar"/>
+
+    <bean id="upcomingMilestoneNotificationStep" parent="upcomingMilestoneNotificationStep-parentBean"/>
+    <bean id="upcomingMilestoneNotificationStep-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.batch.UpcomingMilestoneNotificationStep" parent="step"
+          p:accountsReceivableModuleBillingService-ref="accountsReceivableModuleBillingService"
+          p:upcomingMilestoneNotificationService-ref="upcomingMilestoneNotificationService"/>
+
+    <bean id="upcomingMilestoneNotificationService" parent="upcomingMilestoneNotificationService-parentBean"/>
+    <bean id="upcomingMilestoneNotificationService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.UpcomingMilestoneNotificationServiceImpl" abstract="true"
+          p:arEmailService-ref="arEmailService" p:dateTimeService-ref="dateTimeService"
+          p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"
+          p:milestoneDao-ref="milestoneDao"/>
+
+    <bean id="letterOfCreditCreateService" parent="letterOfCreditCreateService-parentBean"/>
+    <bean id="letterOfCreditCreateService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.LetterOfCreditCreateServiceImpl" abstract="true"
+          p:documentService-ref="documentService" p:cashControlDocumentService-ref="cashControlDocumentService"
+          p:configService-ref="configurationService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:dateTimeService-ref="dateTimeService" p:financialSystemDocumentService-ref="financialSystemDocumentService"
+          p:generalLedgerPendingEntryService-ref="generalLedgerPendingEntryService"
+          p:kualiModuleService-ref="kualiModuleService" p:parameterService-ref="parameterService"
+          p:paymentApplicationDocumentService-ref="paymentApplicationDocumentService"
+          p:workflowDocumentService-ref="workflowDocumentService"/>
+
+    <bean id="contractsGrantsLookupableHelperService" abstract="true"
+          parent="contractsGrantsLookupableHelperService-parentBean"/>
+    <bean id="contractsGrantsLookupableHelperService-parentBean" abstract="true" parent="lookupableHelperService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="collectionsReportLookupableHelperService" abstract="true"
+          parent="collectionsReportLookupableHelperService-parentBean"/>
+    <bean id="collectionsReportLookupableHelperService-parentBean" abstract="true"
+          parent="contractsGrantsLookupableHelperService" p:configurationService-ref="configurationService"/>
+
+    <bean id="contractsGrantsInvoiceReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsInvoiceReportLookupableHelperServiceImpl"
+          scope="prototype" parent="contractsGrantsLookupableHelperService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"
+          p:dateTimeService-ref="dateTimeService" p:lookupDao-ref="lookupDao"/>
+
+    <bean id="contractsGrantsInvoiceReportLookupResultLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="contractsGrantsInvoiceReportLookupableHelperService"/>
+
+    <bean id="clearContractsGrantsInvoiceDocumentErrorLogStep"
+          class="org.kuali.kfs.module.ar.batch.ClearContractsGrantsInvoiceDocumentErrorLogStep" parent="step"
+          p:accountsReceivableModuleBillingService-ref="accountsReceivableModuleBillingService"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="clearContractsGrantsInvoiceDocumentErrorLogJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="clearContractsGrantsInvoiceDocumentErrorLogStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsInvoiceDocumentErrorLogLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsInvoiceDocumentErrorLogLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:dataDictionaryService-ref="dataDictionaryService" p:dateTimeService-ref="dateTimeService"
+          p:identityService-ref="identityService" p:personService-ref="personService"/>
+
+    <bean id="contractsGrantsInvoiceDocumentErrorLogLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype"
+          p:lookupableHelperService-ref="contractsGrantsInvoiceDocumentErrorLogLookupableHelperService"/>
+
+    <bean id="contractsGrantsInvoiceDocumentErrorLogReportInfo"
+          parent="contractsGrantsInvoiceDocumentErrorLogReportInfo-parentBean"/>
+    <bean id="contractsGrantsInvoiceDocumentErrorLogReportInfo-parentBean" abstract="true"
+          class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          p:reportTitle="Contracts &amp; Grants Invoice Document Error Log Report"
+          p:reportFileName="cg_invoice_error_log_report" p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/"
+          p:reportTemplateName="ContractsGrantsInvoiceDocumentErrorLogReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsInvoiceDetails" value="ContractsGrantsInvoiceDocumentErrorLogDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+                <entry key="errorMessages" value="ContractsGrantsInvoiceDocumentErrorLogMessages"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsInvoiceReportInfo" parent="contractsGrantsInvoiceReportInfo-parentBean"/>
+    <bean id="contractsGrantsInvoiceReportInfo-parentBean" abstract="true" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          p:reportTitle="Outstanding Invoice Report" p:reportFileName="outstanding_invoice_report"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/"
+          p:reportTemplateName="ContractsGrantsInvoiceReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsInvoiceDetails" value="ContractsGrantsInvoiceDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsInvoiceReportService" parent="contractsGrantsInvoiceReportService-parentBean"/>
+    <bean id="contractsGrantsInvoiceReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsInvoiceReportServiceImpl" abstract="true"
+          p:dataDictionaryService-ref="dataDictionaryService" p:dateTimeService-ref="dateTimeService"
+          p:personService-ref="personService" p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService" p:configService-ref="configurationService"
+          p:kualiModuleService-ref="kualiModuleService" p:documentService-ref="documentService"
+          p:noteService-ref="noteService" p:reportInfo-ref="contractsGrantsInvoiceReportInfo"
+          p:reportGenerationService-ref="reportGenerationService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:contractsGrantsBillingUtilityService-ref="contractsGrantsBillingUtilityService"
+          p:optionsService-ref="optionsService"
+          p:contractsGrantsBillingAwardVerificationService-ref="contractsGrantsBillingAwardVerificationService"/>
+
+    <bean id="contractsGrantsPaymentHistoryReportLookupResultLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="contractsGrantsPaymentHistoryReportLookupableHelperService"/>
+
+    <bean id="contractsGrantsPaymentHistoryReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsPaymentHistoryReportLookupableHelperServiceImpl"
+          scope="prototype" parent="contractsGrantsLookupableHelperService" p:dateTimeService-ref="dateTimeService"
+          p:documentService-ref="documentService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"/>
+
+    <bean id="contractsGrantsPaymentHistoryReportInfo" parent="contractsGrantsPaymentHistoryReportInfo-parentBean"/>
+    <bean id="contractsGrantsPaymentHistoryReportInfo-parentBean" abstract="true"
+          class="org.kuali.kfs.sys.report.ReportInfoHolder" p:reportTitle="Payment History Report"
+          p:reportFileName="cg_payment_history_report" p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/"
+          p:reportTemplateName="ContractsGrantsPaymentHistoryReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsPaymentHistoryDetails" value="ContractsGrantsPaymentHistoryDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsLOCReportLookupResultLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="contractsGrantsLOCReportLookupableHelperService"/>
+
+    <bean id="contractsGrantsLOCReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsLOCReportLookupableHelperServiceImpl"
+          scope="prototype" parent="contractsGrantsLookupableHelperService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="contractsGrantsLOCReportInfo" parent="contractsGrantsLOCReportInfo-parentBean"/>
+    <bean id="contractsGrantsLOCReportInfo-parentBean" abstract="true" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          p:reportTitle="Contracts &amp; Grants LOC Report" p:reportFileName="cg_loc_report"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="ContractsGrantsLOCReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsLOC" value="ContractsGrantsLOC"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsSuspendedInvoiceSummaryReportLookupResultLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="contractsGrantsSuspendedInvoiceSummaryReportLookupableHelperService"/>
+
+    <bean id="contractsGrantsSuspendedInvoiceSummaryReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsSuspendedInvoiceSummaryReportLookupableHelperServiceImpl"
+          scope="prototype" parent="contractsGrantsLookupableHelperService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"/>
+
+    <bean id="contractsGrantsSuspendedInvoiceSummaryReportInfo"
+          parent="contractsGrantsSuspendedInvoiceSummaryReportInfo-parentBean"/>
+    <bean id="contractsGrantsSuspendedInvoiceSummaryReportInfo-parentBean" abstract="true"
+          class="org.kuali.kfs.sys.report.ReportInfoHolder" p:reportTitle="Suspended Invoice Summary Report"
+          p:reportFileName="cg_suspended_invoice_summary_report" p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/"
+          p:reportTemplateName="ContractsGrantsSuspendedInvoiceSummaryReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsSuspendedInvoiceSummaryDetails"
+                       value="ContractsGrantsSuspendedInvoiceSummaryDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsSuspendedInvoiceDetailReportLookupResultLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="contractsGrantsSuspendedInvoiceDetailReportLookupableHelperService"/>
+
+    <bean id="contractsGrantsSuspendedInvoiceDetailReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsSuspendedInvoiceDetailReportLookupableHelperServiceImpl"
+          scope="prototype" parent="contractsGrantsLookupableHelperService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService" p:personService-ref="personService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"/>
+
+    <bean id="contractsGrantsSuspendedInvoiceDetailReportInfo"
+          parent="contractsGrantsSuspendedInvoiceDetailReportInfo-parentBean"/>
+    <bean id="contractsGrantsSuspendedInvoiceDetailReportInfo-parentBean" abstract="true"
+          class="org.kuali.kfs.sys.report.ReportInfoHolder" p:reportTitle="Suspended Invoice Detail Report"
+          p:reportFileName="cg_suspended_invoice_detail_report" p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/"
+          p:reportTemplateName="ContractsGrantsSuspendedInvoiceDetailReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsSuspendedInvoiceDetailDetails"
+                       value="ContractsGrantsSuspendedInvoiceDetailDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="ticklersReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.TicklersReportLookupableHelperServiceImpl"
+          scope="prototype" parent="collectionsReportLookupableHelperService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:dateTimeService-ref="dateTimeService" p:personService-ref="personService"
+          p:contractsGrantsCollectionActivityDocumentService-ref="contractsGrantsCollectionActivityDocumentService"/>
+
+    <bean id="ticklersReportLookupResultLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="ticklersReportLookupableHelperService"/>
+
+    <bean id="ticklersReportInfo" parent="ticklersReportInfo-parentBean"/>
+    <bean id="ticklersReportInfo-parentBean" abstract="true" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          p:reportTitle="Tickler Report" p:reportFileName="ar_tickler_report"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="TicklersReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="ticklersReportDetails" value="TicklersReportDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="cgAgingReportInfo" parent="cgAgingReportInfo-parentBean"/>
+    <bean id="cgAgingReportInfo-parentBean" abstract="true" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          p:reportTitle="Contracts &amp; Grants Aged Accounts Receivable Report" p:reportFileName="ar_cgb_aging_report"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="ContractsGrantsAgingReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsAgingReportDetails" value="ContractsGrantsAgingReportDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contractsGrantsAgingReportService" parent="contractsGrantsAgingReportService-parentBean"/>
+    <bean id="contractsGrantsAgingReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsAgingReportServiceImpl" abstract="true"
+          p:dateTimeService-ref="dateTimeService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:businessObjectService-ref="businessObjectService" p:personService-ref="personService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:lookupService-ref="lookupService"/>
+
+    <bean id="contractsGrantsMilestoneReportLookupableHelperService"
+          parent="contractsGrantsMilestoneReportLookupableHelperService-parentBean"/>
+    <bean id="contractsGrantsMilestoneReportLookupableHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsMilestoneReportLookupableHelperServiceImpl"
+          scope="prototype" parent="contractsGrantsLookupableHelperService" p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="contractsGrantsMilestoneReportLookupResultLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="contractsGrantsMilestoneReportLookupableHelperService"/>
+
+    <bean id="contractsGrantsMilestoneReportInfo" parent="contractsGrantsMilestoneReportInfo-parentBean"/>
+    <bean id="contractsGrantsMilestoneReportInfo-parentBean" abstract="true"
+          class="org.kuali.kfs.sys.report.ReportInfoHolder" p:reportTitle="Milestone Report"
+          p:reportFileName="cg_milestone_report" p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/"
+          p:reportTemplateName="ContractsGrantsMilestoneReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="contractsGrantsMilestoneReportDetails" value="ContractsGrantsMilestoneReportDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="scheduleLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ScheduleLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService" p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="scheduleLookupable"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="scheduleLookupableHelperService"/>
+
+    <import resource="document/validation/configuration/ContractsGrantsInvoiceValidation.xml"/>
+
+    <bean id="customerDocumentService" parent="customerDocumentService-parentBean"/>
+    <bean id="customerDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.service.impl.CustomerDocumentServiceImpl" abstract="true"
+          p:customerService-ref="customerService" p:dataDictionaryService-ref="dataDictionaryService"
+          p:documentService-ref="documentService" p:kualiModuleService-ref="kualiModuleService"
+          p:maintenanceDocumentDictionaryService-ref="maintenanceDocumentDictionaryService"
+          p:workflowDocumentService-ref="workflowDocumentService"
+          p:sequenceAccessorService-ref="sequenceAccessorService"/>
+
+    <bean id="customerViewService" parent="customerViewService-parentBean"/>
+    <bean id="customerViewService-parentBean" class="org.kuali.kfs.module.ar.service.impl.CustomerViewServiceImpl"
+          abstract="true" p:accountsReceivableModuleBillingService-ref="accountsReceivableModuleBillingService"/>
+
+    <!--  AR Services  -->
+    <bean id="systemInformationService" parent="systemInformationService-parentBean"/>
+    <bean id="systemInformationService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.SystemInformationServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService" p:universityDateService-ref="universityDateService"/>
+
+    <bean id="lockboxService" parent="lockboxService-parentBean"/>
+    <bean id="lockboxService-parentBean" class="org.kuali.kfs.module.ar.batch.service.impl.LockboxServiceImpl"
+          abstract="true" p:lockboxDao-ref="lockboxDao" p:systemInformationService-ref="systemInformationService"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"
+          p:cashControlDocumentService-ref="cashControlDocumentService"
+          p:paymentApplicationDocumentService-ref="paymentApplicationDocumentService"
+          p:documentService-ref="documentService" p:dateTimeService-ref="dateTimeService"
+          p:reportsDirectory="${reports.directory}" p:boService-ref="businessObjectService"
+          p:customerService-ref="customerService" p:documentTypeService-ref="documentTypeService"/>
+
+    <bean id="customerInvoiceDetailService" parent="customerInvoiceDetailService-parentBean"/>
+    <bean id="customerInvoiceDetailService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerInvoiceDetailServiceImpl" abstract="true"
+          p:accountsReceivablePendingEntryService-ref="accountsReceivablePendingEntryService"
+          p:accountsReceivableTaxService-ref="accountsReceivableTaxService"
+          p:businessObjectService-ref="businessObjectService" p:dateTimeService-ref="dateTimeService"
+          p:financialSystemUserService-ref="financialSystemUserService"
+          p:invoicePaidAppliedService-ref="invoicePaidAppliedService" p:parameterService-ref="parameterService"
+          p:taxService-ref="taxService" p:universityDateService-ref="universityDateService"/>
+
+    <bean id="nonAppliedHoldingService" parent="nonAppliedHoldingService-parentBean"/>
+    <bean id="nonAppliedHoldingService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.NonAppliedHoldingServiceImpl" abstract="true"
+          p:nonAppliedHoldingDao-ref="nonAppliedHoldingDao"/>
+
+    <bean id="customerCreditMemoDetailService" parent="customerCreditMemoDetailService-parentBean"/>
+    <bean id="customerCreditMemoDetailService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerCreditMemoDetailServiceImpl" abstract="true"/>
+
+    <bean id="customerCreditMemoDocumentService" parent="customerCreditMemoDocumentService-parentBean"/>
+    <bean id="customerCreditMemoDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerCreditMemoDocumentServiceImpl" abstract="true"
+          p:universityDateService-ref="universityDateService" p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService" p:paidAppliedService-ref="invoicePaidAppliedService"
+          p:documentService-ref="documentService" p:accountsReceivableTaxService-ref="accountsReceivableTaxService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"/>
+
+    <bean id="ocrLineService" parent="ocrLineService-parentBean"/>
+    <bean id="ocrLineService-parentBean" class="org.kuali.kfs.module.ar.report.service.impl.OCRLineServiceImpl"
+          abstract="true"/>
+
+    <bean id="invoicePaidAppliedService" parent="invoicePaidAppliedService-parentBean"/>
+    <bean id="invoicePaidAppliedService-parentBean"
+          abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.InvoicePaidAppliedServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:universityDateService-ref="universityDateService"
+          p:workflowDocumentService-ref="workflowDocumentService"
+    />
+
+    <bean id="accountsReceivableDocumentHeaderService" parent="accountsReceivableDocumentHeaderService-parentBean"/>
+    <bean id="accountsReceivableDocumentHeaderService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.AccountsReceivableDocumentHeaderServiceImpl"
+          abstract="true" p:businessObjectService-ref="businessObjectService"
+          p:financialSystemUserService-ref="financialSystemUserService"
+          p:universityDateService-ref="universityDateService" p:sysInfoService-ref="systemInformationService"/>
+
+    <bean id="invoiceRecurrenceService" parent="invoiceRecurrenceService-parentBean"/>
+    <bean id="invoiceRecurrenceService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.InvoiceRecurrenceServiceImpl" abstract="true"
+          p:documentService-ref="documentService" p:dateTimeService-ref="dateTimeService"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="customerAgingReportService" parent="customerAgingReportService-parentBean"/>
+    <bean id="customerAgingReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.CustomerAgingReportServiceImpl" abstract="true"
+          p:dateTimeService-ref="dateTimeService" p:parameterService-ref="parameterService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:customerAgingReportDao-ref="customerAgingReportDao"/>
+
+    <!-- Used for DWR call to get Customer Name -->
+    <bean id="customerService" parent="customerService-parentBean"/>
+    <bean id="customerService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerServiceImpl" abstract="true"
+          p:sequenceAccessorService-ref="sequenceAccessorService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService" p:noteService-ref="noteService"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="customerInvoiceDocumentService" parent="customerInvoiceDocumentService-parentBean"/>
+    <bean id="customerInvoiceDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerInvoiceDocumentServiceImpl" abstract="true"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"
+          p:businessObjectService-ref="businessObjectService" p:configurationService-ref="configurationService"
+          p:customerAddressService-ref="customerAddressService"
+          p:customerInvoiceDetailService-ref="customerInvoiceDetailService"
+          p:customerInvoiceDocumentDao-ref="customerInvoiceDocumentDao" p:dateTimeService-ref="dateTimeService"
+          p:documentDao-ref="documentDao" p:documentService-ref="documentService"
+          p:financialSystemUserService-ref="financialSystemUserService" p:identityService-ref="identityService"
+          p:invoicePaidAppliedService-ref="invoicePaidAppliedService" p:noteService-ref="noteService"
+          p:personService-ref="personService" p:universityDateService-ref="universityDateService"/>
+
+    <bean id="customerInvoiceWriteoffDocumentService" parent="customerInvoiceWriteoffDocumentService-parentBean"/>
+    <bean id="customerInvoiceWriteoffDocumentService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerInvoiceWriteoffDocumentServiceImpl"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"
+          p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"
+          p:universityDateService-ref="universityDateService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService" p:customerService-ref="customerService"
+          p:documentService-ref="documentService"
+          p:invoiceWriteoffBatchService-ref="customerInvoiceWriteoffBatchService"
+          p:dateTimeService-ref="dateTimeService" p:financialSystemUserService-ref="financialSystemUserService"
+          p:objectCodeService-ref="objectCodeService" p:paidAppliedService-ref="invoicePaidAppliedService"/>
+
+    <bean id="accountsReceivablePendingEntryService" parent="accountsReceivablePendingEntryService-parentBean"/>
+    <bean id="accountsReceivablePendingEntryService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.AccountsReceivablePendingEntryServiceImpl" abstract="true"
+          p:generalLedgerPendingEntryService-ref="generalLedgerPendingEntryService"
+          p:parameterService-ref="parameterService"/>
+
+
+    <bean id="nonInvoicedDistributionService" parent="nonInvoicedDistributionService-parentBean"/>
+    <bean id="nonInvoicedDistributionService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.NonInvoicedDistributionServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="customerAddressService" parent="customerAddressService-parentBean"/>
+    <bean id="customerAddressService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerAddressServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService" p:sequenceAccessorService-ref="sequenceAccessorService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="paymentApplicationDocumentService" parent="paymentApplicationDocumentService-parentBean"/>
+    <bean id="paymentApplicationDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.PaymentApplicationDocumentServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService" p:nonAppliedHoldingService-ref="nonAppliedHoldingService"
+          p:documentService-ref="documentService" p:universityDateService-ref="universityDateService"
+          p:cashControlDetailDao-ref="cashControlDetailDao"
+          p:kualiConfigurationService-ref="configurationService"
+          p:systemInformationService-ref="systemInformationService"
+          p:customerAddressService-ref="customerAddressService" p:parameterService-ref="parameterService"
+          p:personService-ref="personService"/>
+
+    <bean id="paymentApplicationAdjustmentDocumentService"
+          parent="paymentApplicationAdjustmentDocumentService-parentBean"
+    />
+    <bean id="paymentApplicationAdjustmentDocumentService-parentBean"
+          abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.PaymentApplicationAdjustmentDocumentService"
+          c:accountService-ref="accountService"
+          c:businessObjectService-ref="businessObjectService"
+          c:chartService-ref="chartService"
+          c:customerInvoiceDetailService-ref="customerInvoiceDetailService"
+          c:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          c:dataDictionaryService-ref="dataDictionaryService"
+          c:documentService-ref="documentService"
+          c:financialSystemUserService-ref="financialSystemUserService"
+          c:generalLedgerPendingEntryService-ref="generalLedgerPendingEntryService"
+          c:noteService-ref="noteService"
+          c:objectCodeService-ref="objectCodeService"
+          c:offsetDefinitionService-ref="offsetDefinitionService"
+          c:projectCodeService-ref="projectCodeService"
+          c:subAccountService-ref="subAccountService"
+          c:subObjectCodeService-ref="subObjectCodeService"
+          c:systemInformationService-ref="systemInformationService"
+          c:universityDateService-ref="universityDateService"
+    />
+
+    <bean id="contractsGrantsCollectionActivityDocumentService"
+          parent="contractsGrantsCollectionActivityDocumentService-parentBean"/>
+    <bean id="contractsGrantsCollectionActivityDocumentService-parentBean"
+          abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsCollectionActivityDocumentServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"
+          p:dateTimeService-ref="dateTimeService"
+          p:documentService-ref="documentService"
+          p:documentTypeService-ref="documentTypeService"
+          p:invoicePaidAppliedService-ref="invoicePaidAppliedService"
+          p:kualiModuleService-ref="kualiModuleService"
+          p:personService-ref="personService"
+    />
+
+    <bean id="cashControlDocumentService" parent="cashControlDocumentService-parentBean"/>
+    <bean id="cashControlDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CashControlDocumentServiceImpl" abstract="true"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"
+          p:documentService-ref="documentService" p:businessObjectService-ref="businessObjectService"
+          p:glpeService-ref="generalLedgerPendingEntryService" p:optionsService-ref="optionsService"
+          p:systemInformationService-ref="systemInformationService" p:dataDictionaryService-ref="dataDictionaryService"
+          p:chartService-ref="chartService" p:universityDateService-ref="universityDateService"
+          p:bankService-ref="bankService"
+          p:accountingDocumentRuleHelperService-ref="accountingDocumentRuleHelperService"
+          p:documentTypeService-ref="documentTypeService"/>
+
+    <bean id="lockboxJobTrigger" parent="cronTrigger" p:jobName="lockboxJob" p:cronExpression="0 30 4 * * ?"/>
+
+    <bean id="lockboxStep" class="org.kuali.kfs.module.ar.batch.LockboxStep" parent="step"
+          p:lockboxService-ref="lockboxService"/>
+
+    <bean id="lockboxLoadStep" class="org.kuali.kfs.module.ar.batch.LockboxLoadStep"
+          parent="step" p:lockboxLoadService-ref="lockboxLoadService"/>
+
+    <bean id="lockboxLoadService" parent="lockboxLoadService-parentBean"/>
+    <bean id="lockboxLoadService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.LockboxLoadServiceImpl" abstract="true"
+          p:batchInputFileService-ref="batchInputFileService" p:batchInputFileType-ref="lockboxInputFileType"
+          p:businessObjectService-ref="businessObjectService" p:dateTimeService-ref="dateTimeService"
+          p:reportsDirectory="${reports.directory}" p:parameterService-ref="parameterService"
+          p:emailService-ref="emailService"/>
+
+    <bean id="lockboxInputFileType" parent="FlatFileParser" p:directoryPath="${staging.directory}/ar/lockbox"
+          p:fileExtension="txt" p:fileNamePrefix="arlockbox" p:fileTypeIdentifier="lockboxInputFileType"
+          p:titleKey="message.batchUpload.title.lockboxLoad" p:processor-ref="lockboxLoadService">
+        <property name="flatFileSpecification">
+            <bean parent="FixedWidthFlatFileSpecification"
+                  p:defaultBusinessObjectClass="org.kuali.kfs.module.ar.businessobject.LockboxDetail">
+                <property name="objectSpecifications">
+                    <list>
+                        <bean parent="FlatFilePrefixObjectSpecification" p:linePrefix="BATCH-AR LOCKBOX"
+                              p:businessObjectClass="org.kuali.kfs.module.ar.businessobject.Lockbox">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="lockboxNumber" p:start="17" p:end="27"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="scannedInvoiceDate" p:start="28" p:end="38"
+                                          p:formatterClass="org.kuali.kfs.core.web.format.DateFormatter"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="headerTransactionBatchTotal" p:start="48" p:end="63"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="headerTransactionBatchCount" p:start="64" p:end="69"
+                                          p:formatterClass="org.kuali.kfs.core.web.format.IntegerFormatter"/>
+                                </list>
+                            </property>
+                        </bean>
+                        <bean parent="FlatFilePrefixObjectSpecification"
+                              p:businessObjectClass="org.kuali.kfs.module.ar.businessobject.LockboxDetail"
+                              p:parentBusinessObjectClass="org.kuali.kfs.module.ar.businessobject.Lockbox"
+                              p:parentTargetProperty="lockboxDetails">
+                            <property name="parseProperties">
+                                <list>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="customerNumber" p:start="6" p:end="15"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="financialDocumentReferenceInvoiceNumber"
+                                          p:start="17" p:end="26"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="billingDate" p:start="26" p:end="36"
+                                          p:formatterClass="org.kuali.kfs.core.web.format.DateFormatter"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="invoiceTotalAmount" p:start="36" p:end="51"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="invoicePaidOrAppliedAmount" p:start="51" p:end="66"
+                                          p:formatterClass="org.kuali.kfs.sys.businessobject.format.ExplicitKualiDecimalFormatter"/>
+                                    <bean parent="FixedWidthFlatFilePropertySpecification"
+                                          p:propertyName="customerPaymentMediumCode" p:start="66" p:end="67"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="lockboxJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="lockboxLoadStep"/>
+                <ref bean="lockboxStep"/>
+            </list>
+        </property>
+        <property name="dependencies">
+            <map>
+                <entry key="nightlyOutJob" value="hardDependency"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="invoiceRecurrenceJobTrigger" parent="invoiceRecurrenceJobTrigger-parentBean"/>
+    <bean id="invoiceRecurrenceJobTrigger-parentBean" parent="cronTrigger" abstract="true"
+          p:jobName="invoiceRecurrenceJob" p:cronExpression="00 00 00 1 1,4,7,10  ?"/>
+
+    <bean id="invoiceRecurrenceStep" parent="invoiceRecurrenceStep-parentBean"/>
+    <bean id="invoiceRecurrenceStep-parentBean" class="org.kuali.kfs.module.ar.batch.InvoiceRecurrenceStep"
+          parent="step" abstract="true" p:invoiceRecurrenceService-ref="invoiceRecurrenceService"/>
+
+    <bean id="invoiceRecurrenceJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="invoiceRecurrenceStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cashControlElectronicPaymentClaimingDocumentHelper"
+          parent="cashControlElectronicPaymentClaimingDocumentHelper-parentBean"/>
+    <bean id="cashControlElectronicPaymentClaimingDocumentHelper-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CashControlElectronicPaymentClaimingHelperImpl"
+          abstract="true" p:dataDictionaryService-ref="dataDictionaryService" p:documentService-ref="documentService"
+          p:electronicPaymentClaimingService-ref="electronicPaymentClaimingService"
+          p:cashControlDocumentService-ref="cashControlDocumentService"
+          p:financialSystemUserService-ref="financialSystemUserService"
+          p:kualiConfigurationService-ref="configurationService"
+          p:accountsReceivableDocumentHeaderService-ref="accountsReceivableDocumentHeaderService"/>
+
+    <bean id="customerLoadJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="customerLoadStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="customerDigesterAdapter" class="org.kuali.kfs.module.ar.batch.vo.CustomerDigesterAdapter"
+          p:dateTimeService-ref="dateTimeService" p:maintDocDDService-ref="maintenanceDocumentDictionaryService"
+          p:sequenceAccessorService-ref="sequenceAccessorService"/>
+
+    <bean id="customerLoadStep" parent="customerLoadStep-parentBean"/>
+    <bean id="customerLoadStep-parentBean" class="org.kuali.kfs.module.ar.batch.CustomerLoadStep" parent="step"
+          abstract="true" p:batchService-ref="customerLoadService"
+          p:batchInputFileType-ref="customerLoadInputFileType"/>
+
+    <bean id="customerLoadService" parent="customerLoadService-parentBean"/>
+    <bean id="customerLoadService-parentBean" class="org.kuali.kfs.module.ar.batch.service.impl.CustomerLoadServiceImpl"
+          abstract="true" p:batchInputFileService-ref="batchInputFileService" p:customerService-ref="customerService"
+          p:configService-ref="configurationService" p:docService-ref="documentService"
+          p:parameterService-ref="parameterService" p:dateTimeService-ref="dateTimeService"
+          p:reportsDirectory="${reports.directory}" p:adapter-ref="customerDigesterAdapter">
+        <property name="batchInputFileTypes">
+            <list>
+                <ref bean="customerLoadInputFileType"/>
+                <ref bean="customerLoadCSVInputFileType"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="customerLoadInputFileType" parent="customerLoadInputFileType-parentBean"/>
+    <bean id="customerLoadInputFileType-parentBean" class="org.kuali.kfs.module.ar.batch.CustomerLoadInputFileType"
+          abstract="true" p:directoryPath="${staging.directory}/ar/customer" p:fileExtension="xml"
+          p:digestorRulesFileName="org/kuali/kfs/module/ar/batch/digester/customerLoadDigesterRules.xml"
+          p:schemaLocation="classpath:org/kuali/kfs/module/ar/batch/customer.xsd"
+          p:customerLoadService-ref="customerLoadService"/>
+
+    <bean id="customerLoadCSVInputFileType" parent="customerLoadCSVInputFileType-parentBean"/>
+    <bean id="customerLoadCSVInputFileType-parentBean" class="org.kuali.kfs.module.ar.batch.CustomerLoadCSVInputFileType"
+          abstract="true" p:directoryPath="${staging.directory}/ar/customer" p:fileExtension="csv"
+          p:csvEnumClass="org.kuali.kfs.module.ar.batch.vo.CustomerCsvHeaders"
+          p:customerLoadService-ref="customerLoadService"/>
+
+    <bean id="milestoneScheduleCsvInputFileType" parent="milestoneScheduleCsvInputFileType-parentBean"/>
+    <bean id="milestoneScheduleCsvInputFileType-parentBean" class="org.kuali.kfs.module.ar.batch.MilestoneScheduleCsvInputFileType"
+          abstract="true" p:directoryPath="${staging.directory}/ar" p:fileExtension="csv"
+          p:csvEnumClass="org.kuali.kfs.module.ar.batch.vo.MilestoneScheduleCsvHeaders"
+          p:accountService-ref="accountService" p:businessObjectService-ref="businessObjectService"
+          p:configurationService-ref="configurationService" p:documentService-ref="documentService"
+          p:maintenanceDocumentDictionaryService-ref="maintenanceDocumentDictionaryService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="predeterminedBillingScheduleCsvInputFileType" parent="predeterminedBillingScheduleCsvInputFileType-parentBean"/>
+    <bean id="predeterminedBillingScheduleCsvInputFileType-parentBean"
+          class="org.kuali.kfs.module.ar.batch.PredeterminedBillingScheduleCsvInputFileType"
+          abstract="true" p:directoryPath="${staging.directory}/ar" p:fileExtension="csv"
+          p:csvEnumClass="org.kuali.kfs.module.ar.batch.vo.PredeterminedBillingScheduleCsvHeaders"
+          p:accountService-ref="accountService" p:businessObjectService-ref="businessObjectService"
+          p:configurationService-ref="configurationService" p:documentService-ref="documentService"
+          p:maintenanceDocumentDictionaryService-ref="maintenanceDocumentDictionaryService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="customerInvoiceWriteoffBatchJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="customerInvoiceWriteoffBatchStep"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="customerInvoiceWriteoffBatchStep" class="org.kuali.kfs.module.ar.batch.CustomerInvoiceWriteoffBatchStep"
+          parent="step" p:batchService-ref="customerInvoiceWriteoffBatchService"
+          p:batchInputFileType-ref="customerInvoiceWriteoffBatchInputFileType"/>
+
+    <bean id="customerInvoiceWriteoffBatchService" parent="customerInvoiceWriteoffBatchService-parentBean"/>
+    <bean id="customerInvoiceWriteoffBatchService-parentBean"
+          class="org.kuali.kfs.module.ar.batch.service.impl.CustomerInvoiceWriteoffBatchServiceImpl" abstract="true"
+          p:batchInputFileService-ref="batchInputFileService"
+          p:batchInputFileType-ref="customerInvoiceWriteoffBatchInputFileType"
+          p:reportsDirectory="${reports.directory}" p:dateTimeService-ref="dateTimeService"
+          p:customerService-ref="customerService" p:invoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:customerInvoiceWriteoffDocumentService-ref="customerInvoiceWriteoffDocumentService"/>
+
+    <bean id="customerInvoiceWriteoffBatchInputFileType" parent="customerInvoiceWriteoffBatchInputFileType-parentBean"/>
+    <bean id="customerInvoiceWriteoffBatchInputFileType-parentBean"
+          class="org.kuali.kfs.module.ar.batch.CustomerInvoiceWriteoffBatchInputFileType" abstract="true"
+          p:directoryPath="${staging.directory}/ar/invoiceWriteoff" p:fileExtension="xml"
+          p:digestorRulesFileName="org/kuali/kfs/module/ar/batch/digester/customerInvoiceWriteoffBatchDigesterRules.xml"
+          p:schemaLocation="classpath:org/kuali/kfs/module/ar/batch/customerInvoiceWriteoffBatch.xsd"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="customerInvoiceDocumentBatchStep" class="org.kuali.kfs.module.ar.batch.CustomerInvoiceDocumentBatchStep"
+          parent="step" p:businessObjectService-ref="businessObjectService"
+          p:customerAddressService-ref="customerAddressService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService" p:dateTimeService-ref="dateTimeService"
+          p:documentService-ref="documentService" p:lockboxService-ref="lockboxService"
+          p:writeoffService-ref="customerInvoiceWriteoffDocumentService"/>
+
+    <!-- Workflow Lookupables -->
+
+    <bean id="customerLookupHelperService" scope="prototype" parent="customerLookupHelperService-parentBean"/>
+    <bean id="customerLookupHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.CustomerLookupableHelperServiceImpl" scope="prototype"
+          parent="lookupableHelperService"
+          p:permissionService-ref="permissionService"/>
+
+    <bean id="customerLookupable" parent="customerLookupable-parentBean" scope="prototype"/>
+    <bean id="customerLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
+          p:lookupableHelperService-ref="customerLookupHelperService"/>
+
+    <bean id="accountsReceivablesDocumentHeaderLookupable"
+          parent="accountsReceivablesDocumentHeaderLookupable-parentBean" scope="prototype"/>
+    <bean id="accountsReceivablesDocumentHeaderLookupable-parentBean"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
+          p:lookupableHelperService-ref="accountsReceivablesDocumentHeaderLookupHelperService"/>
+
+    <bean id="accountsReceivablesDocumentHeaderLookupHelperService" scope="prototype"
+          parent="accountsReceivablesDocumentHeaderLookupHelperService-parentBean"/>
+    <bean id="accountsReceivablesDocumentHeaderLookupHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.AccountsReceivablesDocumentHeaderLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService"/>
+
+    <!-- Report Service -->
+
+    <bean id="customerCreditMemoReportService" parent="customerCreditMemoReportService-parentBean"/>
+    <bean id="customerCreditMemoReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.CustomerCreditMemoReportServiceImpl" abstract="true"
+          p:reportGenerationService-ref="reportGenerationService" p:parameterService-ref="parameterService"
+          p:customerCreditMemoReportInfo-ref="customerCreditMemoReportInfo"
+          p:customerCreditMemoReportInfoNoTax-ref="customerCreditMemoReportInfoNoTax"/>
+
+    <bean id="customerCreditMemoReportInfo" parent="customerCreditMemoReportInfo-parentBean"/>
+    <bean id="customerCreditMemoReportInfo-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder" abstract="true"
+          p:reportTitle="Customer Credit Memo Report" p:reportFileName="customer_credit_memo"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="CreditMemo"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="creditMemoDetails" value="CreditMemoDetails"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="customerCreditMemoReportInfoNoTax" parent="customerCreditMemoReportInfoNoTax-parentBean"/>
+    <bean id="customerCreditMemoReportInfoNoTax-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          abstract="true" p:reportTitle="Customer Credit Memo Report" p:reportFileName="customer_credit_memo"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="CreditMemoNoTax"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="creditMemoDetailsNoTax" value="CreditMemoDetailsNoTax"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="customerInvoiceReportService" parent="customerInvoiceReportService-parentBean"/>
+    <bean id="customerInvoiceReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.CustomerInvoiceReportServiceImpl" abstract="true"
+          p:reportGenerationService-ref="reportGenerationService" p:parameterService-ref="parameterService"
+          p:customerInvoiceReportInfo-ref="customerInvoiceReportInfo"
+          p:customerInvoiceReportInfoNoTax-ref="customerInvoiceReportInfoNoTax"/>
+
+    <bean id="customerInvoiceReportInfo" parent="customerInvoiceReportInfo-parentBean"/>
+    <bean id="customerInvoiceReportInfo-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder" abstract="true"
+          p:reportTitle="Customer Invoice Report" p:reportFileName="customer_invoice"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="Invoice"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="invoiceDetails" value="InvoiceDetails"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="customerInvoiceReportInfoNoTax" parent="customerInvoiceReportInfoNoTax-parentBean"/>
+    <bean id="customerInvoiceReportInfoNoTax-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          abstract="true" p:reportTitle="Customer Invoice Report" p:reportFileName="customer_invoice"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="InvoiceNoTax"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="invoiceDetailsNoTax" value="InvoiceDetailsNoTax"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="customerStatementReportService" parent="customerStatementReportService-parentBean"/>
+    <bean id="customerStatementReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.CustomerStatementReportServiceImpl" abstract="true"
+          p:reportGenerationService-ref="reportGenerationService"
+          p:customerStatementReportInfo-ref="customerStatementReportInfo"
+          p:customerDetailStatementReportInfo-ref="customerDetailStatementReportInfo"/>
+
+    <bean id="customerStatementReportInfo" parent="customerStatementReportInfo-parentBean"
+          p:reportTemplateName="SummaryStatement">
+        <property name="subReports">
+            <map>
+                <entry key="statementDetails" value="SubSummaryStatement"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="customerDetailStatementReportInfo" parent="customerStatementReportInfo-parentBean"
+          p:reportTemplateName="DetailStatement">
+        <property name="subReports">
+            <map>
+                <entry key="subDetailStatement" value="SubDetailStatement"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="customerStatementReportInfo-parentBean" class="org.kuali.kfs.sys.report.ReportInfoHolder" abstract="true"
+          p:reportTitle="Customer Statement Report" p:reportFileName="customer_statement"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="Statement"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="statementDetails" value="StatementDetails"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="accountsReceivableReportService" parent="accountsReceivableReportService-parentBean"/>
+    <bean id="accountsReceivableReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.AccountsReceivableReportServiceImpl" abstract="true"
+          p:dateTimeService-ref="dateTimeService" p:documentService-ref="documentService"
+          p:customerAddressService-ref="customerAddressService" p:parameterService-ref="parameterService"
+          p:businessObjectService-ref="businessObjectService" p:universityDateService-ref="universityDateService"
+          p:customerService-ref="customerService" p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:customerInvoiceDetailService-ref="customerInvoiceDetailService" p:orgService-ref="organizationService"
+          p:invoicePaidAppliedService-ref="invoicePaidAppliedService"
+          p:invoiceWriteoffDocumentService-ref="customerInvoiceWriteoffDocumentService"
+          p:customerCreditMemoReportService-ref="customerCreditMemoReportService"
+          p:ocrLineService-ref="ocrLineService" p:customerInvoiceReportService-ref="customerInvoiceReportService"
+          p:customerStatementReportService-ref="customerStatementReportService"
+          p:customerCreditMemoDocumentService-ref="customerCreditMemoDocumentService"
+          p:customerAgingReportService-ref="customerAgingReportService" p:locationService-ref="locationService-fin"/>
+
+    <bean id="arCustomerAgingReportLookupableHelperService"
+          parent="arCustomerAgingReportLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="arCustomerAgingReportLookupableHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.CustomerAgingReportLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService" p:dateTimeService-ref="dateTimeService"
+          p:customerAgingReportService-ref="customerAgingReportService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="arCustomerAgingReportLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype"
+          p:lookupableHelperService-ref="arCustomerAgingReportLookupableHelperService"/>
+
+    <bean id="arCustomerOpenItemReportLookupableHelperService"
+          parent="arCustomerOpenItemReportLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="arCustomerOpenItemReportLookupableHelperService-parentBean"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.CustomerOpenItemReportLookupableHelperServiceImpl"
+          scope="prototype"
+          abstract="true" parent="lookupableHelperService"
+          p:customerOpenItemReportService-ref="customerOpenItemReportService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="arCustomerOpenItemReportLookupable" parent="arCustomerOpenItemReportLookupable-parentBean"
+          scope="prototype"/>
+    <bean id="arCustomerOpenItemReportLookupable-parentBean" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          abstract="true" p:lookupableHelperService-ref="arCustomerOpenItemReportLookupableHelperService"/>
+
+    <bean id="customerInvoiceWriteoffLookupResultLookupableHelperService"
+          parent="customerInvoiceWriteoffLookupResultLookupableHelperService-parentBean" scope="prototype"/>
+    <bean id="customerInvoiceWriteoffLookupResultLookupableHelperService-parentBean"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.CustomerInvoiceWriteoffLookupResultLookupableHelperServiceImpl"
+          abstract="true" parent="lookupableHelperService"
+          p:customerInvoiceWriteoffDocumentService-ref="customerInvoiceWriteoffDocumentService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="customerInvoiceWriteoffLookupResultLookupable"
+          parent="customerInvoiceWriteoffLookupResultLookupable-parentBean" scope="prototype"/>
+    <bean id="customerInvoiceWriteoffLookupResultLookupable-parentBean"
+          class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" abstract="true"
+          p:lookupableHelperService-ref="customerInvoiceWriteoffLookupResultLookupableHelperService"/>
+
+    <bean id="customerOpenItemReportService" parent="customerOpenItemReportService-parentBean"/>
+    <bean id="customerOpenItemReportService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.CustomerOpenItemReportServiceImpl" abstract="true"
+          p:accountsReceivableDocumentHeaderDao-ref="accountsReceivableDocumentHeaderDao"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:businessObjectService-ref="businessObjectService" p:documentService-ref="documentService"
+          p:dateTimeService-ref="dateTimeService" p:customerInvoiceDetailDao-ref="customerInvoiceDetailDao"
+          p:nonAppliedHoldingDao-ref="nonAppliedHoldingDao"/>
+
+    <bean id="accountsReceivableTaxService" parent="accountsReceivableTaxService-parentBean"/>
+    <bean id="accountsReceivableTaxService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.AccountsReceivableTaxServiceImpl" abstract="true"
+          p:parameterService-ref="parameterService" p:businessObjectService-ref="businessObjectService"
+          p:customerAddressService-ref="customerAddressService"/>
+
+    <bean id="invoiceRecurrenceDocumentService" parent="invoiceRecurrenceDocumentService-parentBean"/>
+    <bean id="invoiceRecurrenceDocumentService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.InvoiceRecurrenceDocumentServiceImpl" abstract="true"
+          p:parameterService-ref="parameterService" p:businessObjectService-ref="businessObjectService"
+          p:customerAddressService-ref="customerAddressService" p:documentService-ref="documentService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="accountsReceivableOrganizationDerivedRoleTypeService"
+          parent="accountsReceivableOrganizationDerivedRoleTypeService-parentBean"/>
+    <bean id="accountsReceivableOrganizationDerivedRoleTypeService-parentBean"
+          class="org.kuali.kfs.module.ar.identity.AccountsReceivableOrganizationDerivedRoleTypeServiceImpl"
+          abstract="true" parent="kimNoMembersRoleTypeService" p:businessObjectService-ref="businessObjectService"
+          p:financialSystemUserService-ref="financialSystemUserService"
+          p:universityDateService-ref="universityDateService"/>
+
+    <bean name="collectorRoleTypeService" parent="collectorRoleTypeService-parentBean"/>
+    <bean id="collectorRoleTypeService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.identity.CollectorRoleTypeServiceImpl"
+          parent="organizationHierarchyAwareRoleTypeService"/>
+
+    <bean id="invoiceRecurrenceDerivedRoleTypeService" parent="invoiceRecurrenceDerivedRoleTypeService-parentBean"/>
+    <bean id="invoiceRecurrenceDerivedRoleTypeService-parentBean"
+          class="org.kuali.kfs.module.ar.identity.InvoiceRecurrenceDerivedRoleTypeServiceImpl" abstract="true"
+          parent="kimNoMembersRoleTypeService"/>
+
+    <bean id="collActReportInfo" parent="collActReportInfo-parentBean"/>
+    <bean id="collActReportInfo-parentBean" abstract="true" class="org.kuali.kfs.sys.report.ReportInfoHolder"
+          p:reportTitle="Collection Activity Report" p:reportFileName="ar_collection_act_report"
+          p:reportsDirectory="${reports.directory}/ar/"
+          p:resourceBundleBaseName="org/kuali/kfs/module/ar/report/messages"
+          p:reportTemplateClassPath="org/kuali/kfs/module/ar/report/" p:reportTemplateName="CollectionActivityReport"
+          p:subReportTemplateClassPath="org/kuali/kfs/module/ar/report/">
+        <property name="subReports">
+            <map>
+                <entry key="collectionActivityReportDetails" value="CollectionActivityReportDetails"/>
+                <entry key="searchCriteria" value="SearchCriteria"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="collectionActivityReportService" parent="collectionActivityReportService-parentBean"/>
+    <bean id="collectionActivityReportService-parentBean"
+          class="org.kuali.kfs.module.ar.report.service.impl.CollectionActivityReportServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService" p:personService-ref="personService"/>
+
+    <bean id="systemInformationFiscalYearMaker" parent="FiscalYearMaker"
+          p:businessObjectClass="org.kuali.kfs.module.ar.businessobject.SystemInformation">
+        <property name="parentClasses">
+            <set>
+                <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
+                <value>org.kuali.kfs.coa.businessobject.SubObjectCode</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="organizationAccountingDefaultFiscalYearMaker" parent="FiscalYearMaker"
+          p:businessObjectClass="org.kuali.kfs.module.ar.businessobject.OrganizationAccountingDefault">
+        <property name="parentClasses">
+            <set>
+                <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
+                <value>org.kuali.kfs.coa.businessobject.SubObjectCode</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="cgbInvoiceObjectCodeFiscalYearMaker"
+          class="org.kuali.kfs.module.ar.batch.dataaccess.impl.ContractsGrantsInvoiceObjectCodeFiscalYearMakerImpl"
+          parent="FiscalYearMaker"
+          p:businessObjectClass="org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceObjectCode">
+        <property name="parentClasses">
+            <set>
+                <value>org.kuali.kfs.coa.businessobject.ObjectCode</value>
+            </set>
+        </property>
+    </bean>
+
+    <!-- Funds Manager Derived Role -->
+    <bean id="fundsManagerDerivedRoleTypeService" parent="fundsManagerDerivedRoleTypeService-parentBean"/>
+    <bean id="fundsManagerDerivedRoleTypeService-parentBean"
+          class="org.kuali.kfs.module.ar.identity.FundsManagerDerivedRoleTypeServiceImpl" abstract="true"
+          parent="kimNoMembersRoleTypeService" p:kualiModuleService-ref="kualiModuleService"/>
+
+    <!--  for Contracts & grants aging report -->
+    <bean id="arContractsAndGrantsAgingReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsAgingReportLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService" p:dateTimeService-ref="dateTimeService"
+          p:contractsGrantsAgingReportService-ref="contractsGrantsAgingReportService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:customerAgingReportService-ref="customerAgingReportService"
+          p:customerCreditMemoDocumentService-ref="customerCreditMemoDocumentService"
+          p:moduleService-ref="kualiModuleService"
+          p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"/>
+
+    <bean id="arContractsAndGrantsAgingReportLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="arContractsAndGrantsAgingReportLookupableHelperService"/>
+
+    <bean id="collectionActivityReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.CollectionActivityReportLookupableHelperServiceImpl"
+          scope="prototype" parent="collectionsReportLookupableHelperService"
+          p:collectionActivityReportService-ref="collectionActivityReportService"/>
+
+    <bean id="collectionActivityReportLookupResultLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="collectionActivityReportLookupableHelperService"/>
+
+    <bean id="transmitContractsAndGrantsInvoicesLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.TransmitContractsAndGrantsInvoicesLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:personService-ref="personService"
+          p:transmitContractsAndGrantsInvoicesService-ref="transmitContractsAndGrantsInvoicesService"/>
+
+    <bean id="transmitContractsAndGrantsInvoicesLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="transmitContractsAndGrantsInvoicesLookupableHelperService"/>
+
+    <bean id="contractsGrantsAgingOpenInvoicesReportService"
+          parent="contractsGrantsAgingOpenInvoicesReportService-parentBean"/>
+    <bean id="contractsGrantsAgingOpenInvoicesReportService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsAgingOpenInvoicesReportServiceImpl"
+          abstract="true" p:customerInvoiceDocumentService-ref="customerInvoiceDocumentService"
+          p:contractsGrantsAgingReportService-ref="contractsGrantsAgingReportService"
+          p:dateTimeService-ref="dateTimeService" p:kualiModuleService-ref="kualiModuleService"/>
+
+    <bean id="arContractsGrantsAgingOpenInvoicesReportLookupableHelperService"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.ContractsGrantsAgingOpenInvoicesReportLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService"
+          p:contractsGrantsAgingOpenInvoicesReportService-ref="contractsGrantsAgingOpenInvoicesReportService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="arContractsGrantsAgingOpenInvoicesReportLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype"
+          p:lookupableHelperService-ref="arContractsGrantsAgingOpenInvoicesReportLookupableHelperService"/>
+
+    <bean id="dunningLetterService" parent="dunningLetterService-parentBean"/>
+    <bean id="dunningLetterService-parentBean"
+          class="org.kuali.kfs.module.ar.document.service.impl.DunningLetterServiceImpl" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:contractsGrantsBillingUtilityService-ref="contractsGrantsBillingUtilityService"
+          p:contractsGrantsInvoiceDocumentDao-ref="contractsGrantsInvoiceDocumentDao"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:dateTimeService-ref="dateTimeService" p:financialSystemUserService-ref="financialSystemUserService"
+          p:kualiModuleService-ref="kualiModuleService" p:noteService-ref="noteService"
+          p:parameterService-ref="parameterService"/>
+
+    <bean id="collectionActivityInvoiceLookupableHelperService"
+          parent="collectionActivityInvoiceLookupableHelperService-parentBean"/>
+    <bean id="collectionActivityInvoiceLookupableHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.businessobject.lookup.CollectionActivityInvoiceLookupableHelperServiceImpl"
+          scope="prototype" parent="lookupableHelperService"
+          p:contractsGrantsCollectionActivityDocumentService-ref="contractsGrantsCollectionActivityDocumentService"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="collectionActivityInvoiceLookupResultLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"
+          scope="prototype" p:lookupableHelperService-ref="collectionActivityInvoiceLookupableHelperService"/>
+
+    <bean id="transmitContractsAndGrantsInvoicesService" parent="transmitContractsAndGrantsInvoicesService-parentBean"/>
+    <bean id="transmitContractsAndGrantsInvoicesService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.TransmitContractsAndGrantsInvoicesServiceImpl"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:contractsGrantsInvoiceReportService-ref="contractsGrantsInvoiceReportService"
+          p:dateTimeService-ref="dateTimeService" p:documentService-ref="documentService"
+          p:arEmailService-ref="arEmailService" p:personService-ref="personService"/>
+
+    <bean id="federalFinancialReportService" parent="federalFinancialReportService-parentBean"/>
+    <bean id="federalFinancialReportService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.FederalFinancialReportServiceImpl"/>
+
+    <bean id="contractsGrantsReportHelperService" parent="contractsGrantsReportHelperService-parentBean"/>
+    <bean id="contractsGrantsReportHelperService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsReportHelperServiceImpl"
+          p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+          p:dataDictionaryService-ref="dataDictionaryService" p:reportGenerationService-ref="reportGenerationService"
+          p:configurationService-ref="configurationService" p:dateTimeService-ref="dateTimeService"
+          p:personService-ref="personService"/>
+
+    <bean id="contractsGrantsSuspendedInvoiceSummaryReportBuilderService"
+          parent="contractsGrantsSuspendedInvoiceSummaryReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsSuspendedInvoiceSummaryReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsSuspendedInvoiceSummaryReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsSuspendedInvoiceSummaryReportInfo"/>
+
+    <bean id="contractsGrantsAgingReportBuilderService" parent="contractsGrantsAgingReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsAgingReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsAgingReportBuilderServiceImpl"
+          p:reportInfo-ref="cgAgingReportInfo"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"
+          p:contractsGrantsAgingReportService-ref="contractsGrantsAgingReportService"/>
+
+    <bean id="contractsGrantsInvoiceDocumentErrorLogReportBuilderService"
+          parent="contractsGrantsInvoiceDocumentErrorLogReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsInvoiceDocumentErrorLogReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsInvoiceDocumentErrorLogReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsInvoiceDocumentErrorLogReportInfo"/>
+
+    <bean id="contractsGrantsInvoiceReportBuilderService" parent="contractsGrantsInvoiceReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsInvoiceReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsInvoiceReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsInvoiceReportInfo"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="collectionActivityReportBuilderService" parent="collectionActivityReportBuilderService-parentBean"/>
+    <bean id="collectionActivityReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.CollectionActivityReportBuilderServiceImpl"
+          p:reportInfo-ref="collActReportInfo"/>
+
+    <bean id="contractsGrantsMilestoneReportBuilderService"
+          parent="contractsGrantsMilestoneReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsMilestoneReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsMilestoneReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsMilestoneReportInfo"/>
+
+    <bean id="contractsGrantsLOCReportBuilderService" parent="contractsGrantsLOCReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsLOCReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsLOCReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsLOCReportInfo"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="contractsGrantsPaymentHistoryReportBuilderService"
+          parent="contractsGrantsPaymentHistoryReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsPaymentHistoryReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsPaymentHistoryReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsPaymentHistoryReportInfo"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="ticklersReportBuilderService" parent="ticklersReportBuilderService-parentBean"/>
+    <bean id="ticklersReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.TicklersReportBuilderServiceImpl"
+          p:reportInfo-ref="ticklersReportInfo"/>
+
+    <bean id="contractsGrantsSuspendedInvoiceDetailReportBuilderService"
+          parent="contractsGrantsSuspendedInvoiceDetailReportBuilderService-parentBean"/>
+    <bean id="contractsGrantsSuspendedInvoiceDetailReportBuilderService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.report.service.impl.ContractsGrantsSuspendedInvoiceDetailReportBuilderServiceImpl"
+          p:reportInfo-ref="contractsGrantsSuspendedInvoiceDetailReportInfo"
+          p:contractsGrantsReportHelperService-ref="contractsGrantsReportHelperService"/>
+
+    <bean id="contractsGrantsLetterOfCreditReviewDocumentService"
+          parent="contractsGrantsLetterOfCreditReviewDocumentService-parentBean"/>
+    <bean id="contractsGrantsLetterOfCreditReviewDocumentService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsLetterOfCreditReviewDocumentServiceImpl"
+          p:awardAccountObjectCodeTotalBilledDao-ref="awardAccountObjectCodeTotalBilledDao"
+          p:contractsGrantsInvoiceCreateDocumentService-ref="contractsGrantsInvoiceCreateDocumentService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:contractsAndGrantsModuleBillingService-ref="contractsAndGrantsModuleBillingService"
+          p:kualiModuleService-ref="kualiModuleService" p:optionsService-ref="optionsService"/>
+
+    <bean id="predeterminedBillingScheduleMaintenanceService"
+          parent="predeterminedBillingScheduleMaintenanceService-parentBean"/>
+    <bean id="predeterminedBillingScheduleMaintenanceService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.PredeterminedBillingScheduleMaintenanceServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
+
+    <bean id="milestoneScheduleMaintenanceService" parent="milestoneScheduleMaintenanceService-parentBean"/>
+    <bean id="milestoneScheduleMaintenanceService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.MilestoneScheduleMaintenanceServiceImpl"
+          p:businessObjectService-ref="businessObjectService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"/>
+
+    <bean id="contractsGrantsBillingAwardVerificationService"
+          parent="contractsGrantsBillingAwardVerificationService-parentBean"/>
+    <bean id="contractsGrantsBillingAwardVerificationService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.document.service.impl.ContractsGrantsBillingAwardVerificationServiceImpl"
+          p:accountingPeriodService-ref="accountingPeriodService" p:businessObjectService-ref="businessObjectService"
+          p:customerService-ref="customerService"
+          p:contractsGrantsInvoiceDocumentService-ref="contractsGrantsInvoiceDocumentService"
+          p:financialSystemDocumentService-ref="financialSystemDocumentService"
+          p:kualiModuleService-ref="kualiModuleService" p:parameterService-ref="parameterService"
+          p:verifyBillingFrequencyService-ref="verifyBillingFrequencyService"
+          p:universityDateService-ref="universityDateService" p:optionsService-ref="optionsService"
+          p:financialSystemUserService-ref="financialSystemUserService"/>
+
+    <bean id="costCategoryDao" parent="costCategoryDao-parentBean"/>
+    <bean id="costCategoryDao-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.dataaccess.impl.CostCategoryDaoOjb" parent="platformAwareDao"/>
+
+    <bean id="costCategoryService" parent="costCategoryService-parentBean"/>
+    <bean id="costCategoryService-parentBean" abstract="true"
+          class="org.kuali.kfs.module.ar.service.impl.CostCategoryServiceImpl" p:costCategoryDao-ref="costCategoryDao"
+          p:businessObjectService-ref="businessObjectService"/>
+
+    <bean id="finalBilledIndicatorValidationService"
+          class="org.kuali.kfs.module.ar.document.service.FinalBilledIndicatorValidationService"
+          p:documentService-ref="documentService"
+    />
+
+    <import resource="document/validation/configuration/AccountsReceivableValidators.xml"/>
+    <import resource="document/validation/configuration/CustomerInvoiceValidation.xml"/>
+</beans>
