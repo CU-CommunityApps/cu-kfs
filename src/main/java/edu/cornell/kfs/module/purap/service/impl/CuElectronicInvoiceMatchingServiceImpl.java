@@ -20,10 +20,13 @@ import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceMatchingServiceI
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceOrderHolder;
 import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
 import org.kuali.kfs.vnd.businessobject.PurchaseOrderCostSource;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
+import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 
 public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMatchingServiceImpl {
+    private VendorService vendorService;
 
     protected void validateInvoiceItems(ElectronicInvoiceOrderHolder orderHolder){
         Set poLineNumbers = new HashSet();
@@ -313,15 +316,28 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             return;
         }
 
-        if (poDoc.getVendorHeaderGeneratedIdentifier() == null ||
-            poDoc.getVendorDetailAssignedIdentifier() == null ||
-                !(poDoc.getVendorHeaderGeneratedIdentifier().equals(orderHolder.getVendorHeaderId()) &&
-                  poDoc.getVendorDetailAssignedIdentifier().equals(orderHolder.getVendorDetailId()))){
+        if (eInvoiceVendorMatchesPOVendor(poDoc, orderHolder)){
             ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR,null,orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
             return;
         }
 
+    }
+    
+    private boolean eInvoiceVendorMatchesPOVendor(PurchaseOrderDocument poDoc, ElectronicInvoiceOrderHolder orderHolder) {
+        VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getElectronicInvoice().getDunsNumber());
+
+        if (poDoc.getVendorHeaderGeneratedIdentifier() == null ||
+            poDoc.getVendorDetailAssignedIdentifier() == null ||
+                !(poDoc.getVendorHeaderGeneratedIdentifier().equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier()))){
+
+            return false;
+        }
+        return true;
+    }
+
+    public void setVendorService(VendorService vendorService) {
+        this.vendorService = vendorService;
     }
 
 
