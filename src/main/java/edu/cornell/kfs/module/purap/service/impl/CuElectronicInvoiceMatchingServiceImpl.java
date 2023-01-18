@@ -316,7 +316,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             return;
         }
 
-        if (eInvoiceVendorMatchesPOVendor(poDoc, orderHolder)){
+        if (!eInvoiceVendorMatchesPOVendor(poDoc, orderHolder)){
             ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR,null,orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
             return;
