@@ -128,7 +128,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 @Transactional
-//CU customization: backport FINP-8642, this file cab be removed when we upgrade to the 07/21/2022 version of financials
+//CU customization: backport FINP-8642; this file can be removed when we upgrade to the 07/21/2022 version of financials
 public class ContractsGrantsInvoiceDocumentServiceImpl implements ContractsGrantsInvoiceDocumentService {
 
     private static final Logger LOG = LogManager.getLogger();

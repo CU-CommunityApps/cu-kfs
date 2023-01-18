@@ -18,7 +18,7 @@
  */
 package org.kuali.kfs.module.ar.document.authorization;
 
-//CU customization: backport FINP-8555, this file cab be removed when we upgrade to the 07/14/2022 version of financials
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.kuali.kfs.kew.api.WorkflowDocument;
@@ -42,6 +42,7 @@ import java.util.Set;
 /**
  * Contracts & Grants Invoice Document Presentation Controller class.
  */
+//CU customization: backport FINP-5292, FINP-8555; this file cab be removed when we upgrade to the 07/14/2022 version of financials
 public class ContractsGrantsInvoiceDocumentPresentationController extends
         CustomerInvoiceDocumentPresentationController {
 

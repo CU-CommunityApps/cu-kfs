@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * This class defines all the service methods for Contracts & Grants invoice Document.
  */
-//CU customization: backport FINP-8642, this file cab be removed when we upgrade to the 07/21/2022 version of financials
+//CU customization: backport FINP-8642; this file can be removed when we upgrade to the 07/21/2022 version of financials
 public interface ContractsGrantsInvoiceDocumentService {
 
     /**

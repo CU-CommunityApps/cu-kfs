@@ -46,7 +46,7 @@ import org.kuali.kfs.sys.document.validation.event.AccountingDocumentSaveWithNoL
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//CU customization: backport FINP-8642, this file can be removed when we upgrade to the 07/21/2022 version of financials
+//CU customization: backport FINP-5292, FINP-8642; this file can be removed when we upgrade to the 07/21/2022 version of financials
 public class ContractsGrantsInvoiceDocumentAction extends CustomerInvoiceAction {
 
     protected static volatile ContractsGrantsInvoiceDocumentService contractsGrantsInvoiceDocumentService;
@@ -347,7 +347,7 @@ public class ContractsGrantsInvoiceDocumentAction extends CustomerInvoiceAction 
         return forward;
     }
     
-    //CU customization: backport FINP-8642
+    //CU customization: backport FINP-5292, FINP-8642
     public ActionForward updateFinalBillIndicator(final ActionMapping mapping, final ActionForm form,
             final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm =
