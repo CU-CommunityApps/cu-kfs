@@ -24,6 +24,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMatchingServiceImpl {
     private VendorService vendorService;
@@ -329,6 +330,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
 
         if (poDoc.getVendorHeaderGeneratedIdentifier() == null ||
             poDoc.getVendorDetailAssignedIdentifier() == null ||
+            ObjectUtils.isNull(vendorByDunsDetail) ||
                 !(poDoc.getVendorHeaderGeneratedIdentifier().equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier()))){
 
             return false;
