@@ -72,7 +72,7 @@
     
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
-        
+    <!-- start backport FINP-8555 -->    
     <bean id="ArAuthorizationConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap"
           p:constantClass="org.kuali.kfs.module.ar.ArAuthorizationConstants"/>
           
@@ -85,5 +85,6 @@
             </map>
         </property>
     </bean>
+    <!-- end backport FINP-8555 --> 
 
 </beans>
