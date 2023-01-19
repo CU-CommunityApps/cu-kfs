@@ -328,11 +328,9 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     private boolean eInvoiceVendorMatchesPOVendor(PurchaseOrderDocument poDoc, ElectronicInvoiceOrderHolder orderHolder) {
         VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getElectronicInvoice().getDunsNumber());
 
-        if (poDoc.getVendorHeaderGeneratedIdentifier() == null ||
-            poDoc.getVendorDetailAssignedIdentifier() == null ||
-            ObjectUtils.isNull(vendorByDunsDetail) ||
-                !(poDoc.getVendorHeaderGeneratedIdentifier().equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier()))){
-
+        if (poDoc.getVendorHeaderGeneratedIdentifier() == null || poDoc.getVendorDetailAssignedIdentifier() == null
+                || ObjectUtils.isNull(vendorByDunsDetail) || !(poDoc.getVendorHeaderGeneratedIdentifier()
+                        .equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier()))) {
             return false;
         }
         return true;
