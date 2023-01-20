@@ -150,18 +150,8 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     }
     
     protected String determineStandardEntryClass(String achTransactionCode) {
-        if (StringUtils.equalsIgnoreCase(StandardEntryClassValuesFinder.StandardEntryClass.PPD.name(),
-                (StringUtils.right(achTransactionCode, 3)))) {
-            return StandardEntryClassValuesFinder.StandardEntryClass.PPD.name();
-            
-        } else if (StringUtils.equalsIgnoreCase(StandardEntryClassValuesFinder.StandardEntryClass.CTX.name(),
-                (StringUtils.right(achTransactionCode, 3)))) {
-            return StandardEntryClassValuesFinder.StandardEntryClass.CTX.name();
-            
-        } else if (StringUtils.equalsIgnoreCase(StandardEntryClassValuesFinder.StandardEntryClass.CCD.name(),
-                (StringUtils.right(achTransactionCode, 3)))) {
-            return StandardEntryClassValuesFinder.StandardEntryClass.CCD.name();
-            
+        if (StringUtils.isNotBlank(achTransactionCode)) {
+            return (StandardEntryClassValuesFinder.StandardEntryClass.valueOf((StringUtils.right(achTransactionCode, 3)).toUpperCase())).toString();
         } else {
             throw new IllegalArgumentException("Unrecognized ACH transaction code from file: " + achTransactionCode);
         }

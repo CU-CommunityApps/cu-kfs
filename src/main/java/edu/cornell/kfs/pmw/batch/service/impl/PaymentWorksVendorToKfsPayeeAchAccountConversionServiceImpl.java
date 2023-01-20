@@ -63,18 +63,8 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
     }
     
     protected String determineStandardEntryClass(String kfsBankAccountTypeCode) {
-        if (StringUtils.equalsIgnoreCase(StandardEntryClassValuesFinder.StandardEntryClass.CTX.name(),
-                (StringUtils.right(kfsBankAccountTypeCode, 3)))) {
-            return StandardEntryClassValuesFinder.StandardEntryClass.CTX.name();
-            
-        } else if (StringUtils.equalsIgnoreCase(StandardEntryClassValuesFinder.StandardEntryClass.PPD.name(),
-                (StringUtils.right(kfsBankAccountTypeCode, 3)))) {
-            return StandardEntryClassValuesFinder.StandardEntryClass.PPD.name();
-            
-        } else if (StringUtils.equalsIgnoreCase(StandardEntryClassValuesFinder.StandardEntryClass.CCD.name(),
-                (StringUtils.right(kfsBankAccountTypeCode, 3)))) {
-            return StandardEntryClassValuesFinder.StandardEntryClass.CCD.name();
-            
+        if (StringUtils.isNotBlank(kfsBankAccountTypeCode)) {
+            return (StandardEntryClassValuesFinder.StandardEntryClass.valueOf((StringUtils.right(kfsBankAccountTypeCode, 3)).toUpperCase())).toString();
         } else {
             throw new IllegalArgumentException("Unrecognized KFS bank account type code : " + kfsBankAccountTypeCode);
         }
