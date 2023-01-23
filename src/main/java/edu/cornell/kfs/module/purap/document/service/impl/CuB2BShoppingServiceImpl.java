@@ -292,11 +292,18 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
 
     @Override
     public String getPunchOutUrlForRoleSet(Person user, JaggaerRoleSet roleSet) {
+    	LOG.info("getPunchOutUrlForRoleSet, creating punchout URL for role: " + roleSet);
         B2BInformation b2b = getB2bShoppingConfigurationInformation();
         String cxml = getPunchOutSetupRequestMessage(user, b2b, roleSet);
         String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
         PunchOutSetupResponse posr = B2BParserHelper.getInstance().parsePunchOutSetupResponse(response);
         return posr.getPunchOutUrl();
+    }
+    
+    @Override
+    public String getPunchOutUrl(Person user) {
+    	LOG.info("getPunchOutUrl, overriding to use custom link generating code.");
+    	return getPunchOutUrlForRoleSet(user, JaggaerRoleSet.ESHOP);
     }
 
     @Override
