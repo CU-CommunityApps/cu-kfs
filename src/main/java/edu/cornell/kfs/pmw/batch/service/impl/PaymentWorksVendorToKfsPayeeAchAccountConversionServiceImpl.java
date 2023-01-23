@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -63,10 +64,12 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
     }
     
     protected String determineStandardEntryClass(String kfsBankAccountTypeCode) {
-        if (StringUtils.isNotBlank(kfsBankAccountTypeCode)) {
-            return (StandardEntryClassValuesFinder.StandardEntryClass.valueOf((StringUtils.right(kfsBankAccountTypeCode, 3)).toUpperCase())).toString();
+        String valueToConvert = StringUtils.right(kfsBankAccountTypeCode, 3);
+        if (StringUtils.isNotBlank(valueToConvert)) {
+            valueToConvert = valueToConvert.toUpperCase(Locale.US);
+            return StandardEntryClassValuesFinder.StandardEntryClass.valueOf(valueToConvert).toString();
         } else {
-            throw new IllegalArgumentException("Unrecognized KFS bank account type code : " + kfsBankAccountTypeCode);
+            throw new IllegalArgumentException("KFS bank account type code did not contain at least three characters : " + kfsBankAccountTypeCode);
         }
     }
     

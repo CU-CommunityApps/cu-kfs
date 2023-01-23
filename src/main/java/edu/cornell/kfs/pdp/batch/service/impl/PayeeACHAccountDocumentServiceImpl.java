@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -150,10 +151,12 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     }
     
     protected String determineStandardEntryClass(String achTransactionCode) {
-        if (StringUtils.isNotBlank(achTransactionCode)) {
-            return (StandardEntryClassValuesFinder.StandardEntryClass.valueOf((StringUtils.right(achTransactionCode, 3)).toUpperCase())).toString();
+        String valueToConvert = StringUtils.right(achTransactionCode, 3);
+        if (StringUtils.isNotBlank(valueToConvert)) {
+            valueToConvert = valueToConvert.toUpperCase(Locale.US);
+            return StandardEntryClassValuesFinder.StandardEntryClass.valueOf(valueToConvert).toString();
         } else {
-            throw new IllegalArgumentException("Unrecognized ACH transaction code from file: " + achTransactionCode);
+            throw new IllegalArgumentException("ACH transaction code from file did not contain at least three characters : " + achTransactionCode);
         }
     }
     

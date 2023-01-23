@@ -12,9 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.cornell.kfs.pdp.batch.fixture.StandardEntryClassConversionFixture;
-import edu.cornell.kfs.pdp.batch.fixture.StandardEntryClassConversionFixture.ExpectFailureData;
-import edu.cornell.kfs.pdp.batch.fixture.StandardEntryClassConversionFixture.ExpectPaymentWorksSuccessData;
-
 
 public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImplTest {
     
@@ -41,10 +38,10 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImplTest {
     
     @ParameterizedTest
     @MethodSource("goodPaymentWorksACHAccountTypesForValidation")
-    void testGoodPMWAccountTypeToStandardEntryClassConversion(ExpectPaymentWorksSuccessData testFixture) {
-        assertEquals(paymentWorksVendorToKfsPayeeAchAccountConversionService.determineStandardEntryClass(testFixture.achBankAccountTypeBeingTested),
-                testFixture.standardEntryClassExpected,
-                "PaymnetWorks provided ACH bank account type was not expected to map to this Standard Entry Class.");
+    void testGoodPMWAccountTypeToStandardEntryClassConversion(StandardEntryClassConversionFixture.ExpectPaymentWorksSuccessData testFixture) {
+        assertEquals(testFixture.standardEntryClassExpected,
+                paymentWorksVendorToKfsPayeeAchAccountConversionService.determineStandardEntryClass(testFixture.achBankAccountTypeBeingTested),
+                "PaymentWorks provided ACH bank account type was not expected to map to this Standard Entry Class.");
     }
     
     static Stream<Arguments> badPaymentWorksACHAccountTypesForValidation() {
@@ -61,7 +58,7 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImplTest {
     
     @ParameterizedTest
     @MethodSource("badPaymentWorksACHAccountTypesForValidation")
-    void testBadAccountTypeToStandardEntryClassConversion(ExpectFailureData testFixture) {
+    void testBadAccountTypeToStandardEntryClassConversion(StandardEntryClassConversionFixture.ExpectFailureData testFixture) {
         assertThrows(IllegalArgumentException.class,
                 () -> paymentWorksVendorToKfsPayeeAchAccountConversionService.determineStandardEntryClass(testFixture.achBankAccountTypeBeingTested));
     }

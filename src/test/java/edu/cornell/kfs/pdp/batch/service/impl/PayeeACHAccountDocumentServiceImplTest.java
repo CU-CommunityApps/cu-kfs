@@ -12,8 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.cornell.kfs.pdp.batch.fixture.StandardEntryClassConversionFixture;
-import edu.cornell.kfs.pdp.batch.fixture.StandardEntryClassConversionFixture.ExpectFailureData;
-import edu.cornell.kfs.pdp.batch.fixture.StandardEntryClassConversionFixture.ExpectPDPSuccessData;
 
 public class PayeeACHAccountDocumentServiceImplTest {
     
@@ -38,9 +36,9 @@ public class PayeeACHAccountDocumentServiceImplTest {
     
     @ParameterizedTest
     @MethodSource("goodACHAccountTypesForValidation")
-    void testGoodAccountTypeToStandardEntryClassConversion(ExpectPDPSuccessData testFixture) {
-        assertEquals(payeeACHAccountDocumentService.determineStandardEntryClass(testFixture.achBankAccountTypeBeingTested),
-                testFixture.standardEntryClassExpected,
+    void testGoodAccountTypeToStandardEntryClassConversion(StandardEntryClassConversionFixture.ExpectPDPSuccessData testFixture) {
+        assertEquals(testFixture.standardEntryClassExpected,
+                payeeACHAccountDocumentService.determineStandardEntryClass(testFixture.achBankAccountTypeBeingTested),
                 "Workday provided ACH bank account type was not expected to map to this Standard Entry Class.");
     }
     
@@ -58,7 +56,7 @@ public class PayeeACHAccountDocumentServiceImplTest {
     
     @ParameterizedTest
     @MethodSource("badACHAccountTypesForValidation")
-    void testBadAccountTypeToStandardEntryClassConversion(ExpectFailureData testFixture) {
+    void testBadAccountTypeToStandardEntryClassConversion(StandardEntryClassConversionFixture.ExpectFailureData testFixture) {
         assertThrows(IllegalArgumentException.class,
                 () -> payeeACHAccountDocumentService.determineStandardEntryClass(testFixture.achBankAccountTypeBeingTested));
     }
