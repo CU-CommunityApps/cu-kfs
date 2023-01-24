@@ -47,10 +47,9 @@ import org.springframework.web.context.ServletContextAware;
 
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,14 +59,13 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
         ServletContextAware, SmartApplicationListener {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final String DEFAULT_ROOT_RESOURCE_LOADER_NAME = "RootResourceLoader";
-    private static final String ROOT_RESOURCE_LOADER_CONTAINER_NAME = "RootResourceLoaderContainer";
-    private static final String SCHEDULED_THREAD_POOL_SERVICE = "rice.ksb.scheduledThreadPool";
+    private static final String SPRING_RESOURCE_LOADER_NAME = "SPRING_RESOURCE_LOADER_NAME";
+    static final QName SPRING_RL_QNAME =
+            new QName(KFSConstants.APPLICATION_NAMESPACE_CODE, "KFS_" + SPRING_RESOURCE_LOADER_NAME);
+
 
     private DataSource dataSource;
     private DataSource nonTransactionalDataSource;
-    private UserTransaction userTransaction;
-    private TransactionManager transactionManager;
     private final List<Lifecycle> internalLifecycles;
     private ServletContext servletContext;
 
@@ -80,33 +78,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
 
     @Override
     public final void addToConfig() {
-        configureJta();
         configureDataSource();
-    }
-
-    /**
-     * If the user injected JTA classes into this configurer, verify that both the UserTransaction and
-     * TransactionManager are set and then attach them to the configuration.
-     */
-    private void configureJta() {
-        if (this.userTransaction != null) {
-            ConfigContext.getCurrentContextConfig()
-                    .putObject(KFSConstants.USER_TRANSACTION_OBJ, this.userTransaction);
-        }
-        if (this.transactionManager != null) {
-            ConfigContext.getCurrentContextConfig()
-                    .putObject(KFSConstants.TRANSACTION_MANAGER_OBJ, this.transactionManager);
-        }
-        boolean userTransactionConfigured = this.userTransaction != null;
-        boolean transactionManagerConfigured = this.transactionManager != null;
-        if (userTransactionConfigured && !transactionManagerConfigured) {
-            throw new ConfigurationException("When configuring JTA, both a UserTransaction and a TransactionManager " +
-                    "are required. Only the UserTransaction was configured.");
-        }
-        if (transactionManagerConfigured && !userTransactionConfigured) {
-            throw new ConfigurationException("When configuring JTA, both a UserTransaction and a TransactionManager " +
-                    "are required. Only the TransactionManager was configured.");
-        }
     }
 
     private void configureDataSource() {
@@ -192,33 +164,24 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
 
     @Override
     public final void initializeResourceLoaders() throws Exception {
-        List<String> files = new ArrayList<>(getPrimarySpringFiles());
+        addResourceLoaderName(SPRING_RL_QNAME, SPRING_RESOURCE_LOADER_NAME);
 
-        ResourceLoader rootResourceLoader = GlobalResourceLoader.getResourceLoader();
-        if (rootResourceLoader == null) {
-            createRootResourceLoader();
-        }
+        final List<String> primarySpringFiles = getPrimarySpringFiles();
+        final ResourceLoader springResourceLoader =
+                new SpringResourceLoader(SPRING_RL_QNAME, primarySpringFiles, servletContext);
 
-        if (!files.isEmpty()) {
-            ResourceLoader rl = createResourceLoader(servletContext, files);
-            rl.start();
-            GlobalResourceLoader.addResourceLoader(rl);
-        }
-    }
-
-    private void createRootResourceLoader() throws Exception {
-        final ResourceLoaderContainer container = new ResourceLoaderContainer(
-                new QName(KFSConstants.APPLICATION_NAMESPACE_CODE, ROOT_RESOURCE_LOADER_CONTAINER_NAME));
-        ResourceLoader rootResourceLoader = new BaseResourceLoader(
-                new QName(KFSConstants.APPLICATION_NAMESPACE_CODE, DEFAULT_ROOT_RESOURCE_LOADER_NAME));
-
-        container.addResourceLoader(rootResourceLoader);
-        GlobalResourceLoader.addResourceLoader(container);
+        springResourceLoader.start();
+        GlobalResourceLoader.addResourceLoader(springResourceLoader);
         GlobalResourceLoader.start();
     }
 
-    private ResourceLoader createResourceLoader(ServletContext servletContext, List<String> files) {
-        return ResourceLoaderFactory.createRootRiceResourceLoader(servletContext, files, "KFS");
+    private static void addResourceLoaderName(
+            final QName name,
+            final String resourceLoaderName
+    ) {
+        final Collection<QName> names = new ArrayList<>();
+        names.add(name);
+        ConfigContext.getCurrentContextConfig().putObject(resourceLoaderName, names);
     }
 
     @Override
@@ -249,11 +212,9 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
      */
     private void loadDataDictionary() {
         LOG.info("KRAD Configurer - Loading DD");
-        DataDictionaryService dds = KNSServiceLocator.getDataDictionaryService();
-        if (dds == null) {
-            dds = GlobalResourceLoader.getService(KRADServiceLocatorWeb.DATA_DICTIONARY_SERVICE);
-        }
-        dds.parseDataDictionaryConfigurationFiles(false);
+        final DataDictionaryService dds =
+                GlobalResourceLoader.getService(KRADServiceLocatorWeb.DATA_DICTIONARY_SERVICE);
+        dds.parseDataDictionaryConfigurationFiles();
 
         LOG.info("KRAD Configurer - Validating DD");
         //TODO: Fix via config when we can.
@@ -323,22 +284,6 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
 
     public void setNonTransactionalDataSource(DataSource nonTransactionalDataSource) {
         this.nonTransactionalDataSource = nonTransactionalDataSource;
-    }
-
-    public UserTransaction getUserTransaction() {
-        return userTransaction;
-    }
-
-    public void setUserTransaction(UserTransaction userTransaction) {
-        this.userTransaction = userTransaction;
-    }
-
-    public TransactionManager getTransactionManager() {
-        return transactionManager;
-    }
-
-    public void setTransactionManager(TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
     }
 
     public ServletContext getServletContext() {

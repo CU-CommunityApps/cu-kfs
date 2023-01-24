@@ -172,14 +172,14 @@ public class CacheConfiguration {
         // These caches have a TTL value different from the default specified in the redis.default.ttl property
         // Cornell Note: We are not actively using this Map in our customized caching setup.
         return Map.ofEntries(
-        		
-                entry(DocumentType.CACHE_NAME, 3600L),
-                entry(MenuService.MENU_LINKS_CACHE_NAME, 86760L),
-                entry(Namespace.CACHE_NAME, 3600L),
-                entry(Parameter.CACHE_NAME, 3600L),
-                entry(RoutePath.CACHE_NAME, 3600L),
-                entry(RuleAttribute.CACHE_NAME, 3600L)
-                
+                entry(BatchFile.CACHE_NAME, Duration.ofSeconds(84600L)),
+                entry(DocumentType.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(HomeOrigination.CACHE_NAME, Duration.ZERO),
+                entry(MenuService.MENU_LINKS_CACHE_NAME, Duration.ofSeconds(86760L)),
+                entry(Namespace.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(Parameter.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(RoutePath.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(RuleAttribute.CACHE_NAME, Duration.ofSeconds(3600L))
         );
     }
 
@@ -190,10 +190,10 @@ public class CacheConfiguration {
 
     @Bean
     public RedisConnectionFactory connectionFactory(
-            @Value("${redis.auth.token.password}") String redisAuthTokenPassword,
-            @Value("${redis.host}") String redisHost,
-            @Value("${redis.port}") int redisPort,
-            @Value("${redis.use.ssl}") boolean redisUseSsl,
+            @Value("${redis.auth.token.password}") final String redisAuthTokenPassword,
+            @Value("${redis.host}") final String redisHost,
+            @Value("${redis.port}") final int redisPort,
+            @Value("${redis.use.ssl}") final boolean redisUseSsl,
             RedisEventListenerLazyInitProxy redisEventListener
     ) {
         final RedisStandaloneConfiguration redisStandaloneConfiguration =
@@ -235,7 +235,7 @@ public class CacheConfiguration {
     @Bean
     public CuEhCacheCacheManager cacheManager(
             @Value("${kfs.ehcache.config.location}") Resource ehcacheConfigLocation,
-            @Value("${redis.default.ttl}") Long redisDefaultTtl,
+            @Value("${redis.default.ttl}") final Long redisDefaultTtl,
             RedisEventListenerLazyInitProxy redisEventListener,
             EhcacheEventListenerForUpdatingRedis ehcacheEventListener
     ) {

@@ -65,6 +65,7 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingCapitalAssetItem;
 import org.kuali.kfs.module.purap.businessobject.PurchasingCapitalAssetSystemBase;
 import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
+import org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetLocation;
 import org.kuali.kfs.module.purap.document.PurchaseOrderAmendmentDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
@@ -1243,10 +1244,17 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         String locationIndex = StringUtils.substringBetween(fullParameter, KFSConstants.METHOD_TO_CALL_PARM2_LEFT_DEL, KFSConstants.METHOD_TO_CALL_PARM2_RIGHT_DEL);
 
         // get specific asset item and grab system as well and attach asset number
-        PurchasingCapitalAssetItem assetItem = purDocument.getPurchasingCapitalAssetItems().get(Integer.parseInt(assetItemIndex));
+        PurchasingCapitalAssetItem assetItem = purDocument.getPurchasingCapitalAssetItems()
+                .get(Integer.parseInt(assetItemIndex));
         CapitalAssetSystem system = assetItem.getPurchasingCapitalAssetSystem();
-        system.getCapitalAssetLocations().remove(Integer.parseInt(locationIndex));
 
+        // Since the capital asset location is set up as an EBO, we can't include it in the
+        // buildListOfDeletionAwareLists method in PurchasingCapitalAssetSystemBase, and we need to delete the location
+        // explictly here. Otherwise, deleted locations can magically after the document is routed.
+        final RequisitionCapitalAssetLocation capitalAssetLocation =
+                (RequisitionCapitalAssetLocation) system.getCapitalAssetLocations()
+                        .remove(Integer.parseInt(locationIndex));
+        getBusinessObjectService().delete(capitalAssetLocation);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

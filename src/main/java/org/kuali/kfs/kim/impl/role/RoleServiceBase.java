@@ -159,7 +159,7 @@ abstract class RoleServiceBase {
                 return roleDao.getRoleGroupsForGroupIdsAndRoleIds(roleIds, groupIds, convertedQualification);
             case ROLE_MEMBERS_FOR_ROLE_IDS:
                 // Search for role members with the given member type code.
-                return roleDao.getRoleMembersForRoleIds(roleIds, memberTypeCode, convertedQualification);
+                return roleDao.getRoleMembersForRoleId(roleId, memberTypeCode, convertedQualification);
             case ROLE_MEMBERSHIPS_FOR_ROLE_IDS_AS_MEMBERS:
                 // Search for role members who are also roles.
                 return roleDao.getRoleMembershipsForRoleIdsAsMembers(roleIds, convertedQualification);
@@ -195,7 +195,7 @@ abstract class RoleServiceBase {
     }
 
     /**
-     * Calls the KimRoleDao's "getRoleMembersForRoleIds" method and/or retrieves any corresponding members from the
+     * Calls the KimRoleDao's "getRoleMembersForRoleId" method and/or retrieves any corresponding members from the
      * cache.
      */
     protected List<RoleMember> getStoredRoleMembersForRoleId(String roleId, String memberTypeCode,

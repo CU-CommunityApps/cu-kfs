@@ -262,10 +262,19 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             // check if control accounts of award accounts are the same
             boolean isValid = true;
             if (accountNum != 1) {
-                Set<Account> distinctAwardAccounts = new HashSet<>();
-                for (ContractsAndGrantsBillingAwardAccount awardAccount : awd.getActiveAwardAccounts()) {
-                    if (ObjectUtils.isNotNull(awardAccount.getAccount().getContractControlAccount())) {
-                        distinctAwardAccounts.add(awardAccount.getAccount().getContractControlAccount());
+                // collect a set of distinct "chart-account" string combinations since the Contract Control Account
+                // itself may be a proxy and wouldn't be equal to another non-proxy Account object even if the
+                // chart/account are the same, so we could end up with multiple Accounts in the Set causing this
+                // validation to fail inadvertently
+                final Set<String> distinctAwardAccounts = new HashSet<>();
+                for (final ContractsAndGrantsBillingAwardAccount awardAccount : awd.getActiveAwardAccounts()) {
+                    final Account account = awardAccount.getAccount();
+                    if (ObjectUtils.isNotNull(account)) {
+                        distinctAwardAccounts.add(
+                                account.getContractControlFinCoaCode()
+                                + "-"
+                                + account.getContractControlAccountNumber()
+                        );
                     }
                 }
                 if (distinctAwardAccounts.size() > 1) {
