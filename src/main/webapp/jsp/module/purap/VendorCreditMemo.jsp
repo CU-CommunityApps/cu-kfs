@@ -65,9 +65,9 @@
                 itemAttributes="${DataDictionary.CreditMemoItem.attributes}"
                 documentAttributes="${DataDictionary.SourceAccountingLine.attributes}"/>
 
-        <purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+        <purap:relatedDocuments />
 
-        <purap:paymentHistory documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+        <purap:paymentHistory />
 
         <purap:cmWireTransfer/>
         <purap:cmForeignDraft/>
