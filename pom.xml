@@ -5,7 +5,13 @@
     <groupId>edu.cornell.kfs</groupId>
     <artifactId>kfs-war</artifactId>
     <packaging>war</packaging>
-    <name>KFS war</name>
+    
+
+
+
+
+
+<name>KFS war</name>
     <version>current</version>
     <description>
         This project wraps the KFS war with a war overlay.
