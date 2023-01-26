@@ -74,11 +74,11 @@
 
         <%-- Display related documents, if a req has been created from this doc. --%>
         <c:if test="${isRegularStep && !empty(KualiForm.document.reqsDocId)}">
-            <purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+            <purap:relatedDocuments />
         </c:if>
 
         <c:if test="${!empty(KualiForm.document.dvDocId)}">
-            <purap:iWantRelatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+            <purap:iWantRelatedDocuments />
         </c:if>
 
         <purap:iWantNotes attachmentTypesValuesFinder="${documentEntry.attachmentTypesValuesFinder}"
