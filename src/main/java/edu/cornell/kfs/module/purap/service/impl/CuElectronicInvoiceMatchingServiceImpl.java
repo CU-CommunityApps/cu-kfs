@@ -329,11 +329,12 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
         VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getElectronicInvoice().getDunsNumber());
 
         if (poDoc.getVendorHeaderGeneratedIdentifier() == null || poDoc.getVendorDetailAssignedIdentifier() == null
-                || ObjectUtils.isNull(vendorByDunsDetail) || !(poDoc.getVendorHeaderGeneratedIdentifier()
-                        .equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier()))) {
+                || ObjectUtils.isNull(vendorByDunsDetail))
+        {
             return false;
         }
-        return true;
+        
+        return poDoc.getVendorHeaderGeneratedIdentifier().equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier());
     }
 
     public void setVendorService(VendorService vendorService) {
