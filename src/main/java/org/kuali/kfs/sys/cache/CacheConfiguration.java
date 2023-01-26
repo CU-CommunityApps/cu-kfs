@@ -78,6 +78,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.time.Duration;
+
 import edu.cornell.kfs.sys.cache.ClientTrackingLettuceConnectionFactory;
 import edu.cornell.kfs.sys.cache.CuEhCacheCacheManager;
 import edu.cornell.kfs.sys.cache.EhcacheEventListenerForUpdatingRedis;
@@ -168,7 +170,7 @@ public class CacheConfiguration {
     }
 
     @Bean
-    public Map<String, Long> cacheExpires() {
+    public Map<String, Duration> cacheExpires() {
         // These caches have a TTL value different from the default specified in the redis.default.ttl property
         // Cornell Note: We are not actively using this Map in our customized caching setup.
         return Map.ofEntries(

@@ -180,7 +180,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     }
 
     @Override
-    public void templateEmployee(Person employee) {
+    public void templateEmployee(final Person employee) {
         if (employee == null) {
             return;
         }
@@ -201,62 +201,41 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         final ParameterService parameterService = this.getParameterService();
 
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)
-                && parameterService.getParameterValueAsBoolean(
-                        DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)) {
-            this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
-        } else {
-            final EntityAddress address = getNonDefaultAddress(employee);
-            if (address != null) {
-                this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(address.getLine1Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateProvinceCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(address.getPostalCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
-            } else {
-                this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr("");
-                this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName("");
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");
-            }
-        }
+        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
+        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
+        getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCodeUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
 
         //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the message
         // "Is this payee an employee" = No
         if (employee.isActive()) {
-            this.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(true);
+            getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(true);
         } else {
-            this.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(false);
+            getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(false);
         }
 
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the employee must be foreign
-        for (String externalIdentifierTypeCode : employee.getExternalIdentifiers().keySet()) {
+        for (final String externalIdentifierTypeCode : employee.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
                 this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if employee is a research subject
-        ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
+        final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
-                this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+                getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
                     FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
-                String researchPayLimit = getParameterService().getParameterValueAsString(
+                final String researchPayLimit = getParameterService().getParameterValueAsString(
                         DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
-                    KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
+                    final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
                     if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                        this.getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
+                        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }
@@ -271,14 +250,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
      *
      * @param student
      */
-    public void templateStudent(Person student) {
+    public void templateStudent(final Person student) {
         if (student == null) {
             return;
         }
 
-        this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
+        getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
 
-        this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(student.getPrincipalId());
+        getDvPayeeDetail().setDisbVchrPayeeIdNumber(student.getPrincipalId());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
@@ -287,56 +266,34 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         final ParameterService parameterService = this.getParameterService();
 
-        // Use the same parameter as for employees even though this is a student as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)
-                && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class,
-                        FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)) {
-            this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(student.getAddressStateProvinceCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
-        } else {
-            final EntityAddress address = getNonDefaultAddress(student);
-            if (address != null) {
-                this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(address.getLine1Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateProvinceCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
-            } else {
-                this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr("");
-                this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName("");
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");
-            }
-        }
+        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
+        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
+        getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeStateCode(student.getAddressStateProvinceCodeUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
 
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the student must be foreign
-        for (String externalIdentifierTypeCode : student.getExternalIdentifiers().keySet()) {
+        for (final String externalIdentifierTypeCode : student.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
+                getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if student is a research subject
 
 
-        ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
+        final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS);
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
                     FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
-                String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
+                final String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
                         FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
-                    KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
+                    final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
                     if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                        this.getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
+                        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }
@@ -351,14 +308,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
      *
      * @param alumni
      */
-    public void templateAlumni(Person alumni) {
+    public void templateAlumni(final Person alumni) {
         if (alumni == null) {
             return;
         }
 
-        this.getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
+        getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
 
-        this.getDvPayeeDetail().setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
+        getDvPayeeDetail().setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         ((CuDisbursementVoucherPayeeDetailExtension) this.getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
@@ -368,55 +325,33 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         final ParameterService parameterService = this.getParameterService();
 
-        // Use the same parameter as for employees even though this is a alumni as basic intention is the same
-        if (parameterService.parameterExists(DisbursementVoucherDocument.class, FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)
-                && parameterService.getParameterValueAsBoolean(DisbursementVoucherDocument.class,
-                        FPParameterConstants.USE_DEFAULT_EMPLOYEE_ADDRESS)) {
-            this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
-            this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
-        } else {
-            final EntityAddress address = getNonDefaultAddress(alumni);
-            if (address != null) {
-                this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr(address.getLine1Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr(address.getLine2Unmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName(address.getCityUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode(address.getStateProvinceCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode(address.getCountryCodeUnmasked());
-            } else {
-                this.getDvPayeeDetail().setDisbVchrPayeeLine1Addr("");
-                this.getDvPayeeDetail().setDisbVchrPayeeLine2Addr("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCityName("");
-                this.getDvPayeeDetail().setDisbVchrPayeeStateCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeZipCode("");
-                this.getDvPayeeDetail().setDisbVchrPayeeCountryCode("");
-            }
-        }
+        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
+        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
+        getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCodeUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
 
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the alumni must be foreign
-        for (String externalIdentifierTypeCode : alumni.getExternalIdentifiers().keySet()) {
+        for (final String externalIdentifierTypeCode : alumni.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
                 this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if alumni is a research subject
-        ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
+        final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
-                this.getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+                getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
                     FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
-                String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
+                final String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
                         FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
-                    KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
+                    final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
                     if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                        this.getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
+                        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }

@@ -30,8 +30,7 @@ import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.core.api.resourceloader.ResourceLoader;
 import org.kuali.kfs.core.api.resourceloader.ResourceLoaderContainer;
 import org.kuali.kfs.core.framework.lifecycle.ServiceDelegatingLifecycle;
-import org.kuali.kfs.core.framework.resourceloader.BaseResourceLoader;
-import org.kuali.kfs.core.framework.resourceloader.ResourceLoaderFactory;
+import org.kuali.kfs.core.framework.resourceloader.SpringResourceLoader;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.service.KRADServiceLocatorWeb;
@@ -59,6 +58,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements Configurer,
         ServletContextAware, SmartApplicationListener {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final String SCHEDULED_THREAD_POOL_SERVICE = "rice.ksb.scheduledThreadPool";
     private static final String SPRING_RESOURCE_LOADER_NAME = "SPRING_RESOURCE_LOADER_NAME";
     static final QName SPRING_RL_QNAME =
             new QName(KFSConstants.APPLICATION_NAMESPACE_CODE, "KFS_" + SPRING_RESOURCE_LOADER_NAME);
