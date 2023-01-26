@@ -317,7 +317,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
             return;
         }
 
-        if (!eInvoiceVendorMatchesPOVendor(poDoc, orderHolder)){
+        if (!eInvoiceVendorMatchesPOVendor(poDoc, orderHolder)) {
             ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR,null,orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
             return;
@@ -329,8 +329,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
         VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getElectronicInvoice().getDunsNumber());
 
         if (poDoc.getVendorHeaderGeneratedIdentifier() == null || poDoc.getVendorDetailAssignedIdentifier() == null
-                || ObjectUtils.isNull(vendorByDunsDetail))
-        {
+                || ObjectUtils.isNull(vendorByDunsDetail)) {
             return false;
         }
         
