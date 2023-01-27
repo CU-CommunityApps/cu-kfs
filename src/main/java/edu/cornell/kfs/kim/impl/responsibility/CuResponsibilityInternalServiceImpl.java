@@ -40,7 +40,7 @@ public class CuResponsibilityInternalServiceImpl extends ResponsibilityInternalS
      * Overridden to make this a no-op method.
      */
     @Override
-    public void updateActionRequestsForResponsibilityChange(Set<String> responsibilityIds) {
+    public void updateActionRequestsForResponsibilityChange(final Set<String> responsibilityIds) {
         // Do nothing.
     }
 
