@@ -1,17 +1,17 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 
-import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.businessobject.options.StandardEntryClassValuesFinder;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
@@ -50,6 +50,7 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
         kfsAchDataWrapper.getPayeeAchAccount().setBankRoutingNumber(pmwVendor.getBankAcctRoutingNumber());
         kfsAchDataWrapper.getPayeeAchAccount().setBankAccountNumber(pmwVendor.getBankAcctBankAccountNumber());
         kfsAchDataWrapper.getPayeeAchAccount().setBankAccountTypeCode(convertBankAccountTypeFromPmwToKfs(pmwVendor.getBankAcctType()));
+        kfsAchDataWrapper.getPayeeAchAccount().setStandardEntryClass(determineStandardEntryClass(kfsAchDataWrapper.getPayeeAchAccount().getBankAccountTypeCode()));
         kfsAchDataWrapper.getPayeeAchAccount().setPayeeName(pmwVendor.getRequestingCompanyLegalName());
         kfsAchDataWrapper.getPayeeAchAccount().setPayeeEmailAddress(pmwVendor.getBankAcctAchEmail());
         kfsAchDataWrapper.getPayeeAchAccount().setAchTransactionType(PaymentWorksConstants.KFSPayeeAchMaintenanceDocumentConstants.ACH_DIRECT_DEPOSIT_TRANSACTION_TYPE);
@@ -60,6 +61,16 @@ public class PaymentWorksVendorToKfsPayeeAchAccountConversionServiceImpl impleme
     private String convertBankAccountTypeFromPmwToKfs(String pmwBankAccountType) {
         List<PaymentWorksConstants.PaymentWorksBankAccountType> matchingPmwBanksAccountTypes = getPaymentWorksBatchUtilityService().findAllPmwBankAccountTypesMatching(pmwBankAccountType);
         return matchingPmwBanksAccountTypes.get(0).translationToKfsBankAccountTypeCode;
+    }
+    
+    protected String determineStandardEntryClass(String kfsBankAccountTypeCode) {
+        String valueToConvert = StringUtils.right(kfsBankAccountTypeCode, 3);
+        if (StringUtils.isNotBlank(valueToConvert)) {
+            valueToConvert = valueToConvert.toUpperCase(Locale.US);
+            return StandardEntryClassValuesFinder.StandardEntryClass.valueOf(valueToConvert).toString();
+        } else {
+            throw new IllegalArgumentException("KFS bank account type code did not contain at least three characters : " + kfsBankAccountTypeCode);
+        }
     }
     
     private String formatPayeeNumberForVendor(PaymentWorksVendor pmwVendor) {
