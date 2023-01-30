@@ -13,8 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -51,7 +51,6 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
@@ -292,7 +291,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
 
     @Override
     public String getPunchOutUrlForRoleSet(Person user, JaggaerRoleSet roleSet) {
-    	LOG.info("getPunchOutUrlForRoleSet, creating punchout URL for role: " + roleSet);
+    	if (LOG.isDebugEnabled()) {
+    		LOG.debug("getPunchOutUrlForRoleSet, creating punchout URL for role: " + roleSet);
+    	}
         B2BInformation b2b = getB2bShoppingConfigurationInformation();
         String cxml = getPunchOutSetupRequestMessage(user, b2b, roleSet);
         String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
@@ -302,7 +303,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     
     @Override
     public String getPunchOutUrl(Person user) {
-    	LOG.info("getPunchOutUrl, overriding to use custom link generating code.");
+    	LOG.debug("getPunchOutUrl, overriding to use custom link generating code.");
     	return getPunchOutUrlForRoleSet(user, JaggaerRoleSet.ESHOP);
     }
 
