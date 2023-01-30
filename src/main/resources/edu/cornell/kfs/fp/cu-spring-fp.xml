@@ -278,7 +278,7 @@
 	<bean id="disbursementVoucherDao" 
 	      class="edu.cornell.kfs.fp.dataaccess.impl.CuDisbursementVoucherDaoOjb" 
 	      parent="platformAwareDao" 
-	      p:parameterService-ref="parameterService/>
+	      p:parameterService-ref="parameterService"/>
 
     
     <!--  Validations -->
