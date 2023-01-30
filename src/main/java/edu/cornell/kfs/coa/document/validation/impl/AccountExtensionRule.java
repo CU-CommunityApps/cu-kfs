@@ -28,7 +28,6 @@ import org.kuali.kfs.coa.document.validation.impl.AccountRule;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.ld.businessobject.LaborBenefitRateCategory;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -52,37 +51,10 @@ public class AccountExtensionRule extends AccountRule {
         success &= checkSubFundProgram(document);
         success &= checkAppropriationAccount(document);
         success &= checkMajorReportingCategoryCode(document);
-        success &= checkLaborBenefitCategoryCode(document);
         
         return success;
     }
 
-    //TODO This should no longer be required as laborBenefitCategoryCode is now in the base table and add to
-    // the list of fields the have existence checks.
-    @SuppressWarnings("deprecation")
-	protected boolean checkLaborBenefitCategoryCode(MaintenanceDocument document) {
-        boolean success = true;
-
-        String laborBenefitCategoryCode  = newAccount.getLaborBenefitRateCategoryCode();
-        BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-
-        // Benefit Category Code is not a required field. if no value is entered 
-        // no validation is performed.
-        if (!StringUtils.isBlank(laborBenefitCategoryCode)) {
-            Map<String, Object> fieldValues = new HashMap<String, Object>();
-            fieldValues.put("laborBenefitRateCategoryCode", laborBenefitCategoryCode);
-            
-            Collection<LaborBenefitRateCategory> retVals = bos.findMatching(LaborBenefitRateCategory.class, fieldValues);
-            
-            if (retVals.isEmpty()) {
-                success = false;
-                putFieldError("laborBenefitRateCategoryCode", KFSKeyConstants.ERROR_EXISTENCE, " Labor Benefit Rate Category Code " + laborBenefitCategoryCode);
-            }
-        	
-        }
-        return success;
-    }
-    
     protected boolean checkSubFundProgram(MaintenanceDocument document) {
         boolean success = true;
 
