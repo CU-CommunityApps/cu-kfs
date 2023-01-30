@@ -1,7 +1,6 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.text.MessageFormat;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -30,7 +29,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
-import org.kuali.kfs.pdp.businessobject.options.StandardEntryClassValuesFinder;
 import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
@@ -126,7 +124,6 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         achAccount.setBankRoutingNumber(achDetail.getBankRoutingNumber());
         achAccount.setBankAccountNumber(achDetail.getBankAccountNumber());
         achAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
-        achAccount.setStandardEntryClass(determineStandardEntryClass(achAccount.getBankAccountTypeCode()));
         if (StringUtils.isNotBlank(payee.getNameUnmasked())) {
             achAccount.setPayeeName(payee.getNameUnmasked());
         }
@@ -147,16 +144,6 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
             return getPayeeACHAccountExtractParameter(CUPdpParameterConstants.ACH_PERSONAL_SAVINGS_TRANSACTION_CODE);
         } else {
             throw new IllegalArgumentException("Unrecognized account type from file: " + workdayAccountType);
-        }
-    }
-    
-    protected String determineStandardEntryClass(String achTransactionCode) {
-        String valueToConvert = StringUtils.right(achTransactionCode, 3);
-        if (StringUtils.isNotBlank(valueToConvert)) {
-            valueToConvert = valueToConvert.toUpperCase(Locale.US);
-            return StandardEntryClassValuesFinder.StandardEntryClass.valueOf(valueToConvert).toString();
-        } else {
-            throw new IllegalArgumentException("ACH transaction code from file did not contain at least three characters : " + achTransactionCode);
         }
     }
     
@@ -391,7 +378,6 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         newAccount.setBankRoutingNumber(achDetail.getBankRoutingNumber());
         newAccount.setBankAccountNumber(achDetail.getBankAccountNumber());
         newAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
-        newAccount.setStandardEntryClass(determineStandardEntryClass(newAccount.getBankAccountTypeCode()));
         newAccount.setActive(true);
         
         paatDocument.getOldMaintainableObject().setDataObject(oldAccount);
