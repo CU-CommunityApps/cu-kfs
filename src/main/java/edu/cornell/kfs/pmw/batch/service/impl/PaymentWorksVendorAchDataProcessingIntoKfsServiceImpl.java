@@ -1,10 +1,6 @@
 package edu.cornell.kfs.pmw.batch.service.impl;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,14 +8,12 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 
@@ -32,10 +26,8 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.batch.report.PaymentWorksNewVendorPayeeAchBatchReportData;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksBatchUtilityService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorPayeeAchReportService;
-import edu.cornell.kfs.pmw.batch.service.PaymentWorksNewVendorRequestsReportService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorAchDataProcessingIntoKfsService;
 import edu.cornell.kfs.pmw.batch.service.PaymentWorksVendorToKfsPayeeAchAccountConversionService;
-import edu.cornell.kfs.vnd.CUVendorConstants;
 
 public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements PaymentWorksVendorAchDataProcessingIntoKfsService {
 	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl.class);
@@ -135,6 +127,7 @@ public class PaymentWorksVendorAchDataProcessingIntoKfsServiceImpl implements Pa
         achAccount.setBankRoutingNumber(newPayeeAchAccount.getBankRoutingNumber());
         achAccount.setBankAccountNumber(newPayeeAchAccount.getBankAccountNumber());
         achAccount.setBankAccountTypeCode(newPayeeAchAccount.getBankAccountTypeCode());
+        achAccount.setStandardEntryClass(newPayeeAchAccount.getStandardEntryClass());
         achAccount.setPayeeName(newPayeeAchAccount.getPayeeName());
         achAccount.setPayeeEmailAddress(newPayeeAchAccount.getPayeeEmailAddress());
         achAccount.setAchTransactionType(newPayeeAchAccount.getAchTransactionType());
