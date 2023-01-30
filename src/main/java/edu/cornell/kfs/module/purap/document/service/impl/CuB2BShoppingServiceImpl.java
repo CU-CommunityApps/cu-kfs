@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -41,7 +40,6 @@ import org.kuali.kfs.module.purap.util.PurApDateFormatUtils;
 import org.kuali.kfs.module.purap.util.cxml.B2BParserHelper;
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 import org.kuali.kfs.module.purap.util.cxml.PunchOutSetupResponse;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
@@ -51,9 +49,7 @@ import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
@@ -292,11 +288,20 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
 
     @Override
     public String getPunchOutUrlForRoleSet(Person user, JaggaerRoleSet roleSet) {
+    	if (LOG.isDebugEnabled()) {
+    		LOG.debug("getPunchOutUrlForRoleSet, creating punchout URL for role: " + roleSet);
+    	}
         B2BInformation b2b = getB2bShoppingConfigurationInformation();
         String cxml = getPunchOutSetupRequestMessage(user, b2b, roleSet);
         String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
         PunchOutSetupResponse posr = B2BParserHelper.getInstance().parsePunchOutSetupResponse(response);
         return posr.getPunchOutUrl();
+    }
+    
+    @Override
+    public String getPunchOutUrl(Person user) {
+    	LOG.debug("getPunchOutUrl, overriding to use custom link generating code.");
+    	return getPunchOutUrlForRoleSet(user, JaggaerRoleSet.ESHOP);
     }
 
     @Override
@@ -360,14 +365,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
         // KFSPTS-1720
         cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
-        if (JaggaerRoleSet.ESHOP.equals(roleSet)) {
-            cxml.append("      <Extrinsic name=\"Role\">").append(getPreAuthValue(user.getPrincipalId())).append("</Extrinsic>\n");
-            cxml.append("      <Extrinsic name=\"Role\">").append(getViewValue(user.getPrincipalId())).append("</Extrinsic>\n");
-        } else {
-            List<String> roles = jaggaerRoleService.getJaggaerRoles(user, roleSet);
-            for (String role : roles) {
-                cxml.append("      <Extrinsic name=\"Role\">").append(role).append("</Extrinsic>\n");
-            }
+        
+        for (String role : jaggaerRoleService.getJaggaerRoles(user, roleSet)) {
+            cxml.append("      <Extrinsic name=\"Role\">").append(role).append("</Extrinsic>\n");
         }
 
         cxml.append("      <BrowserFormPost>\n");
@@ -384,48 +384,8 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
         cxml.append("    </PunchOutSetupRequest>\n");
         cxml.append("  </Request>\n");
         cxml.append("</cXML>\n");
-
         return cxml.toString();
       }
-
-    private String getPreAuthValue(String principalId) {
-        try {
-      	  //Check for special view role first
-      	  if (KimApiServiceLocator.getPermissionService().hasPermission(
-                principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SUBMIT_ESHOP_CART_PERMISSION))  {
-      		  return CUPurapConstants.SCIQUEST_ROLE_BUYER;
-      	  } else {
-          	return CUPurapConstants.SCIQUEST_ROLE_SHOPPER;
-      	  }
-          
-        } catch (Exception e) {
-            // incase something goes wrong.  continue to process
-            LOG.info("error from role check " + e.getMessage());
-            return CUPurapConstants.SCIQUEST_ROLE_SHOPPER;
-        }
-    }
-    private String getViewValue(String principalId) {
-        try {
-      	  //Check for special view role first
-      	  if (KimApiServiceLocator.getPermissionService().hasPermission(
-                	principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SHOPPER_OFFICE_PERMISSION))  {
-      		  	return CUPurapConstants.SCIQUEST_ROLE_OFFICE;
-      	  } else if (KimApiServiceLocator.getPermissionService().hasPermission(
-  	      	  	principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SHOPPER_LAB_PERMISSION))  {
-  				return CUPurapConstants.SCIQUEST_ROLE_LAB;
-  		  }	else if (KimApiServiceLocator.getPermissionService().hasPermission(
-  			    principalId, KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.B2B_SHOPPER_FACILITIES_PERMISSION))  {
-  				return CUPurapConstants.SCIQUEST_ROLE_FACILITIES;
-  		  } else {
-  				return CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED;
-      	  }
-          
-        } catch (Exception e) {
-            // incase something goes wrong.  continue to process
-            LOG.info("error from role check " + e.getMessage());
-            return CUPurapConstants.SCIQUEST_ROLE_UNRESTRICTED;
-        }
-    }
     
     // KFSUPGRADE-404
     /**
