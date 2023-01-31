@@ -12,6 +12,9 @@ Cornell University Customizations Project
 ### About
 This project provides customizations to the Kuali Financial System (KFS) to support Cornell University business processes and requirements.
 
+### Next Test
+This is a test for behavior of a financials upgrade PR
+
 ### More Information
 Questions about this project may be directed to our [Kuali Developers](mailto:cu-kuali-devs@cornell.edu).
 
