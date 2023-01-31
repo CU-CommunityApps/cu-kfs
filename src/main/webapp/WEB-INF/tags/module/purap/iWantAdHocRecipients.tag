@@ -17,9 +17,9 @@
                         <strong>NOTE:</strong>
                     </p>
                     <ul>
-                        <li>Do not enter your Net ID in the box below.</li>
-                        <li>If additional approvals are required prior to submitting to your Service Center for processing, please list the individual's Net ID below.</li>
-                        <li>Please click the <strong>Submit</strong> button to route to the named approver or your Service Center.</li>
+                        <li>Do <strong>not</strong> enter your Net ID in the Approver's box below.</li>
+                        <li>If you did not enter an <strong>account number</strong> in Step 2/Account Information, enter the Net ID of the person in your department who can provide that information. </li>
+                        <li>If additional approvals are required, enter the Net ID of the person in your department who can authorize the expenditure <strong>or</strong> attach the approval in Step 3/Notes and Attachments.</li>
                     </ul>
                 </td>
             </tr>
