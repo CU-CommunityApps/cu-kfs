@@ -22,6 +22,9 @@ import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
 import org.kuali.kfs.vnd.businessobject.PurchaseOrderCostSource;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -319,7 +322,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
 
         if (!eInvoiceVendorMatchesPOVendor(poDoc, orderHolder)) {
             ElectronicInvoiceRejectReason rejectReason = createRejectReason(PurapConstants.ElectronicInvoice.PO_VENDOR_NOT_MATCHES_WITH_INVOICE_VENDOR,null,orderHolder.getFileName());
-            orderHolder.addInvoiceOrderRejectReason(rejectReason);
+            orderHolder.addInvoiceOrderRejectReason(rejectReason,PurapConstants.ElectronicInvoice.RejectDocumentFields.VENDOR_DUNS_NUMBER,CUPurapKeyConstants.ERROR_REJECT_INVOICE_PO_VENDOR_MISMATCH);
             return;
         }
 
