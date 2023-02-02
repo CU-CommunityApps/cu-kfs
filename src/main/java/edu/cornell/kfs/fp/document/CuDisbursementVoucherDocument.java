@@ -217,7 +217,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the employee must be foreign
         for (final String externalIdentifierTypeCode : employee.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
+                getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if employee is a research subject
@@ -317,7 +317,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
-        this.getDvPayeeDetail().setDisbVchrPayeePersonName(alumni.getNameUnmasked());
+        getDvPayeeDetail().setDisbVchrPayeePersonName(alumni.getNameUnmasked());
 
         getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
         getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
@@ -329,7 +329,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the alumni must be foreign
         for (final String externalIdentifierTypeCode : alumni.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                this.getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
+                getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if alumni is a research subject
@@ -703,7 +703,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     @Override
     public boolean isTravelReviewRequired() {
-        List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+        List<AccountingLine> theList = (List<AccountingLine>) sourceAccountingLines;
 
         for (AccountingLine alb : theList )
         {
@@ -723,7 +723,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             overDollarThreshold = true;
         }
 
-        final String paymentReasonCode = this.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
+        final String paymentReasonCode = getDvPayeeDetail().getDisbVchrPaymentReasonCode();
 
         return (getDisbursementVoucherPaymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || getDisbursementVoucherPaymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
     }
@@ -732,11 +732,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         String awardThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
         KualiDecimal dollarThresholdDecimal = new KualiDecimal(awardThreshold);
-        if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
+        if ( disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
             return true;
         }
 
-        List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+        List<AccountingLine> theList = (List<AccountingLine>) sourceAccountingLines;
         for (AccountingLine alb : theList )
         {
             ParameterEvaluator objectCodes = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", OBJECT_CODES_REQUIRING_AWARD_REVIEW, alb.getFinancialObjectCode());
@@ -763,7 +763,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return true;
         }
 
-        List<AccountingLine> theList = (List<AccountingLine>) this.sourceAccountingLines;
+        List<AccountingLine> theList = (List<AccountingLine>) sourceAccountingLines;
 
         for (AccountingLine alb : theList )
         {
@@ -775,14 +775,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             }
         }
 
-        ParameterEvaluator paymentReasons = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, this.dvPayeeDetail.getDisbVchrPaymentReasonCode());
+        ParameterEvaluator paymentReasons = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator("KFS-FP", "DisbursementVoucher", PAYMENT_REASONS_REQUIRING_CAMPUS_REVIEW, dvPayeeDetail.getDisbVchrPaymentReasonCode());
         if (paymentReasons.evaluationSucceeds()) {
             return true;
         }
 
         String dollarThreshold = getParameterService().getParameterValueAsString("KFS-FP", "DisbursementVoucher", DOLLAR_THRESHOLD_REQUIRING_CAMPUS_REVIEW);
         KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
-        if ( this.disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
+        if ( disbVchrCheckTotalAmount.isGreaterEqual(dollarThresholdDecimal)) {
             return true;
         }
 
