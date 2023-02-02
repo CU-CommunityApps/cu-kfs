@@ -325,8 +325,8 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
 
     }
     
-    private boolean eInvoiceVendorMatchesPOVendor(PurchaseOrderDocument poDoc, ElectronicInvoiceOrderHolder orderHolder) {
-        VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getElectronicInvoice().getDunsNumber());
+    private boolean eInvoiceVendorMatchesPOVendor(PurchaseOrderDocument poDoc, ElectronicInvoiceOrderHolder orderHolder) {        
+        VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getDunsNumber());
 
         if (poDoc.getVendorHeaderGeneratedIdentifier() == null || poDoc.getVendorDetailAssignedIdentifier() == null
                 || ObjectUtils.isNull(vendorByDunsDetail)) {
@@ -337,6 +337,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     }
 
     public void setVendorService(VendorService vendorService) {
+        super.setVendorService(vendorService);
         this.vendorService = vendorService;
     }
 
