@@ -34,5 +34,7 @@ public class CUPurapKeyConstants {
     
     // KFSUPGRADE-779
     public static final String ERROR_PAYMENTMETHODCODE_MUSTMATCHPREQ = "error.document.creditmemo.paymentmethodcode.mustmatchpreq";
+    
+    public static final String ERROR_REJECT_INVOICE_PO_VENDOR_MISMATCH = "errors.reject.invoice.po.vendor.mismatch";
 
 }
