@@ -55,6 +55,7 @@ import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -132,6 +133,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	private WorkflowDocumentService workflowDocumentService;
 	private CUFinancialSystemDocumentService financialSystemDocumentService;
 	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
+	private PersonService personService;
 
 	@Override
     public ElectronicInvoiceLoad loadElectronicInvoices() {
@@ -789,7 +791,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
         String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
-            Person user = KimApiServiceLocator.getPersonService().getPerson(reqDocInitiator);
+            Person user = personService.getPerson(reqDocInitiator);
 
             setProcessingCampus(preqDoc, user.getCampusCode());
 
@@ -1787,6 +1789,11 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     public void setcUPaymentMethodGeneralLedgerPendingEntryService(
             CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService) {
         this.cUPaymentMethodGeneralLedgerPendingEntryService = cUPaymentMethodGeneralLedgerPendingEntryService;
+    }
+
+    public void setPersonService(PersonService personService) {
+        super.setPersonService(personService);
+        this.personService = personService;
     }
 
 }

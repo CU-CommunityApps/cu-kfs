@@ -35,6 +35,7 @@ import java.util.List;
  */
 public class PaymentRequestView extends AbstractRelatedView {
 
+    private Date invoiceDate;
     private String invoiceNumber;
     private Integer purchaseOrderIdentifier;
     private boolean paymentHoldIndicator;
@@ -47,6 +48,14 @@ public class PaymentRequestView extends AbstractRelatedView {
 
     public Object getTotalAmount() {
         return new CurrencyFormatter().format(documentHeader.getFinancialDocumentTotalAmount());
+    }
+    
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
+
+    public void setInvoiceDate(final Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
     }
 
     public String getInvoiceNumber() {

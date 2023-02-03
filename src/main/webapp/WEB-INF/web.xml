@@ -213,10 +213,6 @@
     </listener>
 
     <listener>
-        <listener-class>org.kuali.kfs.core.web.listener.BootstrapListener</listener-class>
-    </listener>
-
-    <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 

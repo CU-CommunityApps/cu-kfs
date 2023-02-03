@@ -26,7 +26,6 @@
 <%@ attribute name="onblur" required="false" description="If set, this will be used as the onblur method on the control." %>
 <%@ attribute name="readOnly" required="false" description="Whether this control should be rendered as read only (ie, not a control but rather text) or not." %>
 <%@ attribute name="datePicker" required="false" description="Whether this control should be rendered with a date picker." %>
-<%@ attribute name="expandedTextArea" required="false" description="whether to render an expanded textarea control.  Only applicable for textareas. "%>
 <%@ attribute name="disabled" required="false" description="Whether this control should be rendered as disabled or not." %>
 <%@ attribute name="onchange" required="false" description="If set, this will be used as the onchange method on the control." %>
 <%@ attribute name="onclick" required="false" description="If set, this will be used as the onclick method on the control." %>
@@ -425,13 +424,4 @@ if (attributeEntry == null) {
                 //]]>
               </script>
     </c:if>
-</c:if>
-<%-- always display even when readOnly --%>
-<%-- expanded textarea icon --%>
-<c:if test="${attributeEntry.control.textarea == true && (expandedTextArea == true || (attributeEntry.control.expandedTextArea == true && expandedTextArea != false))}">
-	<%-- so that the JS can grab the value from the opener...got to be a better way to do this...--%>
-	<c:if test="${readOnly}">
-		<html:hidden property="${property}" write="false" styleId="${property}" />
-	</c:if>
-	<kul:expandedTextArea textAreaFieldName="${property}" action="${fn:substringBefore(fn:substring(requestScope['org.apache.struts.taglib.html.FORM'].action, 1, -1),'.do')}" textAreaLabel="${attributeEntry.label}" disabled="${disabled}" title="${attributeEntry.label}" readOnly="${readOnly}" maxLength="${attributeEntry.maxLength}"/>
 </c:if>

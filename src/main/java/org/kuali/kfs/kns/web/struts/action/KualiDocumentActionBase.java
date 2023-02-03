@@ -110,6 +110,7 @@ import org.springmodules.orm.ojb.OjbOperationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1279,9 +1280,17 @@ public class KualiDocumentActionBase extends KualiAction {
             documentForm.copyPopulateEditablePropertiesToActionEditableProperties();
 
             logAttachmentDownload(documentForm, request, note, attachment);
-            WebUtils.saveMimeInputStreamAsFile(response, attachment.getAttachmentMimeTypeCode(),
-                    attachment.getAttachmentContents(), attachment.getAttachmentFileName(),
-                    attachment.getAttachmentFileSize().intValue());
+
+            try (InputStream attachmentContents = attachment.getAttachmentContents()) {
+                WebUtils.saveMimeInputStreamAsFile(
+                        response,
+                        attachment.getAttachmentMimeTypeCode(),
+                        attachmentContents,
+                        attachment.getAttachmentFileName(),
+                        attachment.getAttachmentFileSize().intValue()
+                );
+            }
+
             return null;
         }
 

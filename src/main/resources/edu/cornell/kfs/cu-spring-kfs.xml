@@ -5,6 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
     <!-- Overridden to allow for parameterizing the database platform implementation classname. -->
-    <bean id="dbPlatform" class="org.kuali.kfs.core.BeanHolder" p:objectType="${datasource.platform}"/>
+    <bean id="dbPlatform" class="${datasource.platform}"/>
 
 </beans>
