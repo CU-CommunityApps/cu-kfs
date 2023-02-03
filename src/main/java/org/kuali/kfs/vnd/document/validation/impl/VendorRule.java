@@ -37,6 +37,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.PostalCodeValidationService;
 import org.kuali.kfs.vnd.VendorConstants;
@@ -401,27 +402,26 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
     /**
      * Validates that if vendor is parent, then tax # and tax type combo should be unique by checking for the
-     * existence of vendor(s) with the same tax # and tax type in the existing vendor header table. Ideally we're also
-     * supposed to check for pending vendors, but at the moment, the pending vendors are under research investigation,
-     * so we're only checking the existing vendors for now. If the vendor is a parent and the validation fails,
-     * display the actual error message. If the vendor is not a parent and the validation fails, display the error
-     * message that the parent of this vendor needs to be changed, please contact Purchasing Dept.
-     * Note: We will require uniqueness on Tax ID + ID type across all active and inactive vendors.
-     * If an inactive vendor exists with the same Tax ID and Tax ID Type, either the existing vendor record
-     * should be reactivated (or the incorrect tax id corrected).
+     * existence of active vendor(s) with the same tax # and tax type in the existing vendor header table. Ideally
+     * we're also supposed to check for pending vendors, but at the moment, the pending vendors are under research
+     * investigation, so we're only checking the existing vendors for now. If the vendor is a parent and the validation
+     * fails, display the actual error message. If the vendor is not a parent and the validation fails, display the
+     * error message that the parent of this vendor needs to be changed, please contact Purchasing Dept.
      *
      * @param vendorDetail the VendorDetail object to be validated
      * @return boolean true if the vendorDetail passes the unique tax # and tax type validation.
      */
-    protected boolean validateParentVendorTaxNumber(VendorDetail vendorDetail) {
-        boolean isParent = vendorDetail.isVendorParentIndicator();
+    protected boolean validateParentVendorTaxNumber(final VendorDetail vendorDetail) {
+        final boolean isParent = vendorDetail.isVendorParentIndicator();
 
-        Map<String, Object> criteria = new HashMap<>();
-        criteria.put(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE, vendorDetail.getVendorHeader().getVendorTaxTypeCode());
+        final Map<String, Object> criteria = new HashMap<>();
+        criteria.put(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE,
+                vendorDetail.getVendorHeader().getVendorTaxTypeCode());
         criteria.put(VendorPropertyConstants.VENDOR_TAX_NUMBER, vendorDetail.getVendorHeader().getVendorTaxNumber());
-        Map<String, Object> negativeCriteria = new HashMap<>();
+        criteria.put(KFSPropertyConstants.ACTIVE_INDICATOR, true);
+        final Map<String, Object> negativeCriteria = new HashMap<>();
 
-        int existingVendor;
+        final int existingVendor;
 
         // If this is editing an existing vendor, we have to include the current vendor's header generated id in the
         // negative criteria so that the current vendor is excluded from the search

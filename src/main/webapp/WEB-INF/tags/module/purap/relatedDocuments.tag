@@ -19,9 +19,6 @@
 
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
-
-<%@ attribute name="documentAttributes" required="true" type="java.util.Map" 
-              description="The DataDictionary entry containing attributes for this row's fields."%>
               
 <c:set var="documentType" value="${KualiForm.document.documentHeader.workflowDocument.documentTypeName}" />
 <c:set var="isATypeOfPurAPRecDoc" value="${KualiForm.document.isATypeOfPurAPRecDoc}" />
@@ -45,35 +42,34 @@
         <h3>Related Documents</h3>
 		<br/>
 
-		<purap:relatedDocumentsDetail documentAttributes="${documentAttributes}"
-			viewList="document.relatedViews.relatedRequisitionViews" /> 
+		<purap:relatedDocumentsDetail viewList="document.relatedViews.relatedRequisitionViews" /> 
 		
-		<purap:relatedPurchaseOrderDocumentsDetail documentAttributes="${documentAttributes}"
+		<purap:relatedPurchaseOrderDocumentsDetail
 			groupList="document.relatedViews.groupedRelatedPurchaseOrderViews"
 			limitByPoId="${limitByPoId}" /> 
 
-		<purap:relatedDocumentsDetail documentAttributes="${documentAttributes}"
+		<purap:relatedDocumentsDetail
 			viewList="document.relatedViews.relatedBulkReceivingViews" 
 			limitByPoId="${limitByPoId}" /> 
 
-		<purap:relatedReceivingDocumentsDetail documentAttributes="${documentAttributes}"
+		<purap:relatedReceivingDocumentsDetail
 			groupList="document.relatedViews.groupedRelatedReceivingViews" 
 			limitByPoId="${limitByPoId}" /> 
 			 
-		<purap:relatedDocumentsDetail documentAttributes="${documentAttributes}"
+		<purap:relatedDocumentsDetail
 			viewList="document.relatedViews.relatedPaymentRequestViews"
 			limitByPoId="${limitByPoId}" /> 
 
-		<purap:relatedDocumentsDetail documentAttributes="${documentAttributes}"
+		<purap:relatedDocumentsDetail
 			viewList="document.relatedViews.relatedCreditMemoViews"
 			limitByPoId="${limitByPoId}" /> 
 			
 		<%-- CU Customization (KFSPTS-1656): Added new IWantDocument views. --%>
-		<purap:relatedDocumentsDetail documentAttributes="${documentAttributes}"
+		<purap:relatedDocumentsDetail
 			viewList="document.relatedViews.relatedIWantViews" />
  
 		<c:if test="${!isATypeOfPurAPRecDoc}">
-			<purap:relatedElectronicRejectDocumentsDetail documentAttributes="${documentAttributes}"
+			<purap:relatedElectronicRejectDocumentsDetail
 				viewList="document.relatedViews.relatedRejectViews"
 				limitByPoId="${limitByPoId}" /> 	
 		</c:if>

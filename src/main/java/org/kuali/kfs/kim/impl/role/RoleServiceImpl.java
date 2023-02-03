@@ -34,6 +34,7 @@ import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.type.KimTypeInfoService;
 import org.kuali.kfs.kim.framework.common.delegate.DelegationTypeService;
 import org.kuali.kfs.kim.framework.role.RoleTypeService;
 import org.kuali.kfs.kim.framework.services.KimFrameworkServiceLocator;
@@ -83,6 +84,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     private static final Map<String, RoleDaoAction> memberTypeToRoleDaoActionMap = populateMemberTypeToRoleDaoActionMap();
     private RoleService proxiedRoleService;
     private CacheManager cacheManager;
+
+    private KimTypeInfoService kimTypeInfoService;
 
     public RoleServiceImpl() {
         this.cacheManager = new NoOpCacheManager();
@@ -814,7 +817,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 String prevServiceName = null;
                 boolean multipleServices = false;
                 for (String roleId : matchingRoleIds) {
-                    String serviceName = KimApiServiceLocator.getKimTypeInfoService().getKimType(getRoleWithoutMembers(roleId)
+                    String serviceName = kimTypeInfoService.getKimType(getRoleWithoutMembers(roleId)
                             .getKimTypeId()).getServiceName();
                     if (prevServiceName != null && !StringUtils.equals(prevServiceName, serviceName)) {
                         multipleServices = true;
@@ -1470,7 +1473,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     protected DelegationTypeService getDelegationTypeService(String delegationId) {
         DelegationTypeService service = null;
         DelegateType delegateType = getKimDelegationImpl(delegationId);
-        KimType kimType = KimApiServiceLocator.getKimTypeInfoService().getKimType(delegateType.getKimTypeId());
+        KimType kimType = kimTypeInfoService.getKimType(delegateType.getKimTypeId());
         if (kimType != null) {
             KimTypeService tempService = KimFrameworkServiceLocator.getKimTypeService(kimType);
             if (tempService instanceof DelegationTypeService) {
@@ -1614,10 +1617,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         if (CollectionUtils.isNotEmpty(membersMatchByExactQualifiers)) {
             return membersMatchByExactQualifiers.get(0);
         }
-        List<String> roleIds = new ArrayList<>();
-        roleIds.add(role.getId());
-        List<RoleMember> roleMembers = getRoleDao().getRoleMembersForRoleIds(roleIds, MemberType.PRINCIPAL.getCode(),
-                qualifier);
+        List<RoleMember> roleMembers = getRoleDao().getRoleMembersForRoleId(role.getId(),
+                MemberType.PRINCIPAL.getCode(), qualifier);
         RoleMember anyMemberMatch = doAnyMemberRecordsMatch(roleMembers, principalId, MemberType.PRINCIPAL.getCode(),
                 qualifier);
         if (null != anyMemberMatch) {
@@ -2350,6 +2351,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         this.cacheManager = cacheManager;
     }
 
+    public void setKimTypeInfoService(final KimTypeInfoService kimTypeInfoService) {
+        this.kimTypeInfoService = kimTypeInfoService;
+    }
+
     /**
      * An internal helper class which is used to keep context for an invocation of principalHasRole.
      */
@@ -2379,7 +2384,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             }
             RoleTypeService roleTypeService = null;
             if (kimTypeId != null) {
-                KimType roleType = KimApiServiceLocator.getKimTypeInfoService().getKimType(kimTypeId);
+                KimType roleType = kimTypeInfoService.getKimType(kimTypeId);
                 if (roleType != null && StringUtils.isNotBlank(roleType.getServiceName())) {
                     roleTypeService = getRoleTypeServiceByName(roleType.getServiceName());
                 }

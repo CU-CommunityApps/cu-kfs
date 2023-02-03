@@ -718,9 +718,9 @@
         </div>
     </kul:tab>
 
-    <purap:relatedDocuments documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+    <purap:relatedDocuments />
 
-    <purap:paymentHistory documentAttributes="${DataDictionary.RelatedDocuments.attributes}"/>
+    <purap:paymentHistory />
 
     <kul:notes/>
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorKeyConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
@@ -44,6 +45,7 @@ public abstract class CuVendorRuleBase extends VendorRule {
         	        VendorPropertyConstants.VENDOR_TAX_TYPE_CODE, vendorDetail.getVendorHeader().getVendorTaxTypeCode()));
         	criteria.add(PredicateFactory.equal(
         	        VendorPropertyConstants.VENDOR_TAX_NUMBER, vendorDetail.getVendorHeader().getVendorTaxNumber()));
+        	criteria.add(PredicateFactory.equal(KFSPropertyConstants.ACTIVE_INDICATOR, true));
         } else {
         	return true;
         }

@@ -259,7 +259,8 @@
     </bean>
 
 	<bean id="creditMemoDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" />
-    <bean id="paymentRequestDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPaymentRequestDaoOjb"/>
+    <bean id="paymentRequestDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPaymentRequestDaoOjb"
+          p:parameterService-ref="parameterService"/>
     <bean id="PurchaseOrderActionListAttribute" class="edu.cornell.kfs.module.purap.document.workflow.CuPurchaseOrderActionListAttribute" />
     <bean id="purapGeneralLedgerService" parent="purapGeneralLedgerService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuPurapGeneralLedgerServiceImpl" >
             <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />

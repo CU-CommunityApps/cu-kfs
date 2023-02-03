@@ -60,7 +60,8 @@
     <!-- Override action list and action item DAOs/services to support the action list notes customization. -->
 
     <bean id="actionItemDAO" class="edu.cornell.kfs.kew.actionitem.dao.impl.CuActionItemDAOOjbImpl" lazy-init="true"
-          p:jcdAlias="kewDataSource"/>
+          p:jcdAlias="kewDataSource"
+          p:personService-ref="personService"/>
 
     <bean id="actionListService" class="edu.cornell.kfs.kew.actionlist.service.impl.CuActionListServiceImpl"
           lazy-init="true" p:actionListDAO-ref="actionListDAO" p:actionItemDAO-ref="actionItemDAO"
@@ -69,7 +70,7 @@
     <!-- Override route header service and DAO to add a helper method that the 1099/1042S tax process relies on. -->
 
     <bean id="documentRouteHeaderDAO" class="edu.cornell.kfs.kew.routeheader.dao.impl.CuDocumentRouteHeaderDAOOjbImpl"
-          lazy-init="true" p:jcdAlias="kewDataSource"/>
+          lazy-init="true" p:jcdAlias="kewDataSource" p:documentTypeService-ref="documentTypeService"/>
 
     <bean id="documentRouteHeaderService" class="edu.cornell.kfs.kew.routeheader.service.impl.CuRouteHeaderServiceImpl"
           lazy-init="true" p:routeHeaderDAO-ref="documentRouteHeaderDAO"
@@ -81,9 +82,10 @@
      -->
     <bean id="emailContentService" class="org.kuali.kfs.kew.mail.service.impl.EmailContentServiceImpl"
           lazy-init="true"
+          p:deploymentEnvironment="${environment}"
           p:emailService-ref="emailService"
-          p:routeHeaderService-ref="documentRouteHeaderService"
-          p:deploymentEnvironment="${environment}"/>
+          p:personService-ref="personService"
+          p:routeHeaderService-ref="documentRouteHeaderService"/>
 
     <!-- Override action list email service to support forcing PROD-style emails in non-PROD environments. -->
 
@@ -91,6 +93,7 @@
           class="edu.cornell.kfs.kew.mail.service.impl.CuActionListEmailServiceImpl"
           p:emailContentGenerator-ref="emailContentService"
           p:emailService-ref="emailService"
-          p:parameterService-ref="parameterService"/>
+          p:parameterService-ref="parameterService"
+          p:personService-ref="personService"/>
 
 </beans>

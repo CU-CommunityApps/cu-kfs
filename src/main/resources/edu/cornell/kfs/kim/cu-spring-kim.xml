@@ -20,11 +20,6 @@
                 <value>edu.cornell.kfs.kim</value>
             </list>
         </property>
-        <property name="databaseRepositoryFilePaths">
-			<list merge="true">
-				<value>edu/cornell/kfs/kim/cu-ojb-kim.xml</value>
-			</list>
-		</property>
     </bean>
 
     <bean id="kimAuthenticationService" class="edu.cornell.kfs.kim.impl.identity.CUWebAuthAuthenticationService"
@@ -47,8 +42,10 @@
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
             <bean class="edu.cornell.kfs.kim.lookup.CuRoleLookupableHelperServiceImpl"
-                  parent="lookupableHelperService"
-                  p:permissionService-ref="permissionService">
+                  parent="lookupableHelperService"    
+                  p:kimTypeInfoService-ref="kimTypeInfoService"
+                  p:permissionService-ref="permissionService"
+                  p:responsibilityService-ref="kimResponsibilityService">
             </bean>
         </property>
     </bean>
