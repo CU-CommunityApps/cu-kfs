@@ -42,17 +42,12 @@
                             property="newIWantItemLine.itemLineNumber"
                             readOnly="true"/>
                 </td>
-                <td class="infoline relative" colspan="${colSpanDescription}">
+                <td class="infoline relative wrap-break-word" colspan="${colSpanDescription}">
                     <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.itemDescription}"
                             property="newIWantItemLine.itemDescription"
                             tabindexOverride="${tabindexOverrideBase + 0}"
                             styleClass="fullwidth"/>
-                    <kul:expandedTextArea
-                            textAreaFieldName="newIWantItemLine.itemDescription"
-                            action="purapIWant"
-                            textAreaLabel="description"
-                            addClass="embed textarea"/>
                 </td>
                 <td class="infoline">
                     <kul:htmlControlAttribute
@@ -166,20 +161,13 @@
                 <th class="infoline" nowrap="nowrap" style="position: relative;">
                     <bean:write name="KualiForm" property="document.item[${ctr}].itemLineNumber"/>
                 </th>
-                <td class="infoline relative" colspan="2">
+                <td class="infoline relative wrap-break-word" colspan="2">
                     <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.itemDescription}"
                             property="document.item[${ctr}].itemDescription"
                             readOnly="${not fullEntryMode}"
                             tabindexOverride="${tabindexOverrideBase + 0}"
                             styleClass="fullwidth"/>
-                    <c:if test="${fullEntryMode}">
-                        <kul:expandedTextArea
-                                textAreaFieldName="document.item[${ctr}].itemDescription"
-                                action="purapRequisition"
-                                textAreaLabel="description"
-                                addClass="embed textarea"/>
-                    </c:if>
                 </td>
                 <td class="infoline">
                     <kul:htmlControlAttribute
