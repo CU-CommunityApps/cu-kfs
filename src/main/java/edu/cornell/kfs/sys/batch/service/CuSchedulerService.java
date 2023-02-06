@@ -7,4 +7,5 @@ public interface CuSchedulerService extends SchedulerService {
 
     void scheduleExceptionMessageJob(PersistedMessage message, String description);
 
+    void scheduleDelayedAsyncCallJob(PersistedMessage message, String description);
 }
