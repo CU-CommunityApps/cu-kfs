@@ -79,8 +79,8 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDire
             LOG.error("error while getting file bytes:  " + e.getMessage(), e);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
         } catch (ParseException e) {
-            LOG.error(ERROR_PREFIX + e.getMessage());
-            throw new RuntimeException(ERROR_PREFIX + e.getMessage(), e);
+            LOG.error(ERROR_PREFIX  + fileName + e.getMessage());
+            throw new RuntimeException(ERROR_PREFIX + fileName + e.getMessage(), e);
         }
 
         if (pcardTransactions == null || pcardTransactions.isEmpty()) {

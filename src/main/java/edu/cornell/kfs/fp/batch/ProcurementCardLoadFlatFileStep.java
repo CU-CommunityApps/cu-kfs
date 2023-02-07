@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
@@ -36,6 +38,7 @@ import org.kuali.kfs.sys.service.ReportWriterService;
  * withing a single transaction. Step can be restarted as needed.
  */
 public class ProcurementCardLoadFlatFileStep extends AbstractStep {
+    private static final Logger LOG = LogManager.getLogger();
     private ProcurementCardLoadTransactionsService procurementCardLoadTransactionsService;
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType procurementCardInputFileType;
@@ -53,6 +56,7 @@ public class ProcurementCardLoadFlatFileStep extends AbstractStep {
         boolean processSuccess = true;
         List<String> processedFiles = new ArrayList<String>();
         for (String inputFileName : fileNamesToLoad) {
+            LOG.info("execute, file name: " + inputFileName);
             processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName,reportWriterService);
             if (processSuccess) {
                 processedFiles.add(inputFileName);

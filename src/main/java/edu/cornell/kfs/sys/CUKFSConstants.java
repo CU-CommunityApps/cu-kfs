@@ -183,6 +183,7 @@ public class CUKFSConstants {
     public static final class FileExtensions {
         public static final String CSV = ".csv";
         public static final String DONE = ".done";
+        public static final String DATA = ".data";
     }
     
     public static final class OptionalModuleNamespaces {
