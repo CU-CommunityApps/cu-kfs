@@ -60,7 +60,10 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
 
     protected static final String PROCESSING_ERROR_MESSAGE = "Encountered an error while processing travel request";
     protected static final String POST_ACTION_ERROR_MESSAGE =
-            "Encountered a processing error after performing workflow action on travel request";
+            "Encountered a processing error after performing workflow action on travel request. "
+                    + "Please check if the request was actually updated in Concur.";
+    protected static final String APPROVE_DESPITE_ERROR_MESSAGE =
+            "The request failed validation but will be approved anyway. The resulting SAE entries may get rejected.";
 
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
@@ -192,6 +195,10 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             validationMessages.add(PROCESSING_ERROR_MESSAGE);
         }
         
+        if (!validationMessages.isEmpty()) {
+            validationMessages.add(APPROVE_DESPITE_ERROR_MESSAGE);
+        }
+        
         String reportNumber = requestAsListItem.getRequestId();
         String reportName = requestAsListItem.getName();
         String reportStatus = requestAsListItem.getApprovalStatus() != null   ? requestAsListItem.getApprovalStatus().getName() : KFSConstants.EMPTY_STRING;
@@ -231,8 +238,15 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
         boolean isValid =
                 (resultsDTO.getProcessingResults() == ConcurEventNotificationVersion2ProcessingResults.validAccounts);
-        LOG.info("updateRequestStatusInConcur, Will notify Concur that Request " + requestUuid
-                + " had an overall validation of " + isValid);
+        if (isValid) {
+            LOG.info("updateRequestStatusInConcur, Will notify Concur that Request " + requestUuid
+                    + " was validated successfully");
+        } else {
+            LOG.warn("updateRequestStatusInConcur, Validation failed for Concur Request " + requestUuid
+                    + " but we will notify Concur that the Request can move forward anyway. "
+                    + "The matching entries in the upcoming SAE file may get rejected as a result.");
+        }
+        
         if (!shouldUpdateStatusInConcur()) {
             LOG.info("updateRequestStatusInConcur, Concur workflow actions are currently disabled "
                     + "in this KFS environment");
@@ -240,7 +254,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
         
         String requestId = resultsDTO.getReportNumber();
-        String workflowAction = isValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.REQUEST_V4_SEND_BACK;
+        String workflowAction = ConcurWorkflowActions.APPROVE;
         String logMessageDetail = buildLogMessageDetailForRequestWorkflowAction(
                 workflowAction, requestId, requestUuid);
         

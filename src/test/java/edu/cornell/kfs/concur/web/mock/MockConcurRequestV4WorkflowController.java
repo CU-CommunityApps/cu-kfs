@@ -72,8 +72,7 @@ public class MockConcurRequestV4WorkflowController implements ResettableControll
             @PathVariable(REQUEST_UUID_VARIABLE) String requestUuid,
             @PathVariable(ACTION_VARIABLE) String workflowAction
     ) {
-        if (!StringUtils.equalsAny(workflowAction,
-                ConcurWorkflowActions.APPROVE, ConcurWorkflowActions.REQUEST_V4_SEND_BACK)) {
+        if (!StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)) {
             return ResponseEntity.notFound().build();
         } else if (forceInternalServerError.get()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Forced Server-Side Error");

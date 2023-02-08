@@ -315,8 +315,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         ConcurTestWorkflowInfo newWorkflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestUuid);
         boolean requestValid = oldResultsDTO.getProcessingResults() ==
                 ConcurEventNotificationVersion2ProcessingResults.validAccounts;
-        String expectedWorkflowAction = requestValid ? ConcurWorkflowActions.APPROVE
-                : ConcurWorkflowActions.REQUEST_V4_SEND_BACK;
+        String expectedWorkflowAction = ConcurWorkflowActions.APPROVE;
         
         assertNotNull(newWorkflowInfo, "Workflow action data should have been present for request " + requestUuid);
         assertTrue(StringUtils.isNotBlank(newWorkflowInfo.getActionTaken()),
@@ -390,7 +389,8 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         } else {
             return createProcessingResultsForRequest(requestFixture,
                     ConcurEventNotificationVersion2ProcessingResults.invalidAccounts,
-                    MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT);
+                    MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT,
+                    ConcurRequestV4ServiceImpl.APPROVE_DESPITE_ERROR_MESSAGE);
         }
     }
 
@@ -398,7 +398,8 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
             RequestV4DetailFixture requestFixture) {
         return createProcessingResultsForRequest(requestFixture,
                 ConcurEventNotificationVersion2ProcessingResults.processingError,
-                ConcurRequestV4ServiceImpl.PROCESSING_ERROR_MESSAGE);
+                ConcurRequestV4ServiceImpl.PROCESSING_ERROR_MESSAGE,
+                ConcurRequestV4ServiceImpl.APPROVE_DESPITE_ERROR_MESSAGE);
     }
 
     private ConcurEventNotificationProcessingResultsDTO createProcessingResultsForRequest(
@@ -406,6 +407,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
             String... messages) {
         return new ConcurEventNotificationProcessingResultsDTO(
                 ConcurEventNoticationVersion2EventType.TravelRequest, requestResults, requestFixture.requestId,
+                requestFixture.name, requestFixture.approvalStatus.name,
                 requestFixture.owner.getFullName(), KFSConstants.EMPTY_STRING, Arrays.asList(messages));
     }
 
