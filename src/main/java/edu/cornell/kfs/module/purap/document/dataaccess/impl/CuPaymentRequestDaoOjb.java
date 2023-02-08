@@ -1,22 +1,31 @@
 package edu.cornell.kfs.module.purap.document.dataaccess.impl;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
+import org.kuali.kfs.module.purap.businessobject.PaymentRequestView;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.dataaccess.impl.PaymentRequestDaoOjb;
 import org.kuali.kfs.module.purap.util.VendorGroupingHelper;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
@@ -24,6 +33,8 @@ import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 @SuppressWarnings("unchecked")
 public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPaymentRequestDao {
 	private static final Logger LOG = LogManager.getLogger();
+
+    private ParameterService parameterService;
 
     @Override
     public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String campusCode, Date onOrBeforePaymentRequestPayDate) {
@@ -142,6 +153,69 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         }
         
         return null;
+    }
+
+    /**
+     * Overridden to have the query use a java.sql.Date parameter instead of a java.time.LocalDate parameter,
+     * since our database driver seems to be too old to automatically handle the newer java.time.* objects.
+     * This method override should be removed once we upgrade to a newer JDBC driver with java.time.* support.
+     */
+    @Override
+    public List<PaymentRequestView> getPossibleDuplicatePaymentRequestsByVendorNumber(
+            final Integer vendorHeaderGeneratedId,
+            final Integer vendorDetailAssignedId
+    ) {
+        LOG.debug("getPossibleDuplicatePaymentRequestsByVendorNumber started");
+        // Get Vendor Name and use that to find the records to return, since that is on the Payment Request
+        // View, but vendor header/detail ids aren't
+        final Criteria vendorCriteria = new Criteria();
+        vendorCriteria.addEqualTo("vendorHeaderGeneratedIdentifier", vendorHeaderGeneratedId);
+        vendorCriteria.addEqualTo("vendorDetailAssignedIdentifier", vendorDetailAssignedId);
+        final QueryByCriteria vendorQuery = new QueryByCriteria(VendorDetail.class, vendorCriteria);
+        final VendorDetail vendorDetail = (VendorDetail) getPersistenceBrokerTemplate().getObjectByQuery(vendorQuery);
+
+        if (ObjectUtils.isNull(vendorDetail)) {
+            return List.of();
+        }
+
+        final Criteria paymentRequestCriteria = new Criteria();
+        paymentRequestCriteria.addEqualTo("UPPER(vendorName)", vendorDetail.getVendorName().toUpperCase(Locale.US));
+
+        final String duplicateInvoiceDaysString =
+                parameterService.getParameterValueAsString(
+                        KFSConstants.CoreModuleNamespaces.KFS,
+                        KfsParameterConstants.DOCUMENT_COMPONENT,
+                        KFSParameterKeyConstants.DUPLICATE_INVOICE_DAYS
+                );
+        if (StringUtils.isNotBlank(duplicateInvoiceDaysString)) {
+            try {
+                final long duplicateInvoiceDays = Long.parseLong(duplicateInvoiceDaysString);
+                final LocalDate date = LocalDate.now();
+                final LocalDate duplicateInvoiceStartDate = date.minusDays(duplicateInvoiceDays);
+                final Date duplicateInvoiceStartDateForQuery = Date.valueOf(duplicateInvoiceStartDate);
+                paymentRequestCriteria.addGreaterOrEqualThan(
+                        KFSPropertyConstants.INVOICE_DATE,
+                        duplicateInvoiceStartDateForQuery
+                );
+            } catch (final NumberFormatException e) {
+                LOG.warn("Invalid non-numeric value for {} / {} / {} parameter: {}",
+                        KFSConstants.CoreModuleNamespaces.KFS,
+                        KfsParameterConstants.DOCUMENT_COMPONENT,
+                        KFSParameterKeyConstants.DUPLICATE_INVOICE_DAYS,
+                        duplicateInvoiceDaysString
+                );
+            }
+        }
+
+        final QueryByCriteria paymentRequestQuery =
+                new QueryByCriteria(PaymentRequestView.class, paymentRequestCriteria);
+        return (List<PaymentRequestView>) getPersistenceBrokerTemplate().getCollectionByQuery(paymentRequestQuery);
+    }
+
+    @Override
+    public void setParameterService(ParameterService parameterService) {
+        super.setParameterService(parameterService);
+        this.parameterService = parameterService;
     }
 
 }
