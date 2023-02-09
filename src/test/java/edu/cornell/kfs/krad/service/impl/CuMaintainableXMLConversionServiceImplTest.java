@@ -229,6 +229,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
         "Legacy5xIndirectCostRecoveryTypeTest.xml",
         "LegacyAccountDelegateGlobalTest.xml",
         "AccountDelegateGlobalTest.xml",
+        "CuAccountDelegateGlobalTest.xml",
         "LegacyHigherEducationFunctionTest.xml",
         "LegacyAccountReversionGlobalTest.xml"
     })
