@@ -399,7 +399,7 @@
           class="org.kuali.kfs.ksb.messaging.quartz.MessageServiceExecutorJobListener"/>
 
     <!--
-        These beans are only meant for KSB-message-related processing, so we exclude it
+        These beans are only meant for KSB-message-related processing, so we exclude them
         from the KFS-SYS module's "jobNames" property.
      -->
     <bean id="delayedAsyncCallJob" parent="unscheduledJobDescriptor"

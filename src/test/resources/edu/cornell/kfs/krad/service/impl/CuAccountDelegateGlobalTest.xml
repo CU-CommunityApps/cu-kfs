@@ -1,0 +1,217 @@
+<xmlConversionTestCase>
+
+<oldData>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
+  <newCollectionRecord>false</newCollectionRecord>
+  <accountGlobalDetails/>
+  <delegateGlobals/>
+</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal>
+  <versionNumber>1</versionNumber>
+  <newCollectionRecord>false</newCollectionRecord>
+  <documentNumber>77766655</documentNumber>
+  <modelName>TESTMODEL</modelName>
+  <modelChartOfAccountsCode>IT</modelChartOfAccountsCode>
+  <modelOrganizationCode>0987</modelOrganizationCode>
+  <accountGlobalDetails>
+    <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>3344555</accountNumber>
+    </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+    <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4560987</accountNumber>
+    </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+  </accountGlobalDetails>
+  <delegateGlobals>
+    <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <accountDelegateUniversalId>1010101</accountDelegateUniversalId>
+      <financialDocumentTypeCode>AP</financialDocumentTypeCode>
+      <approvalFromThisAmount>
+        <value>0.00</value>
+      </approvalFromThisAmount>
+      <approvalToThisAmount>
+        <value>5000.00</value>
+      </approvalToThisAmount>
+      <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+      <accountDelegateStartDate>2021-01-01</accountDelegateStartDate>
+      <accountDelegate>
+        <principalId>1010101</principalId>
+        <principalName>jdd123</principalName>
+        <entityId>1010101</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Jane</firstName>
+        <middleName>D.</middleName>
+        <lastName>Doe</lastName>
+        <name>Doe, Jane D.</name>
+        <address serialization="custom">
+          <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+            <default/>
+          </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+          <org.kuali.rice.kim.api.identity.address.EntityAddress>
+            <default>
+              <active>true</active>
+              <defaultValue>true</defaultValue>
+              <suppressAddress>true</suppressAddress>
+              <validated>false</validated>
+              <addressType serialization="custom">
+                <org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                  <default/>
+                </org.kuali.rice.core.api.mo.AbstractDataTransferObject>
+                <org.kuali.rice.kim.api.identity.CodedAttribute>
+                  <default>
+                    <active>true</active>
+                    <code>HM</code>
+                    <name>Home</name>
+                    <objectId>5B35758A2D240503E0404F8189D80000</objectId>
+                    <sortCode>b</sortCode>
+                    <versionNumber>1</versionNumber>
+                  </default>
+                </org.kuali.rice.kim.api.identity.CodedAttribute>
+              </addressType>
+              <attentionLine>Xxxxxx</attentionLine>
+              <city>Xxxxxx</city>
+              <cityUnmasked>Ithaca</cityUnmasked>
+              <countryCode>XX</countryCode>
+              <entityId>1010101</entityId>
+              <entityTypeCode>PERSON</entityTypeCode>
+              <id>57575757</id>
+              <line1>Xxxxxx</line1>
+              <line1Unmasked>999 Main St</line1Unmasked>
+              <line2>Xxxxxx</line2>
+              <line2Unmasked> </line2Unmasked>
+              <line3>Xxxxxx</line3>
+              <line3Unmasked> </line3Unmasked>
+              <objectId>01309bb2-abe5-4d9e-9c51-937233620000</objectId>
+              <postalCode>00000</postalCode>
+              <postalCodeUnmasked>14850-1234</postalCodeUnmasked>
+              <stateProvinceCode>XX</stateProvinceCode>
+              <stateProvinceCodeUnmasked>NY</stateProvinceCodeUnmasked>
+              <versionNumber>4</versionNumber>
+            </default>
+          </org.kuali.rice.kim.api.identity.address.EntityAddress>
+        </address>
+        <emailAddress>jdd123@someplace.edu</emailAddress>
+        <phoneNumber>(555) 444-3333</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>XX</campusCode>
+        <externalIdentifiers/>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-6655</primaryDepartmentCode>
+        <employeeId>1002003</employeeId>
+        <baseSalaryAmount>
+          <value>0.00</value>
+        </baseSalaryAmount>
+        <primary>true</primary>
+        <active>true</active>
+      </accountDelegate>
+    </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+    <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <accountDelegateUniversalId>1010101</accountDelegateUniversalId>
+      <financialDocumentTypeCode>DI</financialDocumentTypeCode>
+      <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+      <accountDelegateStartDate>2021-01-01</accountDelegateStartDate>
+      <accountDelegate>
+        <principalId>1010101</principalId>
+        <principalName>jdd123</principalName>
+        <entityId>1010101</entityId>
+        <entityTypeCode>PERSON</entityTypeCode>
+        <firstName>Jane</firstName>
+        <middleName>D.</middleName>
+        <lastName>Doe</lastName>
+        <name>Doe, Jane D.</name>
+        <address reference="../../../org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail/accountDelegate/address"/>
+        <emailAddress>jdd123@someplace.edu</emailAddress>
+        <phoneNumber>(555) 444-3333</phoneNumber>
+        <suppressName>false</suppressName>
+        <suppressAddress>true</suppressAddress>
+        <suppressPhone>false</suppressPhone>
+        <suppressPersonal>false</suppressPersonal>
+        <suppressEmail>false</suppressEmail>
+        <campusCode>IT</campusCode>
+        <externalIdentifiers/>
+        <employeeStatusCode>A</employeeStatusCode>
+        <employeeTypeCode>P</employeeTypeCode>
+        <primaryDepartmentCode>IT-6655</primaryDepartmentCode>
+        <employeeId>1002003</employeeId>
+        <baseSalaryAmount reference="../../../org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail/accountDelegate/baseSalaryAmount"/>
+        <primary>true</primary>
+        <active>true</active>
+      </accountDelegate>
+    </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+  </delegateGlobals>
+</edu.cornell.kfs.coa.businessobject.CuAccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</oldData>
+
+<expectedResult>
+<maintainableDocumentContents maintainableImplClass="org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl"><oldMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+  <newCollectionRecord>false</newCollectionRecord>
+  <accountGlobalDetails/>
+  <delegateGlobals/>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</oldMaintainableObject><newMaintainableObject><org.kuali.kfs.coa.businessobject.AccountDelegateGlobal>
+  <versionNumber>1</versionNumber>
+  <newCollectionRecord>false</newCollectionRecord>
+  <documentNumber>77766655</documentNumber>
+  <modelName>TESTMODEL</modelName>
+  <modelChartOfAccountsCode>IT</modelChartOfAccountsCode>
+  <modelOrganizationCode>0987</modelOrganizationCode>
+  <accountGlobalDetails>
+    <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>3344555</accountNumber>
+    </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+    <org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <chartOfAccountsCode>IT</chartOfAccountsCode>
+      <accountNumber>4560987</accountNumber>
+    </org.kuali.kfs.coa.businessobject.AccountGlobalDetail>
+  </accountGlobalDetails>
+  <delegateGlobals>
+    <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <accountDelegateUniversalId>1010101</accountDelegateUniversalId>
+      <financialDocumentTypeCode>AP</financialDocumentTypeCode>
+      <approvalFromThisAmount>
+        <value>0.00</value>
+      </approvalFromThisAmount>
+      <approvalToThisAmount>
+        <value>5000.00</value>
+      </approvalToThisAmount>
+      <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+      <accountDelegateStartDate>2021-01-01</accountDelegateStartDate>
+      
+    </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+    <org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+      <newCollectionRecord>true</newCollectionRecord>
+      <documentNumber>77766655</documentNumber>
+      <accountDelegateUniversalId>1010101</accountDelegateUniversalId>
+      <financialDocumentTypeCode>DI</financialDocumentTypeCode>
+      <accountDelegatePrimaryRoutingIndicator>false</accountDelegatePrimaryRoutingIndicator>
+      <accountDelegateStartDate>2021-01-01</accountDelegateStartDate>
+      
+    </org.kuali.kfs.coa.businessobject.AccountDelegateGlobalDetail>
+  </delegateGlobals>
+</org.kuali.kfs.coa.businessobject.AccountDelegateGlobal><maintenanceAction>newWithExisting</maintenanceAction>
+</newMaintainableObject></maintainableDocumentContents>
+</expectedResult>
+
+</xmlConversionTestCase>
