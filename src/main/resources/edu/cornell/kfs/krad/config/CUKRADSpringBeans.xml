@@ -10,9 +10,9 @@
     <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl" />
 
     <bean id="antiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.ClamAVAntiVirusServiceImpl"
-          p:host="127.0.0.1"
-          p:port="3310"
-          p:timeout="60000"/>
+          p:host="${cu.antivirus.clamav.host}"
+          p:port="${cu.antivirus.clamav.port}"
+          p:timeout="${cu.antivirus.clamav.timeout}"/>
 
     <bean id="attachmentService" class="edu.cornell.kfs.krad.service.impl.CuAttachmentServiceImpl">
         <property name="kualiConfigurationService">
