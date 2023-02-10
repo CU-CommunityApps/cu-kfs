@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.batch.service.ProcurementCardLoadTransactionsService;
 import org.kuali.kfs.fp.businessobject.ProcurementCardTransaction;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.InitiateDirectoryBase;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
@@ -79,8 +80,8 @@ public class ProcurementCardLoadFlatTransactionsServiceImpl extends InitiateDire
             LOG.error("error while getting file bytes:  " + e.getMessage(), e);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
         } catch (ParseException e) {
-            LOG.error(ERROR_PREFIX + e.getMessage());
-            throw new RuntimeException(ERROR_PREFIX + e.getMessage(), e);
+            LOG.error(ERROR_PREFIX  + fileName + KFSConstants.BLANK_SPACE+ e.getMessage());
+            throw new RuntimeException(ERROR_PREFIX + fileName + KFSConstants.BLANK_SPACE + e.getMessage(), e);
         }
 
         if (pcardTransactions == null || pcardTransactions.isEmpty()) {
