@@ -15,7 +15,7 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.sys.service.ReportWriterService;
 
 public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
-	private static final Logger LOG = LogManager.getLogger(CorporateBilledCorporatePaidLoadFlatFileStep.class);
+    private static final Logger LOG = LogManager.getLogger();
     private ProcurementCardLoadTransactionsService procurementCardLoadTransactionsService;
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType corporateBilledCorporatePaidInputFileType;
@@ -24,30 +24,22 @@ public class CorporateBilledCorporatePaidLoadFlatFileStep extends AbstractStep {
     
     public boolean execute(String jobName, Date jobRunDate) {
         procurementCardLoadTransactionsService.cleanTransactionsTable();
-
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(corporateBilledCorporatePaidInputFileType);
-        
         ((WrappingBatchService) reportWriterService).initialize();
-        
+        boolean processSuccess = true;
         List<String> processedFiles = new ArrayList<String>();
+        
         for (String inputFileName : fileNamesToLoad) {
             LOG.info("execute, file name: " + inputFileName);
-            try {
-                procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName, reportWriterService);
-                
-            } catch (RuntimeException e) {
-                LOG.error("execute, There was an error proccessing " + inputFileName, e);
-            }
-            finally{
+            processSuccess = procurementCardLoadTransactionsService.loadProcurementCardFile(inputFileName, reportWriterService);
+            if (processSuccess) {
                 processedFiles.add(inputFileName);
             }
         }
-
+        
         ((WrappingBatchService) reportWriterService).destroy();
-
         removeDoneFiles(processedFiles);
-
-        return true;
+        return processSuccess;
     }
 
     private void removeDoneFiles(List<String> dataFileNames) {
