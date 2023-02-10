@@ -1,218 +1,265 @@
-<?xml version="1.0" encoding="UTF-8"?><beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p" xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-<!--
- Copyright 2006-2008 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:org/kuali/kfs/sys/sys-lookup-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-sys-attribute-beans.xml"/>
+    
+    <bean id="AccountReversion" parent="AccountReversion-parentBean"/>
+    <bean id="AccountReversion-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AccountReversion"
+          p:inquiryDefinition-ref="AccountReversion-inquiryDefinition"
+          p:lookupDefinition-ref="AccountReversion-lookupDefinition"
+          p:objectLabel="Account Reversion"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="accountReversionViewer">
+        <property name="attributes">
+            <list>
+                <ref bean="AccountReversion-accountReversionViewer"/>
+                <ref bean="AccountReversion-universityFiscalYear"/>
+                <ref bean="AccountReversion-chartOfAccountsCode"/>
+                <ref bean="AccountReversion-accountNumber"/>
+                <ref bean="AccountReversion-budgetReversionChartOfAccountsCode"/>
+                <ref bean="AccountReversion-budgetReversionAccountNumber"/>
+                <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode"/>
+                <ref bean="AccountReversion-cashReversionAccountNumber"/>
+                <ref bean="AccountReversion-carryForwardByObjectCodeIndicator"/>
+                <ref bean="AccountReversion-active"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- Attribute Definitions -->
+
+    <bean id="AccountReversion-accountReversionViewer" parent="AccountReversion-accountReversionViewer-parentBean"/>
+    <bean id="AccountReversion-accountReversionViewer-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="accountReversionViewer"
+          p:label="View"
+          p:shortLabel="View"
+          p:maxLength="100"
+          p:required="false"
+          p:control-ref="HiddenControl">
+    </bean>
+    
+    <bean id="AccountReversion-universityFiscalYear" parent="AccountReversion-universityFiscalYear-parentBean"/>
+    <bean id="AccountReversion-universityFiscalYear-parentBean" abstract="true" parent="GenericAttributes-genericFiscalYear"
+          p:name="universityFiscalYear"
+          p:disableLookup="false"
+          p:required="true">
+    </bean>
+    
+    <bean id="AccountReversion-chartOfAccountsCode" parent="Chart-chartOfAccountsCode"/>
+
+    <bean id="AccountReversion-accountNumber" parent="AccountReversion-accountNumber-parentBean"/>
+    <bean id="AccountReversion-accountNumber-parentBean" abstract="true" parent="Account-accountNumber"
+          p:name="accountNumber"
+          p:forceUppercase="true">
+    </bean>
+  
+    <bean id="AccountReversion-budgetReversionChartOfAccountsCode" parent="AccountReversion-budgetReversionChartOfAccountsCode-parentBean"/>
+    <bean id="AccountReversion-budgetReversionChartOfAccountsCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode"
+          p:name="budgetReversionChartOfAccountsCode"
+          p:label="Budget Reversion Chart"
+          p:shortLabel="Budget Reversion Chart">
+    </bean>
+  
+    <bean id="AccountReversion-budgetReversionAccountNumber" parent="AccountReversion-budgetReversionAccountNumber-parentBean"/>
+    <bean id="AccountReversion-budgetReversionAccountNumber-parentBean" abstract="true" parent="Account-accountNumber"
+          p:name="budgetReversionAccountNumber"
+          p:label="Budget Reversion Account"
+          p:shortLabel="Budget Reversion Account">
+    </bean>
+    
+    <bean id="AccountReversion-cashReversionFinancialChartOfAccountsCode" parent="AccountReversion-cashReversionFinancialChartOfAccountsCode-parentBean"/>
+    <bean id="AccountReversion-cashReversionFinancialChartOfAccountsCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode"
+          p:name="cashReversionFinancialChartOfAccountsCode"
+          p:label="Cash Reversion Chart"
+          p:shortLabel="Cash Reversion Chart">
+    </bean>
+    
+    <bean id="AccountReversion-cashReversionAccountNumber" parent="AccountReversion-cashReversionAccountNumber-parentBean"/>
+    <bean id="AccountReversion-cashReversionAccountNumber-parentBean" abstract="true" parent="Account-accountNumber"
+          p:name="cashReversionAccountNumber"
+          p:label="Cash Reversion Account"
+          p:shortLabel="Cash Reversion Account">
+    </bean>
+    
+    <bean id="AccountReversion-carryForwardByObjectCodeIndicator" parent="AccountReversion-carryForwardByObjectCodeIndicator-parentBean"/>
+    <bean id="AccountReversion-carryForwardByObjectCodeIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean"
+          p:name="carryForwardByObjectCodeIndicator"
+          p:label="Carry Forward by Object Code Indicator"
+          p:shortLabel="CF by Object Code">
+    </bean>
+    
+    <bean id="AccountReversion-active" parent="AccountReversion-active-parentBean"/>
+    <bean id="AccountReversion-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
+          p:name="active">
+    </bean>
+
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="AccountReversion-inquiryDefinition" parent="AccountReversion-inquiryDefinition-parentBean"/>
+    <bean id="AccountReversion-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Account Reversion Inquiry"
+          p:inquirableClass="edu.cornell.kfs.coa.businessobject.inquiry.AccountReversionInquirable">
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="Account Reversion"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
+                            <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+                            <bean parent="FieldDefinition" p:attributeName="budgetReversionChartOfAccountsCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="budgetReversionAccountNumber"/>
+                            <bean parent="FieldDefinition" p:attributeName="cashReversionFinancialChartOfAccountsCode"/>
+                            <bean parent="FieldDefinition" p:attributeName="cashReversionAccountNumber"/>
+                            <bean parent="FieldDefinition" p:attributeName="carryForwardByObjectCodeIndicator"/>
+                            <bean parent="FieldDefinition" p:attributeName="active"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="InquirySectionDefinition">
+                    <property name="title" value="Account Reversion Details"/>
+                    <property name="numberOfColumns" value="1"/>
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="InquiryCollectionDefinition">
+                                <property name="attributeName" value="accountReversionDetails" />
+                                <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountReversionDetail" />
+                                <property name="numberOfColumns" value="1" />
+                                <property name="inquiryFields">
+                                    <list>
+                                        <bean parent="FieldDefinition" p:attributeName="accountReversionCategoryCode"/>
+                                        <bean parent="FieldDefinition" p:attributeName="accountReversionObjectCode"/>
+                                        <bean parent="FieldDefinition" p:attributeName="reversionObject.financialObjectCodeName"/>
+                                        <bean parent="FieldDefinition" p:attributeName="accountReversionCode"/>
+                                    </list>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+<!-- THESE CHANGES SHOULD BE MADE AVAILABLE WHEN FINP-7573 AND FINP-6862 FROM KualiCo patch release 2022-03-30
+     IS MADE AVAILABLE IN CORNELL'S ENVIRONMENT
+     
+    <bean id="AccountReversion-inquiryDefinition" parent="AccountReversion-inquiryDefinition-parentBean"/>
+    <bean id="AccountReversion-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Account Reversion Inquiry"
+          p:inquirableClass="edu.cornell.kfs.coa.businessobject.inquiry.AccountReversionInquirable">
+        <property name="sections">
+            <list>
+                <ref bean="AccountReversion-sectionDefinition"/>
+                <ref bean="AccountReversion-sectionDefinition-accountReversionDetails"/>
+            </list>
+        </property>
+    </bean>
+        
+    <bean id="AccountReversion-sectionDefinition" parent="AccountReversion-sectionDefinition-parentBean"/>
+    <bean id="AccountReversion-sectionDefinition-parentBean" abstract="true" parent="sectionDefinition"
+          p:title="Account Reversion"
+          p:numberOfColumns="1">
+        <property name="fields">
+            <list>
+                <ref bean="AccountReversion-universityFiscalYear"/>
+                <ref bean="AccountReversion-chartOfAccountsCode"/>
+                <ref bean="AccountReversion-accountNumber"/>
+                <ref bean="AccountReversion-budgetReversionChartOfAccountsCode"/>
+                <ref bean="AccountReversion-budgetReversionAccountNumber"/>
+                <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode"/>
+                <ref bean="AccountReversion-cashReversionAccountNumber"/>
+                <ref bean="AccountReversion-carryForwardByObjectCodeIndicator"/>
+                <ref bean="AccountReversion-active"/>
+            </list>
+        </property>
+    </bean>
+      
+    <bean id="AccountReversion-sectionDefinition-accountReversionDetails" parent="AccountReversion-sectionDefinition-accountReversionDetails-parentBean"/>
+    <bean id="AccountReversion-sectionDefinition-accountReversionDetails-parentBean" abstract="true" parent="sectionDefinition"
+          p:title="Account Reversion Details"
+          p:numberOfColumns="1">
+        <property name="collectionDefinitions">
+            <list>
+                <ref bean="AccountReversion-collectionDefinition-accountReversionDetails"/>
+            </list>
+        </property>
+    </bean>
+     
+    <bean id="AccountReversion-collectionDefinition-accountReversionDetails" parent="AccountReversion-collectionDefinition-accountReversionDetails-parentBean"/>
+    <bean id="AccountReversion-collectionDefinition-accountReversionDetails-parentBean" abstract="true" parent="collectionDefinition"
+          p:attributeName="accountReversionDetails"
+          p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AccountReversionDetail"
+          p:label=""
+          p:numberOfColumns="1">
+        <property name="fields">
+            <list>
+                <ref bean="AccountReversionDetail-accountReversionCategoryCode"/>
+                <ref bean="AccountReversionDetail-accountReversionObjectCode"/>
+                <ref bean="AccountReversionDetail-reversionObject.financialObjectCodeName"/>
+                <ref bean="AccountReversionDetail-accountReversionCode"/>
+            </list>
+        </property>
+        <property name="keyAttributes">
+            <list>
+                <ref bean="AccountReversionDetail-accountReversionCategoryCode"/>
+                <ref bean="AccountReversionDetail-accountReversionObjectCode"/>
+                <ref bean="AccountReversionDetail-reversionObject.financialObjectCodeName"/>
+                <ref bean="AccountReversionDetail-accountReversionCode"/>
+            </list>
+        </property>
+    </bean>
 -->
 
-  <bean id="AccountReversion" parent="AccountReversion-parentBean"/>
-
-  <bean id="AccountReversion-parentBean" abstract="true" parent="BusinessObjectEntry">
-    <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountReversion"/>
-    <property name="inquiryDefinition">
-      <ref bean="AccountReversion-inquiryDefinition"/>
-    </property>
-    <property name="lookupDefinition">
-      <ref bean="AccountReversion-lookupDefinition"/>
-    </property>
-    <property name="titleAttribute" value="accountReversionViewer"/>
-    <property name="objectLabel" value="Account Reversion"/>
-    <property name="attributes">
-      <list>
-        <ref bean="AccountReversion-accountReversionViewer"/>
-        <ref bean="AccountReversion-universityFiscalYear"/>
-        <ref bean="AccountReversion-chartOfAccountsCode"/>
-        <ref bean="AccountReversion-accountNumber"/>
-        <ref bean="AccountReversion-budgetReversionChartOfAccountsCode"/>
-        <ref bean="AccountReversion-budgetReversionAccountNumber"/>
-        <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode"/>
-        <ref bean="AccountReversion-cashReversionAccountNumber"/>
-        <ref bean="AccountReversion-carryForwardByObjectCodeIndicator"/>
-        <ref bean="AccountReversion-active"/>
-      </list>
-    </property>
-  </bean>
-
-<!-- Attribute Definitions -->
-
-
-  <bean id="AccountReversion-accountReversionViewer" parent="AccountReversion-accountReversionViewer-parentBean"/>
-
-  <bean id="AccountReversion-accountReversionViewer-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="accountReversionViewer"/>
-    <property name="label" value="View"/>
-    <property name="shortLabel" value="View"/>
-    <property name="maxLength" value="100"/>
-    <property name="required" value="false"/>
-    <property name="control">
-      <ref bean="HiddenControl" />
-    </property>
-  </bean>
-  <bean id="AccountReversion-universityFiscalYear" parent="AccountReversion-universityFiscalYear-parentBean"/>
-
-  <bean id="AccountReversion-universityFiscalYear-parentBean" abstract="true" parent="GenericAttributes-genericFiscalYear">
-    <property name="name" value="universityFiscalYear"/>
-    <property name="forceUppercase" value="true"/>
-    <property name="required" value="true"/>
-  </bean>
-  <bean id="AccountReversion-chartOfAccountsCode" parent="AccountReversion-chartOfAccountsCode-parentBean"/>
-
-  <bean id="AccountReversion-chartOfAccountsCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode">
-  	<property name="forceUppercase" value="true"/>
-  </bean>
-  <bean id="AccountReversion-accountNumber" parent="AccountReversion-accountNumber-parentBean"/>
-
-  <bean id="AccountReversion-accountNumber-parentBean" abstract="true" parent="Account-accountNumber">
-  	<property name="name" value="accountNumber"/>
-  	<property name="forceUppercase" value="true"/>
-  </bean>
-  
-  <bean id="AccountReversion-budgetReversionChartOfAccountsCode" parent="AccountReversion-budgetReversionChartOfAccountsCode-parentBean"/>
-
-  <bean id="AccountReversion-budgetReversionChartOfAccountsCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode">
-    <property name="name" value="budgetReversionChartOfAccountsCode"/>
-    <property name="label" value="Budget Reversion Chart"/>
-    <property name="shortLabel" value="Budget Reversion Chart"/>
-  </bean>
-  <bean id="AccountReversion-budgetReversionAccountNumber" parent="AccountReversion-budgetReversionAccountNumber-parentBean"/>
-
-  <bean id="AccountReversion-budgetReversionAccountNumber-parentBean" abstract="true" parent="Account-accountNumber">
-    <property name="name" value="budgetReversionAccountNumber"/>
-    <property name="label" value="Budget Reversion Account"/>
-    <property name="shortLabel" value="Budget Reversion Account"/>
-  </bean>
-  <bean id="AccountReversion-cashReversionFinancialChartOfAccountsCode" parent="AccountReversion-cashReversionFinancialChartOfAccountsCode-parentBean"/>
-
-  <bean id="AccountReversion-cashReversionFinancialChartOfAccountsCode-parentBean" abstract="true" parent="Chart-chartOfAccountsCode">
-    <property name="name" value="cashReversionFinancialChartOfAccountsCode"/>
-    <property name="label" value="Cash Reversion Chart"/>
-    <property name="shortLabel" value="Cash Reversion Chart"/>
-  </bean>
-  <bean id="AccountReversion-cashReversionAccountNumber" parent="AccountReversion-cashReversionAccountNumber-parentBean"/>
-
-  <bean id="AccountReversion-cashReversionAccountNumber-parentBean" abstract="true" parent="Account-accountNumber">
-    <property name="name" value="cashReversionAccountNumber"/>
-    <property name="label" value="Cash Reversion Account"/>
-    <property name="shortLabel" value="Cash Reversion Account"/>
-  </bean>
-  <bean id="AccountReversion-carryForwardByObjectCodeIndicator" parent="AccountReversion-carryForwardByObjectCodeIndicator-parentBean"/>
-
-  <bean id="AccountReversion-carryForwardByObjectCodeIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
-    <property name="name" value="carryForwardByObjectCodeIndicator"/>
-    <property name="label" value="Carry Forward by Object Code Indicator"/>
-    <property name="shortLabel" value="CF by Object Code"/>
-  </bean>
-  <bean id="AccountReversion-active" parent="AccountReversion-active-parentBean"/>
-
-  <bean id="AccountReversion-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator">
-    <property name="name" value="active"/>
-  </bean>
-
-
-<!-- Business Object Inquiry Definition -->
-
-
-  <bean id="AccountReversion-inquiryDefinition" parent="AccountReversion-inquiryDefinition-parentBean"/>
-
-  <bean id="AccountReversion-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition">
-    <property name="title" value="Account Reversion Inquiry"/>
-    <property name="inquirySections">
-      <list>
-        <bean parent="InquirySectionDefinition">
-          <property name="title" value="Account Reversion"/>
-          <property name="numberOfColumns" value="1"/>
-          <property name="inquiryFields">
-            <list>
-              <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
-              <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-              <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="budgetReversionChartOfAccountsCode"/>
-              <bean parent="FieldDefinition" p:attributeName="budgetReversionAccountNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="cashReversionFinancialChartOfAccountsCode"/>
-              <bean parent="FieldDefinition" p:attributeName="cashReversionAccountNumber"/>
-              <bean parent="FieldDefinition" p:attributeName="carryForwardByObjectCodeIndicator"/>
-              <bean parent="FieldDefinition" p:attributeName="active"/>
-            </list>
-          </property>
-        </bean>
-        <bean parent="InquirySectionDefinition">
-          <property name="title" value="Account Reversion Details"/>
-          <property name="numberOfColumns" value="1"/>
-          <property name="inquiryFields">
-            <list>
-              <bean parent="InquiryCollectionDefinition">
-                <property name="attributeName" value="accountReversionDetails"/>
-                <property name="businessObjectClass" value="edu.cornell.kfs.coa.businessobject.AccountReversionDetail"/>
-                <property name="numberOfColumns" value="1"/>
-                <property name="inquiryFields">
-                  <list>
-                    <bean parent="FieldDefinition" p:attributeName="accountReversionCategoryCode"/>
-                    <bean parent="FieldDefinition" p:attributeName="accountReversionObjectCode"/>
-                    <bean parent="FieldDefinition" p:attributeName="reversionObject.financialObjectCodeName"/>
-                    <bean parent="FieldDefinition" p:attributeName="accountReversionCode"/>
-                  </list>
+    <!-- Business Object Lookup Definition -->
+    <bean id="AccountReversion-lookupDefinition" parent="AccountReversion-lookupDefinition-parentBean"/>
+    <bean id="AccountReversion-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="Account Reversion Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>accountNumber</value>
+                    </list>
                 </property>
-              </bean>
-            </list>
-          </property>
-        </bean>
-      </list>
-    </property>
-    <property name="inquirableClass" value="edu.cornell.kfs.coa.businessobject.inquiry.AccountReversionInquirable"/>
-  </bean>
-
-<!-- Business Object Lookup Definition -->
-
-
-  <bean id="AccountReversion-lookupDefinition" parent="AccountReversion-lookupDefinition-parentBean"/>
-
-  <bean id="AccountReversion-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
-    <property name="title" value="Account Reversion Lookup"/>
-    
-    <property name="defaultSort">
-      <bean parent="SortDefinition">
-        <property name="attributeNames">
-          <list>
-            <value>accountNumber</value>
-          </list>
+            </bean>
         </property>
-      </bean>
-    </property>
-    <property name="lookupFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="budgetReversionChartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="budgetReversionAccountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="cashReversionFinancialChartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="cashReversionAccountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
-    <property name="resultFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="accountReversionViewer"/>
-        <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="budgetReversionChartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="budgetReversionAccountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="cashReversionFinancialChartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="cashReversionAccountNumber"/>
-        <bean parent="FieldDefinition" p:attributeName="carryForwardByObjectCodeIndicator"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
-  </bean>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="AccountReversion-universityFiscalYear"/>
+                <ref bean="AccountReversion-chartOfAccountsCode"/>
+                <ref bean="AccountReversion-accountNumber"/>
+                <ref bean="AccountReversion-budgetReversionChartOfAccountsCode"/>
+                <ref bean="AccountReversion-budgetReversionAccountNumber"/>
+                <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode"/>
+                <ref bean="AccountReversion-cashReversionAccountNumber"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="AccountReversion-accountReversionViewer"/>
+                <ref bean="AccountReversion-universityFiscalYear"/>
+                <ref bean="AccountReversion-chartOfAccountsCode"/>
+                <ref bean="AccountReversion-accountNumber"/>
+                <ref bean="AccountReversion-budgetReversionChartOfAccountsCode"/>
+                <ref bean="AccountReversion-budgetReversionAccountNumber"/>
+                <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode"/>
+                <ref bean="AccountReversion-cashReversionAccountNumber"/>
+                <ref bean="AccountReversion-carryForwardByObjectCodeIndicator"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
 </beans>
