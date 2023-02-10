@@ -99,7 +99,7 @@
     <bean id="ContractGrantReportingCode-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
           p:title="CG Reporting Code Lookup">
         <property name="defaultSort">
-            <bean parent="SortDefinition" p:sortAscending="true">
+            <bean parent="SortDefinition" p:sortAscending="false">
                 <property name="attributeNames">
                     <list>
                         <value>chartOfAccountsCode</value>

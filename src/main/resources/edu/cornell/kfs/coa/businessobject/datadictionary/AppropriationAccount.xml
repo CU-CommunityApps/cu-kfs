@@ -10,7 +10,6 @@
     <bean id="AppropriationAccount" parent="AppropriationAccount-parentBean"/>
     <bean id="AppropriationAccount-parentBean" abstract="true" parent="BusinessObjectEntry"
           p:actionsProvider-ref="businessObjectActionsProvider"
-          p:boNotesEnabled="true"
           p:businessObjectAdminService-ref="defaultBoAdminService"
           p:businessObjectClass="edu.cornell.kfs.coa.businessobject.AppropriationAccount"
           p:inquiryDefinition-ref="AppropriationAccount-inquiryDefinition"
@@ -118,7 +117,7 @@
     <bean id="AppropriationAccount-lookupDefinition-base-parentBean" abstract="true" parent="LookupDefinition"
           p:title="Appropriation Account Lookup"> 
         <property name="defaultSort">
-            <bean parent="SortDefinition" p:sortAscending="true">
+            <bean parent="SortDefinition" p:sortAscending="false">
                 <property name="attributeNames">
                     <list>
                         <value>appropriationAccountNumber</value>
