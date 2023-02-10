@@ -16,7 +16,7 @@ import com.rsmart.kuali.kfs.sys.KFSConstants;
 
 /**
  * CBCP processing is based on PCard and in some cases CBCP calls the actual PCard routines to perform its processing.
- * Uniting the parts of the integration tests for these two areas to achive economy of scale and reduce maintennance.
+ * Uniting the parts of the integration tests for these two areas to achieve economy of scale and reduce maintenance.
  */
 
 public abstract class CommonPcardCbcpLoadFlatFileTransactionsIntegTestBase extends KualiIntegTestBase {

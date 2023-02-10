@@ -10,7 +10,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 /**
  * CBCP utilizes PCard routines for its processing under the covers. 
- * Calling/using PCard routines in this intergration test with CBCP items is a valid setup for this test.
+ * Calling/using PCard routines in this integration test with CBCP items is a valid setup for this test.
  */
 
 @ConfigureContext(session = ccs1)
@@ -35,7 +35,7 @@ public class CorporateBilledCorporatePaidLoadFlatTransactionsServiceImplIntegTes
         //Good Data Test
         getUnitTestSqlDao().sqlCommand(CBCP_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
         assertTrue(procurementCardLoadFlatTransactionsService.loadProcurementCardFile(getStagingBatchDirectory() + GOOD_DATA_FILE_NAME_WITH_DATA_EXTENSION));
-        List summaryResults =  getUnitTestSqlDao().sqlSelect(CBCP_TRANSACTION_TABLE_SQL_SELECT_COMMAND);
+        List summaryResults = getUnitTestSqlDao().sqlSelect(CBCP_TRANSACTION_TABLE_SQL_SELECT_COMMAND);
         assertEquals(1, summaryResults.size());
         LOG.info("testGoodAndBadDataLoadFileProcessing, Good CBCP file was successfully loaded.");
         

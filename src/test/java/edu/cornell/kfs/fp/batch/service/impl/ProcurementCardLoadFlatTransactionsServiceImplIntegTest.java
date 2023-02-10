@@ -11,11 +11,6 @@ import org.kuali.kfs.sys.ConfigureContext;
 public class ProcurementCardLoadFlatTransactionsServiceImplIntegTest extends CommonProcurementCardIntegTestBase {
     private static final Logger LOG = LogManager.getLogger();
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-    
     public void testGoodAndBadDataLoadFileProcessing() {
         //Good Data Test
         getUnitTestSqlDao().sqlCommand(PCARD_TRANSACTION_TABLE_SQL_DELETE_COMMAND);
