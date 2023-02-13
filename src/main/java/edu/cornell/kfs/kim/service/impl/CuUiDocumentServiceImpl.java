@@ -12,6 +12,7 @@ import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
@@ -26,26 +27,28 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
         Map<String, String> criteria = new HashMap<>();
         criteria.put(KimConstants.PrimaryKeyConstants.ROLE_ID, identityManagementRoleDocument.getRoleId());
         Role roleBo = businessObjectService.findByPrimaryKey(Role.class, criteria);
-        List<RoleMember> members = new ArrayList<>(roleBo.getMembers());
-        List<RoleMember> membersToRemove = new ArrayList<>();
-        boolean found = false;
-        for (KimDocumentRoleMember modifiedMember : identityManagementRoleDocument.getModifiedMembers()) {
-            for (RoleMember member : members) {
-                if (modifiedMember.getRoleMemberId().equals(member.getId())) {
-                    membersToRemove.add(member);
-                    found = true;
-                }
-                if (found) {
-                    break;
+        if (ObjectUtils.isNotNull(roleBo)) {
+            List<RoleMember> members = new ArrayList<>(roleBo.getMembers());
+            List<RoleMember> membersToRemove = new ArrayList<>();
+            boolean found = false;
+            for (KimDocumentRoleMember modifiedMember : identityManagementRoleDocument.getModifiedMembers()) {
+                for (RoleMember member : members) {
+                    if (modifiedMember.getRoleMemberId().equals(member.getId())) {
+                        membersToRemove.add(member);
+                        found = true;
+                    }
+                    if (found) {
+                        break;
+                    }
                 }
             }
+            for (RoleMember memberToRemove : membersToRemove) {
+                members.remove(memberToRemove);
+            }
+    
+            identityManagementRoleDocument.setMembers(loadRoleMembers(identityManagementRoleDocument, members));
+            loadMemberRoleRspActions(identityManagementRoleDocument);
         }
-        for (RoleMember memberToRemove : membersToRemove) {
-            members.remove(memberToRemove);
-        }
-
-        identityManagementRoleDocument.setMembers(loadRoleMembers(identityManagementRoleDocument, members));
-        loadMemberRoleRspActions(identityManagementRoleDocument);
     }
 
     @Override
