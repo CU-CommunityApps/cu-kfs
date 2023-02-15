@@ -34,7 +34,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
-import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
+import org.kuali.kfs.pdp.batch.service.impl.CuExtractPaymentServiceBase;
 import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -50,17 +50,18 @@ import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
+public class CuExtractPaymentServiceImpl extends CuExtractPaymentServiceBase {
     private static final Logger LOG = LogManager.getLogger();
     public static final String DV_EXTRACT_SUB_UNIT_CODE = "DV";
     public static final String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
     
     protected AchBundlerHelperService achBundlerHelperService;
     protected CuPayeeAddressService cuPayeeAddressService;
-    
+
     public CuExtractPaymentServiceImpl() {
     	super(null);
     }
@@ -68,7 +69,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     public CuExtractPaymentServiceImpl(
             final Iso20022FormatExtractor iso20022FormatExtractor
     ) {
-    	super(null);
+    	super(iso20022FormatExtractor);
     }
     
     /**
@@ -79,10 +80,16 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     public void extractAchPayments() {
         LOG.debug("MOD - extractAchPayments() - Enter");
 
+        PaymentStatus extractedStatus = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class,
+                PdpConstants.PaymentStatusCodes.EXTRACTED);
+
+        if (shouldUseIso20022Format()) {
+            extractAchsInIso20022Format(extractedStatus, directoryName);
+            return;
+        }
+
         Date processDate = dateTimeService.getCurrentDate();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        PaymentStatus extractedStatus = (PaymentStatus) businessObjectService.findBySinglePrimaryKey(PaymentStatus.class,
-                PdpConstants.PaymentStatusCodes.EXTRACTED);
     
         String achFilePrefix = kualiConfigurationService.getPropertyValueAsString(
                 PdpKeyConstants.ExtractPayment.ACH_FILENAME);
@@ -91,7 +98,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         String filename = getOutputFile(achFilePrefix, processDate);
         LOG.debug("MOD: extractAchPayments() filename = " + filename);
 
-       /** 
+        /** 
         * MOD: This is the only section in the method that is changed.  This mod calls a new method that bundles 
         * ACHs into single disbursements if the flag to do so is turned on.
         */
@@ -100,8 +107,81 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         } else {
             writeExtractAchFile(extractedStatus, filename, processDate, sdf);
         }
-   }
-    
+    }
+
+    /**
+     * Overridden to call a CU-specific version of the parameter-checking method to determine
+     * whether or not to use the ISO 20022 format.
+     */
+    @Override
+    public void extractChecks() {
+        LOG.debug("extractChecks() - Enter");
+
+        final PaymentStatus extractedStatus =
+                businessObjectService.findBySinglePrimaryKey(
+                        PaymentStatus.class,
+                        PdpConstants.PaymentStatusCodes.EXTRACTED
+                );
+
+        if (shouldUseIso20022Format()) {
+            iso20022FormatExtractor.extractChecks(extractedStatus, directoryName);
+        } else {
+            extractChecksToProprietaryFormat(extractedStatus);
+        }
+
+        LOG.debug("extractChecks() - Exit");
+    }
+
+    /*
+     * The KualiCo superclass declares this method as private, so we have to copy it
+     * to allow this subclass to invoke it.
+     */
+    private void extractChecksToProprietaryFormat(
+            final PaymentStatus extractedStatus
+    ) {
+        LOG.debug("extractChecksToProprietaryFormat(...) - Enter : extractedStatus={}", extractedStatus);
+
+        Date processDate = dateTimeService.getCurrentDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        String checkFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(
+                PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
+        checkFilePrefix = MessageFormat.format(checkFilePrefix, new Object[]{null});
+
+        String filename = getOutputFile(checkFilePrefix, processDate);
+        LOG.debug("extractChecksToProprietaryFormat(...) - : filename={}", filename);
+
+        List<PaymentProcess> extractsToRun = this.processDao.getAllExtractsToRun();
+        for (PaymentProcess extractToRun : extractsToRun) {
+            writeExtractCheckFile(extractedStatus, extractToRun, filename, extractToRun.getId().intValue());
+            extractToRun.setExtractedInd(true);
+            businessObjectService.save(extractToRun);
+        }
+
+        LOG.debug("extractChecksToProprietaryFormat(...) - Exit");
+    }
+
+    /*
+     * The KualiCo superclass declares this method as private, so we have to define our own instead of overriding.
+     */
+    private boolean shouldUseIso20022Format() {
+        if (isIso20022FormatParameterEnabled(CUPdpParameterConstants.CU_USE_ISO20022_FORMAT_IND)) {
+            if (isIso20022FormatParameterEnabled(PdpConstants.ISO20022_FORMAT_IND)) {
+                return true;
+            } else {
+                throw new IllegalStateException("ISO20022_FORMAT_IND cannot be disabled "
+                        + "if CU_USE_ISO20022_FORMAT_IND is enabled");
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isIso20022FormatParameterEnabled(String parameterName) {
+        return parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.PDP,
+                KFSConstants.Components.ISO_FORMAT, parameterName, Boolean.FALSE);
+    }
+
    /**
     * A custom method that goes through and extracts all pending ACH payments and bundles them by payee/disbursement nbr.
     * Changes made to this method due to re-factoring the code so that common pieces could be used 
