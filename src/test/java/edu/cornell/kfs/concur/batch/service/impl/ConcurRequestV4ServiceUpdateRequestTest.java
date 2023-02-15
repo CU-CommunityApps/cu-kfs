@@ -300,12 +300,13 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
             case ERROR_ON_ACTION_FOR_MISSING_REQUEST:
             case ERROR_ON_DUPLICATE_ACTION:
                 assertThrows(RuntimeException.class,
-                        () -> concurRequestV4Service.updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO),
+                        () -> concurRequestV4Service.updateRequestStatusInConcurIfNecessary(
+                                accessToken, requestUuid, resultsDTO),
                         "An exception should have been thrown when attempting action for request " + requestUuid);
                 break;
             
             default:
-                concurRequestV4Service.updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
+                concurRequestV4Service.updateRequestStatusInConcurIfNecessary(accessToken, requestUuid, resultsDTO);
                 break;
         }
     }

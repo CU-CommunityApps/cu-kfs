@@ -209,7 +209,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(
                 ConcurEventNoticationVersion2EventType.TravelRequest, processingResult,
                 reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
-        updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
+        updateRequestStatusInConcurIfNecessary(accessToken, requestUuid, resultsDTO);
         
         return resultsDTO;
     }
@@ -234,25 +234,29 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
     }
 
-    protected void updateRequestStatusInConcur(
+    protected void updateRequestStatusInConcurIfNecessary(
             String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
         boolean isValid =
                 (resultsDTO.getProcessingResults() == ConcurEventNotificationVersion2ProcessingResults.validAccounts);
         if (isValid) {
-            LOG.info("updateRequestStatusInConcur, Will notify Concur that Request " + requestUuid
+            LOG.info("updateRequestStatusInConcurIfNecessary, Will notify Concur that Request " + requestUuid
                     + " was validated successfully");
         } else {
-            LOG.warn("updateRequestStatusInConcur, Validation failed for Concur Request " + requestUuid
+            LOG.warn("updateRequestStatusInConcurIfNecessary, Validation failed for Concur Request " + requestUuid
                     + " but we will notify Concur that the Request can move forward anyway. "
                     + "The matching entries in the upcoming SAE file may get rejected as a result.");
         }
         
-        if (!shouldUpdateStatusInConcur()) {
-            LOG.info("updateRequestStatusInConcur, Concur workflow actions are currently disabled "
+        if (shouldUpdateStatusInConcur()) {
+            updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
+        } else {
+            LOG.info("updateRequestStatusInConcurIfNecessary, Concur workflow actions are currently disabled "
                     + "in this KFS environment");
-            return;
         }
-        
+    }
+
+    protected void updateRequestStatusInConcur(
+            String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
         String requestId = resultsDTO.getReportNumber();
         String logMessageDetail = buildLogMessageDetailForRequestApproveAction(requestId, requestUuid);
         
