@@ -254,12 +254,10 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
         
         String requestId = resultsDTO.getReportNumber();
-        String workflowAction = ConcurWorkflowActions.APPROVE;
-        String logMessageDetail = buildLogMessageDetailForRequestWorkflowAction(
-                workflowAction, requestId, requestUuid);
+        String logMessageDetail = buildLogMessageDetailForRequestApproveAction(requestId, requestUuid);
         
-        ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestWorkflowAction(
-                workflowAction, requestUuid, resultsDTO);
+        ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
+                requestUuid, resultsDTO);
         
         ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationV2WebserviceService.callConcurEndpoint(
                 accessToken, webRequest, logMessageDetail);
@@ -283,20 +281,17 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         return StringUtils.equalsIgnoreCase(concurTestWorkflowIndicator, KFSConstants.ACTIVE_INDICATOR);
     }
 
-    protected String buildLogMessageDetailForRequestWorkflowAction(String workflowAction, String requestId,
-            String requestUuid) {
+    protected String buildLogMessageDetailForRequestApproveAction(String requestId, String requestUuid) {
         String requestV4WorkflowMessageFormat = configurationService.getPropertyValueAsString(
                 ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_WORKFLOW);
-        return MessageFormat.format(requestV4WorkflowMessageFormat, workflowAction, requestId, requestUuid);
+        return MessageFormat.format(requestV4WorkflowMessageFormat,
+                ConcurWorkflowActions.APPROVE, requestId, requestUuid);
     }
 
-    protected ConcurWebRequest<ConcurRequestV4ReportDTO> buildWebRequestForTravelRequestWorkflowAction(
-            String workflowAction, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
-        String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
-                ? ConcurConstants.APPROVE_COMMENT
-                : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
-        ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
-        String workflowActionUrl = buildFullUrlForRequestWorkflowAction(requestUuid, workflowAction);
+    protected ConcurWebRequest<ConcurRequestV4ReportDTO> buildWebRequestForTravelRequestApproveAction(
+            String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(ConcurConstants.APPROVE_COMMENT);
+        String workflowActionUrl = buildFullUrlForRequestWorkflowAction(requestUuid, ConcurWorkflowActions.APPROVE);
         
         return ConcurWebRequestBuilder.forRequestExpectingResponseOfType(ConcurRequestV4ReportDTO.class)
                 .withUrl(workflowActionUrl)
