@@ -14,6 +14,9 @@ public final class CUPdpParameterConstants {
     public static final String UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_BODY = "UPDATED_PAYEE_ACH_ACCOUNT_EMAIL_BODY";
     public static final String PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES = "PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES";
     public static final String MAX_ACH_ACCT_EXTRACT_RETRY = "MAX_ACH_ACCT_EXTRACT_RETRY";
+
+    // TODO: Remove this parameter after we have fully migrated to the ISO 20022 formatting process.
+    public static final String CU_USE_ISO20022_FORMAT_IND = "CU_USE_ISO20022_FORMAT_IND";
     
     public static final class CuPayeeAddressService {
         public static final String CU_PAYEE_ADDRESS_SERVICE_COMPONENT = "CuPayeeAddressService";
