@@ -15,8 +15,8 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.kuali.kfs.core.api.util.CoreUtilities;
 
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.krad.CUKRADConstants.ClamAVResponses;
 import edu.cornell.kfs.krad.CUKRADTestConstants;
 import edu.cornell.kfs.krad.antivirus.service.ScanResult.Status;
@@ -109,7 +109,7 @@ public class ClamAVAntiVirusServiceImplTest {
 
     private ClamAVScanResult runScan(String fileName) throws Exception {
         try (
-            InputStream fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName);
+            InputStream fileStream = CuCoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName);
         ) {
             return antiVirusService.scan(fileStream);
         }
@@ -117,7 +117,7 @@ public class ClamAVAntiVirusServiceImplTest {
 
     private ClamAVScanResult runScanWithPreLoadedFile(String fileName) throws Exception {
         try (
-            InputStream fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName);
+            InputStream fileStream = CuCoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileName);
         ) {
             byte[] fileBytes = IOUtils.toByteArray(fileStream);
             return antiVirusService.scan(fileBytes);

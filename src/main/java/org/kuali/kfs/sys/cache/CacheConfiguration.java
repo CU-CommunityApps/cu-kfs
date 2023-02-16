@@ -36,7 +36,6 @@ import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.identity.OrgReviewRole;
 import org.kuali.kfs.coreservice.impl.namespace.Namespace;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
-import org.kuali.kfs.integration.ar.AccountsReceivableCustomerInvoiceDetail;
 import org.kuali.kfs.kew.api.doctype.RoutePath;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.rule.bo.RuleAttribute;
@@ -98,7 +97,6 @@ public class CacheConfiguration {
         return Set.of(
                 Account.CACHE_NAME,
                 AccountingPeriod.CACHE_NAME,
-                AccountsReceivableCustomerInvoiceDetail.CACHE_NAME,
                 BalanceType.CACHE_NAME,
                 Bank.CACHE_NAME,
                 BatchFile.CACHE_NAME,
