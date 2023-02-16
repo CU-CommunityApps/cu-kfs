@@ -34,7 +34,7 @@ import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowRuntimeException;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.group.GroupService;
 import org.springmodules.orm.ojb.PersistenceBrokerCallback;
 import org.springmodules.orm.ojb.support.PersistenceBrokerDaoSupport;
 
@@ -72,6 +72,8 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                     + "         from KREW_ACTN_ITM_T   where    prncpl_id=? "
                     + "         group by  ASND_DT,doc_hdr_id "
                     + "       ) T";
+
+    private GroupService groupService;
 
     @Override
     public Collection<ActionItemActionListExtension> getActionList(String principalId, ActionListFilter filter) {
@@ -282,7 +284,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 Criteria groupCrit = new Criteria();
                 Criteria orCrit = new Criteria();
                 userCrit.addEqualTo("delegatorPrincipalId", principalId);
-                List<String> delegatorGroupIds = KimApiServiceLocator.getGroupService().getGroupIdsByPrincipalId(
+                List<String> delegatorGroupIds = groupService.getGroupIdsByPrincipalId(
                         principalId);
                 if (delegatorGroupIds != null && !delegatorGroupIds.isEmpty()) {
                     groupCrit.addIn("delegatorGroupId", delegatorGroupIds);
@@ -303,7 +305,7 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 Criteria groupCrit = new Criteria();
                 Criteria orCrit = new Criteria();
                 userCrit.addEqualTo("delegatorPrincipalId", principalId);
-                List<String> delegatorGroupIds = KimApiServiceLocator.getGroupService().getGroupIdsByPrincipalId(
+                List<String> delegatorGroupIds = groupService.getGroupIdsByPrincipalId(
                         principalId);
                 if (delegatorGroupIds != null && !delegatorGroupIds.isEmpty()) {
                     groupCrit.addIn("delegatorGroupId", delegatorGroupIds);
@@ -560,5 +562,9 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         cal.set(Calendar.MINUTE, 59);
         cal.set(Calendar.SECOND, 59);
         return cal.getTime();
+    }
+
+    public void setGroupService(final GroupService groupService) {
+        this.groupService = groupService;
     }
 }
