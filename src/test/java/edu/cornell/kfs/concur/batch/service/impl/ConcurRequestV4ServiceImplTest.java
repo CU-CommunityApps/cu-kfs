@@ -160,6 +160,8 @@ public class ConcurRequestV4ServiceImplTest {
         parameters.put(ConcurParameterConstants.REQUEST_V4_TEST_USERS, buildDefaultTestUsersParameterValue());
         parameters.put(ConcurParameterConstants.REQUEST_V4_NUMBER_OF_DAYS_OLD,
                 ParameterTestValues.REQUEST_V4_DAYS_OLD_1);
+        parameters.put(ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND,
+                KFSConstants.ParameterValues.NO);
         return parameters;
     }
 
@@ -731,6 +733,11 @@ public class ConcurRequestV4ServiceImplTest {
             } else {
                 return super.processTravelRequestsSubset(accessToken, testUserIdMappings, requestListing);
             }
+        }
+        
+        @Override
+        protected boolean shouldUpdateStatusInConcur() {
+            return false;
         }
         
         @Override

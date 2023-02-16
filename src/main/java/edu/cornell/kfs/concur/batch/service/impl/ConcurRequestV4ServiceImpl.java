@@ -22,17 +22,21 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
+import org.springframework.http.HttpMethod;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
+import edu.cornell.kfs.concur.batch.ConcurWebRequest;
+import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
@@ -46,6 +50,7 @@ import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4OperationDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4PersonDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ReportDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4StatusDTO;
+import edu.cornell.kfs.concur.rest.jsonObjects.ConcurV4WorkflowDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -54,6 +59,11 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     private static final Logger LOG = LogManager.getLogger();
 
     protected static final String PROCESSING_ERROR_MESSAGE = "Encountered an error while processing travel request";
+    protected static final String POST_ACTION_ERROR_MESSAGE =
+            "Encountered a processing error after performing workflow action on travel request. "
+                    + "Please check if the request was actually updated in Concur.";
+    protected static final String APPROVE_DESPITE_ERROR_MESSAGE =
+            "The request failed validation but will be approved anyway. The resulting SAE entries may get rejected.";
 
     protected ConcurBatchUtilityService concurBatchUtilityService;
     protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
@@ -185,6 +195,10 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             validationMessages.add(PROCESSING_ERROR_MESSAGE);
         }
         
+        if (!validationMessages.isEmpty()) {
+            validationMessages.add(APPROVE_DESPITE_ERROR_MESSAGE);
+        }
+        
         String reportNumber = requestAsListItem.getRequestId();
         String reportName = requestAsListItem.getName();
         String reportStatus = requestAsListItem.getApprovalStatus() != null   ? requestAsListItem.getApprovalStatus().getName() : KFSConstants.EMPTY_STRING;
@@ -195,7 +209,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(
                 ConcurEventNoticationVersion2EventType.TravelRequest, processingResult,
                 reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
-        updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
+        updateRequestStatusInConcurIfNecessary(accessToken, requestUuid, resultsDTO);
         
         return resultsDTO;
     }
@@ -220,14 +234,114 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         }
     }
 
-    protected void updateRequestStatusInConcur(
+    protected void updateRequestStatusInConcurIfNecessary(
             String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
         boolean isValid =
                 (resultsDTO.getProcessingResults() == ConcurEventNotificationVersion2ProcessingResults.validAccounts);
-        LOG.info("updateRequestStatusInConcur, Will notify Concur that Request " + requestUuid
-                + " had an overall validation of " + isValid);
+        if (isValid) {
+            LOG.info("updateRequestStatusInConcurIfNecessary, Will notify Concur that Request " + requestUuid
+                    + " was validated successfully");
+        } else {
+            LOG.warn("updateRequestStatusInConcurIfNecessary, Validation failed for Concur Request " + requestUuid
+                    + " but we will notify Concur that the Request can move forward anyway. "
+                    + "The matching entries in the upcoming SAE file may get rejected as a result.");
+        }
         
-        LOG.info("updateRequestStatusInConcur, Update of the Request's status in Concur has not been implemented yet");
+        if (shouldUpdateStatusInConcur()) {
+            updateRequestStatusInConcur(accessToken, requestUuid, resultsDTO);
+        } else {
+            LOG.info("updateRequestStatusInConcurIfNecessary, Concur workflow actions are currently disabled "
+                    + "in this KFS environment");
+        }
+    }
+
+    protected void updateRequestStatusInConcur(
+            String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        String requestId = resultsDTO.getReportNumber();
+        String logMessageDetail = buildLogMessageDetailForRequestApproveAction(requestId, requestUuid);
+        
+        ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
+                requestUuid, resultsDTO);
+        
+        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationV2WebserviceService.callConcurEndpoint(
+                accessToken, webRequest, logMessageDetail);
+        
+        try {
+            checkStatusOfUpdatedRequest(updatedTravelRequest, requestUuid);
+        } catch (Exception e) {
+            LOG.error("updateRequestStatusInConcur, Could not process workflow response from Concur "
+                    + "for Request UUID " + requestUuid, e);
+            updateProcessingResultForInvalidWorkflowResponse(resultsDTO);
+        }
+    }
+
+    protected boolean shouldUpdateStatusInConcur() {
+        return isProduction() || shouldUpdateStatusInConcurForNonProductionEnvironment();
+    }
+
+    protected boolean shouldUpdateStatusInConcurForNonProductionEnvironment() {
+        String concurTestWorkflowIndicator = concurBatchUtilityService.getConcurParameterValue(
+                ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND);
+        return StringUtils.equalsIgnoreCase(concurTestWorkflowIndicator, KFSConstants.ACTIVE_INDICATOR);
+    }
+
+    protected String buildLogMessageDetailForRequestApproveAction(String requestId, String requestUuid) {
+        String requestV4WorkflowMessageFormat = configurationService.getPropertyValueAsString(
+                ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_WORKFLOW);
+        return MessageFormat.format(requestV4WorkflowMessageFormat,
+                ConcurWorkflowActions.APPROVE, requestId, requestUuid);
+    }
+
+    protected ConcurWebRequest<ConcurRequestV4ReportDTO> buildWebRequestForTravelRequestApproveAction(
+            String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(ConcurConstants.APPROVE_COMMENT);
+        String workflowActionUrl = buildFullUrlForRequestWorkflowAction(requestUuid, ConcurWorkflowActions.APPROVE);
+        
+        return ConcurWebRequestBuilder.forRequestExpectingResponseOfType(ConcurRequestV4ReportDTO.class)
+                .withUrl(workflowActionUrl)
+                .withHttpMethod(HttpMethod.POST)
+                .withJsonBody(workflowDTO)
+                .build();
+    }
+
+    protected String buildFullUrlForRequestWorkflowAction(String requestUuid, String workflowAction) {
+        String baseUrl = getRequestV4Endpoint();
+        return StringUtils.joinWith(CUKFSConstants.SLASH,
+                baseUrl, UrlFactory.encode(requestUuid), UrlFactory.encode(workflowAction));
+    }
+
+    protected void checkStatusOfUpdatedRequest(ConcurRequestV4ReportDTO travelRequest, String requestUuid) {
+        if (ObjectUtils.isNull(travelRequest)) {
+            throw new IllegalStateException("Concur did not return Request content for UUID " + requestUuid);
+        }
+        
+        String requestId = travelRequest.getRequestId();
+        if (StringUtils.isBlank(requestId)) {
+            throw new IllegalStateException("A Request ID is not present on Request with UUID " + requestUuid);
+        }
+        
+        ConcurRequestV4StatusDTO requestStatus = travelRequest.getApprovalStatus();
+        if (ObjectUtils.isNull(requestStatus)) {
+            throw new IllegalStateException("Workflow status is missing on Request with UUID " + requestUuid);
+        } else if (StringUtils.isBlank(requestStatus.getCode()) || StringUtils.isBlank(requestStatus.getName())) {
+            throw new IllegalStateException("Status code/name is missing on Request with UUID " + requestUuid);
+        } else {
+            LOG.info("checkStatusOfUpdatedRequest, Request with ID " + requestId + " and UUID " + requestUuid
+                    + " has transitioned to status: " + requestStatus.getCode() + " -- " + requestStatus.getName());
+        }
+    }
+
+    protected void updateProcessingResultForInvalidWorkflowResponse(
+            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+        resultsDTO.setProcessingResults(ConcurEventNotificationVersion2ProcessingResults.processingError);
+        List<String> messages = resultsDTO.getMessages();
+        if (ObjectUtils.isNull(messages)) {
+            messages = new ArrayList<>();
+        } else if (!(messages instanceof ArrayList)) {
+            messages = new ArrayList<>(messages);
+        }
+        messages.add(POST_ACTION_ERROR_MESSAGE);
+        resultsDTO.setMessages(messages);
     }
 
     protected ConcurRequestV4ReportDTO getTravelRequest(String accessToken, String requestUuid) {
