@@ -96,4 +96,13 @@
           p:parameterService-ref="parameterService"
           p:personService-ref="personService"/>
 
+    <!--
+        Override refresh queue service to backport the FINP-9050 changes. This override should be removed
+        when we upgrade to the 2023-02-08 financials patch.
+     -->
+    <bean id="documentRefreshQueue" class="org.kuali.kfs.kew.impl.document.DocumentRefreshQueueImpl"
+          p:personService-ref="personService"
+          p:workflowDocumentActionsService-ref="workflowDocumentActionsService"
+    />
+
 </beans>
