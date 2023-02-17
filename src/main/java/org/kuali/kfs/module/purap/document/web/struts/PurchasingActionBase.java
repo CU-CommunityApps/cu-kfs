@@ -557,14 +557,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
     /**
      * Import items to the document from a spreadsheet.
-     *
-     * @param mapping An ActionMapping
-     * @param form An ActionForm
-     * @param request The HttpServletRequest
-     * @param response The HttpServletResponse
-     * @return An ActionForward
-     * @throws Exception
      */
+    // Used in puritems.tag
     public ActionForward importItems(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         LOG.info("Importing item lines");

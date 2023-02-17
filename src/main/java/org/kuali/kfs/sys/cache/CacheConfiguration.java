@@ -117,8 +117,8 @@ public class CacheConfiguration {
                 Namespace.CACHE_NAME,
                 ObjectCode.CACHE_NAME,
                 ObjectType.CACHE_NAME,
-                OrgReviewRole.CACHE_NAME,
                 Organization.CACHE_NAME,
+                OrgReviewRole.CACHE_NAME,
                 Parameter.CACHE_NAME,
                 Permission.CACHE_NAME,
                 PermissionTemplate.CACHE_NAME,
@@ -172,14 +172,27 @@ public class CacheConfiguration {
         // These caches have a TTL value different from the default specified in the redis.default.ttl property
         // Cornell Note: We are not actively using this Map in our customized caching setup.
         return Map.ofEntries(
-                entry(BatchFile.CACHE_NAME, Duration.ofSeconds(84600L)),
+                entry(Account.CACHE_NAME, Duration.ZERO),
+                entry(AccountingPeriod.CACHE_NAME, Duration.ZERO),
+                entry(BalanceType.CACHE_NAME, Duration.ZERO),
+                entry(Bank.CACHE_NAME, Duration.ZERO),
+                entry(BatchFile.CACHE_NAME, Duration.ZERO),
+                entry(Chart.CACHE_NAME, Duration.ZERO),
                 entry(DocumentType.CACHE_NAME, Duration.ofSeconds(3600L)),
                 entry(HomeOrigination.CACHE_NAME, Duration.ZERO),
                 entry(MenuService.MENU_LINKS_CACHE_NAME, Duration.ofSeconds(86760L)),
                 entry(Namespace.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(ObjectCode.CACHE_NAME, Duration.ZERO),
+                entry(ObjectType.CACHE_NAME, Duration.ZERO),
+                entry(Organization.CACHE_NAME, Duration.ZERO),
+                entry(OrgReviewRole.CACHE_NAME, Duration.ZERO),
                 entry(Parameter.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(ProjectCode.CACHE_NAME, Duration.ZERO),
                 entry(RoutePath.CACHE_NAME, Duration.ofSeconds(3600L)),
-                entry(RuleAttribute.CACHE_NAME, Duration.ofSeconds(3600L))
+                entry(RuleAttribute.CACHE_NAME, Duration.ofSeconds(3600L)),
+                entry(SubAccount.CACHE_NAME, Duration.ZERO),
+                entry(SystemOptions.CACHE_NAME, Duration.ZERO),
+                entry(UniversityDate.CACHE_NAME, Duration.ZERO)
         );
     }
 

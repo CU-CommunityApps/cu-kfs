@@ -50,10 +50,13 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
     }
 
     @Override
-    public void setCorePoolSize(int corePoolSize) {
+    public void setCorePoolSize(final int corePoolSize) {
         LOG.info("Setting core pool size to {} threads.", corePoolSize);
+        if (corePoolSize > getMaximumPoolSize()) {
+            setMaximumPoolSize(corePoolSize);
+        }
         super.setCorePoolSize(corePoolSize);
-        this.poolSizeSet = true;
+        poolSizeSet = true;
     }
 
     @Override

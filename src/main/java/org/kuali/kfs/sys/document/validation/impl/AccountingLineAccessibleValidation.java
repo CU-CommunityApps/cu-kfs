@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DocumentDictionaryService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -70,6 +71,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     protected DataDictionaryService dataDictionaryService;
     protected AccountingDocument accountingDocumentForValidation;
     protected AccountingLine accountingLineForValidation;
+    protected DocumentDictionaryService documentDictionaryService;
 
     /**
      * Indicates what is being done to an accounting line. This allows the same method to be used for different
@@ -134,6 +136,22 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
             if (isPreqDiscountRecreate(event)) {
                 return true;
             }
+            
+            // if only posting year changed and the user has edit permissions on Accounting Period, that's ok
+            if (event instanceof UpdateAccountingLineEvent) {
+                final boolean isAccountingPeriodAccessible =
+                        documentDictionaryService.getDocumentAuthorizer(accountingDocumentForValidation)
+                        .isAuthorized(accountingDocumentForValidation, KFSConstants.CoreModuleNamespaces.KFS,
+                                KFSConstants.YEAR_END_ACCOUNTING_PERIOD_EDIT_PERMISSION, currentUser.getPrincipalId());
+
+                final boolean onlyPostingYearChanged = onlyPostingYearChanged(((UpdateAccountingLineEvent) event)
+                        .getAccountingLine(), ((UpdateAccountingLineEvent) event).getUpdatedAccountingLine());
+
+                if (isAccountingPeriodAccessible && onlyPostingYearChanged) {
+                    return true;
+                }
+            }
+
             // report errors
             // KFSPTS-2253
             if (!isExceptionNode) {
@@ -208,6 +226,36 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     }
 
     /**
+     * Checks to see if the posting year is the only difference between the original accounting line and the updated
+     * accounting line.
+     *
+     * @param accountingLine original accounting line to compare
+     * @param updatedAccountingLine updated accounting line to compare
+     * @return true if only the posting year has changed on the accounting line, false otherwise
+     */
+    private boolean onlyPostingYearChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
+        if (accountingLine.isLike(updatedAccountingLine)) {
+            return false;
+        }
+
+        AccountingLine updatedLine;
+        try {
+            updatedLine = updatedAccountingLine.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOG.warn(
+                    "Exception trying to create a new instance of the updatedLine ({}).",
+                    updatedAccountingLine::getClass
+            );
+            return false;
+        }
+
+        updatedLine.copyFrom(updatedAccountingLine);
+        updatedLine.setPostingYear(accountingLine.getPostingYear());
+
+        return accountingLine.isLike(updatedLine);
+    }
+
+    /**
      * Returns the name of the accounting line group which holds the proper authorizer to do the KIM check
      *
      * @return the name of the accounting line group to get the authorizer from
@@ -224,8 +272,8 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
     protected AccountingLineAuthorizer lookupAccountingLineAuthorizer() {
         final String groupName = getGroupName();
         final Map<String, AccountingLineGroupDefinition> groups = ((FinancialSystemTransactionalDocumentEntry)
-                dataDictionaryService.getDictionaryObjectEntry(accountingDocumentForValidation
-                        .getClass().getName())).getAccountingLineGroups();
+            dataDictionaryService.getDictionaryObjectEntry(accountingDocumentForValidation
+                .getClass().getName())).getAccountingLineGroups();
 
         if (groups.isEmpty()) {
             // no groups? just use the default...
@@ -345,6 +393,14 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         
         return workflowDocument != null && workflowDocument.getDocument() != null
                 && workflowDocument.getCurrentNodeNames().contains(nodeName);
+    }
+    
+    public DocumentDictionaryService getDocumentDictionaryService() {
+        return documentDictionaryService;
+    }
+
+    public void setDocumentDictionaryService(DocumentDictionaryService documentDictionaryService) {
+        this.documentDictionaryService = documentDictionaryService;
     }
 
     private boolean isAccountNode(Document document) {

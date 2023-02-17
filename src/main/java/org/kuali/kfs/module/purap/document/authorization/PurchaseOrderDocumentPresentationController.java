@@ -171,9 +171,10 @@ public class PurchaseOrderDocumentPresentationController extends
             editModes.add(PurchaseOrderEditMode.LOCK_B2B_ENTRY);
         }
 
-        // if not B2B requisition, users can edit the posting year if within a given amount of time set in a parameter
-        if (!RequisitionSources.B2B.equals(poDocument.getRequisitionSourceCode())
-                && getPurapService().allowEncumberNextFiscalYear()
+        // users can edit the posting year if within a given amount of time set in a parameter; for B2B orders can be
+        // allowed by parameter
+        if (getPurapService().requisitionSourceAllowsEditingPostingYear(poDocument)
+            && getPurapService().allowEncumberNextFiscalYear()
                 && (PurchaseOrderStatuses.APPDOC_IN_PROCESS.equals(statusCode)
                     || PurchaseOrderStatuses.APPDOC_WAITING_FOR_VENDOR.equals(statusCode)
                     || PurchaseOrderStatuses.APPDOC_WAITING_FOR_DEPARTMENT.equals(statusCode)
