@@ -368,24 +368,6 @@ function inquiryPop(boClassName, inquiryParameters) {
     window.open(baseUrl + "/directInquiry.do?" + queryString, "_blank", "width=640, height=600, scrollbars=yes");
 }
 
-function textAreaPop(textAreaName, htmlFormAction, textAreaLabel, docFormKey, textAreaReadOnly, textAreaMaxLength) {
-
-    if (textAreaReadOnly === null || textAreaReadOnly === undefined) {
-        textAreaReadOnly = false;
-    }
-
-    if (textAreaMaxLength === null || textAreaMaxLength === undefined) {
-        textAreaMaxLength = "";
-    }
-
-    var documentWebScope = "session"
-    window.open("updateTextArea.do?textAreaFieldName=" + textAreaName + "&htmlFormAction=" + htmlFormAction + "&textAreaFieldLabel=" + textAreaLabel + "&docFormKey=" + docFormKey + "&documentWebScope=" + documentWebScope + "&textAreaReadOnly=" + textAreaReadOnly + "&textAreaMaxLength=" + textAreaMaxLength, "_blank", "width=580, height=560, scrollbars=yes");
-}
-
-function setTextArea(textAreaName) {
-    document.getElementById(textAreaName).value = window.opener.document.getElementById(textAreaName).value;
-}
-
 function textLimit(taElement, maxlen) {
     var fieldValue = taElement.value;
     if (fieldValue.length > maxlen) {

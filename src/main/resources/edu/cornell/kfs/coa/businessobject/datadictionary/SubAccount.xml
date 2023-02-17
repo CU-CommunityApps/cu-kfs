@@ -23,35 +23,21 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
   xsi:schemaLocation="http://www.springframework.org/schema/beans         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <!-- Business Object Inquiry Definition -->
-
-  <bean id="SubAccount-inquirySectionDefinition" parent="SubAccount-inquirySectionDefinition-parentBean">
-    <property name="inquiryFields">
-      <list>
-        <!-- Note: Since we're explicitly redefining the order, we'll need to update this if new fields are added to Sub-Account in the Foundation code base! -->
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode" />
-        <bean parent="FieldDefinition" p:attributeName="accountNumber" />
-        <bean parent="FieldDefinition" p:attributeName="subAccountNumber" />
-        <bean parent="FieldDefinition" p:attributeName="subAccountName" />
-        <bean parent="FieldDefinition" p:attributeName="active" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.subAccountTypeCode" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.offCampusCode" />
-        <bean parent="FieldDefinition" p:attributeName="financialReportingCodeSectionBlank" />
-        <bean parent="FieldDefinition" p:attributeName="financialReportingCodeSection" />
-        <bean parent="FieldDefinition" p:attributeName="financialReportChartCode" />
-        <bean parent="FieldDefinition" p:attributeName="finReportOrganizationCode" />
-        <bean parent="FieldDefinition" p:attributeName="financialReportingCode" />
-        <bean parent="FieldDefinition" p:attributeName="cgCostSharingSectionBlank" />
-        <bean parent="FieldDefinition" p:attributeName="cgCostSharingSection" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.costShareChartOfAccountCode" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.costShareSourceAccountNumber" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.costShareSourceSubAccountNumber" />
-        <bean parent="FieldDefinition" p:attributeName="cgICRSectionBlank" />
-        <bean parent="FieldDefinition" p:attributeName="cgICRSection" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.financialIcrSeriesIdentifier" />
-        <bean parent="FieldDefinition" p:attributeName="a21SubAccount.indirectCostRecoveryTypeCode" />
-      </list>
-    </property>
-  </bean>
+  <!-- Business Object Details Definition -->
+  
+     <bean id="SubAccount-sectionDefinition"
+          parent="SubAccount-sectionDefinition-parentBean">
+        <property name="fields">
+            <list>
+                <ref bean="SubAccount-chartOfAccountsCode"/>
+                <ref bean="SubAccount-accountNumber"/>
+                <ref bean="SubAccount-subAccountNumber"/>
+                <ref bean="SubAccount-subAccountName"/>
+                <ref bean="SubAccount-active"/>
+                <ref bean="SubAccount-a21SubAccount.subAccountTypeCode"/>
+                <ref bean="SubAccount-a21SubAccount.offCampusCode"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

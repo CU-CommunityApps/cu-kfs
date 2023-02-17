@@ -389,8 +389,8 @@
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.supplierDiversityLabel}" />
                     </th>
                     <td class="datacell" rowspan="2">
-                          <c:if test="${not empty KualiForm.document.vendorDetail.vendorHeader.vendorSupplierDiversities}">
-                              <c:forEach var="item" items="${KualiForm.document.vendorDetail.vendorHeader.vendorSupplierDiversities}" varStatus="status">
+                          <c:if test="${not empty KualiForm.document.vendorDetail.vendorHeader.activeVendorSupplierDiversities}">
+                              <c:forEach var="item" items="${KualiForm.document.vendorDetail.vendorHeader.activeVendorSupplierDiversities}" varStatus="status">
                                   <c:if test="${!(status.first)}"><br></c:if>${item.vendorSupplierDiversity.vendorSupplierDiversityDescription}
                               </c:forEach>
                           </c:if>
