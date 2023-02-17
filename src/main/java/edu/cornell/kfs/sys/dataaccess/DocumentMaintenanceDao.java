@@ -18,4 +18,9 @@ public interface DocumentMaintenanceDao {
 	 */
 	List<ActionItemNoteDetailDto> getActionNotesToBeRequeued();
 
+	/**
+	 * Finds the action list notes for a specific document that will be re-queued.
+	 */
+	List<ActionItemNoteDetailDto> getActionNotesToBeRequeuedForDocument(String documentId);
+
 }
