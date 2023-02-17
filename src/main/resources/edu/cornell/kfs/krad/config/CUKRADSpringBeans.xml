@@ -49,7 +49,8 @@
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>
 
     <bean id="businessObjectAuthorizationService"
-          class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"/>
+          class="edu.cornell.kfs.kns.service.impl.CuBusinessObjectAuthorizationServiceImpl"
+          p:permissionService-ref="permissionService"/>
           
     <bean id="encryptionService" class="edu.cornell.kfs.core.impl.encryption.AESEncryptionServiceImpl">
         <property name="key" value="${cu.encryption.key}"/>
