@@ -12,13 +12,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.actionitem.ActionItem;
 import org.kuali.kfs.kew.actionlist.dao.impl.ActionListPriorityComparator;
-import org.kuali.kfs.kew.api.document.DocumentRefreshQueue;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
+import edu.cornell.kfs.kew.api.document.CuDocumentRefreshQueue;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
@@ -28,8 +28,13 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     private static final Logger LOG = LogManager.getLogger();
 
     private DocumentMaintenanceDao documentMaintenanceDao;
-    private DocumentRefreshQueue documentRefreshQueue;
+    private CuDocumentRefreshQueue documentRefreshQueue;
     private BusinessObjectService businessObjectService;
+
+    @Override
+    public List<ActionItemNoteDetailDto> getActionNotesToBeRequeuedForDocument(String documentId) {
+        return documentMaintenanceDao.getActionNotesToBeRequeuedForDocument(documentId);
+    }
 
     @Override
     public boolean requeueDocuments() {
@@ -48,23 +53,50 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     @Transactional
     private void requeueDocumentByDocumentId(List<ActionItemNoteDetailDto> noteDetails, String docId) {
         LOG.info("requeueDocumentByDocumentId: Requesting requeue for document: " + docId);
-        documentRefreshQueue.refreshDocument(docId);
+        documentRefreshQueue.refreshDocumentWithoutRestoringActionNotes(docId);
         
         List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
-        for (ActionItemNoteDetailDto detailDto : noteDetailsForDocument) {
+        restoreActionNotesForRequeuedDocument(docId, noteDetailsForDocument);
+    }
+    
+    @Override
+    public void restoreActionNotesForRequeuedDocument(String documentId, List<ActionItemNoteDetailDto> actionNotes) {
+        if (CollectionUtils.isEmpty(actionNotes)) {
+            LOG.info("restoreActionNotesForRequeuedDocument, There are no action notes to restore for document {}",
+                    documentId);
+            return;
+        } else {
+            LOG.info("restoreActionNotesForRequeuedDocument, Restoring {} action notes for document {}",
+                    actionNotes.size(), documentId);
+        }
+        
+        for (ActionItemNoteDetailDto detailDto : actionNotes) {
+            if (!StringUtils.equals(detailDto.getDocHeaderId(), documentId)) {
+                LOG.warn("restoreActionNotesForRequeuedDocument, Skipping note detail {} because it is not "
+                        + "associated with document {}", detailDto, documentId);
+                continue;
+            }
+            
             ActionItem actionItem = findActionItem(detailDto);
             if (ObjectUtils.isNotNull(actionItem)) {
                 ActionItemExtension actionItemExtension = findActionItemExtension(actionItem.getId());
                 if (ObjectUtils.isNull(actionItemExtension)) {
                     actionItemExtension = buildActionItemExtension(detailDto, actionItem);
-                    LOG.info("requeueDocumentByDocumentId, adding note details " + detailDto.toString() + " to action item " + actionItem.getId());
+                    LOG.info("restoreActionNotesForRequeuedDocument, Adding note detail {} to action item {}",
+                            detailDto, actionItem.getId());
                 } else {
                     actionItemExtension.setActionNote(detailDto.getActionNote());
-                    LOG.info("requeueDocumentByDocumentId, updating note details " + detailDto.toString() + " to action item " + actionItem.getId());
+                    LOG.info("restoreActionNotesForRequeuedDocument, Updating note detail {} for action item {}",
+                            detailDto, actionItem.getId());
                 }
                 businessObjectService.save(actionItemExtension);
+            } else {
+                LOG.info("restoreActionNotesForRequeuedDocument, Skipping note detail {} because a matching "
+                        + "action item no longer exists", detailDto);
             }
         }
+        
+        LOG.info("restoreActionNotesForRequeuedDocument, Finished restoring action notes for document {}", documentId);
     }
     
     private ActionItem findActionItem(ActionItemNoteDetailDto detailDto) {
@@ -108,7 +140,7 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         this.documentMaintenanceDao = documentMaintenanceDao;
     }
 
-    public void setDocumentRefreshQueue(DocumentRefreshQueue documentRefreshQueue) {
+    public void setDocumentRefreshQueue(CuDocumentRefreshQueue documentRefreshQueue) {
         this.documentRefreshQueue = documentRefreshQueue;
     }
 

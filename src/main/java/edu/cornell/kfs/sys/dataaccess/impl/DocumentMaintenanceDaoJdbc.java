@@ -70,7 +70,19 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
 
     @Override
     public List<ActionItemNoteDetailDto> getActionNotesToBeRequeued() {
-        CuSqlQuery sqlQuery = buildActionNoteQuery();
+        CuSqlChunk requeueSqlSubQuery = buildRequeueSqlQueryChunkWithoutOrderByClause();
+        CuSqlQuery sqlQuery = buildActionNoteQuery(requeueSqlSubQuery);
+        return getActionNotesToBeRequeued(sqlQuery);
+    }
+
+    @Override
+    public List<ActionItemNoteDetailDto> getActionNotesToBeRequeuedForDocument(String documentId) {
+        CuSqlChunk docIdParameter = CuSqlChunk.forParameter(documentId);
+        CuSqlQuery sqlQuery = buildActionNoteQuery(docIdParameter);
+        return getActionNotesToBeRequeued(sqlQuery);
+    }
+
+    private List<ActionItemNoteDetailDto> getActionNotesToBeRequeued(CuSqlQuery sqlQuery) {
         RowMapper<ActionItemNoteDetailDto> actionItemNoteMapper = (resultSet, rowNum) -> {
             ActionItemNoteDetailDto actionItemNote = new ActionItemNoteDetailDto();
             actionItemNote.setPrincipalId(resultSet.getString(1));
@@ -83,12 +95,12 @@ public class DocumentMaintenanceDaoJdbc extends PlatformAwareDaoBaseJdbc impleme
         return queryForValues(sqlQuery, actionItemNoteMapper);
     }
 
-    private CuSqlQuery buildActionNoteQuery() {
+    private CuSqlQuery buildActionNoteQuery(CuSqlChunk docIdListOrSubQuery) {
         return CuSqlQuery.of(
                 "SELECT AI.PRNCPL_ID, AI.DOC_HDR_ID, AIE.ACTN_NOTE, AIE.LAST_UPDT_TS, AI.ACTN_ITM_ID ",
                 "FROM KFS.KREW_ACTN_ITM_T AI ",
                 "JOIN KFS.KREW_ACTN_ITM_EXT_T AIE ON AI.ACTN_ITM_ID = AIE.ACTN_ITM_ID ",
-                "WHERE AI.DOC_HDR_ID IN (", buildRequeueSqlQueryChunkWithoutOrderByClause(), ")");
+                "WHERE AI.DOC_HDR_ID IN (", docIdListOrSubQuery, ")");
     }
 
     private <T> List<T> queryForValues(CuSqlQuery sqlQuery, RowMapper<T> rowMapper) {
