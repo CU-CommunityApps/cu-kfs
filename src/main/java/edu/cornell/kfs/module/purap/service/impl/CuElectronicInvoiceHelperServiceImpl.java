@@ -1291,13 +1291,16 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void attachInvoiceXMLWithRejectDoc(ElectronicInvoiceRejectDocument eInvoiceRejectDocument, File attachmentFile, String noteText) {
+    protected void attachInvoiceXMLWithRejectDoc(
+            final ElectronicInvoiceRejectDocument eInvoiceRejectDocument, 
+            final File attachmentFile, 
+            final String noteText) {
         Note note = null;
         try {
             note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
             note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
-        } catch (Exception e1) {
+        } catch (final Exception e1) {
             throw new RuntimeException("Unable to create note from document: ", e1);
         }
 

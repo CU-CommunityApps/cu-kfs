@@ -36,14 +36,17 @@
           class="edu.cornell.kfs.krad.service.impl.CuMaintainableXMLConversionServiceImpl"
           p:conversionRuleFile="classpath:edu/cornell/kfs/krad/config/MaintainableXMLUpgradeRules.xml"/>
 
-    <bean id="documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl"
-          p:documentDao-ref="documentDao" p:dateTimeService-ref="dateTimeService"
-          p:workflowDocumentService-ref="workflowDocumentService"
-          p:documentHeaderService-ref="documentHeaderService"
-          p:businessObjectService-ref="businessObjectService" p:noteService-ref="noteService"
+    <bean id="documentService" class="edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl"  
+          p:businessObjectService-ref="businessObjectService"
           p:dataDictionaryService-ref="dataDictionaryService"
-          p:kualiConfigurationService-ref="configurationService"
-          p:maintainableXMLConversionService-ref="cuMaintainableXMLConversionService"/>
+          p:dateTimeService-ref="dateTimeService"
+          p:documentDao-ref="documentDao"
+          p:documentHeaderService-ref="documentHeaderService"
+          p:kualiConfigurationService-ref="configurationService" 
+          p:noteService-ref="noteService"      
+          p:personService-ref="personService"
+          p:maintainableXMLConversionService-ref="cuMaintainableXMLConversionService"
+          p:workflowDocumentService-ref="workflowDocumentService" />
 
     <bean id="documentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"/>

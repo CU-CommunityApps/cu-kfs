@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
@@ -329,7 +330,16 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         boolean documentEligible = false;
         
         List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
-        String documentTypeName = documentHeader.getWorkflowDocument().getDocumentTypeName();
+        
+        final WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
+
+        // Documents that have been recalled may still have an enroute doc header status (due to a bug we need to
+        // fix), so we need to double-check the workflow doc here since only ENROUTE docs can be DISAPPROVED.
+        if (!workflowDocument.isEnroute()) {
+            return false;
+        }
+        
+        String documentTypeName = workflowDocument.getDocumentTypeName();
         DocumentType childDocumentType = documentTypeService.getDocumentTypeByName(documentTypeName);
         
         for (DocumentType parentDocumentType : parentDocumentTypes) {
