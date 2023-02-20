@@ -59,7 +59,6 @@
         <plugin.surefire.version>2.22.2</plugin.surefire.version>
         <plugin.dependency.version>3.2.0</plugin.dependency.version>
         <plugin.war.version>3.3.1</plugin.war.version>
-        <javax.activation.version>1.1.1</javax.activation.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
         <log4j.version>2.17.2</log4j.version>
@@ -2072,12 +2071,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>${validation-api.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>co.kuali</groupId>
             <artifactId>xapool</artifactId>
             <version>${xapool.version}</version>
@@ -2092,11 +2085,6 @@
                     <artifactId>ojdbc7</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>${javax.activation.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>
