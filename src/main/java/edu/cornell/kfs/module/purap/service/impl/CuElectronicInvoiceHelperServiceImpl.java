@@ -133,7 +133,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	private WorkflowDocumentService workflowDocumentService;
 	private CUFinancialSystemDocumentService financialSystemDocumentService;
 	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
-	private PersonService personService;
 
 	@Override
     public ElectronicInvoiceLoad loadElectronicInvoices() {
@@ -1789,11 +1788,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     public void setcUPaymentMethodGeneralLedgerPendingEntryService(
             CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService) {
         this.cUPaymentMethodGeneralLedgerPendingEntryService = cUPaymentMethodGeneralLedgerPendingEntryService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        super.setPersonService(personService);
-        this.personService = personService;
     }
 
 }
