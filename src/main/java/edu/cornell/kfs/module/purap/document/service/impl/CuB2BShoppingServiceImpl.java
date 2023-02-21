@@ -94,7 +94,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             // create requisition
             RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
             String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
-            String businessPurpose = ((CuB2BShoppingCart)message).getBusinessPurpose();
+            String businessPurpose = message.getMessage().getPunchOutOrderMessage().getPunchOutOrderMessageHeader().getQuoteStatus();
 
             req.getDocumentHeader().setDocumentDescription(description);
             req.getDocumentHeader().setExplanation(businessPurpose);

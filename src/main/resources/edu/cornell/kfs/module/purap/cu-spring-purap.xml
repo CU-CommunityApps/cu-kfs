@@ -60,7 +60,7 @@
 		</property>
 	</bean>
      
-    <bean id="b2bPunchOutOrderFileType" class="edu.cornell.kfs.module.purap.util.cxml.CuB2BPunchOutOrderFileType">
+    <bean id="b2bPunchOutOrderFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType">
 	    <property name="schemaLocation">
             <value>classpath:org/kuali/kfs/module/purap/util/cxml/b2bPunchOutOrder.xsd</value>
         </property>
