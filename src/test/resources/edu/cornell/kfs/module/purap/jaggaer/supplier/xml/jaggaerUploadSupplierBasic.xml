@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<!DOCTYPE SupplierMessage SYSTEM "https://integrations.sciquest.com/app_docs/dtd/supplier/supplier.dtd">
+<SupplierMessage version="1.0">
+	<Header>
+		<MessageId>20140922T02:09:00.304</MessageId>
+		<Timestamp>20140922T02:09:00.304</Timestamp>
+		<Authentication>
+			<Identity>JAGGAERQAOrg</Identity>
+			<SharedSecret>password</SharedSecret>
+		</Authentication>
+	</Header>
+	<Supplier>
+		<Name>CBO test supplier</Name>
+		<DoingBusinessAs>Test Supplier</DoingBusinessAs>
+		<Active>true</Active>
+		<ComingSoon>true</ComingSoon>
+		<NewSupplier>true</NewSupplier>
+		<SupplierNumber>CBO0001</SupplierNumber>
+		<BaselineSupplierNumber>CBO0001</BaselineSupplierNumber>
+		<ThirdPartyRefNumber>CBO0001</ThirdPartyRefNumber>
+		<BaselineThirdPartyRefNumber>CBO0001</BaselineThirdPartyRefNumber>
+		<VendorId businessUnit="NC">NCCBO0001</VendorId>
+		<VendorId businessUnit="VA">VACBO0001</VendorId>
+		<DUNS>123456789</DUNS>
+		<LegalStructure>1</LegalStructure>
+		<FederalIDNumber>000000000</FederalIDNumber>
+		<PreferredTechnicalContactId>0001</PreferredTechnicalContactId>
+		<PreferredCatalogContactId>0001</PreferredCatalogContactId>
+		<PreferredCustomerCareContactId>0001</PreferredCustomerCareContactId>
+		<ExposeListPrice>true</ExposeListPrice>
+		<UseListPriceRule>2</UseListPriceRule>
+		<AllowNonCatalogItems>true</AllowNonCatalogItems>
+		<AllowFormPurchases>true</AllowFormPurchases>
+		<SupportedCurrencies>
+			<Currency isoCurrencyCode="USD">Yes</Currency>
+			<Currency isoCurrencyCode="MXN">Yes</Currency>
+			<Currency isoCurrencyCode="CAD">Yes</Currency>
+		</SupportedCurrencies>
+		<EnabledCurrencies>
+			<Currency isoCurrencyCode="USD">Yes</Currency>
+			<Currency isoCurrencyCode="MXN">No</Currency>
+			<Currency isoCurrencyCode="CAD">Yes</Currency>
+		</EnabledCurrencies>
+		<SupplierKeywords />
+		<SupplierContactInfo id="0001" type="remitto"
+			usePreferred="Yes">
+			<ContactHeader>
+				<ContactName>Invoicing Contact</ContactName>
+				<ExternalId>RT0001</ExternalId>
+				<BaselineExternalId>RT0001</BaselineExternalId>
+				<ThirdPartyRefNumber>1000TR</ThirdPartyRefNumber>
+				<BaselineThirdPartyRefNumber>1000TR</BaselineThirdPartyRefNumber>
+				<Active>true</Active>
+			</ContactHeader>
+			<ContactAddress>
+				<Name>Invoicing</Name>
+			</ContactAddress>
+		</SupplierContactInfo>
+		<SupplierContactInfo id="0001" type="technical">
+			<ContactHeader>
+				<ContactName>Technical Contact</ContactName>
+				<ExternalId>TC0001</ExternalId>
+				<BaselineExternalId>TC0001</BaselineExternalId>
+				<Active>true</Active>
+			</ContactHeader>
+			<ContactAddress>
+				<Name>Technical Contact</Name>
+			</ContactAddress>
+		</SupplierContactInfo>
+		<SupplierContactInfo id="0001" type="customercare">
+			<ContactHeader>
+				<ContactName>Customer Care Contact</ContactName>
+				<ExternalId>CCC001</ExternalId>
+				<BaselineExternalId>CCC001</BaselineExternalId>
+				<Active>true</Active>
+			</ContactHeader>
+		</SupplierContactInfo>
+		<SupplierContactInfo id="0001" type="catalog">
+			<ContactHeader>
+				<ContactName>Catalog Contact</ContactName>
+				<ExternalId>CC0001</ExternalId>
+				<BaselineExternalId>CC0001</BaselineExternalId>
+				<Active>true</Active>
+			</ContactHeader>
+			<ContactAddress>
+				<Name>Catalog Contact</Name>
+			</ContactAddress>
+		</SupplierContactInfo>
+		<SupplierContactInfo id="0003" type="catalog">
+			<ContactHeader>
+				<ContactName>Catalog Contact 3</ContactName>
+				<ExternalId>CC0003</ExternalId>
+				<BaselineExternalId>CC0003</BaselineExternalId>
+				<Active>true</Active>
+			</ContactHeader>
+			<ContactAddress>
+				<Name>Catalog Contact 3</Name>
+				<Phone>
+					<TelephoneNumber>
+						<CountryCode>1</CountryCode>
+						<AreaCode>800</AreaCode>
+						<Number>2331121</Number>
+						<Extension />
+					</TelephoneNumber>
+				</Phone>
+				<TollFreePhone />
+				<Fax />
+				<Email>contact@supplier.com</Email>
+				<Address>
+					<AddressLine1 />
+					<AddressLine2 />
+					<AddressLine3 />
+					<City>Any City</City>
+					<State>NC</State>
+					<PostalCode>27513</PostalCode>
+					<Country isoCountryCode="US" />
+				</Address>
+				<Notes>Contact Notes</Notes>
+			</ContactAddress>
+		</SupplierContactInfo>
+		<Classification>
+			<InternalName>MostPreferredSupplier</InternalName>
+			<DisplayName>The most preferred supplier</DisplayName>
+		</Classification>
+		<Classification>
+			<InternalName>Internal Stockroom</InternalName>
+		</Classification>
+		<FulfillmentCenter id="0001">
+			<FulfillmentCenterName> Your Fulfillment Center 1</FulfillmentCenterName>
+			<Active>true</Active>
+			<ExternalId>FC001</ExternalId>
+			<BaselineExternalId>FC001</BaselineExternalId>
+			<ThirdPartyRefNumber>100CF</ThirdPartyRefNumber>
+			<BaselineThirdPartyRefNumber>100CF</BaselineThirdPartyRefNumber>
+			<PreferredRemitToId>0001</PreferredRemitToId>
+			<PreferredRemitToThirdPartyId>1000TR</PreferredRemitToThirdPartyId>
+			<PreferredTechnicalContactId>0001</PreferredTechnicalContactId>
+			<PreferredCustomerCareContactId>0001</PreferredCustomerCareContactId>
+			<FulfillmentCenterOrderingContactInfo
+				id="0001">
+				<ContactAddress>
+					<Name>Ordering Contact</Name>
+					<Phone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>800</AreaCode>
+							<Number>2331121</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Phone>
+					<TollFreePhone />
+					<Fax />
+					<Email>contact@supplier.com</Email>
+					<Address>
+						<AddressLine1 />
+						<AddressLine2 />
+						<AddressLine3 />
+						<City>Any City</City>
+						<State>NC</State>
+						<PostalCode>27513</PostalCode>
+						<Country isoCountryCode="US" />
+					</Address>
+					<Notes>Contact Notes</Notes>
+				</ContactAddress>
+			</FulfillmentCenterOrderingContactInfo>
+			<PaymentMethod>
+				<PaymentMethodInfo type="PO">
+					<Active>true</Active>
+					<PONumberSelection type="wheel">
+						<NumberWheel>PO</NumberWheel>
+						<AllowFreeForm>false</AllowFreeForm>
+					</PONumberSelection>
+				</PaymentMethodInfo>
+			</PaymentMethod>
+			<Shipping>
+				<FOB>Destination</FOB>
+				<SurchargeConfiguration>
+					<Fee>
+						<FeeType>Percentage</FeeType>
+						<Percentage>3</Percentage>
+						<Amount />
+						<FeeScope>ByLine</FeeScope>
+					</Fee>
+				</SurchargeConfiguration>
+			</Shipping>
+			<Handling>
+				<SurchargeConfiguration>
+					<Fee>
+						<FeeType>Flat Fee</FeeType>
+						<Percentage>3</Percentage>
+						<Amount />
+						<FeeScope>ByLine</FeeScope>
+					</Fee>
+					<UseOrderThreshold>true</UseOrderThreshold>
+					<OrderThreshold>25</OrderThreshold>
+				</SurchargeConfiguration>
+			</Handling>
+			<TaxInfo>
+				<TaxableByDefault>true</TaxableByDefault>
+				<Tax1Active>true</Tax1Active>
+				<Tax1>6.75</Tax1>
+				<Tax2Active>false</Tax2Active>
+				<TaxShipping>false</TaxShipping>
+				<TaxHandling>false</TaxHandling>
+			</TaxInfo>
+			<Invoicing>
+				<Terms>
+					<Active>true</Active>
+					<Discount unit="percent" currency="USD">3</Discount>
+					<Days>10</Days>
+					<TermsType>Net</TermsType>
+					<DaysAfter>30</DaysAfter>
+				</Terms>
+				<NumberWheel>IN</NumberWheel>
+			</Invoicing>
+			<OrderAcceptanceInstructions>please confirm any substitutions by
+				calling the Purchasing Office.</OrderAcceptanceInstructions>
+			<OrderDistribution>
+				<DistributionMethod type="fax">
+					<Active>true</Active>
+					<Fax>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>800</AreaCode>
+							<Number>2331121</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Fax>
+				</DistributionMethod>
+				<DistributionMethod type="htmlattachment">
+					<Active>false</Active>
+					<Email>orders@supplier.com</Email>
+				</DistributionMethod>
+			</OrderDistribution>
+		</FulfillmentCenter>
+	</Supplier>
+</SupplierMessage>
