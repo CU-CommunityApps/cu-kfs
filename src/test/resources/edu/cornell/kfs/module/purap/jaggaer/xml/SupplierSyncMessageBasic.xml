@@ -10,8 +10,62 @@
         </Authentication>
     </Header>
     <SupplierRequestMessage>
-        <Supplier>
+        <Supplier isChanged="T" approvedForERPSync="T" requiresERP="T">
+            <ERPNumber isChanged="F">erp number</ERPNumber>
+            <OldERPNumber>old erp number</OldERPNumber>
+            <SupplierSQId>SO ID</SupplierSQId>
+            <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+            <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+            <JASupplierId>ja supplier id</JASupplierId>
             <Name>Acme Test Company</Name>
+            <DoingBusinessAs>doing business os</DoingBusinessAs>
+            <OtherNames>other name</OtherNames>
+            <CountryOfOrigin>USA</CountryOfOrigin>
+            <ParentSupplier/>
+            <Active>active</Active>
+            <BusinessUnitVendorNumberList/>
+            <WebSiteURL>www.cornell.edu</WebSiteURL>
+            <DUNS>duns</DUNS>
+            <LegalStructure>legal structure</LegalStructure>
+            <TaxIdentificationType>tax type</TaxIdentificationType>
+            <TaxIdentificationNumber>tax id</TaxIdentificationNumber>
+            <VatIdentificationNumber>VAT ID</VatIdentificationNumber>
+            <ExemptFromBackupWithholding>back holding</ExemptFromBackupWithholding>
+            <NumberOfEmployees>69</NumberOfEmployees>
+            <YearEstablished>1977</YearEstablished>
+            <AnnualSalesList/>
+            <ServiceAreaList/>
+            <RegistrationProfileType>profile tyoe</RegistrationProfileType>
+            <RegistrationProfileStatus>profile status</RegistrationProfileStatus>
+            <SupplierTaxRepresentativeId isChanged="T">tax rep ID</SupplierTaxRepresentativeId>
+            <SupplierRegCourt>regular court</SupplierRegCourt>
+            <SupplierRegSeat>regular seat</SupplierRegSeat>
+            <SupplierRegNumber>reg number</SupplierRegNumber>
+            <SupplierCapital/>
+            <SupplierShareholders>holders</SupplierShareholders>
+            <VATExempt>VAT</VATExempt>
+            <CommodityCodeList/>
+            <Brands/>
+            <ShoppingCommodityCode>commodity</ShoppingCommodityCode>
+            <AustinTetra>austin</AustinTetra>
+            <SIC>SIC</SIC>
+            <NaicsCodes/>
+            <SupportedCurrencyList/>
+            <EnabledCurrencyList/>
+            <SupplierKeywords>keyward</SupplierKeywords>
+            <AddressList/>
+            <PrimaryAddressList/>
+            <ContactList/>
+            <PrimaryContactList/>
+            <ClassificationList/>
+            <DiversityClassificationList/>
+            <LocationList/>
+            <RestrictFulfillmentLocationsByBusinessUnit isChanged="restrict"/>
+            <CustomElementList/>
+            <AccountsPayableList/>
+            <TaxInformationList/>
+            <InsuranceInformationList/>
+            <EnablePaymentProvisioning>prov</EnablePaymentProvisioning>
         </Supplier>
     </SupplierRequestMessage>
 </SupplierSyncMessage>
