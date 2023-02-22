@@ -13,8 +13,10 @@ public class OrderCompletedValuesFinder extends KeyValuesBase {
 
 	public List<KeyValue> getKeyValues() {
         List<KeyValue> keyValues = new ArrayList<KeyValue>();
-        keyValues.add(new ConcreteKeyValue("N", "College/Unit <b>approved</b> for processing by service center. (Click <b>Approve</b> to automatically route to service center for processing.) &nbsp; &nbsp; &nbsp;"));
-        keyValues.add(new ConcreteKeyValue("Y", "College/Unit <b>has</b> processed this request. (Do <b>not</b> route to service center. Click <b>Approve<b>.)")); 
+        
+        keyValues.add(new ConcreteKeyValue("N", "I have <b>NOT</b> placed the order. (Click <b>approve</b> to submit to the FTC/BSC for processing) &nbsp; &nbsp; &nbsp;"));
+        keyValues.add(new ConcreteKeyValue("Y", "I <b>HAVE</b> placed the order via pcard/eshop etc. (Click <b>approve</b> to finalize the order)"));
+         
         return keyValues;
     }
 
