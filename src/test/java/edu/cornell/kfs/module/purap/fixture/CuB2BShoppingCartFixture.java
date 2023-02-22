@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 import org.kuali.kfs.module.purap.util.cxml.Message;
+import org.kuali.kfs.module.purap.util.cxml.Money;
 import org.kuali.kfs.module.purap.util.cxml.PunchOutOrderMessage;
 import org.kuali.kfs.module.purap.util.cxml.PunchOutOrderMessageHeader;
+import org.kuali.kfs.module.purap.util.cxml.PunchOutOrderMessageHeader.Total;
 
 public enum CuB2BShoppingCartFixture {
 	B2B_CART_USING_VENDOR_ID("200", // messageStatusCode
@@ -50,17 +52,21 @@ public enum CuB2BShoppingCartFixture {
 	 * Creates a B2BShoppingCart from this B2BShoppingCartFixture.
 	 */
 	public B2BShoppingCart createB2BShoppingCart() {
-		B2BShoppingCart cart = new B2BShoppingCart();
-		cart.setMessageStatusCode(messageStatusCode);
-		cart.setMessageStatusText(messageStatusText);
-		cart.setTotal(totalAmount);
-		Message message = new Message();
-		PunchOutOrderMessage punchOutOrderMessage = new PunchOutOrderMessage();
-		PunchOutOrderMessageHeader header = new PunchOutOrderMessageHeader();
-		header.setQuoteStatus(businessPurpose);
-		punchOutOrderMessage.setPunchOutOrderMessageHeader(header);
-		message.setPunchOutOrderMessage(punchOutOrderMessage);
-		cart.setMessage(message);
+        B2BShoppingCart cart = new B2BShoppingCart();
+        cart.setMessageStatusCode(messageStatusCode);
+        cart.setMessageStatusText(messageStatusText);
+        Message message = new Message();
+        PunchOutOrderMessage punchOutOrderMessage = new PunchOutOrderMessage();
+        PunchOutOrderMessageHeader header = new PunchOutOrderMessageHeader();
+        header.setQuoteStatus(businessPurpose);
+        Total total = new Total();
+        Money money = new Money();
+        total.setMoney(money);
+        header.setTotal(total);
+        punchOutOrderMessage.setPunchOutOrderMessageHeader(header);
+        message.setPunchOutOrderMessage(punchOutOrderMessage);
+        cart.setMessage(message);
+        cart.setTotal(totalAmount);
 
 		for (B2BShoppingCartItemFixture itemFixture : itemFixturesList) {
 			cart.addShoppingCartItem(itemFixture.createB2BShoppingCartItem());
