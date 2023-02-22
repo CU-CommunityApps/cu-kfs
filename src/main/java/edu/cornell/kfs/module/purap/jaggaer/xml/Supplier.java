@@ -49,11 +49,11 @@ public class Supplier {
     @XmlElement(name = "Name")
     protected Name name;
     @XmlElement(name = "DoingBusinessAs")
-    protected DoingBusinessAs doingBusinessAs;
+    protected JaggaerBasicValue doingBusinessAs;
     @XmlElement(name = "OtherNames")
-    protected OtherNames otherNames;
+    protected JaggaerBasicValue otherNames;
     @XmlElement(name = "CountryOfOrigin")
-    protected CountryOfOrigin countryOfOrigin;
+    protected JaggaerBasicValue countryOfOrigin;
     @XmlElement(name = "ParentSupplier")
     protected ParentSupplier parentSupplier;
     @XmlElement(name = "Active")
@@ -61,7 +61,7 @@ public class Supplier {
     @XmlElement(name = "BusinessUnitVendorNumberList")
     protected BusinessUnitVendorNumberList businessUnitVendorNumberList;
     @XmlElement(name = "WebSiteURL")
-    protected WebSiteURL webSiteURL;
+    protected JaggaerBasicValue webSiteURL;
     @XmlElement(name = "DUNS")
     protected DUNS duns;
     @XmlElement(name = "LegalStructure")
@@ -225,27 +225,27 @@ public class Supplier {
         this.name = name;
     }
 
-    public DoingBusinessAs getDoingBusinessAs() {
+    public JaggaerBasicValue getDoingBusinessAs() {
         return doingBusinessAs;
     }
 
-    public void setDoingBusinessAs(DoingBusinessAs doingBusinessAs) {
+    public void setDoingBusinessAs(JaggaerBasicValue doingBusinessAs) {
         this.doingBusinessAs = doingBusinessAs;
     }
 
-    public OtherNames getOtherNames() {
+    public JaggaerBasicValue getOtherNames() {
         return otherNames;
     }
 
-    public void setOtherNames(OtherNames otherNames) {
+    public void setOtherNames(JaggaerBasicValue otherNames) {
         this.otherNames = otherNames;
     }
 
-    public CountryOfOrigin getCountryOfOrigin() {
+    public JaggaerBasicValue getCountryOfOrigin() {
         return countryOfOrigin;
     }
 
-    public void setCountryOfOrigin(CountryOfOrigin countryOfOrigin) {
+    public void setCountryOfOrigin(JaggaerBasicValue countryOfOrigin) {
         this.countryOfOrigin = countryOfOrigin;
     }
 
@@ -273,11 +273,11 @@ public class Supplier {
         this.businessUnitVendorNumberList = businessUnitVendorNumberList;
     }
 
-    public WebSiteURL getWebSiteURL() {
+    public JaggaerBasicValue getWebSiteURL() {
         return webSiteURL;
     }
 
-    public void setWebSiteURL(WebSiteURL webSiteURL) {
+    public void setWebSiteURL(JaggaerBasicValue webSiteURL) {
         this.webSiteURL = webSiteURL;
     }
 

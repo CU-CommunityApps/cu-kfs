@@ -161,25 +161,17 @@ public class SupplierSyncMessageTest {
         duns.setvalue("duns");
         supplier.setDuns(duns);
         
-        WebSiteURL url = new WebSiteURL();
-        url.setvalue("www.cornell.edu");
-        supplier.setWebSiteURL(url);
+        supplier.setWebSiteURL(new JaggaerBasicValue("www.cornell.edu"));
         
         Active active = new Active();
         active.setvalue("active");
         supplier.setActive(active);
         
-        CountryOfOrigin country = new CountryOfOrigin();
-        country.setvalue("USA");
-        supplier.setCountryOfOrigin(country);
+        supplier.setCountryOfOrigin(new JaggaerBasicValue("USA"));
         
-        OtherNames other = new OtherNames();
-        other.setvalue("other name");
-        supplier.setOtherNames(other);
+        supplier.setOtherNames(new JaggaerBasicValue("other name"));
         
-        DoingBusinessAs dba = new DoingBusinessAs();
-        dba.setvalue("doing business os");
-        supplier.setDoingBusinessAs(dba);
+        supplier.setDoingBusinessAs(new JaggaerBasicValue("doing business os"));
         
         ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
         refNumber.setvalue("3rd party ref number");
