@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SupplierSyncMessage version="1.0">
+    <Header>
+        <MessageId>message id</MessageId>
+        <RelatedMessageId>related id</RelatedMessageId>
+        <Timestamp>20210218</Timestamp>
+        <Authentication>
+            <Identity>Cornell</Identity>
+            <SharedSecret>SuperCoolPassword</SharedSecret>
+        </Authentication>
+    </Header>
+    <SupplierRequestMessage>
+        <Supplier>
+            <Name>Acme Test Company</Name>
+        </Supplier>
+    </SupplierRequestMessage>
+</SupplierSyncMessage>

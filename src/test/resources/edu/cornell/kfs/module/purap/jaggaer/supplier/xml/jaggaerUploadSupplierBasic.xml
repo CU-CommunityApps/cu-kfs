@@ -1,3 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SupplierMessage version="1.0">
+    <Header>
+        <MessageId>20140922T02:09:00.304</MessageId>
+        <Timestamp>20140922T02:09:00.304</Timestamp>
+        <Authentication>
+            <Identity>JAGGAERQAOrg</Identity>
+            <SharedSecret>password</SharedSecret>
+        </Authentication>
+    </Header>
+    <Supplier/>
+</SupplierMessage>
+
+
+<!--  
 <?xml version="1.0"?>
 <!DOCTYPE SupplierMessage SYSTEM "https://integrations.sciquest.com/app_docs/dtd/supplier/supplier.dtd">
 <SupplierMessage version="1.0">
@@ -235,3 +250,4 @@
 		</FulfillmentCenter>
 	</Supplier>
 </SupplierMessage>
+ -->
