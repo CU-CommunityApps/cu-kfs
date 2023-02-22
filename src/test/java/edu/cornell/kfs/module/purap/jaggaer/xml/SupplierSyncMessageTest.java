@@ -128,58 +128,34 @@ public class SupplierSyncMessageTest {
         
         supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID"));
         
-        SupplierShareholders holders = new SupplierShareholders();
-        holders.setvalue("holders");
-        supplier.setSupplierShareholders(holders);
+        supplier.setSupplierShareholders(new JaggaerBasicValue("holders"));
         
-        SupplierRegNumber regNumber = new SupplierRegNumber();
-        regNumber.setvalue("reg number");
-        supplier.setSupplierRegNumber(regNumber);
+        supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number"));
         
-        SupplierRegSeat seat = new SupplierRegSeat();
-        seat.setvalue("regular seat");
-        supplier.setSupplierRegSeat(seat);
+        supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat"));
         
-        SupplierRegCourt court = new SupplierRegCourt();
-        court.setvalue("regular court");
-        supplier.setSupplierRegCourt(court);
+        supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court"));
         
-        SupplierTaxRepresentativeId repId = new SupplierTaxRepresentativeId();
+        JaggaerBasicValue repId = new JaggaerBasicValue();
         repId.setvalue("tax rep ID");
         repId.setIsChanged("T");
         supplier.setSupplierTaxRepresentativeId(repId);
         
-        RegistrationProfileStatus profileStatus = new RegistrationProfileStatus();
-        profileStatus.setvalue("profile status");
-        supplier.setRegistrationProfileStatus(profileStatus);
+        supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status"));
         
-        RegistrationProfileType profileType = new RegistrationProfileType();
-        profileType.setvalue("profile tyoe");
-        supplier.setRegistrationProfileType(profileType);
+        supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe"));
         
-        YearEstablished yearEstablished = new YearEstablished();
-        yearEstablished.setvalue("1977");
-        supplier.setYearEstablished(yearEstablished);
+        supplier.setYearEstablished(new JaggaerBasicValue("1977"));
         
-        NumberOfEmployees employeeNumber = new NumberOfEmployees();
-        employeeNumber.setvalue("69");
-        supplier.setNumberOfEmployees(employeeNumber);
+        supplier.setNumberOfEmployees(new JaggaerBasicValue("69"));
         
-        ExemptFromBackupWithholding back = new ExemptFromBackupWithholding();
-        back.setvalue("back holding");
-        supplier.setExemptFromBackupWithholding(back);
+        supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding"));
         
-        TaxIdentificationNumber taxId = new TaxIdentificationNumber();
-        taxId.setvalue("tax id");
-        supplier.setTaxIdentificationNumber(taxId);
+        supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id"));
         
-        TaxIdentificationType taxType = new TaxIdentificationType();
-        taxType.setvalue("tax type");
-        supplier.setTaxIdentificationType(taxType);
+        supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type"));
         
-        LegalStructure legalStruct = new LegalStructure();
-        legalStruct.setvalue("legal structure");
-        supplier.setLegalStructure(legalStruct);
+        supplier.setLegalStructure(new JaggaerBasicValue("legal structure"));
         
         DUNS duns = new DUNS();
         duns.setvalue("duns");

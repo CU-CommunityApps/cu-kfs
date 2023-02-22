@@ -65,39 +65,39 @@ public class Supplier {
     @XmlElement(name = "DUNS")
     protected DUNS duns;
     @XmlElement(name = "LegalStructure")
-    protected LegalStructure legalStructure;
+    protected JaggaerBasicValue legalStructure;
     @XmlElement(name = "TaxIdentificationType")
-    protected TaxIdentificationType taxIdentificationType;
+    protected JaggaerBasicValue taxIdentificationType;
     @XmlElement(name = "TaxIdentificationNumber")
-    protected TaxIdentificationNumber taxIdentificationNumber;
+    protected JaggaerBasicValue taxIdentificationNumber;
     @XmlElement(name = "VatIdentificationNumber")
     protected JaggaerBasicValue vatIdentificationNumber;
     @XmlElement(name = "ExemptFromBackupWithholding")
-    protected ExemptFromBackupWithholding exemptFromBackupWithholding;
+    protected JaggaerBasicValue exemptFromBackupWithholding;
     @XmlElement(name = "NumberOfEmployees")
-    protected NumberOfEmployees numberOfEmployees;
+    protected JaggaerBasicValue numberOfEmployees;
     @XmlElement(name = "YearEstablished")
-    protected YearEstablished yearEstablished;
+    protected JaggaerBasicValue yearEstablished;
     @XmlElement(name = "AnnualSalesList")
     protected AnnualSalesList annualSalesList;
     @XmlElement(name = "ServiceAreaList")
     protected ServiceAreaList serviceAreaList;
     @XmlElement(name = "RegistrationProfileType")
-    protected RegistrationProfileType registrationProfileType;
+    protected JaggaerBasicValue registrationProfileType;
     @XmlElement(name = "RegistrationProfileStatus")
-    protected RegistrationProfileStatus registrationProfileStatus;
+    protected JaggaerBasicValue registrationProfileStatus;
     @XmlElement(name = "SupplierTaxRepresentativeId")
-    protected SupplierTaxRepresentativeId supplierTaxRepresentativeId;
+    protected JaggaerBasicValue supplierTaxRepresentativeId;
     @XmlElement(name = "SupplierRegCourt")
-    protected SupplierRegCourt supplierRegCourt;
+    protected JaggaerBasicValue supplierRegCourt;
     @XmlElement(name = "SupplierRegSeat")
-    protected SupplierRegSeat supplierRegSeat;
+    protected JaggaerBasicValue supplierRegSeat;
     @XmlElement(name = "SupplierRegNumber")
-    protected SupplierRegNumber supplierRegNumber;
+    protected JaggaerBasicValue supplierRegNumber;
     @XmlElement(name = "SupplierCapital")
     protected SupplierCapital supplierCapital;
     @XmlElement(name = "SupplierShareholders")
-    protected SupplierShareholders supplierShareholders;
+    protected JaggaerBasicValue supplierShareholders;
     @XmlElement(name = "VATExempt")
     protected JaggaerBasicValue vatExempt;
     @XmlElement(name = "CommodityCodeList")
@@ -289,27 +289,27 @@ public class Supplier {
         this.duns = duns;
     }
 
-    public LegalStructure getLegalStructure() {
+    public JaggaerBasicValue getLegalStructure() {
         return legalStructure;
     }
 
-    public void setLegalStructure(LegalStructure legalStructure) {
+    public void setLegalStructure(JaggaerBasicValue legalStructure) {
         this.legalStructure = legalStructure;
     }
 
-    public TaxIdentificationType getTaxIdentificationType() {
+    public JaggaerBasicValue getTaxIdentificationType() {
         return taxIdentificationType;
     }
 
-    public void setTaxIdentificationType(TaxIdentificationType taxIdentificationType) {
+    public void setTaxIdentificationType(JaggaerBasicValue taxIdentificationType) {
         this.taxIdentificationType = taxIdentificationType;
     }
 
-    public TaxIdentificationNumber getTaxIdentificationNumber() {
+    public JaggaerBasicValue getTaxIdentificationNumber() {
         return taxIdentificationNumber;
     }
 
-    public void setTaxIdentificationNumber(TaxIdentificationNumber taxIdentificationNumber) {
+    public void setTaxIdentificationNumber(JaggaerBasicValue taxIdentificationNumber) {
         this.taxIdentificationNumber = taxIdentificationNumber;
     }
 
@@ -321,27 +321,27 @@ public class Supplier {
         this.vatIdentificationNumber = vatIdentificationNumber;
     }
 
-    public ExemptFromBackupWithholding getExemptFromBackupWithholding() {
+    public JaggaerBasicValue getExemptFromBackupWithholding() {
         return exemptFromBackupWithholding;
     }
 
-    public void setExemptFromBackupWithholding(ExemptFromBackupWithholding exemptFromBackupWithholding) {
+    public void setExemptFromBackupWithholding(JaggaerBasicValue exemptFromBackupWithholding) {
         this.exemptFromBackupWithholding = exemptFromBackupWithholding;
     }
 
-    public NumberOfEmployees getNumberOfEmployees() {
+    public JaggaerBasicValue getNumberOfEmployees() {
         return numberOfEmployees;
     }
 
-    public void setNumberOfEmployees(NumberOfEmployees numberOfEmployees) {
+    public void setNumberOfEmployees(JaggaerBasicValue numberOfEmployees) {
         this.numberOfEmployees = numberOfEmployees;
     }
 
-    public YearEstablished getYearEstablished() {
+    public JaggaerBasicValue getYearEstablished() {
         return yearEstablished;
     }
 
-    public void setYearEstablished(YearEstablished yearEstablished) {
+    public void setYearEstablished(JaggaerBasicValue yearEstablished) {
         this.yearEstablished = yearEstablished;
     }
 
@@ -361,51 +361,51 @@ public class Supplier {
         this.serviceAreaList = serviceAreaList;
     }
 
-    public RegistrationProfileType getRegistrationProfileType() {
+    public JaggaerBasicValue getRegistrationProfileType() {
         return registrationProfileType;
     }
 
-    public void setRegistrationProfileType(RegistrationProfileType registrationProfileType) {
+    public void setRegistrationProfileType(JaggaerBasicValue registrationProfileType) {
         this.registrationProfileType = registrationProfileType;
     }
 
-    public RegistrationProfileStatus getRegistrationProfileStatus() {
+    public JaggaerBasicValue getRegistrationProfileStatus() {
         return registrationProfileStatus;
     }
 
-    public void setRegistrationProfileStatus(RegistrationProfileStatus registrationProfileStatus) {
+    public void setRegistrationProfileStatus(JaggaerBasicValue registrationProfileStatus) {
         this.registrationProfileStatus = registrationProfileStatus;
     }
 
-    public SupplierTaxRepresentativeId getSupplierTaxRepresentativeId() {
+    public JaggaerBasicValue getSupplierTaxRepresentativeId() {
         return supplierTaxRepresentativeId;
     }
 
-    public void setSupplierTaxRepresentativeId(SupplierTaxRepresentativeId supplierTaxRepresentativeId) {
+    public void setSupplierTaxRepresentativeId(JaggaerBasicValue supplierTaxRepresentativeId) {
         this.supplierTaxRepresentativeId = supplierTaxRepresentativeId;
     }
 
-    public SupplierRegCourt getSupplierRegCourt() {
+    public JaggaerBasicValue getSupplierRegCourt() {
         return supplierRegCourt;
     }
 
-    public void setSupplierRegCourt(SupplierRegCourt supplierRegCourt) {
+    public void setSupplierRegCourt(JaggaerBasicValue supplierRegCourt) {
         this.supplierRegCourt = supplierRegCourt;
     }
 
-    public SupplierRegSeat getSupplierRegSeat() {
+    public JaggaerBasicValue getSupplierRegSeat() {
         return supplierRegSeat;
     }
 
-    public void setSupplierRegSeat(SupplierRegSeat supplierRegSeat) {
+    public void setSupplierRegSeat(JaggaerBasicValue supplierRegSeat) {
         this.supplierRegSeat = supplierRegSeat;
     }
 
-    public SupplierRegNumber getSupplierRegNumber() {
+    public JaggaerBasicValue getSupplierRegNumber() {
         return supplierRegNumber;
     }
 
-    public void setSupplierRegNumber(SupplierRegNumber supplierRegNumber) {
+    public void setSupplierRegNumber(JaggaerBasicValue supplierRegNumber) {
         this.supplierRegNumber = supplierRegNumber;
     }
 
@@ -417,11 +417,11 @@ public class Supplier {
         this.supplierCapital = supplierCapital;
     }
 
-    public SupplierShareholders getSupplierShareholders() {
+    public JaggaerBasicValue getSupplierShareholders() {
         return supplierShareholders;
     }
 
-    public void setSupplierShareholders(SupplierShareholders supplierShareholders) {
+    public void setSupplierShareholders(JaggaerBasicValue supplierShareholders) {
         this.supplierShareholders = supplierShareholders;
     }
 
