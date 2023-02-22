@@ -3,8 +3,7 @@ package edu.cornell.kfs.module.purap.fixture;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
+import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
 
 public enum CuB2BShoppingCartFixture {
 	B2B_CART_USING_VENDOR_ID("200", // messageStatusCode
@@ -47,12 +46,12 @@ public enum CuB2BShoppingCartFixture {
 	/**
 	 * Creates a B2BShoppingCart from this B2BShoppingCartFixture.
 	 */
-	public CuB2BShoppingCart createB2BShoppingCart() {
-		CuB2BShoppingCart cart = new CuB2BShoppingCart();
+	public B2BShoppingCart createB2BShoppingCart() {
+		B2BShoppingCart cart = new B2BShoppingCart();
 		cart.setMessageStatusCode(messageStatusCode);
 		cart.setMessageStatusText(messageStatusText);
 		cart.setTotal(totalAmount);
-		cart.setBusinessPurpose(businessPurpose);
+		cart.getMessage().getPunchOutOrderMessage().getPunchOutOrderMessageHeader().setQuoteStatus(businessPurpose);
 
 		for (B2BShoppingCartItemFixture itemFixture : itemFixturesList) {
 			cart.addShoppingCartItem(itemFixture.createB2BShoppingCartItem());

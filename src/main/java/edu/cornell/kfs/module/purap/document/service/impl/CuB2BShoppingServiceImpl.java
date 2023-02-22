@@ -54,7 +54,6 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
-import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
