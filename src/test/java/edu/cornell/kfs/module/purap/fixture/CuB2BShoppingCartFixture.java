@@ -55,14 +55,16 @@ public enum CuB2BShoppingCartFixture {
         B2BShoppingCart cart = new B2BShoppingCart();
         cart.setMessageStatusCode(messageStatusCode);
         cart.setMessageStatusText(messageStatusText);
+        
         Message message = new Message();
         PunchOutOrderMessage punchOutOrderMessage = new PunchOutOrderMessage();
         PunchOutOrderMessageHeader header = new PunchOutOrderMessageHeader();
-        header.setQuoteStatus(businessPurpose);
         Total total = new Total();
         Money money = new Money();
+        
         total.setMoney(money);
         header.setTotal(total);
+        header.setQuoteStatus(businessPurpose);
         punchOutOrderMessage.setPunchOutOrderMessageHeader(header);
         message.setPunchOutOrderMessage(punchOutOrderMessage);
         cart.setMessage(message);

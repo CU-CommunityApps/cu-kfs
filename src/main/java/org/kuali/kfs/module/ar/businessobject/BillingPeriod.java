@@ -35,14 +35,13 @@ public class BillingPeriod {
     // CU Customization: Added logging
     private static final Logger LOG = LogManager.getLogger();
 
-    //CU customization change to protected
-    protected final AccountingPeriodService accountingPeriodService;
-    protected final ArConstants.BillingFrequencyValues billingFrequency;
-    protected final Date awardStartDate;
-    protected final Date currentDate;
-    protected final Date lastBilledDate;
-    protected Date startDate;
-    protected Date endDate;
+    private final AccountingPeriodService accountingPeriodService;
+    private final ArConstants.BillingFrequencyValues billingFrequency;
+    private final Date awardStartDate;
+    private final Date currentDate;
+    private final Date lastBilledDate;
+    private Date startDate;
+    private Date endDate;
     private boolean billable;
 
     BillingPeriod(
@@ -116,13 +115,18 @@ public class BillingPeriod {
      * Added helper method that can override the period's end date when creating an invoice manually.
      */
     protected Date determineEndDateForManualBilling() {
+        Objects.requireNonNull(startDate, "startDate should have been initialized prior to invoking this method");
         Objects.requireNonNull(endDate, "endDate should have been initialized prior to invoking this method");
-        LOG.info("determineEndDateForManualBilling: No adjustments by default, returning existing end date");
-        return endDate;
+        if (startDate.after(endDate)) {
+            LOG.info("determineEndDateForManualBilling: Start date is after end date, returning current date instead");
+            return currentDate;
+        } else {
+            LOG.info("determineEndDateForManualBilling: No adjustments necessary, returning existing end date");
+            return endDate;
+        }
     }
 
-    // CU customization change to protected
-    protected Date determineEndDateByFrequency() {
+    private Date determineEndDateByFrequency() {
         final AccountingPeriod accountingPeriod = findPreviousAccountingPeriod(currentDate);
         return accountingPeriod.getUniversityFiscalPeriodEndDate();
     }
@@ -137,8 +141,7 @@ public class BillingPeriod {
         return currentAccountingPeriodCode - subAmt;
     }
 
-    // CU customization change to protected
-    protected boolean canThisBeBilledByBillingFrequency() {
+    private boolean canThisBeBilledByBillingFrequency() {
         if (billingFrequency == ArConstants.BillingFrequencyValues.ANNUALLY
             && accountingPeriodService.getByDate(lastBilledDate).getUniversityFiscalYear() >=
                     accountingPeriodService.getByDate(currentDate).getUniversityFiscalYear()) {
@@ -152,8 +155,7 @@ public class BillingPeriod {
 
     }
 
-    // CU customization change to protected
-    protected Date determineStartDate() {
+    private Date determineStartDate() {
         if (lastBilledDate == null) {
             if (awardStartDate.after(currentDate)) {
                 final AccountingPeriod previousAccountingPeriod = findPreviousAccountingPeriod(currentDate);
@@ -167,19 +169,12 @@ public class BillingPeriod {
         return determineStartDateByFrequency();
     }
 
-    // CU customization change to protected
-    protected Date determineStartDateByFrequency() {
-        final AccountingPeriod lastBilledDateAccountingPeriod;
-        if (billingFrequency == ArConstants.BillingFrequencyValues.LETTER_OF_CREDIT
-            || billingFrequency == ArConstants.BillingFrequencyValues.MONTHLY
-            || billingFrequency == ArConstants.BillingFrequencyValues.MANUAL
-            || billingFrequency == ArConstants.BillingFrequencyValues.MILESTONE
-            || billingFrequency == ArConstants.BillingFrequencyValues.PREDETERMINED_BILLING) {
-            lastBilledDateAccountingPeriod = findAccountingPeriodBy(lastBilledDate);
-        } else {
-            lastBilledDateAccountingPeriod = findPreviousAccountingPeriod(lastBilledDate);
+    private Date determineStartDateByFrequency() {
+        if (lastBilledDate == null) {
+            LOG.info("determineStartDateByFrequency, no previous billed date, so award start date is the next start date");
+            return awardStartDate;
         }
-        return calculateNextDay(lastBilledDateAccountingPeriod.getUniversityFiscalPeriodEndDate());
+        return calculateNextDay(lastBilledDate);
     }
 
     private AccountingPeriod findPreviousAccountingPeriod(final Date date) {
@@ -230,8 +225,7 @@ public class BillingPeriod {
         return endDate;
     }
     
-    // CU customization change to protected
-    protected AccountingPeriod findAccountingPeriodBy(final Date date) {
+    private AccountingPeriod findAccountingPeriodBy(final Date date) {
         return accountingPeriodService.getByDate(date);
     }
 
@@ -243,8 +237,7 @@ public class BillingPeriod {
         return canThisBeBilledByBillingFrequency();
     }
 
-    // CU customization change to protected
-    protected static Date calculateNextDay(final Date date) {
+    private static Date calculateNextDay(final Date date) {
         return new Date(DateUtils.addDays(date, 1).getTime());
     }
 
