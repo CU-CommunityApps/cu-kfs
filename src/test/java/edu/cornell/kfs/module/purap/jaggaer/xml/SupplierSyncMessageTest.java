@@ -110,37 +110,23 @@ public class SupplierSyncMessageTest {
         name.setvalue("Acme Test Company");
         supplier.setName(name);
         
-        RestrictFulfillmentLocationsByBusinessUnit restrict = new RestrictFulfillmentLocationsByBusinessUnit();
-        restrict.setIsChanged("restrict");
-        supplier.setRestrictFulfillmentLocationsByBusinessUnit(restrict);
+        supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict"));
+        supplier.getRestrictFulfillmentLocationsByBusinessUnit().setIsChanged("T");
         
-        SIC sic = new SIC();
-        sic.setvalue("SIC");
-        supplier.setSic(sic);
+        supplier.setSic(new JaggaerBasicValue("SIC"));
+        supplier.getSic().setIsChanged("F");
         
-        SupplierKeywords keyward = new SupplierKeywords();
-        keyward.setvalue("keyward");
-        supplier.setSupplierKeywords(keyward);
+        supplier.setSupplierKeywords(new JaggaerBasicValue("keyward"));
         
-        EnablePaymentProvisioning provisioning = new EnablePaymentProvisioning();
-        provisioning.setvalue("prov");
-        supplier.setEnablePaymentProvisioning(provisioning);
+        supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov"));
         
-        AustinTetra austin = new AustinTetra();
-        austin.setvalue("austin");
-        supplier.setAustinTetra(austin);
+        supplier.setAustinTetra(new JaggaerBasicValue("austin"));
         
-        ShoppingCommodityCode commodity = new ShoppingCommodityCode();
-        commodity.setvalue("commodity");
-        supplier.setShoppingCommodityCode(commodity);
+        supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity"));
         
-        VATExempt vat = new VATExempt();
-        vat.setvalue("VAT");
-        supplier.setVatExempt(vat);
+        supplier.setVatExempt(new JaggaerBasicValue("VAT"));
         
-        VatIdentificationNumber vatId = new VatIdentificationNumber();
-        vatId.setvalue("VAT ID");
-        supplier.setVatIdentificationNumber(vatId);
+        supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID"));
         
         SupplierShareholders holders = new SupplierShareholders();
         holders.setvalue("holders");

@@ -48,7 +48,7 @@
             <Brands/>
             <ShoppingCommodityCode>commodity</ShoppingCommodityCode>
             <AustinTetra>austin</AustinTetra>
-            <SIC>SIC</SIC>
+            <SIC isChanged="F">SIC</SIC>
             <NaicsCodes/>
             <SupportedCurrencyList/>
             <EnabledCurrencyList/>
@@ -60,7 +60,7 @@
             <ClassificationList/>
             <DiversityClassificationList/>
             <LocationList/>
-            <RestrictFulfillmentLocationsByBusinessUnit isChanged="restrict"/>
+            <RestrictFulfillmentLocationsByBusinessUnit isChanged="T">restrict</RestrictFulfillmentLocationsByBusinessUnit>
             <CustomElementList/>
             <AccountsPayableList/>
             <TaxInformationList/>

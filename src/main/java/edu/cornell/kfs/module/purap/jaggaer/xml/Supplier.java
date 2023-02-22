@@ -71,7 +71,7 @@ public class Supplier {
     @XmlElement(name = "TaxIdentificationNumber")
     protected TaxIdentificationNumber taxIdentificationNumber;
     @XmlElement(name = "VatIdentificationNumber")
-    protected VatIdentificationNumber vatIdentificationNumber;
+    protected JaggaerBasicValue vatIdentificationNumber;
     @XmlElement(name = "ExemptFromBackupWithholding")
     protected ExemptFromBackupWithholding exemptFromBackupWithholding;
     @XmlElement(name = "NumberOfEmployees")
@@ -99,17 +99,17 @@ public class Supplier {
     @XmlElement(name = "SupplierShareholders")
     protected SupplierShareholders supplierShareholders;
     @XmlElement(name = "VATExempt")
-    protected VATExempt vatExempt;
+    protected JaggaerBasicValue vatExempt;
     @XmlElement(name = "CommodityCodeList")
     protected CommodityCodeList commodityCodeList;
     @XmlElement(name = "Brands")
     protected Brands brands;
     @XmlElement(name = "ShoppingCommodityCode")
-    protected ShoppingCommodityCode shoppingCommodityCode;
+    protected JaggaerBasicValue shoppingCommodityCode;
     @XmlElement(name = "AustinTetra")
-    protected AustinTetra austinTetra;
+    protected JaggaerBasicValue austinTetra;
     @XmlElement(name = "SIC")
-    protected SIC sic;
+    protected JaggaerBasicValue sic;
     @XmlElement(name = "NaicsCodes")
     protected NaicsCodes naicsCodes;
     @XmlElement(name = "SupportedCurrencyList")
@@ -117,7 +117,7 @@ public class Supplier {
     @XmlElement(name = "EnabledCurrencyList")
     protected EnabledCurrencyList enabledCurrencyList;
     @XmlElement(name = "SupplierKeywords")
-    protected SupplierKeywords supplierKeywords;
+    protected JaggaerBasicValue supplierKeywords;
     @XmlElement(name = "AddressList")
     protected AddressList addressList;
     @XmlElement(name = "PrimaryAddressList")
@@ -133,7 +133,7 @@ public class Supplier {
     @XmlElement(name = "LocationList")
     protected LocationList locationList;
     @XmlElement(name = "RestrictFulfillmentLocationsByBusinessUnit")
-    protected RestrictFulfillmentLocationsByBusinessUnit restrictFulfillmentLocationsByBusinessUnit;
+    protected JaggaerBasicValue restrictFulfillmentLocationsByBusinessUnit;
     @XmlElement(name = "CustomElementList")
     protected CustomElementList customElementList;
     @XmlElement(name = "AccountsPayableList")
@@ -143,7 +143,7 @@ public class Supplier {
     @XmlElement(name = "InsuranceInformationList")
     protected InsuranceInformationList insuranceInformationList;
     @XmlElement(name = "EnablePaymentProvisioning")
-    protected EnablePaymentProvisioning enablePaymentProvisioning;
+    protected JaggaerBasicValue enablePaymentProvisioning;
 
     public String getIsChanged() {
         return isChanged;
@@ -313,11 +313,11 @@ public class Supplier {
         this.taxIdentificationNumber = taxIdentificationNumber;
     }
 
-    public VatIdentificationNumber getVatIdentificationNumber() {
+    public JaggaerBasicValue getVatIdentificationNumber() {
         return vatIdentificationNumber;
     }
 
-    public void setVatIdentificationNumber(VatIdentificationNumber vatIdentificationNumber) {
+    public void setVatIdentificationNumber(JaggaerBasicValue vatIdentificationNumber) {
         this.vatIdentificationNumber = vatIdentificationNumber;
     }
 
@@ -425,11 +425,11 @@ public class Supplier {
         this.supplierShareholders = supplierShareholders;
     }
 
-    public VATExempt getVatExempt() {
+    public JaggaerBasicValue getVatExempt() {
         return vatExempt;
     }
 
-    public void setVatExempt(VATExempt vatExempt) {
+    public void setVatExempt(JaggaerBasicValue vatExempt) {
         this.vatExempt = vatExempt;
     }
 
@@ -449,27 +449,27 @@ public class Supplier {
         this.brands = brands;
     }
 
-    public ShoppingCommodityCode getShoppingCommodityCode() {
+    public JaggaerBasicValue getShoppingCommodityCode() {
         return shoppingCommodityCode;
     }
 
-    public void setShoppingCommodityCode(ShoppingCommodityCode shoppingCommodityCode) {
+    public void setShoppingCommodityCode(JaggaerBasicValue shoppingCommodityCode) {
         this.shoppingCommodityCode = shoppingCommodityCode;
     }
 
-    public AustinTetra getAustinTetra() {
+    public JaggaerBasicValue getAustinTetra() {
         return austinTetra;
     }
 
-    public void setAustinTetra(AustinTetra austinTetra) {
+    public void setAustinTetra(JaggaerBasicValue austinTetra) {
         this.austinTetra = austinTetra;
     }
 
-    public SIC getSic() {
+    public JaggaerBasicValue getSic() {
         return sic;
     }
 
-    public void setSic(SIC sic) {
+    public void setSic(JaggaerBasicValue sic) {
         this.sic = sic;
     }
 
@@ -497,11 +497,11 @@ public class Supplier {
         this.enabledCurrencyList = enabledCurrencyList;
     }
 
-    public SupplierKeywords getSupplierKeywords() {
+    public JaggaerBasicValue getSupplierKeywords() {
         return supplierKeywords;
     }
 
-    public void setSupplierKeywords(SupplierKeywords supplierKeywords) {
+    public void setSupplierKeywords(JaggaerBasicValue supplierKeywords) {
         this.supplierKeywords = supplierKeywords;
     }
 
@@ -561,12 +561,12 @@ public class Supplier {
         this.locationList = locationList;
     }
 
-    public RestrictFulfillmentLocationsByBusinessUnit getRestrictFulfillmentLocationsByBusinessUnit() {
+    public JaggaerBasicValue getRestrictFulfillmentLocationsByBusinessUnit() {
         return restrictFulfillmentLocationsByBusinessUnit;
     }
 
     public void setRestrictFulfillmentLocationsByBusinessUnit(
-            RestrictFulfillmentLocationsByBusinessUnit restrictFulfillmentLocationsByBusinessUnit) {
+            JaggaerBasicValue restrictFulfillmentLocationsByBusinessUnit) {
         this.restrictFulfillmentLocationsByBusinessUnit = restrictFulfillmentLocationsByBusinessUnit;
     }
 
@@ -602,11 +602,11 @@ public class Supplier {
         this.insuranceInformationList = insuranceInformationList;
     }
 
-    public EnablePaymentProvisioning getEnablePaymentProvisioning() {
+    public JaggaerBasicValue getEnablePaymentProvisioning() {
         return enablePaymentProvisioning;
     }
 
-    public void setEnablePaymentProvisioning(EnablePaymentProvisioning enablePaymentProvisioning) {
+    public void setEnablePaymentProvisioning(JaggaerBasicValue enablePaymentProvisioning) {
         this.enablePaymentProvisioning = enablePaymentProvisioning;
     }
 
