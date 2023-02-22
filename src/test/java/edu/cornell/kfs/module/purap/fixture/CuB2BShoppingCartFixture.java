@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart;
+import org.kuali.kfs.module.purap.util.cxml.Message;
+import org.kuali.kfs.module.purap.util.cxml.PunchOutOrderMessage;
+import org.kuali.kfs.module.purap.util.cxml.PunchOutOrderMessageHeader;
 
 public enum CuB2BShoppingCartFixture {
 	B2B_CART_USING_VENDOR_ID("200", // messageStatusCode
@@ -51,7 +54,13 @@ public enum CuB2BShoppingCartFixture {
 		cart.setMessageStatusCode(messageStatusCode);
 		cart.setMessageStatusText(messageStatusText);
 		cart.setTotal(totalAmount);
-		cart.getMessage().getPunchOutOrderMessage().getPunchOutOrderMessageHeader().setQuoteStatus(businessPurpose);
+		Message message = new Message();
+		PunchOutOrderMessage punchOutOrderMessage = new PunchOutOrderMessage();
+		PunchOutOrderMessageHeader header = new PunchOutOrderMessageHeader();
+		header.setQuoteStatus(businessPurpose);
+		punchOutOrderMessage.setPunchOutOrderMessageHeader(header);
+		message.setPunchOutOrderMessage(punchOutOrderMessage);
+		cart.setMessage(message);
 
 		for (B2BShoppingCartItemFixture itemFixture : itemFixturesList) {
 			cart.addShoppingCartItem(itemFixture.createB2BShoppingCartItem());
