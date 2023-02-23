@@ -39,5 +39,15 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="SubAccount-sectionDefinition-cgIcr"
+          parent="SubAccount-sectionDefinition-cgIcr-parentBean">
+        <property name="fields">
+            <list>
+                <ref bean="SubAccount-a21SubAccount.financialIcrSeriesIdentifier"/>
+                <ref bean="SubAccount-a21SubAccount.indirectCostRecoveryTypeCode"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>
