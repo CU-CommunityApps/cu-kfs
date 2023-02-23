@@ -168,7 +168,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             //Before we generate account summary, we should update the account amounts first.
             purapAccountingService.updateAccountAmounts(purDoc);
 
-            //Before generating the summary, lets replace the object code in a cloned accounts collection sothat we can
+            //Before generating the summary, lets replace the object code in a cloned accounts collection so that we can
             //consolidate all the modified object codes during summary generation.
             List<PurApItem> clonedTradeInItems = new ArrayList<PurApItem>();
             Collection<String> objectSubTypesRequiringQty = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.OBJECT_SUB_TYPES_REQUIRING_QUANTITY) );

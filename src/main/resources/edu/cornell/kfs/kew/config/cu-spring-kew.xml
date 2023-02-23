@@ -60,6 +60,7 @@
     <!-- Override action list and action item DAOs/services to support the action list notes customization. -->
 
     <bean id="actionItemDAO" class="edu.cornell.kfs.kew.actionitem.dao.impl.CuActionItemDAOOjbImpl" lazy-init="true"
+          p:groupService-ref="kimGroupService"
           p:jcdAlias="kewDataSource"
           p:personService-ref="personService"/>
 

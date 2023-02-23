@@ -169,6 +169,7 @@ public class BillingPeriod {
         return determineStartDateByFrequency();
     }
 
+    // CU customization
     private Date determineStartDateByFrequency() {
         if (lastBilledDate == null) {
             LOG.info("determineStartDateByFrequency, no previous billed date, so award start date is the next start date");
