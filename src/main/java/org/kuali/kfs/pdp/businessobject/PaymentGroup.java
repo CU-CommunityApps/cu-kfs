@@ -101,6 +101,8 @@ import com.rsmart.kuali.kfs.cr.CRConstants;
 @XmlType(name = "", propOrder = {"payeeName",
     "payeeIdObj",
     "payeeOwnerCd",
+    // CU customization
+    "customerInstitutionNumber",
     "line1Address",
     "line2Address",
     "line3Address",
@@ -154,22 +156,22 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     @XmlSchemaType(name = "normalizedString")
     protected String customerInstitutionNumber;
 
-    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "address1")
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address1")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     private String line1Address;
 
-    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "address2")
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address2")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     private String line2Address;
 
-    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "address3")
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address3")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     private String line3Address;
 
-    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "address4")
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address4")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
     private String line4Address;
@@ -758,7 +760,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     public void setPayeeOwnerCd(final String payeeOwnerCd) {
         this.payeeOwnerCd = payeeOwnerCd;
-        setPayeeOwnerCdFromVendor(payeeOwnerCd);
     }
 
     public void setPaymentDate(final Date paymentDate) {
@@ -985,16 +986,11 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
     }
     
-    /**
-     * @param string
-     */
-    public void setPayeeOwnerCdFromVendor(String string) {
-        
-       // payeeOwnerCd = string;
-        
-        
+
+    public void setPayeeOwnerCdFromVendor(String payeeIdValue) {
+
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-        String[] headerDetails = payeeId.split("-");      
+        String[] headerDetails = payeeIdValue.split("-");      
         Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
@@ -1003,7 +999,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         if (details.size() == 1) {
             payeeOwnerCd=details.get(0).getVendorHeader().getVendorOwnershipCode();
         } else {
-            throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ string+" ]");
+            throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ payeeIdValue +" ]");
         }
     }
     

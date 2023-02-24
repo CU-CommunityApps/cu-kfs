@@ -98,7 +98,7 @@ import java.util.List;
     "purchaseOrderNbr",
     "requisitionNbr",
     "organizationDocNbr",
-    "customerInstitutionNumber",
+    // CU customization, removed "customerInstitutionNumber",
     "invoiceDate",
     "origInvoiceAmount",
     "netPaymentAmount",
@@ -159,9 +159,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     @XmlSchemaType(name = "normalizedString")
     private String organizationDocNbr;
 
-    @XmlElement(name = "customer_institution_identifier", namespace = XmlConstants.PAYMENT_NAMESPACE)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
+    // CU customization; changed this field to transient as it was moved on PaymentGroup
+    @XmlTransient
     private String customerInstitutionNumber;
 
     @XmlElement(name = "orig_invoice_amt", namespace = XmlConstants.PAYMENT_NAMESPACE)
