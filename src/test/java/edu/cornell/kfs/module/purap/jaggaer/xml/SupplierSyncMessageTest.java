@@ -116,7 +116,7 @@ public class SupplierSyncMessageTest {
         supplier.setSic(new JaggaerBasicValue("SIC"));
         supplier.getSic().setIsChanged("F");
         
-        supplier.setSupplierKeywords(new JaggaerBasicValue("keyward"));
+        supplier.setSupplierKeywords(new JaggaerBasicValue("keyword"));
         
         supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov"));
         
@@ -190,14 +190,8 @@ public class SupplierSyncMessageTest {
         supplier.setBrands(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
         supplier.setCommodityCodeList(buildCommodityCodeList());
-        
-        
-        
-        SupportedCurrencyList supportedCurrency = new SupportedCurrencyList();
-        supplier.setSupportedCurrencyList(supportedCurrency);
-        
-        EnabledCurrencyList currencyList = new EnabledCurrencyList();
-        supplier.setEnabledCurrencyList(currencyList);
+        supplier.setSupportedCurrencyList(buildCurrencyList(false, true, true, true));
+        supplier.setEnabledCurrencyList(buildCurrencyList(true, true, false, false));
         
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
@@ -301,6 +295,32 @@ public class SupplierSyncMessageTest {
         commodityCodeList.getCommodityCode().add(code2);
         
         return commodityCodeList;
+    }
+    
+    private CurrencyList buildCurrencyList(boolean includeListChanged, boolean includeUSD, boolean includePeso, boolean includeEuro) {
+        CurrencyList currencyList = new CurrencyList();
+        
+        if (includeListChanged) {
+            currencyList.setIsChanged("T");
+        }
+        
+        if (includeUSD) {
+            IsoCurrencyCode usd = new IsoCurrencyCode("usd");
+            usd.setIsChanged("T");
+            currencyList.getIsoCurrencyCode().add(usd);
+        }
+        
+        if (includePeso) {
+            IsoCurrencyCode peso = new IsoCurrencyCode("peso");
+            peso.setIsChanged("F");
+            currencyList.getIsoCurrencyCode().add(peso);
+        }
+        
+        if (includeEuro) {
+            currencyList.getIsoCurrencyCode().add(new IsoCurrencyCode("euro"));
+        }
+        
+        return currencyList;
     }
     
     private void assertXMLFilesEqual(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException, ParserConfigurationException {

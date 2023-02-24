@@ -62,9 +62,15 @@
                     <SecondaryNaics isChanged="T">third</SecondaryNaics>
                 </SecondaryNaicsList>
             </NaicsCodes>
-            <SupportedCurrencyList/>
-            <EnabledCurrencyList/>
-            <SupplierKeywords>keyward</SupplierKeywords>
+            <SupportedCurrencyList>
+                <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
+                <IsoCurrencyCode isChanged="F">peso</IsoCurrencyCode>
+                <IsoCurrencyCode>euro</IsoCurrencyCode>
+            </SupportedCurrencyList>
+            <EnabledCurrencyList isChanged="T">
+                <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
+            </EnabledCurrencyList>
+            <SupplierKeywords>keyword</SupplierKeywords>
             <AddressList/>
             <PrimaryAddressList/>
             <ContactList/>

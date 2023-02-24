@@ -13,6 +13,14 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "IsoCurrencyCode")
 public class IsoCurrencyCode {
+    
+    public IsoCurrencyCode() {
+        
+    }
+    
+    public IsoCurrencyCode(String value) {
+        this.value = value;
+    }
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
