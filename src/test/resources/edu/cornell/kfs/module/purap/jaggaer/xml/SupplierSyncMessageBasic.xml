@@ -23,7 +23,10 @@
             <CountryOfOrigin>USA</CountryOfOrigin>
             <ParentSupplier/>
             <Active>active</Active>
-            <BusinessUnitVendorNumberList/>
+            <BusinessUnitVendorNumberList isChanged="T">
+                <BusinessUnitVendorNumber businessUnitInternalName="vendor number 1" isChanged="T">1232</BusinessUnitVendorNumber>
+                <BusinessUnitVendorNumber businessUnitInternalName="vendor number 2" isChanged="F">56464</BusinessUnitVendorNumber>
+            </BusinessUnitVendorNumberList>
             <WebSiteURL>www.cornell.edu</WebSiteURL>
             <DUNS>duns</DUNS>
             <LegalStructure>legal structure</LegalStructure>
@@ -33,15 +36,39 @@
             <ExemptFromBackupWithholding>back holding</ExemptFromBackupWithholding>
             <NumberOfEmployees>69</NumberOfEmployees>
             <YearEstablished>1977</YearEstablished>
-            <AnnualSalesList/>
-            <ServiceAreaList/>
+            <AnnualSalesList isChanged="T">
+                <AnnualSales isChanged="F">
+                    <AnnualSalesYear isChanged="T">2023</AnnualSalesYear>
+                    <AnnualSalesAmount isChanged="T">6900.00</AnnualSalesAmount>
+                    <IsoCurrencyCode isChanged="F">usd</IsoCurrencyCode>
+                </AnnualSales>
+            </AnnualSalesList>
+            <ServiceAreaList isChanged="T">
+                <ServiceArea isChanged="T">
+                    <ServiceAreaInternalName isChanged="T">internal name</ServiceAreaInternalName>
+                    <StateServiceAreaList isChanged="T">
+                        <StateServiceAreaInternalName isChanged="T">internal name 1</StateServiceAreaInternalName>
+                        <StateServiceAreaInternalName isChanged="T">internal name 2</StateServiceAreaInternalName>
+                    </StateServiceAreaList>
+                </ServiceArea>
+                <ServiceArea isChanged="F">
+                    <ServiceAreaInternalName isChanged="T">a different internal name</ServiceAreaInternalName>
+                    <StateServiceAreaList isChanged="T">
+                        <StateServiceAreaInternalName isChanged="T">internal name 3</StateServiceAreaInternalName>
+                        <StateServiceAreaInternalName isChanged="T">internal name 4</StateServiceAreaInternalName>
+                    </StateServiceAreaList>
+                </ServiceArea>
+            </ServiceAreaList>
             <RegistrationProfileType>profile tyoe</RegistrationProfileType>
             <RegistrationProfileStatus>profile status</RegistrationProfileStatus>
             <SupplierTaxRepresentativeId isChanged="T">tax rep ID</SupplierTaxRepresentativeId>
             <SupplierRegCourt>regular court</SupplierRegCourt>
             <SupplierRegSeat>regular seat</SupplierRegSeat>
             <SupplierRegNumber>reg number</SupplierRegNumber>
-            <SupplierCapital/>
+            <SupplierCapital isChanged="T">
+                <Amount isChanged="T">50.00</Amount>
+                <IsoCurrencyCode isChanged="F">usd</IsoCurrencyCode>
+            </SupplierCapital>
             <SupplierShareholders>holders</SupplierShareholders>
             <VATExempt>VAT</VATExempt>
             <CommodityCodeList>

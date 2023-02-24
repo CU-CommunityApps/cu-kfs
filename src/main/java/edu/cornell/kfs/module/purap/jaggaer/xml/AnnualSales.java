@@ -18,9 +18,9 @@ public class AnnualSales {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "AnnualSalesYear")
-    protected AnnualSalesYear annualSalesYear;
+    protected JaggaerBasicValue annualSalesYear;
     @XmlElement(name = "AnnualSalesAmount")
-    protected AnnualSalesAmount annualSalesAmount;
+    protected Amount annualSalesAmount;
     @XmlElement(name = "IsoCurrencyCode")
     protected IsoCurrencyCode isoCurrencyCode;
 
@@ -32,19 +32,19 @@ public class AnnualSales {
         this.isChanged = value;
     }
 
-    public AnnualSalesYear getAnnualSalesYear() {
+    public JaggaerBasicValue getAnnualSalesYear() {
         return annualSalesYear;
     }
 
-    public void setAnnualSalesYear(AnnualSalesYear value) {
+    public void setAnnualSalesYear(JaggaerBasicValue value) {
         this.annualSalesYear = value;
     }
 
-    public AnnualSalesAmount getAnnualSalesAmount() {
+    public Amount getAnnualSalesAmount() {
         return annualSalesAmount;
     }
 
-    public void setAnnualSalesAmount(AnnualSalesAmount value) {
+    public void setAnnualSalesAmount(Amount value) {
         this.annualSalesAmount = value;
     }
 

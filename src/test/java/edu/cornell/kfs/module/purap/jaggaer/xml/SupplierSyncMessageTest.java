@@ -136,8 +136,7 @@ public class SupplierSyncMessageTest {
         
         supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court"));
         
-        JaggaerBasicValue repId = new JaggaerBasicValue();
-        repId.setvalue("tax rep ID");
+        JaggaerBasicValue repId = new JaggaerBasicValue("tax rep ID");
         repId.setIsChanged("T");
         supplier.setSupplierTaxRepresentativeId(repId);
         
@@ -186,12 +185,17 @@ public class SupplierSyncMessageTest {
         supplier.setSqIntegrationNumber(sqIntegrationNumber);
         
         
-        
         supplier.setBrands(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
         supplier.setCommodityCodeList(buildCommodityCodeList());
         supplier.setSupportedCurrencyList(buildCurrencyList(false, true, true, true));
         supplier.setEnabledCurrencyList(buildCurrencyList(true, true, false, false));
+        supplier.setBusinessUnitVendorNumberList(buildBusinessUnitVendorNumberList());
+        supplier.setSupplierCapital(buildSupplierCapital());
+        supplier.setAnnualSalesList(buildAnnualSalesList());
+        supplier.setServiceAreaList(buildServiceAreaList());
+        
+        
         
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
@@ -225,18 +229,6 @@ public class SupplierSyncMessageTest {
         
         InsuranceInformationList insurance = new InsuranceInformationList();
         supplier.setInsuranceInformationList(insurance);
-        
-        SupplierCapital capital = new SupplierCapital();
-        supplier.setSupplierCapital(capital);
-        
-        ServiceAreaList areaList = new ServiceAreaList();
-        supplier.setServiceAreaList(areaList);
-        
-        AnnualSalesList salesList = new AnnualSalesList();
-        supplier.setAnnualSalesList(salesList);
-        
-        BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
-        supplier.setBusinessUnitVendorNumberList(unitNumberList);
         
         ParentSupplier parent = new ParentSupplier();
         supplier.setParentSupplier(parent);
@@ -321,6 +313,106 @@ public class SupplierSyncMessageTest {
         }
         
         return currencyList;
+    }
+    
+    private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
+        BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
+        unitNumberList.setIsChanged("T");
+        
+        BusinessUnitVendorNumber unit1 = new BusinessUnitVendorNumber();
+        unit1.setBusinessUnitInternalName("vendor number 1");
+        unit1.setvalue("1232");
+        unit1.setIsChanged("T");
+        unitNumberList.getBusinessUnitVendorNumber().add(unit1);
+        
+        BusinessUnitVendorNumber unit2 = new BusinessUnitVendorNumber();
+        unit2.setBusinessUnitInternalName("vendor number 2");
+        unit2.setvalue("56464");
+        unit2.setIsChanged("F");
+        unitNumberList.getBusinessUnitVendorNumber().add(unit2);
+        
+        
+        return unitNumberList;
+        
+    }
+    
+    private SupplierCapital buildSupplierCapital() {
+        SupplierCapital capital = new SupplierCapital();
+        Amount ammount = new Amount();
+        ammount.setIsChanged("T");
+        ammount.setvalue("50.00");
+        capital.setAmount(ammount);
+        capital.setIsChanged("T");
+        IsoCurrencyCode usd = new IsoCurrencyCode("usd");
+        usd.setIsChanged("F");
+        capital.setIsoCurrencyCode(usd);
+        return capital;
+    }
+    
+    private AnnualSalesList buildAnnualSalesList() {
+        AnnualSalesList salesList = new AnnualSalesList();
+        salesList.setIsChanged("T");
+        
+        AnnualSales sale = new AnnualSales();
+        sale.setIsChanged("F");
+        
+        IsoCurrencyCode usd = new IsoCurrencyCode("usd");
+        usd.setIsChanged("F");
+        sale.setIsoCurrencyCode(usd);
+        
+        JaggaerBasicValue year = new JaggaerBasicValue();
+        year.setIsChanged("T");
+        year.setvalue("2023");
+        sale.setAnnualSalesYear(year);
+        
+        Amount ammount = new Amount();
+        ammount.setIsChanged("T");
+        ammount.setvalue("6900.00");
+        sale.setAnnualSalesAmount(ammount);
+        
+        salesList.getAnnualSales().add(sale);
+        
+        return salesList;
+    }
+    
+    private ServiceAreaList buildServiceAreaList() {
+        ServiceAreaList areaList = new ServiceAreaList();
+        areaList.setIsChanged("T");
+        
+        ServiceArea area1 = new ServiceArea();
+        area1.setIsChanged("T");
+        area1.setServiceAreaInternalName(buildServiceAreaInternalName("internal name"));
+        area1.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 1", "internal name 2"));
+        areaList.getServiceArea().add(area1);
+        
+        ServiceArea area2 = new ServiceArea();
+        area2.setIsChanged("F");
+        area2.setServiceAreaInternalName(buildServiceAreaInternalName("a different internal name"));
+        area2.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 3", "internal name 4"));
+        areaList.getServiceArea().add(area2);
+        
+        return areaList;
+    }
+    
+    private ServiceAreaInternalName buildServiceAreaInternalName(String internalName) {
+        ServiceAreaInternalName sain = new ServiceAreaInternalName();
+        sain.setvalue(internalName);
+        sain.setIsChanged("T");
+        return sain;
+    }
+    
+    private StateServiceAreaList buildStateServiceAreaList(String... names) {
+        StateServiceAreaList stateServiceAreaList = new StateServiceAreaList();
+        stateServiceAreaList.setIsChanged("T");
+        
+        for (String name : names) {
+            StateServiceAreaInternalName internalName = new StateServiceAreaInternalName();
+            internalName.setIsChanged("T");
+            internalName.setvalue(name);
+            stateServiceAreaList.getStateServiceAreaInternalName().add(internalName);
+        }
+        
+        return stateServiceAreaList;
     }
     
     private void assertXMLFilesEqual(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException, ParserConfigurationException {
