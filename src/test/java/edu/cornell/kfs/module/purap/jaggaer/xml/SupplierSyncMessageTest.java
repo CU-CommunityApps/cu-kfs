@@ -189,6 +189,9 @@ public class SupplierSyncMessageTest {
         
         supplier.setBrands(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
+        supplier.setCommodityCodeList(buildCommodityCodeList());
+        
+        
         
         SupportedCurrencyList supportedCurrency = new SupportedCurrencyList();
         supplier.setSupportedCurrencyList(supportedCurrency);
@@ -229,9 +232,6 @@ public class SupplierSyncMessageTest {
         InsuranceInformationList insurance = new InsuranceInformationList();
         supplier.setInsuranceInformationList(insurance);
         
-        CommodityCodeList commodityCodeList = new CommodityCodeList();
-        supplier.setCommodityCodeList(commodityCodeList);
-        
         SupplierCapital capital = new SupplierCapital();
         supplier.setSupplierCapital(capital);
         
@@ -253,12 +253,10 @@ public class SupplierSyncMessageTest {
     private Brands buildBrands() {
         Brands brands = new Brands();
         
-        JaggaerBasicValue brand1 = new JaggaerBasicValue();
-        brand1.setvalue("brand 1");
+        JaggaerBasicValue brand1 = new JaggaerBasicValue("brand 1");
         brand1.setIsChanged("T");
         
-        JaggaerBasicValue brand2 = new JaggaerBasicValue();
-        brand2.setvalue("brand 2");
+        JaggaerBasicValue brand2 = new JaggaerBasicValue("brand 2");
         brand2.setIsChanged("F");
         
         brands.getBrand().add(brand1);
@@ -289,6 +287,20 @@ public class SupplierSyncMessageTest {
         
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
         return codes;
+    }
+    
+    private CommodityCodeList buildCommodityCodeList() {
+        CommodityCodeList commodityCodeList = new CommodityCodeList();
+        
+        JaggaerBasicValue code1 = new JaggaerBasicValue("Commodity Code 1");
+        code1.setIsChanged("T");
+        commodityCodeList.getCommodityCode().add(code1);
+        
+        JaggaerBasicValue code2 = new JaggaerBasicValue("Commodity Code 2");
+        code2.setIsChanged("F");
+        commodityCodeList.getCommodityCode().add(code2);
+        
+        return commodityCodeList;
     }
     
     private void assertXMLFilesEqual(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException, ParserConfigurationException {

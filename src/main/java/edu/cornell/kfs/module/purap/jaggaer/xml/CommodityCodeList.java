@@ -20,7 +20,7 @@ public class CommodityCodeList {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "CommodityCode")
-    protected List<CommodityCode> commodityCode;
+    protected List<JaggaerBasicValue> commodityCode;
 
     public String getIsChanged() {
         return isChanged;
@@ -30,9 +30,9 @@ public class CommodityCodeList {
         this.isChanged = value;
     }
 
-    public List<CommodityCode> getCommodityCode() {
+    public List<JaggaerBasicValue> getCommodityCode() {
         if (commodityCode == null) {
-            commodityCode = new ArrayList<CommodityCode>();
+            commodityCode = new ArrayList<JaggaerBasicValue>();
         }
         return this.commodityCode;
     }

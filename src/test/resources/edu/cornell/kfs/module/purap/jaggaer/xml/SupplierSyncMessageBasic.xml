@@ -44,7 +44,10 @@
             <SupplierCapital/>
             <SupplierShareholders>holders</SupplierShareholders>
             <VATExempt>VAT</VATExempt>
-            <CommodityCodeList/>
+            <CommodityCodeList>
+                <CommodityCode isChanged="T">Commodity Code 1</CommodityCode>
+                <CommodityCode isChanged="F">Commodity Code 2</CommodityCode>
+            </CommodityCodeList>
             <Brands>
                 <Brand isChanged="T">brand 1</Brand>
                 <Brand isChanged="F">brand 2</Brand>
