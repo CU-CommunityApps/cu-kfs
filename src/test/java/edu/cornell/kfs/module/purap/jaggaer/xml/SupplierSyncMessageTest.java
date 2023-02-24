@@ -187,11 +187,8 @@ public class SupplierSyncMessageTest {
         
         
         
-        Brands brands = new Brands();
-        supplier.setBrands(brands);
-        
-        NaicsCodes codes = new NaicsCodes();
-        supplier.setNaicsCodes(codes);
+        supplier.setBrands(buildBrands());
+        supplier.setNaicsCodes(buildNaicsCodes());
         
         SupportedCurrencyList supportedCurrency = new SupportedCurrencyList();
         supplier.setSupportedCurrencyList(supportedCurrency);
@@ -251,6 +248,47 @@ public class SupplierSyncMessageTest {
         supplier.setParentSupplier(parent);
         
         return supplier;
+    }
+    
+    private Brands buildBrands() {
+        Brands brands = new Brands();
+        
+        JaggaerBasicValue brand1 = new JaggaerBasicValue();
+        brand1.setvalue("brand 1");
+        brand1.setIsChanged("T");
+        
+        JaggaerBasicValue brand2 = new JaggaerBasicValue();
+        brand2.setvalue("brand 2");
+        brand2.setIsChanged("F");
+        
+        brands.getBrand().add(brand1);
+        brands.getBrand().add(brand2);
+        
+        return brands;
+    }
+    
+    private NaicsCodes buildNaicsCodes() {
+        NaicsCodes codes = new NaicsCodes();
+        codes.setIsChanged("T");
+        PrimaryNaics primary = new PrimaryNaics();
+        primary.setvalue("primary code");
+        primary.setIsChanged("T");
+        codes.getPrimaryNaicsOrSecondaryNaicsList().add(primary);
+        
+        SecondaryNaicsList secondaryList = new SecondaryNaicsList();
+        
+        SecondaryNaics second = new SecondaryNaics();
+        second.setvalue("second");
+        second.setIsChanged("F");
+        secondaryList.getSecondaryNaics().add(second);
+        
+        SecondaryNaics third = new SecondaryNaics();
+        third.setvalue("third");
+        third.setIsChanged("T");
+        secondaryList.getSecondaryNaics().add(third);
+        
+        codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
+        return codes;
     }
     
     private void assertXMLFilesEqual(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException, ParserConfigurationException {

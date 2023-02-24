@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "secondaryNaics" })
 @XmlRootElement(name = "SecondaryNaicsList")
-public class SecondaryNaicsList {
+public class SecondaryNaicsList implements PimaryNaicsOrSecondaryNaicsListItemInterface{
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

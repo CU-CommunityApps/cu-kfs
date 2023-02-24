@@ -20,7 +20,7 @@ public class Brands {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "Brand")
-    protected List<Brand> brand;
+    protected List<JaggaerBasicValue> brand;
 
     public String getIsChanged() {
         return isChanged;
@@ -30,9 +30,9 @@ public class Brands {
         this.isChanged = value;
     }
 
-    public List<Brand> getBrand() {
+    public List<JaggaerBasicValue> getBrand() {
         if (brand == null) {
-            brand = new ArrayList<Brand>();
+            brand = new ArrayList<JaggaerBasicValue>();
         }
         return this.brand;
     }

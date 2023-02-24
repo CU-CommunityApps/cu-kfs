@@ -45,11 +45,20 @@
             <SupplierShareholders>holders</SupplierShareholders>
             <VATExempt>VAT</VATExempt>
             <CommodityCodeList/>
-            <Brands/>
+            <Brands>
+                <Brand isChanged="T">brand 1</Brand>
+                <Brand isChanged="F">brand 2</Brand>
+            </Brands>
             <ShoppingCommodityCode>commodity</ShoppingCommodityCode>
             <AustinTetra>austin</AustinTetra>
             <SIC isChanged="F">SIC</SIC>
-            <NaicsCodes/>
+            <NaicsCodes isChanged="T">
+                <PrimaryNaics isChanged="T">primary code</PrimaryNaics>
+                <SecondaryNaicsList>
+                    <SecondaryNaics isChanged="F">second</SecondaryNaics>
+                    <SecondaryNaics isChanged="T">third</SecondaryNaics>
+                </SecondaryNaicsList>
+            </NaicsCodes>
             <SupportedCurrencyList/>
             <EnabledCurrencyList/>
             <SupplierKeywords>keyward</SupplierKeywords>

@@ -22,7 +22,7 @@ public class NaicsCodes {
     protected String isChanged;
     @XmlElements({ @XmlElement(name = "PrimaryNaics", type = PrimaryNaics.class),
             @XmlElement(name = "SecondaryNaicsList", type = SecondaryNaicsList.class) })
-    protected List<Object> primaryNaicsOrSecondaryNaicsList;
+    protected List<PimaryNaicsOrSecondaryNaicsListItemInterface> primaryNaicsOrSecondaryNaicsList;
 
     public String getIsChanged() {
         return isChanged;
@@ -32,9 +32,9 @@ public class NaicsCodes {
         this.isChanged = value;
     }
 
-    public List<Object> getPrimaryNaicsOrSecondaryNaicsList() {
+    public List<PimaryNaicsOrSecondaryNaicsListItemInterface> getPrimaryNaicsOrSecondaryNaicsList() {
         if (primaryNaicsOrSecondaryNaicsList == null) {
-            primaryNaicsOrSecondaryNaicsList = new ArrayList<Object>();
+            primaryNaicsOrSecondaryNaicsList = new ArrayList<PimaryNaicsOrSecondaryNaicsListItemInterface>();
         }
         return this.primaryNaicsOrSecondaryNaicsList;
     }
