@@ -149,7 +149,9 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     @XmlSchemaType(name = "normalizedString")
     private String payeeOwnerCd;
     
-    @XmlTransient
+    @XmlElement(name = "customer_institution_identifier", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String customerInstitutionNumber;
 
     @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "address1")
@@ -756,6 +758,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 
     public void setPayeeOwnerCd(final String payeeOwnerCd) {
         this.payeeOwnerCd = payeeOwnerCd;
+        setPayeeOwnerCdFromVendor(payeeOwnerCd);
     }
 
     public void setPaymentDate(final Date paymentDate) {
