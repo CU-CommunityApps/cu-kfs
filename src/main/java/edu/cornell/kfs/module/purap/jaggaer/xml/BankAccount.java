@@ -29,23 +29,23 @@ public class BankAccount {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "BankName")
-    protected BankName bankName;
+    protected JaggaerBasicValue bankName;
     @XmlElement(name = "AccountHoldersName")
-    protected AccountHoldersName accountHoldersName;
+    protected JaggaerBasicValue accountHoldersName;
     @XmlElement(name = "AccountNumberType")
-    protected AccountNumberType accountNumberType;
+    protected JaggaerBasicValue accountNumberType;
     @XmlElement(name = "RoutingNumber")
-    protected RoutingNumber routingNumber;
+    protected JaggaerBasicValue routingNumber;
     @XmlElement(name = "BankAccountNumber")
-    protected BankAccountNumber bankAccountNumber;
+    protected JaggaerBasicValue bankAccountNumber;
     @XmlElement(name = "IbanBankAccountNumber")
-    protected IbanBankAccountNumber ibanBankAccountNumber;
+    protected JaggaerBasicValue ibanBankAccountNumber;
     @XmlElement(name = "DirectDepositFormat")
-    protected DirectDepositFormat directDepositFormat;
+    protected JaggaerBasicValue directDepositFormat;
     @XmlElement(name = "BankIdentifierCode")
-    protected BankIdentifierCode bankIdentifierCode;
+    protected JaggaerBasicValue bankIdentifierCode;
     @XmlElement(name = "InternationalRoutingCode")
-    protected InternationalRoutingCode internationalRoutingCode;
+    protected JaggaerBasicValue internationalRoutingCode;
     @XmlElement(name = "IsoCountryCode")
     protected IsoCountryCode isoCountryCode;
     @XmlElement(name = "AddressLine1")
@@ -77,75 +77,75 @@ public class BankAccount {
         this.isChanged = value;
     }
 
-    public BankName getBankName() {
+    public JaggaerBasicValue getBankName() {
         return bankName;
     }
 
-    public void setBankName(BankName value) {
+    public void setBankName(JaggaerBasicValue value) {
         this.bankName = value;
     }
 
-    public AccountHoldersName getAccountHoldersName() {
+    public JaggaerBasicValue getAccountHoldersName() {
         return accountHoldersName;
     }
 
-    public void setAccountHoldersName(AccountHoldersName value) {
+    public void setAccountHoldersName(JaggaerBasicValue value) {
         this.accountHoldersName = value;
     }
 
-    public AccountNumberType getAccountNumberType() {
+    public JaggaerBasicValue getAccountNumberType() {
         return accountNumberType;
     }
 
-    public void setAccountNumberType(AccountNumberType value) {
+    public void setAccountNumberType(JaggaerBasicValue value) {
         this.accountNumberType = value;
     }
 
-    public RoutingNumber getRoutingNumber() {
+    public JaggaerBasicValue getRoutingNumber() {
         return routingNumber;
     }
 
-    public void setRoutingNumber(RoutingNumber value) {
+    public void setRoutingNumber(JaggaerBasicValue value) {
         this.routingNumber = value;
     }
 
-    public BankAccountNumber getBankAccountNumber() {
+    public JaggaerBasicValue getBankAccountNumber() {
         return bankAccountNumber;
     }
 
-    public void setBankAccountNumber(BankAccountNumber value) {
+    public void setBankAccountNumber(JaggaerBasicValue value) {
         this.bankAccountNumber = value;
     }
 
-    public IbanBankAccountNumber getIbanBankAccountNumber() {
+    public JaggaerBasicValue getIbanBankAccountNumber() {
         return ibanBankAccountNumber;
     }
 
-    public void setIbanBankAccountNumber(IbanBankAccountNumber value) {
+    public void setIbanBankAccountNumber(JaggaerBasicValue value) {
         this.ibanBankAccountNumber = value;
     }
 
-    public DirectDepositFormat getDirectDepositFormat() {
+    public JaggaerBasicValue getDirectDepositFormat() {
         return directDepositFormat;
     }
 
-    public void setDirectDepositFormat(DirectDepositFormat value) {
+    public void setDirectDepositFormat(JaggaerBasicValue value) {
         this.directDepositFormat = value;
     }
 
-    public BankIdentifierCode getBankIdentifierCode() {
+    public JaggaerBasicValue getBankIdentifierCode() {
         return bankIdentifierCode;
     }
 
-    public void setBankIdentifierCode(BankIdentifierCode value) {
+    public void setBankIdentifierCode(JaggaerBasicValue value) {
         this.bankIdentifierCode = value;
     }
 
-    public InternationalRoutingCode getInternationalRoutingCode() {
+    public JaggaerBasicValue getInternationalRoutingCode() {
         return internationalRoutingCode;
     }
 
-    public void setInternationalRoutingCode(InternationalRoutingCode value) {
+    public void setInternationalRoutingCode(JaggaerBasicValue value) {
         this.internationalRoutingCode = value;
     }
 

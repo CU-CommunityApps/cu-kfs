@@ -28,6 +28,7 @@ import org.xml.sax.SAXException;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import jakarta.xml.bind.JAXBException;
+import liquibase.pro.packaged.in;
 
 public class SupplierSyncMessageTest {
     private static final Logger LOG = LogManager.getLogger();
@@ -635,12 +636,95 @@ public class SupplierSyncMessageTest {
         country.setvalue("USA");
         ap.setCountryCode(country);
         
-        BankAccount bankAccount = new BankAccount();
-        /*
-         * @todo finish this
-         */
-        ap.setBankAccount(bankAccount);
+        ap.setBankAccount(buildBankAccount());
+        ap.setFlexFields(buildFlexFields());
         
+        
+        apList.getAccountsPayable().add(ap);
+        return apList;
+    }
+    
+    private BankAccount buildBankAccount() {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setType("bank account type");
+        bankAccount.setIsChanged("T");
+        
+        JaggaerBasicValue bankName = new JaggaerBasicValue("bank name");
+        bankName.setIsChanged("T");
+        bankAccount.setBankName(bankName);
+        
+        JaggaerBasicValue holder = new JaggaerBasicValue("Jane Doe");
+        holder.setIsChanged("T");
+        bankAccount.setAccountHoldersName(holder);
+        
+        JaggaerBasicValue accountNumberType = new JaggaerBasicValue("account number type");
+        accountNumberType.setIsChanged("T");
+        bankAccount.setAccountNumberType(accountNumberType);
+        
+        JaggaerBasicValue routing = new JaggaerBasicValue("routing number");
+        routing.setIsChanged("T");
+        bankAccount.setRoutingNumber(routing);
+        
+        JaggaerBasicValue accountNumber = new JaggaerBasicValue("bank account number");
+        accountNumber.setIsChanged("T");
+        bankAccount.setBankAccountNumber(accountNumber);
+        
+        JaggaerBasicValue iban = new JaggaerBasicValue("iban number");
+        iban.setIsChanged("T");
+        bankAccount.setIbanBankAccountNumber(iban);
+        
+        JaggaerBasicValue depositFormat = new JaggaerBasicValue("Deposit Format");
+        depositFormat.setIsChanged("T");
+        bankAccount.setDirectDepositFormat(depositFormat);
+        
+        JaggaerBasicValue code = new JaggaerBasicValue("bank identifier code");
+        code.setIsChanged("T");
+        bankAccount.setBankIdentifierCode(code);
+        
+        JaggaerBasicValue internalRouting = new JaggaerBasicValue("international routing");
+        internalRouting.setIsChanged("T");
+        bankAccount.setInternationalRoutingCode(internalRouting);
+        
+        IsoCountryCode countryCode = new IsoCountryCode();
+        countryCode.setIsChanged("T");
+        countryCode.setvalue("USA");
+        bankAccount.setIsoCountryCode(countryCode);
+        
+        AddressLine1 line1 = new AddressLine1();
+        line1.setIsChanged("T");
+        line1.setvalue("Address Line 1");
+        bankAccount.setAddressLine1(line1);
+        
+        AddressLine2 line2 = new AddressLine2();
+        line2.setIsChanged("T");
+        line2.setvalue("Address Line 2");
+        bankAccount.setAddressLine2(line2);
+        
+        AddressLine3 line3 = new AddressLine3();
+        line3.setIsChanged("T");
+        line3.setvalue("Address Line 3");
+        bankAccount.setAddressLine3(line3);
+        
+        City city = new City();
+        city.setIsChanged("T");
+        city.setvalue("Ithaca");
+        bankAccount.setCity(city);
+        
+        State state = new State();
+        state.setIsChanged("T");
+        state.setvalue("NY");
+        bankAccount.setState(state);
+        
+        PostalCode postalCode = new PostalCode();
+        postalCode.setIsChanged("T");
+        postalCode.setvalue("14850");
+        bankAccount.setPostalCode(postalCode);
+        
+        
+        return bankAccount;
+    }
+
+    private FlexFields buildFlexFields() {
         FlexFields flexFields = new FlexFields();
         
         JaggaerBasicValue field1 = new JaggaerBasicValue("flex field 1");
@@ -662,12 +746,7 @@ public class SupplierSyncMessageTest {
         JaggaerBasicValue field5 = new JaggaerBasicValue("flex field 5");
         field5.setIsChanged("T");
         flexFields.setFlexField5(field5);
-        
-        ap.setFlexFields(flexFields);
-        
-        
-        apList.getAccountsPayable().add(ap);
-        return apList;
+        return flexFields;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {

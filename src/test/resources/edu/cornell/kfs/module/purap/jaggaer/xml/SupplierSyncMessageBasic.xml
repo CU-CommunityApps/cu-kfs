@@ -133,7 +133,24 @@
                     <AccountHolderName isChanged="T">John Doe</AccountHolderName>
                     <AccountType isChanged="T">account type</AccountType>
                     <CountryCode isChanged="T">USA</CountryCode>
-                    <BankAccount/>
+                    <BankAccount type="bank account type" isChanged="T">
+                        <BankName isChanged="T">bank name</BankName>
+                        <AccountHoldersName isChanged="T">Jane Doe</AccountHoldersName>
+                        <AccountNumberType isChanged="T">account number type</AccountNumberType>
+                        <RoutingNumber isChanged="T">routing number</RoutingNumber>
+                        <BankAccountNumber isChanged="T">bank account number</BankAccountNumber>
+                        <IbanBankAccountNumber isChanged="T">iban number</IbanBankAccountNumber>
+                        <DirectDepositFormat isChanged="T">Deposit Format</DirectDepositFormat>
+                        <BankIdentifierCode isChanged="T">bank identifier code</BankIdentifierCode>
+                        <InternationalRoutingCode isChanged="T">international routing</InternationalRoutingCode>
+                        <IsoCountryCode isChanged="T">USA</IsoCountryCode>
+                        <AddressLine1 isChanged="T">Address Line 1</AddressLine1>
+                        <AddressLine2 isChanged="T">Address Line 2</AddressLine2>
+                        <AddressLine3 isChanged="T">Address Line 3</AddressLine3>
+                        <City isChanged="T">Ithaca</City>
+                        <State isChanged="T">NY</State>
+                        <PostalCode isChanged="T">14850</PostalCode>
+                    </BankAccount>
                     <FlexFields>
                         <FlexField1 isChanged="T">flex field 1</FlexField1>
                         <FlexField2 isChanged="T">flex field 2</FlexField2>
