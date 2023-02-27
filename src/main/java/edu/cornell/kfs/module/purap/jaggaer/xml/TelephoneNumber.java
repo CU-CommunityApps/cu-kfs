@@ -20,11 +20,11 @@ public class TelephoneNumber {
     @XmlElement(name = "CountryCode", required = true)
     protected CountryCode countryCode;
     @XmlElement(name = "AreaCode", required = true)
-    protected AreaCode areaCode;
+    protected JaggaerBasicValue areaCode;
     @XmlElement(name = "Number", required = true)
-    protected Number number;
+    protected JaggaerBasicValue number;
     @XmlElement(name = "Extension")
-    protected Extension extension;
+    protected JaggaerBasicValue extension;
 
     public String getIsChanged() {
         return isChanged;
@@ -42,27 +42,27 @@ public class TelephoneNumber {
         this.countryCode = value;
     }
 
-    public AreaCode getAreaCode() {
+    public JaggaerBasicValue getAreaCode() {
         return areaCode;
     }
 
-    public void setAreaCode(AreaCode value) {
+    public void setAreaCode(JaggaerBasicValue value) {
         this.areaCode = value;
     }
 
-    public Number getNumber() {
+    public JaggaerBasicValue getNumber() {
         return number;
     }
 
-    public void setNumber(Number value) {
+    public void setNumber(JaggaerBasicValue value) {
         this.number = value;
     }
 
-    public Extension getExtension() {
+    public JaggaerBasicValue getExtension() {
         return extension;
     }
 
-    public void setExtension(Extension value) {
+    public void setExtension(JaggaerBasicValue value) {
         this.extension = value;
     }
 

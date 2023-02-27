@@ -23,21 +23,21 @@ public class InsuranceInformation {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "PolicyNumber")
-    protected PolicyNumber policyNumber;
+    protected JaggaerBasicValue policyNumber;
     @XmlElement(name = "InsuranceLimit")
-    protected InsuranceLimit insuranceLimit;
+    protected JaggaerBasicValue insuranceLimit;
     @XmlElement(name = "ExpirationDate")
-    protected ExpirationDate expirationDate;
+    protected JaggaerBasicValue expirationDate;
     @XmlElement(name = "InsuranceProvider")
-    protected InsuranceProvider insuranceProvider;
+    protected JaggaerBasicValue insuranceProvider;
     @XmlElement(name = "Agent")
-    protected Agent agent;
+    protected JaggaerBasicValue agent;
     @XmlElement(name = "InsuranceProviderPhone")
     protected InsuranceProviderPhone insuranceProviderPhone;
     @XmlElement(name = "InsuranceCertificate")
     protected InsuranceCertificate insuranceCertificate;
     @XmlElement(name = "OtherTypeName")
-    protected OtherTypeName otherTypeName;
+    protected JaggaerBasicValue otherTypeName;
 
     public String getType() {
         return type;
@@ -55,43 +55,43 @@ public class InsuranceInformation {
         this.isChanged = value;
     }
 
-    public PolicyNumber getPolicyNumber() {
+    public JaggaerBasicValue getPolicyNumber() {
         return policyNumber;
     }
 
-    public void setPolicyNumber(PolicyNumber value) {
+    public void setPolicyNumber(JaggaerBasicValue value) {
         this.policyNumber = value;
     }
 
-    public InsuranceLimit getInsuranceLimit() {
+    public JaggaerBasicValue getInsuranceLimit() {
         return insuranceLimit;
     }
 
-    public void setInsuranceLimit(InsuranceLimit value) {
+    public void setInsuranceLimit(JaggaerBasicValue value) {
         this.insuranceLimit = value;
     }
 
-    public ExpirationDate getExpirationDate() {
+    public JaggaerBasicValue getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(ExpirationDate value) {
+    public void setExpirationDate(JaggaerBasicValue value) {
         this.expirationDate = value;
     }
 
-    public InsuranceProvider getInsuranceProvider() {
+    public JaggaerBasicValue getInsuranceProvider() {
         return insuranceProvider;
     }
 
-    public void setInsuranceProvider(InsuranceProvider value) {
+    public void setInsuranceProvider(JaggaerBasicValue value) {
         this.insuranceProvider = value;
     }
 
-    public Agent getAgent() {
+    public JaggaerBasicValue getAgent() {
         return agent;
     }
 
-    public void setAgent(Agent value) {
+    public void setAgent(JaggaerBasicValue value) {
         this.agent = value;
     }
 
@@ -111,11 +111,11 @@ public class InsuranceInformation {
         this.insuranceCertificate = value;
     }
 
-    public OtherTypeName getOtherTypeName() {
+    public JaggaerBasicValue getOtherTypeName() {
         return otherTypeName;
     }
 
-    public void setOtherTypeName(OtherTypeName value) {
+    public void setOtherTypeName(JaggaerBasicValue value) {
         this.otherTypeName = value;
     }
 

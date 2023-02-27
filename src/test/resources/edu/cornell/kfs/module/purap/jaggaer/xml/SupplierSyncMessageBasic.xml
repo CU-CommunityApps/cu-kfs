@@ -21,7 +21,10 @@
             <DoingBusinessAs>doing business os</DoingBusinessAs>
             <OtherNames>other name</OtherNames>
             <CountryOfOrigin>USA</CountryOfOrigin>
-            <ParentSupplier/>
+            <ParentSupplier isChanged="F">
+                <ERPNumber isChanged="F">parent erp number</ERPNumber>
+                <SQIntegrationNumber>parent integration number</SQIntegrationNumber>
+            </ParentSupplier>
             <Active>active</Active>
             <BusinessUnitVendorNumberList isChanged="T">
                 <BusinessUnitVendorNumber businessUnitInternalName="vendor number 1" isChanged="T">1232</BusinessUnitVendorNumber>
@@ -109,7 +112,34 @@
             <CustomElementList/>
             <AccountsPayableList/>
             <TaxInformationList/>
-            <InsuranceInformationList/>
+            <InsuranceInformationList isChanged="T">
+                <InsuranceInformation type="auto" isChanged="T">
+                    <PolicyNumber isChanged="T">XYZ321</PolicyNumber>
+                    <InsuranceLimit isChanged="T">100</InsuranceLimit>
+                    <ExpirationDate isChanged="T">12/31/2069</ExpirationDate>
+                    <InsuranceProvider isChanged="T">USAA</InsuranceProvider>
+                    <Agent isChanged="T">Agent Name</Agent>
+                    <InsuranceProviderPhone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </InsuranceProviderPhone>
+                    <InsuranceCertificate isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="666" type="HTML">
+                                <AttachmentName>attachment name</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </InsuranceCertificate>
+                    <OtherTypeName isChanged="T">some other name</OtherTypeName>
+                </InsuranceInformation>
+            </InsuranceInformationList>
             <EnablePaymentProvisioning>prov</EnablePaymentProvisioning>
         </Supplier>
     </SupplierRequestMessage>

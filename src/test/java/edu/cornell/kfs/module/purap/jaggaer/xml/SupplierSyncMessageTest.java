@@ -1,43 +1,43 @@
 package edu.cornell.kfs.module.purap.jaggaer.xml;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterAll;
+import org.custommonkey.xmlunit.DetailedDiff;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
+import org.springframework.data.redis.core.types.Expiration;
 import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public class SupplierSyncMessageTest {
     private static final Logger LOG = LogManager.getLogger();
-    
+
     private static final String BATCH_DIRECTORY = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/outputtemp/";
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
     private static final String BASIC_FILE_EXAMPLE = "SupplierSyncMessageBasic.xml";
-    
+
     private File batchDirectoryFile;
-    
+
     private CUMarshalService marshalService;
 
     @BeforeEach
@@ -56,43 +56,48 @@ public class SupplierSyncMessageTest {
     @Test
     void test() throws JAXBException, IOException, SAXException, ParserConfigurationException {
         File basicFileExample = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
-        //String expectedXml = FileUtils.readFileToString(basicFileExample, StandardCharsets.UTF_8);
-        //LOG.info("expectedXML: " + expectedXml);
-        
+
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
-        
+
         supplierSyncMessage.setVersion("1.0");
-        supplierSyncMessage.setHeader(builderHeader());
-        
+        supplierSyncMessage.setHeader(buildHeader());
+
         SupplierRequestMessage srm = new SupplierRequestMessage();
         srm.getSupplier().add(buildSupplier());
-        
-        supplierSyncMessage.getSupplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage().add(srm);
-        
-        String actualResults  = marshalService.marshalObjectToXmlString(supplierSyncMessage);
+
+        supplierSyncMessage
+                .getSupplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage()
+                .add(srm);
+
+        String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
         LOG.info("actualResults: " + actualResults);
-        
+
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, BATCH_DIRECTORY + "test.xml");
-        
-        assertXMLFilesEqual(actualXmlFile, basicFileExample);
-        
-        
+
+        FileInputStream actualFileInputStream = new FileInputStream(actualXmlFile);
+        FileInputStream expectedFIleInputStream = new FileInputStream(basicFileExample);
+
+        BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
+        BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));
+
+        compareXML(actualBufferedReader, expectedBufferedReader);
+
     }
 
-    private Header builderHeader() {
+    private Header buildHeader() {
         Header header = new Header();
-        
+
         Authentication auth = new Authentication();
         auth.setIdentity("Cornell");
         auth.setSharedSecret("SuperCoolPassword");
         header.setAuthentication(auth);
-        
+
         header.setMessageId("message id");
         header.setRelatedMessageId("related id");
         header.setTimestamp("20210218");
         return header;
     }
-    
+
     private Supplier buildSupplier() {
         Supplier supplier = new Supplier();
         supplier.setJaSupplierId("ja supplier id");
@@ -100,91 +105,90 @@ public class SupplierSyncMessageTest {
         supplier.setApprovedForERPSync("T");
         supplier.setRequiresERP("T");
         supplier.setOldERPNumber("old erp number");
-        
+
         ERPNumber erpNumber = new ERPNumber();
         erpNumber.setvalue("erp number");
         erpNumber.setIsChanged("F");
         supplier.setErpNumber(erpNumber);
-        
+
         Name name = new Name();
         name.setvalue("Acme Test Company");
         supplier.setName(name);
-        
+
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict"));
         supplier.getRestrictFulfillmentLocationsByBusinessUnit().setIsChanged("T");
-        
+
         supplier.setSic(new JaggaerBasicValue("SIC"));
         supplier.getSic().setIsChanged("F");
-        
+
         supplier.setSupplierKeywords(new JaggaerBasicValue("keyword"));
-        
+
         supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov"));
-        
+
         supplier.setAustinTetra(new JaggaerBasicValue("austin"));
-        
+
         supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity"));
-        
+
         supplier.setVatExempt(new JaggaerBasicValue("VAT"));
-        
+
         supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID"));
-        
+
         supplier.setSupplierShareholders(new JaggaerBasicValue("holders"));
-        
+
         supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number"));
-        
+
         supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat"));
-        
+
         supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court"));
-        
+
         JaggaerBasicValue repId = new JaggaerBasicValue("tax rep ID");
         repId.setIsChanged("T");
         supplier.setSupplierTaxRepresentativeId(repId);
-        
+
         supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status"));
-        
+
         supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe"));
-        
+
         supplier.setYearEstablished(new JaggaerBasicValue("1977"));
-        
+
         supplier.setNumberOfEmployees(new JaggaerBasicValue("69"));
-        
+
         supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding"));
-        
+
         supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id"));
-        
+
         supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type"));
-        
+
         supplier.setLegalStructure(new JaggaerBasicValue("legal structure"));
-        
+
         DUNS duns = new DUNS();
         duns.setvalue("duns");
         supplier.setDuns(duns);
-        
+
         supplier.setWebSiteURL(new JaggaerBasicValue("www.cornell.edu"));
-        
+
         Active active = new Active();
         active.setvalue("active");
         supplier.setActive(active);
-        
+
         supplier.setCountryOfOrigin(new JaggaerBasicValue("USA"));
-        
+
         supplier.setOtherNames(new JaggaerBasicValue("other name"));
-        
+
         supplier.setDoingBusinessAs(new JaggaerBasicValue("doing business os"));
-        
+
         ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
         refNumber.setvalue("3rd party ref number");
         supplier.setThirdPartyRefNumber(refNumber);
-        
+
         SupplierSQId sqId = new SupplierSQId();
         sqId.setvalue("SO ID");
         supplier.setSupplierSQId(sqId);
-        
+
         SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
         sqIntegrationNumber.setvalue("sqIntegrationNumber");
         supplier.setSqIntegrationNumber(sqIntegrationNumber);
-        
-        
+
         supplier.setBrands(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
         supplier.setCommodityCodeList(buildCommodityCodeList());
@@ -194,63 +198,57 @@ public class SupplierSyncMessageTest {
         supplier.setSupplierCapital(buildSupplierCapital());
         supplier.setAnnualSalesList(buildAnnualSalesList());
         supplier.setServiceAreaList(buildServiceAreaList());
-        
-        
-        
+        supplier.setParentSupplier(buildParentSupplier());
+        supplier.setInsuranceInformationList(buildInsuranceInformationList());
+
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
-        
+
         PrimaryAddressList addresses = new PrimaryAddressList();
         supplier.setPrimaryAddressList(addresses);
-        
+
         ContactList contactList = new ContactList();
         supplier.setContactList(contactList);
-        
+
         PrimaryContactList primaryContact = new PrimaryContactList();
         supplier.setPrimaryContactList(primaryContact);
-        
+
         ClassificationList classificiationList = new ClassificationList();
         supplier.setClassificationList(classificiationList);
-        
+
         DiversityClassificationList diversity = new DiversityClassificationList();
         supplier.setDiversityClassificationList(diversity);
-        
+
         LocationList location = new LocationList();
         supplier.setLocationList(location);
-        
+
         CustomElementList custom = new CustomElementList();
         supplier.setCustomElementList(custom);
-        
+
         AccountsPayableList ap = new AccountsPayableList();
         supplier.setAccountsPayableList(ap);
-        
+
         TaxInformationList tax = new TaxInformationList();
         supplier.setTaxInformationList(tax);
-        
-        InsuranceInformationList insurance = new InsuranceInformationList();
-        supplier.setInsuranceInformationList(insurance);
-        
-        ParentSupplier parent = new ParentSupplier();
-        supplier.setParentSupplier(parent);
-        
+
         return supplier;
     }
-    
+
     private Brands buildBrands() {
         Brands brands = new Brands();
-        
+
         JaggaerBasicValue brand1 = new JaggaerBasicValue("brand 1");
         brand1.setIsChanged("T");
-        
+
         JaggaerBasicValue brand2 = new JaggaerBasicValue("brand 2");
         brand2.setIsChanged("F");
-        
+
         brands.getBrand().add(brand1);
         brands.getBrand().add(brand2);
-        
+
         return brands;
     }
-    
+
     private NaicsCodes buildNaicsCodes() {
         NaicsCodes codes = new NaicsCodes();
         codes.setIsChanged("T");
@@ -258,84 +256,84 @@ public class SupplierSyncMessageTest {
         primary.setvalue("primary code");
         primary.setIsChanged("T");
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(primary);
-        
+
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        
+
         SecondaryNaics second = new SecondaryNaics();
         second.setvalue("second");
         second.setIsChanged("F");
         secondaryList.getSecondaryNaics().add(second);
-        
+
         SecondaryNaics third = new SecondaryNaics();
         third.setvalue("third");
         third.setIsChanged("T");
         secondaryList.getSecondaryNaics().add(third);
-        
+
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
         return codes;
     }
-    
+
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList commodityCodeList = new CommodityCodeList();
-        
+
         JaggaerBasicValue code1 = new JaggaerBasicValue("Commodity Code 1");
         code1.setIsChanged("T");
         commodityCodeList.getCommodityCode().add(code1);
-        
+
         JaggaerBasicValue code2 = new JaggaerBasicValue("Commodity Code 2");
         code2.setIsChanged("F");
         commodityCodeList.getCommodityCode().add(code2);
-        
+
         return commodityCodeList;
     }
-    
-    private CurrencyList buildCurrencyList(boolean includeListChanged, boolean includeUSD, boolean includePeso, boolean includeEuro) {
+
+    private CurrencyList buildCurrencyList(boolean includeListChanged, boolean includeUSD, boolean includePeso,
+            boolean includeEuro) {
         CurrencyList currencyList = new CurrencyList();
-        
+
         if (includeListChanged) {
             currencyList.setIsChanged("T");
         }
-        
+
         if (includeUSD) {
             IsoCurrencyCode usd = new IsoCurrencyCode("usd");
             usd.setIsChanged("T");
             currencyList.getIsoCurrencyCode().add(usd);
         }
-        
+
         if (includePeso) {
             IsoCurrencyCode peso = new IsoCurrencyCode("peso");
             peso.setIsChanged("F");
             currencyList.getIsoCurrencyCode().add(peso);
         }
-        
+
         if (includeEuro) {
             currencyList.getIsoCurrencyCode().add(new IsoCurrencyCode("euro"));
         }
-        
+
         return currencyList;
     }
-    
+
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
         unitNumberList.setIsChanged("T");
-        
+
         BusinessUnitVendorNumber unit1 = new BusinessUnitVendorNumber();
         unit1.setBusinessUnitInternalName("vendor number 1");
         unit1.setvalue("1232");
         unit1.setIsChanged("T");
         unitNumberList.getBusinessUnitVendorNumber().add(unit1);
-        
+
         BusinessUnitVendorNumber unit2 = new BusinessUnitVendorNumber();
         unit2.setBusinessUnitInternalName("vendor number 2");
         unit2.setvalue("56464");
         unit2.setIsChanged("F");
         unitNumberList.getBusinessUnitVendorNumber().add(unit2);
-        
-        
+
         return unitNumberList;
-        
+
     }
-    
+
     private SupplierCapital buildSupplierCapital() {
         SupplierCapital capital = new SupplierCapital();
         Amount ammount = new Amount();
@@ -348,88 +346,190 @@ public class SupplierSyncMessageTest {
         capital.setIsoCurrencyCode(usd);
         return capital;
     }
-    
+
     private AnnualSalesList buildAnnualSalesList() {
         AnnualSalesList salesList = new AnnualSalesList();
         salesList.setIsChanged("T");
-        
+
         AnnualSales sale = new AnnualSales();
         sale.setIsChanged("F");
-        
+
         IsoCurrencyCode usd = new IsoCurrencyCode("usd");
         usd.setIsChanged("F");
         sale.setIsoCurrencyCode(usd);
-        
+
         JaggaerBasicValue year = new JaggaerBasicValue();
         year.setIsChanged("T");
         year.setvalue("2023");
         sale.setAnnualSalesYear(year);
-        
+
         Amount ammount = new Amount();
         ammount.setIsChanged("T");
         ammount.setvalue("6900.00");
         sale.setAnnualSalesAmount(ammount);
-        
+
         salesList.getAnnualSales().add(sale);
-        
+
         return salesList;
     }
-    
+
     private ServiceAreaList buildServiceAreaList() {
         ServiceAreaList areaList = new ServiceAreaList();
         areaList.setIsChanged("T");
-        
+
         ServiceArea area1 = new ServiceArea();
         area1.setIsChanged("T");
         area1.setServiceAreaInternalName(buildServiceAreaInternalName("internal name"));
         area1.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 1", "internal name 2"));
         areaList.getServiceArea().add(area1);
-        
+
         ServiceArea area2 = new ServiceArea();
         area2.setIsChanged("F");
         area2.setServiceAreaInternalName(buildServiceAreaInternalName("a different internal name"));
         area2.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 3", "internal name 4"));
         areaList.getServiceArea().add(area2);
-        
+
         return areaList;
     }
-    
+
     private ServiceAreaInternalName buildServiceAreaInternalName(String internalName) {
         ServiceAreaInternalName sain = new ServiceAreaInternalName();
         sain.setvalue(internalName);
         sain.setIsChanged("T");
         return sain;
     }
-    
+
     private StateServiceAreaList buildStateServiceAreaList(String... names) {
         StateServiceAreaList stateServiceAreaList = new StateServiceAreaList();
         stateServiceAreaList.setIsChanged("T");
-        
+
         for (String name : names) {
             StateServiceAreaInternalName internalName = new StateServiceAreaInternalName();
             internalName.setIsChanged("T");
             internalName.setvalue(name);
             stateServiceAreaList.getStateServiceAreaInternalName().add(internalName);
         }
-        
+
         return stateServiceAreaList;
     }
-    
-    private void assertXMLFilesEqual(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException, ParserConfigurationException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(false);
-        dbf.setCoalescing(true);
-        dbf.setIgnoringElementContentWhitespace(true);
-        dbf.setIgnoringComments(true);
-        DocumentBuilder db = dbf.newDocumentBuilder();
 
-        Document actualDocument = db.parse(actualXmlFile);
-        actualDocument.normalizeDocument();
+    private ParentSupplier buildParentSupplier() {
+        ParentSupplier parent = new ParentSupplier();
 
-        Document expectedDocument = db.parse(expectedXmlFile);
-        expectedDocument.normalizeDocument();
+        ERPNumber erpNumber = new ERPNumber();
+        erpNumber.setvalue("parent erp number");
+        erpNumber.setIsChanged("F");
+        parent.setERPNumber(erpNumber);
 
-        assertTrue(actualDocument.isEqualNode(expectedDocument));
+        parent.setIsChanged("F");
+
+        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
+        sqIntegrationNumber.setvalue("parent integration number");
+        parent.setSQIntegrationNumber(sqIntegrationNumber);
+
+        return parent;
+
+    }
+
+    private InsuranceInformationList buildInsuranceInformationList() {
+        InsuranceInformationList insurance = new InsuranceInformationList();
+        insurance.setIsChanged("T");
+
+        InsuranceInformation info = new InsuranceInformation();
+        info.setType("auto");
+        info.setIsChanged("T");
+
+        JaggaerBasicValue policyNumber = new JaggaerBasicValue("XYZ321");
+        policyNumber.setIsChanged("T");
+        info.setPolicyNumber(policyNumber);
+
+        JaggaerBasicValue limit = new JaggaerBasicValue("100");
+        limit.setIsChanged("T");
+        info.setInsuranceLimit(limit);
+
+        JaggaerBasicValue provider = new JaggaerBasicValue("USAA");
+        provider.setIsChanged("T");
+        info.setInsuranceProvider(provider);
+
+        JaggaerBasicValue agent = new JaggaerBasicValue("Agent Name");
+        agent.setIsChanged("T");
+        info.setAgent(agent);
+        
+        JaggaerBasicValue expiration = new JaggaerBasicValue("12/31/2069");
+        expiration.setIsChanged("T");
+        info.setExpirationDate(expiration);
+        
+
+        info.setInsuranceProviderPhone(buildInsuranceProviderPhone());
+
+        info.setInsuranceCertificate(buildInsuranceCertificate());
+
+        JaggaerBasicValue other = new JaggaerBasicValue("some other name");
+        other.setIsChanged("T");
+        info.setOtherTypeName(other);
+
+        insurance.getInsuranceInformation().add(info);
+        return insurance;
+    }
+
+    private InsuranceCertificate buildInsuranceCertificate() {
+        InsuranceCertificate certificate = new InsuranceCertificate();
+        certificate.setIsChanged("T");
+        Attachments attachments = new Attachments();
+        attachments.setXmlnsXop("test.dtd");
+        Attachment attach = new Attachment();
+        attach.setAttachmentName("attachment name");
+        attach.setAttachmentSize("5000");
+        attach.setAttachmentURL("http://www.cornell.edu");
+        attach.setId("666");
+        attach.setType("HTML");
+        XopInclude include = new XopInclude();
+        include.setHref("http://www.google.com");
+        attach.setXopInclude(include);
+        attachments.getAttachment().add(attach);
+        certificate.setAttachments(attachments);
+        return certificate;
+    }
+
+    private InsuranceProviderPhone buildInsuranceProviderPhone() {
+        InsuranceProviderPhone phone = new InsuranceProviderPhone();
+        phone.setIsChanged("T");
+        TelephoneNumber telephoneNumber = new TelephoneNumber();
+        telephoneNumber.setIsChanged("T");
+        
+        CountryCode country = new CountryCode();
+        country.setIsChanged("T");
+        country.setvalue("USA");
+        telephoneNumber.setCountryCode(country);
+        
+        JaggaerBasicValue area = new JaggaerBasicValue("607");
+        area.setIsChanged("T");
+        telephoneNumber.setAreaCode(area);
+        
+        JaggaerBasicValue number = new JaggaerBasicValue("255*9900");
+        number.setIsChanged("T");
+        telephoneNumber.setNumber(number);
+        
+        JaggaerBasicValue extension = new JaggaerBasicValue("987");
+        extension.setIsChanged("T");
+        telephoneNumber.setExtension(extension);
+        
+        phone.setTelephoneNumber(telephoneNumber);
+        return phone;
+    }
+
+    public void compareXML(Reader control, Reader test) throws SAXException, IOException {
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setIgnoreComments(true);
+        
+        Diff xmlDiff = new Diff(control, test);
+        DetailedDiff detailXmlDiff = new DetailedDiff(xmlDiff);
+        List<Difference> differences = detailXmlDiff.getAllDifferences();
+        for (Difference difference : differences) {
+            LOG.info("compareXML, difference: " + difference);
+        }
+        assertEquals(0, differences.size());
+        
     }
 
 }
