@@ -203,6 +203,7 @@ public class SupplierSyncMessageTest {
         supplier.setInsuranceInformationList(buildInsuranceInformationList());
         supplier.setTaxInformationList(buildTaxInformationList());
         supplier.setAccountsPayableList(buildAccountsPayableList());
+        supplier.setCustomElementList(buildCustomElementList());
 
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
@@ -224,9 +225,6 @@ public class SupplierSyncMessageTest {
 
         LocationList location = new LocationList();
         supplier.setLocationList(location);
-
-        CustomElementList custom = new CustomElementList();
-        supplier.setCustomElementList(custom);
 
         return supplier;
     }
@@ -747,6 +745,45 @@ public class SupplierSyncMessageTest {
         field5.setIsChanged("T");
         flexFields.setFlexField5(field5);
         return flexFields;
+    }
+    
+    private CustomElementList buildCustomElementList() {
+        CustomElementList customList = new CustomElementList();
+        customList.setIsChanged("T");
+        
+        CustomElement element1 = new CustomElement();
+        element1.setIsActive("F");
+        element1.setIsChanged("T");
+        element1.setType("custom type");
+        
+        JaggaerBasicValue identifer1 = new JaggaerBasicValue("a custom identifer");
+        identifer1.setIsChanged("T");
+        element1.setCustomElementIdentifier(identifer1);
+        
+        DisplayName name1 = new DisplayName();
+        name1.setIsChanged("T");
+        name1.setvalue("a cool display name");
+        element1.setDisplayName(name1);
+        
+        customList.getCustomElement().add(element1);
+        
+        CustomElement element2 = new CustomElement();
+        element2.setIsActive("T");
+        element2.setIsChanged("F");
+        element2.setType("custom type2");
+        
+        JaggaerBasicValue identifer2 = new JaggaerBasicValue("a  different custom identifer");
+        identifer2.setIsChanged("T");
+        element2.setCustomElementIdentifier(identifer2);
+        
+        DisplayName name2 = new DisplayName();
+        name2.setIsChanged("T");
+        name2.setvalue("a lame display name");
+        element2.setDisplayName(name2);
+        
+        customList.getCustomElement().add(element2);
+        
+        return customList;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {

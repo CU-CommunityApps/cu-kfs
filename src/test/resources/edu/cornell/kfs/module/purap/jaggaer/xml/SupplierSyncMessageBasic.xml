@@ -109,7 +109,16 @@
             <DiversityClassificationList/>
             <LocationList/>
             <RestrictFulfillmentLocationsByBusinessUnit isChanged="T">restrict</RestrictFulfillmentLocationsByBusinessUnit>
-            <CustomElementList/>
+            <CustomElementList isChanged="T">
+                <CustomElement isChanged="T" isActive="F" type="custom type">
+                    <CustomElementIdentifier isChanged="T">a custom identifer</CustomElementIdentifier>
+                    <DisplayName isChanged="T">a cool display name</DisplayName>
+                </CustomElement>
+                <CustomElement isChanged="F" isActive="T" type="custom type2">
+                    <CustomElementIdentifier isChanged="T">a  different custom identifer</CustomElementIdentifier>
+                    <DisplayName isChanged="T">a lame display name</DisplayName>
+                </CustomElement>
+            </CustomElementList>
             <AccountsPayableList isChanged="T">
                 <AccountsPayable type="accounts payable type" isChanged="T">
                     <ERPNumber isChanged="F">erp number</ERPNumber>

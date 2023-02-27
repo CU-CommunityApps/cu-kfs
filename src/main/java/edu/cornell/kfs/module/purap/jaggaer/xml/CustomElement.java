@@ -28,7 +28,7 @@ public class CustomElement {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String type;
     @XmlElement(name = "CustomElementIdentifier")
-    protected CustomElementIdentifier customElementIdentifier;
+    protected JaggaerBasicValue customElementIdentifier;
     @XmlElement(name = "DisplayName")
     protected DisplayName displayName;
     @XmlElements({ @XmlElement(name = "CustomElementValueList", type = CustomElementValueList.class),
@@ -59,11 +59,11 @@ public class CustomElement {
         this.type = value;
     }
 
-    public CustomElementIdentifier getCustomElementIdentifier() {
+    public JaggaerBasicValue getCustomElementIdentifier() {
         return customElementIdentifier;
     }
 
-    public void setCustomElementIdentifier(CustomElementIdentifier value) {
+    public void setCustomElementIdentifier(JaggaerBasicValue value) {
         this.customElementIdentifier = value;
     }
 
