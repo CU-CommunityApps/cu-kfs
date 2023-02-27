@@ -200,6 +200,8 @@ public class SupplierSyncMessageTest {
         supplier.setServiceAreaList(buildServiceAreaList());
         supplier.setParentSupplier(buildParentSupplier());
         supplier.setInsuranceInformationList(buildInsuranceInformationList());
+        supplier.setTaxInformationList(buildTaxInformationList());
+        supplier.setAccountsPayableList(buildAccountsPayableList());
 
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
@@ -224,12 +226,6 @@ public class SupplierSyncMessageTest {
 
         CustomElementList custom = new CustomElementList();
         supplier.setCustomElementList(custom);
-
-        AccountsPayableList ap = new AccountsPayableList();
-        supplier.setAccountsPayableList(ap);
-
-        TaxInformationList tax = new TaxInformationList();
-        supplier.setTaxInformationList(tax);
 
         return supplier;
     }
@@ -517,8 +513,164 @@ public class SupplierSyncMessageTest {
         phone.setTelephoneNumber(telephoneNumber);
         return phone;
     }
+    
+    private TaxInformationList buildTaxInformationList() {
+        TaxInformationList taxList = new TaxInformationList();
+        taxList.setIsChanged("T");
+        
+        TaxInformation info = new TaxInformation();
+        info.setIsChanged("T");
+        info.setType("information type");
+        
+        JaggaerBasicValue documentName = new JaggaerBasicValue("document name");
+        documentName.setIsChanged("F");
+        info.setTaxDocumentName(documentName);;
+        
+        JaggaerBasicValue year = new JaggaerBasicValue("2023");
+        year.setIsChanged("T");
+        info.setTaxDocumentYear(year);
+        
+        TaxDocument document = new TaxDocument();
+        document.setIsChanged("Y");
+        
+        Attachments attachments = new Attachments();
+        attachments.setXmlnsXop("taxDocument.dtd");
+        Attachment attach = new Attachment();
+        attach.setAttachmentName("super cool tax document");
+        attach.setAttachmentSize("5000");
+        attach.setAttachmentURL("http://www.cornell.edu");
+        attach.setId("1000");
+        attach.setType("pdf");
+        XopInclude include = new XopInclude();
+        include.setHref("http://www.google.com");
+        attach.setXopInclude(include);
+        attachments.getAttachment().add(attach);
+        
+        document.setAttachments(attachments);
+        
+        info.setTaxDocument(document);
+        
+        
+        taxList.getTaxInformation().add(info);
+        return taxList;
+    }
+    
+    private AccountsPayableList buildAccountsPayableList() {
+        AccountsPayableList apList = new AccountsPayableList();
+        apList.setIsChanged("T");
+        
+        AccountsPayable ap = new AccountsPayable();
+        ap.setIsChanged("T");
+        ap.setType("accounts payable type");
+        ap.setOldERPNumber("old erp number");
+        
+        ERPNumber erpNumber = new ERPNumber();
+        erpNumber.setvalue("erp number");
+        erpNumber.setIsChanged("F");
+        ap.setERPNumber(erpNumber);
+        
+        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
+        sqIntegrationNumber.setvalue("sqIntegrationNumber");
+        ap.setSQIntegrationNumber(sqIntegrationNumber);
+        
+        ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
+        refNumber.setvalue("3rd party ref number");
+        refNumber.setIsChanged("T");
+        ap.setThirdPartyRefNumber(refNumber);
+        
+        Name name = new Name();
+        name.setvalue("accounts payable name");
+        name.setIsChanged("T");
+        ap.setName(name);
+        
+        Active active = new Active();
+        active.setvalue("active");
+        active.setIsChanged("T");
+        ap.setActive(active);
+        
+        AssociatedAddress address = new AssociatedAddress();
+        
+        AddressRef ref = new AddressRef();
+        address.setIsChanged("T");
+        address.setType("type");
+        
+        ref.setERPNumber(erpNumber);
+        ref.setSQIntegrationNumber(sqIntegrationNumber);
+        ref.setThirdPartyRefNumber(refNumber);
+        address.setAddressRef(ref);
+        
+        ap.getAssociatedAddress().add(address);
+        
+        Email email = new Email();
+        email.setIsChanged("T");
+        email.setvalue("user@cornell.edu");
+        ap.setEmail(email);
+        
+        IsoCurrencyCode usd = new IsoCurrencyCode("usd");
+        usd.setIsChanged("T");
+        ap.setIsoCurrencyCode(usd);
+        
+        JaggaerBasicValue contact = new JaggaerBasicValue("contact name");
+        contact.setIsChanged("T");
+        ap.setContactName(contact);
+        
+        JaggaerBasicValue purpose = new JaggaerBasicValue("testing is the only purpose");
+        purpose.setIsChanged("T");
+        ap.setPurpose(purpose);;
+        
+        JaggaerBasicValue accountid = new JaggaerBasicValue("G234715");
+        accountid.setIsChanged("T");
+        ap.setAccountId(accountid);
+        
+        JaggaerBasicValue holderName = new JaggaerBasicValue("John Doe");
+        holderName.setIsChanged("T");
+        ap.setAccountHolderName(holderName);
+        
+        JaggaerBasicValue accountType = new JaggaerBasicValue("account type");
+        accountType.setIsChanged("T");
+        ap.setAccountType(accountType);
+        
+        CountryCode country = new CountryCode();
+        country.setIsChanged("T");
+        country.setvalue("USA");
+        ap.setCountryCode(country);
+        
+        BankAccount bankAccount = new BankAccount();
+        /*
+         * @todo finish this
+         */
+        ap.setBankAccount(bankAccount);
+        
+        FlexFields flexFields = new FlexFields();
+        
+        JaggaerBasicValue field1 = new JaggaerBasicValue("flex field 1");
+        field1.setIsChanged("T");
+        flexFields.setFlexField1(field1);
+        
+        JaggaerBasicValue field2 = new JaggaerBasicValue("flex field 2");
+        field2.setIsChanged("T");
+        flexFields.setFlexField2(field2);
+        
+        JaggaerBasicValue field3 = new JaggaerBasicValue("flex field 3");
+        field3.setIsChanged("T");
+        flexFields.setFlexField3(field3);
+        
+        JaggaerBasicValue field4 = new JaggaerBasicValue("flex field 4");
+        field4.setIsChanged("T");
+        flexFields.setFlexField4(field4);
+        
+        JaggaerBasicValue field5 = new JaggaerBasicValue("flex field 5");
+        field5.setIsChanged("T");
+        flexFields.setFlexField5(field5);
+        
+        ap.setFlexFields(flexFields);
+        
+        
+        apList.getAccountsPayable().add(ap);
+        return apList;
+    }
 
-    public void compareXML(Reader control, Reader test) throws SAXException, IOException {
+    private void compareXML(Reader control, Reader test) throws SAXException, IOException {
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setIgnoreComments(true);
         

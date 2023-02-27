@@ -44,15 +44,15 @@ public class AccountsPayable {
     @XmlElement(name = "IsoCurrencyCode")
     protected IsoCurrencyCode isoCurrencyCode;
     @XmlElement(name = "ContactName")
-    protected ContactName contactName;
+    protected JaggaerBasicValue contactName;
     @XmlElement(name = "Purpose")
-    protected Purpose purpose;
+    protected JaggaerBasicValue purpose;
     @XmlElement(name = "AccountId")
-    protected AccountId accountId;
+    protected JaggaerBasicValue accountId;
     @XmlElement(name = "AccountHolderName")
-    protected AccountHolderName accountHolderName;
+    protected JaggaerBasicValue accountHolderName;
     @XmlElement(name = "AccountType")
-    protected AccountType accountType;
+    protected JaggaerBasicValue accountType;
     @XmlElement(name = "CountryCode")
     protected CountryCode countryCode;
     @XmlElement(name = "BankAccount")
@@ -147,43 +147,43 @@ public class AccountsPayable {
         this.isoCurrencyCode = value;
     }
 
-    public ContactName getContactName() {
+    public JaggaerBasicValue getContactName() {
         return contactName;
     }
 
-    public void setContactName(ContactName value) {
+    public void setContactName(JaggaerBasicValue value) {
         this.contactName = value;
     }
 
-    public Purpose getPurpose() {
+    public JaggaerBasicValue getPurpose() {
         return purpose;
     }
 
-    public void setPurpose(Purpose value) {
+    public void setPurpose(JaggaerBasicValue value) {
         this.purpose = value;
     }
 
-    public AccountId getAccountId() {
+    public JaggaerBasicValue getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(AccountId value) {
+    public void setAccountId(JaggaerBasicValue value) {
         this.accountId = value;
     }
 
-    public AccountHolderName getAccountHolderName() {
+    public JaggaerBasicValue getAccountHolderName() {
         return accountHolderName;
     }
 
-    public void setAccountHolderName(AccountHolderName value) {
+    public void setAccountHolderName(JaggaerBasicValue value) {
         this.accountHolderName = value;
     }
 
-    public AccountType getAccountType() {
+    public JaggaerBasicValue getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(AccountType value) {
+    public void setAccountType(JaggaerBasicValue value) {
         this.accountType = value;
     }
 

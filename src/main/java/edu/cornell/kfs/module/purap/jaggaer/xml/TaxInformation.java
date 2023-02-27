@@ -22,9 +22,9 @@ public class TaxInformation {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "TaxDocumentName")
-    protected TaxDocumentName taxDocumentName;
+    protected JaggaerBasicValue taxDocumentName;
     @XmlElement(name = "TaxDocumentYear")
-    protected TaxDocumentYear taxDocumentYear;
+    protected JaggaerBasicValue taxDocumentYear;
     @XmlElement(name = "TaxDocument")
     protected TaxDocument taxDocument;
 
@@ -44,19 +44,19 @@ public class TaxInformation {
         this.isChanged = value;
     }
 
-    public TaxDocumentName getTaxDocumentName() {
+    public JaggaerBasicValue getTaxDocumentName() {
         return taxDocumentName;
     }
 
-    public void setTaxDocumentName(TaxDocumentName value) {
+    public void setTaxDocumentName(JaggaerBasicValue value) {
         this.taxDocumentName = value;
     }
 
-    public TaxDocumentYear getTaxDocumentYear() {
+    public JaggaerBasicValue getTaxDocumentYear() {
         return taxDocumentYear;
     }
 
-    public void setTaxDocumentYear(TaxDocumentYear value) {
+    public void setTaxDocumentYear(JaggaerBasicValue value) {
         this.taxDocumentYear = value;
     }
 

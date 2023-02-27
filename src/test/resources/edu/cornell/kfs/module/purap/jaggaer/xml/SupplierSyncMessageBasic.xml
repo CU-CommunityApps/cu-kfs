@@ -110,8 +110,55 @@
             <LocationList/>
             <RestrictFulfillmentLocationsByBusinessUnit isChanged="T">restrict</RestrictFulfillmentLocationsByBusinessUnit>
             <CustomElementList/>
-            <AccountsPayableList/>
-            <TaxInformationList/>
+            <AccountsPayableList isChanged="T">
+                <AccountsPayable type="accounts payable type" isChanged="T">
+                    <ERPNumber isChanged="F">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+                    <ThirdPartyRefNumber isChanged="T">3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">accounts payable name</Name>
+                    <Active isChanged="T">active</Active>
+                    <AssociatedAddress isChanged="T" type="type">
+                        <AddressRef>
+                            <ERPNumber isChanged="F">erp number</ERPNumber>
+                            <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+                            <ThirdPartyRefNumber isChanged="T">3rd party ref number</ThirdPartyRefNumber>
+                        </AddressRef>
+                    </AssociatedAddress>
+                    <Email isChanged="T">user@cornell.edu</Email>
+                    <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
+                    <ContactName isChanged="T">contact name</ContactName>
+                    <Purpose isChanged="T">testing is the only purpose</Purpose>
+                    <AccountId isChanged="T">G234715</AccountId>
+                    <AccountHolderName isChanged="T">John Doe</AccountHolderName>
+                    <AccountType isChanged="T">account type</AccountType>
+                    <CountryCode isChanged="T">USA</CountryCode>
+                    <BankAccount/>
+                    <FlexFields>
+                        <FlexField1 isChanged="T">flex field 1</FlexField1>
+                        <FlexField2 isChanged="T">flex field 2</FlexField2>
+                        <FlexField3 isChanged="T">flex field 3</FlexField3>
+                        <FlexField4 isChanged="T">flex field 4</FlexField4>
+                        <FlexField5 isChanged="T">flex field 5</FlexField5>
+                    </FlexFields>
+                </AccountsPayable>
+            </AccountsPayableList>
+            <TaxInformationList isChanged="T">
+                <TaxInformation type="information type" isChanged="T">
+                    <TaxDocumentName isChanged="F">document name</TaxDocumentName>
+                    <TaxDocumentYear isChanged="T">2023</TaxDocumentYear>
+                    <TaxDocument isChanged="Y">
+                        <Attachments xmlns:xop="taxDocument.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>super cool tax document</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </TaxDocument>
+                </TaxInformation>
+            </TaxInformationList>
             <InsuranceInformationList isChanged="T">
                 <InsuranceInformation type="auto" isChanged="T">
                     <PolicyNumber isChanged="T">XYZ321</PolicyNumber>
