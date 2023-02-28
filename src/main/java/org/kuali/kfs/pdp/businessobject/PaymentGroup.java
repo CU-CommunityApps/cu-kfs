@@ -151,6 +151,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     @XmlSchemaType(name = "normalizedString")
     private String payeeOwnerCd;
     
+    // CU customization
     @XmlElement(name = "customer_institution_identifier", namespace = XmlConstants.PAYMENT_NAMESPACE)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     @XmlSchemaType(name = "normalizedString")
@@ -328,9 +329,6 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
                     paymentGroupHistory.getPaymentChangeCode())) {
                 isCanceledReissued = true;
             }
-            if (PdpConstants.PaymentChangeCodes.REISSUE_DISBURSEMENT.equals(paymentGroupHistory.getPaymentChangeCode())) {
-                isCanceledReissued = true;
-            }
         }
 
         if (isCanceledReissued) {
@@ -338,7 +336,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
 
         // check for stale payments, if one payment detail is stale then they all are
-
+        // CU customization
         if (!CRConstants.CLEARED.equalsIgnoreCase(paymentStatus.getCode())) {
             final PaymentDetail paymentDetail = getPaymentDetails().get(0);
             if (!paymentDetail.isDisbursementActionAllowed()) {
@@ -543,6 +541,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         this.bankCode = bankCode;
     }
 
+    // CU customization
     public String getCustomerInstitutionNumber() {
 		return customerInstitutionNumber;
 	}
@@ -551,6 +550,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 		this.customerInstitutionNumber = customerInstitutionNumber;
 	}
 
+	// CU customization
     public Boolean getCampusAddress() {
         return campusAddress;
     }

@@ -359,6 +359,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         notes.remove(paymentNoteText);
     }
 
+    // CU customization to add extended attribute
     @Override
     public void afterInsert() {
         super.afterInsert();

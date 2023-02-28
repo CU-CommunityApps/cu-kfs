@@ -9,6 +9,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 
+/* CU customization. This class preserves the getResourceAsStream method from base code CoreUtilities. 
+   CoreUtilities has been updated with FINP-8446 from the 5/18/22 release, to remove unused methods but we are still using the getResourceAsStreammethod method.
+*/
 public final class CuCoreUtilities {
     
     private CuCoreUtilities() {

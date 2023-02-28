@@ -1312,8 +1312,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                     attachmentType);
         } catch (final FileNotFoundException e) {
             LOG.error("Exception opening attachment file", e);
-        } catch (final IOException e) {
-            throw new RuntimeException("Unable to create attachment", e);
         } catch (Exception e) {
             // it may have more than one kind of Exception
             // if attachment is not created for any reason, then don't include in note and proceed.
