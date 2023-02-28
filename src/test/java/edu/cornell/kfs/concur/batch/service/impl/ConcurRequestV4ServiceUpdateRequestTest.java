@@ -38,7 +38,7 @@ import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
@@ -92,8 +92,8 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         
         this.concurRequestV4Service = new TestConcurRequestV4ServiceImpl();
         concurRequestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        concurRequestV4Service.setConcurEventNotificationV2WebserviceService(
-                createConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
+        concurRequestV4Service.setConcurEventNotificationApiService(
+                createConcurEventNotificationApiService(mockConcurBatchUtilityService));
         concurRequestV4Service.setConfigurationService(createMockConfigurationService());
         concurRequestV4Service.setConcurAccountValidationService(Mockito.mock(ConcurAccountValidationService.class));
         concurRequestV4Service.setSimulateProduction(true);
@@ -129,12 +129,12 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
                 Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)));
     }
 
-    private ConcurEventNotificationV2WebserviceService createConcurEventNotificationV2WebserviceService(
+    private ConcurEventNotificationApiService createConcurEventNotificationApiService(
             ConcurBatchUtilityService concurBatchUtilityService) {
-        ConcurEventNotificationV2WebserviceServiceImpl concurEventNotificationV2WebserviceService
-                = new ConcurEventNotificationV2WebserviceServiceImpl();
-        concurEventNotificationV2WebserviceService.setConcurBatchUtilityService(concurBatchUtilityService);
-        return concurEventNotificationV2WebserviceService;
+        ConcurEventNotificationApiServiceImpl concurEventNotificationApiService
+                = new ConcurEventNotificationApiServiceImpl();
+        concurEventNotificationApiService.setConcurBatchUtilityService(concurBatchUtilityService);
+        return concurEventNotificationApiService;
     }
 
     private void adjustProductionMode(RequestV4DetailFixture requestFixture) {

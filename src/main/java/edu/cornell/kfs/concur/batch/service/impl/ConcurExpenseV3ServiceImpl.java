@@ -24,7 +24,7 @@ import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.ConcurWebRequest;
 import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
@@ -42,7 +42,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     private static final Logger LOG = LogManager.getLogger();
 
     protected ConcurBatchUtilityService concurBatchUtilityService;
-    protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
+    protected ConcurEventNotificationApiService concurEventNotificationApiService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
 
@@ -55,7 +55,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
 
     protected ConcurExpenseV3ListingDTO getConcurStartingExpenseListing(String accessToken) {
         String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_INTIAL_EXPENSE_LISTING);
-        ConcurExpenseV3ListingDTO expenseList = concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
+        ConcurExpenseV3ListingDTO expenseList = concurEventNotificationApiService.buildConcurDTOFromEndpoint(accessToken,
                 findDefaultExpenseListingEndPoint(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
         return expenseList;
     }
@@ -86,7 +86,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
-            ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationV2WebserviceService
+            ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationApiService
                     .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         } 
@@ -96,7 +96,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + ConcurConstants.QUESTION_MARK_USER_EQUALS + userName;
         String logMessageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_REPORT), reportId);
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
+        return concurEventNotificationApiService.buildConcurDTOFromEndpoint(accessToken,
                 expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class, logMessageDetail);
     }
     
@@ -120,7 +120,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String allocationEndpoint, String logMessageDetail) {
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(accessToken,
+        return concurEventNotificationApiService.buildConcurDTOFromEndpoint(accessToken,
                 allocationEndpoint, ConcurExpenseAllocationV3ListingDTO.class, logMessageDetail);
     }
 
@@ -168,7 +168,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         ConcurWebRequest<Void> webRequest = buildWebRequestForExpenseWorkflowAction(
                 workflowAction, reportId, resultsDTO);
 
-        concurEventNotificationV2WebserviceService.callConcurEndpoint(
+        concurEventNotificationApiService.callConcurEndpoint(
                 accessToken, webRequest, logMessageDetail);
     }
     
@@ -263,8 +263,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
 
     public void setConcurEventNotificationV2WebserviceService(
-            ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService) {
-        this.concurEventNotificationV2WebserviceService = concurEventNotificationV2WebserviceService;
+            ConcurEventNotificationApiService concurEventNotificationApiService) {
+        this.concurEventNotificationApiService = concurEventNotificationApiService;
     }
 
     public void setConcurAccountValidationService(ConcurAccountValidationService concurAccountValidationService) {

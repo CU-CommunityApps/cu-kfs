@@ -686,7 +686,7 @@
   <bean id="concurExpenseV3Service" parent="concurExpenseV3Service-parentBean" />
   <bean id="concurExpenseV3Service-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurExpenseV3ServiceImpl" abstract="true">
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
-      <property name="concurEventNotificationV2WebserviceService" ref="concurEventNotificationV2WebserviceService"/>
+      <property name="concurEventNotificationApiService" ref="concurEventNotificationApiService"/>
       <property name="concurAccountValidationService" ref="concurAccountValidationService"/>
       <property name="configurationService" ref="configurationService"/>
   </bean>
@@ -696,12 +696,12 @@
         class="edu.cornell.kfs.concur.batch.service.impl.ConcurRequestV4ServiceImpl"
         p:concurBatchUtilityService-ref="concurBatchUtilityService"
         p:concurAccountValidationService-ref="concurAccountValidationService"
-        p:concurEventNotificationV2WebserviceService-ref="concurEventNotificationV2WebserviceService"
+        p:concurEventNotificationApiService-ref="concurEventNotificationApiService"
         p:configurationService-ref="configurationService"
         p:dateTimeService-ref="dateTimeService"/>
   
-  <bean id="concurEventNotificationV2WebserviceService" parent="concurEventNotificationV2WebserviceService-parentBean" />
-  <bean id="concurEventNotificationV2WebserviceService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationV2WebserviceServiceImpl" abstract="true">
+  <bean id="concurEventNotificationApiService" parent="concurEventNotificationApiService-parentBean" />
+  <bean id="concurEventNotificationApiService-parentBean" class="edu.cornell.kfs.concur.batch.service.impl.ConcurEventNotificationApiServiceImpl" abstract="true">
       <property name="concurBatchUtilityService" ref="concurBatchUtilityService"/>
   </bean>
   

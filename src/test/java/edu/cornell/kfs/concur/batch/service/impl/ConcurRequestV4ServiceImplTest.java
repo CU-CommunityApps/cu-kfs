@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,6 @@ import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.RequestV4Dates;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4ListingFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
@@ -121,8 +121,8 @@ public class ConcurRequestV4ServiceImplTest {
         requestV4Service.setSimulateProductionMode(false);
         requestV4Service.setSkipRequestListItemProcessing(false);
         requestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        requestV4Service.setConcurEventNotificationV2WebserviceService(
-                buildConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
+        requestV4Service.setConcurEventNotificationApiService(
+                buildConcurEventNotificationApiService(mockConcurBatchUtilityService));
         requestV4Service.setConfigurationService(buildMockConfigurationService());
         requestV4Service.setDateTimeService(buildSpiedDateTimeService(testDateTimeService));
         requestV4Service.setConcurAccountValidationService(buildMockConcurAccountValidationService());
@@ -270,12 +270,12 @@ public class ConcurRequestV4ServiceImplTest {
         mockCurrentTimeMillis = getTimeInMilliseconds(newDate);
     }
 
-    private ConcurEventNotificationV2WebserviceService buildConcurEventNotificationV2WebserviceService(
+    private ConcurEventNotificationApiService buildConcurEventNotificationApiService(
             ConcurBatchUtilityService mockConcurBatchUtilityService) {
-        ConcurEventNotificationV2WebserviceServiceImpl notificationV2Service
-                = new ConcurEventNotificationV2WebserviceServiceImpl();
-        notificationV2Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        return notificationV2Service;
+        ConcurEventNotificationApiServiceImpl eventNotificationApiService
+                = new ConcurEventNotificationApiServiceImpl();
+        eventNotificationApiService.setConcurBatchUtilityService(mockConcurBatchUtilityService);
+        return eventNotificationApiService;
     }
 
     private ConcurAccountValidationService buildMockConcurAccountValidationService() {

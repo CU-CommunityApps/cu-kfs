@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,6 @@ import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.batch.ConcurWebRequest;
 import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
@@ -66,7 +66,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             "The request failed validation but will be approved anyway. The resulting SAE entries may get rejected.";
 
     protected ConcurBatchUtilityService concurBatchUtilityService;
-    protected ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService;
+    protected ConcurEventNotificationApiService concurEventNotificationApiService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
@@ -128,7 +128,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         String messageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING),
                 page);
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
+        return concurEventNotificationApiService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
     }
 
@@ -263,7 +263,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
                 requestUuid, resultsDTO);
         
-        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationV2WebserviceService.callConcurEndpoint(
+        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationApiService.callConcurEndpoint(
                 accessToken, webRequest, logMessageDetail);
         
         try {
@@ -350,7 +350,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 requestUuid);
         String queryUrl = getRequestV4Endpoint() + CUKFSConstants.SLASH + UrlFactory.encode(requestUuid);
         
-        return concurEventNotificationV2WebserviceService.buildConcurDTOFromEndpoint(
+        return concurEventNotificationApiService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ReportDTO.class, messageDetail);
     }
 
@@ -445,9 +445,9 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
-    public void setConcurEventNotificationV2WebserviceService(
-            ConcurEventNotificationV2WebserviceService concurEventNotificationV2WebserviceService) {
-        this.concurEventNotificationV2WebserviceService = concurEventNotificationV2WebserviceService;
+    public void setConcurEventNotificationApiService(
+            ConcurEventNotificationApiService concurEventNotificationApiService) {
+        this.concurEventNotificationApiService = concurEventNotificationApiService;
     }
 
     public void setConcurAccountValidationService(ConcurAccountValidationService concurAccountValidationService) {
