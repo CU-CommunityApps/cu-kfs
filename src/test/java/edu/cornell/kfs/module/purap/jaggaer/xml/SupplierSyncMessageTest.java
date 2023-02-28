@@ -475,6 +475,11 @@ public class SupplierSyncMessageTest {
     private InsuranceProviderPhone buildInsuranceProviderPhone() {
         InsuranceProviderPhone phone = new InsuranceProviderPhone();
         phone.setIsChanged(T_TRUE);
+        phone.setTelephoneNumber(buildBasicTelephoneNumber());
+        return phone;
+    }
+
+    private TelephoneNumber buildBasicTelephoneNumber() {
         TelephoneNumber telephoneNumber = new TelephoneNumber();
         telephoneNumber.setIsChanged(T_TRUE);
         
@@ -494,9 +499,7 @@ public class SupplierSyncMessageTest {
         JaggaerBasicValue extension = new JaggaerBasicValue("987");
         extension.setIsChanged(T_TRUE);
         telephoneNumber.setExtension(extension);
-        
-        phone.setTelephoneNumber(telephoneNumber);
-        return phone;
+        return telephoneNumber;
     }
     
     private TaxInformationList buildTaxInformationList() {
@@ -792,6 +795,14 @@ public class SupplierSyncMessageTest {
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setIsChanged(T_TRUE);
         method.setType("delivery method");
+        Email email = new Email();
+        email.setIsChanged(T_TRUE);
+        email.setvalue("foo@bar.com");
+        method.getEmailOrFax().add(email);
+        Fax fax = new Fax();
+        fax.setIsChanged(F_FALSE);
+        fax.setTelephoneNumber(buildBasicTelephoneNumber());
+        method.getEmailOrFax().add(fax);
         location.setPrefPurchaseOrderDeliveryMethod(method);
         
         LocationEffectiveDate effectiveDate = new LocationEffectiveDate();
@@ -799,11 +810,9 @@ public class SupplierSyncMessageTest {
         effectiveDate.setvalue("02/28/2023");
         location.setLocationEffectiveDate(effectiveDate);
         
-        PaymentMethod paymentMethod = buildPaymentMethod();
+        location.setPaymentMethod(buildPaymentMethod());
         
-        location.setPaymentMethod(paymentMethod);
-        
-        //locationList.getLocation().add(location);
+        locationList.getLocation().add(location);
         return locationList;
     }
 
@@ -811,16 +820,47 @@ public class SupplierSyncMessageTest {
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setType("payment type");
         paymentMethod.setIsChanged(T_TRUE);
+        paymentMethod.setPOPaymentMethod(buildPOPaymentMethod());
         
-        POPaymentMethod poMethod = new POPaymentMethod();
-        poMethod.setIsChanged(T_TRUE);
-        
-        POPayment poPayment = new POPayment();
-        poMethod.setPOPayment(poPayment);
-        
-        paymentMethod.setPOPaymentMethod(poMethod);
+        BlanketPOPaymentMethod blanketMethod = new BlanketPOPaymentMethod();
+        blanketMethod.setIsChanged(T_TRUE);
+        BlanketPONumber blanketNumber = new BlanketPONumber();
+        blanketNumber.setIsChanged(T_TRUE);
+        blanketNumber.setvalue("blanket number");
+        blanketMethod.setBlanketPONumber(blanketNumber);
+        paymentMethod.setBlanketPOPaymentMethod(blanketMethod);
         
         return paymentMethod;
+    }
+
+    private POPaymentMethod buildPOPaymentMethod() {
+        POPaymentMethod poPaymentMethod = new POPaymentMethod();
+        poPaymentMethod.setIsChanged(T_TRUE);
+        
+        POPayment poPayment = new POPayment();
+        poPayment.setIsChanged(T_TRUE);
+        poPayment.setActive(buildActive());
+        
+        PONumberSelection selection = new PONumberSelection();
+        selection.setIsChanged(T_TRUE);
+        selection.setType("selection type");
+        
+        NumberWheel wheel = new NumberWheel();
+        wheel.setIsChanged(T_TRUE);
+        wheel.setvalue("wheel");
+        selection.setNumberWheel(wheel);
+        
+        poPayment.setPONumberSelection(selection);
+        
+        AllowFreeForm form = new AllowFreeForm();
+        form.setIsChanged(T_TRUE);
+        form.setvalue("all free form");
+        poPayment.setAllowFreeForm(form);
+        
+        
+        poPaymentMethod.setPOPayment(poPayment);
+        
+        return poPaymentMethod;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {

@@ -107,7 +107,45 @@
             <PrimaryContactList/>
             <ClassificationList/>
             <DiversityClassificationList/>
-            <LocationList/>
+            <LocationList>
+                <Location isChanged="T" supportsOrderFulfillment="Order Fulfillment(">
+                    <ERPNumber isChanged="T">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">silly location name</Name>
+                    <Description isChanged="T">description value</Description>
+                    <Active>active</Active>
+                    <LocationActive isChanged="T">location is active</LocationActive>
+                    <Primary isChanged="T">primary</Primary>
+                    <PrefPurchaseOrderDeliveryMethod isChanged="T" type="delivery method">
+                        <Email isChanged="T">foo@bar.com</Email>
+                        <Fax isChanged="F">
+                            <TelephoneNumber isChanged="T">
+                                <CountryCode isChanged="T">USA</CountryCode>
+                                <AreaCode isChanged="T">607</AreaCode>
+                                <Number isChanged="T">255*9900</Number>
+                                <Extension isChanged="T">987</Extension>
+                            </TelephoneNumber>
+                        </Fax>
+                    </PrefPurchaseOrderDeliveryMethod>
+                    <LocationEffectiveDate isChanged="T">02/28/2023</LocationEffectiveDate>
+                    <PaymentMethod type="payment type" isChanged="T">
+                        <POPaymentMethod isChanged="T">
+                            <POPayment isChanged="T">
+                                <Active>active</Active>
+                                <PONumberSelection type="selection type" isChanged="T">
+                                    <NumberWheel isChanged="T">wheel</NumberWheel>
+                                </PONumberSelection>
+                                <AllowFreeForm isChanged="T">all free form</AllowFreeForm>
+                            </POPayment>
+                        </POPaymentMethod>
+                        <BlanketPOPaymentMethod isChanged="T">
+                            <BlanketPONumber isChanged="T">blanket number</BlanketPONumber>
+                        </BlanketPOPaymentMethod>
+                    </PaymentMethod>
+                </Location>
+            </LocationList>
             <RestrictFulfillmentLocationsByBusinessUnit isChanged="T">restrict</RestrictFulfillmentLocationsByBusinessUnit>
             <CustomElementList isChanged="T">
                 <CustomElement isChanged="T" isActive="F" type="custom type">
