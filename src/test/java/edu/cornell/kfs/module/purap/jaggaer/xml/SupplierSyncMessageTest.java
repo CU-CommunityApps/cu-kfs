@@ -10,8 +10,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,15 +20,19 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.redis.core.types.Expiration;
 import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import jakarta.xml.bind.JAXBException;
-import liquibase.pro.packaged.in;
 
 public class SupplierSyncMessageTest {
+    private static final String US_DOLLAR_CURRENCY_CODE = "usd";
+
+    private static final String F_FALSE = "F";
+
+    private static final String T_TRUE = "T";
+
     private static final Logger LOG = LogManager.getLogger();
 
     private static final String BATCH_DIRECTORY = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/outputtemp/";
@@ -55,7 +57,7 @@ public class SupplierSyncMessageTest {
     }
 
     @Test
-    void test() throws JAXBException, IOException, SAXException, ParserConfigurationException {
+    void test() throws JAXBException, IOException, SAXException {
         File basicFileExample = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
 
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
@@ -102,64 +104,42 @@ public class SupplierSyncMessageTest {
     private Supplier buildSupplier() {
         Supplier supplier = new Supplier();
         supplier.setJaSupplierId("ja supplier id");
-        supplier.setIsChanged("T");
-        supplier.setApprovedForERPSync("T");
-        supplier.setRequiresERP("T");
+        supplier.setIsChanged(T_TRUE);
+        supplier.setApprovedForERPSync(T_TRUE);
+        supplier.setRequiresERP(T_TRUE);
         supplier.setOldERPNumber("old erp number");
-
-        ERPNumber erpNumber = new ERPNumber();
-        erpNumber.setvalue("erp number");
-        erpNumber.setIsChanged("F");
-        supplier.setErpNumber(erpNumber);
-
-        Name name = new Name();
-        name.setvalue("Acme Test Company");
-        supplier.setName(name);
+        supplier.setErpNumber(buildERPNumber("erp number", F_FALSE));
+        supplier.setName(buildName("Acme Test Company", null));
 
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict"));
-        supplier.getRestrictFulfillmentLocationsByBusinessUnit().setIsChanged("T");
+        supplier.getRestrictFulfillmentLocationsByBusinessUnit().setIsChanged(T_TRUE);
 
         supplier.setSic(new JaggaerBasicValue("SIC"));
-        supplier.getSic().setIsChanged("F");
+        supplier.getSic().setIsChanged(F_FALSE);
 
         supplier.setSupplierKeywords(new JaggaerBasicValue("keyword"));
-
         supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov"));
-
         supplier.setAustinTetra(new JaggaerBasicValue("austin"));
-
         supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity"));
-
         supplier.setVatExempt(new JaggaerBasicValue("VAT"));
-
         supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID"));
-
         supplier.setSupplierShareholders(new JaggaerBasicValue("holders"));
-
         supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number"));
-
         supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat"));
-
         supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court"));
 
         JaggaerBasicValue repId = new JaggaerBasicValue("tax rep ID");
-        repId.setIsChanged("T");
+        repId.setIsChanged(T_TRUE);
         supplier.setSupplierTaxRepresentativeId(repId);
 
         supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status"));
-
         supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe"));
 
         supplier.setYearEstablished(new JaggaerBasicValue("1977"));
-
         supplier.setNumberOfEmployees(new JaggaerBasicValue("69"));
-
         supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding"));
-
         supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id"));
-
         supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type"));
-
         supplier.setLegalStructure(new JaggaerBasicValue("legal structure"));
 
         DUNS duns = new DUNS();
@@ -167,28 +147,17 @@ public class SupplierSyncMessageTest {
         supplier.setDuns(duns);
 
         supplier.setWebSiteURL(new JaggaerBasicValue("www.cornell.edu"));
-
-        Active active = new Active();
-        active.setvalue("active");
-        supplier.setActive(active);
-
+        supplier.setActive(buildActive());
         supplier.setCountryOfOrigin(new JaggaerBasicValue("USA"));
-
         supplier.setOtherNames(new JaggaerBasicValue("other name"));
-
         supplier.setDoingBusinessAs(new JaggaerBasicValue("doing business os"));
-
-        ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
-        refNumber.setvalue("3rd party ref number");
-        supplier.setThirdPartyRefNumber(refNumber);
+        supplier.setThirdPartyRefNumber(buildThirdPartyRefNumber());
 
         SupplierSQId sqId = new SupplierSQId();
         sqId.setvalue("SO ID");
         supplier.setSupplierSQId(sqId);
 
-        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
-        sqIntegrationNumber.setvalue("sqIntegrationNumber");
-        supplier.setSqIntegrationNumber(sqIntegrationNumber);
+        supplier.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
 
         supplier.setBrands(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
@@ -204,6 +173,7 @@ public class SupplierSyncMessageTest {
         supplier.setTaxInformationList(buildTaxInformationList());
         supplier.setAccountsPayableList(buildAccountsPayableList());
         supplier.setCustomElementList(buildCustomElementList());
+        supplier.setLocationList(buildLocationList());
 
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
@@ -223,22 +193,50 @@ public class SupplierSyncMessageTest {
         DiversityClassificationList diversity = new DiversityClassificationList();
         supplier.setDiversityClassificationList(diversity);
 
-        LocationList location = new LocationList();
-        supplier.setLocationList(location);
-
         return supplier;
+    }
+    
+    private ERPNumber buildERPNumber(String erpNumber, String changed) {
+        ERPNumber erp = new ERPNumber();
+        erp.setIsChanged(changed);
+        erp.setvalue(erpNumber);
+        return erp;
+    }
+    
+    private Name buildName(String nameString, String changed) {
+        Name name = new Name();
+        name.setvalue(nameString);
+        name.setIsChanged(changed);
+        return name;
+    }
+    
+    private Active buildActive() {
+        Active active = new Active();
+        active.setvalue("active");
+        return active;
+    }
+    
+    private ThirdPartyRefNumber buildThirdPartyRefNumber() {
+        ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
+        refNumber.setvalue("3rd party ref number");
+        return refNumber;
+    }
+    
+    private SQIntegrationNumber buildSQIntegrationNumber(String number) {
+        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
+        sqIntegrationNumber.setvalue(number);
+        return sqIntegrationNumber;
     }
 
     private Brands buildBrands() {
         Brands brands = new Brands();
 
         JaggaerBasicValue brand1 = new JaggaerBasicValue("brand 1");
-        brand1.setIsChanged("T");
+        brand1.setIsChanged(T_TRUE);
+        brands.getBrand().add(brand1);
 
         JaggaerBasicValue brand2 = new JaggaerBasicValue("brand 2");
-        brand2.setIsChanged("F");
-
-        brands.getBrand().add(brand1);
+        brand2.setIsChanged(F_FALSE);
         brands.getBrand().add(brand2);
 
         return brands;
@@ -246,22 +244,22 @@ public class SupplierSyncMessageTest {
 
     private NaicsCodes buildNaicsCodes() {
         NaicsCodes codes = new NaicsCodes();
-        codes.setIsChanged("T");
+        codes.setIsChanged(T_TRUE);
         PrimaryNaics primary = new PrimaryNaics();
         primary.setvalue("primary code");
-        primary.setIsChanged("T");
+        primary.setIsChanged(T_TRUE);
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(primary);
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
 
         SecondaryNaics second = new SecondaryNaics();
         second.setvalue("second");
-        second.setIsChanged("F");
+        second.setIsChanged(F_FALSE);
         secondaryList.getSecondaryNaics().add(second);
 
         SecondaryNaics third = new SecondaryNaics();
         third.setvalue("third");
-        third.setIsChanged("T");
+        third.setIsChanged(T_TRUE);
         secondaryList.getSecondaryNaics().add(third);
 
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
@@ -272,11 +270,11 @@ public class SupplierSyncMessageTest {
         CommodityCodeList commodityCodeList = new CommodityCodeList();
 
         JaggaerBasicValue code1 = new JaggaerBasicValue("Commodity Code 1");
-        code1.setIsChanged("T");
+        code1.setIsChanged(T_TRUE);
         commodityCodeList.getCommodityCode().add(code1);
 
         JaggaerBasicValue code2 = new JaggaerBasicValue("Commodity Code 2");
-        code2.setIsChanged("F");
+        code2.setIsChanged(F_FALSE);
         commodityCodeList.getCommodityCode().add(code2);
 
         return commodityCodeList;
@@ -287,23 +285,19 @@ public class SupplierSyncMessageTest {
         CurrencyList currencyList = new CurrencyList();
 
         if (includeListChanged) {
-            currencyList.setIsChanged("T");
+            currencyList.setIsChanged(T_TRUE);
         }
 
         if (includeUSD) {
-            IsoCurrencyCode usd = new IsoCurrencyCode("usd");
-            usd.setIsChanged("T");
-            currencyList.getIsoCurrencyCode().add(usd);
+            currencyList.getIsoCurrencyCode().add(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         }
 
         if (includePeso) {
-            IsoCurrencyCode peso = new IsoCurrencyCode("peso");
-            peso.setIsChanged("F");
-            currencyList.getIsoCurrencyCode().add(peso);
+            currencyList.getIsoCurrencyCode().add(buildIsoCurrencyCode("peso", F_FALSE));
         }
 
         if (includeEuro) {
-            currencyList.getIsoCurrencyCode().add(new IsoCurrencyCode("euro"));
+            currencyList.getIsoCurrencyCode().add(buildIsoCurrencyCode("euro", null));
         }
 
         return currencyList;
@@ -311,18 +305,18 @@ public class SupplierSyncMessageTest {
 
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
-        unitNumberList.setIsChanged("T");
+        unitNumberList.setIsChanged(T_TRUE);
 
         BusinessUnitVendorNumber unit1 = new BusinessUnitVendorNumber();
         unit1.setBusinessUnitInternalName("vendor number 1");
         unit1.setvalue("1232");
-        unit1.setIsChanged("T");
+        unit1.setIsChanged(T_TRUE);
         unitNumberList.getBusinessUnitVendorNumber().add(unit1);
 
         BusinessUnitVendorNumber unit2 = new BusinessUnitVendorNumber();
         unit2.setBusinessUnitInternalName("vendor number 2");
         unit2.setvalue("56464");
-        unit2.setIsChanged("F");
+        unit2.setIsChanged(F_FALSE);
         unitNumberList.getBusinessUnitVendorNumber().add(unit2);
 
         return unitNumberList;
@@ -332,34 +326,36 @@ public class SupplierSyncMessageTest {
     private SupplierCapital buildSupplierCapital() {
         SupplierCapital capital = new SupplierCapital();
         Amount ammount = new Amount();
-        ammount.setIsChanged("T");
+        ammount.setIsChanged(T_TRUE);
         ammount.setvalue("50.00");
         capital.setAmount(ammount);
-        capital.setIsChanged("T");
-        IsoCurrencyCode usd = new IsoCurrencyCode("usd");
-        usd.setIsChanged("F");
-        capital.setIsoCurrencyCode(usd);
+        capital.setIsChanged(T_TRUE);
+        capital.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
         return capital;
+    }
+    
+    private IsoCurrencyCode buildIsoCurrencyCode(String currencyCode, String changed) {
+        IsoCurrencyCode code = new IsoCurrencyCode(currencyCode);
+        code.setIsChanged(changed);
+        return code;
     }
 
     private AnnualSalesList buildAnnualSalesList() {
         AnnualSalesList salesList = new AnnualSalesList();
-        salesList.setIsChanged("T");
+        salesList.setIsChanged(T_TRUE);
 
         AnnualSales sale = new AnnualSales();
-        sale.setIsChanged("F");
+        sale.setIsChanged(F_FALSE);
 
-        IsoCurrencyCode usd = new IsoCurrencyCode("usd");
-        usd.setIsChanged("F");
-        sale.setIsoCurrencyCode(usd);
+        sale.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
 
         JaggaerBasicValue year = new JaggaerBasicValue();
-        year.setIsChanged("T");
+        year.setIsChanged(T_TRUE);
         year.setvalue("2023");
         sale.setAnnualSalesYear(year);
 
         Amount ammount = new Amount();
-        ammount.setIsChanged("T");
+        ammount.setIsChanged(T_TRUE);
         ammount.setvalue("6900.00");
         sale.setAnnualSalesAmount(ammount);
 
@@ -370,16 +366,16 @@ public class SupplierSyncMessageTest {
 
     private ServiceAreaList buildServiceAreaList() {
         ServiceAreaList areaList = new ServiceAreaList();
-        areaList.setIsChanged("T");
+        areaList.setIsChanged(T_TRUE);
 
         ServiceArea area1 = new ServiceArea();
-        area1.setIsChanged("T");
+        area1.setIsChanged(T_TRUE);
         area1.setServiceAreaInternalName(buildServiceAreaInternalName("internal name"));
         area1.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 1", "internal name 2"));
         areaList.getServiceArea().add(area1);
 
         ServiceArea area2 = new ServiceArea();
-        area2.setIsChanged("F");
+        area2.setIsChanged(F_FALSE);
         area2.setServiceAreaInternalName(buildServiceAreaInternalName("a different internal name"));
         area2.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 3", "internal name 4"));
         areaList.getServiceArea().add(area2);
@@ -390,17 +386,17 @@ public class SupplierSyncMessageTest {
     private ServiceAreaInternalName buildServiceAreaInternalName(String internalName) {
         ServiceAreaInternalName sain = new ServiceAreaInternalName();
         sain.setvalue(internalName);
-        sain.setIsChanged("T");
+        sain.setIsChanged(T_TRUE);
         return sain;
     }
 
     private StateServiceAreaList buildStateServiceAreaList(String... names) {
         StateServiceAreaList stateServiceAreaList = new StateServiceAreaList();
-        stateServiceAreaList.setIsChanged("T");
+        stateServiceAreaList.setIsChanged(T_TRUE);
 
         for (String name : names) {
             StateServiceAreaInternalName internalName = new StateServiceAreaInternalName();
-            internalName.setIsChanged("T");
+            internalName.setIsChanged(T_TRUE);
             internalName.setvalue(name);
             stateServiceAreaList.getStateServiceAreaInternalName().add(internalName);
         }
@@ -410,48 +406,38 @@ public class SupplierSyncMessageTest {
 
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-
-        ERPNumber erpNumber = new ERPNumber();
-        erpNumber.setvalue("parent erp number");
-        erpNumber.setIsChanged("F");
-        parent.setERPNumber(erpNumber);
-
-        parent.setIsChanged("F");
-
-        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
-        sqIntegrationNumber.setvalue("parent integration number");
-        parent.setSQIntegrationNumber(sqIntegrationNumber);
-
+        parent.setERPNumber(buildERPNumber("parent erp number", F_FALSE));
+        parent.setIsChanged(F_FALSE);
+        parent.setSQIntegrationNumber(buildSQIntegrationNumber("parent integration number"));
         return parent;
-
     }
 
     private InsuranceInformationList buildInsuranceInformationList() {
         InsuranceInformationList insurance = new InsuranceInformationList();
-        insurance.setIsChanged("T");
+        insurance.setIsChanged(T_TRUE);
 
         InsuranceInformation info = new InsuranceInformation();
         info.setType("auto");
-        info.setIsChanged("T");
+        info.setIsChanged(T_TRUE);
 
         JaggaerBasicValue policyNumber = new JaggaerBasicValue("XYZ321");
-        policyNumber.setIsChanged("T");
+        policyNumber.setIsChanged(T_TRUE);
         info.setPolicyNumber(policyNumber);
 
         JaggaerBasicValue limit = new JaggaerBasicValue("100");
-        limit.setIsChanged("T");
+        limit.setIsChanged(T_TRUE);
         info.setInsuranceLimit(limit);
 
         JaggaerBasicValue provider = new JaggaerBasicValue("USAA");
-        provider.setIsChanged("T");
+        provider.setIsChanged(T_TRUE);
         info.setInsuranceProvider(provider);
 
         JaggaerBasicValue agent = new JaggaerBasicValue("Agent Name");
-        agent.setIsChanged("T");
+        agent.setIsChanged(T_TRUE);
         info.setAgent(agent);
         
         JaggaerBasicValue expiration = new JaggaerBasicValue("12/31/2069");
-        expiration.setIsChanged("T");
+        expiration.setIsChanged(T_TRUE);
         info.setExpirationDate(expiration);
         
 
@@ -460,7 +446,7 @@ public class SupplierSyncMessageTest {
         info.setInsuranceCertificate(buildInsuranceCertificate());
 
         JaggaerBasicValue other = new JaggaerBasicValue("some other name");
-        other.setIsChanged("T");
+        other.setIsChanged(T_TRUE);
         info.setOtherTypeName(other);
 
         insurance.getInsuranceInformation().add(info);
@@ -469,7 +455,7 @@ public class SupplierSyncMessageTest {
 
     private InsuranceCertificate buildInsuranceCertificate() {
         InsuranceCertificate certificate = new InsuranceCertificate();
-        certificate.setIsChanged("T");
+        certificate.setIsChanged(T_TRUE);
         Attachments attachments = new Attachments();
         attachments.setXmlnsXop("test.dtd");
         Attachment attach = new Attachment();
@@ -488,25 +474,25 @@ public class SupplierSyncMessageTest {
 
     private InsuranceProviderPhone buildInsuranceProviderPhone() {
         InsuranceProviderPhone phone = new InsuranceProviderPhone();
-        phone.setIsChanged("T");
+        phone.setIsChanged(T_TRUE);
         TelephoneNumber telephoneNumber = new TelephoneNumber();
-        telephoneNumber.setIsChanged("T");
+        telephoneNumber.setIsChanged(T_TRUE);
         
         CountryCode country = new CountryCode();
-        country.setIsChanged("T");
+        country.setIsChanged(T_TRUE);
         country.setvalue("USA");
         telephoneNumber.setCountryCode(country);
         
         JaggaerBasicValue area = new JaggaerBasicValue("607");
-        area.setIsChanged("T");
+        area.setIsChanged(T_TRUE);
         telephoneNumber.setAreaCode(area);
         
         JaggaerBasicValue number = new JaggaerBasicValue("255*9900");
-        number.setIsChanged("T");
+        number.setIsChanged(T_TRUE);
         telephoneNumber.setNumber(number);
         
         JaggaerBasicValue extension = new JaggaerBasicValue("987");
-        extension.setIsChanged("T");
+        extension.setIsChanged(T_TRUE);
         telephoneNumber.setExtension(extension);
         
         phone.setTelephoneNumber(telephoneNumber);
@@ -515,22 +501,22 @@ public class SupplierSyncMessageTest {
     
     private TaxInformationList buildTaxInformationList() {
         TaxInformationList taxList = new TaxInformationList();
-        taxList.setIsChanged("T");
+        taxList.setIsChanged(T_TRUE);
         
         TaxInformation info = new TaxInformation();
-        info.setIsChanged("T");
+        info.setIsChanged(T_TRUE);
         info.setType("information type");
         
         JaggaerBasicValue documentName = new JaggaerBasicValue("document name");
-        documentName.setIsChanged("F");
+        documentName.setIsChanged(F_FALSE);
         info.setTaxDocumentName(documentName);;
         
         JaggaerBasicValue year = new JaggaerBasicValue("2023");
-        year.setIsChanged("T");
+        year.setIsChanged(T_TRUE);
         info.setTaxDocumentYear(year);
         
         TaxDocument document = new TaxDocument();
-        document.setIsChanged("Y");
+        document.setIsChanged(T_TRUE);
         
         Attachments attachments = new Attachments();
         attachments.setXmlnsXop("taxDocument.dtd");
@@ -556,81 +542,65 @@ public class SupplierSyncMessageTest {
     
     private AccountsPayableList buildAccountsPayableList() {
         AccountsPayableList apList = new AccountsPayableList();
-        apList.setIsChanged("T");
+        apList.setIsChanged(T_TRUE);
         
         AccountsPayable ap = new AccountsPayable();
-        ap.setIsChanged("T");
+        ap.setIsChanged(T_TRUE);
         ap.setType("accounts payable type");
         ap.setOldERPNumber("old erp number");
         
-        ERPNumber erpNumber = new ERPNumber();
-        erpNumber.setvalue("erp number");
-        erpNumber.setIsChanged("F");
-        ap.setERPNumber(erpNumber);
+        ap.setERPNumber(buildERPNumber("erp number", F_FALSE));
         
-        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
-        sqIntegrationNumber.setvalue("sqIntegrationNumber");
-        ap.setSQIntegrationNumber(sqIntegrationNumber);
+        ap.setSQIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
         
-        ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
-        refNumber.setvalue("3rd party ref number");
-        refNumber.setIsChanged("T");
-        ap.setThirdPartyRefNumber(refNumber);
+        ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         
-        Name name = new Name();
-        name.setvalue("accounts payable name");
-        name.setIsChanged("T");
-        ap.setName(name);
+        ap.setName(buildName("accounts payable name", T_TRUE));
         
-        Active active = new Active();
-        active.setvalue("active");
-        active.setIsChanged("T");
-        ap.setActive(active);
+        ap.setActive(buildActive());
         
         AssociatedAddress address = new AssociatedAddress();
         
         AddressRef ref = new AddressRef();
-        address.setIsChanged("T");
+        address.setIsChanged(T_TRUE);
         address.setType("type");
         
-        ref.setERPNumber(erpNumber);
-        ref.setSQIntegrationNumber(sqIntegrationNumber);
-        ref.setThirdPartyRefNumber(refNumber);
+        ref.setERPNumber(ap.getERPNumber());
+        ref.setSQIntegrationNumber(ap.getSQIntegrationNumber());
+        ref.setThirdPartyRefNumber(ap.getThirdPartyRefNumber());
         address.setAddressRef(ref);
         
         ap.getAssociatedAddress().add(address);
         
         Email email = new Email();
-        email.setIsChanged("T");
+        email.setIsChanged(T_TRUE);
         email.setvalue("user@cornell.edu");
         ap.setEmail(email);
         
-        IsoCurrencyCode usd = new IsoCurrencyCode("usd");
-        usd.setIsChanged("T");
-        ap.setIsoCurrencyCode(usd);
+        ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         
         JaggaerBasicValue contact = new JaggaerBasicValue("contact name");
-        contact.setIsChanged("T");
+        contact.setIsChanged(T_TRUE);
         ap.setContactName(contact);
         
         JaggaerBasicValue purpose = new JaggaerBasicValue("testing is the only purpose");
-        purpose.setIsChanged("T");
+        purpose.setIsChanged(T_TRUE);
         ap.setPurpose(purpose);;
         
         JaggaerBasicValue accountid = new JaggaerBasicValue("G234715");
-        accountid.setIsChanged("T");
+        accountid.setIsChanged(T_TRUE);
         ap.setAccountId(accountid);
         
         JaggaerBasicValue holderName = new JaggaerBasicValue("John Doe");
-        holderName.setIsChanged("T");
+        holderName.setIsChanged(T_TRUE);
         ap.setAccountHolderName(holderName);
         
         JaggaerBasicValue accountType = new JaggaerBasicValue("account type");
-        accountType.setIsChanged("T");
+        accountType.setIsChanged(T_TRUE);
         ap.setAccountType(accountType);
         
         CountryCode country = new CountryCode();
-        country.setIsChanged("T");
+        country.setIsChanged(T_TRUE);
         country.setvalue("USA");
         ap.setCountryCode(country);
         
@@ -645,76 +615,76 @@ public class SupplierSyncMessageTest {
     private BankAccount buildBankAccount() {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setType("bank account type");
-        bankAccount.setIsChanged("T");
+        bankAccount.setIsChanged(T_TRUE);
         
         JaggaerBasicValue bankName = new JaggaerBasicValue("bank name");
-        bankName.setIsChanged("T");
+        bankName.setIsChanged(T_TRUE);
         bankAccount.setBankName(bankName);
         
         JaggaerBasicValue holder = new JaggaerBasicValue("Jane Doe");
-        holder.setIsChanged("T");
+        holder.setIsChanged(T_TRUE);
         bankAccount.setAccountHoldersName(holder);
         
         JaggaerBasicValue accountNumberType = new JaggaerBasicValue("account number type");
-        accountNumberType.setIsChanged("T");
+        accountNumberType.setIsChanged(T_TRUE);
         bankAccount.setAccountNumberType(accountNumberType);
         
         JaggaerBasicValue routing = new JaggaerBasicValue("routing number");
-        routing.setIsChanged("T");
+        routing.setIsChanged(T_TRUE);
         bankAccount.setRoutingNumber(routing);
         
         JaggaerBasicValue accountNumber = new JaggaerBasicValue("bank account number");
-        accountNumber.setIsChanged("T");
+        accountNumber.setIsChanged(T_TRUE);
         bankAccount.setBankAccountNumber(accountNumber);
         
         JaggaerBasicValue iban = new JaggaerBasicValue("iban number");
-        iban.setIsChanged("T");
+        iban.setIsChanged(T_TRUE);
         bankAccount.setIbanBankAccountNumber(iban);
         
         JaggaerBasicValue depositFormat = new JaggaerBasicValue("Deposit Format");
-        depositFormat.setIsChanged("T");
+        depositFormat.setIsChanged(T_TRUE);
         bankAccount.setDirectDepositFormat(depositFormat);
         
         JaggaerBasicValue code = new JaggaerBasicValue("bank identifier code");
-        code.setIsChanged("T");
+        code.setIsChanged(T_TRUE);
         bankAccount.setBankIdentifierCode(code);
         
         JaggaerBasicValue internalRouting = new JaggaerBasicValue("international routing");
-        internalRouting.setIsChanged("T");
+        internalRouting.setIsChanged(T_TRUE);
         bankAccount.setInternationalRoutingCode(internalRouting);
         
         IsoCountryCode countryCode = new IsoCountryCode();
-        countryCode.setIsChanged("T");
+        countryCode.setIsChanged(T_TRUE);
         countryCode.setvalue("USA");
         bankAccount.setIsoCountryCode(countryCode);
         
         AddressLine1 line1 = new AddressLine1();
-        line1.setIsChanged("T");
+        line1.setIsChanged(T_TRUE);
         line1.setvalue("Address Line 1");
         bankAccount.setAddressLine1(line1);
         
         AddressLine2 line2 = new AddressLine2();
-        line2.setIsChanged("T");
+        line2.setIsChanged(T_TRUE);
         line2.setvalue("Address Line 2");
         bankAccount.setAddressLine2(line2);
         
         AddressLine3 line3 = new AddressLine3();
-        line3.setIsChanged("T");
+        line3.setIsChanged(T_TRUE);
         line3.setvalue("Address Line 3");
         bankAccount.setAddressLine3(line3);
         
         City city = new City();
-        city.setIsChanged("T");
+        city.setIsChanged(T_TRUE);
         city.setvalue("Ithaca");
         bankAccount.setCity(city);
         
         State state = new State();
-        state.setIsChanged("T");
+        state.setIsChanged(T_TRUE);
         state.setvalue("NY");
         bankAccount.setState(state);
         
         PostalCode postalCode = new PostalCode();
-        postalCode.setIsChanged("T");
+        postalCode.setIsChanged(T_TRUE);
         postalCode.setvalue("14850");
         bankAccount.setPostalCode(postalCode);
         
@@ -726,64 +696,131 @@ public class SupplierSyncMessageTest {
         FlexFields flexFields = new FlexFields();
         
         JaggaerBasicValue field1 = new JaggaerBasicValue("flex field 1");
-        field1.setIsChanged("T");
+        field1.setIsChanged(T_TRUE);
         flexFields.setFlexField1(field1);
         
         JaggaerBasicValue field2 = new JaggaerBasicValue("flex field 2");
-        field2.setIsChanged("T");
+        field2.setIsChanged(T_TRUE);
         flexFields.setFlexField2(field2);
         
         JaggaerBasicValue field3 = new JaggaerBasicValue("flex field 3");
-        field3.setIsChanged("T");
+        field3.setIsChanged(T_TRUE);
         flexFields.setFlexField3(field3);
         
         JaggaerBasicValue field4 = new JaggaerBasicValue("flex field 4");
-        field4.setIsChanged("T");
+        field4.setIsChanged(T_TRUE);
         flexFields.setFlexField4(field4);
         
         JaggaerBasicValue field5 = new JaggaerBasicValue("flex field 5");
-        field5.setIsChanged("T");
+        field5.setIsChanged(T_TRUE);
         flexFields.setFlexField5(field5);
         return flexFields;
     }
     
     private CustomElementList buildCustomElementList() {
         CustomElementList customList = new CustomElementList();
-        customList.setIsChanged("T");
+        customList.setIsChanged(T_TRUE);
         
         CustomElement element1 = new CustomElement();
-        element1.setIsActive("F");
-        element1.setIsChanged("T");
+        element1.setIsActive(F_FALSE);
+        element1.setIsChanged(T_TRUE);
         element1.setType("custom type");
         
         JaggaerBasicValue identifer1 = new JaggaerBasicValue("a custom identifer");
-        identifer1.setIsChanged("T");
+        identifer1.setIsChanged(T_TRUE);
         element1.setCustomElementIdentifier(identifer1);
         
         DisplayName name1 = new DisplayName();
-        name1.setIsChanged("T");
+        name1.setIsChanged(T_TRUE);
         name1.setvalue("a cool display name");
         element1.setDisplayName(name1);
         
         customList.getCustomElement().add(element1);
         
         CustomElement element2 = new CustomElement();
-        element2.setIsActive("T");
-        element2.setIsChanged("F");
+        element2.setIsActive(T_TRUE);
+        element2.setIsChanged(F_FALSE);
         element2.setType("custom type2");
         
         JaggaerBasicValue identifer2 = new JaggaerBasicValue("a  different custom identifer");
-        identifer2.setIsChanged("T");
+        identifer2.setIsChanged(T_TRUE);
         element2.setCustomElementIdentifier(identifer2);
         
         DisplayName name2 = new DisplayName();
-        name2.setIsChanged("T");
+        name2.setIsChanged(T_TRUE);
         name2.setvalue("a lame display name");
         element2.setDisplayName(name2);
         
         customList.getCustomElement().add(element2);
         
         return customList;
+    }
+    
+    private LocationList buildLocationList() {
+        LocationList locationList = new LocationList();
+        
+        Location location = new Location();
+        location.setIsChanged(T_TRUE);
+        location.setSupportsOrderFulfillment("Order Fulfillment(");
+        location.setOldERPNumber("old erp number");
+        
+        location.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        
+        location.setSQIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
+        
+        location.setThirdPartyRefNumber(buildThirdPartyRefNumber());
+        
+        location.setName(buildName("silly location name", T_TRUE));
+        
+        Description description = new Description();
+        description.setIsChanged(T_TRUE);
+        description.setvalue("description value");
+        location.setDescription(description);
+        
+        location.setActive(buildActive());
+        
+        LocationActive locationActive = new LocationActive();
+        locationActive.setIsChanged(T_TRUE);
+        locationActive.setvalue("location is active");
+        location.setLocationActive(locationActive);
+        
+        Primary primary = new Primary();
+        primary.setIsChanged(T_TRUE);
+        primary.setvalue("primary");
+        location.setPrimary(primary);
+        
+        PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
+        method.setIsChanged(T_TRUE);
+        method.setType("delivery method");
+        location.setPrefPurchaseOrderDeliveryMethod(method);
+        
+        LocationEffectiveDate effectiveDate = new LocationEffectiveDate();
+        effectiveDate.setIsChanged(T_TRUE);
+        effectiveDate.setvalue("02/28/2023");
+        location.setLocationEffectiveDate(effectiveDate);
+        
+        PaymentMethod paymentMethod = buildPaymentMethod();
+        
+        location.setPaymentMethod(paymentMethod);
+        
+        //locationList.getLocation().add(location);
+        return locationList;
+    }
+
+    private PaymentMethod buildPaymentMethod() {
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setType("payment type");
+        paymentMethod.setIsChanged(T_TRUE);
+        
+        POPaymentMethod poMethod = new POPaymentMethod();
+        poMethod.setIsChanged(T_TRUE);
+        
+        POPayment poPayment = new POPayment();
+        poMethod.setPOPayment(poPayment);
+        
+        paymentMethod.setPOPaymentMethod(poMethod);
+        
+        return paymentMethod;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {

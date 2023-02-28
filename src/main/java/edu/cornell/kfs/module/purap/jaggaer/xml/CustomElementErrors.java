@@ -14,15 +14,15 @@ import jakarta.xml.bind.annotation.XmlType;
 public class CustomElementErrors {
 
     @XmlElement(name = "CustomElementIdentifier", required = true)
-    protected CustomElementIdentifier customElementIdentifier;
+    protected JaggaerBasicValue customElementIdentifier;
     @XmlElement(name = "ErrorMessage")
     protected List<ErrorMessage> errorMessage;
 
-    public CustomElementIdentifier getCustomElementIdentifier() {
+    public JaggaerBasicValue getCustomElementIdentifier() {
         return customElementIdentifier;
     }
 
-    public void setCustomElementIdentifier(CustomElementIdentifier value) {
+    public void setCustomElementIdentifier(JaggaerBasicValue value) {
         this.customElementIdentifier = value;
     }
 

@@ -124,14 +124,14 @@
                     <ERPNumber isChanged="F">erp number</ERPNumber>
                     <OldERPNumber>old erp number</OldERPNumber>
                     <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
-                    <ThirdPartyRefNumber isChanged="T">3rd party ref number</ThirdPartyRefNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
                     <Name isChanged="T">accounts payable name</Name>
-                    <Active isChanged="T">active</Active>
+                    <Active>active</Active>
                     <AssociatedAddress isChanged="T" type="type">
                         <AddressRef>
                             <ERPNumber isChanged="F">erp number</ERPNumber>
                             <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
-                            <ThirdPartyRefNumber isChanged="T">3rd party ref number</ThirdPartyRefNumber>
+                            <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
                         </AddressRef>
                     </AssociatedAddress>
                     <Email isChanged="T">user@cornell.edu</Email>
@@ -173,7 +173,7 @@
                 <TaxInformation type="information type" isChanged="T">
                     <TaxDocumentName isChanged="F">document name</TaxDocumentName>
                     <TaxDocumentYear isChanged="T">2023</TaxDocumentYear>
-                    <TaxDocument isChanged="Y">
+                    <TaxDocument isChanged="T">
                         <Attachments xmlns:xop="taxDocument.dtd">
                             <Attachment id="1000" type="pdf">
                                 <AttachmentName>super cool tax document</AttachmentName>
