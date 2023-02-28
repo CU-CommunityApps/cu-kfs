@@ -29,8 +29,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -315,7 +315,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
             ConcurEventNotificationProcessingResultsDTO oldResultsDTO, int expectedVersionNumber) {
         ConcurTestWorkflowInfo newWorkflowInfo = mockEndpoint.getWorkflowInfoForTravelRequest(requestUuid);
         boolean requestValid = oldResultsDTO.getProcessingResults() ==
-                ConcurEventNotificationVersion2ProcessingResults.validAccounts;
+                ConcurEventNotificationResults.validAccounts;
         String expectedWorkflowAction = ConcurWorkflowActions.APPROVE;
         
         assertNotNull(newWorkflowInfo, "Workflow action data should have been present for request " + requestUuid);
@@ -353,19 +353,19 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
     private void assertResultsDTOHasExpectedData(WorkflowOutcome expectedOutcome,
             ConcurEventNotificationProcessingResultsDTO oldResultsDTO,
             ConcurEventNotificationProcessingResultsDTO newResultsDTO) {
-        assertEquals(ConcurEventNoticationVersion2EventType.TravelRequest, newResultsDTO.getEventType(),
+        assertEquals(ConcurEventNotificationType.TravelRequest, newResultsDTO.getEventType(),
                 "Wrong event type");
         assertEquals(oldResultsDTO.getReportNumber(), newResultsDTO.getReportNumber(), "Wrong Request ID");
         assertEquals(oldResultsDTO.getTravelerName(), newResultsDTO.getTravelerName(), "Wrong traveler name");
         assertTrue(StringUtils.isBlank(newResultsDTO.getTravelerEmail()), "Traveler email should have been blank");
         
-        ConcurEventNotificationVersion2ProcessingResults expectedProcessingResults =
+        ConcurEventNotificationResults expectedProcessingResults =
                 (expectedOutcome == WorkflowOutcome.ERROR_ANALYZING_RESPONSE)
-                        ? ConcurEventNotificationVersion2ProcessingResults.processingError
+                        ? ConcurEventNotificationResults.processingError
                         : oldResultsDTO.getProcessingResults();
         
         assertEquals(expectedProcessingResults, newResultsDTO.getProcessingResults(), "Wrong processing results");
-        if (expectedProcessingResults == ConcurEventNotificationVersion2ProcessingResults.validAccounts) {
+        if (expectedProcessingResults == ConcurEventNotificationResults.validAccounts) {
             assertTrue(CollectionUtils.isEmpty(newResultsDTO.getMessages()),
                     "No error messages should have been present for a valid-accounts result");
         } else {
@@ -386,10 +386,10 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
             RequestV4DetailFixture requestFixture) {
         if (requestFixture.isExpectedToPassAccountValidation()) {
             return createProcessingResultsForRequest(requestFixture,
-                    ConcurEventNotificationVersion2ProcessingResults.validAccounts);
+                    ConcurEventNotificationResults.validAccounts);
         } else {
             return createProcessingResultsForRequest(requestFixture,
-                    ConcurEventNotificationVersion2ProcessingResults.invalidAccounts,
+                    ConcurEventNotificationResults.invalidAccounts,
                     MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT,
                     ConcurRequestV4ServiceImpl.APPROVE_DESPITE_ERROR_MESSAGE);
         }
@@ -398,16 +398,16 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
     private ConcurEventNotificationProcessingResultsDTO createProcessingErrorResultsForRequest(
             RequestV4DetailFixture requestFixture) {
         return createProcessingResultsForRequest(requestFixture,
-                ConcurEventNotificationVersion2ProcessingResults.processingError,
+                ConcurEventNotificationResults.processingError,
                 ConcurRequestV4ServiceImpl.PROCESSING_ERROR_MESSAGE,
                 ConcurRequestV4ServiceImpl.APPROVE_DESPITE_ERROR_MESSAGE);
     }
 
     private ConcurEventNotificationProcessingResultsDTO createProcessingResultsForRequest(
-            RequestV4DetailFixture requestFixture, ConcurEventNotificationVersion2ProcessingResults requestResults,
+            RequestV4DetailFixture requestFixture, ConcurEventNotificationResults requestResults,
             String... messages) {
         return new ConcurEventNotificationProcessingResultsDTO(
-                ConcurEventNoticationVersion2EventType.TravelRequest, requestResults, requestFixture.requestId,
+                ConcurEventNotificationType.TravelRequest, requestResults, requestFixture.requestId,
                 requestFixture.name, requestFixture.approvalStatus.name,
                 requestFixture.owner.getFullName(), KFSConstants.EMPTY_STRING, Arrays.asList(messages));
     }

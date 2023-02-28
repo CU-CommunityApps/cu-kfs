@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2ReportService;
@@ -49,8 +49,8 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
         reportWriterService.writeFormattedMessageLine(MessageFormat.format(sectionOpening, "Summary"));
 
         String summaryLineFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SUMMARY_LINE);
-        for (ConcurEventNoticationVersion2EventType eventType : ConcurEventNoticationVersion2EventType.values()) {
-            for (ConcurEventNotificationVersion2ProcessingResults resultsType : ConcurEventNotificationVersion2ProcessingResults.values()) {
+        for (ConcurEventNotificationType eventType : ConcurEventNotificationType.values()) {
+            for (ConcurEventNotificationResults resultsType : ConcurEventNotificationResults.values()) {
                 List<ConcurEventNotificationProcessingResultsDTO> filteredDtos = filterResultsDto(processingResults,
                         eventType, resultsType);
                 reportWriterService.writeFormattedMessageLine(MessageFormat.format(summaryLineFormat,
@@ -66,8 +66,8 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     
     private List<ConcurEventNotificationProcessingResultsDTO> filterResultsDto(
             List<ConcurEventNotificationProcessingResultsDTO> processingResults,
-            ConcurEventNoticationVersion2EventType eventType,
-            ConcurEventNotificationVersion2ProcessingResults resultsType) {
+            ConcurEventNotificationType eventType,
+            ConcurEventNotificationResults resultsType) {
         return processingResults.stream()
                 .filter(result -> result.getEventType() == eventType && result.getProcessingResults() == resultsType)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -75,8 +75,8 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     
     private void buildDetailSections(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
         String detailSummaryFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_SUMMARY);
-        for (ConcurEventNoticationVersion2EventType eventType : ConcurEventNoticationVersion2EventType.values()) {
-            for (ConcurEventNotificationVersion2ProcessingResults resultsType : ConcurEventNotificationVersion2ProcessingResults.values()) {
+        for (ConcurEventNotificationType eventType : ConcurEventNotificationType.values()) {
+            for (ConcurEventNotificationResults resultsType : ConcurEventNotificationResults.values()) {
                 List<ConcurEventNotificationProcessingResultsDTO> filteredDtos = filterResultsDto(processingResults,
                         eventType, resultsType);
                 if (CollectionUtils.isNotEmpty(filteredDtos)) {
@@ -88,7 +88,7 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
     }
 
     private void buildDetailSection(List<ConcurEventNotificationProcessingResultsDTO> filteredDtos, String sectionTitle,
-                                    ConcurEventNoticationVersion2EventType eventType) {
+                                    ConcurEventNotificationType eventType) {
         String detailItemFormat = configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_DETAIL_ITEM);
         
         reportWriterService.writeFormattedMessageLine(MessageFormat.format(configurationService.getPropertyValueAsString(

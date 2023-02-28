@@ -15,8 +15,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.http.HttpMethod;
 
 import edu.cornell.kfs.concur.ConcurConstants;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -130,7 +130,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             String travelerEmail) {
         boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
-        ConcurEventNotificationVersion2ProcessingResults reportResults = ConcurEventNotificationVersion2ProcessingResults.validAccounts;
+        ConcurEventNotificationResults reportResults = ConcurEventNotificationResults.validAccounts;
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
@@ -140,16 +140,16 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 validationMessages.addAll(results.getMessages());
             }
             if (!reportValid) {
-                reportResults = ConcurEventNotificationVersion2ProcessingResults.invalidAccounts;
+                reportResults = ConcurEventNotificationResults.invalidAccounts;
             }
         } catch (Exception e) {
             reportValid = false;
-            reportResults = ConcurEventNotificationVersion2ProcessingResults.processingError;
+            reportResults = ConcurEventNotificationResults.processingError;
             validationMessages.add("Encountered an error validating this report");
             LOG.error("validateExpenseAllocations, had an error validating report " + reportNumber, e);
         }
         
-        ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNoticationVersion2EventType.ExpenseReport,
+        ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNotificationType.ExpenseReport,
                 reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
         processingResults.add(resultsDTO);
         updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);

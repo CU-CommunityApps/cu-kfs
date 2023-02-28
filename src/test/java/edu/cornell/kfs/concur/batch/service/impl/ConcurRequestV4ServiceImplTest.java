@@ -39,7 +39,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -536,7 +536,7 @@ public class ConcurRequestV4ServiceImplTest {
     private void assertRequestWasValidatedAsExpected(
             RequestV4DetailFixture expectedResult, ConcurEventNotificationProcessingResultsDTO actualResult) {
         assertEquals(expectedResult.requestId, actualResult.getReportNumber(), "Wrong Request ID for result");
-        assertEquals(ConcurEventNoticationVersion2EventType.TravelRequest, actualResult.getEventType(),
+        assertEquals(ConcurEventNotificationType.TravelRequest, actualResult.getEventType(),
                 "Wrong validation event type for result");
         assertEquals(expectedResult.getExpectedProcessingResult(), actualResult.getProcessingResults(),
                 "Wrong validation outcome for result");
