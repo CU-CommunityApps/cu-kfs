@@ -25,7 +25,7 @@ public class PrefPurchaseOrderDeliveryMethod {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String type;
     @XmlElements({ @XmlElement(name = "Email", type = Email.class), @XmlElement(name = "Fax", type = Fax.class) })
-    protected List<Object> emailOrFax;
+    protected List<PrefPurchaseOrderDeliveryMethodEmailOrFaxInterface> emailOrFax;
 
     public String getIsChanged() {
         return isChanged;
@@ -43,9 +43,9 @@ public class PrefPurchaseOrderDeliveryMethod {
         this.type = value;
     }
 
-    public List<Object> getEmailOrFax() {
+    public List<PrefPurchaseOrderDeliveryMethodEmailOrFaxInterface> getEmailOrFax() {
         if (emailOrFax == null) {
-            emailOrFax = new ArrayList<Object>();
+            emailOrFax = new ArrayList<PrefPurchaseOrderDeliveryMethodEmailOrFaxInterface>();
         }
         return this.emailOrFax;
     }

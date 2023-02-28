@@ -35,13 +35,13 @@ public class Location {
     @XmlElement(name = "Name")
     protected Name name;
     @XmlElement(name = "Description")
-    protected Description description;
+    protected JaggaerBasicValue description;
     @XmlElement(name = "Active")
     protected Active active;
     @XmlElement(name = "LocationActive")
-    protected LocationActive locationActive;
+    protected JaggaerBasicValue locationActive;
     @XmlElement(name = "Primary")
-    protected Primary primary;
+    protected JaggaerBasicValue primary;
     @XmlElement(name = "PrefPurchaseOrderDeliveryMethod")
     protected PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod;
     @XmlElement(name = "LocationEffectiveDate")
@@ -123,11 +123,11 @@ public class Location {
         this.name = value;
     }
 
-    public Description getDescription() {
+    public JaggaerBasicValue getDescription() {
         return description;
     }
 
-    public void setDescription(Description value) {
+    public void setDescription(JaggaerBasicValue value) {
         this.description = value;
     }
 
@@ -139,19 +139,19 @@ public class Location {
         this.active = value;
     }
 
-    public LocationActive getLocationActive() {
+    public JaggaerBasicValue getLocationActive() {
         return locationActive;
     }
 
-    public void setLocationActive(LocationActive value) {
+    public void setLocationActive(JaggaerBasicValue value) {
         this.locationActive = value;
     }
 
-    public Primary getPrimary() {
+    public JaggaerBasicValue getPrimary() {
         return primary;
     }
 
-    public void setPrimary(Primary value) {
+    public void setPrimary(JaggaerBasicValue value) {
         this.primary = value;
     }
 

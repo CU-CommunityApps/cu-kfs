@@ -575,10 +575,7 @@ public class SupplierSyncMessageTest {
         
         ap.getAssociatedAddress().add(address);
         
-        Email email = new Email();
-        email.setIsChanged(T_TRUE);
-        email.setvalue("user@cornell.edu");
-        ap.setEmail(email);
+        ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
         
         ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         
@@ -775,30 +772,24 @@ public class SupplierSyncMessageTest {
         
         location.setName(buildName("silly location name", T_TRUE));
         
-        Description description = new Description();
+        JaggaerBasicValue description = new JaggaerBasicValue("description value");
         description.setIsChanged(T_TRUE);
-        description.setvalue("description value");
         location.setDescription(description);
         
         location.setActive(buildActive());
         
-        LocationActive locationActive = new LocationActive();
+        JaggaerBasicValue locationActive = new JaggaerBasicValue("location is active");
         locationActive.setIsChanged(T_TRUE);
-        locationActive.setvalue("location is active");
         location.setLocationActive(locationActive);
         
-        Primary primary = new Primary();
+        JaggaerBasicValue primary = new JaggaerBasicValue("primary");
         primary.setIsChanged(T_TRUE);
-        primary.setvalue("primary");
         location.setPrimary(primary);
         
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setIsChanged(T_TRUE);
         method.setType("delivery method");
-        Email email = new Email();
-        email.setIsChanged(T_TRUE);
-        email.setvalue("foo@bar.com");
-        method.getEmailOrFax().add(email);
+        method.getEmailOrFax().add(buildEmail("foo@bar.com", T_TRUE));
         Fax fax = new Fax();
         fax.setIsChanged(F_FALSE);
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
@@ -815,6 +806,13 @@ public class SupplierSyncMessageTest {
         locationList.getLocation().add(location);
         return locationList;
     }
+    
+    private Email buildEmail(String emailAddress, String changed) {
+        Email email = new Email();
+        email.setIsChanged(changed);
+        email.setvalue(emailAddress);
+        return email;
+    }
 
     private PaymentMethod buildPaymentMethod() {
         PaymentMethod paymentMethod = new PaymentMethod();
@@ -824,10 +822,11 @@ public class SupplierSyncMessageTest {
         
         BlanketPOPaymentMethod blanketMethod = new BlanketPOPaymentMethod();
         blanketMethod.setIsChanged(T_TRUE);
-        BlanketPONumber blanketNumber = new BlanketPONumber();
+        
+        JaggaerBasicValue blanketNumber = new JaggaerBasicValue("blanket number");
         blanketNumber.setIsChanged(T_TRUE);
-        blanketNumber.setvalue("blanket number");
         blanketMethod.setBlanketPONumber(blanketNumber);
+        
         paymentMethod.setBlanketPOPaymentMethod(blanketMethod);
         
         return paymentMethod;
@@ -845,16 +844,14 @@ public class SupplierSyncMessageTest {
         selection.setIsChanged(T_TRUE);
         selection.setType("selection type");
         
-        NumberWheel wheel = new NumberWheel();
+        JaggaerBasicValue wheel = new JaggaerBasicValue("wheel");
         wheel.setIsChanged(T_TRUE);
-        wheel.setvalue("wheel");
         selection.setNumberWheel(wheel);
         
         poPayment.setPONumberSelection(selection);
         
-        AllowFreeForm form = new AllowFreeForm();
+        JaggaerBasicValue form = new JaggaerBasicValue("allow free form");
         form.setIsChanged(T_TRUE);
-        form.setvalue("all free form");
         poPayment.setAllowFreeForm(form);
         
         

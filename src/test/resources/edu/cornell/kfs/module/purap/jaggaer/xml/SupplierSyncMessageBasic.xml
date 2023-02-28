@@ -137,7 +137,7 @@
                                 <PONumberSelection type="selection type" isChanged="T">
                                     <NumberWheel isChanged="T">wheel</NumberWheel>
                                 </PONumberSelection>
-                                <AllowFreeForm isChanged="T">all free form</AllowFreeForm>
+                                <AllowFreeForm isChanged="T">allow free form</AllowFreeForm>
                             </POPayment>
                         </POPaymentMethod>
                         <BlanketPOPaymentMethod isChanged="T">

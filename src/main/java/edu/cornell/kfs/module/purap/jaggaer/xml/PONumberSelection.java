@@ -21,7 +21,7 @@ public class PONumberSelection {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "NumberWheel")
-    protected NumberWheel numberWheel;
+    protected JaggaerBasicValue numberWheel;
 
     public String getType() {
         return type;
@@ -39,11 +39,11 @@ public class PONumberSelection {
         this.isChanged = value;
     }
 
-    public NumberWheel getNumberWheel() {
+    public JaggaerBasicValue getNumberWheel() {
         return numberWheel;
     }
 
-    public void setNumberWheel(NumberWheel value) {
+    public void setNumberWheel(JaggaerBasicValue value) {
         this.numberWheel = value;
     }
 

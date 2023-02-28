@@ -22,7 +22,7 @@ public class POPayment {
     @XmlElement(name = "PONumberSelection")
     protected PONumberSelection poNumberSelection;
     @XmlElement(name = "AllowFreeForm", required = true)
-    protected AllowFreeForm allowFreeForm;
+    protected JaggaerBasicValue allowFreeForm;
 
     public String getIsChanged() {
         return isChanged;
@@ -48,11 +48,11 @@ public class POPayment {
         this.poNumberSelection = value;
     }
 
-    public AllowFreeForm getAllowFreeForm() {
+    public JaggaerBasicValue getAllowFreeForm() {
         return allowFreeForm;
     }
 
-    public void setAllowFreeForm(AllowFreeForm value) {
+    public void setAllowFreeForm(JaggaerBasicValue value) {
         this.allowFreeForm = value;
     }
 
