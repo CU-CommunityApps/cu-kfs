@@ -101,8 +101,71 @@
                 <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
             </EnabledCurrencyList>
             <SupplierKeywords>keyword</SupplierKeywords>
-            <AddressList/>
-            <PrimaryAddressList/>
+            <AddressList isChanged="T">
+                <Address type="home address" isChanged="T">
+                    <ERPNumber isChanged="T">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">address name</Name>
+                    <Active>active</Active>
+                    <PrefPurchaseOrderDeliveryMethod isChanged="T" type="delivery method">
+                        <Email isChanged="T">foo@bar.com</Email>
+                        <Fax isChanged="F">
+                            <TelephoneNumber isChanged="T">
+                                <CountryCode isChanged="T">USA</CountryCode>
+                                <AreaCode isChanged="T">607</AreaCode>
+                                <Number isChanged="T">255*9900</Number>
+                                <Extension isChanged="T">987</Extension>
+                            </TelephoneNumber>
+                        </Fax>
+                    </PrefPurchaseOrderDeliveryMethod>
+                    <AddressLine1 isChanged="T">line 1</AddressLine1>
+                    <AddressLine2 isChanged="T">line 2</AddressLine2>
+                    <AddressLine3 isChanged="T">line 3</AddressLine3>
+                    <City isChanged="T">Ithaca</City>
+                    <State isChanged="T">NY</State>
+                    <PostalCode isChanged="T">14850</PostalCode>
+                    <IsoCountryCode isChanged="T">USA</IsoCountryCode>
+                    <Phone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Phone>
+                    <TollFreePhone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </TollFreePhone>
+                    <Fax isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Fax>
+                    <Notes isChanged="T">just a simple note</Notes>
+                    <AssignedBusinessUnitsList isChanged="T">
+                        <BusinessUnitInternalName isChanged="T" preferredForThisBusinessUnit="is preferred">testing name</BusinessUnitInternalName>
+                    </AssignedBusinessUnitsList>
+                </Address>
+            </AddressList>
+            <PrimaryAddressList isChanged="T">
+                <AssociatedAddress isChanged="T" type="adddress type">
+                    <AddressRef>
+                        <ERPNumber isChanged="T">erp number</ERPNumber>
+                        <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
+                        <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    </AddressRef>
+                </AssociatedAddress>
+            </PrimaryAddressList>
             <ContactList isChanged="T">
                 <Contact type="contact type" isChanged="T">
                     <ERPNumber isChanged="T">erp number</ERPNumber>

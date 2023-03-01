@@ -178,12 +178,8 @@ public class SupplierSyncMessageTest {
         supplier.setClassificationList(buildClassificationList());
         supplier.setPrimaryContactList(buildPrimaryContactList());
         supplier.setContactList(buildContactList());
-
-        AddressList addressList = new AddressList();
-        supplier.setAddressList(addressList);
-
-        PrimaryAddressList addresses = new PrimaryAddressList();
-        supplier.setPrimaryAddressList(addresses);
+        supplier.setPrimaryAddressList(buildPrimaryAddressList());
+        supplier.setAddressList(buildAddressList());
 
         return supplier;
     }
@@ -771,15 +767,7 @@ public class SupplierSyncMessageTest {
         primary.setIsChanged(T_TRUE);
         location.setPrimary(primary);
         
-        PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
-        method.setIsChanged(T_TRUE);
-        method.setType("delivery method");
-        method.getEmailOrFax().add(buildEmail("foo@bar.com", T_TRUE));
-        Fax fax = new Fax();
-        fax.setIsChanged(F_FALSE);
-        fax.setTelephoneNumber(buildBasicTelephoneNumber());
-        method.getEmailOrFax().add(fax);
-        location.setPrefPurchaseOrderDeliveryMethod(method);
+        location.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
         
         LocationEffectiveDate effectiveDate = new LocationEffectiveDate();
         effectiveDate.setIsChanged(T_TRUE);
@@ -790,6 +778,18 @@ public class SupplierSyncMessageTest {
         
         locationList.getLocation().add(location);
         return locationList;
+    }
+
+    private PrefPurchaseOrderDeliveryMethod buildPrefPurchaseOrderDeliveryMethod() {
+        PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
+        method.setIsChanged(T_TRUE);
+        method.setType("delivery method");
+        method.getEmailOrFax().add(buildEmail("foo@bar.com", T_TRUE));
+        Fax fax = new Fax();
+        fax.setIsChanged(F_FALSE);
+        fax.setTelephoneNumber(buildBasicTelephoneNumber());
+        method.getEmailOrFax().add(fax);
+        return method;
     }
     
     private Email buildEmail(String emailAddress, String changed) {
@@ -981,6 +981,110 @@ public class SupplierSyncMessageTest {
         
         contactList.getContact().add(contact);
         return contactList;
+    }
+    
+    private PrimaryAddressList buildPrimaryAddressList() {
+        PrimaryAddressList addressList = new PrimaryAddressList();
+        addressList.setIsChanged(T_TRUE);
+        
+        AssociatedAddress address1 = new AssociatedAddress();
+        address1.setIsChanged(T_TRUE);
+        address1.setType("adddress type");
+        
+        AddressRef ref = new AddressRef();
+        ref.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        ref.setSQIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
+        address1.setAddressRef(ref);
+        
+        addressList.getAssociatedAddress().add(address1);        
+        return addressList;
+    }
+    
+    private AddressList buildAddressList() {
+        AddressList addressList = new AddressList();
+        addressList.setIsChanged(T_TRUE);        
+        
+        Address address = new Address();
+        address.setIsChanged(T_TRUE);
+        address.setType("home address");
+        address.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        address.setOldERPNumber("old erp number");
+        address.setSQIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        address.setThirdPartyRefNumber(buildThirdPartyRefNumber());
+        address.setName(buildName("address name", T_TRUE));
+        address.setActive(buildActive());
+        address.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
+        
+        AddressLine1 line1 = new AddressLine1();
+        line1.setIsChanged(T_TRUE);
+        line1.setvalue("line 1");
+        address.setAddressLine1(line1);
+        
+        AddressLine2 line2 = new AddressLine2();
+        line2.setIsChanged(T_TRUE);
+        line2.setvalue("line 2");
+        address.setAddressLine2(line2);
+        
+        AddressLine3 line3 = new AddressLine3();
+        line3.setIsChanged(T_TRUE);
+        line3.setvalue("line 3");
+        address.setAddressLine3(line3);
+        
+        City city = new City();
+        city.setIsChanged(T_TRUE);
+        city.setvalue("Ithaca");
+        address.setCity(city);
+        
+        State state = new State();
+        state.setIsChanged(T_TRUE);
+        state.setvalue("NY");
+        address.setState(state);
+        
+        PostalCode postal = new PostalCode();
+        postal.setIsChanged(T_TRUE);
+        postal.setvalue("14850");
+        address.setPostalCode(postal);
+        
+        IsoCountryCode country = new IsoCountryCode();
+        country.setIsChanged(T_TRUE);
+        country.setvalue("USA");
+        address.setIsoCountryCode(country);
+        
+        Phone phone = new Phone();
+        phone.setIsChanged(T_TRUE);
+        phone.setTelephoneNumber(buildBasicTelephoneNumber());
+        address.setPhone(phone);
+        
+        TollFreePhone tollFree = new TollFreePhone();
+        tollFree.setIsChanged(T_TRUE);
+        tollFree.setTelephoneNumber(buildBasicTelephoneNumber());
+        address.setTollFreePhone(tollFree);
+        
+        Fax fax = new Fax();
+        fax.setIsChanged(T_TRUE);
+        fax.setTelephoneNumber(buildBasicTelephoneNumber());
+        address.setFax(fax);
+        
+        Notes notes = new Notes();
+        notes.setIsChanged(T_TRUE);
+        notes.setvalue("just a simple note");
+        address.setNotes(notes);
+        
+        AssignedBusinessUnitsList businessList = new AssignedBusinessUnitsList();
+        businessList.setIsChanged(T_TRUE);
+        
+        BusinessUnitInternalName internalName = new BusinessUnitInternalName();
+        internalName.setIsChanged(T_TRUE);
+        internalName.setPreferredForThisBusinessUnit("is preferred");
+        internalName.setvalue("testing name");
+        
+        businessList.getBusinessUnitInternalName().add(internalName);
+        
+        address.setAssignedBusinessUnitsList(businessList);
+        addressList.getAddress().add(address);
+        
+        return addressList;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {
