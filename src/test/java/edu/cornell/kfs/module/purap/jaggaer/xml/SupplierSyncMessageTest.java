@@ -115,25 +115,25 @@ public class SupplierSyncMessageTest {
 
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict", T_TRUE));
         supplier.setSic(new JaggaerBasicValue("SIC", F_FALSE));
-        supplier.setSupplierKeywords(new JaggaerBasicValue("keyword", null));
-        supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov", null));
-        supplier.setAustinTetra(new JaggaerBasicValue("austin", null));
-        supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity", null));
+        supplier.setSupplierKeywords(new JaggaerBasicValue("keyword"));
+        supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov"));
+        supplier.setAustinTetra(new JaggaerBasicValue("austin"));
+        supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity"));
         supplier.setVatExempt(new JaggaerBasicValue("VAT", null));
-        supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID", null));
-        supplier.setSupplierShareholders(new JaggaerBasicValue("holders", null));
-        supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number", null));
-        supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat", null));
-        supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court", null));
+        supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID"));
+        supplier.setSupplierShareholders(new JaggaerBasicValue("holders"));
+        supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number"));
+        supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat"));
+        supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court"));
         supplier.setSupplierTaxRepresentativeId(new JaggaerBasicValue("tax rep ID", T_TRUE));
-        supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status", null));
-        supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe", null));
-        supplier.setYearEstablished(new JaggaerBasicValue("1977", null));
-        supplier.setNumberOfEmployees(new JaggaerBasicValue("69", null));
-        supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding", null));
-        supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id", null));
-        supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type", null));
-        supplier.setLegalStructure(new JaggaerBasicValue("legal structure", null));
+        supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status"));
+        supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe"));
+        supplier.setYearEstablished(new JaggaerBasicValue("1977"));
+        supplier.setNumberOfEmployees(new JaggaerBasicValue("69"));
+        supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding"));
+        supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id"));
+        supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type"));
+        supplier.setLegalStructure(new JaggaerBasicValue("legal structure"));
 
         DUNS duns = new DUNS();
         duns.setvalue("duns");
@@ -506,10 +506,7 @@ public class SupplierSyncMessageTest {
         ap.setPurpose(new JaggaerBasicValue("testing is the only purpose", T_TRUE));;
         ap.setAccountId(new JaggaerBasicValue("G234715", T_TRUE));
         ap.setAccountHolderName(new JaggaerBasicValue("John Doe", T_TRUE));
-        
-        JaggaerBasicValue accountType = new JaggaerBasicValue("account type");
-        accountType.setIsChanged(T_TRUE);
-        ap.setAccountType(accountType);
+        ap.setAccountType(new JaggaerBasicValue("account type", T_TRUE));
         
         CountryCode country = new CountryCode();
         country.setIsChanged(T_TRUE);
@@ -529,41 +526,15 @@ public class SupplierSyncMessageTest {
         bankAccount.setType("bank account type");
         bankAccount.setIsChanged(T_TRUE);
         
-        JaggaerBasicValue bankName = new JaggaerBasicValue("bank name");
-        bankName.setIsChanged(T_TRUE);
-        bankAccount.setBankName(bankName);
-        
-        JaggaerBasicValue holder = new JaggaerBasicValue("Jane Doe");
-        holder.setIsChanged(T_TRUE);
-        bankAccount.setAccountHoldersName(holder);
-        
-        JaggaerBasicValue accountNumberType = new JaggaerBasicValue("account number type");
-        accountNumberType.setIsChanged(T_TRUE);
-        bankAccount.setAccountNumberType(accountNumberType);
-        
-        JaggaerBasicValue routing = new JaggaerBasicValue("routing number");
-        routing.setIsChanged(T_TRUE);
-        bankAccount.setRoutingNumber(routing);
-        
-        JaggaerBasicValue accountNumber = new JaggaerBasicValue("bank account number");
-        accountNumber.setIsChanged(T_TRUE);
-        bankAccount.setBankAccountNumber(accountNumber);
-        
-        JaggaerBasicValue iban = new JaggaerBasicValue("iban number");
-        iban.setIsChanged(T_TRUE);
-        bankAccount.setIbanBankAccountNumber(iban);
-        
-        JaggaerBasicValue depositFormat = new JaggaerBasicValue("Deposit Format");
-        depositFormat.setIsChanged(T_TRUE);
-        bankAccount.setDirectDepositFormat(depositFormat);
-        
-        JaggaerBasicValue code = new JaggaerBasicValue("bank identifier code");
-        code.setIsChanged(T_TRUE);
-        bankAccount.setBankIdentifierCode(code);
-        
-        JaggaerBasicValue internalRouting = new JaggaerBasicValue("international routing");
-        internalRouting.setIsChanged(T_TRUE);
-        bankAccount.setInternationalRoutingCode(internalRouting);
+        bankAccount.setBankName(new JaggaerBasicValue("bank name", T_TRUE));
+        bankAccount.setAccountHoldersName(new JaggaerBasicValue("Jane Doe", T_TRUE));
+        bankAccount.setAccountNumberType(new JaggaerBasicValue("account number type", T_TRUE));
+        bankAccount.setRoutingNumber(new JaggaerBasicValue("routing number", T_TRUE));
+        bankAccount.setBankAccountNumber(new JaggaerBasicValue("bank account number", T_TRUE));
+        bankAccount.setIbanBankAccountNumber(new JaggaerBasicValue("iban number", T_TRUE));
+        bankAccount.setDirectDepositFormat(new JaggaerBasicValue("Deposit Format", T_TRUE));
+        bankAccount.setBankIdentifierCode(new JaggaerBasicValue("bank identifier code", T_TRUE));
+        bankAccount.setInternationalRoutingCode(new JaggaerBasicValue("international routing", T_TRUE));
         
         IsoCountryCode countryCode = new IsoCountryCode();
         countryCode.setIsChanged(T_TRUE);
@@ -595,26 +566,11 @@ public class SupplierSyncMessageTest {
 
     private FlexFields buildFlexFields() {
         FlexFields flexFields = new FlexFields();
-        
-        JaggaerBasicValue field1 = new JaggaerBasicValue("flex field 1");
-        field1.setIsChanged(T_TRUE);
-        flexFields.setFlexField1(field1);
-        
-        JaggaerBasicValue field2 = new JaggaerBasicValue("flex field 2");
-        field2.setIsChanged(T_TRUE);
-        flexFields.setFlexField2(field2);
-        
-        JaggaerBasicValue field3 = new JaggaerBasicValue("flex field 3");
-        field3.setIsChanged(T_TRUE);
-        flexFields.setFlexField3(field3);
-        
-        JaggaerBasicValue field4 = new JaggaerBasicValue("flex field 4");
-        field4.setIsChanged(T_TRUE);
-        flexFields.setFlexField4(field4);
-        
-        JaggaerBasicValue field5 = new JaggaerBasicValue("flex field 5");
-        field5.setIsChanged(T_TRUE);
-        flexFields.setFlexField5(field5);
+        flexFields.setFlexField1(new JaggaerBasicValue("flex field 1", T_TRUE));
+        flexFields.setFlexField2(new JaggaerBasicValue("flex field 2", T_TRUE));
+        flexFields.setFlexField3(new JaggaerBasicValue("flex field 3", T_TRUE));
+        flexFields.setFlexField4(new JaggaerBasicValue("flex field 4", T_TRUE));
+        flexFields.setFlexField5(new JaggaerBasicValue("flex field 5", T_TRUE));
         return flexFields;
     }
     
@@ -627,12 +583,8 @@ public class SupplierSyncMessageTest {
         element1.setIsChanged(T_TRUE);
         element1.setType("custom type");
         
-        JaggaerBasicValue identifer1 = new JaggaerBasicValue("a custom identifer");
-        identifer1.setIsChanged(T_TRUE);
-        element1.setCustomElementIdentifier(identifer1);
-        
+        element1.setCustomElementIdentifier(new JaggaerBasicValue("a custom identifer", T_TRUE));
         element1.setDisplayName(buildDisplayName("a cool display name", T_TRUE));
-        
         customList.getCustomElement().add(element1);
         
         CustomElement element2 = new CustomElement();
@@ -640,12 +592,8 @@ public class SupplierSyncMessageTest {
         element2.setIsChanged(F_FALSE);
         element2.setType("custom type2");
         
-        JaggaerBasicValue identifer2 = new JaggaerBasicValue("a  different custom identifer");
-        identifer2.setIsChanged(T_TRUE);
-        element2.setCustomElementIdentifier(identifer2);
-        
+        element2.setCustomElementIdentifier(new JaggaerBasicValue("a  different custom identifer", T_TRUE));
         element2.setDisplayName(buildDisplayName("a lame display name", T_TRUE));
-        
         customList.getCustomElement().add(element2);
         
         return customList;
@@ -674,20 +622,10 @@ public class SupplierSyncMessageTest {
         
         location.setName(buildName("silly location name", T_TRUE));
         
-        JaggaerBasicValue description = new JaggaerBasicValue("description value");
-        description.setIsChanged(T_TRUE);
-        location.setDescription(description);
-        
+        location.setDescription(new JaggaerBasicValue("description value", T_TRUE));
         location.setActive(buildActive());
-        
-        JaggaerBasicValue locationActive = new JaggaerBasicValue("location is active");
-        locationActive.setIsChanged(T_TRUE);
-        location.setLocationActive(locationActive);
-        
-        JaggaerBasicValue primary = new JaggaerBasicValue("primary");
-        primary.setIsChanged(T_TRUE);
-        location.setPrimary(primary);
-        
+        location.setLocationActive(new JaggaerBasicValue("location is active", T_TRUE));
+        location.setPrimary(new JaggaerBasicValue("primary", T_TRUE));
         location.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
         
         LocationEffectiveDate effectiveDate = new LocationEffectiveDate();
@@ -728,13 +666,9 @@ public class SupplierSyncMessageTest {
         
         BlanketPOPaymentMethod blanketMethod = new BlanketPOPaymentMethod();
         blanketMethod.setIsChanged(T_TRUE);
-        
-        JaggaerBasicValue blanketNumber = new JaggaerBasicValue("blanket number");
-        blanketNumber.setIsChanged(T_TRUE);
-        blanketMethod.setBlanketPONumber(blanketNumber);
+        blanketMethod.setBlanketPONumber(new JaggaerBasicValue("blanket number", T_TRUE));
         
         paymentMethod.setBlanketPOPaymentMethod(blanketMethod);
-        
         return paymentMethod;
     }
 
@@ -750,17 +684,10 @@ public class SupplierSyncMessageTest {
         selection.setIsChanged(T_TRUE);
         selection.setType("selection type");
         
-        JaggaerBasicValue wheel = new JaggaerBasicValue("wheel");
-        wheel.setIsChanged(T_TRUE);
-        selection.setNumberWheel(wheel);
-        
+        selection.setNumberWheel(new JaggaerBasicValue("wheel", T_TRUE));
         poPayment.setPONumberSelection(selection);
-        
-        JaggaerBasicValue form = new JaggaerBasicValue("allow free form");
-        form.setIsChanged(T_TRUE);
-        poPayment.setAllowFreeForm(form);
-        
-        
+        poPayment.setAllowFreeForm(new JaggaerBasicValue("allow free form", T_TRUE));
+
         poPaymentMethod.setPOPayment(poPayment);
         
         return poPaymentMethod;
@@ -773,10 +700,7 @@ public class SupplierSyncMessageTest {
         DiversityClassification diversity = new DiversityClassification();
         diversity.setIsChanged(T_TRUE);
         
-        JaggaerBasicValue name = new JaggaerBasicValue("internal name");
-        name.setIsChanged(T_TRUE);
-        diversity.setInternalName(name);;
-        
+        diversity.setInternalName(new JaggaerBasicValue("internal name", T_TRUE));;
         diversity.setDisplayName(buildDisplayName("display name", F_FALSE));
         
         DD214Certificate ddCertificate = new DD214Certificate();
@@ -812,18 +736,14 @@ public class SupplierSyncMessageTest {
         classification1.setIsChanged(T_TRUE);
         classification1.setDisplayName(buildDisplayName("classification 1 name", T_TRUE));
         
-        JaggaerBasicValue name1 = new JaggaerBasicValue("internal name for classification 1");
-        name1.setIsChanged(T_TRUE);
-        classification1.setInternalName(name1);
+        classification1.setInternalName(new JaggaerBasicValue("internal name for classification 1", T_TRUE));
         classificationList.getClassification().add(classification1);
         
         Classification classification2 = new Classification();
         classification2.setIsChanged(F_FALSE);
         classification2.setDisplayName(buildDisplayName("classification 2 name", F_FALSE));
         
-        JaggaerBasicValue name2 = new JaggaerBasicValue("internal name for classification 2");
-        name2.setIsChanged(F_FALSE);
-        classification2.setInternalName(name2);
+        classification2.setInternalName(new JaggaerBasicValue("internal name for classification 2", F_FALSE));
         classificationList.getClassification().add(classification2);
         
         return classificationList;
@@ -861,17 +781,9 @@ public class SupplierSyncMessageTest {
         contact.setName(buildName("contact name", T_TRUE));
         contact.setActive(buildActive());
         
-        JaggaerBasicValue firstName = new JaggaerBasicValue("Jane");
-        firstName.setIsChanged(T_TRUE);
-        contact.setFirstName(firstName);
-        
-        JaggaerBasicValue lastName = new JaggaerBasicValue("Doe");
-        lastName.setIsChanged(T_TRUE);
-        contact.setLastName(lastName);
-        
-        JaggaerBasicValue title = new JaggaerBasicValue("cool title");
-        title.setIsChanged(T_TRUE);
-        contact.setTitle(title);
+        contact.setFirstName(new JaggaerBasicValue("Jane", T_TRUE));
+        contact.setLastName(new JaggaerBasicValue("Doe", T_TRUE));
+        contact.setTitle(new JaggaerBasicValue("cool title", T_TRUE));
         
         contact.setEmail(buildEmail("test@foo.com", T_TRUE));
         

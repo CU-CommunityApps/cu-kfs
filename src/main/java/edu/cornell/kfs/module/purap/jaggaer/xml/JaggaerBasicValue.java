@@ -23,7 +23,7 @@ public class JaggaerBasicValue {
     }
     
     public JaggaerBasicValue(String value) {
-        this.value = value;
+        this(value, null);
     }
     
     public JaggaerBasicValue(String value, String isChanged) {
