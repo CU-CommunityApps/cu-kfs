@@ -25,6 +25,8 @@ import org.xml.sax.SAXException;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import jakarta.xml.bind.JAXBException;
+import liquibase.pro.packaged.F;
+import liquibase.pro.packaged.T;
 
 public class SupplierSyncMessageTest {
     private static final String US_DOLLAR_CURRENCY_CODE = "usd";
@@ -83,7 +85,7 @@ public class SupplierSyncMessageTest {
         BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
         BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));
 
-        compareXML(actualBufferedReader, expectedBufferedReader);
+        compareXML(expectedBufferedReader, actualBufferedReader);
 
     }
 
@@ -111,46 +113,37 @@ public class SupplierSyncMessageTest {
         supplier.setErpNumber(buildERPNumber("erp number", F_FALSE));
         supplier.setName(buildName("Acme Test Company", null));
 
-        supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict"));
-        supplier.getRestrictFulfillmentLocationsByBusinessUnit().setIsChanged(T_TRUE);
-
-        supplier.setSic(new JaggaerBasicValue("SIC"));
-        supplier.getSic().setIsChanged(F_FALSE);
-
-        supplier.setSupplierKeywords(new JaggaerBasicValue("keyword"));
-        supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov"));
-        supplier.setAustinTetra(new JaggaerBasicValue("austin"));
-        supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity"));
-        supplier.setVatExempt(new JaggaerBasicValue("VAT"));
-        supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID"));
-        supplier.setSupplierShareholders(new JaggaerBasicValue("holders"));
-        supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number"));
-        supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat"));
-        supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court"));
-
-        JaggaerBasicValue repId = new JaggaerBasicValue("tax rep ID");
-        repId.setIsChanged(T_TRUE);
-        supplier.setSupplierTaxRepresentativeId(repId);
-
-        supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status"));
-        supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe"));
-
-        supplier.setYearEstablished(new JaggaerBasicValue("1977"));
-        supplier.setNumberOfEmployees(new JaggaerBasicValue("69"));
-        supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding"));
-        supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id"));
-        supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type"));
-        supplier.setLegalStructure(new JaggaerBasicValue("legal structure"));
+        supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict", T_TRUE));
+        supplier.setSic(new JaggaerBasicValue("SIC", F_FALSE));
+        supplier.setSupplierKeywords(new JaggaerBasicValue("keyword", null));
+        supplier.setEnablePaymentProvisioning(new JaggaerBasicValue("prov", null));
+        supplier.setAustinTetra(new JaggaerBasicValue("austin", null));
+        supplier.setShoppingCommodityCode(new JaggaerBasicValue("commodity", null));
+        supplier.setVatExempt(new JaggaerBasicValue("VAT", null));
+        supplier.setVatIdentificationNumber(new JaggaerBasicValue("VAT ID", null));
+        supplier.setSupplierShareholders(new JaggaerBasicValue("holders", null));
+        supplier.setSupplierRegNumber(new JaggaerBasicValue("reg number", null));
+        supplier.setSupplierRegSeat(new JaggaerBasicValue("regular seat", null));
+        supplier.setSupplierRegCourt(new JaggaerBasicValue("regular court", null));
+        supplier.setSupplierTaxRepresentativeId(new JaggaerBasicValue("tax rep ID", T_TRUE));
+        supplier.setRegistrationProfileStatus(new JaggaerBasicValue("profile status", null));
+        supplier.setRegistrationProfileType(new JaggaerBasicValue("profile tyoe", null));
+        supplier.setYearEstablished(new JaggaerBasicValue("1977", null));
+        supplier.setNumberOfEmployees(new JaggaerBasicValue("69", null));
+        supplier.setExemptFromBackupWithholding(new JaggaerBasicValue("back holding", null));
+        supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id", null));
+        supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type", null));
+        supplier.setLegalStructure(new JaggaerBasicValue("legal structure", null));
 
         DUNS duns = new DUNS();
         duns.setvalue("duns");
         supplier.setDuns(duns);
 
-        supplier.setWebSiteURL(new JaggaerBasicValue("www.cornell.edu"));
+        supplier.setWebSiteURL(new JaggaerBasicValue("www.cornell.edu", null));
         supplier.setActive(buildActive());
-        supplier.setCountryOfOrigin(new JaggaerBasicValue("USA"));
-        supplier.setOtherNames(new JaggaerBasicValue("other name"));
-        supplier.setDoingBusinessAs(new JaggaerBasicValue("doing business os"));
+        supplier.setCountryOfOrigin(new JaggaerBasicValue("USA", null));
+        supplier.setOtherNames(new JaggaerBasicValue("other name", null));
+        supplier.setDoingBusinessAs(new JaggaerBasicValue("doing business os", null));
         supplier.setThirdPartyRefNumber(buildThirdPartyRefNumber());
 
         SupplierSQId sqId = new SupplierSQId();
@@ -218,15 +211,8 @@ public class SupplierSyncMessageTest {
 
     private Brands buildBrands() {
         Brands brands = new Brands();
-
-        JaggaerBasicValue brand1 = new JaggaerBasicValue("brand 1");
-        brand1.setIsChanged(T_TRUE);
-        brands.getBrand().add(brand1);
-
-        JaggaerBasicValue brand2 = new JaggaerBasicValue("brand 2");
-        brand2.setIsChanged(F_FALSE);
-        brands.getBrand().add(brand2);
-
+        brands.getBrand().add(new JaggaerBasicValue("brand 1", T_TRUE));
+        brands.getBrand().add(new JaggaerBasicValue("brand 2", F_FALSE));
         return brands;
     }
 
@@ -256,15 +242,8 @@ public class SupplierSyncMessageTest {
 
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList commodityCodeList = new CommodityCodeList();
-
-        JaggaerBasicValue code1 = new JaggaerBasicValue("Commodity Code 1");
-        code1.setIsChanged(T_TRUE);
-        commodityCodeList.getCommodityCode().add(code1);
-
-        JaggaerBasicValue code2 = new JaggaerBasicValue("Commodity Code 2");
-        code2.setIsChanged(F_FALSE);
-        commodityCodeList.getCommodityCode().add(code2);
-
+        commodityCodeList.getCommodityCode().add(new JaggaerBasicValue("Commodity Code 1", T_TRUE));
+        commodityCodeList.getCommodityCode().add(new JaggaerBasicValue("Commodity Code 2", F_FALSE));
         return commodityCodeList;
     }
 
@@ -408,35 +387,14 @@ public class SupplierSyncMessageTest {
         info.setType("auto");
         info.setIsChanged(T_TRUE);
 
-        JaggaerBasicValue policyNumber = new JaggaerBasicValue("XYZ321");
-        policyNumber.setIsChanged(T_TRUE);
-        info.setPolicyNumber(policyNumber);
-
-        JaggaerBasicValue limit = new JaggaerBasicValue("100");
-        limit.setIsChanged(T_TRUE);
-        info.setInsuranceLimit(limit);
-
-        JaggaerBasicValue provider = new JaggaerBasicValue("USAA");
-        provider.setIsChanged(T_TRUE);
-        info.setInsuranceProvider(provider);
-
-        JaggaerBasicValue agent = new JaggaerBasicValue("Agent Name");
-        agent.setIsChanged(T_TRUE);
-        info.setAgent(agent);
-        
-        JaggaerBasicValue expiration = new JaggaerBasicValue("12/31/2069");
-        expiration.setIsChanged(T_TRUE);
-        info.setExpirationDate(expiration);
-        
-
+        info.setPolicyNumber(new JaggaerBasicValue("XYZ321", T_TRUE));
+        info.setInsuranceLimit(new JaggaerBasicValue("100", T_TRUE));
+        info.setInsuranceProvider(new JaggaerBasicValue("USAA", T_TRUE));
+        info.setAgent(new JaggaerBasicValue("Agent Name", T_TRUE));
+        info.setExpirationDate(new JaggaerBasicValue("12/31/2069", T_TRUE));
         info.setInsuranceProviderPhone(buildInsuranceProviderPhone());
-
         info.setInsuranceCertificate(buildInsuranceCertificate());
-
-        JaggaerBasicValue other = new JaggaerBasicValue("some other name");
-        other.setIsChanged(T_TRUE);
-        info.setOtherTypeName(other);
-
+        info.setOtherTypeName(new JaggaerBasicValue("some other name", T_TRUE));
         insurance.getInsuranceInformation().add(info);
         return insurance;
     }
@@ -463,18 +421,10 @@ public class SupplierSyncMessageTest {
         country.setIsChanged(T_TRUE);
         country.setvalue("USA");
         telephoneNumber.setCountryCode(country);
-        
-        JaggaerBasicValue area = new JaggaerBasicValue("607");
-        area.setIsChanged(T_TRUE);
-        telephoneNumber.setAreaCode(area);
-        
-        JaggaerBasicValue number = new JaggaerBasicValue("255*9900");
-        number.setIsChanged(T_TRUE);
-        telephoneNumber.setNumber(number);
-        
-        JaggaerBasicValue extension = new JaggaerBasicValue("987");
-        extension.setIsChanged(T_TRUE);
-        telephoneNumber.setExtension(extension);
+
+        telephoneNumber.setAreaCode(new JaggaerBasicValue("607", T_TRUE));
+        telephoneNumber.setNumber(new JaggaerBasicValue("255*9900", T_TRUE));
+        telephoneNumber.setExtension(new JaggaerBasicValue("987", T_TRUE));
         return telephoneNumber;
     }
     
@@ -486,13 +436,8 @@ public class SupplierSyncMessageTest {
         info.setIsChanged(T_TRUE);
         info.setType("information type");
         
-        JaggaerBasicValue documentName = new JaggaerBasicValue("document name");
-        documentName.setIsChanged(F_FALSE);
-        info.setTaxDocumentName(documentName);;
-        
-        JaggaerBasicValue year = new JaggaerBasicValue("2023");
-        year.setIsChanged(T_TRUE);
-        info.setTaxDocumentYear(year);
+        info.setTaxDocumentName(new JaggaerBasicValue("document name", F_FALSE));;
+        info.setTaxDocumentYear(new JaggaerBasicValue("2023", T_TRUE));
         
         TaxDocument document = new TaxDocument();
         document.setIsChanged(T_TRUE);
@@ -500,7 +445,6 @@ public class SupplierSyncMessageTest {
         document.setAttachments(buildAttachments("super cool tax document"));
         
         info.setTaxDocument(document);
-        
         
         taxList.getTaxInformation().add(info);
         return taxList;
@@ -558,22 +502,10 @@ public class SupplierSyncMessageTest {
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
         
         ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
-        
-        JaggaerBasicValue contact = new JaggaerBasicValue("contact name");
-        contact.setIsChanged(T_TRUE);
-        ap.setContactName(contact);
-        
-        JaggaerBasicValue purpose = new JaggaerBasicValue("testing is the only purpose");
-        purpose.setIsChanged(T_TRUE);
-        ap.setPurpose(purpose);;
-        
-        JaggaerBasicValue accountid = new JaggaerBasicValue("G234715");
-        accountid.setIsChanged(T_TRUE);
-        ap.setAccountId(accountid);
-        
-        JaggaerBasicValue holderName = new JaggaerBasicValue("John Doe");
-        holderName.setIsChanged(T_TRUE);
-        ap.setAccountHolderName(holderName);
+        ap.setContactName(new JaggaerBasicValue("contact name", T_TRUE));
+        ap.setPurpose(new JaggaerBasicValue("testing is the only purpose", T_TRUE));;
+        ap.setAccountId(new JaggaerBasicValue("G234715", T_TRUE));
+        ap.setAccountHolderName(new JaggaerBasicValue("John Doe", T_TRUE));
         
         JaggaerBasicValue accountType = new JaggaerBasicValue("account type");
         accountType.setIsChanged(T_TRUE);
@@ -638,20 +570,9 @@ public class SupplierSyncMessageTest {
         countryCode.setvalue("USA");
         bankAccount.setIsoCountryCode(countryCode);
         
-        AddressLine1 line1 = new AddressLine1();
-        line1.setIsChanged(T_TRUE);
-        line1.setvalue("Address Line 1");
-        bankAccount.setAddressLine1(line1);
-        
-        AddressLine2 line2 = new AddressLine2();
-        line2.setIsChanged(T_TRUE);
-        line2.setvalue("Address Line 2");
-        bankAccount.setAddressLine2(line2);
-        
-        AddressLine3 line3 = new AddressLine3();
-        line3.setIsChanged(T_TRUE);
-        line3.setvalue("Address Line 3");
-        bankAccount.setAddressLine3(line3);
+        bankAccount.setAddressLine1(new AddressLine("Address Line 1", T_TRUE));
+        bankAccount.setAddressLine2(new AddressLine("Address Line 2", T_TRUE));
+        bankAccount.setAddressLine3(new AddressLine("Address Line 3", T_TRUE));
         
         City city = new City();
         city.setIsChanged(T_TRUE);
@@ -1016,20 +937,9 @@ public class SupplierSyncMessageTest {
         address.setActive(buildActive());
         address.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
         
-        AddressLine1 line1 = new AddressLine1();
-        line1.setIsChanged(T_TRUE);
-        line1.setvalue("line 1");
-        address.setAddressLine1(line1);
-        
-        AddressLine2 line2 = new AddressLine2();
-        line2.setIsChanged(T_TRUE);
-        line2.setvalue("line 2");
-        address.setAddressLine2(line2);
-        
-        AddressLine3 line3 = new AddressLine3();
-        line3.setIsChanged(T_TRUE);
-        line3.setvalue("line 3");
-        address.setAddressLine3(line3);
+        address.setAddressLine1(new AddressLine("line 1", T_TRUE));
+        address.setAddressLine2(new AddressLine("line 2", T_TRUE));
+        address.setAddressLine3(new AddressLine("line 3", T_TRUE));
         
         City city = new City();
         city.setIsChanged(T_TRUE);

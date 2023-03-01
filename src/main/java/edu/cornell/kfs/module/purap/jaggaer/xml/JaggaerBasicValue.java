@@ -25,6 +25,11 @@ public class JaggaerBasicValue {
     public JaggaerBasicValue(String value) {
         this.value = value;
     }
+    
+    public JaggaerBasicValue(String value, String isChanged) {
+        this.value = value;
+        this.isChanged = isChanged;
+    }
 
     public String getIsChanged() {
         return isChanged;

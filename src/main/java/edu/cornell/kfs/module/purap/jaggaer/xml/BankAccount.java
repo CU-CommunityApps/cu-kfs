@@ -49,11 +49,11 @@ public class BankAccount {
     @XmlElement(name = "IsoCountryCode")
     protected IsoCountryCode isoCountryCode;
     @XmlElement(name = "AddressLine1")
-    protected AddressLine1 addressLine1;
+    protected AddressLine addressLine1;
     @XmlElement(name = "AddressLine2")
-    protected AddressLine2 addressLine2;
+    protected AddressLine addressLine2;
     @XmlElement(name = "AddressLine3")
-    protected AddressLine3 addressLine3;
+    protected AddressLine addressLine3;
     @XmlElement(name = "City")
     protected City city;
     @XmlElement(name = "State")
@@ -157,27 +157,27 @@ public class BankAccount {
         this.isoCountryCode = value;
     }
 
-    public AddressLine1 getAddressLine1() {
+    public AddressLine getAddressLine1() {
         return addressLine1;
     }
 
-    public void setAddressLine1(AddressLine1 value) {
+    public void setAddressLine1(AddressLine value) {
         this.addressLine1 = value;
     }
 
-    public AddressLine2 getAddressLine2() {
+    public AddressLine getAddressLine2() {
         return addressLine2;
     }
 
-    public void setAddressLine2(AddressLine2 value) {
+    public void setAddressLine2(AddressLine value) {
         this.addressLine2 = value;
     }
 
-    public AddressLine3 getAddressLine3() {
+    public AddressLine getAddressLine3() {
         return addressLine3;
     }
 
-    public void setAddressLine3(AddressLine3 value) {
+    public void setAddressLine3(AddressLine value) {
         this.addressLine3 = value;
     }
 
