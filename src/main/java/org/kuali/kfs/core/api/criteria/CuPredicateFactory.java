@@ -1,8 +1,9 @@
 package org.kuali.kfs.core.api.criteria;
 
 /*
- * CU customization: The noEqual method has been removed from the base code PredicateFactory class with FINP-8446, 5/18/22, that cleaned unused messages.
- * This CU customized class has been placed in the org.kuali.kfs package rather than the edu.cornell.kfs package to allow for access to the CriteriaSupportUtils class.
+ * CU customization: The notEqual method has been removed from the base code PredicateFactory class with FINP-8446, 5/18/22, that cleaned unused methods.
+ * This CU customized class adds back the notEqual method that is still used in our cu-kfs code. The class has been placed in the org.kuali.kfs package 
+ * rather than the edu.cornell.kfs package to allow for access to the CriteriaSupportUtils class.
  */
 public final class CuPredicateFactory {
     

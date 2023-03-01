@@ -193,6 +193,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             case KewApiConstants.ROUTE_HEADER_EXCEPTION_CD:
             case KewApiConstants.ROUTE_HEADER_CANCEL_CD:
             case KewApiConstants.ROUTE_HEADER_DISAPPROVED_CD:
+                throw new RuntimeException("Document " + documentId + " entered an unexpected unsuccessful status of " + documentStatus);
             default:
                 return true;
         }

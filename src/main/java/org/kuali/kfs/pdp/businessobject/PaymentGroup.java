@@ -546,11 +546,11 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
 		return customerInstitutionNumber;
 	}
 
+    // CU customization
 	public void setCustomerInstitutionNumber(String customerInstitutionNumber) {
 		this.customerInstitutionNumber = customerInstitutionNumber;
 	}
 
-	// CU customization
     public Boolean getCampusAddress() {
         return campusAddress;
     }

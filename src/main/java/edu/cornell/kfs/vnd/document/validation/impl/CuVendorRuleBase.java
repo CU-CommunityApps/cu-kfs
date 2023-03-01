@@ -59,7 +59,7 @@ public abstract class CuVendorRuleBase extends VendorRule {
         if (ObjectUtils.isNotNull(vendorDetail.getVendorHeaderGeneratedIdentifier())) {
             // ==== CU Customization: Use CriteriaLookupService instead, since BO service doesn't allow negative criteria in non-count methods. ====
             criteria.add(CuPredicateFactory.notEqual(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
-                    vendorDetail.getVendorHeaderGeneratedIdentifier().toString()));
+                    vendorDetail.getVendorHeaderGeneratedIdentifier()));
             existingVendors = SpringContext.getBean(CriteriaLookupService.class).lookup(
                     VendorDetail.class, QueryByCriteria.Builder.fromPredicates(criteria.toArray(new Predicate[criteria.size()]))).getResults();
         } else {
