@@ -19,7 +19,7 @@ public class DiversityClassification {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "InternalName", required = true)
-    protected InternalName internalName;
+    protected JaggaerBasicValue internalName;
     @XmlElement(name = "DisplayName")
     protected DisplayName displayName;
     @XmlElement(name = "AdditionalDataList")
@@ -37,11 +37,11 @@ public class DiversityClassification {
         this.isChanged = value;
     }
 
-    public InternalName getInternalName() {
+    public JaggaerBasicValue getInternalName() {
         return internalName;
     }
 
-    public void setInternalName(InternalName value) {
+    public void setInternalName(JaggaerBasicValue value) {
         this.internalName = value;
     }
 

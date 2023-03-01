@@ -174,6 +174,8 @@ public class SupplierSyncMessageTest {
         supplier.setAccountsPayableList(buildAccountsPayableList());
         supplier.setCustomElementList(buildCustomElementList());
         supplier.setLocationList(buildLocationList());
+        supplier.setDiversityClassificationList(buildDiversityClassificationList());
+        supplier.setClassificationList(buildClassificationList());
 
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
@@ -186,12 +188,6 @@ public class SupplierSyncMessageTest {
 
         PrimaryContactList primaryContact = new PrimaryContactList();
         supplier.setPrimaryContactList(primaryContact);
-
-        ClassificationList classificiationList = new ClassificationList();
-        supplier.setClassificationList(classificiationList);
-
-        DiversityClassificationList diversity = new DiversityClassificationList();
-        supplier.setDiversityClassificationList(diversity);
 
         return supplier;
     }
@@ -456,19 +452,7 @@ public class SupplierSyncMessageTest {
     private InsuranceCertificate buildInsuranceCertificate() {
         InsuranceCertificate certificate = new InsuranceCertificate();
         certificate.setIsChanged(T_TRUE);
-        Attachments attachments = new Attachments();
-        attachments.setXmlnsXop("test.dtd");
-        Attachment attach = new Attachment();
-        attach.setAttachmentName("attachment name");
-        attach.setAttachmentSize("5000");
-        attach.setAttachmentURL("http://www.cornell.edu");
-        attach.setId("666");
-        attach.setType("HTML");
-        XopInclude include = new XopInclude();
-        include.setHref("http://www.google.com");
-        attach.setXopInclude(include);
-        attachments.getAttachment().add(attach);
-        certificate.setAttachments(attachments);
+        certificate.setAttachments(buildAttachments("attachment name"));
         return certificate;
     }
 
@@ -521,10 +505,20 @@ public class SupplierSyncMessageTest {
         TaxDocument document = new TaxDocument();
         document.setIsChanged(T_TRUE);
         
+        document.setAttachments(buildAttachments("super cool tax document"));
+        
+        info.setTaxDocument(document);
+        
+        
+        taxList.getTaxInformation().add(info);
+        return taxList;
+    }
+    
+    private Attachments buildAttachments(String attachmentName) {
         Attachments attachments = new Attachments();
-        attachments.setXmlnsXop("taxDocument.dtd");
+        attachments.setXmlnsXop("test.dtd");
         Attachment attach = new Attachment();
-        attach.setAttachmentName("super cool tax document");
+        attach.setAttachmentName(attachmentName);
         attach.setAttachmentSize("5000");
         attach.setAttachmentURL("http://www.cornell.edu");
         attach.setId("1000");
@@ -533,15 +527,9 @@ public class SupplierSyncMessageTest {
         include.setHref("http://www.google.com");
         attach.setXopInclude(include);
         attachments.getAttachment().add(attach);
-        
-        document.setAttachments(attachments);
-        
-        info.setTaxDocument(document);
-        
-        
-        taxList.getTaxInformation().add(info);
-        return taxList;
+        return attachments;
     }
+    
     
     private AccountsPayableList buildAccountsPayableList() {
         AccountsPayableList apList = new AccountsPayableList();
@@ -730,10 +718,7 @@ public class SupplierSyncMessageTest {
         identifer1.setIsChanged(T_TRUE);
         element1.setCustomElementIdentifier(identifer1);
         
-        DisplayName name1 = new DisplayName();
-        name1.setIsChanged(T_TRUE);
-        name1.setvalue("a cool display name");
-        element1.setDisplayName(name1);
+        element1.setDisplayName(buildDisplayName("a cool display name", T_TRUE));
         
         customList.getCustomElement().add(element1);
         
@@ -746,14 +731,18 @@ public class SupplierSyncMessageTest {
         identifer2.setIsChanged(T_TRUE);
         element2.setCustomElementIdentifier(identifer2);
         
-        DisplayName name2 = new DisplayName();
-        name2.setIsChanged(T_TRUE);
-        name2.setvalue("a lame display name");
-        element2.setDisplayName(name2);
+        element2.setDisplayName(buildDisplayName("a lame display name", T_TRUE));
         
         customList.getCustomElement().add(element2);
         
         return customList;
+    }
+    
+    private DisplayName buildDisplayName(String name, String changed) {
+        DisplayName displayName = new DisplayName();
+        displayName.setIsChanged(changed);
+        displayName.setvalue(name);
+        return displayName;
     }
     
     private LocationList buildLocationList() {
@@ -858,6 +847,69 @@ public class SupplierSyncMessageTest {
         poPaymentMethod.setPOPayment(poPayment);
         
         return poPaymentMethod;
+    }
+    
+    private DiversityClassificationList buildDiversityClassificationList() {
+        DiversityClassificationList diversityList = new DiversityClassificationList();
+        diversityList.setIsChanged(T_TRUE);
+        
+        DiversityClassification diversity = new DiversityClassification();
+        diversity.setIsChanged(T_TRUE);
+        
+        JaggaerBasicValue name = new JaggaerBasicValue("internal name");
+        name.setIsChanged(T_TRUE);
+        diversity.setInternalName(name);;
+        
+        diversity.setDisplayName(buildDisplayName("display name", F_FALSE));
+        
+        DD214Certificate ddCertificate = new DD214Certificate();
+        ddCertificate.setIsChanged(T_TRUE);
+        ddCertificate.setAttachments(buildAttachments("DD 214 Certificate Attachments"));
+        diversity.setDD214Certificate(ddCertificate);
+        
+        DiversityCertificate certificate = new DiversityCertificate();
+        certificate.setIsChanged(T_TRUE);
+        certificate.setAttachments(buildAttachments("diversity certificate attachment"));
+        diversity.setDiversityCertificate(certificate);
+        
+        AdditionalDataList dataList = new AdditionalDataList();
+        dataList.setIsChanged(T_TRUE);
+        
+        AdditionalData datum = new AdditionalData();
+        datum.setIsChanged(T_TRUE);
+        datum.setName("datum name");
+        datum.getContent().add("some additional piece of information");
+        dataList.getAdditionalData().add(datum);
+        
+        diversity.setAdditionalDataList(dataList);
+        
+        diversityList.getDiversityClassification().add(diversity);
+        return diversityList;
+    }
+    
+    private ClassificationList buildClassificationList() {
+        ClassificationList classificationList = new ClassificationList();
+        classificationList.setIsChanged(T_TRUE);
+        
+        Classification classification1 = new Classification();
+        classification1.setIsChanged(T_TRUE);
+        classification1.setDisplayName(buildDisplayName("classification 1 name", T_TRUE));
+        
+        JaggaerBasicValue name1 = new JaggaerBasicValue("internal name for classification 1");
+        name1.setIsChanged(T_TRUE);
+        classification1.setInternalName(name1);
+        classificationList.getClassification().add(classification1);
+        
+        Classification classification2 = new Classification();
+        classification2.setIsChanged(F_FALSE);
+        classification2.setDisplayName(buildDisplayName("classification 2 name", F_FALSE));
+        
+        JaggaerBasicValue name2 = new JaggaerBasicValue("internal name for classification 2");
+        name2.setIsChanged(F_FALSE);
+        classification2.setInternalName(name2);
+        classificationList.getClassification().add(classification2);
+        
+        return classificationList;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {

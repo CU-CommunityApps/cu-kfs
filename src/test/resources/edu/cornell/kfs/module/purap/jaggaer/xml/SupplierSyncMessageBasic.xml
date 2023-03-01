@@ -105,8 +105,45 @@
             <PrimaryAddressList/>
             <ContactList/>
             <PrimaryContactList/>
-            <ClassificationList/>
-            <DiversityClassificationList/>
+            <ClassificationList isChanged="T">
+                <Classification isChanged="T">
+                    <InternalName isChanged="T">internal name for classification 1</InternalName>
+                    <DisplayName isChanged="T">classification 1 name</DisplayName>
+                </Classification>
+                <Classification isChanged="F">
+                    <InternalName isChanged="F">internal name for classification 2</InternalName>
+                    <DisplayName isChanged="F">classification 2 name</DisplayName>
+                </Classification>
+            </ClassificationList>
+            <DiversityClassificationList isChanged="T">
+                <DiversityClassification isChanged="T">
+                    <InternalName isChanged="T">internal name</InternalName>
+                    <DisplayName isChanged="F">display name</DisplayName>
+                    <AdditionalDataList isChanged="T">
+                        <AdditionalData isChanged="T" name="datum name">some additional piece of information</AdditionalData>
+                    </AdditionalDataList>
+                    <DD-214Certificate isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>DD 214 Certificate Attachments</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </DD-214Certificate>
+                    <DiversityCertificate isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>diversity certificate attachment</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </DiversityCertificate>
+                </DiversityClassification>
+            </DiversityClassificationList>
             <LocationList>
                 <Location isChanged="T" supportsOrderFulfillment="Order Fulfillment(">
                     <ERPNumber isChanged="T">erp number</ERPNumber>
@@ -212,7 +249,7 @@
                     <TaxDocumentName isChanged="F">document name</TaxDocumentName>
                     <TaxDocumentYear isChanged="T">2023</TaxDocumentYear>
                     <TaxDocument isChanged="T">
-                        <Attachments xmlns:xop="taxDocument.dtd">
+                        <Attachments xmlns:xop="test.dtd">
                             <Attachment id="1000" type="pdf">
                                 <AttachmentName>super cool tax document</AttachmentName>
                                 <AttachmentURL>http://www.cornell.edu</AttachmentURL>
@@ -240,7 +277,7 @@
                     </InsuranceProviderPhone>
                     <InsuranceCertificate isChanged="T">
                         <Attachments xmlns:xop="test.dtd">
-                            <Attachment id="666" type="HTML">
+                            <Attachment id="1000" type="pdf">
                                 <AttachmentName>attachment name</AttachmentName>
                                 <AttachmentURL>http://www.cornell.edu</AttachmentURL>
                                 <AttachmentSize>5000</AttachmentSize>
