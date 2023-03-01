@@ -64,64 +64,144 @@ public class AccountsPayable {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getIsChanged() {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    public ERPNumber getERPNumber() {
+    public ERPNumber getErpNumber() {
         return erpNumber;
     }
 
-    public void setERPNumber(ERPNumber value) {
-        this.erpNumber = value;
+    public void setErpNumber(ERPNumber erpNumber) {
+        this.erpNumber = erpNumber;
     }
 
     public String getOldERPNumber() {
         return oldERPNumber;
     }
 
-    public void setOldERPNumber(String value) {
-        this.oldERPNumber = value;
+    public void setOldERPNumber(String oldERPNumber) {
+        this.oldERPNumber = oldERPNumber;
     }
 
-    public SQIntegrationNumber getSQIntegrationNumber() {
+    public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
 
-    public void setSQIntegrationNumber(SQIntegrationNumber value) {
-        this.sqIntegrationNumber = value;
+    public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
+        this.sqIntegrationNumber = sqIntegrationNumber;
     }
 
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
 
-    public void setThirdPartyRefNumber(ThirdPartyRefNumber value) {
-        this.thirdPartyRefNumber = value;
+    public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
+        this.thirdPartyRefNumber = thirdPartyRefNumber;
     }
 
     public Name getName() {
         return name;
     }
 
-    public void setName(Name value) {
-        this.name = value;
+    public void setName(Name name) {
+        this.name = name;
     }
 
     public Active getActive() {
         return active;
     }
 
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
+    public IsoCurrencyCode getIsoCurrencyCode() {
+        return isoCurrencyCode;
+    }
+
+    public void setIsoCurrencyCode(IsoCurrencyCode isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
+    }
+
+    public JaggaerBasicValue getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(JaggaerBasicValue contactName) {
+        this.contactName = contactName;
+    }
+
+    public JaggaerBasicValue getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(JaggaerBasicValue purpose) {
+        this.purpose = purpose;
+    }
+
+    public JaggaerBasicValue getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(JaggaerBasicValue accountId) {
+        this.accountId = accountId;
+    }
+
+    public JaggaerBasicValue getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public void setAccountHolderName(JaggaerBasicValue accountHolderName) {
+        this.accountHolderName = accountHolderName;
+    }
+
+    public JaggaerBasicValue getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(JaggaerBasicValue accountType) {
+        this.accountType = accountType;
+    }
+
+    public CountryCode getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(CountryCode countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public BankAccount getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public FlexFields getFlexFields() {
+        return flexFields;
+    }
+
+    public void setFlexFields(FlexFields flexFields) {
+        this.flexFields = flexFields;
     }
 
     public List<AssociatedAddress> getAssociatedAddress() {
@@ -129,86 +209,6 @@ public class AccountsPayable {
             associatedAddress = new ArrayList<AssociatedAddress>();
         }
         return this.associatedAddress;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
-    public void setEmail(Email value) {
-        this.email = value;
-    }
-
-    public IsoCurrencyCode getIsoCurrencyCode() {
-        return isoCurrencyCode;
-    }
-
-    public void setIsoCurrencyCode(IsoCurrencyCode value) {
-        this.isoCurrencyCode = value;
-    }
-
-    public JaggaerBasicValue getContactName() {
-        return contactName;
-    }
-
-    public void setContactName(JaggaerBasicValue value) {
-        this.contactName = value;
-    }
-
-    public JaggaerBasicValue getPurpose() {
-        return purpose;
-    }
-
-    public void setPurpose(JaggaerBasicValue value) {
-        this.purpose = value;
-    }
-
-    public JaggaerBasicValue getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(JaggaerBasicValue value) {
-        this.accountId = value;
-    }
-
-    public JaggaerBasicValue getAccountHolderName() {
-        return accountHolderName;
-    }
-
-    public void setAccountHolderName(JaggaerBasicValue value) {
-        this.accountHolderName = value;
-    }
-
-    public JaggaerBasicValue getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(JaggaerBasicValue value) {
-        this.accountType = value;
-    }
-
-    public CountryCode getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(CountryCode value) {
-        this.countryCode = value;
-    }
-
-    public BankAccount getBankAccount() {
-        return bankAccount;
-    }
-
-    public void setBankAccount(BankAccount value) {
-        this.bankAccount = value;
-    }
-
-    public FlexFields getFlexFields() {
-        return flexFields;
-    }
-
-    public void setFlexFields(FlexFields value) {
-        this.flexFields = value;
     }
 
 }

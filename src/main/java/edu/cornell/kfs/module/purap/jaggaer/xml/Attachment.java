@@ -34,48 +34,48 @@ public class Attachment {
         return id;
     }
 
-    public void setId(String value) {
-        this.id = value;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getAttachmentName() {
         return attachmentName;
     }
 
-    public void setAttachmentName(String value) {
-        this.attachmentName = value;
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
     }
 
     public String getAttachmentURL() {
         return attachmentURL;
     }
 
-    public void setAttachmentURL(String value) {
-        this.attachmentURL = value;
+    public void setAttachmentURL(String attachmentURL) {
+        this.attachmentURL = attachmentURL;
     }
 
     public String getAttachmentSize() {
         return attachmentSize;
     }
 
-    public void setAttachmentSize(String value) {
-        this.attachmentSize = value;
+    public void setAttachmentSize(String attachmentSize) {
+        this.attachmentSize = attachmentSize;
     }
 
     public XopInclude getXopInclude() {
         return xopInclude;
     }
 
-    public void setXopInclude(XopInclude value) {
-        this.xopInclude = value;
+    public void setXopInclude(XopInclude xopInclude) {
+        this.xopInclude = xopInclude;
     }
 
 }

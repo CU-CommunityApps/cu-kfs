@@ -31,8 +31,8 @@ public class Attachments {
         }
     }
 
-    public void setXmlnsXop(String value) {
-        this.xmlnsXop = value;
+    public void setXmlnsXop(String xmlnsXop) {
+        this.xmlnsXop = xmlnsXop;
     }
 
     public List<Attachment> getAttachment() {

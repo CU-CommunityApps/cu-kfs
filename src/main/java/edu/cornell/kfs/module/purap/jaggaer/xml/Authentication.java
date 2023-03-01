@@ -20,16 +20,16 @@ public class Authentication {
         return identity;
     }
 
-    public void setIdentity(String value) {
-        this.identity = value;
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public String getSharedSecret() {
         return sharedSecret;
     }
 
-    public void setSharedSecret(String value) {
-        this.sharedSecret = value;
+    public void setSharedSecret(String sharedSecret) {
+        this.sharedSecret = sharedSecret;
     }
 
 }

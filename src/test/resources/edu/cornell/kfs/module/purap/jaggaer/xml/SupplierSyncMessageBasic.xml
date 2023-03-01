@@ -298,6 +298,15 @@
                             <BlanketPONumber isChanged="T">blanket number</BlanketPONumber>
                         </BlanketPOPaymentMethod>
                     </PaymentMethod>
+                    <AssociatedContactList isChanged="T">
+                        <AssociatedContact isChanged="T" type="contact type">
+                            <ContactRef>
+                                <ERPNumber isChanged="T">erp number</ERPNumber>
+                                <SQIntegrationNumber>SQ number</SQIntegrationNumber>
+                                <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                            </ContactRef>
+                        </AssociatedContact>
+                    </AssociatedContactList>
                 </Location>
             </LocationList>
             <RestrictFulfillmentLocationsByBusinessUnit isChanged="T">restrict</RestrictFulfillmentLocationsByBusinessUnit>

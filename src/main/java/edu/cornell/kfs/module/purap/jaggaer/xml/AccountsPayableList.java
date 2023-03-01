@@ -27,8 +27,8 @@ public class AccountsPayableList {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public List<AccountsPayable> getAccountsPayable() {

@@ -193,7 +193,7 @@ public class SupplierSyncMessageTest {
     
     private Active buildActive() {
         Active active = new Active();
-        active.setvalue("active");
+        active.setValue("active");
         return active;
     }
     
@@ -294,7 +294,7 @@ public class SupplierSyncMessageTest {
         SupplierCapital capital = new SupplierCapital();
         Amount ammount = new Amount();
         ammount.setIsChanged(T_TRUE);
-        ammount.setvalue("50.00");
+        ammount.setValue("50.00");
         capital.setAmount(ammount);
         capital.setIsChanged(T_TRUE);
         capital.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
@@ -323,7 +323,7 @@ public class SupplierSyncMessageTest {
 
         Amount ammount = new Amount();
         ammount.setIsChanged(T_TRUE);
-        ammount.setvalue("6900.00");
+        ammount.setValue("6900.00");
         sale.setAnnualSalesAmount(ammount);
 
         salesList.getAnnualSales().add(sale);
@@ -476,9 +476,9 @@ public class SupplierSyncMessageTest {
         ap.setType("accounts payable type");
         ap.setOldERPNumber("old erp number");
         
-        ap.setERPNumber(buildERPNumber("erp number", F_FALSE));
+        ap.setErpNumber(buildERPNumber("erp number", F_FALSE));
         
-        ap.setSQIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
+        ap.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
         
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         
@@ -492,8 +492,8 @@ public class SupplierSyncMessageTest {
         address.setIsChanged(T_TRUE);
         address.setType("type");
         
-        ref.setERPNumber(ap.getERPNumber());
-        ref.setSQIntegrationNumber(ap.getSQIntegrationNumber());
+        ref.setErpNumber(ap.getErpNumber());
+        ref.setSqIntegrationNumber(ap.getSqIntegrationNumber());
         ref.setThirdPartyRefNumber(ap.getThirdPartyRefNumber());
         address.setAddressRef(ref);
         
@@ -635,6 +635,11 @@ public class SupplierSyncMessageTest {
         
         location.setPaymentMethod(buildPaymentMethod());
         
+        AssociatedContactList contactList = new AssociatedContactList();
+        contactList.setIsChanged(T_TRUE);
+        contactList.getAssociatedContact().add(buildAssociatedContact());
+        location.setAssociatedContactList(contactList);
+        
         locationList.getLocation().add(location);
         return locationList;
     }
@@ -752,7 +757,11 @@ public class SupplierSyncMessageTest {
     private PrimaryContactList buildPrimaryContactList() {
         PrimaryContactList primaryContactList = new PrimaryContactList();
         primaryContactList.setIsChanged(T_TRUE);
-        
+        primaryContactList.getAssociatedContact().add(buildAssociatedContact());
+        return primaryContactList;
+    }
+    
+    private AssociatedContact buildAssociatedContact() {
         AssociatedContact contact = new AssociatedContact();
         contact.setIsChanged(T_TRUE);
         contact.setType("contact type");
@@ -762,9 +771,7 @@ public class SupplierSyncMessageTest {
         ref.setSQIntegrationNumber(buildSQIntegrationNumber("SQ number"));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         contact.setContactRef(ref);
-        primaryContactList.getAssociatedContact().add(contact);
-        
-        return primaryContactList;
+        return contact;
     }
     
     private ContactList buildContactList() {
@@ -825,8 +832,8 @@ public class SupplierSyncMessageTest {
         address1.setType("adddress type");
         
         AddressRef ref = new AddressRef();
-        ref.setERPNumber(buildERPNumber("erp number", T_TRUE));
-        ref.setSQIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        ref.setErpNumber(buildERPNumber("erp number", T_TRUE));
+        ref.setSqIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         address1.setAddressRef(ref);
         
@@ -841,9 +848,9 @@ public class SupplierSyncMessageTest {
         Address address = new Address();
         address.setIsChanged(T_TRUE);
         address.setType("home address");
-        address.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        address.setErpNumber(buildERPNumber("erp number", T_TRUE));
         address.setOldERPNumber("old erp number");
-        address.setSQIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        address.setSqIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
         address.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         address.setName(buildName("address name", T_TRUE));
         address.setActive(buildActive());
@@ -920,7 +927,6 @@ public class SupplierSyncMessageTest {
             LOG.info("compareXML, difference: " + difference);
         }
         assertEquals(0, differences.size());
-        
     }
 
 }

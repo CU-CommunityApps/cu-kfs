@@ -61,173 +61,132 @@ public class Address {
     protected Notes notes;
     @XmlElement(name = "AssignedBusinessUnitsList")
     protected AssignedBusinessUnitsList assignedBusinessUnitsList;
-
     public String getType() {
         return type;
     }
-
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
-
     public String getIsChanged() {
         return isChanged;
     }
-
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
-
-    public ERPNumber getERPNumber() {
+    public ERPNumber getErpNumber() {
         return erpNumber;
     }
-
-    public void setERPNumber(ERPNumber value) {
-        this.erpNumber = value;
+    public void setErpNumber(ERPNumber erpNumber) {
+        this.erpNumber = erpNumber;
     }
-
     public String getOldERPNumber() {
         return oldERPNumber;
     }
-
-    public void setOldERPNumber(String value) {
-        this.oldERPNumber = value;
+    public void setOldERPNumber(String oldERPNumber) {
+        this.oldERPNumber = oldERPNumber;
     }
-
-    public SQIntegrationNumber getSQIntegrationNumber() {
+    public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
-
-    public void setSQIntegrationNumber(SQIntegrationNumber value) {
-        this.sqIntegrationNumber = value;
+    public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
+        this.sqIntegrationNumber = sqIntegrationNumber;
     }
-
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
-
-    public void setThirdPartyRefNumber(ThirdPartyRefNumber value) {
-        this.thirdPartyRefNumber = value;
+    public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
+        this.thirdPartyRefNumber = thirdPartyRefNumber;
     }
-
     public Name getName() {
         return name;
     }
-
-    public void setName(Name value) {
-        this.name = value;
+    public void setName(Name name) {
+        this.name = name;
     }
-
     public Active getActive() {
         return active;
     }
-
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
-
     public PrefPurchaseOrderDeliveryMethod getPrefPurchaseOrderDeliveryMethod() {
         return prefPurchaseOrderDeliveryMethod;
     }
-
-    public void setPrefPurchaseOrderDeliveryMethod(PrefPurchaseOrderDeliveryMethod value) {
-        this.prefPurchaseOrderDeliveryMethod = value;
+    public void setPrefPurchaseOrderDeliveryMethod(PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod) {
+        this.prefPurchaseOrderDeliveryMethod = prefPurchaseOrderDeliveryMethod;
     }
-
     public AddressLine getAddressLine1() {
         return addressLine1;
     }
-
-    public void setAddressLine1(AddressLine value) {
-        this.addressLine1 = value;
+    public void setAddressLine1(AddressLine addressLine1) {
+        this.addressLine1 = addressLine1;
     }
-
     public AddressLine getAddressLine2() {
         return addressLine2;
     }
-
-    public void setAddressLine2(AddressLine value) {
-        this.addressLine2 = value;
+    public void setAddressLine2(AddressLine addressLine2) {
+        this.addressLine2 = addressLine2;
     }
-
     public AddressLine getAddressLine3() {
         return addressLine3;
     }
-
-    public void setAddressLine3(AddressLine value) {
-        this.addressLine3 = value;
+    public void setAddressLine3(AddressLine addressLine3) {
+        this.addressLine3 = addressLine3;
     }
-
     public City getCity() {
         return city;
     }
-
-    public void setCity(City value) {
-        this.city = value;
+    public void setCity(City city) {
+        this.city = city;
     }
-
     public State getState() {
         return state;
     }
-
-    public void setState(State value) {
-        this.state = value;
+    public void setState(State state) {
+        this.state = state;
     }
-
     public PostalCode getPostalCode() {
         return postalCode;
     }
-
-    public void setPostalCode(PostalCode value) {
-        this.postalCode = value;
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
     }
-
     public IsoCountryCode getIsoCountryCode() {
         return isoCountryCode;
     }
-
-    public void setIsoCountryCode(IsoCountryCode value) {
-        this.isoCountryCode = value;
+    public void setIsoCountryCode(IsoCountryCode isoCountryCode) {
+        this.isoCountryCode = isoCountryCode;
     }
-
     public Phone getPhone() {
         return phone;
     }
-
-    public void setPhone(Phone value) {
-        this.phone = value;
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
-
     public TollFreePhone getTollFreePhone() {
         return tollFreePhone;
     }
-
-    public void setTollFreePhone(TollFreePhone value) {
-        this.tollFreePhone = value;
+    public void setTollFreePhone(TollFreePhone tollFreePhone) {
+        this.tollFreePhone = tollFreePhone;
     }
-
     public Fax getFax() {
         return fax;
     }
-
-    public void setFax(Fax value) {
-        this.fax = value;
+    public void setFax(Fax fax) {
+        this.fax = fax;
     }
-
     public Notes getNotes() {
         return notes;
     }
-
-    public void setNotes(Notes value) {
-        this.notes = value;
+    public void setNotes(Notes notes) {
+        this.notes = notes;
     }
-
     public AssignedBusinessUnitsList getAssignedBusinessUnitsList() {
         return assignedBusinessUnitsList;
     }
-
-    public void setAssignedBusinessUnitsList(AssignedBusinessUnitsList value) {
-        this.assignedBusinessUnitsList = value;
+    public void setAssignedBusinessUnitsList(AssignedBusinessUnitsList assignedBusinessUnitsList) {
+        this.assignedBusinessUnitsList = assignedBusinessUnitsList;
     }
 
+   
 }

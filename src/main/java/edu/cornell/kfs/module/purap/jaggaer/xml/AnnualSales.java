@@ -28,32 +28,32 @@ public class AnnualSales {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getAnnualSalesYear() {
         return annualSalesYear;
     }
 
-    public void setAnnualSalesYear(JaggaerBasicValue value) {
-        this.annualSalesYear = value;
+    public void setAnnualSalesYear(JaggaerBasicValue annualSalesYear) {
+        this.annualSalesYear = annualSalesYear;
     }
 
     public Amount getAnnualSalesAmount() {
         return annualSalesAmount;
     }
 
-    public void setAnnualSalesAmount(Amount value) {
-        this.annualSalesAmount = value;
+    public void setAnnualSalesAmount(Amount annualSalesAmount) {
+        this.annualSalesAmount = annualSalesAmount;
     }
 
     public IsoCurrencyCode getIsoCurrencyCode() {
         return isoCurrencyCode;
     }
 
-    public void setIsoCurrencyCode(IsoCurrencyCode value) {
-        this.isoCurrencyCode = value;
+    public void setIsoCurrencyCode(IsoCurrencyCode isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
     }
 
 }

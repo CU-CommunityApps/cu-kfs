@@ -23,10 +23,14 @@ public class SupplierSyncMessage {
     protected String version;
     @XmlElement(name = "Header", required = true)
     protected Header header;
-    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class),
-            @XmlElement(name = "SupplierResponseMessage", required = true, type = SupplierResponseMessage.class),
-            @XmlElement(name = "LookupRequestMessage", required = true, type = LookupRequestMessage.class),
-            @XmlElement(name = "LookupResponseMessage", required = true, type = LookupResponseMessage.class) })
+    /*
+     * Jaggaer's supplier.dtd generated SupplierResponseMessage, LookupRequestMessage and LookupResponseMessage 
+     * in addition to SupplierRequestMessage.  The jaggaer upload supplier with XML integration only needs 
+     * SupplierRequestMessage.  Therefore the other types will be added yet.
+     * If and when those POJOs are needed, they can be generated with XJC using the following command
+     * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd supplier.dtd
+     */
+    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
     protected List<Object> supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage;
 
     public String getVersion() {

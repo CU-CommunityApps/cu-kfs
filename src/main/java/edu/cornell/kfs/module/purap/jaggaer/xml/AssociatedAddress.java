@@ -28,24 +28,24 @@ public class AssociatedAddress {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public AddressRef getAddressRef() {
         return addressRef;
     }
 
-    public void setAddressRef(AddressRef value) {
-        this.addressRef = value;
+    public void setAddressRef(AddressRef addressRef) {
+        this.addressRef = addressRef;
     }
 
 }
