@@ -25,16 +25,16 @@ public class BlanketPOPaymentMethod {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getBlanketPONumber() {
         return blanketPONumber;
     }
 
-    public void setBlanketPONumber(JaggaerBasicValue value) {
-        this.blanketPONumber = value;
+    public void setBlanketPONumber(JaggaerBasicValue blanketPONumber) {
+        this.blanketPONumber = blanketPONumber;
     }
 
 }

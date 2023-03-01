@@ -28,23 +28,23 @@ public class BusinessUnitVendorNumber {
         return businessUnitInternalName;
     }
 
-    public void setBusinessUnitInternalName(String value) {
-        this.businessUnitInternalName = value;
+    public void setBusinessUnitInternalName(String businessUnitInternalName) {
+        this.businessUnitInternalName = businessUnitInternalName;
     }
 
     public String getIsChanged() {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

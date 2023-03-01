@@ -39,40 +39,40 @@ public class CustomElement {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public String getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(String value) {
-        this.isActive = value;
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public JaggaerBasicValue getCustomElementIdentifier() {
         return customElementIdentifier;
     }
 
-    public void setCustomElementIdentifier(JaggaerBasicValue value) {
-        this.customElementIdentifier = value;
+    public void setCustomElementIdentifier(JaggaerBasicValue customElementIdentifier) {
+        this.customElementIdentifier = customElementIdentifier;
     }
 
     public DisplayName getDisplayName() {
         return displayName;
     }
 
-    public void setDisplayName(DisplayName value) {
-        this.displayName = value;
+    public void setDisplayName(DisplayName displayName) {
+        this.displayName = displayName;
     }
 
     public List<Object> getCustomElementValueListOrAttachments() {

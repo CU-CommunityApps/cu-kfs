@@ -276,13 +276,13 @@ public class SupplierSyncMessageTest {
 
         BusinessUnitVendorNumber unit1 = new BusinessUnitVendorNumber();
         unit1.setBusinessUnitInternalName("vendor number 1");
-        unit1.setvalue("1232");
+        unit1.setValue("1232");
         unit1.setIsChanged(T_TRUE);
         unitNumberList.getBusinessUnitVendorNumber().add(unit1);
 
         BusinessUnitVendorNumber unit2 = new BusinessUnitVendorNumber();
         unit2.setBusinessUnitInternalName("vendor number 2");
-        unit2.setvalue("56464");
+        unit2.setValue("56464");
         unit2.setIsChanged(F_FALSE);
         unitNumberList.getBusinessUnitVendorNumber().add(unit2);
 
@@ -416,12 +416,7 @@ public class SupplierSyncMessageTest {
     private TelephoneNumber buildBasicTelephoneNumber() {
         TelephoneNumber telephoneNumber = new TelephoneNumber();
         telephoneNumber.setIsChanged(T_TRUE);
-        
-        CountryCode country = new CountryCode();
-        country.setIsChanged(T_TRUE);
-        country.setvalue("USA");
-        telephoneNumber.setCountryCode(country);
-
+        telephoneNumber.setCountryCode(new JaggaerBasicValue("USA", T_TRUE));
         telephoneNumber.setAreaCode(new JaggaerBasicValue("607", T_TRUE));
         telephoneNumber.setNumber(new JaggaerBasicValue("255*9900", T_TRUE));
         telephoneNumber.setExtension(new JaggaerBasicValue("987", T_TRUE));
@@ -507,11 +502,7 @@ public class SupplierSyncMessageTest {
         ap.setAccountId(new JaggaerBasicValue("G234715", T_TRUE));
         ap.setAccountHolderName(new JaggaerBasicValue("John Doe", T_TRUE));
         ap.setAccountType(new JaggaerBasicValue("account type", T_TRUE));
-        
-        CountryCode country = new CountryCode();
-        country.setIsChanged(T_TRUE);
-        country.setvalue("USA");
-        ap.setCountryCode(country);
+        ap.setCountryCode(new JaggaerBasicValue("USA", T_TRUE));
         
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
@@ -547,7 +538,7 @@ public class SupplierSyncMessageTest {
         
         City city = new City();
         city.setIsChanged(T_TRUE);
-        city.setvalue("Ithaca");
+        city.setValue("Ithaca");
         bankAccount.setCity(city);
         
         State state = new State();
@@ -583,6 +574,14 @@ public class SupplierSyncMessageTest {
         element1.setIsChanged(T_TRUE);
         element1.setType("custom type");
         
+        CustomElementValueList elementValueList = new CustomElementValueList();
+        elementValueList.setIsChanged(T_TRUE);
+        CustomElementValue value = new CustomElementValue();
+        value.setIsChanged(T_TRUE);
+        value.setValue("some custom value");
+        elementValueList.getCustomElementValue().add(value);
+        element1.getCustomElementValueListOrAttachments().add(elementValueList);
+        
         element1.setCustomElementIdentifier(new JaggaerBasicValue("a custom identifer", T_TRUE));
         element1.setDisplayName(buildDisplayName("a cool display name", T_TRUE));
         customList.getCustomElement().add(element1);
@@ -591,6 +590,9 @@ public class SupplierSyncMessageTest {
         element2.setIsActive(T_TRUE);
         element2.setIsChanged(F_FALSE);
         element2.setType("custom type2");
+        element2.getCustomElementValueListOrAttachments().add(buildAttachments("custom element attachment"));
+        
+        
         
         element2.setCustomElementIdentifier(new JaggaerBasicValue("a  different custom identifer", T_TRUE));
         element2.setDisplayName(buildDisplayName("a lame display name", T_TRUE));
@@ -767,8 +769,8 @@ public class SupplierSyncMessageTest {
         contact.setType("contact type");
         
         ContactRef ref = new ContactRef();
-        ref.setERPNumber(buildERPNumber("erp number", T_TRUE));
-        ref.setSQIntegrationNumber(buildSQIntegrationNumber("SQ number"));
+        ref.setErpNumber(buildERPNumber("erp number", T_TRUE));
+        ref.setSqIntegrationNumber(buildSQIntegrationNumber("SQ number"));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         contact.setContactRef(ref);
         return contact;
@@ -781,9 +783,9 @@ public class SupplierSyncMessageTest {
         Contact contact = new Contact();
         contact.setIsChanged(T_TRUE);
         contact.setType("contact type");
-        contact.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        contact.setErpNumber(buildERPNumber("erp number", T_TRUE));
         contact.setOldERPNumber("old erp number");
-        contact.setSQIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        contact.setSqIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
         contact.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         contact.setName(buildName("contact name", T_TRUE));
         contact.setActive(buildActive());
@@ -862,7 +864,7 @@ public class SupplierSyncMessageTest {
         
         City city = new City();
         city.setIsChanged(T_TRUE);
-        city.setvalue("Ithaca");
+        city.setValue("Ithaca");
         address.setCity(city);
         
         State state = new State();
@@ -906,7 +908,7 @@ public class SupplierSyncMessageTest {
         BusinessUnitInternalName internalName = new BusinessUnitInternalName();
         internalName.setIsChanged(T_TRUE);
         internalName.setPreferredForThisBusinessUnit("is preferred");
-        internalName.setvalue("testing name");
+        internalName.setValue("testing name");
         
         businessList.getBusinessUnitInternalName().add(internalName);
         

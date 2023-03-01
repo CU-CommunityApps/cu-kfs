@@ -18,7 +18,7 @@ public class TelephoneNumber {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "CountryCode", required = true)
-    protected CountryCode countryCode;
+    protected JaggaerBasicValue countryCode;
     @XmlElement(name = "AreaCode", required = true)
     protected JaggaerBasicValue areaCode;
     @XmlElement(name = "Number", required = true)
@@ -34,11 +34,11 @@ public class TelephoneNumber {
         this.isChanged = value;
     }
 
-    public CountryCode getCountryCode() {
+    public JaggaerBasicValue getCountryCode() {
         return countryCode;
     }
 
-    public void setCountryCode(CountryCode value) {
+    public void setCountryCode(JaggaerBasicValue value) {
         this.countryCode = value;
     }
 

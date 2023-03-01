@@ -22,19 +22,19 @@ public class CustomElementValueList {
     @XmlElement(name = "CustomElementValue", required = true)
     protected List<CustomElementValue> customElementValue;
 
-    public String getIsChanged() {
-        return isChanged;
-    }
-
-    public void setIsChanged(String value) {
-        this.isChanged = value;
-    }
-
     public List<CustomElementValue> getCustomElementValue() {
         if (customElementValue == null) {
             customElementValue = new ArrayList<CustomElementValue>();
         }
         return this.customElementValue;
+    }
+
+    public String getIsChanged() {
+        return isChanged;
+    }
+
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
 }

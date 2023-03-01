@@ -54,7 +54,7 @@ public class AccountsPayable {
     @XmlElement(name = "AccountType")
     protected JaggaerBasicValue accountType;
     @XmlElement(name = "CountryCode")
-    protected CountryCode countryCode;
+    protected JaggaerBasicValue countryCode;
     @XmlElement(name = "BankAccount")
     protected BankAccount bankAccount;
     @XmlElement(name = "FlexFields")
@@ -180,11 +180,11 @@ public class AccountsPayable {
         this.accountType = accountType;
     }
 
-    public CountryCode getCountryCode() {
+    public JaggaerBasicValue getCountryCode() {
         return countryCode;
     }
 
-    public void setCountryCode(CountryCode countryCode) {
+    public void setCountryCode(JaggaerBasicValue countryCode) {
         this.countryCode = countryCode;
     }
 

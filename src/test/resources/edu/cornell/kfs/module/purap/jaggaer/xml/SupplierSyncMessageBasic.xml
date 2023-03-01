@@ -314,10 +314,21 @@
                 <CustomElement isChanged="T" isActive="F" type="custom type">
                     <CustomElementIdentifier isChanged="T">a custom identifer</CustomElementIdentifier>
                     <DisplayName isChanged="T">a cool display name</DisplayName>
+                    <CustomElementValueList isChanged="T">
+                        <CustomElementValue isChanged="T">some custom value</CustomElementValue>
+                    </CustomElementValueList>
                 </CustomElement>
                 <CustomElement isChanged="F" isActive="T" type="custom type2">
                     <CustomElementIdentifier isChanged="T">a  different custom identifer</CustomElementIdentifier>
                     <DisplayName isChanged="T">a lame display name</DisplayName>
+                    <Attachments xmlns:xop="test.dtd">
+                        <Attachment id="1000" type="pdf">
+                            <AttachmentName>custom element attachment</AttachmentName>
+                            <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                            <AttachmentSize>5000</AttachmentSize>
+                            <xop:Include href="http://www.google.com"/>
+                        </Attachment>
+                    </Attachments>
                 </CustomElement>
             </CustomElementList>
             <AccountsPayableList isChanged="T">

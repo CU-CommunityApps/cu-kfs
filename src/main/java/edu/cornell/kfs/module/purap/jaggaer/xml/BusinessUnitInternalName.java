@@ -27,23 +27,23 @@ public class BusinessUnitInternalName {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public String getPreferredForThisBusinessUnit() {
         return preferredForThisBusinessUnit;
     }
 
-    public void setPreferredForThisBusinessUnit(String value) {
-        this.preferredForThisBusinessUnit = value;
+    public void setPreferredForThisBusinessUnit(String preferredForThisBusinessUnit) {
+        this.preferredForThisBusinessUnit = preferredForThisBusinessUnit;
     }
 
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
