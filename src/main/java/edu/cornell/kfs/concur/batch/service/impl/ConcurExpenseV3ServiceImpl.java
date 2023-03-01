@@ -16,7 +16,7 @@ import org.springframework.http.HttpMethod;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -27,7 +27,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
-import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItemDetailDTO;
@@ -48,7 +48,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
 
     @Override
     public void processExpenseReports(String accessToken,
-            List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+            List<ConcurEventNotificationResponse> processingResults) {
         ConcurExpenseV3ListingDTO expenseList = getConcurStartingExpenseListing(accessToken);
         processExpenseListing(accessToken, expenseList, processingResults);
     }
@@ -69,7 +69,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
 
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList,
-            List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+            List<ConcurEventNotificationResponse> processingResults) {
         for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
             ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken,
                     partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
@@ -125,12 +125,12 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
 
 
-    protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults,
+    protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationResponse> processingResults,
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportNumber, String reportName, String reportStatus, String travelerName,
             String travelerEmail) {
         boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
-        ConcurEventNotificationResults reportResults = ConcurEventNotificationResults.validAccounts;
+        ConcurEventNotificationStatus reportResults = ConcurEventNotificationStatus.validAccounts;
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
@@ -140,23 +140,23 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 validationMessages.addAll(results.getMessages());
             }
             if (!reportValid) {
-                reportResults = ConcurEventNotificationResults.invalidAccounts;
+                reportResults = ConcurEventNotificationStatus.invalidAccounts;
             }
         } catch (Exception e) {
             reportValid = false;
-            reportResults = ConcurEventNotificationResults.processingError;
+            reportResults = ConcurEventNotificationStatus.processingError;
             validationMessages.add("Encountered an error validating this report");
             LOG.error("validateExpenseAllocations, had an error validating report " + reportNumber, e);
         }
         
-        ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(ConcurEventNotificationType.ExpenseReport,
+        ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport,
                 reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
         processingResults.add(resultsDTO);
         updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);
         
     }
     
-    protected void updateStatusInConcur(String accessToken, String reportId, boolean reportValid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+    protected void updateStatusInConcur(String accessToken, String reportId, boolean reportValid, ConcurEventNotificationResponse resultsDTO) {
         LOG.info("updateStatusInConcur, for report id " + reportId + " the over all validation status will be set to " + reportValid);
         if (!shouldUpdateStatusInConcur()) {
             LOG.info("updateStatusInConcur, Concur workflow actions are currently disabled in this KFS environment");
@@ -189,7 +189,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected ConcurWebRequest<Void> buildWebRequestForExpenseWorkflowAction(String workflowAction, String reportId,
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+            ConcurEventNotificationResponse resultsDTO) {
         String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
                 ? ConcurConstants.APPROVE_COMMENT
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);

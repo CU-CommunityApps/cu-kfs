@@ -12,7 +12,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurAccessTokenV2Service;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2ReportService;
 import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
-import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 
 public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     private static final Logger LOG = LogManager.getLogger();
@@ -25,24 +25,24 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         String accessToken = concurAccessTokenV2Service.retrieveNewAccessBearerToken();
-        List<ConcurEventNotificationProcessingResultsDTO> processingResults = new ArrayList<>();
+        List<ConcurEventNotificationResponse> processingResults = new ArrayList<>();
         validateExpenseReports(accessToken, processingResults);
         validateTravelRequests(accessToken, processingResults);
         generateReport(processingResults);
         return true;
     }
     
-    private void validateExpenseReports(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+    private void validateExpenseReports(String accessToken, List<ConcurEventNotificationResponse> processingResults) {
         concurExpenseV3Service.processExpenseReports(accessToken, processingResults);
     }
     
-    private void validateTravelRequests(String accessToken, List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
-        List<ConcurEventNotificationProcessingResultsDTO> travelRequestProcessingResults = concurRequestV4Service
+    private void validateTravelRequests(String accessToken, List<ConcurEventNotificationResponse> processingResults) {
+        List<ConcurEventNotificationResponse> travelRequestProcessingResults = concurRequestV4Service
                 .processTravelRequests(accessToken);
         processingResults.addAll(travelRequestProcessingResults);
     }
     
-    private void generateReport(List<ConcurEventNotificationProcessingResultsDTO> processingResults) {
+    private void generateReport(List<ConcurEventNotificationResponse> processingResults) {
         if (processingResults.isEmpty()) {
             LOG.info("generateReport, no reports nor travel requests were validated");
         } else {
@@ -51,7 +51,7 @@ public class ConcurEventNotificationV2ProcessingStep extends AbstractStep {
         }
     }
     
-    private void logIndividualResult(ConcurEventNotificationProcessingResultsDTO result) {
+    private void logIndividualResult(ConcurEventNotificationResponse result) {
         LOG.info("logIndividualResult, " + result.toString());
     }
 

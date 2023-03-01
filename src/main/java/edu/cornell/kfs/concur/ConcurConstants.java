@@ -200,7 +200,7 @@ public class ConcurConstants {
         }
     }
     
-    public enum ConcurEventNotificationResults {
+    public enum ConcurEventNotificationStatus {
         validAccounts("valid", true, "Valid Accounts"),
         invalidAccounts("invalid", false, "Invalid Accounts"),
         processingError("processing error", false, "Processing Errors");
@@ -209,7 +209,7 @@ public class ConcurConstants {
         public final boolean valid;
         public final String statusForReport;
         
-        private ConcurEventNotificationResults(String status, boolean valid, String statusForReport) {
+        private ConcurEventNotificationStatus(String status, boolean valid, String statusForReport) {
             this.status = status;
             this.valid = valid;
             this.statusForReport = statusForReport;

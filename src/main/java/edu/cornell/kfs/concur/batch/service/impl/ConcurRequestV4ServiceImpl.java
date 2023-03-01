@@ -29,7 +29,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiOperations;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurApiParameters;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Views;
@@ -41,7 +41,7 @@ import edu.cornell.kfs.concur.batch.ConcurWebRequestBuilder;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurRequestV4Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
-import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4CustomItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
@@ -72,7 +72,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     protected DateTimeService dateTimeService;
 
     @Override
-    public List<ConcurEventNotificationProcessingResultsDTO> processTravelRequests(String accessToken) {
+    public List<ConcurEventNotificationResponse> processTravelRequests(String accessToken) {
         LOG.info("processTravelRequests, Starting processing of "
                 + (isProduction() ? "Production" : "Non-Production") + " travel requests");
         
@@ -82,8 +82,8 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                     + "has either a blank/nonexistent value or a malformed value");
         }
         
-        Stream.Builder<Stream<ConcurEventNotificationProcessingResultsDTO>> subResults = Stream.builder();
-        Stream<ConcurEventNotificationProcessingResultsDTO> subResult;
+        Stream.Builder<Stream<ConcurEventNotificationResponse>> subResults = Stream.builder();
+        Stream<ConcurEventNotificationResponse> subResult;
         String initialQueryUrl = buildInitialRequestQueryUrl();
         String currentQueryUrl = initialQueryUrl;
         int page = 1;
@@ -97,7 +97,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             currentQueryUrl = getQueryUrlForNextResultsPageIfPresent(requestListing);
         } while (StringUtils.isNotBlank(currentQueryUrl));
         
-        List<ConcurEventNotificationProcessingResultsDTO> results = subResults.build()
+        List<ConcurEventNotificationResponse> results = subResults.build()
                 .flatMap(subResultStream -> subResultStream)
                 .collect(Collectors.toUnmodifiableList());
         
@@ -132,12 +132,12 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
     }
 
-    protected Stream<ConcurEventNotificationProcessingResultsDTO> processTravelRequestsSubset(
+    protected Stream<ConcurEventNotificationResponse> processTravelRequestsSubset(
             String accessToken, Map<String, String> testUserIdMappings, ConcurRequestV4ListingDTO requestListing) {
         if (CollectionUtils.isEmpty(requestListing.getListItems())) {
             return Stream.empty();
         }
-        Stream.Builder<ConcurEventNotificationProcessingResultsDTO> subResults = Stream.builder();
+        Stream.Builder<ConcurEventNotificationResponse> subResults = Stream.builder();
         
         for (ConcurRequestV4ListItemDTO requestAsListItem : requestListing.getListItems()) {
             if (StringUtils.isBlank(requestAsListItem.getId())) {
@@ -146,7 +146,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             }
             if (isRequestPendingExternalValidation(requestAsListItem)
                     && requestHasAppropriateOwner(requestAsListItem, testUserIdMappings)) {
-                ConcurEventNotificationProcessingResultsDTO processingResultForRequest = processTravelRequest(
+                ConcurEventNotificationResponse processingResultForRequest = processTravelRequest(
                         accessToken, requestAsListItem);
                 subResults.add(processingResultForRequest);
             }
@@ -171,27 +171,27 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         return isProduction() ? !isTestUser : isTestUser;
     }
 
-    protected ConcurEventNotificationProcessingResultsDTO processTravelRequest(String accessToken,
-            ConcurRequestV4ListItemDTO requestAsListItem) {
+    protected ConcurEventNotificationResponse processTravelRequest(String accessToken,
+                                                                   ConcurRequestV4ListItemDTO requestAsListItem) {
         String requestUuid = requestAsListItem.getId();
-        ConcurEventNotificationResults processingResult;
+        ConcurEventNotificationStatus processingResult;
         List<String> validationMessages = new ArrayList<>();
         boolean requestValid;
         
         try {
-            ConcurRequestV4ReportDTO request = getTravelRequest(accessToken, requestUuid);
-            ConcurAccountInfo accountInfo = buildAccountInfo(request);
+            ConcurRequestV4ReportDTO travelRequest = getTravelRequest(accessToken, requestUuid);
+            ConcurAccountInfo accountInfo = buildAccountInfo(travelRequest);
             LOG.info("processTravelRequest, Validating request " + requestUuid + " with account info: "
                     + accountInfo.toString());
             ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo);
             requestValid = validationResult.isValid();
             validationMessages.addAll(validationResult.getMessages());
-            processingResult = requestValid ? ConcurEventNotificationResults.validAccounts
-                    : ConcurEventNotificationResults.invalidAccounts;
+            processingResult = requestValid ? ConcurEventNotificationStatus.validAccounts
+                    : ConcurEventNotificationStatus.invalidAccounts;
         } catch (Exception e) {
             LOG.error("processTravelRequest, Unexpected error encountered while validating request " + requestUuid, e);
             requestValid = false;
-            processingResult = ConcurEventNotificationResults.processingError;
+            processingResult = ConcurEventNotificationStatus.processingError;
             validationMessages.add(PROCESSING_ERROR_MESSAGE);
         }
         
@@ -206,12 +206,12 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 requestAsListItem.getOwner().getMiddleInitial(), requestAsListItem.getOwner().getLastName());
         String travelerEmail = StringUtils.EMPTY;
         
-        ConcurEventNotificationProcessingResultsDTO resultsDTO = new ConcurEventNotificationProcessingResultsDTO(
+        ConcurEventNotificationResponse eventNotificationResponse = new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.TravelRequest, processingResult,
                 reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
-        updateRequestStatusInConcurIfNecessary(accessToken, requestUuid, resultsDTO);
+        updateRequestStatusInConcurIfNecessary(accessToken, requestUuid, eventNotificationResponse);
         
-        return resultsDTO;
+        return eventNotificationResponse;
     }
 
     protected ConcurAccountInfo buildAccountInfo(ConcurRequestV4ReportDTO request) {
@@ -235,9 +235,9 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected void updateRequestStatusInConcurIfNecessary(
-            String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+            String accessToken, String requestUuid, ConcurEventNotificationResponse resultsDTO) {
         boolean isValid =
-                (resultsDTO.getProcessingResults() == ConcurEventNotificationResults.validAccounts);
+                (resultsDTO.getEventNotificationStatus() == ConcurEventNotificationStatus.validAccounts);
         if (isValid) {
             LOG.info("updateRequestStatusInConcurIfNecessary, Will notify Concur that Request " + requestUuid
                     + " was validated successfully");
@@ -256,7 +256,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected void updateRequestStatusInConcur(
-            String accessToken, String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+            String accessToken, String requestUuid, ConcurEventNotificationResponse resultsDTO) {
         String requestId = resultsDTO.getReportNumber();
         String logMessageDetail = buildLogMessageDetailForRequestApproveAction(requestId, requestUuid);
         
@@ -293,7 +293,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected ConcurWebRequest<ConcurRequestV4ReportDTO> buildWebRequestForTravelRequestApproveAction(
-            String requestUuid, ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+            String requestUuid, ConcurEventNotificationResponse resultsDTO) {
         ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(ConcurConstants.APPROVE_COMMENT);
         String workflowActionUrl = buildFullUrlForRequestWorkflowAction(requestUuid, ConcurWorkflowActions.APPROVE);
         
@@ -332,8 +332,8 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     }
 
     protected void updateProcessingResultForInvalidWorkflowResponse(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) {
-        resultsDTO.setProcessingResults(ConcurEventNotificationResults.processingError);
+            ConcurEventNotificationResponse resultsDTO) {
+        resultsDTO.setEventNotificationStatus(ConcurEventNotificationStatus.processingError);
         List<String> messages = resultsDTO.getMessages();
         if (ObjectUtils.isNull(messages)) {
             messages = new ArrayList<>();

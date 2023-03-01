@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurWorkflowActions;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -38,7 +38,7 @@ import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
 import edu.cornell.kfs.concur.util.MockConcurUtils;
 import edu.cornell.kfs.concur.web.mock.MockConcurExpenseV4WorkflowController;
@@ -132,44 +132,44 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
         return configurationService;
     }
 
-    static Stream<ConcurEventNotificationProcessingResultsDTO> resultsForExistingReports() {
+    static Stream<ConcurEventNotificationResponse> resultsForExistingReports() {
         return Stream.of(
                 createResultsDTO(ConcurTestConstants.REPORT_ID_1,
-                        ConcurEventNotificationResults.validAccounts),
+                        ConcurEventNotificationStatus.validAccounts),
                 createResultsDTO(ConcurTestConstants.REPORT_ID_2,
-                        ConcurEventNotificationResults.invalidAccounts,
+                        ConcurEventNotificationStatus.invalidAccounts,
                         MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT),
                 createResultsDTO(ConcurTestConstants.REPORT_ID_3,
-                        ConcurEventNotificationResults.processingError,
+                        ConcurEventNotificationStatus.processingError,
                         MESSAGE_ERROR_ENCOUNTERED));
     }
 
-    static Stream<ConcurEventNotificationProcessingResultsDTO> resultsForNonExistingReports() {
+    static Stream<ConcurEventNotificationResponse> resultsForNonExistingReports() {
         return Stream.of(
                 createResultsDTO(NON_EXISTING_REPORT_ID_1,
-                        ConcurEventNotificationResults.validAccounts),
+                        ConcurEventNotificationStatus.validAccounts),
                 createResultsDTO(NON_EXISTING_REPORT_ID_2,
-                        ConcurEventNotificationResults.invalidAccounts,
+                        ConcurEventNotificationStatus.invalidAccounts,
                         MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT),
                 createResultsDTO(NON_EXISTING_REPORT_ID_3,
-                        ConcurEventNotificationResults.processingError,
+                        ConcurEventNotificationStatus.processingError,
                         MESSAGE_ERROR_ENCOUNTERED));
     }
 
-    static Stream<ConcurEventNotificationProcessingResultsDTO> resultsForExistingAndNonExistingReports() {
+    static Stream<ConcurEventNotificationResponse> resultsForExistingAndNonExistingReports() {
         return Stream.concat(resultsForExistingReports(), resultsForNonExistingReports());
     }
 
-    private static ConcurEventNotificationProcessingResultsDTO createResultsDTO(
-            String reportId, ConcurEventNotificationResults reportResults, String... messages) {
-        return new ConcurEventNotificationProcessingResultsDTO(
+    private static ConcurEventNotificationResponse createResultsDTO(
+            String reportId, ConcurEventNotificationStatus reportResults, String... messages) {
+        return new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.ExpenseReport, reportResults, reportId, REPORT_NAME_E3_CONFERENCE, REPORT_STATUS_APPROVED,
                 TRAVELER_NAME_JOHN_DOE, TRAVELER_EMAIL_JOHN_DOE, Arrays.asList(messages));
     }
 
     @ParameterizedTest
     @MethodSource("resultsForExistingReports")
-    void testUpdateReportStatusForExistingProductionReports(ConcurEventNotificationProcessingResultsDTO resultsDTO)
+    void testUpdateReportStatusForExistingProductionReports(ConcurEventNotificationResponse resultsDTO)
             throws Exception {
         assertReportStatusUpdatesSuccessfully(resultsDTO);
     }
@@ -177,7 +177,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingReports")
     void testUpdateReportStatusForExistingProductionReportsEvenWithParameterSetToN(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         mockConcurBatchUtilityService.setConcurParameterValue(
                 ConcurParameterConstants.CONCUR_TEST_WORKFLOW_ACTIONS_ENABLED_IND, ParameterValues.NO);
         assertReportStatusUpdatesSuccessfully(resultsDTO);
@@ -185,7 +185,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
 
     @ParameterizedTest
     @MethodSource("resultsForExistingReports")
-    void testUpdateReportStatusForExistingNonProductionReports(ConcurEventNotificationProcessingResultsDTO resultsDTO)
+    void testUpdateReportStatusForExistingNonProductionReports(ConcurEventNotificationResponse resultsDTO)
             throws Exception {
         concurExpenseV3Service.setSimulateProduction(false);
         assertReportStatusUpdatesSuccessfully(resultsDTO);
@@ -194,7 +194,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingAndNonExistingReports")
     void testSkipUpdatesForNonProductionReportsIfParameterSetToN(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         boolean reportExists = mockEndpoint.doesReportExistOnMockServer(resultsDTO.getReportNumber());
         concurExpenseV3Service.setSimulateProduction(false);
         mockConcurBatchUtilityService.setConcurParameterValue(
@@ -205,7 +205,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingReports")
     void testCannotUpdateReportStatusAgainAfterSuccessfulUpdate(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         assertReportStatusUpdatesSuccessfully(resultsDTO);
         assertReportStatusDoesNotUpdate(resultsDTO, true, true);
     }
@@ -213,9 +213,9 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingReports")
     void testCannotUpdateReportStatusIfReportWasAlreadyApprovedOrSentBack(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         boolean reportValid =
-                (resultsDTO.getProcessingResults() == ConcurEventNotificationResults.validAccounts);
+                (resultsDTO.getEventNotificationStatus() == ConcurEventNotificationStatus.validAccounts);
         String workflowAction = reportValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.SEND_BACK;
         mockEndpoint.overrideWorkflowInfoForReport(resultsDTO.getReportNumber(),
                 new ConcurTestWorkflowInfo(workflowAction, MESSAGE_ACTION_TAKEN, 1));
@@ -224,7 +224,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
 
     @ParameterizedTest
     @MethodSource("resultsForNonExistingReports")
-    void testCannotUpdateReportStatusForNonExistingReports(ConcurEventNotificationProcessingResultsDTO resultsDTO)
+    void testCannotUpdateReportStatusForNonExistingReports(ConcurEventNotificationResponse resultsDTO)
             throws Exception {
         assertReportStatusDoesNotUpdate(resultsDTO, false, true);
     }
@@ -232,7 +232,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingAndNonExistingReports")
     void testCannotUpdateReportStatusWhenCallingIncorrectEndpoint(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         boolean reportExists = mockEndpoint.doesReportExistOnMockServer(resultsDTO.getReportNumber());
         mockConcurBatchUtilityService.setConcurParameterValue(
                 ConcurParameterConstants.EXPENSE_V4_WORKFLOW_ENDPOINT, INVALID_WORKFLOW_ENDPOINT);
@@ -242,7 +242,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingAndNonExistingReports")
     void testCannotUpdateReportStatusIfEndpointEncountersInternalServerError(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         boolean reportExists = mockEndpoint.doesReportExistOnMockServer(resultsDTO.getReportNumber());
         mockEndpoint.setForceInternalServerError(true);
         assertReportStatusDoesNotUpdate(resultsDTO, reportExists, true);
@@ -251,7 +251,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     @ParameterizedTest
     @MethodSource("resultsForExistingAndNonExistingReports")
     void testCannotUpdateReportStatusWhenUsingInvalidAccessToken(
-            ConcurEventNotificationProcessingResultsDTO resultsDTO) throws Exception {
+            ConcurEventNotificationResponse resultsDTO) throws Exception {
         boolean reportExists = mockEndpoint.doesReportExistOnMockServer(resultsDTO.getReportNumber());
         accessToken = INVALID_BEARER_TOKEN;
         assertReportStatusDoesNotUpdate(resultsDTO, reportExists, true);
@@ -259,9 +259,9 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
 
     @Test
     void testUpdateStatusesOfMultipleReports() throws Exception {
-        ConcurEventNotificationProcessingResultsDTO[] resultsDTOs = resultsForExistingAndNonExistingReports()
-                .toArray(ConcurEventNotificationProcessingResultsDTO[]::new);
-        for (ConcurEventNotificationProcessingResultsDTO resultsDTO : resultsDTOs) {
+        ConcurEventNotificationResponse[] resultsDTOs = resultsForExistingAndNonExistingReports()
+                .toArray(ConcurEventNotificationResponse[]::new);
+        for (ConcurEventNotificationResponse resultsDTO : resultsDTOs) {
             if (mockEndpoint.doesReportExistOnMockServer(resultsDTO.getReportNumber())) {
                 assertReportStatusUpdatesSuccessfully(resultsDTO);
             } else {
@@ -270,10 +270,10 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
         }
     }
 
-    private void assertReportStatusUpdatesSuccessfully(ConcurEventNotificationProcessingResultsDTO resultsDTO) {
+    private void assertReportStatusUpdatesSuccessfully(ConcurEventNotificationResponse resultsDTO) {
         String reportId = resultsDTO.getReportNumber();
         boolean reportValid =
-                (resultsDTO.getProcessingResults() == ConcurEventNotificationResults.validAccounts);
+                (resultsDTO.getEventNotificationStatus() == ConcurEventNotificationStatus.validAccounts);
         String expectedWorkflowAction = reportValid ? ConcurWorkflowActions.APPROVE : ConcurWorkflowActions.SEND_BACK;
         
         ConcurTestWorkflowInfo workflowInfo = mockEndpoint.getWorkflowInfoForReport(reportId);
@@ -302,11 +302,11 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
                 "Wrong version number on workflow object for report " + reportId);
     }
 
-    private void assertReportStatusDoesNotUpdate(ConcurEventNotificationProcessingResultsDTO resultsDTO,
-            boolean reportExists, boolean expectErrorOnWorkflowAttempt) {
+    private void assertReportStatusDoesNotUpdate(ConcurEventNotificationResponse resultsDTO,
+                                                 boolean reportExists, boolean expectErrorOnWorkflowAttempt) {
         String reportId = resultsDTO.getReportNumber();
         boolean reportValid =
-                (resultsDTO.getProcessingResults() == ConcurEventNotificationResults.validAccounts);
+                (resultsDTO.getEventNotificationStatus() == ConcurEventNotificationStatus.validAccounts);
         ConcurTestWorkflowInfo workflowInfo = mockEndpoint.getWorkflowInfoForReport(reportId);
         String oldActionTaken = null;
         String oldActionComment = null;

@@ -9,11 +9,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 
-public class ConcurEventNotificationProcessingResultsDTO {
+public class ConcurEventNotificationResponse {
     private ConcurEventNotificationType eventType;
-    private ConcurEventNotificationResults processingResults;
+    private ConcurEventNotificationStatus eventNotificationStatus;
     private String reportNumber;
     private String reportName;
     private String reportStatus;
@@ -21,23 +21,23 @@ public class ConcurEventNotificationProcessingResultsDTO {
     private String travelerEmail;
     private List<String> messages;
     
-    public ConcurEventNotificationProcessingResultsDTO(ConcurEventNotificationType eventType,
-                                                       ConcurEventNotificationResults processingResults, String reportNumber, String reportName, String reportStatus,
-                                                       String travelerName, String travelerEmail) {
-        this(eventType, processingResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, new ArrayList<String>());
+    public ConcurEventNotificationResponse(ConcurEventNotificationType eventType,
+                                           ConcurEventNotificationStatus eventNotificationStatus, String reportNumber, String reportName, String reportStatus,
+                                           String travelerName, String travelerEmail) {
+        this(eventType, eventNotificationStatus, reportNumber, reportName, reportStatus, travelerName, travelerEmail, new ArrayList<String>());
     }
     
-    public ConcurEventNotificationProcessingResultsDTO(ConcurEventNotificationProcessingResultsDTO dtoToCopy) {
-        this(dtoToCopy.getEventType(), dtoToCopy.getProcessingResults(), dtoToCopy.getReportNumber(),
-                dtoToCopy.getReportName(), dtoToCopy.getReportStatus(),
-                dtoToCopy.getTravelerName(), dtoToCopy.getTravelerEmail(), new ArrayList<>(dtoToCopy.getMessages()));
+    public ConcurEventNotificationResponse(ConcurEventNotificationResponse responseToCopy) {
+        this(responseToCopy.getEventType(), responseToCopy.getEventNotificationStatus(), responseToCopy.getReportNumber(),
+                responseToCopy.getReportName(), responseToCopy.getReportStatus(),
+                responseToCopy.getTravelerName(), responseToCopy.getTravelerEmail(), new ArrayList<>(responseToCopy.getMessages()));
     }
     
-    public ConcurEventNotificationProcessingResultsDTO(ConcurEventNotificationType eventType,
-                                                       ConcurEventNotificationResults processingResults, String reportNumber, String reportName, String reportStatus,
-                                                       String travelerName, String travelerEmail, List<String> messages) {
+    public ConcurEventNotificationResponse(ConcurEventNotificationType eventType,
+                                           ConcurEventNotificationStatus eventNotificationStatus, String reportNumber, String reportName, String reportStatus,
+                                           String travelerName, String travelerEmail, List<String> messages) {
         this.eventType = eventType;
-        this.processingResults = processingResults;
+        this.eventNotificationStatus = eventNotificationStatus;
         this.reportNumber = reportNumber;
         this.reportName = reportName;
         this.reportStatus = reportStatus;
@@ -54,12 +54,12 @@ public class ConcurEventNotificationProcessingResultsDTO {
         this.eventType = eventType;
     }
 
-    public ConcurEventNotificationResults getProcessingResults() {
-        return processingResults;
+    public ConcurEventNotificationStatus getEventNotificationStatus() {
+        return eventNotificationStatus;
     }
 
-    public void setProcessingResults(ConcurEventNotificationResults processingResults) {
-        this.processingResults = processingResults;
+    public void setEventNotificationStatus(ConcurEventNotificationStatus eventNotificationStatus) {
+        this.eventNotificationStatus = eventNotificationStatus;
     }
 
     public String getReportNumber() {
