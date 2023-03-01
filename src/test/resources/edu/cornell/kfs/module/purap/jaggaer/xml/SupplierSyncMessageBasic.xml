@@ -103,8 +103,62 @@
             <SupplierKeywords>keyword</SupplierKeywords>
             <AddressList/>
             <PrimaryAddressList/>
-            <ContactList/>
-            <PrimaryContactList/>
+            <ContactList isChanged="T">
+                <Contact type="contact type" isChanged="T">
+                    <ERPNumber isChanged="T">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">contact name</Name>
+                    <Active>active</Active>
+                    <FirstName isChanged="T">Jane</FirstName>
+                    <LastName isChanged="T">Doe</LastName>
+                    <Title isChanged="T">cool title</Title>
+                    <Email isChanged="T">test@foo.com</Email>
+                    <Phone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Phone>
+                    <MobilePhone isChanged="F">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </MobilePhone>
+                    <TollFreePhone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </TollFreePhone>
+                    <Fax isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Fax>
+                    <Notes isChanged="T">just a simple note</Notes>
+                </Contact>
+            </ContactList>
+            <PrimaryContactList isChanged="T">
+                <AssociatedContact isChanged="T" type="contact type">
+                    <ContactRef>
+                        <ERPNumber isChanged="T">erp number</ERPNumber>
+                        <SQIntegrationNumber>SQ number</SQIntegrationNumber>
+                        <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    </ContactRef>
+                </AssociatedContact>
+            </PrimaryContactList>
             <ClassificationList isChanged="T">
                 <Classification isChanged="T">
                     <InternalName isChanged="T">internal name for classification 1</InternalName>

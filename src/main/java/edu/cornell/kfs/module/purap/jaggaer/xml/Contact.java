@@ -36,11 +36,11 @@ public class Contact {
     @XmlElement(name = "Active")
     protected Active active;
     @XmlElement(name = "FirstName")
-    protected FirstName firstName;
+    protected JaggaerBasicValue firstName;
     @XmlElement(name = "LastName")
-    protected LastName lastName;
+    protected JaggaerBasicValue lastName;
     @XmlElement(name = "Title")
-    protected Title title;
+    protected JaggaerBasicValue title;
     @XmlElement(name = "Email")
     protected Email email;
     @XmlElement(name = "Phone")
@@ -120,27 +120,27 @@ public class Contact {
         this.active = value;
     }
 
-    public FirstName getFirstName() {
+    public JaggaerBasicValue getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(FirstName value) {
+    public void setFirstName(JaggaerBasicValue value) {
         this.firstName = value;
     }
 
-    public LastName getLastName() {
+    public JaggaerBasicValue getLastName() {
         return lastName;
     }
 
-    public void setLastName(LastName value) {
+    public void setLastName(JaggaerBasicValue value) {
         this.lastName = value;
     }
 
-    public Title getTitle() {
+    public JaggaerBasicValue getTitle() {
         return title;
     }
 
-    public void setTitle(Title value) {
+    public void setTitle(JaggaerBasicValue value) {
         this.title = value;
     }
 

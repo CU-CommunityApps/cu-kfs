@@ -176,18 +176,14 @@ public class SupplierSyncMessageTest {
         supplier.setLocationList(buildLocationList());
         supplier.setDiversityClassificationList(buildDiversityClassificationList());
         supplier.setClassificationList(buildClassificationList());
+        supplier.setPrimaryContactList(buildPrimaryContactList());
+        supplier.setContactList(buildContactList());
 
         AddressList addressList = new AddressList();
         supplier.setAddressList(addressList);
 
         PrimaryAddressList addresses = new PrimaryAddressList();
         supplier.setPrimaryAddressList(addresses);
-
-        ContactList contactList = new ContactList();
-        supplier.setContactList(contactList);
-
-        PrimaryContactList primaryContact = new PrimaryContactList();
-        supplier.setPrimaryContactList(primaryContact);
 
         return supplier;
     }
@@ -910,6 +906,81 @@ public class SupplierSyncMessageTest {
         classificationList.getClassification().add(classification2);
         
         return classificationList;
+    }
+    
+    private PrimaryContactList buildPrimaryContactList() {
+        PrimaryContactList primaryContactList = new PrimaryContactList();
+        primaryContactList.setIsChanged(T_TRUE);
+        
+        AssociatedContact contact = new AssociatedContact();
+        contact.setIsChanged(T_TRUE);
+        contact.setType("contact type");
+        
+        ContactRef ref = new ContactRef();
+        ref.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        ref.setSQIntegrationNumber(buildSQIntegrationNumber("SQ number"));
+        ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
+        contact.setContactRef(ref);
+        primaryContactList.getAssociatedContact().add(contact);
+        
+        return primaryContactList;
+    }
+    
+    private ContactList buildContactList() {
+        ContactList contactList = new ContactList();
+        contactList.setIsChanged(T_TRUE);
+        
+        Contact contact = new Contact();
+        contact.setIsChanged(T_TRUE);
+        contact.setType("contact type");
+        contact.setERPNumber(buildERPNumber("erp number", T_TRUE));
+        contact.setOldERPNumber("old erp number");
+        contact.setSQIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        contact.setThirdPartyRefNumber(buildThirdPartyRefNumber());
+        contact.setName(buildName("contact name", T_TRUE));
+        contact.setActive(buildActive());
+        
+        JaggaerBasicValue firstName = new JaggaerBasicValue("Jane");
+        firstName.setIsChanged(T_TRUE);
+        contact.setFirstName(firstName);
+        
+        JaggaerBasicValue lastName = new JaggaerBasicValue("Doe");
+        lastName.setIsChanged(T_TRUE);
+        contact.setLastName(lastName);
+        
+        JaggaerBasicValue title = new JaggaerBasicValue("cool title");
+        title.setIsChanged(T_TRUE);
+        contact.setTitle(title);
+        
+        contact.setEmail(buildEmail("test@foo.com", T_TRUE));
+        
+        Phone phone = new Phone();
+        phone.setIsChanged(T_TRUE);
+        phone.setTelephoneNumber(buildBasicTelephoneNumber());
+        contact.setPhone(phone);
+        
+        MobilePhone mobile = new MobilePhone();
+        mobile.setIsChanged(F_FALSE);
+        mobile.setTelephoneNumber(buildBasicTelephoneNumber());
+        contact.setMobilePhone(mobile);
+        
+        TollFreePhone tollFree = new TollFreePhone();
+        tollFree.setIsChanged(T_TRUE);
+        tollFree.setTelephoneNumber(buildBasicTelephoneNumber());
+        contact.setTollFreePhone(tollFree);
+        
+        Fax fax = new Fax();
+        fax.setIsChanged(T_TRUE);
+        fax.setTelephoneNumber(buildBasicTelephoneNumber());
+        contact.setFax(fax);
+        
+        Notes notes = new Notes();
+        notes.setIsChanged(T_TRUE);
+        notes.setvalue("just a simple note");
+        contact.setNotes(notes);
+        
+        contactList.getContact().add(contact);
+        return contactList;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {
