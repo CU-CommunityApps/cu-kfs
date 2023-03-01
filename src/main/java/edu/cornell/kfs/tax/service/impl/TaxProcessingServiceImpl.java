@@ -25,6 +25,7 @@ import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
@@ -196,7 +197,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         
         // Parse the definition from the file, in a manner similar to our CU VendorBatchServiceImpl.safelyLoadFileBytes() method.
         try {
-            definitionStream = CoreUtilities.getResourceAsStream(definitionFilePath);
+            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
             definitionContent = IOUtils.toByteArray(definitionStream);
         } catch (IOException e) {
             throw new RuntimeException(e);

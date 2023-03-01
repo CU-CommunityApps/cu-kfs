@@ -61,9 +61,6 @@
 	</bean>
      
     <bean id="b2bPunchOutOrderFileType" class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType">
-	    <property name="digestorRulesFileName">
-	       <value>edu/cornell/kfs/module/purap/util/cxml/b2bPunchOutOrderDigesterRules.xml</value>
-	    </property>
 	    <property name="schemaLocation">
             <value>classpath:org/kuali/kfs/module/purap/util/cxml/b2bPunchOutOrder.xsd</value>
         </property>

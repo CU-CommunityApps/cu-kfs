@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.ClassLoaderUtils;
-import org.kuali.kfs.core.api.util.ContextClassLoaderProxy;
 import org.kuali.kfs.core.api.util.reflect.BaseInvocationHandler;
 import org.kuali.kfs.core.api.util.reflect.TargetedInvocationHandler;
 import org.kuali.kfs.ksb.api.messaging.AsynchronousCall;
@@ -74,8 +73,8 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
             throw new RuntimeException("Cannot create service proxy, no service name passed in.");
         }
         try {
-            return Proxy.newProxyInstance(ClassLoaderUtils.getDefaultClassLoader(), ContextClassLoaderProxy
-                            .getInterfacesToProxy(SpringContext.getService(serviceName)),
+            return Proxy.newProxyInstance(ClassLoaderUtils.getDefaultClassLoader(),
+                    ClassLoaderUtils.getInterfacesToProxy(SpringContext.getService(serviceName), null, null),
                     new DelayedAsynchronousServiceCallProxy(serviceName, value1, delayMilliseconds));
         } catch (Exception e) {
             throw new RuntimeException(e);

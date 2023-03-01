@@ -22,10 +22,22 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.impex.xml.XmlConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kew.xml.KualiDecimalJaxbAdapter;
+import org.kuali.kfs.kew.xml.SqlDateJaxbAdapter;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -47,50 +59,161 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * <p>Java class for anonymous complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}source_doc_nbr"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}invoice_nbr" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}po_nbr" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}req_nbr" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}org_doc_nbr" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}customer_institution_identifier" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}invoice_date" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}orig_invoice_amt" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}net_payment_amt" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}invoice_tot_discount_amt" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}invoice_tot_ship_amt" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}invoice_tot_other_debits" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}invoice_tot_other_credits" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}fs_origin_cd" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}fdoc_typ_cd" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}accounting" maxOccurs="unbounded"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}payment_text" maxOccurs="26" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {"custPaymentDocNbr",
+    "invoiceNbr",
+    "purchaseOrderNbr",
+    "requisitionNbr",
+    "organizationDocNbr",
+    // CU customization, removed "customerInstitutionNumber",
+    "invoiceDate",
+    "origInvoiceAmount",
+    "netPaymentAmount",
+    "invTotDiscountAmount",
+    "invTotShipAmount",
+    "invTotOtherDebitAmount",
+    "invTotOtherCreditAmount",
+    "financialSystemOriginCode",
+    "financialDocumentTypeCode",
+    "accountDetail"})
+@XmlRootElement(name = "detail", namespace = XmlConstants.PAYMENT_NAMESPACE)
 public class PaymentDetail extends PersistableBusinessObjectBase {
 
+    @XmlTransient
     private static final Logger LOG = LogManager.getLogger();
+    @XmlTransient
     private static KualiDecimal zero = KualiDecimal.ZERO;
 
+    @XmlTransient
     private KualiInteger id;
+
+    @XmlElement(name = "invoice_nbr", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String invoiceNbr;
+
+    @XmlElement(name = "invoice_date", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(SqlDateJaxbAdapter.class)
     private Date invoiceDate;
+
+    @XmlElement(name = "po_nbr", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String purchaseOrderNbr;
+
+    @XmlElement(name = "source_doc_nbr", namespace = XmlConstants.PAYMENT_NAMESPACE, required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String custPaymentDocNbr;
+
+    @XmlElement(name = "fs_origin_cd", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String financialSystemOriginCode;
+
+    @XmlElement(name = "fdoc_typ_cd", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String financialDocumentTypeCode;
+
+    @XmlElement(name = "req_nbr", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String requisitionNbr;
+
+    @XmlElement(name = "org_doc_nbr", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     private String organizationDocNbr;
+
+    // CU customization; changed this field to transient as it was moved on PaymentGroup
+    @XmlTransient
     private String customerInstitutionNumber;
+
+    @XmlElement(name = "orig_invoice_amt", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(KualiDecimalJaxbAdapter.class)
     private KualiDecimal origInvoiceAmount;
+
+    @XmlElement(name = "net_payment_amt", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(KualiDecimalJaxbAdapter.class)
     private KualiDecimal netPaymentAmount;
+
+    @XmlElement(name = "invoice_tot_discount_amt", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(KualiDecimalJaxbAdapter.class)
     private KualiDecimal invTotDiscountAmount;
+
+    @XmlElement(name = "invoice_tot_ship_amt", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(KualiDecimalJaxbAdapter.class)
     private KualiDecimal invTotShipAmount;
+
+    @XmlElement(name = "invoice_tot_other_debits", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(KualiDecimalJaxbAdapter.class)
     private KualiDecimal invTotOtherDebitAmount;
+
+    @XmlElement(name = "invoice_tot_other_credits", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(KualiDecimalJaxbAdapter.class)
     private KualiDecimal invTotOtherCreditAmount;
+
+    @XmlTransient
     private Boolean primaryCancelledPayment;
 
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "accounting")
     private List<PaymentAccountDetail> accountDetail = new ArrayList<>();
-    private List<PaymentNoteText> notes = new ArrayList<>();
 
+    @XmlTransient
+    private List<PaymentNoteText> notes = new ArrayList<>();
+    @XmlTransient
     private KualiInteger paymentGroupId;
+    @XmlTransient
     private PaymentGroup paymentGroup;
 
     public PaymentDetail() {
-        super();
     }
 
     public boolean isDetailAmountProvided() {
         return origInvoiceAmount != null || invTotDiscountAmount != null || invTotShipAmount != null
-                || invTotOtherDebitAmount != null || invTotOtherCreditAmount != null;
+               || invTotOtherDebitAmount != null || invTotOtherCreditAmount != null;
     }
 
     public KualiDecimal getCalculatedPaymentAmount() {
-        KualiDecimal orig_invoice_amt = origInvoiceAmount == null ? zero : origInvoiceAmount;
-        KualiDecimal invoice_tot_discount_amt = invTotDiscountAmount == null ? zero : invTotDiscountAmount;
-        KualiDecimal invoice_tot_ship_amt = invTotShipAmount == null ? zero : invTotShipAmount;
-        KualiDecimal invoice_tot_other_debits = invTotOtherDebitAmount == null ? zero : invTotOtherDebitAmount;
-        KualiDecimal invoice_tot_other_credits = invTotOtherCreditAmount == null ? zero : invTotOtherCreditAmount;
+        final KualiDecimal orig_invoice_amt = origInvoiceAmount == null ? zero : origInvoiceAmount;
+        final KualiDecimal invoice_tot_discount_amt = invTotDiscountAmount == null ? zero : invTotDiscountAmount;
+        final KualiDecimal invoice_tot_ship_amt = invTotShipAmount == null ? zero : invTotShipAmount;
+        final KualiDecimal invoice_tot_other_debits = invTotOtherDebitAmount == null ? zero : invTotOtherDebitAmount;
+        final KualiDecimal invoice_tot_other_credits = invTotOtherCreditAmount == null ? zero : invTotOtherCreditAmount;
 
         KualiDecimal t = orig_invoice_amt.subtract(invoice_tot_discount_amt);
         t = t.add(invoice_tot_ship_amt);
@@ -111,27 +234,27 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             return !PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentGroup.getPaymentStatus().getCode());
         }
 
-        String daysStr = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PaymentDetail.class,
-                PdpParameterConstants.DISBURSEMENT_CANCELLATION_DAYS);
-        int days = Integer.parseInt(daysStr);
+        final String daysStr = SpringContext.getBean(ParameterService.class)
+                .getParameterValueAsString(PaymentDetail.class, PdpParameterConstants.DISBURSEMENT_CANCELLATION_DAYS);
+        final int days = Integer.parseInt(daysStr);
 
-        Calendar c = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, days * -1);
         c.set(Calendar.HOUR, 12);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
         c.set(Calendar.AM_PM, Calendar.AM);
-        Timestamp lastDisbursementActionDate = new Timestamp(c.getTimeInMillis());
+        final Timestamp lastDisbursementActionDate = new Timestamp(c.getTimeInMillis());
 
-        Calendar c2 = Calendar.getInstance();
+        final Calendar c2 = Calendar.getInstance();
         c2.setTime(paymentGroup.getDisbursementDate());
         c2.set(Calendar.HOUR, 11);
         c2.set(Calendar.MINUTE, 59);
         c2.set(Calendar.SECOND, 59);
         c2.set(Calendar.MILLISECOND, 59);
         c2.set(Calendar.AM_PM, Calendar.PM);
-        Timestamp disbursementDate = new Timestamp(c2.getTimeInMillis());
+        final Timestamp disbursementDate = new Timestamp(c2.getTimeInMillis());
 
         // date is equal to or after lastActionDate Allowed
         return disbursementDate.compareTo(lastDisbursementActionDate) >= 0;
@@ -142,7 +265,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      *
      * @param pnts list of notes to add
      */
-    public void addNotes(List<PaymentNoteText> pnts) {
+    public void addNotes(final List<PaymentNoteText> pnts) {
         pnts.forEach(n -> {
             LOG.debug("addNotes() Creating check stub text note: {}", n::getCustomerNoteText);
             addNote(n);
@@ -155,7 +278,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     public KualiDecimal getAccountTotal() {
         KualiDecimal acctTotal = new KualiDecimal(0.00);
 
-        for (PaymentAccountDetail paymentAccountDetail : accountDetail) {
+        for (final PaymentAccountDetail paymentAccountDetail : accountDetail) {
             if (paymentAccountDetail.getAccountNetAmount() != null) {
                 acctTotal = acctTotal.add(paymentAccountDetail.getAccountNetAmount());
             }
@@ -168,7 +291,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(Date invoiceDate) {
+    public void setInvoiceDate(final Date invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 
@@ -177,7 +300,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      *
      * @param invoiceDate Timestamp as string
      */
-    public void setInvoiceDate(String invoiceDate) throws ParseException {
+    public void setInvoiceDate(final String invoiceDate) throws ParseException {
         this.invoiceDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(invoiceDate);
     }
 
@@ -185,31 +308,31 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return accountDetail;
     }
 
-    public void setAccountDetail(List<PaymentAccountDetail> ad) {
-        accountDetail = ad;
+    public void setAccountDetail(final List<PaymentAccountDetail> accountDetail) {
+        this.accountDetail = accountDetail;
     }
 
-    public void addAccountDetail(PaymentAccountDetail pad) {
-        pad.setPaymentDetail(this);
-        accountDetail.add(pad);
+    public void addAccountDetail(final PaymentAccountDetail paymentAccountDetail) {
+        paymentAccountDetail.setPaymentDetail(this);
+        accountDetail.add(paymentAccountDetail);
     }
 
-    public void deleteAccountDetail(PaymentAccountDetail pad) {
-        accountDetail.remove(pad);
+    public void deleteAccountDetail(final PaymentAccountDetail paymentAccountDetail) {
+        accountDetail.remove(paymentAccountDetail);
     }
 
     public List<PaymentNoteText> getNotes() {
         return notes;
     }
 
-    public void setNotes(List<PaymentNoteText> n) {
-        notes = n;
+    public void setNotes(final List<PaymentNoteText> notes) {
+        this.notes = notes;
     }
 
-    public void addNote(PaymentNoteText pnt) {
-        if (!StringUtils.isBlank(pnt.getCustomerNoteText())) {
-            pnt.setPaymentDetail(this);
-            notes.add(pnt);
+    public void addNote(final PaymentNoteText paymentNoteText) {
+        if (StringUtils.isNotBlank(paymentNoteText.getCustomerNoteText())) {
+            paymentNoteText.setPaymentDetail(this);
+            notes.add(paymentNoteText);
         } else {
             LOG.warn(
                     "Did not add note to payment detail build from Document #: {} because note was empty",
@@ -223,19 +346,20 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      *
      * @param paymentText note text
      */
-    public void addPaymentText(String paymentText) {
-        PaymentNoteText paymentNoteText = new PaymentNoteText();
+    public void addPaymentText(final String paymentText) {
+        final PaymentNoteText paymentNoteText = new PaymentNoteText();
 
         paymentNoteText.setCustomerNoteText(paymentText);
-        paymentNoteText.setCustomerNoteLineNbr(new KualiInteger(this.notes.size() + 1));
+        paymentNoteText.setCustomerNoteLineNbr(new KualiInteger(notes.size() + 1));
 
         addNote(paymentNoteText);
     }
 
-    public void deleteNote(PaymentNoteText pnt) {
-        notes.remove(pnt);
+    public void deleteNote(final PaymentNoteText paymentNoteText) {
+        notes.remove(paymentNoteText);
     }
 
+    // CU customization to add extended attribute
     @Override
     public void afterInsert() {
         super.afterInsert();
@@ -300,83 +424,83 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return paymentGroup;
     }
 
-    public void setCustPaymentDocNbr(String string) {
-        custPaymentDocNbr = string;
+    public void setCustPaymentDocNbr(final String custPaymentDocNbr) {
+        this.custPaymentDocNbr = custPaymentDocNbr;
     }
 
-    public void setId(KualiInteger integer) {
-        id = integer;
+    public void setId(final KualiInteger id) {
+        this.id = id;
     }
 
-    public void setInvoiceNbr(String string) {
-        invoiceNbr = string;
+    public void setInvoiceNbr(final String invoiceNbr) {
+        this.invoiceNbr = invoiceNbr;
     }
 
-    public void setInvTotDiscountAmount(KualiDecimal decimal) {
-        invTotDiscountAmount = decimal;
+    public void setInvTotDiscountAmount(final KualiDecimal invTotDiscountAmount) {
+        this.invTotDiscountAmount = invTotDiscountAmount;
     }
 
-    public void setInvTotDiscountAmount(String decimal) {
-        invTotDiscountAmount = new KualiDecimal(decimal);
+    public void setInvTotDiscountAmount(final String invTotDiscountAmount) {
+        this.invTotDiscountAmount = new KualiDecimal(invTotDiscountAmount);
     }
 
-    public void setInvTotOtherCreditAmount(KualiDecimal decimal) {
-        invTotOtherCreditAmount = decimal;
+    public void setInvTotOtherCreditAmount(final KualiDecimal invTotOtherCreditAmount) {
+        this.invTotOtherCreditAmount = invTotOtherCreditAmount;
     }
 
-    public void setInvTotOtherCreditAmount(String decimal) {
-        invTotOtherCreditAmount = new KualiDecimal(decimal);
+    public void setInvTotOtherCreditAmount(final String invTotOtherCreditAmount) {
+        this.invTotOtherCreditAmount = new KualiDecimal(invTotOtherCreditAmount);
     }
 
-    public void setInvTotOtherDebitAmount(KualiDecimal decimal) {
-        invTotOtherDebitAmount = decimal;
+    public void setInvTotOtherDebitAmount(final KualiDecimal invTotOtherDebitAmount) {
+        this.invTotOtherDebitAmount = invTotOtherDebitAmount;
     }
 
-    public void setInvTotOtherDebitAmount(String decimal) {
-        invTotOtherDebitAmount = new KualiDecimal(decimal);
+    public void setInvTotOtherDebitAmount(final String invTotOtherDebitAmount) {
+        this.invTotOtherDebitAmount = new KualiDecimal(invTotOtherDebitAmount);
     }
 
-    public void setInvTotShipAmount(KualiDecimal decimal) {
-        invTotShipAmount = decimal;
+    public void setInvTotShipAmount(final KualiDecimal invTotShipAmount) {
+        this.invTotShipAmount = invTotShipAmount;
     }
 
-    public void setInvTotShipAmount(String decimal) {
-        invTotShipAmount = new KualiDecimal(decimal);
+    public void setInvTotShipAmount(final String invTotShipAmount) {
+        this.invTotShipAmount = new KualiDecimal(invTotShipAmount);
     }
 
-    public void setNetPaymentAmount(KualiDecimal decimal) {
-        netPaymentAmount = decimal;
+    public void setNetPaymentAmount(final KualiDecimal netPaymentAmount) {
+        this.netPaymentAmount = netPaymentAmount;
     }
 
-    public void setNetPaymentAmount(String decimal) {
-        netPaymentAmount = new KualiDecimal(decimal);
+    public void setNetPaymentAmount(final String netPaymentAmount) {
+        this.netPaymentAmount = new KualiDecimal(netPaymentAmount);
     }
 
-    public void setOrganizationDocNbr(String string) {
-        organizationDocNbr = string;
+    public void setOrganizationDocNbr(final String organizationDocNbr) {
+        this.organizationDocNbr = organizationDocNbr;
     }
 
-    public void setOrigInvoiceAmount(KualiDecimal decimal) {
-        origInvoiceAmount = decimal;
+    public void setOrigInvoiceAmount(final KualiDecimal origInvoiceAmount) {
+        this.origInvoiceAmount = origInvoiceAmount;
     }
 
-    public void setOrigInvoiceAmount(String decimal) {
-        origInvoiceAmount = new KualiDecimal(decimal);
+    public void setOrigInvoiceAmount(final String origInvoiceAmount) {
+        this.origInvoiceAmount = new KualiDecimal(origInvoiceAmount);
     }
 
-    public void setPurchaseOrderNbr(String string) {
-        purchaseOrderNbr = string;
+    public void setPurchaseOrderNbr(final String purchaseOrderNbr) {
+        this.purchaseOrderNbr = purchaseOrderNbr;
     }
 
-    public void setRequisitionNbr(String string) {
-        requisitionNbr = string;
+    public void setRequisitionNbr(final String requisitionNbr) {
+        this.requisitionNbr = requisitionNbr;
     }
 
     public String getFinancialDocumentTypeCode() {
         return financialDocumentTypeCode;
     }
 
-    public void setFinancialDocumentTypeCode(String financialDocumentTypeCode) {
+    public void setFinancialDocumentTypeCode(final String financialDocumentTypeCode) {
         this.financialDocumentTypeCode = financialDocumentTypeCode;
     }
 
@@ -384,11 +508,11 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return primaryCancelledPayment;
     }
 
-    public void setPrimaryCancelledPayment(Boolean primaryCancelledPayment) {
+    public void setPrimaryCancelledPayment(final Boolean primaryCancelledPayment) {
         this.primaryCancelledPayment = primaryCancelledPayment;
     }
 
-    public void setPaymentGroup(PaymentGroup paymentGroup) {
+    public void setPaymentGroup(final PaymentGroup paymentGroup) {
         this.paymentGroup = paymentGroup;
     }
 
@@ -396,7 +520,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return paymentGroupId;
     }
 
-    public void setPaymentGroupId(KualiInteger paymentGroupId) {
+    public void setPaymentGroupId(final KualiInteger paymentGroupId) {
         this.paymentGroupId = paymentGroupId;
     }
 
@@ -404,7 +528,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return financialSystemOriginCode;
     }
 
-    public void setFinancialSystemOriginCode(String financialSystemOriginCode) {
+    public void setFinancialSystemOriginCode(final String financialSystemOriginCode) {
         this.financialSystemOriginCode = financialSystemOriginCode;
     }
 
@@ -412,7 +536,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
         return customerInstitutionNumber;
     }
 
-    public void setCustomerInstitutionNumber(String customerInstitutionNumber) {
+    public void setCustomerInstitutionNumber(final String customerInstitutionNumber) {
         this.customerInstitutionNumber = customerInstitutionNumber;
     }
 
@@ -420,9 +544,9 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
      * @return the String representation of the payment detail notes.
      */
     public String getNotesText() {
-        StringBuffer notes = new StringBuffer();
-        List<PaymentNoteText> notesList = getNotes();
-        for (PaymentNoteText note : notesList) {
+        final StringBuffer notes = new StringBuffer();
+        final List<PaymentNoteText> notesList = this.notes;
+        for (final PaymentNoteText note : notesList) {
             notes.append(note.getCustomerNoteText());
             notes.append(KFSConstants.NEWLINE);
         }
@@ -442,9 +566,9 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     public int getNbrOfPaymentsInDisbursement() {
         int nbrOfPaymentsInDisbursement = 0;
         if (ObjectUtils.isNotNull(paymentGroup.getDisbursementNbr())) {
-            List<PaymentGroup> paymentGroupList = SpringContext.getBean(PaymentGroupService.class)
+            final List<PaymentGroup> paymentGroupList = SpringContext.getBean(PaymentGroupService.class)
                     .getByDisbursementNumber(paymentGroup.getDisbursementNbr().intValue());
-            for (PaymentGroup paymentGroup : paymentGroupList) {
+            for (final PaymentGroup paymentGroup : paymentGroupList) {
                 nbrOfPaymentsInDisbursement += paymentGroup.getPaymentDetails().size();
             }
         }

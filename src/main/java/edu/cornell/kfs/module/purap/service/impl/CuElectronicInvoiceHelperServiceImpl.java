@@ -133,7 +133,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	private WorkflowDocumentService workflowDocumentService;
 	private CUFinancialSystemDocumentService financialSystemDocumentService;
 	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
-	private PersonService personService;
 
 	@Override
     public ElectronicInvoiceLoad loadElectronicInvoices() {
@@ -1292,43 +1291,33 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void attachInvoiceXMLWithRejectDoc(ElectronicInvoiceRejectDocument eInvoiceRejectDocument, File attachmentFile, String noteText) {
+    protected void attachInvoiceXMLWithRejectDoc(
+            final ElectronicInvoiceRejectDocument eInvoiceRejectDocument, 
+            final File attachmentFile, 
+            final String noteText) {
         Note note = null;
         try {
             note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
             note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
-        } catch (Exception e1) {
+        } catch (final Exception e1) {
             throw new RuntimeException("Unable to create note from document: ", e1);
         }
 
-        String attachmentType = null;
-        BufferedInputStream fileStream = null;
-        try {
-            fileStream = new BufferedInputStream(new FileInputStream(attachmentFile));
-        } catch (FileNotFoundException e) {
-            LOG.error( "Exception opening attachment file", e);
-        }
-
         Attachment attachment = null;
-        try {
+        try (BufferedInputStream fileStream = new BufferedInputStream(new FileInputStream(attachmentFile))) {
+            final String attachmentType = null;
             attachment = attachmentService.createAttachment(eInvoiceRejectDocument.getNoteTarget(),
                     attachmentFile.getName(), INVOICE_FILE_MIME_TYPE, (int) attachmentFile.length(), fileStream,
                     attachmentType);
+        } catch (final FileNotFoundException e) {
+            LOG.error("Exception opening attachment file", e);
         } catch (Exception e) {
-        	// it may have more than one kind of Exception
-        	// if attachment is not created for any reason, then don't include in note and proceed.
-        	// otherwise it will throw runtimeexception and cause job to stop
-        	LOG.error("Unable to create attachment", e);
+            // it may have more than one kind of Exception
+            // if attachment is not created for any reason, then don't include in note and proceed.
+            // otherwise it will throw runtimeexception and cause job to stop
+            LOG.error("Unable to create attachment", e);
            // throw new RuntimeException("Unable to create attachment", e);
-        }finally{
-            if (fileStream != null) {
-                try {
-                    fileStream.close();
-                } catch (IOException e) {
-                    LOG.error( "Exception closing file", e);
-                }
-            }
         }
 
         if (attachment != null) {
@@ -1789,11 +1778,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     public void setcUPaymentMethodGeneralLedgerPendingEntryService(
             CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService) {
         this.cUPaymentMethodGeneralLedgerPendingEntryService = cUPaymentMethodGeneralLedgerPendingEntryService;
-    }
-
-    public void setPersonService(PersonService personService) {
-        super.setPersonService(personService);
-        this.personService = personService;
     }
 
 }

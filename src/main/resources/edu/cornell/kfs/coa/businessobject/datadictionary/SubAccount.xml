@@ -53,5 +53,32 @@
       </list>
     </property>
   </bean>
+  
+  <!-- Business Object Details Definition -->
+  
+     <bean id="SubAccount-sectionDefinition"
+          parent="SubAccount-sectionDefinition-parentBean">
+        <property name="fields">
+            <list>
+                <ref bean="SubAccount-chartOfAccountsCode"/>
+                <ref bean="SubAccount-accountNumber"/>
+                <ref bean="SubAccount-subAccountNumber"/>
+                <ref bean="SubAccount-subAccountName"/>
+                <ref bean="SubAccount-active"/>
+                <ref bean="SubAccount-a21SubAccount.subAccountTypeCode"/>
+                <ref bean="SubAccount-a21SubAccount.offCampusCode"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="SubAccount-sectionDefinition-cgIcr"
+          parent="SubAccount-sectionDefinition-cgIcr-parentBean">
+        <property name="fields">
+            <list>
+                <ref bean="SubAccount-a21SubAccount.financialIcrSeriesIdentifier"/>
+                <ref bean="SubAccount-a21SubAccount.indirectCostRecoveryTypeCode"/>
+            </list>
+        </property>
+    </bean>
 
 </beans>

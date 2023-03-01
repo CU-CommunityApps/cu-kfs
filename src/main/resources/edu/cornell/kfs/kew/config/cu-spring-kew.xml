@@ -60,6 +60,7 @@
     <!-- Override action list and action item DAOs/services to support the action list notes customization. -->
 
     <bean id="actionItemDAO" class="edu.cornell.kfs.kew.actionitem.dao.impl.CuActionItemDAOOjbImpl" lazy-init="true"
+          p:groupService-ref="kimGroupService"
           p:jcdAlias="kewDataSource"
           p:personService-ref="personService"/>
 
@@ -73,7 +74,9 @@
           lazy-init="true" p:jcdAlias="kewDataSource" p:documentTypeService-ref="documentTypeService"/>
 
     <bean id="documentRouteHeaderService" class="edu.cornell.kfs.kew.routeheader.service.impl.CuRouteHeaderServiceImpl"
-          lazy-init="true" p:routeHeaderDAO-ref="documentRouteHeaderDAO"
+          lazy-init="true" 
+          p:identityService-ref="identityService"
+          p:routeHeaderDAO-ref="documentRouteHeaderDAO"
           p:searchableAttributeDAO-ref="searchableAttributeDAO"/>
 
     <!--
@@ -84,6 +87,7 @@
           lazy-init="true"
           p:deploymentEnvironment="${environment}"
           p:emailService-ref="emailService"
+          p:groupService-ref="kimGroupService"
           p:personService-ref="personService"
           p:routeHeaderService-ref="documentRouteHeaderService"/>
 

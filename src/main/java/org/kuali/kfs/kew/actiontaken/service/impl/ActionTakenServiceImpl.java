@@ -24,7 +24,6 @@ import org.kuali.kfs.kew.actiontaken.dao.ActionTakenDAO;
 import org.kuali.kfs.kew.actiontaken.service.ActionTakenService;
 import org.kuali.kfs.kew.api.action.WorkflowAction;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -44,6 +43,8 @@ public class ActionTakenServiceImpl implements ActionTakenService {
 
     private ActionTakenDAO actionTakenDAO;
 
+    private GroupService groupService;
+
     @Override
     public ActionTaken findByActionTakenId(String actionTakenId) {
         return getActionTakenDAO().findByActionTakenId(actionTakenId);
@@ -57,7 +58,7 @@ public class ActionTakenServiceImpl implements ActionTakenService {
     @Override
     public ActionTaken getPreviousAction(
             ActionRequest actionRequest, List<ActionTaken> simulatedActionsTaken) {
-        GroupService ims = KimApiServiceLocator.getGroupService();
+        GroupService ims = groupService;
         ActionTaken foundActionTaken = null;
         List<String> principalIds = new ArrayList<>();
         if (actionRequest.isGroupRequest()) {
@@ -128,11 +129,14 @@ public class ActionTakenServiceImpl implements ActionTakenService {
 
     @Override
     public Timestamp getLastApprovedDate(String documentId) {
-    	return getActionTakenDAO().getLastActionTakenDate(documentId, WorkflowAction.APPROVE);
+        return getActionTakenDAO().getLastActionTakenDate(documentId, WorkflowAction.APPROVE);
     }
     
     public Timestamp getLastModifiedDate(String documentId) {
         return getActionTakenDAO().getLastModifiedDate(documentId);
     }
 
+    public void setGroupService(final GroupService groupService) {
+        this.groupService = groupService;
+    }
 }

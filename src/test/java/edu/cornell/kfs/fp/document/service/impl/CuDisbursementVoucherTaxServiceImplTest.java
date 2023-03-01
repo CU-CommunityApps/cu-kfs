@@ -234,12 +234,6 @@ public class CuDisbursementVoucherTaxServiceImplTest{
 		}
 
 		@Override
-		public ParameterEvaluator getParameterEvaluator(String namespaceCode,
-				String detailTypeCode, String parameterName) {
-			return null;
-		}
-
-		@Override
 		public ParameterEvaluator getParameterEvaluator(
 				Class componentClass, String parameterName,
 				String constrainedValue) {

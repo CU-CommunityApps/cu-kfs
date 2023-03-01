@@ -13,7 +13,6 @@ import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetLocation;
 import org.kuali.kfs.module.cam.businessobject.lookup.AssetLookupableHelperServiceImpl;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
@@ -26,7 +25,7 @@ public class CuAssetLookupableHelperServiceImpl extends AssetLookupableHelperSer
         // perform the lookup on the asset representative first
         String principalName = fieldValues.get(CamsPropertyConstants.Asset.REP_USER_AUTH_ID);
         if (StringUtils.isNotBlank(principalName)) {
-            Principal principal = KimApiServiceLocator.getIdentityService().getPrincipalByPrincipalName(principalName);
+            Principal principal = identityService.getPrincipalByPrincipalName(principalName);
 
             if (principal == null) {
                 return Collections.EMPTY_LIST;

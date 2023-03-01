@@ -31,6 +31,7 @@ import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.IdentityService;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
@@ -84,6 +85,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     private static final Map<String, RoleDaoAction> memberTypeToRoleDaoActionMap = populateMemberTypeToRoleDaoActionMap();
     private RoleService proxiedRoleService;
     private CacheManager cacheManager;
+    private IdentityService identityService;
 
     private KimTypeInfoService kimTypeInfoService;
 
@@ -1953,7 +1955,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 }
                 break;
             case PRINCIPAL:
-                final Principal principal = KimApiServiceLocator.getIdentityService().getPrincipal(memberId);
+                final Principal principal = identityService.getPrincipal(memberId);
                 if (principal == null) {
                     throw new IllegalStateException("the user does not exist: " + memberId);
                 }
@@ -2296,7 +2298,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
         sb.append("   Principal : ").append(principalId);
         if (principalId != null) {
-            Principal principal = KimApiServiceLocator.getIdentityService().getPrincipal(principalId);
+            Principal principal = identityService.getPrincipal(principalId);
             if (principal != null) {
                 sb.append(" (").append(principal.getPrincipalName()).append(')');
             }
@@ -2353,6 +2355,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     public void setKimTypeInfoService(final KimTypeInfoService kimTypeInfoService) {
         this.kimTypeInfoService = kimTypeInfoService;
+    }
+
+    public void setIdentityService(final IdentityService identityService) {
+        this.identityService = identityService;
     }
 
     /**
