@@ -11,7 +11,6 @@ import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.inquiry.InquiryRestrictions;
 import org.kuali.kfs.kns.service.impl.BusinessObjectAuthorizationServiceImpl;
 import org.kuali.kfs.krad.bo.BusinessObject;
@@ -52,15 +51,13 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
     private boolean shouldHideAttachmentLinkOnVendorInquiry(Person user) {
         Map<String, String> permissionDetails = Collections.singletonMap(
                 KewApiConstants.DOCUMENT_TYPE_NAME_DETAIL, CUVendorConstants.VENDOR_DOCUMENT_TYPE_NAME);
-        return !getPermissionService().hasPermissionByTemplate(user.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
+        return !permissionService.hasPermissionByTemplate(user.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, permissionDetails);
     }
 
-    private PermissionService getPermissionService() {
-        if (permissionService == null) {
-            permissionService = KimApiServiceLocator.getPermissionService();
-        }
-        return permissionService;
+    public void setPermissionService(final PermissionService permissionService) {
+        this.permissionService = permissionService;
+        super.setPermissionService(permissionService);
     }
 
 }

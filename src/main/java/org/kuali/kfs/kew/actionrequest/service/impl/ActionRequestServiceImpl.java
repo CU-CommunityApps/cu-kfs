@@ -45,8 +45,9 @@ import org.kuali.kfs.kew.routemodule.RouteModule;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kew.util.FutureRequestDocumentStateManager;
 import org.kuali.kfs.kew.util.ResponsibleParty;
+import org.kuali.kfs.kim.api.group.GroupService;
 import org.kuali.kfs.kim.api.role.RoleMembership;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.identity.IdentityService;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.Group;
@@ -80,6 +81,9 @@ public class ActionRequestServiceImpl implements ActionRequestService {
     private static final Logger LOG = LogManager.getLogger();
 
     private ActionRequestDAO actionRequestDAO;
+    private IdentityService identityService;
+
+    private GroupService groupService;
 
     @Override
     public ActionRequest findByActionRequestId(String actionRequestId) {
@@ -271,7 +275,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
         if (!actionRequest.isPrimaryDelegator()) {
             if (actionRequest.isGroupRequest()) {
                 List<String> principalIds =
-                        KimApiServiceLocator.getGroupService().getMemberPrincipalIds(actionRequest.getGroupId());
+                        groupService.getMemberPrincipalIds(actionRequest.getGroupId());
                 actionItems.addAll(createActionItemsForPrincipals(actionRequest, principalIds));
             } else if (actionRequest.isUserRequest()) {
                 ActionItem actionItem = getActionListService().createActionItemForActionRequest(actionRequest);
@@ -327,8 +331,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
                         return;
                     }
                     if (responsibleParty.getPrincipalId() != null) {
-                        Principal user = KimApiServiceLocator.getIdentityService()
-                                .getPrincipal(responsibleParty.getPrincipalId());
+                        Principal user = identityService.getPrincipal(responsibleParty.getPrincipalId());
                         actionRequest.setPrincipalId(user.getPrincipalId());
                     } else if (responsibleParty.getGroupId() != null) {
                         actionRequest.setGroupId(responsibleParty.getGroupId());
@@ -398,8 +401,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
     protected boolean deactivateOnEmptyGroup(ActionRequest actionRequestToActivate,
             ActivationContext activationContext) {
         if (actionRequestToActivate.isGroupRequest()) {
-            if (KimApiServiceLocator.getGroupService()
-                    .getMemberPrincipalIds(actionRequestToActivate.getGroup().getId()).isEmpty()) {
+            if (groupService.getMemberPrincipalIds(actionRequestToActivate.getGroup().getId()).isEmpty()) {
                 deactivateRequest(null, actionRequestToActivate, null, activationContext);
                 return true;
             }
@@ -545,7 +547,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
     public List findAllValidRequests(String principalId, String documentId, String requestCode) {
         ActionRequestDAO arDAO = getActionRequestDAO();
         Collection pendingArs = arDAO.findByStatusAndDocId(ActionRequestStatus.ACTIVATED.getCode(), documentId);
-        List<String> arGroups = KimApiServiceLocator.getGroupService().getGroupIdsByPrincipalId(principalId);
+        List<String> arGroups = groupService.getGroupIdsByPrincipalId(principalId);
         return filterActionRequestsByCode((List<ActionRequest>) pendingArs, principalId, arGroups,
                 requestCode);
     }
@@ -719,7 +721,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
                 principalIds.add(actionRequest.getPrincipalId());
             } else if (actionRequest.isGroupRequest()) {
                 principalIds.addAll(
-                        KimApiServiceLocator.getGroupService().getMemberPrincipalIds(actionRequest.getGroupId()));
+                        groupService.getMemberPrincipalIds(actionRequest.getGroupId()));
             }
         }
         return principalIds;
@@ -822,7 +824,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
         // request than we need get all the requests with workgroup ids and see if our user is in that group
         List<String> groupIds = getActionRequestDAO().getRequestGroupIds(documentId);
         for (String groupId : groupIds) {
-            if (KimApiServiceLocator.getGroupService().isMemberOfGroup(principalId, groupId)) {
+            if (groupService.isMemberOfGroup(principalId, groupId)) {
                 return true;
             }
         }
@@ -832,5 +834,13 @@ public class ActionRequestServiceImpl implements ActionRequestService {
     @Override
     public ActionRequest getActionRequestForRole(String actionTakenId) {
         return getActionRequestDAO().getRoleActionRequestByActionTakenId(actionTakenId);
+    }
+
+    public void setGroupService(final GroupService groupService) {
+        this.groupService = groupService;
+    }
+
+    public void setIdentityService(final IdentityService identityService) {
+        this.identityService = identityService;
     }
 }

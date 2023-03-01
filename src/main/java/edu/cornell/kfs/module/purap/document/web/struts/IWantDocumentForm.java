@@ -11,7 +11,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.KeyValue;
-import org.kuali.kfs.kew.api.KewApiConstants.SearchableAttributeConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,8 +144,8 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     public String getNewAdHocRoutePersonIdForLookup() {
         if (getNewAdHocRoutePerson() != null) {
             if (StringUtils.isNotBlank(getNewAdHocRoutePerson().getId())) {
-                return SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER + getNewAdHocRoutePerson().getId()
-                        + SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER;
+                return KFSConstants.WILDCARD_CHARACTER + getNewAdHocRoutePerson().getId()
+                        + KFSConstants.WILDCARD_CHARACTER;
             }
         }
         return StringUtils.EMPTY;

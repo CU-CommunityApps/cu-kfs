@@ -18,8 +18,19 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.impex.xml.XmlConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.kew.xml.BooleanJaxbAdapter;
+import org.kuali.kfs.kew.xml.SqlDateJaxbAdapter;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KeyValuesService;
@@ -50,70 +61,237 @@ import java.util.Map;
 import com.rsmart.kuali.kfs.cr.CRConstants;
 
 /**
- * This class represents the PaymentGroup.
+ * <p>Java class for anonymous complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}payee_name"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}payee_id" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}payee_own_cd" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}address1"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}address2" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}address3" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}address4" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}city" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}state" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}zip" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}country" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}campus_address_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}payment_date" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}attachment_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}immediate_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}special_handling_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}taxable_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}nonresident_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}combine_group_ind" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}bank_code" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.kuali.org/kfs/pdp/payment}detail" maxOccurs="27"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
  */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "", propOrder = {"payeeName",
+    "payeeIdObj",
+    "payeeOwnerCd",
+    // CU customization
+    "customerInstitutionNumber",
+    "line1Address",
+    "line2Address",
+    "line3Address",
+    "line4Address",
+    "city",
+    "state",
+    "zipCd",
+    "country",
+    "campusAddress",
+    "paymentDate",
+    "pymtAttachment",
+    "processImmediate",
+    "pymtSpecialHandling",
+    "taxablePayment",
+    "nonresidentPayment",
+    "combineGroups",
+    "bankCode",
+    "paymentDetails"})
 public class PaymentGroup extends PersistableBusinessObjectBase {
 	private static final long serialVersionUID = 1L;
 
-	protected static KualiDecimal zero = KualiDecimal.ZERO;
+    @XmlTransient
+    private KualiInteger id;
 
-    protected KualiInteger id;
-    protected String payeeName;
-    protected String payeeId;
-    protected String payeeIdTypeCd;
-    protected String alternatePayeeId;
-    protected String alternatePayeeIdTypeCd;
-    protected String payeeOwnerCd;
+    @XmlElement(name = "payee_name", namespace = XmlConstants.PAYMENT_NAMESPACE, required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String payeeName;
+
+    @XmlElement(name = "payee_id", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    private PayeeId payeeIdObj;
+
+    @XmlTransient
+    private String payeeId;
+
+    @XmlTransient
+    private String payeeIdTypeCd;
+
+    @XmlTransient
+    private String alternatePayeeId;
+    @XmlTransient
+    private String alternatePayeeIdTypeCd;
+
+    @XmlElement(name = "payee_own_cd", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String payeeOwnerCd;
+    
+    // CU customization
+    @XmlElement(name = "customer_institution_identifier", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
     protected String customerInstitutionNumber;
-    protected String line1Address;
-    protected String line2Address;
-    protected String line3Address;
-    protected String line4Address;
-    protected String city;
-    protected String state;
-    protected String country;
-    protected String zipCd;
-    protected Boolean campusAddress;
-    protected Date paymentDate;
-    protected Boolean pymtAttachment;
-    protected Boolean pymtSpecialHandling;
-    protected Boolean taxablePayment;
-    protected Boolean nonresidentPayment;
-    protected Boolean processImmediate;
-    protected Boolean combineGroups;
-    protected String achBankRoutingNbr;
-    protected String adviceEmailAddress;
-    protected Boolean employeeIndicator;
-    protected String creditMemoNbr;
-    protected KualiDecimal creditMemoAmount;
-    protected KualiInteger disbursementNbr;
-    protected Date disbursementDate;
-    protected String physCampusProcessCd;
-    protected String sortValue;
-    protected String achAccountType;
-    protected Timestamp epicPaymentCancelledExtractedDate;
-    protected Timestamp epicPaymentPaidExtractedDate;
-    protected Timestamp adviceEmailSentDate;
 
-    protected KualiInteger batchId;
-    protected Batch batch;
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address1")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String line1Address;
 
-    protected KualiInteger processId;
-    protected PaymentProcess process;
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address2")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String line2Address;
 
-    protected String paymentStatusCode;
-    protected PaymentStatus paymentStatus;
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address3")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String line3Address;
 
-    protected String disbursementTypeCode;
-    protected DisbursementType disbursementType;
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "address4")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String line4Address;
 
-    protected String bankCode;
-    protected Bank bank;
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String city;
 
-    protected AchAccountNumber achAccountNumber;
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String state;
 
-    protected List<PaymentGroupHistory> paymentGroupHistory = new ArrayList<>();
-    protected List<PaymentDetail> paymentDetails = new ArrayList<>();
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String country;
+
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, name = "zip")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String zipCd;
+
+    @XmlElement(name = "campus_address_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean campusAddress = false;
+
+    @XmlElement(name = "payment_date", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(SqlDateJaxbAdapter.class)
+    private Date paymentDate;
+
+    @XmlElement(name = "attachment_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean pymtAttachment = false;
+
+    @XmlElement(name = "special_handling_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean pymtSpecialHandling = false;
+
+    @XmlElement(name = "taxable_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean taxablePayment = false;
+
+    @XmlElement(name = "nonresident_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean nonresidentPayment = false;
+
+    @XmlElement(name = "nonresident_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean processImmediate = false;
+
+    @XmlElement(name = "combine_group_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean combineGroups = false;
+
+    @XmlTransient
+    private String achBankRoutingNbr;
+    @XmlTransient
+    private String adviceEmailAddress;
+    @XmlTransient
+    private Boolean employeeIndicator;
+    @XmlTransient
+    private String creditMemoNbr;
+    @XmlTransient
+    private KualiDecimal creditMemoAmount;
+    @XmlTransient
+    private KualiInteger disbursementNbr;
+    @XmlTransient
+    private Date disbursementDate;
+    @XmlTransient
+    private String physCampusProcessCd;
+    @XmlTransient
+    private String sortValue;
+    @XmlTransient
+    private String achAccountType;
+    @XmlTransient
+    private Timestamp epicPaymentCancelledExtractedDate;
+    @XmlTransient
+    private Timestamp epicPaymentPaidExtractedDate;
+    @XmlTransient
+    private Timestamp adviceEmailSentDate;
+
+    @XmlTransient
+    private KualiInteger batchId;
+    @XmlTransient
+    private Batch batch;
+
+    @XmlTransient
+    private KualiInteger processId;
+    @XmlTransient
+    private PaymentProcess process;
+
+    @XmlTransient
+    private String paymentStatusCode;
+    @XmlTransient
+    private PaymentStatus paymentStatus;
+
+    @XmlTransient
+    private String disbursementTypeCode;
+    @XmlTransient
+    private DisbursementType disbursementType;
+
+    @XmlElement(name = "bank_code", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    private String bankCode;
+
+    @XmlTransient
+    private Bank bank;
+
+    @XmlTransient
+    private AchAccountNumber achAccountNumber;
+
+    @XmlTransient
+    private List<PaymentGroupHistory> paymentGroupHistory = new ArrayList<>();
+
+    @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "detail")
+    private List<PaymentDetail> paymentDetails = new ArrayList<>();
 
     public PaymentGroup() {
         super();
@@ -146,7 +324,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
 
         boolean isCanceledReissued = false;
-        for (PaymentGroupHistory paymentGroupHistory : getPaymentGroupHistory()) {
+        for (final PaymentGroupHistory paymentGroupHistory : paymentGroupHistory) {
             if (PdpConstants.PaymentChangeCodes.CANCEL_REISSUE_DISBURSEMENT.equals(
                     paymentGroupHistory.getPaymentChangeCode())) {
                 isCanceledReissued = true;
@@ -156,11 +334,11 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         if (isCanceledReissued) {
             paymentStatusWithHistory += " (Reissued)";
         }
-        
-        // check for stale payments, if one payment detail is stale then they all are
 
+        // check for stale payments, if one payment detail is stale then they all are
+        // CU customization
         if (!CRConstants.CLEARED.equalsIgnoreCase(paymentStatus.getCode())) {
-            PaymentDetail paymentDetail = getPaymentDetails().get(0);
+            final PaymentDetail paymentDetail = getPaymentDetails().get(0);
             if (!paymentDetail.isDisbursementActionAllowed()) {
                 paymentStatusWithHistory += " (Stale)";
             }
@@ -176,16 +354,16 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      * @param val
      * @return
      */
-    protected String getWidthString(int width, String val) {
+    private String getWidthString(final int width, final String val) {
         return (val + "                                        ").substring(0, width - 1);
     }
 
     public int getNoteLines() {
         int count = 0;
-        for (PaymentDetail element : this.getPaymentDetails()) {
+        for (final PaymentDetail element : paymentDetails) {
             // Add a line for the invoice #
             count++;
-            count = count + element.getNotes().size();
+            count += element.getNotes().size();
         }
         return count;
     }
@@ -195,7 +373,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public KualiDecimal getNetPaymentAmount() {
         KualiDecimal amt = KualiDecimal.ZERO;
-        for (PaymentDetail element : this.getPaymentDetails()) {
+        for (final PaymentDetail element : paymentDetails) {
             amt = amt.add(element.getNetPaymentAmount());
         }
         return amt;
@@ -206,10 +384,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     /**
-     * @param paymentDetail the payment details list to set.
+     * @param paymentDetails the payment details list to set.
      */
-    public void setPaymentDetails(List<PaymentDetail> paymentDetail) {
-        this.paymentDetails = paymentDetail;
+    public void setPaymentDetails(final List<PaymentDetail> paymentDetails) {
+        this.paymentDetails = paymentDetails;
     }
 
     /**
@@ -217,12 +395,12 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      *
      * @param pgh the payments detail to be added.
      */
-    public void addPaymentDetails(PaymentDetail pgh) {
+    public void addPaymentDetails(final PaymentDetail pgh) {
         pgh.setPaymentGroup(this);
         paymentDetails.add(pgh);
     }
 
-    public void deletePaymentDetails(PaymentDetail pgh) {
+    public void deletePaymentDetails(final PaymentDetail pgh) {
         paymentDetails.remove(pgh);
     }
 
@@ -233,7 +411,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     /**
      * @param paymentGroupHistory the payment group history list to set.
      */
-    public void setPaymentGroupHistory(List<PaymentGroupHistory> paymentGroupHistory) {
+    public void setPaymentGroupHistory(final List<PaymentGroupHistory> paymentGroupHistory) {
         this.paymentGroupHistory = paymentGroupHistory;
     }
 
@@ -242,7 +420,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      *
      * @param pd the paymentGroupHistory to be added.
      */
-    public void addPaymentGroupHistory(PaymentGroupHistory pd) {
+    public void addPaymentGroupHistory(final PaymentGroupHistory pd) {
         pd.setPaymentGroup(this);
         paymentGroupHistory.add(pd);
     }
@@ -252,7 +430,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      *
      * @param pd the paymentGroupHistory to be deleted.
      */
-    public void deletePaymentGroupHistory(PaymentGroupHistory pd) {
+    public void deletePaymentGroupHistory(final PaymentGroupHistory pd) {
         paymentGroupHistory.remove(pd);
     }
 
@@ -264,43 +442,43 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return achAccountNumber;
     }
 
-    public void setAchAccountNumber(AchAccountNumber aan) {
-        this.achAccountNumber = aan;
+    public void setAchAccountNumber(final AchAccountNumber achAccountNumber) {
+        this.achAccountNumber = achAccountNumber;
     }
 
     public String getSortValue() {
         return sortValue;
     }
 
-    public void setSortValue(int sortGroupId) {
-        String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class)
+    public void setSortValue(final int sortGroupId) {
+        final String defaultSortOrderParameterName = SpringContext.getBean(ConfigurationService.class)
                 .getPropertyValueAsString(PdpKeyConstants.DEFAULT_SORT_GROUP_ID);
-        String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
-                PaymentGroup.class, defaultSortOrderParameterName);
+        final String defaultSortOrderParameterValue = SpringContext.getBean(ParameterService.class)
+                .getParameterValueAsString(PaymentGroup.class, defaultSortOrderParameterName);
 
-        StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append(sortGroupId);
 
-        CustomerProfile cp = this.getBatch().getCustomerProfile();
+        final CustomerProfile cp = batch.getCustomerProfile();
         sb.append(cp.getCampusCode());
         sb.append(getWidthString(4, cp.getUnitCode()));
         sb.append(getWidthString(4, cp.getSubUnitCode()));
 
         if (defaultSortOrderParameterValue.equals(String.valueOf(sortGroupId))) {
-            sb.append(this.getPayeeId());
-            sb.append(this.getPayeeIdTypeCd());
+            sb.append(payeeId);
+            sb.append(payeeIdTypeCd);
         } else {
-            sb.append(this.getPayeeName());
+            sb.append(payeeName);
         }
-        this.sortValue = sb.toString();
+        sortValue = sb.toString();
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(final String city) {
         this.city = city;
     }
 
@@ -308,7 +486,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return combineGroups;
     }
 
-    public void setCombineGroups(Boolean combineGroups) {
+    public void setCombineGroups(final Boolean combineGroups) {
         this.combineGroups = combineGroups;
     }
 
@@ -316,7 +494,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(final String country) {
         this.country = country;
     }
 
@@ -324,7 +502,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(final String state) {
         this.state = state;
     }
 
@@ -359,14 +537,16 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return bankCode;
     }
 
-    public void setBankCode(String bankCode) {
+    public void setBankCode(final String bankCode) {
         this.bankCode = bankCode;
     }
 
+    // CU customization
     public String getCustomerInstitutionNumber() {
 		return customerInstitutionNumber;
 	}
 
+    // CU customization
 	public void setCustomerInstitutionNumber(String customerInstitutionNumber) {
 		this.customerInstitutionNumber = customerInstitutionNumber;
 	}
@@ -423,6 +603,10 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return payeeId;
     }
 
+    public PayeeId getPayeeIdObj() {
+        return payeeIdObj;
+    }
+
     public String getPayeeIdTypeCd() {
         return payeeIdTypeCd;
     }
@@ -471,115 +655,115 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return zipCd;
     }
 
-    public void setAchBankRoutingNbr(String s) {
-        achBankRoutingNbr = s;
+    public void setAchBankRoutingNbr(final String achBankRoutingNbr) {
+        this.achBankRoutingNbr = achBankRoutingNbr;
     }
 
-    public void setAdviceEmailAddress(String string) {
-        adviceEmailAddress = string;
+    public void setAdviceEmailAddress(final String adviceEmailAddress) {
+        this.adviceEmailAddress = adviceEmailAddress;
     }
 
-    public void setAlternatePayeeId(String string) {
-        alternatePayeeId = string;
+    public void setAlternatePayeeId(final String alternatePayeeId) {
+        this.alternatePayeeId = alternatePayeeId;
     }
 
-    public void setAlternatePayeeIdTypeCd(String string) {
-        alternatePayeeIdTypeCd = string;
+    public void setAlternatePayeeIdTypeCd(final String alternatePayeeIdTypeCd) {
+        this.alternatePayeeIdTypeCd = alternatePayeeIdTypeCd;
     }
 
-    public void setBank(Bank bank) {
+    public void setBank(final Bank bank) {
         this.bank = bank;
     }
 
-    public void setBatch(Batch b) {
-        batch = b;
+    public void setBatch(final Batch batch) {
+        this.batch = batch;
     }
 
-    public void setCampusAddress(Boolean boolean1) {
-        campusAddress = boolean1;
+    public void setCampusAddress(final Boolean campusAddress) {
+        this.campusAddress = campusAddress;
     }
 
-    public void setCreditMemoAmount(KualiDecimal decimal) {
-        creditMemoAmount = decimal;
+    public void setCreditMemoAmount(final KualiDecimal creditMemoAmount) {
+        this.creditMemoAmount = creditMemoAmount;
     }
 
-    public void setCreditMemoAmount(String decimal) {
-        creditMemoAmount = new KualiDecimal(decimal);
+    public void setCreditMemoAmount(final String creditMemoAmount) {
+        this.creditMemoAmount = new KualiDecimal(creditMemoAmount);
     }
 
-    public void setCreditMemoNbr(String string) {
-        creditMemoNbr = string;
+    public void setCreditMemoNbr(final String creditMemoNbr) {
+        this.creditMemoNbr = creditMemoNbr;
     }
 
-    public void setDisbursementDate(Date timestamp) {
-        disbursementDate = timestamp;
+    public void setDisbursementDate(final Date disbursementDate) {
+        this.disbursementDate = disbursementDate;
     }
 
     /**
      * @throws ParseException
      */
-    public void setDisbursementDate(String disbursementDate) throws ParseException {
+    public void setDisbursementDate(final String disbursementDate) throws ParseException {
         this.disbursementDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(disbursementDate);
     }
 
-    public void setDisbursementNbr(KualiInteger integer) {
-        disbursementNbr = integer;
+    public void setDisbursementNbr(final KualiInteger disbursementNbr) {
+        this.disbursementNbr = disbursementNbr;
     }
 
-    public void setDisbursementNbr(String integer) {
-        disbursementNbr = new KualiInteger(integer);
+    public void setDisbursementNbr(final String disbursementNbr) {
+        this.disbursementNbr = new KualiInteger(disbursementNbr);
     }
 
-    public void setDisbursementType(DisbursementType dt) {
-        disbursementType = dt;
+    public void setDisbursementType(final DisbursementType disbursementType) {
+        this.disbursementType = disbursementType;
     }
 
-    public void setId(KualiInteger integer) {
-        id = integer;
+    public void setId(final KualiInteger id) {
+        this.id = id;
     }
 
-    public void setEmployeeIndicator(Boolean boolean1) {
-        employeeIndicator = boolean1;
+    public void setEmployeeIndicator(final Boolean employeeIndicator) {
+        this.employeeIndicator = employeeIndicator;
     }
 
-    public void setLine1Address(String string) {
-        line1Address = string;
+    public void setLine1Address(final String line1Address) {
+        this.line1Address = line1Address;
     }
 
-    public void setLine2Address(String string) {
-        line2Address = string;
+    public void setLine2Address(final String line2Address) {
+        this.line2Address = line2Address;
     }
 
-    public void setLine3Address(String string) {
-        line3Address = string;
+    public void setLine3Address(final String line3Address) {
+        this.line3Address = line3Address;
     }
 
-    public void setLine4Address(String string) {
-        line4Address = string;
+    public void setLine4Address(final String line4Address) {
+        this.line4Address = line4Address;
     }
 
-    public void setNonresidentPayment(Boolean boolean1) {
-        nonresidentPayment = boolean1;
+    public void setNonresidentPayment(final Boolean nonresidentPayment) {
+        this.nonresidentPayment = nonresidentPayment;
     }
 
-    public void setPayeeId(String string) {
-        payeeId = string;
+    public void setPayeeId(final String payeeId) {
+        this.payeeId = payeeId;
     }
 
-    public void setPayeeIdTypeCd(String string) {
-        payeeIdTypeCd = string;
+    public void setPayeeIdTypeCd(final String payeeIdTypeCd) {
+        this.payeeIdTypeCd = payeeIdTypeCd;
     }
 
-    public void setPayeeName(String string) {
-        payeeName = string;
+    public void setPayeeName(final String payeeName) {
+        this.payeeName = payeeName;
     }
 
-    public void setPayeeOwnerCd(String string) {
-        payeeOwnerCd = string;
+    public void setPayeeOwnerCd(final String payeeOwnerCd) {
+        this.payeeOwnerCd = payeeOwnerCd;
     }
 
-    public void setPaymentDate(Date timestamp) {
-        paymentDate = timestamp;
+    public void setPaymentDate(final Date paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     /**
@@ -587,50 +771,50 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      *
      * @param paymentDate Timestamp as string
      */
-    public void setPaymentDate(String paymentDate) throws ParseException {
+    public void setPaymentDate(final String paymentDate) throws ParseException {
         this.paymentDate = SpringContext.getBean(DateTimeService.class).convertToSqlDate(paymentDate);
     }
 
-    public void setPaymentStatus(PaymentStatus stat) {
-        paymentStatus = stat;
+    public void setPaymentStatus(final PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
-    public void setPhysCampusProcessCd(String string) {
-        physCampusProcessCd = string;
+    public void setPhysCampusProcessCd(final String physCampusProcessCd) {
+        this.physCampusProcessCd = physCampusProcessCd;
     }
 
-    public void setProcess(PaymentProcess p) {
-        if (p != null) {
-            processId = p.getId();
+    public void setProcess(final PaymentProcess process) {
+        if (process != null) {
+            processId = process.getId();
         } else {
             processId = null;
         }
-        this.process = p;
+        this.process = process;
     }
 
-    public void setProcessImmediate(Boolean boolean1) {
-        processImmediate = boolean1;
+    public void setProcessImmediate(final Boolean processImmediate) {
+        this.processImmediate = processImmediate;
     }
 
-    public void setPymtAttachment(Boolean boolean1) {
-        pymtAttachment = boolean1;
+    public void setPymtAttachment(final Boolean pymtAttachment) {
+        this.pymtAttachment = pymtAttachment;
     }
 
-    public void setTaxablePayment(Boolean boolean1) {
-        taxablePayment = boolean1;
+    public void setTaxablePayment(final Boolean taxablePayment) {
+        this.taxablePayment = taxablePayment;
     }
 
-    public void setZipCd(String string) {
-        zipCd = string;
+    public void setZipCd(final String zipCd) {
+        this.zipCd = zipCd;
     }
 
-    public void setPymtSpecialHandling(Boolean pymtSpecialHandling) {
+    public void setPymtSpecialHandling(final Boolean pymtSpecialHandling) {
         this.pymtSpecialHandling = pymtSpecialHandling;
     }
 
     public String toStringKey() {
-        StringBuffer buffer = new StringBuffer();
-        CustomerProfile customerProfile = batch.getCustomerProfile();
+        final StringBuilder buffer = new StringBuilder();
+        final CustomerProfile customerProfile = batch.getCustomerProfile();
 
         buffer.append(PdpPropertyConstants.CustomerProfile.CUSTOMER_PROFILE_CAMPUS_CODE);
         buffer.append("=");
@@ -664,7 +848,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return achAccountType;
     }
 
-    public void setAchAccountType(String achAccountType) {
+    public void setAchAccountType(final String achAccountType) {
         this.achAccountType = achAccountType;
     }
 
@@ -672,7 +856,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return epicPaymentCancelledExtractedDate;
     }
 
-    public void setEpicPaymentCancelledExtractedDate(Timestamp epicPaymentCancelledExtractedDate) {
+    public void setEpicPaymentCancelledExtractedDate(final Timestamp epicPaymentCancelledExtractedDate) {
         this.epicPaymentCancelledExtractedDate = epicPaymentCancelledExtractedDate;
     }
 
@@ -680,7 +864,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return epicPaymentPaidExtractedDate;
     }
 
-    public void setEpicPaymentPaidExtractedDate(Timestamp epicPaymentPaidExtractedDate) {
+    public void setEpicPaymentPaidExtractedDate(final Timestamp epicPaymentPaidExtractedDate) {
         this.epicPaymentPaidExtractedDate = epicPaymentPaidExtractedDate;
     }
 
@@ -688,7 +872,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return batchId;
     }
 
-    public void setBatchId(KualiInteger batchId) {
+    public void setBatchId(final KualiInteger batchId) {
         this.batchId = batchId;
     }
 
@@ -696,7 +880,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return disbursementTypeCode;
     }
 
-    public void setDisbursementTypeCode(String disbursementTypeCode) {
+    public void setDisbursementTypeCode(final String disbursementTypeCode) {
         this.disbursementTypeCode = disbursementTypeCode;
     }
 
@@ -704,23 +888,23 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         return processId;
     }
 
-    public void setProcessId(KualiInteger processId) {
+    public void setProcessId(final KualiInteger processId) {
         this.processId = processId;
     }
 
-    public void setPaymentStatusCode(String paymentStatusCode) {
+    public void setPaymentStatusCode(final String paymentStatusCode) {
         this.paymentStatusCode = paymentStatusCode;
     }
 
-    public void setId_type(String idType) {
-        this.payeeIdTypeCd = idType;
+    public void setId_type(final String payeeIdTypeCd) {
+        this.payeeIdTypeCd = payeeIdTypeCd;
     }
 
     public Timestamp getAdviceEmailSentDate() {
         return adviceEmailSentDate;
     }
 
-    public void setAdviceEmailSentDate(Timestamp adviceEmailSentDate) {
+    public void setAdviceEmailSentDate(final Timestamp adviceEmailSentDate) {
         this.adviceEmailSentDate = adviceEmailSentDate;
     }
 
@@ -754,9 +938,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     }
 
     public String getPayeeIdTypeDesc() {
-        String payeeIdTypeCd = getPayeeIdTypeCd();
-        List<PayeeType> boList = (List) SpringContext.getBean(KeyValuesService.class).findAll(PayeeType.class);
-        for (PayeeType payeeType : boList) {
+        final List<PayeeType> boList = (List) SpringContext.getBean(KeyValuesService.class).findAll(PayeeType.class);
+        for (final PayeeType payeeType : boList) {
             if (payeeType.getCode().equalsIgnoreCase(payeeIdTypeCd)) {
                 return payeeType.getName();
             }
@@ -803,16 +986,11 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
     }
     
-    /**
-     * @param string
-     */
-    public void setPayeeOwnerCdFromVendor(String string) {
-        
-       // payeeOwnerCd = string;
-        
-        
+
+    public void setPayeeOwnerCdFromVendor(String payeeIdValue) {
+
         BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
-        String[] headerDetails = payeeId.split("-");      
+        String[] headerDetails = payeeIdValue.split("-");      
         Map<String, String> fieldValues = new HashMap<String, String>();
         fieldValues.put("vendorHeaderGeneratedIdentifier", headerDetails[0]/*payeeId*/);
         fieldValues.put("vendorDetailAssignedIdentifier", headerDetails[1]);
@@ -821,7 +999,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         if (details.size() == 1) {
             payeeOwnerCd=details.get(0).getVendorHeader().getVendorOwnershipCode();
         } else {
-            throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ string+" ]");
+            throw new RuntimeException("Could not locate Vendor Ownership Code for payeeId [ "+ payeeIdValue +" ]");
         }
     }
     

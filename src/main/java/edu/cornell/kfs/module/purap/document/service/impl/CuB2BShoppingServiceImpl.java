@@ -54,7 +54,6 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerRoleSet;
 import edu.cornell.kfs.module.purap.document.service.CuB2BShoppingService;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.service.JaggaerRoleService;
-import edu.cornell.kfs.module.purap.util.cxml.CuB2BShoppingCart;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.service.UserFavoriteAccountService;
 
@@ -94,7 +93,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             // create requisition
             RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
             String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
-            String businessPurpose = ((CuB2BShoppingCart)message).getBusinessPurpose();
+            String businessPurpose = message.getMessage().getPunchOutOrderMessage().getPunchOutOrderMessageHeader().getQuoteStatus();
 
             req.getDocumentHeader().setDocumentDescription(description);
             req.getDocumentHeader().setExplanation(businessPurpose);

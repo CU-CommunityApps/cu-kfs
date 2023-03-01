@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
-import org.kuali.kfs.core.api.util.CoreUtilities;
 import org.kuali.kfs.krad.service.MaintainableXMLConversionService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
@@ -35,6 +34,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 
 /**
@@ -177,7 +177,7 @@ public class CuMaintainableXMLConversionServiceImpl implements MaintainableXMLCo
         if (resource.exists()) {
             return resource.getInputStream();
         } else if (StringUtils.startsWith(resourcePath, ResourcePatternResolver.CLASSPATH_URL_PREFIX)) {
-            return CoreUtilities.getResourceAsStream(resourcePath);
+            return CuCoreUtilities.getResourceAsStream(resourcePath);
         } else {
             return this.getClass().getResourceAsStream(resourcePath);
         }

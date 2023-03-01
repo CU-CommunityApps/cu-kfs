@@ -20,10 +20,11 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.kuali.kfs.core.api.util.CoreUtilities;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectExtension;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 
 /**
  * This test class is based on its Cynergy counterpart, edu.cornell.cynergy.krad.service.impl.CynergyMaintainableXMLConversionServiceImplTest
@@ -319,7 +320,7 @@ public class CuMaintainableXMLConversionServiceImplTest {
         StringBuilderWriter writer = null;
 
         try {
-            fileStream = CoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileLocalName);
+            fileStream = CuCoreUtilities.getResourceAsStream(BASE_TEST_FILE_PATH + fileLocalName);
             reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8);
             writer = new StringBuilderWriter();
 

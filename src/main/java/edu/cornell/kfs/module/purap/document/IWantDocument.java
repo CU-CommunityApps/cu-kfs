@@ -31,7 +31,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.KewApiConstants.SearchableAttributeConstants;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
@@ -246,7 +245,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      */
     public String getInitiatorNetIDForLookup() {
         if (StringUtils.isNotBlank(initiatorNetID)) {
-            return SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER + initiatorNetID + SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER;
+            return KFSConstants.WILDCARD_CHARACTER+ initiatorNetID + KFSConstants.WILDCARD_CHARACTER;
         }
         return initiatorNetID;
     }
@@ -289,7 +288,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
      */
     public String getDeliverToNetIDForLookup() {
         if (StringUtils.isNotBlank(deliverToNetID)) {
-            return SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER + deliverToNetID + SearchableAttributeConstants.SEARCH_WILDCARD_CHARACTER;
+            return KFSConstants.WILDCARD_CHARACTER + deliverToNetID + KFSConstants.WILDCARD_CHARACTER;
         }
         return deliverToNetID;
     }

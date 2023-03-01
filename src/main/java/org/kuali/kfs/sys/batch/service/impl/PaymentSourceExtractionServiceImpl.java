@@ -24,7 +24,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.api.identity.IdentityService;
 import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
@@ -63,6 +63,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     private FinancialSystemDocumentService financialSystemDocumentService;
     protected Set<String> checkAchFsloDocTypes;
 
+    private IdentityService identityService;
+
     // This should only be set to true when testing this system. Setting this to true will run the code but
     // won't set the doc status to extracted
     boolean testMode = false;
@@ -78,8 +80,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         LOG.debug("extractPayments() started");
         final Date processRunDate = dateTimeService.getCurrentDate();
 
-        final Principal user = KimApiServiceLocator.getIdentityService()
-                .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
+        final Principal user = identityService.getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
         if (user == null) {
             LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
@@ -108,7 +109,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     public void extractImmediatePayments() {
         LOG.debug("extractImmediatePayments() started");
         final Date processRunDate = dateTimeService.getCurrentDate();
-        final Principal uuser = KimApiServiceLocator.getIdentityService()
+        final Principal uuser = identityService
                 .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
         if (uuser == null) {
             LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
@@ -308,8 +309,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         LOG.debug("extractImmediatePayment(DisbursementVoucherDocument) started");
         if (getPaymentSourceToExtractService().shouldExtractPayment(paymentSource)) {
             final Date processRunDate = dateTimeService.getCurrentDate();
-            final Principal principal = KimApiServiceLocator.getIdentityService()
-                    .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
+            final Principal principal = identityService.getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
             if (principal == null) {
                 LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
                 throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
@@ -365,5 +365,9 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
 
     public void setFinancialSystemDocumentService(FinancialSystemDocumentService financialSystemDocumentService) {
         this.financialSystemDocumentService = financialSystemDocumentService;
+    }
+
+    public void setIdentityService(final IdentityService identityService) {
+        this.identityService = identityService;
     }
 }

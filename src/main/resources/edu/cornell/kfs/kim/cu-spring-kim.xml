@@ -36,11 +36,13 @@
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
             <bean class="edu.cornell.kfs.kim.lookup.CuRoleLookupableHelperServiceImpl"
-                  parent="lookupableHelperService"    
+                  parent="lookupableHelperService"
+                  p:groupService-ref="kimGroupService"
+                  p:identityService-ref="identityService"    
                   p:kimTypeInfoService-ref="kimTypeInfoService"
                   p:permissionService-ref="permissionService"
-                  p:responsibilityService-ref="kimResponsibilityService">
-            </bean>
+                  p:responsibilityService-ref="kimResponsibilityService"
+                  p:roleService-ref="roleService"/>
         </property>
     </bean>
     

@@ -11,6 +11,7 @@ import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.validation.impl.VendorRule;
 import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
+import org.kuali.kfs.core.api.criteria.CuPredicateFactory;
 import org.kuali.kfs.core.api.criteria.Predicate;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
@@ -57,7 +58,7 @@ public abstract class CuVendorRuleBase extends VendorRule {
         // negative criteria so that the current vendor is excluded from the search
         if (ObjectUtils.isNotNull(vendorDetail.getVendorHeaderGeneratedIdentifier())) {
             // ==== CU Customization: Use CriteriaLookupService instead, since BO service doesn't allow negative criteria in non-count methods. ====
-            criteria.add(PredicateFactory.notEqual(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
+            criteria.add(CuPredicateFactory.notEqual(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
                     vendorDetail.getVendorHeaderGeneratedIdentifier()));
             existingVendors = SpringContext.getBean(CriteriaLookupService.class).lookup(
                     VendorDetail.class, QueryByCriteria.Builder.fromPredicates(criteria.toArray(new Predicate[criteria.size()]))).getResults();

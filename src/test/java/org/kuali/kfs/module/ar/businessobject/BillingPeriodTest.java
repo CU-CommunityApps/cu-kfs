@@ -12,9 +12,9 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants.BillingFrequencyValues;
 import org.mockito.Mockito;
 
-public class TimeBasedBillingPeriodTest {
+public class BillingPeriodTest {
 
-    private TimeBasedBillingPeriod timeBasedBillingPeriod;
+    private BillingPeriod billingPeriod;
     private BillingFrequencyValues billingFrequency;
     private Date awardStartDate;
     private Date currentDate;
@@ -30,7 +30,7 @@ public class TimeBasedBillingPeriodTest {
 
     @After
     public void tearDown() throws Exception {
-        timeBasedBillingPeriod = null;
+        billingPeriod = null;
         billingFrequency = null;
         awardStartDate = null;
         currentDate = null;
@@ -81,9 +81,9 @@ public class TimeBasedBillingPeriodTest {
     }
 
     private Date findNextBillingDate(Date lastBilledDate) {
-        timeBasedBillingPeriod = new TimeBasedBillingPeriod(billingFrequency, awardStartDate, currentDate,
+        billingPeriod = new BillingPeriod(billingFrequency, awardStartDate, currentDate,
                 lastBilledDate, accountingPeriodService);
-        return timeBasedBillingPeriod.determineStartDateByFrequency();
+        return billingPeriod.determineStartDateByFrequency();
     }
 
 }
