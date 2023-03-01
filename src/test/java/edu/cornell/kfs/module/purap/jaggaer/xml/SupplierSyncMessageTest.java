@@ -470,32 +470,13 @@ public class SupplierSyncMessageTest {
         ap.setIsChanged(T_TRUE);
         ap.setType("accounts payable type");
         ap.setOldERPNumber("old erp number");
-        
         ap.setErpNumber(buildERPNumber("erp number", F_FALSE));
-        
         ap.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
-        
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        
         ap.setName(buildName("accounts payable name", T_TRUE));
-        
         ap.setActive(buildActive());
-        
-        AssociatedAddress address = new AssociatedAddress();
-        
-        AddressRef ref = new AddressRef();
-        address.setIsChanged(T_TRUE);
-        address.setType("type");
-        
-        ref.setErpNumber(ap.getErpNumber());
-        ref.setSqIntegrationNumber(ap.getSqIntegrationNumber());
-        ref.setThirdPartyRefNumber(ap.getThirdPartyRefNumber());
-        address.setAddressRef(ref);
-        
-        ap.getAssociatedAddress().add(address);
-        
+        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getvalue(), ap.getSqIntegrationNumber().getvalue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
-        
         ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         ap.setContactName(new JaggaerBasicValue("contact name", T_TRUE));
         ap.setPurpose(new JaggaerBasicValue("testing is the only purpose", T_TRUE));;
@@ -503,11 +484,9 @@ public class SupplierSyncMessageTest {
         ap.setAccountHolderName(new JaggaerBasicValue("John Doe", T_TRUE));
         ap.setAccountType(new JaggaerBasicValue("account type", T_TRUE));
         ap.setCountryCode(new JaggaerBasicValue("USA", T_TRUE));
-        
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
-        
-        
+
         apList.getAccountsPayable().add(ap);
         return apList;
     }
@@ -615,15 +594,10 @@ public class SupplierSyncMessageTest {
         location.setIsChanged(T_TRUE);
         location.setSupportsOrderFulfillment("Order Fulfillment(");
         location.setOldERPNumber("old erp number");
-        
         location.setERPNumber(buildERPNumber("erp number", T_TRUE));
-        
         location.setSQIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
-        
         location.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        
         location.setName(buildName("silly location name", T_TRUE));
-        
         location.setDescription(new JaggaerBasicValue("description value", T_TRUE));
         location.setActive(buildActive());
         location.setLocationActive(new JaggaerBasicValue("location is active", T_TRUE));
@@ -637,6 +611,21 @@ public class SupplierSyncMessageTest {
         
         location.setPaymentMethod(buildPaymentMethod());
         
+        location.setShipping(new JaggaerBasicValue("shipping details"));
+        location.setHandling(new JaggaerBasicValue("Hangling details"));
+        location.setTaxInfo(buildTaxInfo());
+        location.setTermsAndCondition(buildTermsAndCondition());       
+        location.setOrderDistributionList(buildOrderDistributionList());
+        location.setAssignedBusinessUnitsList(buildAssignedBusinessUnitsList("is preferred", "testing name"));
+        
+        AssociatedAddressList addressList = new AssociatedAddressList();
+        addressList.setIsChanged(T_TRUE);
+        addressList.getAssociatedAddress().add(buildAssociatedAddress("address type", "erp number", "sqi number"));
+        location.setAssociatedAddressList(addressList);
+        
+        location.setCustomElementList(buildCustomElementList());
+        
+        
         AssociatedContactList contactList = new AssociatedContactList();
         contactList.setIsChanged(T_TRUE);
         contactList.getAssociatedContact().add(buildAssociatedContact());
@@ -644,6 +633,78 @@ public class SupplierSyncMessageTest {
         
         locationList.getLocation().add(location);
         return locationList;
+    }
+    
+    private TermsAndCondition buildTermsAndCondition() {
+        TermsAndCondition termsAndConditions = new TermsAndCondition();
+        termsAndConditions.setIsChanged(T_TRUE);
+        
+        PaymentTerms paymentTerms = new PaymentTerms();
+        paymentTerms.setIsChanged(T_TRUE);
+        paymentTerms.setActive(buildActive());
+        
+        Discount discount = new Discount();
+        discount.setIsChanged(T_TRUE);
+        discount.setUnit("dollars");
+        
+        DiscountAmount amount = new DiscountAmount();
+        amount.setvalue("10");
+        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(amount);
+        
+        IsoCurrencyCode currency = new IsoCurrencyCode();
+        currency.setvalue("USD");
+        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(amount);
+        
+        paymentTerms.setDiscount(discount);
+        paymentTerms.setDays(new JaggaerBasicValue("Monday, Tuesday"));
+        paymentTerms.setNet(new JaggaerBasicValue("net"));
+        
+        CustomPaymentTerm customTerm = new CustomPaymentTerm();
+        customTerm.setIsChanged(T_TRUE);
+        customTerm.setId("ID field");
+        customTerm.setUseCustomPaymentTerm("use custom term");
+        customTerm.setValue("custom term");
+        paymentTerms.setCustomPaymentTerm(customTerm);
+        
+        paymentTerms.setFOB(new JaggaerBasicValue("FOB", T_TRUE));
+        paymentTerms.setStandardPaymentTermsCode(new JaggaerBasicValue("standard payment terms"));
+        paymentTerms.setTermsType(new JaggaerBasicValue("terms type"));
+        paymentTerms.setDaysAfter(new JaggaerBasicValue("Days After"));
+        
+        termsAndConditions.setPaymentTerms(paymentTerms);;
+        return termsAndConditions;
+    }
+
+    private OrderDistributionList buildOrderDistributionList() {
+        OrderDistributionList orderList = new OrderDistributionList();
+        orderList.setDistributionLanguage("US English");
+        orderList.setIsChanged(T_TRUE);
+        
+        DistributionMethod method = new DistributionMethod();
+        method.setActive(buildActive());
+        method.setEmail(buildEmail("foo@bar.com", T_TRUE));
+        
+        Fax fax = new Fax();
+        fax.setIsChanged(F_FALSE);
+        fax.setTelephoneNumber(buildBasicTelephoneNumber());
+        method.setFax(fax);
+        
+        orderList.getDistributionMethod().add(method);
+        return orderList;
+    }
+    
+    private TaxInfo buildTaxInfo() {
+        TaxInfo taxInfo = new TaxInfo();
+        taxInfo.setIsChanged(T_TRUE);
+        taxInfo.setTaxableByDefault(new JaggaerBasicValue("taxable by default", T_TRUE));
+        taxInfo.setTax1Active(new JaggaerBasicValue("tax 1 active"));
+        taxInfo.setTax1(new JaggaerBasicValue("tax 1"));
+        taxInfo.setTax2Active(new JaggaerBasicValue("tax 2 active"));
+        taxInfo.setTax2(new JaggaerBasicValue("tax 2"));
+        taxInfo.setTaxShipping(new JaggaerBasicValue("tax shipping"));
+        taxInfo.setTaxHandling(new JaggaerBasicValue("tax handling"));
+        
+        return taxInfo;
     }
 
     private PrefPurchaseOrderDeliveryMethod buildPrefPurchaseOrderDeliveryMethod() {
@@ -828,19 +889,21 @@ public class SupplierSyncMessageTest {
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList addressList = new PrimaryAddressList();
         addressList.setIsChanged(T_TRUE);
-        
-        AssociatedAddress address1 = new AssociatedAddress();
-        address1.setIsChanged(T_TRUE);
-        address1.setType("adddress type");
+        addressList.getAssociatedAddress().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
+        return addressList;
+    }
+    
+    private AssociatedAddress buildAssociatedAddress(String addressType, String erpNumber, String sqiNumber) {
+        AssociatedAddress address = new AssociatedAddress();
+        address.setIsChanged(T_TRUE);
+        address.setType(addressType);
         
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(buildERPNumber("erp number", T_TRUE));
-        ref.setSqIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        ref.setErpNumber(buildERPNumber(erpNumber, T_TRUE));
+        ref.setSqIntegrationNumber(buildSQIntegrationNumber(sqiNumber));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        address1.setAddressRef(ref);
-        
-        addressList.getAssociatedAddress().add(address1);        
-        return addressList;
+        address.setAddressRef(ref);
+        return address;
     }
     
     private AddressList buildAddressList() {
@@ -902,20 +965,22 @@ public class SupplierSyncMessageTest {
         notes.setvalue("just a simple note");
         address.setNotes(notes);
         
+        address.setAssignedBusinessUnitsList(buildAssignedBusinessUnitsList("is preferred", "testing name"));
+        addressList.getAddress().add(address);
+        
+        return addressList;
+    }
+    
+    private AssignedBusinessUnitsList buildAssignedBusinessUnitsList(String preferredForThisBusinessUnit, String name) {
         AssignedBusinessUnitsList businessList = new AssignedBusinessUnitsList();
         businessList.setIsChanged(T_TRUE);
         
         BusinessUnitInternalName internalName = new BusinessUnitInternalName();
         internalName.setIsChanged(T_TRUE);
-        internalName.setPreferredForThisBusinessUnit("is preferred");
-        internalName.setValue("testing name");
-        
+        internalName.setPreferredForThisBusinessUnit(preferredForThisBusinessUnit);
+        internalName.setValue(name);
         businessList.getBusinessUnitInternalName().add(internalName);
-        
-        address.setAssignedBusinessUnitsList(businessList);
-        addressList.getAddress().add(address);
-        
-        return addressList;
+        return businessList;
     }
 
     private void compareXML(Reader control, Reader test) throws SAXException, IOException {

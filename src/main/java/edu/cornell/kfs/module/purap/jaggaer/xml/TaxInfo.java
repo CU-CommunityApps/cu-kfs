@@ -19,19 +19,19 @@ public class TaxInfo {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "TaxableByDefault")
-    protected TaxableByDefault taxableByDefault;
+    protected JaggaerBasicValue taxableByDefault;
     @XmlElement(name = "Tax1Active")
-    protected Tax1Active tax1Active;
+    protected JaggaerBasicValue tax1Active;
     @XmlElement(name = "Tax1")
-    protected Tax1 tax1;
+    protected JaggaerBasicValue tax1;
     @XmlElement(name = "Tax2Active")
-    protected Tax2Active tax2Active;
+    protected JaggaerBasicValue tax2Active;
     @XmlElement(name = "Tax2")
-    protected Tax2 tax2;
+    protected JaggaerBasicValue tax2;
     @XmlElement(name = "TaxShipping")
-    protected TaxShipping taxShipping;
+    protected JaggaerBasicValue taxShipping;
     @XmlElement(name = "TaxHandling")
-    protected TaxHandling taxHandling;
+    protected JaggaerBasicValue taxHandling;
 
     public String getIsChanged() {
         return isChanged;
@@ -41,59 +41,59 @@ public class TaxInfo {
         this.isChanged = value;
     }
 
-    public TaxableByDefault getTaxableByDefault() {
+    public JaggaerBasicValue getTaxableByDefault() {
         return taxableByDefault;
     }
 
-    public void setTaxableByDefault(TaxableByDefault value) {
+    public void setTaxableByDefault(JaggaerBasicValue value) {
         this.taxableByDefault = value;
     }
 
-    public Tax1Active getTax1Active() {
+    public JaggaerBasicValue getTax1Active() {
         return tax1Active;
     }
 
-    public void setTax1Active(Tax1Active value) {
+    public void setTax1Active(JaggaerBasicValue value) {
         this.tax1Active = value;
     }
 
-    public Tax1 getTax1() {
+    public JaggaerBasicValue getTax1() {
         return tax1;
     }
 
-    public void setTax1(Tax1 value) {
+    public void setTax1(JaggaerBasicValue value) {
         this.tax1 = value;
     }
 
-    public Tax2Active getTax2Active() {
+    public JaggaerBasicValue getTax2Active() {
         return tax2Active;
     }
 
-    public void setTax2Active(Tax2Active value) {
+    public void setTax2Active(JaggaerBasicValue value) {
         this.tax2Active = value;
     }
 
-    public Tax2 getTax2() {
+    public JaggaerBasicValue getTax2() {
         return tax2;
     }
 
-    public void setTax2(Tax2 value) {
+    public void setTax2(JaggaerBasicValue value) {
         this.tax2 = value;
     }
 
-    public TaxShipping getTaxShipping() {
+    public JaggaerBasicValue getTaxShipping() {
         return taxShipping;
     }
 
-    public void setTaxShipping(TaxShipping value) {
+    public void setTaxShipping(JaggaerBasicValue value) {
         this.taxShipping = value;
     }
 
-    public TaxHandling getTaxHandling() {
+    public JaggaerBasicValue getTaxHandling() {
         return taxHandling;
     }
 
-    public void setTaxHandling(TaxHandling value) {
+    public void setTaxHandling(JaggaerBasicValue value) {
         this.taxHandling = value;
     }
 

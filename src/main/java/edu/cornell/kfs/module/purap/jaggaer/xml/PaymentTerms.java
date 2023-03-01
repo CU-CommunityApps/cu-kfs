@@ -23,19 +23,19 @@ public class PaymentTerms {
     @XmlElement(name = "Discount")
     protected Discount discount;
     @XmlElement(name = "Days")
-    protected Days days;
+    protected JaggaerBasicValue days;
     @XmlElement(name = "Net")
-    protected Net net;
+    protected JaggaerBasicValue net;
     @XmlElement(name = "CustomPaymentTerm")
     protected CustomPaymentTerm customPaymentTerm;
     @XmlElement(name = "FOB")
-    protected FOB fob;
+    protected JaggaerBasicValue fob;
     @XmlElement(name = "StandardPaymentTermsCode")
-    protected StandardPaymentTermsCode standardPaymentTermsCode;
+    protected JaggaerBasicValue standardPaymentTermsCode;
     @XmlElement(name = "TermsType")
-    protected TermsType termsType;
+    protected JaggaerBasicValue termsType;
     @XmlElement(name = "DaysAfter")
-    protected DaysAfter daysAfter;
+    protected JaggaerBasicValue daysAfter;
 
     public String getIsChanged() {
         return isChanged;
@@ -61,19 +61,19 @@ public class PaymentTerms {
         this.discount = value;
     }
 
-    public Days getDays() {
+    public JaggaerBasicValue getDays() {
         return days;
     }
 
-    public void setDays(Days value) {
+    public void setDays(JaggaerBasicValue value) {
         this.days = value;
     }
 
-    public Net getNet() {
+    public JaggaerBasicValue getNet() {
         return net;
     }
 
-    public void setNet(Net value) {
+    public void setNet(JaggaerBasicValue value) {
         this.net = value;
     }
 
@@ -85,35 +85,35 @@ public class PaymentTerms {
         this.customPaymentTerm = value;
     }
 
-    public FOB getFOB() {
+    public JaggaerBasicValue getFOB() {
         return fob;
     }
 
-    public void setFOB(FOB value) {
+    public void setFOB(JaggaerBasicValue value) {
         this.fob = value;
     }
 
-    public StandardPaymentTermsCode getStandardPaymentTermsCode() {
+    public JaggaerBasicValue getStandardPaymentTermsCode() {
         return standardPaymentTermsCode;
     }
 
-    public void setStandardPaymentTermsCode(StandardPaymentTermsCode value) {
+    public void setStandardPaymentTermsCode(JaggaerBasicValue value) {
         this.standardPaymentTermsCode = value;
     }
 
-    public TermsType getTermsType() {
+    public JaggaerBasicValue getTermsType() {
         return termsType;
     }
 
-    public void setTermsType(TermsType value) {
+    public void setTermsType(JaggaerBasicValue value) {
         this.termsType = value;
     }
 
-    public DaysAfter getDaysAfter() {
+    public JaggaerBasicValue getDaysAfter() {
         return daysAfter;
     }
 
-    public void setDaysAfter(DaysAfter value) {
+    public void setDaysAfter(JaggaerBasicValue value) {
         this.daysAfter = value;
     }
 
