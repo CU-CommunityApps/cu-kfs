@@ -262,7 +262,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
-    public void setConcurEventNotificationV2WebserviceService(
+    public void setConcurEventNotificationApiService(
             ConcurEventNotificationApiService concurEventNotificationApiService) {
         this.concurEventNotificationApiService = concurEventNotificationApiService;
     }

@@ -84,7 +84,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
         
         this.concurExpenseV3Service = new TestConcurExpenseV3ServiceImpl();
         concurExpenseV3Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        concurExpenseV3Service.setConcurEventNotificationV2WebserviceService(
+        concurExpenseV3Service.setConcurEventNotificationApiService(
                 createConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
         concurExpenseV3Service.setConfigurationService(createMockConfigurationService());
         concurExpenseV3Service.setConcurAccountValidationService(Mockito.mock(ConcurAccountValidationService.class));
