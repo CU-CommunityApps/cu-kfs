@@ -63,7 +63,7 @@ public class Supplier {
     @XmlElement(name = "WebSiteURL")
     protected JaggaerBasicValue webSiteURL;
     @XmlElement(name = "DUNS")
-    protected DUNS duns;
+    protected JaggaerBasicValue duns;
     @XmlElement(name = "LegalStructure")
     protected JaggaerBasicValue legalStructure;
     @XmlElement(name = "TaxIdentificationType")
@@ -281,11 +281,11 @@ public class Supplier {
         this.webSiteURL = webSiteURL;
     }
 
-    public DUNS getDuns() {
+    public JaggaerBasicValue getDuns() {
         return duns;
     }
 
-    public void setDuns(DUNS duns) {
+    public void setDuns(JaggaerBasicValue duns) {
         this.duns = duns;
     }
 

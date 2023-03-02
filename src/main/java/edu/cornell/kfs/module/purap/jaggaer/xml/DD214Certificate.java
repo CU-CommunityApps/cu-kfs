@@ -24,16 +24,16 @@ public class DD214Certificate {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public Attachments getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(Attachments value) {
-        this.attachments = value;
+    public void setAttachments(Attachments attachments) {
+        this.attachments = attachments;
     }
 
 }

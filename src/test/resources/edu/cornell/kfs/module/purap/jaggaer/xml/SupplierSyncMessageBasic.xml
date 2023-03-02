@@ -314,7 +314,8 @@
                             <Active>active</Active>
                             <Discount isChanged="T" unit="dollars">
                                 <DiscountAmount>10</DiscountAmount>
-                                <DiscountAmount>10</DiscountAmount>
+                                <IsoCurrencyCode>USD</IsoCurrencyCode>
+                                <DiscountPercent>5</DiscountPercent>
                             </Discount>
                             <Days>Monday, Tuesday</Days>
                             <Net>net</Net>

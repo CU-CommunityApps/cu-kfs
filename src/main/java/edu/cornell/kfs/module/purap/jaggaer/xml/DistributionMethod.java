@@ -33,40 +33,40 @@ public class DistributionMethod {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getIsChanged() {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public Active getActive() {
         return active;
     }
 
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     public Fax getFax() {
         return fax;
     }
 
-    public void setFax(Fax value) {
-        this.fax = value;
+    public void setFax(Fax fax) {
+        this.fax = fax;
     }
 
     public Email getEmail() {
         return email;
     }
 
-    public void setEmail(Email value) {
-        this.email = value;
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
 }

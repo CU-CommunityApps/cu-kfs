@@ -11,11 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "diversityClassification"
-})
+@XmlType(name = "", propOrder = { "diversityClassification" })
 @XmlRootElement(name = "DiversityClassificationList")
 public class DiversityClassificationList {
 
@@ -29,8 +26,8 @@ public class DiversityClassificationList {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public List<DiversityClassification> getDiversityClassification() {

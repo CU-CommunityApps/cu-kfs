@@ -134,11 +134,7 @@ public class SupplierSyncMessageTest {
         supplier.setTaxIdentificationNumber(new JaggaerBasicValue("tax id"));
         supplier.setTaxIdentificationType(new JaggaerBasicValue("tax type"));
         supplier.setLegalStructure(new JaggaerBasicValue("legal structure"));
-
-        DUNS duns = new DUNS();
-        duns.setvalue("duns");
-        supplier.setDuns(duns);
-
+        supplier.setDuns(new JaggaerBasicValue("duns"));
         supplier.setWebSiteURL(new JaggaerBasicValue("www.cornell.edu", null));
         supplier.setActive(buildActive());
         supplier.setCountryOfOrigin(new JaggaerBasicValue("USA", null));
@@ -180,7 +176,7 @@ public class SupplierSyncMessageTest {
     private ERPNumber buildERPNumber(String erpNumber, String changed) {
         ERPNumber erp = new ERPNumber();
         erp.setIsChanged(changed);
-        erp.setvalue(erpNumber);
+        erp.setValue(erpNumber);
         return erp;
     }
     
@@ -475,7 +471,7 @@ public class SupplierSyncMessageTest {
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         ap.setName(buildName("accounts payable name", T_TRUE));
         ap.setActive(buildActive());
-        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getvalue(), ap.getSqIntegrationNumber().getvalue()));
+        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getvalue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
         ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         ap.setContactName(new JaggaerBasicValue("contact name", T_TRUE));
@@ -583,7 +579,7 @@ public class SupplierSyncMessageTest {
     private DisplayName buildDisplayName(String name, String changed) {
         DisplayName displayName = new DisplayName();
         displayName.setIsChanged(changed);
-        displayName.setvalue(name);
+        displayName.setValue(name);
         return displayName;
     }
     
@@ -648,12 +644,16 @@ public class SupplierSyncMessageTest {
         discount.setUnit("dollars");
         
         DiscountAmount amount = new DiscountAmount();
-        amount.setvalue("10");
+        amount.setValue("10");
         discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(amount);
         
         IsoCurrencyCode currency = new IsoCurrencyCode();
         currency.setvalue("USD");
-        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(amount);
+        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(currency);
+        
+        DiscountPercent percent = new DiscountPercent();
+        percent.setValue("5");
+        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(percent);
         
         paymentTerms.setDiscount(discount);
         paymentTerms.setDays(new JaggaerBasicValue("Monday, Tuesday"));
@@ -722,7 +722,7 @@ public class SupplierSyncMessageTest {
     private Email buildEmail(String emailAddress, String changed) {
         Email email = new Email();
         email.setIsChanged(changed);
-        email.setvalue(emailAddress);
+        email.setValue(emailAddress);
         return email;
     }
 
@@ -774,7 +774,7 @@ public class SupplierSyncMessageTest {
         DD214Certificate ddCertificate = new DD214Certificate();
         ddCertificate.setIsChanged(T_TRUE);
         ddCertificate.setAttachments(buildAttachments("DD 214 Certificate Attachments"));
-        diversity.setDD214Certificate(ddCertificate);
+        diversity.setDd214Certificate(ddCertificate);
         
         DiversityCertificate certificate = new DiversityCertificate();
         certificate.setIsChanged(T_TRUE);

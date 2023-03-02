@@ -32,16 +32,16 @@ public class Discount {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public String getUnit() {
         return unit;
     }
 
-    public void setUnit(String value) {
-        this.unit = value;
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public List<Object> getDiscountPercentOrDiscountAmountOrIsoCurrencyCode() {
