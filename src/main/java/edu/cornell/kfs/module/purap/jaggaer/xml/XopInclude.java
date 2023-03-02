@@ -21,8 +21,8 @@ public class XopInclude {
         return href;
     }
 
-    public void setHref(String value) {
-        this.href = value;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 }

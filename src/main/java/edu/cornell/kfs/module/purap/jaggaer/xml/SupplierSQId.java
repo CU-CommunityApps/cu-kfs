@@ -14,12 +14,14 @@ public class SupplierSQId {
     @XmlValue
     protected String value;
 
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
+
+
 
 }

@@ -37,64 +37,64 @@ public class TaxInfo {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getTaxableByDefault() {
         return taxableByDefault;
     }
 
-    public void setTaxableByDefault(JaggaerBasicValue value) {
-        this.taxableByDefault = value;
+    public void setTaxableByDefault(JaggaerBasicValue taxableByDefault) {
+        this.taxableByDefault = taxableByDefault;
     }
 
     public JaggaerBasicValue getTax1Active() {
         return tax1Active;
     }
 
-    public void setTax1Active(JaggaerBasicValue value) {
-        this.tax1Active = value;
+    public void setTax1Active(JaggaerBasicValue tax1Active) {
+        this.tax1Active = tax1Active;
     }
 
     public JaggaerBasicValue getTax1() {
         return tax1;
     }
 
-    public void setTax1(JaggaerBasicValue value) {
-        this.tax1 = value;
+    public void setTax1(JaggaerBasicValue tax1) {
+        this.tax1 = tax1;
     }
 
     public JaggaerBasicValue getTax2Active() {
         return tax2Active;
     }
 
-    public void setTax2Active(JaggaerBasicValue value) {
-        this.tax2Active = value;
+    public void setTax2Active(JaggaerBasicValue tax2Active) {
+        this.tax2Active = tax2Active;
     }
 
     public JaggaerBasicValue getTax2() {
         return tax2;
     }
 
-    public void setTax2(JaggaerBasicValue value) {
-        this.tax2 = value;
+    public void setTax2(JaggaerBasicValue tax2) {
+        this.tax2 = tax2;
     }
 
     public JaggaerBasicValue getTaxShipping() {
         return taxShipping;
     }
 
-    public void setTaxShipping(JaggaerBasicValue value) {
-        this.taxShipping = value;
+    public void setTaxShipping(JaggaerBasicValue taxShipping) {
+        this.taxShipping = taxShipping;
     }
 
     public JaggaerBasicValue getTaxHandling() {
         return taxHandling;
     }
 
-    public void setTaxHandling(JaggaerBasicValue value) {
-        this.taxHandling = value;
+    public void setTaxHandling(JaggaerBasicValue taxHandling) {
+        this.taxHandling = taxHandling;
     }
 
 }

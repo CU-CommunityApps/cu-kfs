@@ -143,7 +143,7 @@ public class SupplierSyncMessageTest {
         supplier.setThirdPartyRefNumber(buildThirdPartyRefNumber());
 
         SupplierSQId sqId = new SupplierSQId();
-        sqId.setvalue("SO ID");
+        sqId.setValue("SO ID");
         supplier.setSupplierSQId(sqId);
 
         supplier.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
@@ -195,7 +195,7 @@ public class SupplierSyncMessageTest {
     
     private ThirdPartyRefNumber buildThirdPartyRefNumber() {
         ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
-        refNumber.setvalue("3rd party ref number");
+        refNumber.setValue("3rd party ref number");
         return refNumber;
     }
     

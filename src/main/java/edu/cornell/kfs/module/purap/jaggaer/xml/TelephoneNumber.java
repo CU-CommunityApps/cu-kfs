@@ -30,40 +30,40 @@ public class TelephoneNumber {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getCountryCode() {
         return countryCode;
     }
 
-    public void setCountryCode(JaggaerBasicValue value) {
-        this.countryCode = value;
+    public void setCountryCode(JaggaerBasicValue countryCode) {
+        this.countryCode = countryCode;
     }
 
     public JaggaerBasicValue getAreaCode() {
         return areaCode;
     }
 
-    public void setAreaCode(JaggaerBasicValue value) {
-        this.areaCode = value;
+    public void setAreaCode(JaggaerBasicValue areaCode) {
+        this.areaCode = areaCode;
     }
 
     public JaggaerBasicValue getNumber() {
         return number;
     }
 
-    public void setNumber(JaggaerBasicValue value) {
-        this.number = value;
+    public void setNumber(JaggaerBasicValue number) {
+        this.number = number;
     }
 
     public JaggaerBasicValue getExtension() {
         return extension;
     }
 
-    public void setExtension(JaggaerBasicValue value) {
-        this.extension = value;
+    public void setExtension(JaggaerBasicValue extension) {
+        this.extension = extension;
     }
 
 }

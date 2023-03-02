@@ -26,24 +26,24 @@ public class SupplierCapital {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public Amount getAmount() {
         return amount;
     }
 
-    public void setAmount(Amount value) {
-        this.amount = value;
+    public void setAmount(Amount amount) {
+        this.amount = amount;
     }
 
     public IsoCurrencyCode getIsoCurrencyCode() {
         return isoCurrencyCode;
     }
 
-    public void setIsoCurrencyCode(IsoCurrencyCode value) {
-        this.isoCurrencyCode = value;
+    public void setIsoCurrencyCode(IsoCurrencyCode isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
     }
 
 }

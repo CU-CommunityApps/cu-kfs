@@ -24,16 +24,16 @@ public class TermsAndCondition {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public PaymentTerms getPaymentTerms() {
         return paymentTerms;
     }
 
-    public void setPaymentTerms(PaymentTerms value) {
-        this.paymentTerms = value;
+    public void setPaymentTerms(PaymentTerms paymentTerms) {
+        this.paymentTerms = paymentTerms;
     }
 
 }

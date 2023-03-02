@@ -32,40 +32,40 @@ public class TaxInformation {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getIsChanged() {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getTaxDocumentName() {
         return taxDocumentName;
     }
 
-    public void setTaxDocumentName(JaggaerBasicValue value) {
-        this.taxDocumentName = value;
+    public void setTaxDocumentName(JaggaerBasicValue taxDocumentName) {
+        this.taxDocumentName = taxDocumentName;
     }
 
     public JaggaerBasicValue getTaxDocumentYear() {
         return taxDocumentYear;
     }
 
-    public void setTaxDocumentYear(JaggaerBasicValue value) {
-        this.taxDocumentYear = value;
+    public void setTaxDocumentYear(JaggaerBasicValue taxDocumentYear) {
+        this.taxDocumentYear = taxDocumentYear;
     }
 
     public TaxDocument getTaxDocument() {
         return taxDocument;
     }
 
-    public void setTaxDocument(TaxDocument value) {
-        this.taxDocument = value;
+    public void setTaxDocument(TaxDocument taxDocument) {
+        this.taxDocument = taxDocument;
     }
 
 }
