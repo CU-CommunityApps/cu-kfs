@@ -130,7 +130,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <argLine>-Xms1024m -Xmx1024m</argLine>
+                    <argLine>-Xms1024m -Xmx1024m -Doracle.jdbc.DateZeroTime=true</argLine>
                     <excludes>
                         <exclude>${test.excludes}</exclude>
                     </excludes>
