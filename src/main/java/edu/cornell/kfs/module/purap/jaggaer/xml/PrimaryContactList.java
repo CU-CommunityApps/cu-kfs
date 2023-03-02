@@ -26,8 +26,8 @@ public class PrimaryContactList {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public List<AssociatedContact> getAssociatedContact() {

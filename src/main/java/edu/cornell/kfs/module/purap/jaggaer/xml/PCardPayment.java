@@ -22,7 +22,7 @@ public class PCardPayment {
     @XmlElement(name = "PONumberSelection")
     protected PONumberSelection poNumberSelection;
     @XmlElement(name = "RequireCardSecurityCode")
-    protected RequireCardSecurityCode requireCardSecurityCode;
+    protected JaggaerBasicValue requireCardSecurityCode;
 
     public String getIsChanged() {
         return isChanged;
@@ -48,11 +48,11 @@ public class PCardPayment {
         this.poNumberSelection = poNumberSelection;
     }
 
-    public RequireCardSecurityCode getRequireCardSecurityCode() {
+    public JaggaerBasicValue getRequireCardSecurityCode() {
         return requireCardSecurityCode;
     }
 
-    public void setRequireCardSecurityCode(RequireCardSecurityCode requireCardSecurityCode) {
+    public void setRequireCardSecurityCode(JaggaerBasicValue requireCardSecurityCode) {
         this.requireCardSecurityCode = requireCardSecurityCode;
     }
 

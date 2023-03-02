@@ -20,7 +20,7 @@ public class ServiceArea {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "ServiceAreaInternalName", required = true)
-    protected ServiceAreaInternalName serviceAreaInternalName;
+    protected JaggaerBasicValue serviceAreaInternalName;
     @XmlElement(name = "StateServiceAreaList")
     protected List<StateServiceAreaList> stateServiceAreaList;
 
@@ -28,16 +28,16 @@ public class ServiceArea {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    public ServiceAreaInternalName getServiceAreaInternalName() {
+    public JaggaerBasicValue getServiceAreaInternalName() {
         return serviceAreaInternalName;
     }
 
-    public void setServiceAreaInternalName(ServiceAreaInternalName value) {
-        this.serviceAreaInternalName = value;
+    public void setServiceAreaInternalName(JaggaerBasicValue serviceAreaInternalName) {
+        this.serviceAreaInternalName = serviceAreaInternalName;
     }
 
     public List<StateServiceAreaList> getStateServiceAreaList() {

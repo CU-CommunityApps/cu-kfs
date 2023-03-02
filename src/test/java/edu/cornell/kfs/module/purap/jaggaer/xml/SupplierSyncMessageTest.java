@@ -201,7 +201,7 @@ public class SupplierSyncMessageTest {
     
     private SQIntegrationNumber buildSQIntegrationNumber(String number) {
         SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
-        sqIntegrationNumber.setvalue(number);
+        sqIntegrationNumber.setValue(number);
         return sqIntegrationNumber;
     }
 
@@ -216,19 +216,19 @@ public class SupplierSyncMessageTest {
         NaicsCodes codes = new NaicsCodes();
         codes.setIsChanged(T_TRUE);
         PrimaryNaics primary = new PrimaryNaics();
-        primary.setvalue("primary code");
+        primary.setValue("primary code");
         primary.setIsChanged(T_TRUE);
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(primary);
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
 
         SecondaryNaics second = new SecondaryNaics();
-        second.setvalue("second");
+        second.setValue("second");
         second.setIsChanged(F_FALSE);
         secondaryList.getSecondaryNaics().add(second);
 
         SecondaryNaics third = new SecondaryNaics();
-        third.setvalue("third");
+        third.setValue("third");
         third.setIsChanged(T_TRUE);
         secondaryList.getSecondaryNaics().add(third);
 
@@ -330,24 +330,17 @@ public class SupplierSyncMessageTest {
 
         ServiceArea area1 = new ServiceArea();
         area1.setIsChanged(T_TRUE);
-        area1.setServiceAreaInternalName(buildServiceAreaInternalName("internal name"));
+        area1.setServiceAreaInternalName(new JaggaerBasicValue("internal name", T_TRUE));
         area1.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 1", "internal name 2"));
         areaList.getServiceArea().add(area1);
 
         ServiceArea area2 = new ServiceArea();
         area2.setIsChanged(F_FALSE);
-        area2.setServiceAreaInternalName(buildServiceAreaInternalName("a different internal name"));
+        area2.setServiceAreaInternalName(new JaggaerBasicValue("a different internal name", T_TRUE));
         area2.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 3", "internal name 4"));
         areaList.getServiceArea().add(area2);
 
         return areaList;
-    }
-
-    private ServiceAreaInternalName buildServiceAreaInternalName(String internalName) {
-        ServiceAreaInternalName sain = new ServiceAreaInternalName();
-        sain.setvalue(internalName);
-        sain.setIsChanged(T_TRUE);
-        return sain;
     }
 
     private StateServiceAreaList buildStateServiceAreaList(String... names) {
@@ -357,7 +350,7 @@ public class SupplierSyncMessageTest {
         for (String name : names) {
             StateServiceAreaInternalName internalName = new StateServiceAreaInternalName();
             internalName.setIsChanged(T_TRUE);
-            internalName.setvalue(name);
+            internalName.setValue(name);
             stateServiceAreaList.getStateServiceAreaInternalName().add(internalName);
         }
 
@@ -468,7 +461,7 @@ public class SupplierSyncMessageTest {
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         ap.setName(buildName("accounts payable name", T_TRUE));
         ap.setActive(buildActive());
-        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getvalue()));
+        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
         ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         ap.setContactName(new JaggaerBasicValue("contact name", T_TRUE));
@@ -510,12 +503,12 @@ public class SupplierSyncMessageTest {
         
         State state = new State();
         state.setIsChanged(T_TRUE);
-        state.setvalue("NY");
+        state.setValue("NY");
         bankAccount.setState(state);
         
         PostalCode postalCode = new PostalCode();
         postalCode.setIsChanged(T_TRUE);
-        postalCode.setvalue("14850");
+        postalCode.setValue("14850");
         bankAccount.setPostalCode(postalCode);
         
         
@@ -758,11 +751,7 @@ public class SupplierSyncMessageTest {
         pCard.setActive(buildActive());
         pCard.setIsChanged(T_TRUE);
         pCard.setPoNumberSelection(selection);
-        
-        RequireCardSecurityCode securityCode = new RequireCardSecurityCode();
-        securityCode.setIsChanged(T_TRUE);
-        securityCode.setvalue("security code");
-        pCard.setRequireCardSecurityCode(securityCode);
+        pCard.setRequireCardSecurityCode(new JaggaerBasicValue("security code", T_TRUE));
         
         poPaymentMethod.setpCardPayment(pCard);
         
@@ -937,12 +926,12 @@ public class SupplierSyncMessageTest {
         
         State state = new State();
         state.setIsChanged(T_TRUE);
-        state.setvalue("NY");
+        state.setValue("NY");
         address.setState(state);
         
         PostalCode postal = new PostalCode();
         postal.setIsChanged(T_TRUE);
-        postal.setvalue("14850");
+        postal.setValue("14850");
         address.setPostalCode(postal);
         
         address.setIsoCountryCode(buildIsoCountryCodeUsa());

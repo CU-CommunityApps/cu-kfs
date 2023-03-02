@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "PrimaryNaics")
-public class PrimaryNaics implements PimaryNaicsOrSecondaryNaicsListItemInterface{
+public class PrimaryNaics implements PimaryNaicsOrSecondaryNaicsListItemInterface {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -24,15 +24,15 @@ public class PrimaryNaics implements PimaryNaicsOrSecondaryNaicsListItemInterfac
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
