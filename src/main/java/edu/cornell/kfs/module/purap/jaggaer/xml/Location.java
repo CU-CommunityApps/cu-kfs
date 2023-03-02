@@ -71,184 +71,184 @@ public class Location {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public String getSupportsOrderFulfillment() {
         return supportsOrderFulfillment;
     }
 
-    public void setSupportsOrderFulfillment(String value) {
-        this.supportsOrderFulfillment = value;
+    public void setSupportsOrderFulfillment(String supportsOrderFulfillment) {
+        this.supportsOrderFulfillment = supportsOrderFulfillment;
     }
 
-    public ERPNumber getERPNumber() {
+    public ERPNumber getErpNumber() {
         return erpNumber;
     }
 
-    public void setERPNumber(ERPNumber value) {
-        this.erpNumber = value;
+    public void setErpNumber(ERPNumber erpNumber) {
+        this.erpNumber = erpNumber;
     }
 
     public String getOldERPNumber() {
         return oldERPNumber;
     }
 
-    public void setOldERPNumber(String value) {
-        this.oldERPNumber = value;
+    public void setOldERPNumber(String oldERPNumber) {
+        this.oldERPNumber = oldERPNumber;
     }
 
-    public SQIntegrationNumber getSQIntegrationNumber() {
+    public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
 
-    public void setSQIntegrationNumber(SQIntegrationNumber value) {
-        this.sqIntegrationNumber = value;
+    public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
+        this.sqIntegrationNumber = sqIntegrationNumber;
     }
 
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
 
-    public void setThirdPartyRefNumber(ThirdPartyRefNumber value) {
-        this.thirdPartyRefNumber = value;
+    public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
+        this.thirdPartyRefNumber = thirdPartyRefNumber;
     }
 
     public Name getName() {
         return name;
     }
 
-    public void setName(Name value) {
-        this.name = value;
+    public void setName(Name name) {
+        this.name = name;
     }
 
     public JaggaerBasicValue getDescription() {
         return description;
     }
 
-    public void setDescription(JaggaerBasicValue value) {
-        this.description = value;
+    public void setDescription(JaggaerBasicValue description) {
+        this.description = description;
     }
 
     public Active getActive() {
         return active;
     }
 
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     public JaggaerBasicValue getLocationActive() {
         return locationActive;
     }
 
-    public void setLocationActive(JaggaerBasicValue value) {
-        this.locationActive = value;
+    public void setLocationActive(JaggaerBasicValue locationActive) {
+        this.locationActive = locationActive;
     }
 
     public JaggaerBasicValue getPrimary() {
         return primary;
     }
 
-    public void setPrimary(JaggaerBasicValue value) {
-        this.primary = value;
+    public void setPrimary(JaggaerBasicValue primary) {
+        this.primary = primary;
     }
 
     public PrefPurchaseOrderDeliveryMethod getPrefPurchaseOrderDeliveryMethod() {
         return prefPurchaseOrderDeliveryMethod;
     }
 
-    public void setPrefPurchaseOrderDeliveryMethod(PrefPurchaseOrderDeliveryMethod value) {
-        this.prefPurchaseOrderDeliveryMethod = value;
+    public void setPrefPurchaseOrderDeliveryMethod(PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod) {
+        this.prefPurchaseOrderDeliveryMethod = prefPurchaseOrderDeliveryMethod;
     }
 
     public LocationEffectiveDate getLocationEffectiveDate() {
         return locationEffectiveDate;
     }
 
-    public void setLocationEffectiveDate(LocationEffectiveDate value) {
-        this.locationEffectiveDate = value;
+    public void setLocationEffectiveDate(LocationEffectiveDate locationEffectiveDate) {
+        this.locationEffectiveDate = locationEffectiveDate;
     }
 
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(PaymentMethod value) {
-        this.paymentMethod = value;
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public JaggaerBasicValue getShipping() {
         return shipping;
     }
 
-    public void setShipping(JaggaerBasicValue value) {
-        this.shipping = value;
+    public void setShipping(JaggaerBasicValue shipping) {
+        this.shipping = shipping;
     }
 
     public JaggaerBasicValue getHandling() {
         return handling;
     }
 
-    public void setHandling(JaggaerBasicValue value) {
-        this.handling = value;
+    public void setHandling(JaggaerBasicValue handling) {
+        this.handling = handling;
     }
 
     public TaxInfo getTaxInfo() {
         return taxInfo;
     }
 
-    public void setTaxInfo(TaxInfo value) {
-        this.taxInfo = value;
+    public void setTaxInfo(TaxInfo taxInfo) {
+        this.taxInfo = taxInfo;
     }
 
     public TermsAndCondition getTermsAndCondition() {
         return termsAndCondition;
     }
 
-    public void setTermsAndCondition(TermsAndCondition value) {
-        this.termsAndCondition = value;
+    public void setTermsAndCondition(TermsAndCondition termsAndCondition) {
+        this.termsAndCondition = termsAndCondition;
     }
 
     public OrderDistributionList getOrderDistributionList() {
         return orderDistributionList;
     }
 
-    public void setOrderDistributionList(OrderDistributionList value) {
-        this.orderDistributionList = value;
+    public void setOrderDistributionList(OrderDistributionList orderDistributionList) {
+        this.orderDistributionList = orderDistributionList;
     }
 
     public AssignedBusinessUnitsList getAssignedBusinessUnitsList() {
         return assignedBusinessUnitsList;
     }
 
-    public void setAssignedBusinessUnitsList(AssignedBusinessUnitsList value) {
-        this.assignedBusinessUnitsList = value;
+    public void setAssignedBusinessUnitsList(AssignedBusinessUnitsList assignedBusinessUnitsList) {
+        this.assignedBusinessUnitsList = assignedBusinessUnitsList;
     }
 
     public AssociatedAddressList getAssociatedAddressList() {
         return associatedAddressList;
     }
 
-    public void setAssociatedAddressList(AssociatedAddressList value) {
-        this.associatedAddressList = value;
+    public void setAssociatedAddressList(AssociatedAddressList associatedAddressList) {
+        this.associatedAddressList = associatedAddressList;
     }
 
     public AssociatedContactList getAssociatedContactList() {
         return associatedContactList;
     }
 
-    public void setAssociatedContactList(AssociatedContactList value) {
-        this.associatedContactList = value;
+    public void setAssociatedContactList(AssociatedContactList associatedContactList) {
+        this.associatedContactList = associatedContactList;
     }
 
     public CustomElementList getCustomElementList() {
         return customElementList;
     }
 
-    public void setCustomElementList(CustomElementList value) {
-        this.customElementList = value;
+    public void setCustomElementList(CustomElementList customElementList) {
+        this.customElementList = customElementList;
     }
 
 }

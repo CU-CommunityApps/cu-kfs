@@ -24,16 +24,16 @@ public class JPMorganVCardPayment {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public Active getActive() {
         return active;
     }
 
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
 }

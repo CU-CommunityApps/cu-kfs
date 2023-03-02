@@ -17,15 +17,15 @@ public class JaggaerBasicValue {
     protected String isChanged;
     @XmlValue
     protected String value;
-    
+
     public JaggaerBasicValue() {
-        
+
     }
-    
+
     public JaggaerBasicValue(String value) {
         this(value, null);
     }
-    
+
     public JaggaerBasicValue(String value, String isChanged) {
         this.value = value;
         this.isChanged = isChanged;
@@ -35,15 +35,15 @@ public class JaggaerBasicValue {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

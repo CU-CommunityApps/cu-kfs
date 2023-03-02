@@ -43,80 +43,80 @@ public class InsuranceInformation {
         return type;
     }
 
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getIsChanged() {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getPolicyNumber() {
         return policyNumber;
     }
 
-    public void setPolicyNumber(JaggaerBasicValue value) {
-        this.policyNumber = value;
+    public void setPolicyNumber(JaggaerBasicValue policyNumber) {
+        this.policyNumber = policyNumber;
     }
 
     public JaggaerBasicValue getInsuranceLimit() {
         return insuranceLimit;
     }
 
-    public void setInsuranceLimit(JaggaerBasicValue value) {
-        this.insuranceLimit = value;
+    public void setInsuranceLimit(JaggaerBasicValue insuranceLimit) {
+        this.insuranceLimit = insuranceLimit;
     }
 
     public JaggaerBasicValue getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(JaggaerBasicValue value) {
-        this.expirationDate = value;
+    public void setExpirationDate(JaggaerBasicValue expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public JaggaerBasicValue getInsuranceProvider() {
         return insuranceProvider;
     }
 
-    public void setInsuranceProvider(JaggaerBasicValue value) {
-        this.insuranceProvider = value;
+    public void setInsuranceProvider(JaggaerBasicValue insuranceProvider) {
+        this.insuranceProvider = insuranceProvider;
     }
 
     public JaggaerBasicValue getAgent() {
         return agent;
     }
 
-    public void setAgent(JaggaerBasicValue value) {
-        this.agent = value;
+    public void setAgent(JaggaerBasicValue agent) {
+        this.agent = agent;
     }
 
     public InsuranceProviderPhone getInsuranceProviderPhone() {
         return insuranceProviderPhone;
     }
 
-    public void setInsuranceProviderPhone(InsuranceProviderPhone value) {
-        this.insuranceProviderPhone = value;
+    public void setInsuranceProviderPhone(InsuranceProviderPhone insuranceProviderPhone) {
+        this.insuranceProviderPhone = insuranceProviderPhone;
     }
 
     public InsuranceCertificate getInsuranceCertificate() {
         return insuranceCertificate;
     }
 
-    public void setInsuranceCertificate(InsuranceCertificate value) {
-        this.insuranceCertificate = value;
+    public void setInsuranceCertificate(InsuranceCertificate insuranceCertificate) {
+        this.insuranceCertificate = insuranceCertificate;
     }
 
     public JaggaerBasicValue getOtherTypeName() {
         return otherTypeName;
     }
 
-    public void setOtherTypeName(JaggaerBasicValue value) {
-        this.otherTypeName = value;
+    public void setOtherTypeName(JaggaerBasicValue otherTypeName) {
+        this.otherTypeName = otherTypeName;
     }
 
 }

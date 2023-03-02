@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "telephoneNumber" })
 @XmlRootElement(name = "Fax")
-public class Fax implements PrefPurchaseOrderDeliveryMethodEmailOrFaxInterface{
+public class Fax implements PrefPurchaseOrderDeliveryMethodEmailOrFaxInterface {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -24,16 +24,16 @@ public class Fax implements PrefPurchaseOrderDeliveryMethodEmailOrFaxInterface{
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public TelephoneNumber getTelephoneNumber() {
         return telephoneNumber;
     }
 
-    public void setTelephoneNumber(TelephoneNumber value) {
-        this.telephoneNumber = value;
+    public void setTelephoneNumber(TelephoneNumber telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
     }
 
 }

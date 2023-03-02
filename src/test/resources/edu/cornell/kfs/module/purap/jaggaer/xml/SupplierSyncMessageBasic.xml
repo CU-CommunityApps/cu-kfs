@@ -293,6 +293,16 @@
                                 </PONumberSelection>
                                 <AllowFreeForm isChanged="T">allow free form</AllowFreeForm>
                             </POPayment>
+                            <PCardPayment isChanged="T">
+                                <Active>active</Active>
+                                <PONumberSelection type="selection type" isChanged="T">
+                                    <NumberWheel isChanged="T">wheel</NumberWheel>
+                                </PONumberSelection>
+                                <RequireCardSecurityCode isChanged="T">security code</RequireCardSecurityCode>
+                            </PCardPayment>
+                            <JPMorganVCardPayment isChanged="T">
+                                <Active>active</Active>
+                            </JPMorganVCardPayment>
                         </POPaymentMethod>
                         <BlanketPOPaymentMethod isChanged="T">
                             <BlanketPONumber isChanged="T">blanket number</BlanketPONumber>

@@ -312,10 +312,7 @@ public class SupplierSyncMessageTest {
 
         sale.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
 
-        JaggaerBasicValue year = new JaggaerBasicValue();
-        year.setIsChanged(T_TRUE);
-        year.setvalue("2023");
-        sale.setAnnualSalesYear(year);
+        sale.setAnnualSalesYear(new JaggaerBasicValue("2023", T_TRUE));
 
         Amount ammount = new Amount();
         ammount.setIsChanged(T_TRUE);
@@ -501,12 +498,7 @@ public class SupplierSyncMessageTest {
         bankAccount.setDirectDepositFormat(new JaggaerBasicValue("Deposit Format", T_TRUE));
         bankAccount.setBankIdentifierCode(new JaggaerBasicValue("bank identifier code", T_TRUE));
         bankAccount.setInternationalRoutingCode(new JaggaerBasicValue("international routing", T_TRUE));
-        
-        IsoCountryCode countryCode = new IsoCountryCode();
-        countryCode.setIsChanged(T_TRUE);
-        countryCode.setvalue("USA");
-        bankAccount.setIsoCountryCode(countryCode);
-        
+        bankAccount.setIsoCountryCode(buildIsoCountryCodeUsa());
         bankAccount.setAddressLine1(new AddressLine("Address Line 1", T_TRUE));
         bankAccount.setAddressLine2(new AddressLine("Address Line 2", T_TRUE));
         bankAccount.setAddressLine3(new AddressLine("Address Line 3", T_TRUE));
@@ -528,6 +520,13 @@ public class SupplierSyncMessageTest {
         
         
         return bankAccount;
+    }
+    
+    private IsoCountryCode buildIsoCountryCodeUsa() {
+        IsoCountryCode countryCode = new IsoCountryCode();
+        countryCode.setIsChanged(T_TRUE);
+        countryCode.setValue("USA");
+        return countryCode;
     }
 
     private FlexFields buildFlexFields() {
@@ -590,8 +589,8 @@ public class SupplierSyncMessageTest {
         location.setIsChanged(T_TRUE);
         location.setSupportsOrderFulfillment("Order Fulfillment(");
         location.setOldERPNumber("old erp number");
-        location.setERPNumber(buildERPNumber("erp number", T_TRUE));
-        location.setSQIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
+        location.setErpNumber(buildERPNumber("erp number", T_TRUE));
+        location.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
         location.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         location.setName(buildName("silly location name", T_TRUE));
         location.setDescription(new JaggaerBasicValue("description value", T_TRUE));
@@ -647,9 +646,7 @@ public class SupplierSyncMessageTest {
         amount.setValue("10");
         discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(amount);
         
-        IsoCurrencyCode currency = new IsoCurrencyCode();
-        currency.setvalue("USD");
-        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(currency);
+        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(buildIsoCurrencyCode("USD", null));
         
         DiscountPercent percent = new DiscountPercent();
         percent.setValue("5");
@@ -757,6 +754,23 @@ public class SupplierSyncMessageTest {
         poPayment.setAllowFreeForm(new JaggaerBasicValue("allow free form", T_TRUE));
 
         poPaymentMethod.setPOPayment(poPayment);
+        
+        JPMorganVCardPayment jpMorgan = new JPMorganVCardPayment();
+        jpMorgan.setActive(buildActive());
+        jpMorgan.setIsChanged(T_TRUE);
+        poPaymentMethod.setJPMorganVCardPayment(jpMorgan);
+        
+        PCardPayment pCard = new PCardPayment();
+        pCard.setActive(buildActive());
+        pCard.setIsChanged(T_TRUE);
+        pCard.setPONumberSelection(selection);
+        
+        RequireCardSecurityCode securityCode = new RequireCardSecurityCode();
+        securityCode.setIsChanged(T_TRUE);
+        securityCode.setvalue("security code");
+        pCard.setRequireCardSecurityCode(securityCode);
+        
+        poPaymentMethod.setPCardPayment(pCard);
         
         return poPaymentMethod;
     }
@@ -940,10 +954,7 @@ public class SupplierSyncMessageTest {
         postal.setvalue("14850");
         address.setPostalCode(postal);
         
-        IsoCountryCode country = new IsoCountryCode();
-        country.setIsChanged(T_TRUE);
-        country.setvalue("USA");
-        address.setIsoCountryCode(country);
+        address.setIsoCountryCode(buildIsoCountryCodeUsa());
         
         Phone phone = new Phone();
         phone.setIsChanged(T_TRUE);

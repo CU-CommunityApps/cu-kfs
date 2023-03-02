@@ -24,32 +24,32 @@ public class Header {
         return messageId;
     }
 
-    public void setMessageId(String value) {
-        this.messageId = value;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     public String getRelatedMessageId() {
         return relatedMessageId;
     }
 
-    public void setRelatedMessageId(String value) {
-        this.relatedMessageId = value;
+    public void setRelatedMessageId(String relatedMessageId) {
+        this.relatedMessageId = relatedMessageId;
     }
 
     public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String value) {
-        this.timestamp = value;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Authentication getAuthentication() {
         return authentication;
     }
 
-    public void setAuthentication(Authentication value) {
-        this.authentication = value;
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
     }
 
 }

@@ -32,48 +32,48 @@ public class FlexFields {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public JaggaerBasicValue getFlexField1() {
         return flexField1;
     }
 
-    public void setFlexField1(JaggaerBasicValue value) {
-        this.flexField1 = value;
+    public void setFlexField1(JaggaerBasicValue flexField1) {
+        this.flexField1 = flexField1;
     }
 
     public JaggaerBasicValue getFlexField2() {
         return flexField2;
     }
 
-    public void setFlexField2(JaggaerBasicValue value) {
-        this.flexField2 = value;
+    public void setFlexField2(JaggaerBasicValue flexField2) {
+        this.flexField2 = flexField2;
     }
 
     public JaggaerBasicValue getFlexField3() {
         return flexField3;
     }
 
-    public void setFlexField3(JaggaerBasicValue value) {
-        this.flexField3 = value;
+    public void setFlexField3(JaggaerBasicValue flexField3) {
+        this.flexField3 = flexField3;
     }
 
     public JaggaerBasicValue getFlexField4() {
         return flexField4;
     }
 
-    public void setFlexField4(JaggaerBasicValue value) {
-        this.flexField4 = value;
+    public void setFlexField4(JaggaerBasicValue flexField4) {
+        this.flexField4 = flexField4;
     }
 
     public JaggaerBasicValue getFlexField5() {
         return flexField5;
     }
 
-    public void setFlexField5(JaggaerBasicValue value) {
-        this.flexField5 = value;
+    public void setFlexField5(JaggaerBasicValue flexField5) {
+        this.flexField5 = flexField5;
     }
 
 }
