@@ -59,34 +59,22 @@ public class SupplierSyncMessageTest {
     }
 
     @Test
-    void test() throws JAXBException, IOException, SAXException {
-        File basicFileExample = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
+    void testSupplierSyncMessage() throws JAXBException, IOException, SAXException  {
+        File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
 
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
-
         supplierSyncMessage.setVersion("1.0");
         supplierSyncMessage.setHeader(buildHeader());
 
         SupplierRequestMessage srm = new SupplierRequestMessage();
         srm.getSupplier().add(buildSupplier());
-
         supplierSyncMessage
                 .getSupplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage()
                 .add(srm);
 
-        String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
-        LOG.info("actualResults: " + actualResults);
-
+        logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, BATCH_DIRECTORY + "test.xml");
-
-        FileInputStream actualFileInputStream = new FileInputStream(actualXmlFile);
-        FileInputStream expectedFIleInputStream = new FileInputStream(basicFileExample);
-
-        BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
-        BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));
-
-        compareXML(expectedBufferedReader, actualBufferedReader);
-
+        compareXML(actualXmlFile, expectedXmlFile);
     }
 
     private Header buildHeader() {
@@ -970,12 +958,25 @@ public class SupplierSyncMessageTest {
         businessList.getBusinessUnitInternalName().add(internalName);
         return businessList;
     }
+    
+    private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
+        if (false) {
+            String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
+            LOG.info("logActualXmlIfNeeded, actualResults: " + actualResults);
+        }
+    }
+    
+    private void compareXML(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException {
+        FileInputStream actualFileInputStream = new FileInputStream(actualXmlFile);
+        FileInputStream expectedFIleInputStream = new FileInputStream(expectedXmlFile);
 
-    private void compareXML(Reader control, Reader test) throws SAXException, IOException {
+        BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
+        BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));
+        
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setIgnoreComments(true);
         
-        Diff xmlDiff = new Diff(control, test);
+        Diff xmlDiff = new Diff(expectedBufferedReader, actualBufferedReader);
         DetailedDiff detailXmlDiff = new DetailedDiff(xmlDiff);
         List<Difference> differences = detailXmlDiff.getAllDifferences();
         for (Difference difference : differences) {
