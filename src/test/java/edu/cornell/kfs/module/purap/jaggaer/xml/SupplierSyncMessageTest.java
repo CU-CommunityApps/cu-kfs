@@ -182,7 +182,7 @@ public class SupplierSyncMessageTest {
     
     private Name buildName(String nameString, String changed) {
         Name name = new Name();
-        name.setvalue(nameString);
+        name.setValue(nameString);
         name.setIsChanged(changed);
         return name;
     }
@@ -366,9 +366,9 @@ public class SupplierSyncMessageTest {
 
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setERPNumber(buildERPNumber("parent erp number", F_FALSE));
+        parent.setErpNumber(buildERPNumber("parent erp number", F_FALSE));
         parent.setIsChanged(F_FALSE);
-        parent.setSQIntegrationNumber(buildSQIntegrationNumber("parent integration number"));
+        parent.setSqIntegrationNumber(buildSQIntegrationNumber("parent integration number"));
         return parent;
     }
 
@@ -598,14 +598,8 @@ public class SupplierSyncMessageTest {
         location.setLocationActive(new JaggaerBasicValue("location is active", T_TRUE));
         location.setPrimary(new JaggaerBasicValue("primary", T_TRUE));
         location.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
-        
-        LocationEffectiveDate effectiveDate = new LocationEffectiveDate();
-        effectiveDate.setIsChanged(T_TRUE);
-        effectiveDate.setvalue("02/28/2023");
-        location.setLocationEffectiveDate(effectiveDate);
-        
+        location.setLocationEffectiveDate(new JaggaerBasicValue("02/28/2023", T_TRUE));
         location.setPaymentMethod(buildPaymentMethod());
-        
         location.setShipping(new JaggaerBasicValue("shipping details"));
         location.setHandling(new JaggaerBasicValue("Hangling details"));
         location.setTaxInfo(buildTaxInfo());
@@ -663,7 +657,7 @@ public class SupplierSyncMessageTest {
         customTerm.setValue("custom term");
         paymentTerms.setCustomPaymentTerm(customTerm);
         
-        paymentTerms.setFOB(new JaggaerBasicValue("FOB", T_TRUE));
+        paymentTerms.setFob(new JaggaerBasicValue("FOB", T_TRUE));
         paymentTerms.setStandardPaymentTermsCode(new JaggaerBasicValue("standard payment terms"));
         paymentTerms.setTermsType(new JaggaerBasicValue("terms type"));
         paymentTerms.setDaysAfter(new JaggaerBasicValue("Days After"));
@@ -727,7 +721,7 @@ public class SupplierSyncMessageTest {
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setType("payment type");
         paymentMethod.setIsChanged(T_TRUE);
-        paymentMethod.setPOPaymentMethod(buildPOPaymentMethod());
+        paymentMethod.setPoPaymentMethod(buildPOPaymentMethod());
         
         BlanketPOPaymentMethod blanketMethod = new BlanketPOPaymentMethod();
         blanketMethod.setIsChanged(T_TRUE);
@@ -750,27 +744,27 @@ public class SupplierSyncMessageTest {
         selection.setType("selection type");
         
         selection.setNumberWheel(new JaggaerBasicValue("wheel", T_TRUE));
-        poPayment.setPONumberSelection(selection);
+        poPayment.setPoNumberSelection(selection);
         poPayment.setAllowFreeForm(new JaggaerBasicValue("allow free form", T_TRUE));
 
-        poPaymentMethod.setPOPayment(poPayment);
+        poPaymentMethod.setPoPayment(poPayment);
         
         JPMorganVCardPayment jpMorgan = new JPMorganVCardPayment();
         jpMorgan.setActive(buildActive());
         jpMorgan.setIsChanged(T_TRUE);
-        poPaymentMethod.setJPMorganVCardPayment(jpMorgan);
+        poPaymentMethod.setJpMorganVCardPayment(jpMorgan);
         
         PCardPayment pCard = new PCardPayment();
         pCard.setActive(buildActive());
         pCard.setIsChanged(T_TRUE);
-        pCard.setPONumberSelection(selection);
+        pCard.setPoNumberSelection(selection);
         
         RequireCardSecurityCode securityCode = new RequireCardSecurityCode();
         securityCode.setIsChanged(T_TRUE);
         securityCode.setvalue("security code");
         pCard.setRequireCardSecurityCode(securityCode);
         
-        poPaymentMethod.setPCardPayment(pCard);
+        poPaymentMethod.setpCardPayment(pCard);
         
         return poPaymentMethod;
     }
@@ -891,10 +885,7 @@ public class SupplierSyncMessageTest {
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
         contact.setFax(fax);
         
-        Notes notes = new Notes();
-        notes.setIsChanged(T_TRUE);
-        notes.setvalue("just a simple note");
-        contact.setNotes(notes);
+        contact.setNotes(new JaggaerBasicValue("just a simple note", T_TRUE));
         
         contactList.getContact().add(contact);
         return contactList;
@@ -971,10 +962,7 @@ public class SupplierSyncMessageTest {
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
         address.setFax(fax);
         
-        Notes notes = new Notes();
-        notes.setIsChanged(T_TRUE);
-        notes.setvalue("just a simple note");
-        address.setNotes(notes);
+        address.setNotes(new JaggaerBasicValue("just a simple note", T_TRUE));
         
         address.setAssignedBusinessUnitsList(buildAssignedBusinessUnitsList("is preferred", "testing name"));
         addressList.getAddress().add(address);

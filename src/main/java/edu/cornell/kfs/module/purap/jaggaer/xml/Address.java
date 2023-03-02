@@ -58,7 +58,7 @@ public class Address {
     @XmlElement(name = "Fax")
     protected Fax fax;
     @XmlElement(name = "Notes")
-    protected Notes notes;
+    protected JaggaerBasicValue notes;
     @XmlElement(name = "AssignedBusinessUnitsList")
     protected AssignedBusinessUnitsList assignedBusinessUnitsList;
     public String getType() {
@@ -175,10 +175,10 @@ public class Address {
     public void setFax(Fax fax) {
         this.fax = fax;
     }
-    public Notes getNotes() {
+    public JaggaerBasicValue getNotes() {
         return notes;
     }
-    public void setNotes(Notes notes) {
+    public void setNotes(JaggaerBasicValue notes) {
         this.notes = notes;
     }
     public AssignedBusinessUnitsList getAssignedBusinessUnitsList() {

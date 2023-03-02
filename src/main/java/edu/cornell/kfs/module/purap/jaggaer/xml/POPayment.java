@@ -28,32 +28,32 @@ public class POPayment {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public Active getActive() {
         return active;
     }
 
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
-    public PONumberSelection getPONumberSelection() {
+    public PONumberSelection getPoNumberSelection() {
         return poNumberSelection;
     }
 
-    public void setPONumberSelection(PONumberSelection value) {
-        this.poNumberSelection = value;
+    public void setPoNumberSelection(PONumberSelection poNumberSelection) {
+        this.poNumberSelection = poNumberSelection;
     }
 
     public JaggaerBasicValue getAllowFreeForm() {
         return allowFreeForm;
     }
 
-    public void setAllowFreeForm(JaggaerBasicValue value) {
-        this.allowFreeForm = value;
+    public void setAllowFreeForm(JaggaerBasicValue allowFreeForm) {
+        this.allowFreeForm = allowFreeForm;
     }
 
 }

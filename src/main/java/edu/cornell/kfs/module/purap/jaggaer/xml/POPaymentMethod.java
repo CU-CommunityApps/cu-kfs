@@ -28,32 +28,32 @@ public class POPaymentMethod {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    public POPayment getPOPayment() {
+    public POPayment getPoPayment() {
         return poPayment;
     }
 
-    public void setPOPayment(POPayment value) {
-        this.poPayment = value;
+    public void setPoPayment(POPayment poPayment) {
+        this.poPayment = poPayment;
     }
 
-    public PCardPayment getPCardPayment() {
+    public PCardPayment getpCardPayment() {
         return pCardPayment;
     }
 
-    public void setPCardPayment(PCardPayment value) {
-        this.pCardPayment = value;
+    public void setpCardPayment(PCardPayment pCardPayment) {
+        this.pCardPayment = pCardPayment;
     }
 
-    public JPMorganVCardPayment getJPMorganVCardPayment() {
+    public JPMorganVCardPayment getJpMorganVCardPayment() {
         return jpMorganVCardPayment;
     }
 
-    public void setJPMorganVCardPayment(JPMorganVCardPayment value) {
-        this.jpMorganVCardPayment = value;
+    public void setJpMorganVCardPayment(JPMorganVCardPayment jpMorganVCardPayment) {
+        this.jpMorganVCardPayment = jpMorganVCardPayment;
     }
 
 }

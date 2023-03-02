@@ -45,7 +45,7 @@ public class Location {
     @XmlElement(name = "PrefPurchaseOrderDeliveryMethod")
     protected PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod;
     @XmlElement(name = "LocationEffectiveDate")
-    protected LocationEffectiveDate locationEffectiveDate;
+    protected JaggaerBasicValue locationEffectiveDate;
     @XmlElement(name = "PaymentMethod")
     protected PaymentMethod paymentMethod;
     @XmlElement(name = "Shipping")
@@ -163,11 +163,11 @@ public class Location {
         this.prefPurchaseOrderDeliveryMethod = prefPurchaseOrderDeliveryMethod;
     }
 
-    public LocationEffectiveDate getLocationEffectiveDate() {
+    public JaggaerBasicValue getLocationEffectiveDate() {
         return locationEffectiveDate;
     }
 
-    public void setLocationEffectiveDate(LocationEffectiveDate locationEffectiveDate) {
+    public void setLocationEffectiveDate(JaggaerBasicValue locationEffectiveDate) {
         this.locationEffectiveDate = locationEffectiveDate;
     }
 

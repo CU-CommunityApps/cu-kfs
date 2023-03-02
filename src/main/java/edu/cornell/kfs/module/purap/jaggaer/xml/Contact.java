@@ -52,7 +52,7 @@ public class Contact {
     @XmlElement(name = "Fax")
     protected Fax fax;
     @XmlElement(name = "Notes")
-    protected Notes notes;
+    protected JaggaerBasicValue notes;
     @XmlElement(name = "AssociatedAddress")
     protected AssociatedAddress associatedAddress;
 
@@ -184,11 +184,11 @@ public class Contact {
         this.fax = fax;
     }
 
-    public Notes getNotes() {
+    public JaggaerBasicValue getNotes() {
         return notes;
     }
 
-    public void setNotes(Notes notes) {
+    public void setNotes(JaggaerBasicValue notes) {
         this.notes = notes;
     }
 

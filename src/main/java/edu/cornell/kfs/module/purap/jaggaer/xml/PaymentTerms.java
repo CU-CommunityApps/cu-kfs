@@ -41,80 +41,80 @@ public class PaymentTerms {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public Active getActive() {
         return active;
     }
 
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     public Discount getDiscount() {
         return discount;
     }
 
-    public void setDiscount(Discount value) {
-        this.discount = value;
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
     public JaggaerBasicValue getDays() {
         return days;
     }
 
-    public void setDays(JaggaerBasicValue value) {
-        this.days = value;
+    public void setDays(JaggaerBasicValue days) {
+        this.days = days;
     }
 
     public JaggaerBasicValue getNet() {
         return net;
     }
 
-    public void setNet(JaggaerBasicValue value) {
-        this.net = value;
+    public void setNet(JaggaerBasicValue net) {
+        this.net = net;
     }
 
     public CustomPaymentTerm getCustomPaymentTerm() {
         return customPaymentTerm;
     }
 
-    public void setCustomPaymentTerm(CustomPaymentTerm value) {
-        this.customPaymentTerm = value;
+    public void setCustomPaymentTerm(CustomPaymentTerm customPaymentTerm) {
+        this.customPaymentTerm = customPaymentTerm;
     }
 
-    public JaggaerBasicValue getFOB() {
+    public JaggaerBasicValue getFob() {
         return fob;
     }
 
-    public void setFOB(JaggaerBasicValue value) {
-        this.fob = value;
+    public void setFob(JaggaerBasicValue fob) {
+        this.fob = fob;
     }
 
     public JaggaerBasicValue getStandardPaymentTermsCode() {
         return standardPaymentTermsCode;
     }
 
-    public void setStandardPaymentTermsCode(JaggaerBasicValue value) {
-        this.standardPaymentTermsCode = value;
+    public void setStandardPaymentTermsCode(JaggaerBasicValue standardPaymentTermsCode) {
+        this.standardPaymentTermsCode = standardPaymentTermsCode;
     }
 
     public JaggaerBasicValue getTermsType() {
         return termsType;
     }
 
-    public void setTermsType(JaggaerBasicValue value) {
-        this.termsType = value;
+    public void setTermsType(JaggaerBasicValue termsType) {
+        this.termsType = termsType;
     }
 
     public JaggaerBasicValue getDaysAfter() {
         return daysAfter;
     }
 
-    public void setDaysAfter(JaggaerBasicValue value) {
-        this.daysAfter = value;
+    public void setDaysAfter(JaggaerBasicValue daysAfter) {
+        this.daysAfter = daysAfter;
     }
 
 }

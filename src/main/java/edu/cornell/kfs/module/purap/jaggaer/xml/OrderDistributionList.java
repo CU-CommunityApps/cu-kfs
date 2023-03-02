@@ -28,16 +28,16 @@ public class OrderDistributionList {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public String getDistributionLanguage() {
         return distributionLanguage;
     }
 
-    public void setDistributionLanguage(String value) {
-        this.distributionLanguage = value;
+    public void setDistributionLanguage(String distributionLanguage) {
+        this.distributionLanguage = distributionLanguage;
     }
 
     public List<DistributionMethod> getDistributionMethod() {

@@ -24,16 +24,16 @@ public class MobilePhone {
         return isChanged;
     }
 
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
     public TelephoneNumber getTelephoneNumber() {
         return telephoneNumber;
     }
 
-    public void setTelephoneNumber(TelephoneNumber value) {
-        this.telephoneNumber = value;
+    public void setTelephoneNumber(TelephoneNumber telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
     }
 
 }
