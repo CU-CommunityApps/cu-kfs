@@ -691,7 +691,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                     invoiceAccountDetail.setTotalBudget(awardAccountBudgetAmount);
                     invoiceAccountDetail.setCumulativeExpenditures(awardAccountCumulativeAmount);
                 }
-                invoiceAccountDetails.add(invoiceAccountDetail);
+                if (shouldBillAccount(document, locReviewDetail)) {
+                    invoiceAccountDetails.add(invoiceAccountDetail);
+                }
                 if (ObjectUtils.isNotNull(locReviewDetail)
                         && !locReviewDetail.getClaimOnCashBalance().negated().equals(locReviewDetail.getAmountToDraw())
                         && ArConstants.BillingFrequencyValues.isLetterOfCredit(award)) {
@@ -715,6 +717,23 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 document.getInvoiceDetails().addAll(invoiceDetails);
             }
             populateContractsGrantsInvoiceDocument(award, document, accountDetails, locCreationType);
+        }
+    }
+
+    private boolean shouldBillAccount(
+            final ContractsGrantsInvoiceDocument document,
+            final ContractsGrantsLetterOfCreditReviewDetail locReviewDetail
+    ) {
+        // CGB should only bill positive amounts on LOC
+        if (ArConstants.BillingFrequencyValues.isLetterOfCredit(document.getInvoiceGeneralDetail())) {
+            KualiDecimal amountToDraw = KualiDecimal.ZERO;
+            if (ObjectUtils.isNotNull(locReviewDetail)) {
+                amountToDraw = locReviewDetail.getAmountToDraw();
+            }
+
+            return amountToDraw.isPositive();
+        } else {
+            return true;
         }
     }
 

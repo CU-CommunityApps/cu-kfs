@@ -21,7 +21,6 @@ package org.kuali.kfs.kew.preferences.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.CoreApiServiceLocator;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.api.KewApiConstants;
@@ -54,6 +53,8 @@ public class PreferencesServiceImpl implements PreferencesService {
     private static final Logger LOG = LogManager.getLogger();
 
     private static final Map<String, String> USER_OPTION_KEY_DEFAULT_MAP;
+
+    private ConfigurationService configurationService;
 
     static {
         USER_OPTION_KEY_DEFAULT_MAP = new HashMap<>();
@@ -112,13 +113,11 @@ public class PreferencesServiceImpl implements PreferencesService {
             }
         }
 
-        ConfigurationService kcs = CoreApiServiceLocator.getKualiConfigurationService();
-
         boolean isSaveRequired = false;
 
         for (Map.Entry<String, String> entry : USER_OPTION_KEY_DEFAULT_MAP.entrySet()) {
             String optionKey = entry.getKey();
-            String defaultValue = kcs.getPropertyValueAsString(entry.getValue());
+            String defaultValue = configurationService.getPropertyValueAsString(entry.getValue());
             LOG.debug("start fetch option {} user {}", optionKey, principalId);
 
             UserOptions option = optionMap.get(optionKey);
@@ -237,5 +236,9 @@ public class PreferencesServiceImpl implements PreferencesService {
 
     public UserOptionsService getUserOptionService() {
         return KEWServiceLocator.getService(KEWServiceLocator.USER_OPTIONS_SRV);
+    }
+
+    public void setConfigurationService(final ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 }
