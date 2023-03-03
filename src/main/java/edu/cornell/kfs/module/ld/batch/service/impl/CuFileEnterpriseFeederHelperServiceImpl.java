@@ -106,7 +106,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 int count = 0;
                     
                 Collection<String> offsetDocTypes = parameterService.getParameterValuesAsString(
-                        LaborEnterpriseFeedStep.class, LaborParameterConstants.LABOR_BENEFIT_OFFSET_DOCTYPE);
+                        LaborEnterpriseFeedStep.class, LaborParameterConstants.BENEFITS_DOCUMENT_TYPES);
                 offsetDocTypes = offsetDocTypes.stream().map(offsetDocType -> offsetDocType.toUpperCase(Locale.US)).collect(Collectors.toList());
 
                 while ((line = dataFileReader.readLine()) != null) {
@@ -247,7 +247,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
             String originCode = parameterService.getParameterValueAsString(
-                    LaborEnterpriseFeedStep.class, LaborParameterConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+                    LaborEnterpriseFeedStep.class, LaborParameterConstants.BENEFITS_ORIGINATION_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
             offsetEntry.setDocumentNumber(wageEntry.getDocumentNumber());

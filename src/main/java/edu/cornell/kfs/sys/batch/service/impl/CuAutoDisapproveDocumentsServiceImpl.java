@@ -58,7 +58,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             Document document = findDocumentForAutoDisapproval(documentHeaderId);
 
            if (document != null) {
-               if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
+               if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader(), null /* FIX THIS! */)) {
                    try {
                        String successMessage = buildSuccessMessage(document);
                        autoDisapprovalYearEndDocument(document, annotation);
@@ -326,7 +326,10 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
      * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.kfs.sys.businessobject.DocumentHeader)
      */
     @Override
-    protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
+    protected boolean checkIfDocumentEligibleForAutoDispproval(
+            final DocumentHeader documentHeader,
+            final List<String> eligibleDocumentTypeIds
+    ) {
         boolean documentEligible = false;
         
         List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();

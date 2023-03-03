@@ -58,7 +58,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                     scrubbedEntry.getSubAccountNumber());
 
             costShareEntry.setFinancialObjectCode(parameterService.getParameterValueAsString(ScrubberStep.class,
-                    COST_SHARE_OBJECT_CODE));
+                    TRANSFER_IN_OBJECT_CODE));
             costShareEntry.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             costShareEntry.setFinancialObjectTypeCode(scrubbedEntryOption.getFinancialObjectTypeTransferExpenseCd());
             costShareEntry.setTransactionLedgerEntrySequenceNumber(new Integer(0));
