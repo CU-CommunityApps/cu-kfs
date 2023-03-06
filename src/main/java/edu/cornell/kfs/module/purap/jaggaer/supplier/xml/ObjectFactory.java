@@ -1,7 +1,7 @@
 
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**
