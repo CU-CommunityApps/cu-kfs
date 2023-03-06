@@ -120,7 +120,6 @@ public final class MaintenanceUtils {
     
     public static Cache getBlockingCache() {
         if (blockingCache == null) {
-            // DOUBLE-CHECK THIS!
             CacheManager cm = CoreImplServiceLocator.getCacheManager();
             blockingCache = cm.getCache(LOCKING_ID_CACHE_NAME);
         }

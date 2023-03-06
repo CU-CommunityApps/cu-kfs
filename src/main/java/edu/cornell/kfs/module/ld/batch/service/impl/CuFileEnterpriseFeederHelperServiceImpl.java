@@ -53,12 +53,9 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
         LOG.info("Processing done file: {}", doneFile::getAbsolutePath);
 
         List<Message> errorMessages = statusAndErrors.getErrorMessages();
-        BufferedReader dataFileReader = null;
 
         ReconciliationBlock reconciliationBlock = null;
-        Reader reconReader = null;
-        try {
-            reconReader = new FileReader(reconFile, StandardCharsets.UTF_8);
+        try (Reader reconReader = new FileReader(reconFile, StandardCharsets.UTF_8)) {
             reconciliationBlock = reconciliationParserService.parseReconciliationBlock(reconReader, reconciliationTableId);
         }
         catch (IOException e) {
@@ -75,33 +72,20 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
             throw e;
         }
-        finally {
-            if (reconReader != null) {
-                try {
-                    reconReader.close();
-                }
-                catch (IOException e) {
-                    LOG.error("Error occurred  trying to close recon file: {}", reconFile::getAbsolutePath, () -> e);
-                }
-            }
-        }
 
-        try {
+        try (
+                BufferedReader dataFileReader1 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
+                BufferedReader dataFileReader2 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8))
+        ) {
             if (reconciliationBlock == null) {
                 errorMessages.add(new Message("Unable to parse reconciliation file.", Message.TYPE_FATAL));
             }
             else {
-                dataFileReader = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
-                Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader, false);
+                Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader1, false);
                 reconciliationService.reconcile(fileIterator, reconciliationBlock, errorMessages);
-
-                fileIterator = null;
-                dataFileReader.close();
-                dataFileReader = null;
             }
 
             if (reconciliationProcessSucceeded(errorMessages)) {
-                dataFileReader = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
                 String line;
                 int count = 0;
                     
@@ -109,7 +93,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                         LaborEnterpriseFeedStep.class, LaborParameterConstants.BENEFITS_DOCUMENT_TYPES);
                 offsetDocTypes = offsetDocTypes.stream().map(offsetDocType -> offsetDocType.toUpperCase(Locale.US)).collect(Collectors.toList());
 
-                while ((line = dataFileReader.readLine()) != null) {
+                while ((line = dataFileReader2.readLine()) != null) {
                     try {
                         LaborOriginEntry tempEntry = new LaborOriginEntry();
                         tempEntry.setFromTextFileForBatch(line, count);
@@ -162,11 +146,6 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                     LOG.info("Processed Entry # "+ count);
                 }
                 
-                
-                dataFileReader.close();
-                dataFileReader = null;
-             //   LOG.info("TotalBenifits : " + totalBenefitValue);
-
                 statusAndErrors.setStatus(new FileReconOkLoadOkStatus());
             }
             else {
@@ -184,17 +163,6 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             else {
                 // Spring only rolls back when throwing a runtime exception (by default), so we throw a new exception
                 throw new RuntimeException(e);
-            }
-        }
-        finally {
-            if (dataFileReader != null) {
-                try {
-                    dataFileReader.close();
-                }
-                catch (IOException e) {
-                    LOG.error("IO Exception occured trying to close connection to the data file", e);
-                    errorMessages.add(new Message("IO Exception occured trying to close connection to the data file", Message.TYPE_FATAL));
-                }
             }
         }
     }
@@ -247,7 +215,8 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
             String originCode = parameterService.getParameterValueAsString(
-                    LaborEnterpriseFeedStep.class, LaborParameterConstants.BENEFITS_ORIGINATION_CODE);
+                    KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION, "LaborEnterpriseFeedStep",
+                    LaborParameterConstants.BENEFITS_ORIGINATION_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
             offsetEntry.setDocumentNumber(wageEntry.getDocumentNumber());
