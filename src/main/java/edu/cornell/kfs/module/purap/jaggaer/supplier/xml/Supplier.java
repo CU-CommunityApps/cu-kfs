@@ -10,66 +10,19 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "erpNumber",
-    "oldERPNumber",
-    "supplierSQId",
-    "sqIntegrationNumber",
-    "thirdPartyRefNumber",
-    "jaSupplierId",
-    "name",
-    "doingBusinessAs",
-    "otherNames",
-    "countryOfOrigin",
-    "parentSupplier",
-    "active",
-    "businessUnitVendorNumberList",
-    "webSiteURL",
-    "duns",
-    "legalStructure",
-    "taxIdentificationType",
-    "taxIdentificationNumber",
-    "vatIdentificationNumber",
-    "exemptFromBackupWithholding",
-    "numberOfEmployees",
-    "yearEstablished",
-    "annualSalesList",
-    "serviceAreaList",
-    "registrationProfileType",
-    "registrationProfileStatus",
-    "supplierTaxRepresentativeId",
-    "supplierRegCourt",
-    "supplierRegSeat",
-    "supplierRegNumber",
-    "supplierCapital",
-    "supplierShareholders",
-    "vatExempt",
-    "commodityCodeList",
-    "brands",
-    "shoppingCommodityCode",
-    "austinTetra",
-    "sic",
-    "naicsCodes",
-    "supportedCurrencyList",
-    "enabledCurrencyList",
-    "supplierKeywords",
-    "addressList",
-    "primaryAddressList",
-    "contactList",
-    "primaryContactList",
-    "classificationList",
-    "diversityClassificationList",
-    "locationList",
-    "restrictFulfillmentLocationsByBusinessUnit",
-    "customElementList",
-    "accountsPayableList",
-    "taxInformationList",
-    "insuranceInformationList",
-    "enablePaymentProvisioning"
-})
+@XmlType(name = "", propOrder = { "erpNumber", "oldERPNumber", "supplierSQId", "sqIntegrationNumber",
+        "thirdPartyRefNumber", "jaSupplierId", "name", "doingBusinessAs", "otherNames", "countryOfOrigin",
+        "parentSupplier", "active", "businessUnitVendorNumberList", "webSiteURL", "duns", "legalStructure",
+        "taxIdentificationType", "taxIdentificationNumber", "vatIdentificationNumber", "exemptFromBackupWithholding",
+        "numberOfEmployees", "yearEstablished", "annualSalesList", "serviceAreaList", "registrationProfileType",
+        "registrationProfileStatus", "supplierTaxRepresentativeId", "supplierRegCourt", "supplierRegSeat",
+        "supplierRegNumber", "supplierCapital", "supplierShareholders", "vatExempt", "commodityCodeList", "brands",
+        "shoppingCommodityCode", "austinTetra", "sic", "naicsCodes", "supportedCurrencyList", "enabledCurrencyList",
+        "supplierKeywords", "addressList", "primaryAddressList", "contactList", "primaryContactList",
+        "classificationList", "diversityClassificationList", "locationList",
+        "restrictFulfillmentLocationsByBusinessUnit", "customElementList", "accountsPayableList", "taxInformationList",
+        "insuranceInformationList", "enablePaymentProvisioning" })
 @XmlRootElement(name = "Supplier")
 public class Supplier {
 
@@ -97,11 +50,11 @@ public class Supplier {
     @XmlElement(name = "Name")
     protected Name name;
     @XmlElement(name = "DoingBusinessAs")
-    protected DoingBusinessAs doingBusinessAs;
+    protected JaggaerBasicValue doingBusinessAs;
     @XmlElement(name = "OtherNames")
-    protected OtherNames otherNames;
+    protected JaggaerBasicValue otherNames;
     @XmlElement(name = "CountryOfOrigin")
-    protected CountryOfOrigin countryOfOrigin;
+    protected JaggaerBasicValue countryOfOrigin;
     @XmlElement(name = "ParentSupplier")
     protected ParentSupplier parentSupplier;
     @XmlElement(name = "Active")
@@ -109,55 +62,55 @@ public class Supplier {
     @XmlElement(name = "BusinessUnitVendorNumberList")
     protected BusinessUnitVendorNumberList businessUnitVendorNumberList;
     @XmlElement(name = "WebSiteURL")
-    protected WebSiteURL webSiteURL;
+    protected JaggaerBasicValue webSiteURL;
     @XmlElement(name = "DUNS")
-    protected DUNS duns;
+    protected JaggaerBasicValue duns;
     @XmlElement(name = "LegalStructure")
-    protected LegalStructure legalStructure;
+    protected JaggaerBasicValue legalStructure;
     @XmlElement(name = "TaxIdentificationType")
-    protected TaxIdentificationType taxIdentificationType;
+    protected JaggaerBasicValue taxIdentificationType;
     @XmlElement(name = "TaxIdentificationNumber")
-    protected TaxIdentificationNumber taxIdentificationNumber;
+    protected JaggaerBasicValue taxIdentificationNumber;
     @XmlElement(name = "VatIdentificationNumber")
-    protected VatIdentificationNumber vatIdentificationNumber;
+    protected JaggaerBasicValue vatIdentificationNumber;
     @XmlElement(name = "ExemptFromBackupWithholding")
-    protected ExemptFromBackupWithholding exemptFromBackupWithholding;
+    protected JaggaerBasicValue exemptFromBackupWithholding;
     @XmlElement(name = "NumberOfEmployees")
-    protected NumberOfEmployees numberOfEmployees;
+    protected JaggaerBasicValue numberOfEmployees;
     @XmlElement(name = "YearEstablished")
-    protected YearEstablished yearEstablished;
+    protected JaggaerBasicValue yearEstablished;
     @XmlElement(name = "AnnualSalesList")
     protected AnnualSalesList annualSalesList;
     @XmlElement(name = "ServiceAreaList")
     protected ServiceAreaList serviceAreaList;
     @XmlElement(name = "RegistrationProfileType")
-    protected RegistrationProfileType registrationProfileType;
+    protected JaggaerBasicValue registrationProfileType;
     @XmlElement(name = "RegistrationProfileStatus")
-    protected RegistrationProfileStatus registrationProfileStatus;
+    protected JaggaerBasicValue registrationProfileStatus;
     @XmlElement(name = "SupplierTaxRepresentativeId")
-    protected SupplierTaxRepresentativeId supplierTaxRepresentativeId;
+    protected JaggaerBasicValue supplierTaxRepresentativeId;
     @XmlElement(name = "SupplierRegCourt")
-    protected SupplierRegCourt supplierRegCourt;
+    protected JaggaerBasicValue supplierRegCourt;
     @XmlElement(name = "SupplierRegSeat")
-    protected SupplierRegSeat supplierRegSeat;
+    protected JaggaerBasicValue supplierRegSeat;
     @XmlElement(name = "SupplierRegNumber")
-    protected SupplierRegNumber supplierRegNumber;
+    protected JaggaerBasicValue supplierRegNumber;
     @XmlElement(name = "SupplierCapital")
     protected SupplierCapital supplierCapital;
     @XmlElement(name = "SupplierShareholders")
-    protected SupplierShareholders supplierShareholders;
+    protected JaggaerBasicValue supplierShareholders;
     @XmlElement(name = "VATExempt")
-    protected VATExempt vatExempt;
+    protected JaggaerBasicValue vatExempt;
     @XmlElement(name = "CommodityCodeList")
     protected CommodityCodeList commodityCodeList;
     @XmlElement(name = "Brands")
     protected Brands brands;
     @XmlElement(name = "ShoppingCommodityCode")
-    protected ShoppingCommodityCode shoppingCommodityCode;
+    protected JaggaerBasicValue shoppingCommodityCode;
     @XmlElement(name = "AustinTetra")
-    protected AustinTetra austinTetra;
+    protected JaggaerBasicValue austinTetra;
     @XmlElement(name = "SIC")
-    protected SIC sic;
+    protected JaggaerBasicValue sic;
     @XmlElement(name = "NaicsCodes")
     protected NaicsCodes naicsCodes;
     @XmlElement(name = "SupportedCurrencyList")
@@ -165,7 +118,7 @@ public class Supplier {
     @XmlElement(name = "EnabledCurrencyList")
     protected EnabledCurrencyList enabledCurrencyList;
     @XmlElement(name = "SupplierKeywords")
-    protected SupplierKeywords supplierKeywords;
+    protected JaggaerBasicValue supplierKeywords;
     @XmlElement(name = "AddressList")
     protected AddressList addressList;
     @XmlElement(name = "PrimaryAddressList")
@@ -181,7 +134,7 @@ public class Supplier {
     @XmlElement(name = "LocationList")
     protected LocationList locationList;
     @XmlElement(name = "RestrictFulfillmentLocationsByBusinessUnit")
-    protected RestrictFulfillmentLocationsByBusinessUnit restrictFulfillmentLocationsByBusinessUnit;
+    protected JaggaerBasicValue restrictFulfillmentLocationsByBusinessUnit;
     @XmlElement(name = "CustomElementList")
     protected CustomElementList customElementList;
     @XmlElement(name = "AccountsPayableList")
@@ -191,586 +144,471 @@ public class Supplier {
     @XmlElement(name = "InsuranceInformationList")
     protected InsuranceInformationList insuranceInformationList;
     @XmlElement(name = "EnablePaymentProvisioning")
-    protected EnablePaymentProvisioning enablePaymentProvisioning;
+    protected JaggaerBasicValue enablePaymentProvisioning;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getApprovedForERPSync() {
         return approvedForERPSync;
     }
 
-    
-    public void setApprovedForERPSync(String value) {
-        this.approvedForERPSync = value;
+    public void setApprovedForERPSync(String approvedForERPSync) {
+        this.approvedForERPSync = approvedForERPSync;
     }
 
-    
     public String getRequiresERP() {
         return requiresERP;
     }
 
-    
-    public void setRequiresERP(String value) {
-        this.requiresERP = value;
+    public void setRequiresERP(String requiresERP) {
+        this.requiresERP = requiresERP;
     }
 
-    
-    public ERPNumber getERPNumber() {
+    public ERPNumber getErpNumber() {
         return erpNumber;
     }
 
-    
-    public void setERPNumber(ERPNumber value) {
-        this.erpNumber = value;
+    public void setErpNumber(ERPNumber erpNumber) {
+        this.erpNumber = erpNumber;
     }
 
-    
     public String getOldERPNumber() {
         return oldERPNumber;
     }
 
-    
-    public void setOldERPNumber(String value) {
-        this.oldERPNumber = value;
+    public void setOldERPNumber(String oldERPNumber) {
+        this.oldERPNumber = oldERPNumber;
     }
 
-    
     public SupplierSQId getSupplierSQId() {
         return supplierSQId;
     }
 
-    
-    public void setSupplierSQId(SupplierSQId value) {
-        this.supplierSQId = value;
+    public void setSupplierSQId(SupplierSQId supplierSQId) {
+        this.supplierSQId = supplierSQId;
     }
 
-    
-    public SQIntegrationNumber getSQIntegrationNumber() {
+    public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
 
-    
-    public void setSQIntegrationNumber(SQIntegrationNumber value) {
-        this.sqIntegrationNumber = value;
+    public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
+        this.sqIntegrationNumber = sqIntegrationNumber;
     }
 
-    
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
 
-    
-    public void setThirdPartyRefNumber(ThirdPartyRefNumber value) {
-        this.thirdPartyRefNumber = value;
+    public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
+        this.thirdPartyRefNumber = thirdPartyRefNumber;
     }
 
-    
-    public String getJASupplierId() {
+    public String getJaSupplierId() {
         return jaSupplierId;
     }
 
-    
-    public void setJASupplierId(String value) {
-        this.jaSupplierId = value;
+    public void setJaSupplierId(String jaSupplierId) {
+        this.jaSupplierId = jaSupplierId;
     }
 
-    
     public Name getName() {
         return name;
     }
 
-    
-    public void setName(Name value) {
-        this.name = value;
+    public void setName(Name name) {
+        this.name = name;
     }
 
-    
-    public DoingBusinessAs getDoingBusinessAs() {
+    public JaggaerBasicValue getDoingBusinessAs() {
         return doingBusinessAs;
     }
 
-    
-    public void setDoingBusinessAs(DoingBusinessAs value) {
-        this.doingBusinessAs = value;
+    public void setDoingBusinessAs(JaggaerBasicValue doingBusinessAs) {
+        this.doingBusinessAs = doingBusinessAs;
     }
 
-    
-    public OtherNames getOtherNames() {
+    public JaggaerBasicValue getOtherNames() {
         return otherNames;
     }
 
-    
-    public void setOtherNames(OtherNames value) {
-        this.otherNames = value;
+    public void setOtherNames(JaggaerBasicValue otherNames) {
+        this.otherNames = otherNames;
     }
 
-    
-    public CountryOfOrigin getCountryOfOrigin() {
+    public JaggaerBasicValue getCountryOfOrigin() {
         return countryOfOrigin;
     }
 
-    
-    public void setCountryOfOrigin(CountryOfOrigin value) {
-        this.countryOfOrigin = value;
+    public void setCountryOfOrigin(JaggaerBasicValue countryOfOrigin) {
+        this.countryOfOrigin = countryOfOrigin;
     }
 
-    
     public ParentSupplier getParentSupplier() {
         return parentSupplier;
     }
 
-    
-    public void setParentSupplier(ParentSupplier value) {
-        this.parentSupplier = value;
+    public void setParentSupplier(ParentSupplier parentSupplier) {
+        this.parentSupplier = parentSupplier;
     }
 
-    
     public Active getActive() {
         return active;
     }
 
-    
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
-    
     public BusinessUnitVendorNumberList getBusinessUnitVendorNumberList() {
         return businessUnitVendorNumberList;
     }
 
-    
-    public void setBusinessUnitVendorNumberList(BusinessUnitVendorNumberList value) {
-        this.businessUnitVendorNumberList = value;
+    public void setBusinessUnitVendorNumberList(BusinessUnitVendorNumberList businessUnitVendorNumberList) {
+        this.businessUnitVendorNumberList = businessUnitVendorNumberList;
     }
 
-    
-    public WebSiteURL getWebSiteURL() {
+    public JaggaerBasicValue getWebSiteURL() {
         return webSiteURL;
     }
 
-    
-    public void setWebSiteURL(WebSiteURL value) {
-        this.webSiteURL = value;
+    public void setWebSiteURL(JaggaerBasicValue webSiteURL) {
+        this.webSiteURL = webSiteURL;
     }
 
-    
-    public DUNS getDUNS() {
+    public JaggaerBasicValue getDuns() {
         return duns;
     }
 
-    
-    public void setDUNS(DUNS value) {
-        this.duns = value;
+    public void setDuns(JaggaerBasicValue duns) {
+        this.duns = duns;
     }
 
-    
-    public LegalStructure getLegalStructure() {
+    public JaggaerBasicValue getLegalStructure() {
         return legalStructure;
     }
 
-    
-    public void setLegalStructure(LegalStructure value) {
-        this.legalStructure = value;
+    public void setLegalStructure(JaggaerBasicValue legalStructure) {
+        this.legalStructure = legalStructure;
     }
 
-    
-    public TaxIdentificationType getTaxIdentificationType() {
+    public JaggaerBasicValue getTaxIdentificationType() {
         return taxIdentificationType;
     }
 
-    
-    public void setTaxIdentificationType(TaxIdentificationType value) {
-        this.taxIdentificationType = value;
+    public void setTaxIdentificationType(JaggaerBasicValue taxIdentificationType) {
+        this.taxIdentificationType = taxIdentificationType;
     }
 
-    
-    public TaxIdentificationNumber getTaxIdentificationNumber() {
+    public JaggaerBasicValue getTaxIdentificationNumber() {
         return taxIdentificationNumber;
     }
 
-    
-    public void setTaxIdentificationNumber(TaxIdentificationNumber value) {
-        this.taxIdentificationNumber = value;
+    public void setTaxIdentificationNumber(JaggaerBasicValue taxIdentificationNumber) {
+        this.taxIdentificationNumber = taxIdentificationNumber;
     }
 
-    
-    public VatIdentificationNumber getVatIdentificationNumber() {
+    public JaggaerBasicValue getVatIdentificationNumber() {
         return vatIdentificationNumber;
     }
 
-    
-    public void setVatIdentificationNumber(VatIdentificationNumber value) {
-        this.vatIdentificationNumber = value;
+    public void setVatIdentificationNumber(JaggaerBasicValue vatIdentificationNumber) {
+        this.vatIdentificationNumber = vatIdentificationNumber;
     }
 
-    
-    public ExemptFromBackupWithholding getExemptFromBackupWithholding() {
+    public JaggaerBasicValue getExemptFromBackupWithholding() {
         return exemptFromBackupWithholding;
     }
 
-    
-    public void setExemptFromBackupWithholding(ExemptFromBackupWithholding value) {
-        this.exemptFromBackupWithholding = value;
+    public void setExemptFromBackupWithholding(JaggaerBasicValue exemptFromBackupWithholding) {
+        this.exemptFromBackupWithholding = exemptFromBackupWithholding;
     }
 
-    
-    public NumberOfEmployees getNumberOfEmployees() {
+    public JaggaerBasicValue getNumberOfEmployees() {
         return numberOfEmployees;
     }
 
-    
-    public void setNumberOfEmployees(NumberOfEmployees value) {
-        this.numberOfEmployees = value;
+    public void setNumberOfEmployees(JaggaerBasicValue numberOfEmployees) {
+        this.numberOfEmployees = numberOfEmployees;
     }
 
-    
-    public YearEstablished getYearEstablished() {
+    public JaggaerBasicValue getYearEstablished() {
         return yearEstablished;
     }
 
-    
-    public void setYearEstablished(YearEstablished value) {
-        this.yearEstablished = value;
+    public void setYearEstablished(JaggaerBasicValue yearEstablished) {
+        this.yearEstablished = yearEstablished;
     }
 
-    
     public AnnualSalesList getAnnualSalesList() {
         return annualSalesList;
     }
 
-    
-    public void setAnnualSalesList(AnnualSalesList value) {
-        this.annualSalesList = value;
+    public void setAnnualSalesList(AnnualSalesList annualSalesList) {
+        this.annualSalesList = annualSalesList;
     }
 
-    
     public ServiceAreaList getServiceAreaList() {
         return serviceAreaList;
     }
 
-    
-    public void setServiceAreaList(ServiceAreaList value) {
-        this.serviceAreaList = value;
+    public void setServiceAreaList(ServiceAreaList serviceAreaList) {
+        this.serviceAreaList = serviceAreaList;
     }
 
-    
-    public RegistrationProfileType getRegistrationProfileType() {
+    public JaggaerBasicValue getRegistrationProfileType() {
         return registrationProfileType;
     }
 
-    
-    public void setRegistrationProfileType(RegistrationProfileType value) {
-        this.registrationProfileType = value;
+    public void setRegistrationProfileType(JaggaerBasicValue registrationProfileType) {
+        this.registrationProfileType = registrationProfileType;
     }
 
-    
-    public RegistrationProfileStatus getRegistrationProfileStatus() {
+    public JaggaerBasicValue getRegistrationProfileStatus() {
         return registrationProfileStatus;
     }
 
-    
-    public void setRegistrationProfileStatus(RegistrationProfileStatus value) {
-        this.registrationProfileStatus = value;
+    public void setRegistrationProfileStatus(JaggaerBasicValue registrationProfileStatus) {
+        this.registrationProfileStatus = registrationProfileStatus;
     }
 
-    
-    public SupplierTaxRepresentativeId getSupplierTaxRepresentativeId() {
+    public JaggaerBasicValue getSupplierTaxRepresentativeId() {
         return supplierTaxRepresentativeId;
     }
 
-    
-    public void setSupplierTaxRepresentativeId(SupplierTaxRepresentativeId value) {
-        this.supplierTaxRepresentativeId = value;
+    public void setSupplierTaxRepresentativeId(JaggaerBasicValue supplierTaxRepresentativeId) {
+        this.supplierTaxRepresentativeId = supplierTaxRepresentativeId;
     }
 
-    
-    public SupplierRegCourt getSupplierRegCourt() {
+    public JaggaerBasicValue getSupplierRegCourt() {
         return supplierRegCourt;
     }
 
-    
-    public void setSupplierRegCourt(SupplierRegCourt value) {
-        this.supplierRegCourt = value;
+    public void setSupplierRegCourt(JaggaerBasicValue supplierRegCourt) {
+        this.supplierRegCourt = supplierRegCourt;
     }
 
-    
-    public SupplierRegSeat getSupplierRegSeat() {
+    public JaggaerBasicValue getSupplierRegSeat() {
         return supplierRegSeat;
     }
 
-    
-    public void setSupplierRegSeat(SupplierRegSeat value) {
-        this.supplierRegSeat = value;
+    public void setSupplierRegSeat(JaggaerBasicValue supplierRegSeat) {
+        this.supplierRegSeat = supplierRegSeat;
     }
 
-    
-    public SupplierRegNumber getSupplierRegNumber() {
+    public JaggaerBasicValue getSupplierRegNumber() {
         return supplierRegNumber;
     }
 
-    
-    public void setSupplierRegNumber(SupplierRegNumber value) {
-        this.supplierRegNumber = value;
+    public void setSupplierRegNumber(JaggaerBasicValue supplierRegNumber) {
+        this.supplierRegNumber = supplierRegNumber;
     }
 
-    
     public SupplierCapital getSupplierCapital() {
         return supplierCapital;
     }
 
-    
-    public void setSupplierCapital(SupplierCapital value) {
-        this.supplierCapital = value;
+    public void setSupplierCapital(SupplierCapital supplierCapital) {
+        this.supplierCapital = supplierCapital;
     }
 
-    
-    public SupplierShareholders getSupplierShareholders() {
+    public JaggaerBasicValue getSupplierShareholders() {
         return supplierShareholders;
     }
 
-    
-    public void setSupplierShareholders(SupplierShareholders value) {
-        this.supplierShareholders = value;
+    public void setSupplierShareholders(JaggaerBasicValue supplierShareholders) {
+        this.supplierShareholders = supplierShareholders;
     }
 
-    
-    public VATExempt getVATExempt() {
+    public JaggaerBasicValue getVatExempt() {
         return vatExempt;
     }
 
-    
-    public void setVATExempt(VATExempt value) {
-        this.vatExempt = value;
+    public void setVatExempt(JaggaerBasicValue vatExempt) {
+        this.vatExempt = vatExempt;
     }
 
-    
     public CommodityCodeList getCommodityCodeList() {
         return commodityCodeList;
     }
 
-    
-    public void setCommodityCodeList(CommodityCodeList value) {
-        this.commodityCodeList = value;
+    public void setCommodityCodeList(CommodityCodeList commodityCodeList) {
+        this.commodityCodeList = commodityCodeList;
     }
 
-    
     public Brands getBrands() {
         return brands;
     }
 
-    
-    public void setBrands(Brands value) {
-        this.brands = value;
+    public void setBrands(Brands brands) {
+        this.brands = brands;
     }
 
-    
-    public ShoppingCommodityCode getShoppingCommodityCode() {
+    public JaggaerBasicValue getShoppingCommodityCode() {
         return shoppingCommodityCode;
     }
 
-    
-    public void setShoppingCommodityCode(ShoppingCommodityCode value) {
-        this.shoppingCommodityCode = value;
+    public void setShoppingCommodityCode(JaggaerBasicValue shoppingCommodityCode) {
+        this.shoppingCommodityCode = shoppingCommodityCode;
     }
 
-    
-    public AustinTetra getAustinTetra() {
+    public JaggaerBasicValue getAustinTetra() {
         return austinTetra;
     }
 
-    
-    public void setAustinTetra(AustinTetra value) {
-        this.austinTetra = value;
+    public void setAustinTetra(JaggaerBasicValue austinTetra) {
+        this.austinTetra = austinTetra;
     }
 
-    
-    public SIC getSIC() {
+    public JaggaerBasicValue getSic() {
         return sic;
     }
 
-    
-    public void setSIC(SIC value) {
-        this.sic = value;
+    public void setSic(JaggaerBasicValue sic) {
+        this.sic = sic;
     }
 
-    
     public NaicsCodes getNaicsCodes() {
         return naicsCodes;
     }
 
-    
-    public void setNaicsCodes(NaicsCodes value) {
-        this.naicsCodes = value;
+    public void setNaicsCodes(NaicsCodes naicsCodes) {
+        this.naicsCodes = naicsCodes;
     }
 
-    
     public SupportedCurrencyList getSupportedCurrencyList() {
         return supportedCurrencyList;
     }
 
-    
-    public void setSupportedCurrencyList(SupportedCurrencyList value) {
-        this.supportedCurrencyList = value;
+    public void setSupportedCurrencyList(SupportedCurrencyList supportedCurrencyList) {
+        this.supportedCurrencyList = supportedCurrencyList;
     }
 
-    
     public EnabledCurrencyList getEnabledCurrencyList() {
         return enabledCurrencyList;
     }
 
-    
-    public void setEnabledCurrencyList(EnabledCurrencyList value) {
-        this.enabledCurrencyList = value;
+    public void setEnabledCurrencyList(EnabledCurrencyList enabledCurrencyList) {
+        this.enabledCurrencyList = enabledCurrencyList;
     }
 
-    
-    public SupplierKeywords getSupplierKeywords() {
+    public JaggaerBasicValue getSupplierKeywords() {
         return supplierKeywords;
     }
 
-    
-    public void setSupplierKeywords(SupplierKeywords value) {
-        this.supplierKeywords = value;
+    public void setSupplierKeywords(JaggaerBasicValue supplierKeywords) {
+        this.supplierKeywords = supplierKeywords;
     }
 
-    
     public AddressList getAddressList() {
         return addressList;
     }
 
-    
-    public void setAddressList(AddressList value) {
-        this.addressList = value;
+    public void setAddressList(AddressList addressList) {
+        this.addressList = addressList;
     }
 
-    
     public PrimaryAddressList getPrimaryAddressList() {
         return primaryAddressList;
     }
 
-    
-    public void setPrimaryAddressList(PrimaryAddressList value) {
-        this.primaryAddressList = value;
+    public void setPrimaryAddressList(PrimaryAddressList primaryAddressList) {
+        this.primaryAddressList = primaryAddressList;
     }
 
-    
     public ContactList getContactList() {
         return contactList;
     }
 
-    
-    public void setContactList(ContactList value) {
-        this.contactList = value;
+    public void setContactList(ContactList contactList) {
+        this.contactList = contactList;
     }
 
-    
     public PrimaryContactList getPrimaryContactList() {
         return primaryContactList;
     }
 
-    
-    public void setPrimaryContactList(PrimaryContactList value) {
-        this.primaryContactList = value;
+    public void setPrimaryContactList(PrimaryContactList primaryContactList) {
+        this.primaryContactList = primaryContactList;
     }
 
-    
     public ClassificationList getClassificationList() {
         return classificationList;
     }
 
-    
-    public void setClassificationList(ClassificationList value) {
-        this.classificationList = value;
+    public void setClassificationList(ClassificationList classificationList) {
+        this.classificationList = classificationList;
     }
 
-    
     public DiversityClassificationList getDiversityClassificationList() {
         return diversityClassificationList;
     }
 
-    
-    public void setDiversityClassificationList(DiversityClassificationList value) {
-        this.diversityClassificationList = value;
+    public void setDiversityClassificationList(DiversityClassificationList diversityClassificationList) {
+        this.diversityClassificationList = diversityClassificationList;
     }
 
-    
     public LocationList getLocationList() {
         return locationList;
     }
 
-    
-    public void setLocationList(LocationList value) {
-        this.locationList = value;
+    public void setLocationList(LocationList locationList) {
+        this.locationList = locationList;
     }
 
-    
-    public RestrictFulfillmentLocationsByBusinessUnit getRestrictFulfillmentLocationsByBusinessUnit() {
+    public JaggaerBasicValue getRestrictFulfillmentLocationsByBusinessUnit() {
         return restrictFulfillmentLocationsByBusinessUnit;
     }
 
-    
-    public void setRestrictFulfillmentLocationsByBusinessUnit(RestrictFulfillmentLocationsByBusinessUnit value) {
-        this.restrictFulfillmentLocationsByBusinessUnit = value;
+    public void setRestrictFulfillmentLocationsByBusinessUnit(
+            JaggaerBasicValue restrictFulfillmentLocationsByBusinessUnit) {
+        this.restrictFulfillmentLocationsByBusinessUnit = restrictFulfillmentLocationsByBusinessUnit;
     }
 
-    
     public CustomElementList getCustomElementList() {
         return customElementList;
     }
 
-    
-    public void setCustomElementList(CustomElementList value) {
-        this.customElementList = value;
+    public void setCustomElementList(CustomElementList customElementList) {
+        this.customElementList = customElementList;
     }
 
-    
     public AccountsPayableList getAccountsPayableList() {
         return accountsPayableList;
     }
 
-    
-    public void setAccountsPayableList(AccountsPayableList value) {
-        this.accountsPayableList = value;
+    public void setAccountsPayableList(AccountsPayableList accountsPayableList) {
+        this.accountsPayableList = accountsPayableList;
     }
 
-    
     public TaxInformationList getTaxInformationList() {
         return taxInformationList;
     }
 
-    
-    public void setTaxInformationList(TaxInformationList value) {
-        this.taxInformationList = value;
+    public void setTaxInformationList(TaxInformationList taxInformationList) {
+        this.taxInformationList = taxInformationList;
     }
 
-    
     public InsuranceInformationList getInsuranceInformationList() {
         return insuranceInformationList;
     }
 
-    
-    public void setInsuranceInformationList(InsuranceInformationList value) {
-        this.insuranceInformationList = value;
+    public void setInsuranceInformationList(InsuranceInformationList insuranceInformationList) {
+        this.insuranceInformationList = insuranceInformationList;
     }
 
-    
-    public EnablePaymentProvisioning getEnablePaymentProvisioning() {
+    public JaggaerBasicValue getEnablePaymentProvisioning() {
         return enablePaymentProvisioning;
     }
 
-    
-    public void setEnablePaymentProvisioning(EnablePaymentProvisioning value) {
-        this.enablePaymentProvisioning = value;
+    public void setEnablePaymentProvisioning(JaggaerBasicValue enablePaymentProvisioning) {
+        this.enablePaymentProvisioning = enablePaymentProvisioning;
     }
 
 }

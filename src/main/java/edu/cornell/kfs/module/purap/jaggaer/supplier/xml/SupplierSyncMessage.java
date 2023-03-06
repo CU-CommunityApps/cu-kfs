@@ -12,7 +12,6 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "header",
         "supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage" })
@@ -30,27 +29,22 @@ public class SupplierSyncMessage {
             @XmlElement(name = "LookupResponseMessage", required = true, type = LookupResponseMessage.class) })
     protected List<Object> supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage;
 
-    
     public String getVersion() {
         return version;
     }
 
-    
-    public void setVersion(String value) {
-        this.version = value;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    
     public Header getHeader() {
         return header;
     }
 
-    
-    public void setHeader(Header value) {
-        this.header = value;
+    public void setHeader(Header header) {
+        this.header = header;
     }
 
-    
     public List<Object> getSupplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage() {
         if (supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage == null) {
             supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage = new ArrayList<Object>();
