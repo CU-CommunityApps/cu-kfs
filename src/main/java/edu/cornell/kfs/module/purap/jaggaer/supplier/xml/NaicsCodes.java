@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -13,35 +12,26 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "primaryNaicsOrSecondaryNaicsList"
-})
+@XmlType(name = "", propOrder = { "primaryNaicsOrSecondaryNaicsList" })
 @XmlRootElement(name = "NaicsCodes")
 public class NaicsCodes {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
-    @XmlElements({
-        @XmlElement(name = "PrimaryNaics", type = PrimaryNaics.class),
-        @XmlElement(name = "SecondaryNaicsList", type = SecondaryNaicsList.class)
-    })
+    @XmlElements({ @XmlElement(name = "PrimaryNaics", type = PrimaryNaics.class),
+            @XmlElement(name = "SecondaryNaicsList", type = SecondaryNaicsList.class) })
     protected List<Object> primaryNaicsOrSecondaryNaicsList;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public List<Object> getPrimaryNaicsOrSecondaryNaicsList() {
         if (primaryNaicsOrSecondaryNaicsList == null) {
             primaryNaicsOrSecondaryNaicsList = new ArrayList<Object>();

@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,13 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "amount",
-    "isoCurrencyCode"
-})
+@XmlType(name = "", propOrder = { "amount", "isoCurrencyCode" })
 @XmlRootElement(name = "SupplierCapital")
 public class SupplierCapital {
 
@@ -28,34 +22,28 @@ public class SupplierCapital {
     @XmlElement(name = "IsoCurrencyCode", required = true)
     protected IsoCurrencyCode isoCurrencyCode;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public Amount getAmount() {
         return amount;
     }
 
-    
-    public void setAmount(Amount value) {
-        this.amount = value;
+    public void setAmount(Amount amount) {
+        this.amount = amount;
     }
 
-    
     public IsoCurrencyCode getIsoCurrencyCode() {
         return isoCurrencyCode;
     }
 
-    
-    public void setIsoCurrencyCode(IsoCurrencyCode value) {
-        this.isoCurrencyCode = value;
+    public void setIsoCurrencyCode(IsoCurrencyCode isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
     }
 
 }

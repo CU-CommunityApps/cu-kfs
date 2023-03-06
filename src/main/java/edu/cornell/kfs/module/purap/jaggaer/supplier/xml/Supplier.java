@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -114,9 +113,9 @@ public class Supplier {
     @XmlElement(name = "NaicsCodes")
     protected NaicsCodes naicsCodes;
     @XmlElement(name = "SupportedCurrencyList")
-    protected SupportedCurrencyList supportedCurrencyList;
+    protected CurrencyList supportedCurrencyList;
     @XmlElement(name = "EnabledCurrencyList")
-    protected EnabledCurrencyList enabledCurrencyList;
+    protected CurrencyList enabledCurrencyList;
     @XmlElement(name = "SupplierKeywords")
     protected JaggaerBasicValue supplierKeywords;
     @XmlElement(name = "AddressList")
@@ -482,19 +481,19 @@ public class Supplier {
         this.naicsCodes = naicsCodes;
     }
 
-    public SupportedCurrencyList getSupportedCurrencyList() {
+    public CurrencyList getSupportedCurrencyList() {
         return supportedCurrencyList;
     }
 
-    public void setSupportedCurrencyList(SupportedCurrencyList supportedCurrencyList) {
+    public void setSupportedCurrencyList(CurrencyList supportedCurrencyList) {
         this.supportedCurrencyList = supportedCurrencyList;
     }
 
-    public EnabledCurrencyList getEnabledCurrencyList() {
+    public CurrencyList getEnabledCurrencyList() {
         return enabledCurrencyList;
     }
 
-    public void setEnabledCurrencyList(EnabledCurrencyList enabledCurrencyList) {
+    public void setEnabledCurrencyList(CurrencyList enabledCurrencyList) {
         this.enabledCurrencyList = enabledCurrencyList;
     }
 

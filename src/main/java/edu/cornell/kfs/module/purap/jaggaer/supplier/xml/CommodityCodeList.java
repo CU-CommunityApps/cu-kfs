@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "commodityCode"
-})
+@XmlType(name = "", propOrder = { "commodityCode" })
 @XmlRootElement(name = "CommodityCodeList")
 public class CommodityCodeList {
 
@@ -25,22 +20,19 @@ public class CommodityCodeList {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "CommodityCode")
-    protected List<CommodityCode> commodityCode;
+    protected List<JaggaerBasicValue> commodityCode;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public List<CommodityCode> getCommodityCode() {
+    public List<JaggaerBasicValue> getCommodityCode() {
         if (commodityCode == null) {
-            commodityCode = new ArrayList<CommodityCode>();
+            commodityCode = new ArrayList<JaggaerBasicValue>();
         }
         return this.commodityCode;
     }

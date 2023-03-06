@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "brand"
-})
+@XmlType(name = "", propOrder = { "brand" })
 @XmlRootElement(name = "Brands")
 public class Brands {
 
@@ -25,22 +20,19 @@ public class Brands {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "Brand")
-    protected List<Brand> brand;
+    protected List<JaggaerBasicValue> brand;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public List<Brand> getBrand() {
+    public List<JaggaerBasicValue> getBrand() {
         if (brand == null) {
-            brand = new ArrayList<Brand>();
+            brand = new ArrayList<JaggaerBasicValue>();
         }
         return this.brand;
     }

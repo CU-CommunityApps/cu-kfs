@@ -194,6 +194,9 @@ public class SupplierSyncMessageTest {
     }
 
     private Brands buildBrands() {
+        /*
+         * @todo add isChanged to this
+         */
         Brands brands = new Brands();
         brands.getBrand().add(new JaggaerBasicValue("brand 1", T_TRUE));
         brands.getBrand().add(new JaggaerBasicValue("brand 2", F_FALSE));
@@ -984,4 +987,4 @@ public class SupplierSyncMessageTest {
         }
         assertEquals(0, differences.size());
     }
-
+}

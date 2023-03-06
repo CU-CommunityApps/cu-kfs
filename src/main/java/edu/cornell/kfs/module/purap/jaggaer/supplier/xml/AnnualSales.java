@@ -10,14 +10,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "annualSalesYear",
-    "annualSalesAmount",
-    "isoCurrencyCode"
-})
+@XmlType(name = "", propOrder = { "annualSalesYear", "annualSalesAmount", "isoCurrencyCode" })
 @XmlRootElement(name = "AnnualSales")
 public class AnnualSales {
 
@@ -25,50 +19,42 @@ public class AnnualSales {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "AnnualSalesYear")
-    protected AnnualSalesYear annualSalesYear;
+    protected JaggaerBasicValue annualSalesYear;
     @XmlElement(name = "AnnualSalesAmount")
-    protected AnnualSalesAmount annualSalesAmount;
+    protected Amount annualSalesAmount;
     @XmlElement(name = "IsoCurrencyCode")
     protected IsoCurrencyCode isoCurrencyCode;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public AnnualSalesYear getAnnualSalesYear() {
+    public JaggaerBasicValue getAnnualSalesYear() {
         return annualSalesYear;
     }
 
-    
-    public void setAnnualSalesYear(AnnualSalesYear value) {
-        this.annualSalesYear = value;
+    public void setAnnualSalesYear(JaggaerBasicValue annualSalesYear) {
+        this.annualSalesYear = annualSalesYear;
     }
 
-    
-    public AnnualSalesAmount getAnnualSalesAmount() {
+    public Amount getAnnualSalesAmount() {
         return annualSalesAmount;
     }
 
-    
-    public void setAnnualSalesAmount(AnnualSalesAmount value) {
-        this.annualSalesAmount = value;
+    public void setAnnualSalesAmount(Amount annualSalesAmount) {
+        this.annualSalesAmount = annualSalesAmount;
     }
 
-    
     public IsoCurrencyCode getIsoCurrencyCode() {
         return isoCurrencyCode;
     }
 
-    
-    public void setIsoCurrencyCode(IsoCurrencyCode value) {
-        this.isoCurrencyCode = value;
+    public void setIsoCurrencyCode(IsoCurrencyCode isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
     }
 
 }

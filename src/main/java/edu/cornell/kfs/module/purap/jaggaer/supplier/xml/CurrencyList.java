@@ -1,24 +1,24 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "value" })
-@XmlRootElement(name = "Active")
-public class Active {
-
+@XmlType(name = "", propOrder = { "isoCurrencyCode" })
+public class CurrencyList {
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
-    @XmlValue
-    protected String value;
+    @XmlElement(name = "IsoCurrencyCode")
+    protected List<IsoCurrencyCode> isoCurrencyCode;
 
     public String getIsChanged() {
         return isChanged;
@@ -28,12 +28,10 @@ public class Active {
         this.isChanged = isChanged;
     }
 
-    public String getValue() {
-        return value;
+    public List<IsoCurrencyCode> getIsoCurrencyCode() {
+        if (isoCurrencyCode == null) {
+            isoCurrencyCode = new ArrayList<IsoCurrencyCode>();
+        }
+        return this.isoCurrencyCode;
     }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
 }

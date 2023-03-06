@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -11,19 +10,9 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "policyNumber",
-    "insuranceLimit",
-    "expirationDate",
-    "insuranceProvider",
-    "agent",
-    "insuranceProviderPhone",
-    "insuranceCertificate",
-    "otherTypeName"
-})
+@XmlType(name = "", propOrder = { "policyNumber", "insuranceLimit", "expirationDate", "insuranceProvider", "agent",
+        "insuranceProviderPhone", "insuranceCertificate", "otherTypeName" })
 @XmlRootElement(name = "InsuranceInformation")
 public class InsuranceInformation {
 
@@ -34,120 +23,100 @@ public class InsuranceInformation {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "PolicyNumber")
-    protected PolicyNumber policyNumber;
+    protected JaggaerBasicValue policyNumber;
     @XmlElement(name = "InsuranceLimit")
-    protected InsuranceLimit insuranceLimit;
+    protected JaggaerBasicValue insuranceLimit;
     @XmlElement(name = "ExpirationDate")
-    protected ExpirationDate expirationDate;
+    protected JaggaerBasicValue expirationDate;
     @XmlElement(name = "InsuranceProvider")
-    protected InsuranceProvider insuranceProvider;
+    protected JaggaerBasicValue insuranceProvider;
     @XmlElement(name = "Agent")
-    protected Agent agent;
+    protected JaggaerBasicValue agent;
     @XmlElement(name = "InsuranceProviderPhone")
     protected InsuranceProviderPhone insuranceProviderPhone;
     @XmlElement(name = "InsuranceCertificate")
     protected InsuranceCertificate insuranceCertificate;
     @XmlElement(name = "OtherTypeName")
-    protected OtherTypeName otherTypeName;
+    protected JaggaerBasicValue otherTypeName;
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public PolicyNumber getPolicyNumber() {
+    public JaggaerBasicValue getPolicyNumber() {
         return policyNumber;
     }
 
-    
-    public void setPolicyNumber(PolicyNumber value) {
-        this.policyNumber = value;
+    public void setPolicyNumber(JaggaerBasicValue policyNumber) {
+        this.policyNumber = policyNumber;
     }
 
-    
-    public InsuranceLimit getInsuranceLimit() {
+    public JaggaerBasicValue getInsuranceLimit() {
         return insuranceLimit;
     }
 
-    
-    public void setInsuranceLimit(InsuranceLimit value) {
-        this.insuranceLimit = value;
+    public void setInsuranceLimit(JaggaerBasicValue insuranceLimit) {
+        this.insuranceLimit = insuranceLimit;
     }
 
-    
-    public ExpirationDate getExpirationDate() {
+    public JaggaerBasicValue getExpirationDate() {
         return expirationDate;
     }
 
-    
-    public void setExpirationDate(ExpirationDate value) {
-        this.expirationDate = value;
+    public void setExpirationDate(JaggaerBasicValue expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
-    
-    public InsuranceProvider getInsuranceProvider() {
+    public JaggaerBasicValue getInsuranceProvider() {
         return insuranceProvider;
     }
 
-    
-    public void setInsuranceProvider(InsuranceProvider value) {
-        this.insuranceProvider = value;
+    public void setInsuranceProvider(JaggaerBasicValue insuranceProvider) {
+        this.insuranceProvider = insuranceProvider;
     }
 
-    
-    public Agent getAgent() {
+    public JaggaerBasicValue getAgent() {
         return agent;
     }
 
-    
-    public void setAgent(Agent value) {
-        this.agent = value;
+    public void setAgent(JaggaerBasicValue agent) {
+        this.agent = agent;
     }
 
-    
     public InsuranceProviderPhone getInsuranceProviderPhone() {
         return insuranceProviderPhone;
     }
 
-    
-    public void setInsuranceProviderPhone(InsuranceProviderPhone value) {
-        this.insuranceProviderPhone = value;
+    public void setInsuranceProviderPhone(InsuranceProviderPhone insuranceProviderPhone) {
+        this.insuranceProviderPhone = insuranceProviderPhone;
     }
 
-    
     public InsuranceCertificate getInsuranceCertificate() {
         return insuranceCertificate;
     }
 
-    
-    public void setInsuranceCertificate(InsuranceCertificate value) {
-        this.insuranceCertificate = value;
+    public void setInsuranceCertificate(InsuranceCertificate insuranceCertificate) {
+        this.insuranceCertificate = insuranceCertificate;
     }
 
-    
-    public OtherTypeName getOtherTypeName() {
+    public JaggaerBasicValue getOtherTypeName() {
         return otherTypeName;
     }
 
-    
-    public void setOtherTypeName(OtherTypeName value) {
-        this.otherTypeName = value;
+    public void setOtherTypeName(JaggaerBasicValue otherTypeName) {
+        this.otherTypeName = otherTypeName;
     }
 
 }
