@@ -11,9 +11,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "paymentTerms"
@@ -27,50 +25,22 @@ public class TermsAndCondition {
     @XmlElement(name = "PaymentTerms")
     protected PaymentTerms paymentTerms;
 
-    /**
-     * Gets the value of the isChanged property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getIsChanged() {
         return isChanged;
     }
 
-    /**
-     * Sets the value of the isChanged property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    /**
-     * Gets the value of the paymentTerms property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PaymentTerms }
-     *     
-     */
+    
     public PaymentTerms getPaymentTerms() {
         return paymentTerms;
     }
 
-    /**
-     * Sets the value of the paymentTerms property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PaymentTerms }
-     *     
-     */
+    
     public void setPaymentTerms(PaymentTerms value) {
         this.paymentTerms = value;
     }

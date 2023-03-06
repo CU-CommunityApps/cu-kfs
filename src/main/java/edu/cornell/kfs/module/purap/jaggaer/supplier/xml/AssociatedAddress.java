@@ -12,9 +12,7 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "addressRef"
@@ -31,74 +29,32 @@ public class AssociatedAddress {
     @XmlElement(name = "AddressRef")
     protected AddressRef addressRef;
 
-    /**
-     * Gets the value of the isChanged property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getIsChanged() {
         return isChanged;
     }
 
-    /**
-     * Sets the value of the isChanged property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getType() {
         return type;
     }
 
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setType(String value) {
         this.type = value;
     }
 
-    /**
-     * Gets the value of the addressRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AddressRef }
-     *     
-     */
+    
     public AddressRef getAddressRef() {
         return addressRef;
     }
 
-    /**
-     * Sets the value of the addressRef property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AddressRef }
-     *     
-     */
+    
     public void setAddressRef(AddressRef value) {
         this.addressRef = value;
     }

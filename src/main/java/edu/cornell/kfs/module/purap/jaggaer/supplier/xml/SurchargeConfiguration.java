@@ -11,9 +11,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "fee",
@@ -33,98 +31,42 @@ public class SurchargeConfiguration {
     @XmlElement(name = "OrderThreshold")
     protected OrderThreshold orderThreshold;
 
-    /**
-     * Gets the value of the isChanged property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getIsChanged() {
         return isChanged;
     }
 
-    /**
-     * Sets the value of the isChanged property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    /**
-     * Gets the value of the fee property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fee }
-     *     
-     */
+    
     public Fee getFee() {
         return fee;
     }
 
-    /**
-     * Sets the value of the fee property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fee }
-     *     
-     */
+    
     public void setFee(Fee value) {
         this.fee = value;
     }
 
-    /**
-     * Gets the value of the useOrderThreshold property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UseOrderThreshold }
-     *     
-     */
+    
     public UseOrderThreshold getUseOrderThreshold() {
         return useOrderThreshold;
     }
 
-    /**
-     * Sets the value of the useOrderThreshold property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link UseOrderThreshold }
-     *     
-     */
+    
     public void setUseOrderThreshold(UseOrderThreshold value) {
         this.useOrderThreshold = value;
     }
 
-    /**
-     * Gets the value of the orderThreshold property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OrderThreshold }
-     *     
-     */
+    
     public OrderThreshold getOrderThreshold() {
         return orderThreshold;
     }
 
-    /**
-     * Sets the value of the orderThreshold property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link OrderThreshold }
-     *     
-     */
+    
     public void setOrderThreshold(OrderThreshold value) {
         this.orderThreshold = value;
     }

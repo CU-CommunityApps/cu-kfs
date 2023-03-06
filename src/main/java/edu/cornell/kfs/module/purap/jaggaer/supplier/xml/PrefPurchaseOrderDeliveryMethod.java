@@ -15,9 +15,7 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "emailOrFax"
@@ -37,77 +35,27 @@ public class PrefPurchaseOrderDeliveryMethod {
     })
     protected List<Object> emailOrFax;
 
-    /**
-     * Gets the value of the isChanged property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getIsChanged() {
         return isChanged;
     }
 
-    /**
-     * Sets the value of the isChanged property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    /**
-     * Gets the value of the type property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getType() {
         return type;
     }
 
-    /**
-     * Sets the value of the type property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setType(String value) {
         this.type = value;
     }
 
-    /**
-     * Gets the value of the emailOrFax property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the emailOrFax property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getEmailOrFax().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Email }
-     * {@link Fax }
-     * 
-     * 
-     */
+    
     public List<Object> getEmailOrFax() {
         if (emailOrFax == null) {
             emailOrFax = new ArrayList<Object>();

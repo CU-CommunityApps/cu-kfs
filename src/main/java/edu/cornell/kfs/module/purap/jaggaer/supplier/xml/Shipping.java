@@ -11,9 +11,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "surchargeConfiguration"
@@ -27,50 +25,22 @@ public class Shipping {
     @XmlElement(name = "SurchargeConfiguration")
     protected SurchargeConfiguration surchargeConfiguration;
 
-    /**
-     * Gets the value of the isChanged property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getIsChanged() {
         return isChanged;
     }
 
-    /**
-     * Sets the value of the isChanged property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    /**
-     * Gets the value of the surchargeConfiguration property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SurchargeConfiguration }
-     *     
-     */
+    
     public SurchargeConfiguration getSurchargeConfiguration() {
         return surchargeConfiguration;
     }
 
-    /**
-     * Sets the value of the surchargeConfiguration property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SurchargeConfiguration }
-     *     
-     */
+    
     public void setSurchargeConfiguration(SurchargeConfiguration value) {
         this.surchargeConfiguration = value;
     }

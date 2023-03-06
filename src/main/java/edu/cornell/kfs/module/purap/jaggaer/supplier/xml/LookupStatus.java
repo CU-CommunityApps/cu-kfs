@@ -11,9 +11,7 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "lookupErrors"
@@ -27,50 +25,22 @@ public class LookupStatus {
     @XmlElement(name = "LookupErrors")
     protected LookupErrors lookupErrors;
 
-    /**
-     * Gets the value of the code property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getCode() {
         return code;
     }
 
-    /**
-     * Sets the value of the code property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setCode(String value) {
         this.code = value;
     }
 
-    /**
-     * Gets the value of the lookupErrors property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LookupErrors }
-     *     
-     */
+    
     public LookupErrors getLookupErrors() {
         return lookupErrors;
     }
 
-    /**
-     * Sets the value of the lookupErrors property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LookupErrors }
-     *     
-     */
+    
     public void setLookupErrors(LookupErrors value) {
         this.lookupErrors = value;
     }

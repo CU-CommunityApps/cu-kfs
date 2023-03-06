@@ -14,9 +14,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-/**
- * 
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "discountPercentOrDiscountAmountOrIsoCurrencyCode"
@@ -37,78 +35,27 @@ public class Discount {
     })
     protected List<Object> discountPercentOrDiscountAmountOrIsoCurrencyCode;
 
-    /**
-     * Gets the value of the isChanged property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getIsChanged() {
         return isChanged;
     }
 
-    /**
-     * Sets the value of the isChanged property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    /**
-     * Gets the value of the unit property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
+    
     public String getUnit() {
         return unit;
     }
 
-    /**
-     * Sets the value of the unit property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
+    
     public void setUnit(String value) {
         this.unit = value;
     }
 
-    /**
-     * Gets the value of the discountPercentOrDiscountAmountOrIsoCurrencyCode property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the discountPercentOrDiscountAmountOrIsoCurrencyCode property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DiscountPercent }
-     * {@link DiscountAmount }
-     * {@link IsoCurrencyCode }
-     * 
-     * 
-     */
+    
     public List<Object> getDiscountPercentOrDiscountAmountOrIsoCurrencyCode() {
         if (discountPercentOrDiscountAmountOrIsoCurrencyCode == null) {
             discountPercentOrDiscountAmountOrIsoCurrencyCode = new ArrayList<Object>();
