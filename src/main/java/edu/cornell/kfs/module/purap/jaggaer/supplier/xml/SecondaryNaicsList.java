@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "secondaryNaics"
-})
+@XmlType(name = "", propOrder = { "secondaryNaics" })
 @XmlRootElement(name = "SecondaryNaicsList")
 public class SecondaryNaicsList {
 
@@ -27,17 +22,14 @@ public class SecondaryNaicsList {
     @XmlElement(name = "SecondaryNaics")
     protected List<SecondaryNaics> secondaryNaics;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public List<SecondaryNaics> getSecondaryNaics() {
         if (secondaryNaics == null) {
             secondaryNaics = new ArrayList<SecondaryNaics>();

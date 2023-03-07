@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,13 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "distributionLanguage",
-    "distributionMethod"
-})
+@XmlType(name = "", propOrder = { "distributionLanguage", "distributionMethod" })
 @XmlRootElement(name = "OrderDistributionList")
 public class OrderDistributionList {
 
@@ -30,27 +24,22 @@ public class OrderDistributionList {
     @XmlElement(name = "DistributionMethod", required = true)
     protected List<DistributionMethod> distributionMethod;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getDistributionLanguage() {
         return distributionLanguage;
     }
 
-    
-    public void setDistributionLanguage(String value) {
-        this.distributionLanguage = value;
+    public void setDistributionLanguage(String distributionLanguage) {
+        this.distributionLanguage = distributionLanguage;
     }
 
-    
     public List<DistributionMethod> getDistributionMethod() {
         if (distributionMethod == null) {
             distributionMethod = new ArrayList<DistributionMethod>();

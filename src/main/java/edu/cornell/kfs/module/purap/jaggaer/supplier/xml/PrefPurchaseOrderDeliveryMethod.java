@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -14,12 +13,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "emailOrFax"
-})
+@XmlType(name = "", propOrder = { "emailOrFax" })
 @XmlRootElement(name = "PrefPurchaseOrderDeliveryMethod")
 public class PrefPurchaseOrderDeliveryMethod {
 
@@ -29,33 +24,25 @@ public class PrefPurchaseOrderDeliveryMethod {
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String type;
-    @XmlElements({
-        @XmlElement(name = "Email", type = Email.class),
-        @XmlElement(name = "Fax", type = Fax.class)
-    })
+    @XmlElements({ @XmlElement(name = "Email", type = Email.class), @XmlElement(name = "Fax", type = Fax.class) })
     protected List<Object> emailOrFax;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public List<Object> getEmailOrFax() {
         if (emailOrFax == null) {
             emailOrFax = new ArrayList<Object>();
