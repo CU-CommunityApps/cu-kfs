@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "attachment"
-})
+@XmlType(name = "", propOrder = { "attachment" })
 @XmlRootElement(name = "Attachments")
 public class Attachments {
 
@@ -27,7 +22,6 @@ public class Attachments {
     @XmlElement(name = "Attachment")
     protected List<Attachment> attachment;
 
-    
     public String getXmlnsXop() {
         if (xmlnsXop == null) {
             return "http://www.w3.org/2004/08/xop/include/";
@@ -36,12 +30,10 @@ public class Attachments {
         }
     }
 
-    
-    public void setXmlnsXop(String value) {
-        this.xmlnsXop = value;
+    public void setXmlnsXop(String xmlnsXop) {
+        this.xmlnsXop = xmlnsXop;
     }
 
-    
     public List<Attachment> getAttachment() {
         if (attachment == null) {
             attachment = new ArrayList<Attachment>();

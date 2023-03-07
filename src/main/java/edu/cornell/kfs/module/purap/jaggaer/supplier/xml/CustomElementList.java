@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "customElement"
-})
+@XmlType(name = "", propOrder = { "customElement" })
 @XmlRootElement(name = "CustomElementList")
 public class CustomElementList {
 
@@ -27,17 +22,14 @@ public class CustomElementList {
     @XmlElement(name = "CustomElement")
     protected List<CustomElement> customElement;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public List<CustomElement> getCustomElement() {
         if (customElement == null) {
             customElement = new ArrayList<CustomElement>();

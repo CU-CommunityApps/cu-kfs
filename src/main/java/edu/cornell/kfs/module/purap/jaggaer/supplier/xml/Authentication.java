@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -7,13 +6,8 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "identity",
-    "sharedSecret"
-})
+@XmlType(name = "", propOrder = { "identity", "sharedSecret" })
 @XmlRootElement(name = "Authentication")
 public class Authentication {
 
@@ -22,24 +16,20 @@ public class Authentication {
     @XmlElement(name = "SharedSecret", required = true)
     protected String sharedSecret;
 
-    
     public String getIdentity() {
         return identity;
     }
 
-    
-    public void setIdentity(String value) {
-        this.identity = value;
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
-    
     public String getSharedSecret() {
         return sharedSecret;
     }
 
-    
-    public void setSharedSecret(String value) {
-        this.sharedSecret = value;
+    public void setSharedSecret(String sharedSecret) {
+        this.sharedSecret = sharedSecret;
     }
 
 }
