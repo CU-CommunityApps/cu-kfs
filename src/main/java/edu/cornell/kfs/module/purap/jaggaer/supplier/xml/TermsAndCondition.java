@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,12 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "paymentTerms"
-})
+@XmlType(name = "", propOrder = { "paymentTerms" })
 @XmlRootElement(name = "TermsAndCondition")
 public class TermsAndCondition {
 
@@ -25,24 +20,20 @@ public class TermsAndCondition {
     @XmlElement(name = "PaymentTerms")
     protected PaymentTerms paymentTerms;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public PaymentTerms getPaymentTerms() {
         return paymentTerms;
     }
 
-    
-    public void setPaymentTerms(PaymentTerms value) {
-        this.paymentTerms = value;
+    public void setPaymentTerms(PaymentTerms paymentTerms) {
+        this.paymentTerms = paymentTerms;
     }
 
 }

@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "location"
-})
+@XmlType(name = "", propOrder = { "location" })
 @XmlRootElement(name = "LocationList")
 public class LocationList {
 
@@ -27,17 +22,14 @@ public class LocationList {
     @XmlElement(name = "Location")
     protected List<Location> location;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public List<Location> getLocation() {
         if (location == null) {
             location = new ArrayList<Location>();

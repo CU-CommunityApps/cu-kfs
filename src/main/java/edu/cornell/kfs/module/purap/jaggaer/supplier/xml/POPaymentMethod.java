@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,14 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "poPayment",
-    "pCardPayment",
-    "jpMorganVCardPayment"
-})
+@XmlType(name = "", propOrder = { "poPayment", "pCardPayment", "jpMorganVCardPayment" })
 @XmlRootElement(name = "POPaymentMethod")
 public class POPaymentMethod {
 
@@ -31,44 +24,36 @@ public class POPaymentMethod {
     @XmlElement(name = "JPMorganVCardPayment")
     protected JPMorganVCardPayment jpMorganVCardPayment;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public POPayment getPOPayment() {
+    public POPayment getPoPayment() {
         return poPayment;
     }
 
-    
-    public void setPOPayment(POPayment value) {
-        this.poPayment = value;
+    public void setPoPayment(POPayment poPayment) {
+        this.poPayment = poPayment;
     }
 
-    
-    public PCardPayment getPCardPayment() {
+    public PCardPayment getpCardPayment() {
         return pCardPayment;
     }
 
-    
-    public void setPCardPayment(PCardPayment value) {
-        this.pCardPayment = value;
+    public void setpCardPayment(PCardPayment pCardPayment) {
+        this.pCardPayment = pCardPayment;
     }
 
-    
-    public JPMorganVCardPayment getJPMorganVCardPayment() {
+    public JPMorganVCardPayment getJpMorganVCardPayment() {
         return jpMorganVCardPayment;
     }
 
-    
-    public void setJPMorganVCardPayment(JPMorganVCardPayment value) {
-        this.jpMorganVCardPayment = value;
+    public void setJpMorganVCardPayment(JPMorganVCardPayment jpMorganVCardPayment) {
+        this.jpMorganVCardPayment = jpMorganVCardPayment;
     }
 
 }

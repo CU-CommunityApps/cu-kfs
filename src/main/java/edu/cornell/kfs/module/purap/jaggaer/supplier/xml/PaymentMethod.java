@@ -11,13 +11,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "poPaymentMethod",
-    "blanketPOPaymentMethod"
-})
+@XmlType(name = "", propOrder = { "poPaymentMethod", "blanketPOPaymentMethod" })
 @XmlRootElement(name = "PaymentMethod")
 public class PaymentMethod {
 
@@ -32,44 +27,36 @@ public class PaymentMethod {
     @XmlElement(name = "BlanketPOPaymentMethod")
     protected BlanketPOPaymentMethod blanketPOPaymentMethod;
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public POPaymentMethod getPOPaymentMethod() {
+    public POPaymentMethod getPoPaymentMethod() {
         return poPaymentMethod;
     }
 
-    
-    public void setPOPaymentMethod(POPaymentMethod value) {
-        this.poPaymentMethod = value;
+    public void setPoPaymentMethod(POPaymentMethod poPaymentMethod) {
+        this.poPaymentMethod = poPaymentMethod;
     }
 
-    
     public BlanketPOPaymentMethod getBlanketPOPaymentMethod() {
         return blanketPOPaymentMethod;
     }
 
-    
-    public void setBlanketPOPaymentMethod(BlanketPOPaymentMethod value) {
-        this.blanketPOPaymentMethod = value;
+    public void setBlanketPOPaymentMethod(BlanketPOPaymentMethod blanketPOPaymentMethod) {
+        this.blanketPOPaymentMethod = blanketPOPaymentMethod;
     }
 
 }

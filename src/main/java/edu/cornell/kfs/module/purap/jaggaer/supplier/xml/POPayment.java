@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,14 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "active",
-    "poNumberSelection",
-    "allowFreeForm"
-})
+@XmlType(name = "", propOrder = { "active", "poNumberSelection", "allowFreeForm" })
 @XmlRootElement(name = "POPayment")
 public class POPayment {
 
@@ -29,46 +22,38 @@ public class POPayment {
     @XmlElement(name = "PONumberSelection")
     protected PONumberSelection poNumberSelection;
     @XmlElement(name = "AllowFreeForm", required = true)
-    protected AllowFreeForm allowFreeForm;
+    protected JaggaerBasicValue allowFreeForm;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public Active getActive() {
         return active;
     }
 
-    
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
-    
-    public PONumberSelection getPONumberSelection() {
+    public PONumberSelection getPoNumberSelection() {
         return poNumberSelection;
     }
 
-    
-    public void setPONumberSelection(PONumberSelection value) {
-        this.poNumberSelection = value;
+    public void setPoNumberSelection(PONumberSelection poNumberSelection) {
+        this.poNumberSelection = poNumberSelection;
     }
 
-    
-    public AllowFreeForm getAllowFreeForm() {
+    public JaggaerBasicValue getAllowFreeForm() {
         return allowFreeForm;
     }
 
-    
-    public void setAllowFreeForm(AllowFreeForm value) {
-        this.allowFreeForm = value;
+    public void setAllowFreeForm(JaggaerBasicValue allowFreeForm) {
+        this.allowFreeForm = allowFreeForm;
     }
 
 }

@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -11,12 +10,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "contactRef"
-})
+@XmlType(name = "", propOrder = { "contactRef" })
 @XmlRootElement(name = "AssociatedContact")
 public class AssociatedContact {
 
@@ -29,34 +24,28 @@ public class AssociatedContact {
     @XmlElement(name = "ContactRef")
     protected ContactRef contactRef;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public ContactRef getContactRef() {
         return contactRef;
     }
 
-    
-    public void setContactRef(ContactRef value) {
-        this.contactRef = value;
+    public void setContactRef(ContactRef contactRef) {
+        this.contactRef = contactRef;
     }
 
 }

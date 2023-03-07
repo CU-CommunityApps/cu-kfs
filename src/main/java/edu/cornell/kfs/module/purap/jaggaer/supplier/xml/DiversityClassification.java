@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,16 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "internalName",
-    "displayName",
-    "additionalDataList",
-    "dd214Certificate",
-    "diversityCertificate"
-})
+@XmlType(name = "", propOrder = { "internalName", "displayName", "additionalDataList", "dd214Certificate",
+        "diversityCertificate" })
 @XmlRootElement(name = "DiversityClassification")
 public class DiversityClassification {
 
@@ -27,7 +19,56 @@ public class DiversityClassification {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "InternalName", required = true)
-    protected InternalName internalName;
+    protected JaggaerBasicValue internalName;
+
+    public String getIsChanged() {
+        return isChanged;
+    }
+
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
+    }
+
+    public JaggaerBasicValue getInternalName() {
+        return internalName;
+    }
+
+    public void setInternalName(JaggaerBasicValue internalName) {
+        this.internalName = internalName;
+    }
+
+    public DisplayName getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(DisplayName displayName) {
+        this.displayName = displayName;
+    }
+
+    public AdditionalDataList getAdditionalDataList() {
+        return additionalDataList;
+    }
+
+    public void setAdditionalDataList(AdditionalDataList additionalDataList) {
+        this.additionalDataList = additionalDataList;
+    }
+
+    public DD214Certificate getDd214Certificate() {
+        return dd214Certificate;
+    }
+
+    public void setDd214Certificate(DD214Certificate dd214Certificate) {
+        this.dd214Certificate = dd214Certificate;
+    }
+
+    public DiversityCertificate getDiversityCertificate() {
+        return diversityCertificate;
+    }
+
+    public void setDiversityCertificate(DiversityCertificate diversityCertificate) {
+        this.diversityCertificate = diversityCertificate;
+    }
+
     @XmlElement(name = "DisplayName")
     protected DisplayName displayName;
     @XmlElement(name = "AdditionalDataList")
@@ -36,65 +77,5 @@ public class DiversityClassification {
     protected DD214Certificate dd214Certificate;
     @XmlElement(name = "DiversityCertificate")
     protected DiversityCertificate diversityCertificate;
-
-    
-    public String getIsChanged() {
-        return isChanged;
-    }
-
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
-    }
-
-    
-    public InternalName getInternalName() {
-        return internalName;
-    }
-
-    
-    public void setInternalName(InternalName value) {
-        this.internalName = value;
-    }
-
-    
-    public DisplayName getDisplayName() {
-        return displayName;
-    }
-
-    
-    public void setDisplayName(DisplayName value) {
-        this.displayName = value;
-    }
-
-    
-    public AdditionalDataList getAdditionalDataList() {
-        return additionalDataList;
-    }
-
-    
-    public void setAdditionalDataList(AdditionalDataList value) {
-        this.additionalDataList = value;
-    }
-
-    
-    public DD214Certificate getDD214Certificate() {
-        return dd214Certificate;
-    }
-
-    
-    public void setDD214Certificate(DD214Certificate value) {
-        this.dd214Certificate = value;
-    }
-
-    
-    public DiversityCertificate getDiversityCertificate() {
-        return diversityCertificate;
-    }
-
-    
-    public void setDiversityCertificate(DiversityCertificate value) {
-        this.diversityCertificate = value;
-    }
 
 }

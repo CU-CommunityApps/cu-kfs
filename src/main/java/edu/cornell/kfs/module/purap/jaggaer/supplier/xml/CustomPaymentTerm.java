@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -11,12 +10,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "value"
-})
+@XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "CustomPaymentTerm")
 public class CustomPaymentTerm {
 
@@ -32,43 +27,35 @@ public class CustomPaymentTerm {
     @XmlValue
     protected String value;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getUseCustomPaymentTerm() {
         return useCustomPaymentTerm;
     }
 
-    
-    public void setUseCustomPaymentTerm(String value) {
-        this.useCustomPaymentTerm = value;
+    public void setUseCustomPaymentTerm(String useCustomPaymentTerm) {
+        this.useCustomPaymentTerm = useCustomPaymentTerm;
     }
 
-    
     public String getId() {
         return id;
     }
 
-    
-    public void setId(String value) {
-        this.id = value;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,14 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "active",
-    "poNumberSelection",
-    "requireCardSecurityCode"
-})
+@XmlType(name = "", propOrder = { "active", "poNumberSelection", "requireCardSecurityCode" })
 @XmlRootElement(name = "PCardPayment")
 public class PCardPayment {
 
@@ -29,46 +22,38 @@ public class PCardPayment {
     @XmlElement(name = "PONumberSelection")
     protected PONumberSelection poNumberSelection;
     @XmlElement(name = "RequireCardSecurityCode")
-    protected RequireCardSecurityCode requireCardSecurityCode;
+    protected JaggaerBasicValue requireCardSecurityCode;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public Active getActive() {
         return active;
     }
 
-    
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
-    
-    public PONumberSelection getPONumberSelection() {
+    public PONumberSelection getPoNumberSelection() {
         return poNumberSelection;
     }
 
-    
-    public void setPONumberSelection(PONumberSelection value) {
-        this.poNumberSelection = value;
+    public void setPoNumberSelection(PONumberSelection poNumberSelection) {
+        this.poNumberSelection = poNumberSelection;
     }
 
-    
-    public RequireCardSecurityCode getRequireCardSecurityCode() {
+    public JaggaerBasicValue getRequireCardSecurityCode() {
         return requireCardSecurityCode;
     }
 
-    
-    public void setRequireCardSecurityCode(RequireCardSecurityCode value) {
-        this.requireCardSecurityCode = value;
+    public void setRequireCardSecurityCode(JaggaerBasicValue requireCardSecurityCode) {
+        this.requireCardSecurityCode = requireCardSecurityCode;
     }
 
 }
