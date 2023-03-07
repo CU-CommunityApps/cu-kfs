@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,12 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "surchargeConfiguration"
-})
+@XmlType(name = "", propOrder = { "surchargeConfiguration" })
 @XmlRootElement(name = "Handling")
 public class Handling {
 
@@ -25,24 +20,20 @@ public class Handling {
     @XmlElement(name = "SurchargeConfiguration", required = true)
     protected SurchargeConfiguration surchargeConfiguration;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public SurchargeConfiguration getSurchargeConfiguration() {
         return surchargeConfiguration;
     }
 
-    
-    public void setSurchargeConfiguration(SurchargeConfiguration value) {
-        this.surchargeConfiguration = value;
+    public void setSurchargeConfiguration(SurchargeConfiguration surchargeConfiguration) {
+        this.surchargeConfiguration = surchargeConfiguration;
     }
 
 }

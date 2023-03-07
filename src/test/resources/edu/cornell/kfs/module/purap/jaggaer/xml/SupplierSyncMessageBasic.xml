@@ -308,8 +308,30 @@
                             <BlanketPONumber isChanged="T">blanket number</BlanketPONumber>
                         </BlanketPOPaymentMethod>
                     </PaymentMethod>
-                    <Shipping>shipping details</Shipping>
-                    <Handling>Hangling details</Handling>
+                    <Shipping isChanged="T">
+                        <SurchargeConfiguration isChanged="T">
+                            <Fee isChanged="T">
+                                <FeeType isChanged="T">fee type</FeeType>
+                                <Percentage>2</Percentage>
+                                <Amount isChanged="T">25.00</Amount>
+                                <FeeScope>scope</FeeScope>
+                            </Fee>
+                            <UseOrderThreshold isChanged="T">use threshhold</UseOrderThreshold>
+                            <OrderThreshold isChanged="T">order threshhold</OrderThreshold>
+                        </SurchargeConfiguration>
+                    </Shipping>
+                    <Handling isChanged="T">
+                        <SurchargeConfiguration isChanged="T">
+                            <Fee isChanged="T">
+                                <FeeType isChanged="T">fee type</FeeType>
+                                <Percentage>2</Percentage>
+                                <Amount isChanged="T">2.75</Amount>
+                                <FeeScope>scope</FeeScope>
+                            </Fee>
+                            <UseOrderThreshold isChanged="T">use threshhold</UseOrderThreshold>
+                            <OrderThreshold isChanged="T">order threshhold</OrderThreshold>
+                        </SurchargeConfiguration>
+                    </Handling>
                     <TaxInfo isChanged="T">
                         <TaxableByDefault isChanged="T">taxable by default</TaxableByDefault>
                         <Tax1Active>tax 1 active</Tax1Active>

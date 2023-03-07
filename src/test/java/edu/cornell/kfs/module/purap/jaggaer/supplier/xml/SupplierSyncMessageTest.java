@@ -279,13 +279,18 @@ public class SupplierSyncMessageTest {
 
     private SupplierCapital buildSupplierCapital() {
         SupplierCapital capital = new SupplierCapital();
-        Amount ammount = new Amount();
-        ammount.setIsChanged(T_TRUE);
-        ammount.setValue("50.00");
+        Amount ammount = buildAmount("50.00");
         capital.setAmount(ammount);
         capital.setIsChanged(T_TRUE);
         capital.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
         return capital;
+    }
+
+    private Amount buildAmount(String amountString) {
+        Amount ammount = new Amount();
+        ammount.setIsChanged(T_TRUE);
+        ammount.setValue(amountString);
+        return ammount;
     }
 
     private IsoCurrencyCode buildIsoCurrencyCode(String currencyCode, String changed) {
@@ -584,8 +589,8 @@ public class SupplierSyncMessageTest {
         location.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
         location.setLocationEffectiveDate(new JaggaerBasicValue("02/28/2023", T_TRUE));
         location.setPaymentMethod(buildPaymentMethod());
-        location.setShipping(new JaggaerBasicValue("shipping details"));
-        location.setHandling(new JaggaerBasicValue("Hangling details"));
+        location.setShipping(buildShipping());
+        location.setHandling(buildHandling());
         location.setTaxInfo(buildTaxInfo());
         location.setTermsAndCondition(buildTermsAndCondition());       
         location.setOrderDistributionList(buildOrderDistributionList());
@@ -606,6 +611,37 @@ public class SupplierSyncMessageTest {
 
         locationList.getLocation().add(location);
         return locationList;
+    }
+    
+    private Shipping buildShipping() {
+        Shipping shipping = new Shipping();
+        shipping.setIsChanged(T_TRUE);
+        shipping.setSurchargeConfiguration(buildSurchargeConfiguration("25.00"));
+        return shipping;
+    }
+    
+    private SurchargeConfiguration buildSurchargeConfiguration(String feeAmount) {
+        SurchargeConfiguration config = new SurchargeConfiguration();
+        config.setIsChanged(T_TRUE);
+        config.setUseOrderThreshold(new JaggaerBasicValue("use threshhold", T_TRUE));
+        config.setOrderThreshold(new JaggaerBasicValue("order threshhold", T_TRUE));
+        
+        Fee fee = new Fee();
+        fee.setAmount(buildAmount(feeAmount));
+        fee.setIsChanged(T_TRUE);
+        fee.setFeeType(new JaggaerBasicValue("fee type", T_TRUE));
+        fee.setPercentage(new JaggaerBasicValue("2"));
+        fee.setFeeScope(new JaggaerBasicValue("scope"));
+        config.setFee(fee);
+        
+        return config;
+    }
+    
+    private Handling buildHandling() {
+        Handling handling = new Handling();
+        handling.setIsChanged(T_TRUE);
+        handling.setSurchargeConfiguration(buildSurchargeConfiguration("2.75"));
+        return handling;
     }
 
     private TermsAndCondition buildTermsAndCondition() {

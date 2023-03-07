@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,15 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "feeType",
-    "percentage",
-    "amount",
-    "feeScope"
-})
+@XmlType(name = "", propOrder = { "feeType", "percentage", "amount", "feeScope" })
 @XmlRootElement(name = "Fee")
 public class Fee {
 
@@ -26,62 +18,52 @@ public class Fee {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "FeeType")
-    protected FeeType feeType;
+    protected JaggaerBasicValue feeType;
     @XmlElement(name = "Percentage")
-    protected Percentage percentage;
+    protected JaggaerBasicValue percentage;
     @XmlElement(name = "Amount")
     protected Amount amount;
     @XmlElement(name = "FeeScope")
-    protected FeeScope feeScope;
+    protected JaggaerBasicValue feeScope;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public FeeType getFeeType() {
+    public JaggaerBasicValue getFeeType() {
         return feeType;
     }
 
-    
-    public void setFeeType(FeeType value) {
-        this.feeType = value;
+    public void setFeeType(JaggaerBasicValue feeType) {
+        this.feeType = feeType;
     }
 
-    
-    public Percentage getPercentage() {
+    public JaggaerBasicValue getPercentage() {
         return percentage;
     }
 
-    
-    public void setPercentage(Percentage value) {
-        this.percentage = value;
+    public void setPercentage(JaggaerBasicValue percentage) {
+        this.percentage = percentage;
     }
 
-    
     public Amount getAmount() {
         return amount;
     }
 
-    
-    public void setAmount(Amount value) {
-        this.amount = value;
+    public void setAmount(Amount amount) {
+        this.amount = amount;
     }
 
-    
-    public FeeScope getFeeScope() {
+    public JaggaerBasicValue getFeeScope() {
         return feeScope;
     }
 
-    
-    public void setFeeScope(FeeScope value) {
-        this.feeScope = value;
+    public void setFeeScope(JaggaerBasicValue feeScope) {
+        this.feeScope = feeScope;
     }
 
 }

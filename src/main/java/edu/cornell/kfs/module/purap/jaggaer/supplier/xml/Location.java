@@ -50,9 +50,9 @@ public class Location {
     @XmlElement(name = "PaymentMethod")
     protected PaymentMethod paymentMethod;
     @XmlElement(name = "Shipping")
-    protected JaggaerBasicValue shipping;
+    protected Shipping shipping;
     @XmlElement(name = "Handling")
-    protected JaggaerBasicValue handling;
+    protected Handling handling;
     @XmlElement(name = "TaxInfo")
     protected TaxInfo taxInfo;
     @XmlElement(name = "TermsAndCondition")
@@ -180,19 +180,19 @@ public class Location {
         this.paymentMethod = paymentMethod;
     }
 
-    public JaggaerBasicValue getShipping() {
+    public Shipping getShipping() {
         return shipping;
     }
 
-    public void setShipping(JaggaerBasicValue shipping) {
+    public void setShipping(Shipping shipping) {
         this.shipping = shipping;
     }
 
-    public JaggaerBasicValue getHandling() {
+    public Handling getHandling() {
         return handling;
     }
 
-    public void setHandling(JaggaerBasicValue handling) {
+    public void setHandling(Handling handling) {
         this.handling = handling;
     }
 

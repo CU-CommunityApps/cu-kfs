@@ -27,9 +27,9 @@ public class SurchargeConfiguration {
     @XmlElement(name = "Fee")
     protected Fee fee;
     @XmlElement(name = "UseOrderThreshold")
-    protected UseOrderThreshold useOrderThreshold;
+    protected JaggaerBasicValue useOrderThreshold;
     @XmlElement(name = "OrderThreshold")
-    protected OrderThreshold orderThreshold;
+    protected JaggaerBasicValue orderThreshold;
 
     
     public String getIsChanged() {
@@ -52,22 +52,22 @@ public class SurchargeConfiguration {
     }
 
     
-    public UseOrderThreshold getUseOrderThreshold() {
+    public JaggaerBasicValue getUseOrderThreshold() {
         return useOrderThreshold;
     }
 
     
-    public void setUseOrderThreshold(UseOrderThreshold value) {
+    public void setUseOrderThreshold(JaggaerBasicValue value) {
         this.useOrderThreshold = value;
     }
 
     
-    public OrderThreshold getOrderThreshold() {
+    public JaggaerBasicValue getOrderThreshold() {
         return orderThreshold;
     }
 
     
-    public void setOrderThreshold(OrderThreshold value) {
+    public void setOrderThreshold(JaggaerBasicValue value) {
         this.orderThreshold = value;
     }
 
