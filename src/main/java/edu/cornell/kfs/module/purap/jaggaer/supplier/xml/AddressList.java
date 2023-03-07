@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "address"
-})
+@XmlType(name = "", propOrder = { "address" })
 @XmlRootElement(name = "AddressList")
 public class AddressList {
 
@@ -27,17 +22,14 @@ public class AddressList {
     @XmlElement(name = "Address")
     protected List<Address> address;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public List<Address> getAddress() {
         if (address == null) {
             address = new ArrayList<Address>();

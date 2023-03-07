@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -11,27 +10,10 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "erpNumber",
-    "oldERPNumber",
-    "sqIntegrationNumber",
-    "thirdPartyRefNumber",
-    "name",
-    "active",
-    "firstName",
-    "lastName",
-    "title",
-    "email",
-    "phone",
-    "mobilePhone",
-    "tollFreePhone",
-    "fax",
-    "notes",
-    "associatedAddress"
-})
+@XmlType(name = "", propOrder = { "erpNumber", "oldERPNumber", "sqIntegrationNumber", "thirdPartyRefNumber", "name",
+        "active", "firstName", "lastName", "title", "email", "phone", "mobilePhone", "tollFreePhone", "fax", "notes",
+        "associatedAddress" })
 @XmlRootElement(name = "Contact")
 public class Contact {
 
@@ -54,11 +36,11 @@ public class Contact {
     @XmlElement(name = "Active")
     protected Active active;
     @XmlElement(name = "FirstName")
-    protected FirstName firstName;
+    protected JaggaerBasicValue firstName;
     @XmlElement(name = "LastName")
-    protected LastName lastName;
+    protected JaggaerBasicValue lastName;
     @XmlElement(name = "Title")
-    protected Title title;
+    protected JaggaerBasicValue title;
     @XmlElement(name = "Email")
     protected Email email;
     @XmlElement(name = "Phone")
@@ -70,188 +52,152 @@ public class Contact {
     @XmlElement(name = "Fax")
     protected Fax fax;
     @XmlElement(name = "Notes")
-    protected Notes notes;
+    protected JaggaerBasicValue notes;
     @XmlElement(name = "AssociatedAddress")
     protected AssociatedAddress associatedAddress;
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public ERPNumber getERPNumber() {
+    public ERPNumber getErpNumber() {
         return erpNumber;
     }
 
-    
-    public void setERPNumber(ERPNumber value) {
-        this.erpNumber = value;
+    public void setErpNumber(ERPNumber erpNumber) {
+        this.erpNumber = erpNumber;
     }
 
-    
     public String getOldERPNumber() {
         return oldERPNumber;
     }
 
-    
-    public void setOldERPNumber(String value) {
-        this.oldERPNumber = value;
+    public void setOldERPNumber(String oldERPNumber) {
+        this.oldERPNumber = oldERPNumber;
     }
 
-    
-    public SQIntegrationNumber getSQIntegrationNumber() {
+    public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
 
-    
-    public void setSQIntegrationNumber(SQIntegrationNumber value) {
-        this.sqIntegrationNumber = value;
+    public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
+        this.sqIntegrationNumber = sqIntegrationNumber;
     }
 
-    
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
 
-    
-    public void setThirdPartyRefNumber(ThirdPartyRefNumber value) {
-        this.thirdPartyRefNumber = value;
+    public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
+        this.thirdPartyRefNumber = thirdPartyRefNumber;
     }
 
-    
     public Name getName() {
         return name;
     }
 
-    
-    public void setName(Name value) {
-        this.name = value;
+    public void setName(Name name) {
+        this.name = name;
     }
 
-    
     public Active getActive() {
         return active;
     }
 
-    
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
-    
-    public FirstName getFirstName() {
+    public JaggaerBasicValue getFirstName() {
         return firstName;
     }
 
-    
-    public void setFirstName(FirstName value) {
-        this.firstName = value;
+    public void setFirstName(JaggaerBasicValue firstName) {
+        this.firstName = firstName;
     }
 
-    
-    public LastName getLastName() {
+    public JaggaerBasicValue getLastName() {
         return lastName;
     }
 
-    
-    public void setLastName(LastName value) {
-        this.lastName = value;
+    public void setLastName(JaggaerBasicValue lastName) {
+        this.lastName = lastName;
     }
 
-    
-    public Title getTitle() {
+    public JaggaerBasicValue getTitle() {
         return title;
     }
 
-    
-    public void setTitle(Title value) {
-        this.title = value;
+    public void setTitle(JaggaerBasicValue title) {
+        this.title = title;
     }
 
-    
     public Email getEmail() {
         return email;
     }
 
-    
-    public void setEmail(Email value) {
-        this.email = value;
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
-    
     public Phone getPhone() {
         return phone;
     }
 
-    
-    public void setPhone(Phone value) {
-        this.phone = value;
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
 
-    
     public MobilePhone getMobilePhone() {
         return mobilePhone;
     }
 
-    
-    public void setMobilePhone(MobilePhone value) {
-        this.mobilePhone = value;
+    public void setMobilePhone(MobilePhone mobilePhone) {
+        this.mobilePhone = mobilePhone;
     }
 
-    
     public TollFreePhone getTollFreePhone() {
         return tollFreePhone;
     }
 
-    
-    public void setTollFreePhone(TollFreePhone value) {
-        this.tollFreePhone = value;
+    public void setTollFreePhone(TollFreePhone tollFreePhone) {
+        this.tollFreePhone = tollFreePhone;
     }
 
-    
     public Fax getFax() {
         return fax;
     }
 
-    
-    public void setFax(Fax value) {
-        this.fax = value;
+    public void setFax(Fax fax) {
+        this.fax = fax;
     }
 
-    
-    public Notes getNotes() {
+    public JaggaerBasicValue getNotes() {
         return notes;
     }
 
-    
-    public void setNotes(Notes value) {
-        this.notes = value;
+    public void setNotes(JaggaerBasicValue notes) {
+        this.notes = notes;
     }
 
-    
     public AssociatedAddress getAssociatedAddress() {
         return associatedAddress;
     }
 
-    
-    public void setAssociatedAddress(AssociatedAddress value) {
-        this.associatedAddress = value;
+    public void setAssociatedAddress(AssociatedAddress associatedAddress) {
+        this.associatedAddress = associatedAddress;
     }
 
 }

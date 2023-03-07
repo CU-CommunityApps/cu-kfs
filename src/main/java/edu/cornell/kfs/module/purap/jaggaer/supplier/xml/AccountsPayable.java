@@ -125,11 +125,10 @@ public class AccountsPayable {
     }
 
     public List<AssociatedAddress> getAssociatedAddress() {
+        if (associatedAddress == null) {
+            associatedAddress = new ArrayList<AssociatedAddress>();
+        }
         return associatedAddress;
-    }
-
-    public void setAssociatedAddress(List<AssociatedAddress> associatedAddress) {
-        this.associatedAddress = associatedAddress;
     }
 
     public Email getEmail() {

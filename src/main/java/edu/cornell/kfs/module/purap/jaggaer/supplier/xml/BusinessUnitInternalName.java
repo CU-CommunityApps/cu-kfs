@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,12 +9,8 @@ import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "value"
-})
+@XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "BusinessUnitInternalName")
 public class BusinessUnitInternalName {
 
@@ -28,33 +23,27 @@ public class BusinessUnitInternalName {
     @XmlValue
     protected String value;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getPreferredForThisBusinessUnit() {
         return preferredForThisBusinessUnit;
     }
 
-    
-    public void setPreferredForThisBusinessUnit(String value) {
-        this.preferredForThisBusinessUnit = value;
+    public void setPreferredForThisBusinessUnit(String preferredForThisBusinessUnit) {
+        this.preferredForThisBusinessUnit = preferredForThisBusinessUnit;
     }
 
-    
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
-    
-    public void setvalue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
