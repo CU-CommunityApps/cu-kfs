@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -12,12 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "accountsPayable"
-})
+@XmlType(name = "", propOrder = { "accountsPayable" })
 @XmlRootElement(name = "AccountsPayableList")
 public class AccountsPayableList {
 
@@ -27,17 +22,14 @@ public class AccountsPayableList {
     @XmlElement(name = "AccountsPayable")
     protected List<AccountsPayable> accountsPayable;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public List<AccountsPayable> getAccountsPayable() {
         if (accountsPayable == null) {
             accountsPayable = new ArrayList<AccountsPayable>();

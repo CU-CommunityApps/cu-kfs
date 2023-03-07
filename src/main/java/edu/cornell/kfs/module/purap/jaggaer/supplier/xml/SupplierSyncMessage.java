@@ -23,10 +23,16 @@ public class SupplierSyncMessage {
     protected String version;
     @XmlElement(name = "Header", required = true)
     protected Header header;
-    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class),
-            @XmlElement(name = "SupplierResponseMessage", required = true, type = SupplierResponseMessage.class),
-            @XmlElement(name = "LookupRequestMessage", required = true, type = LookupRequestMessage.class),
-            @XmlElement(name = "LookupResponseMessage", required = true, type = LookupResponseMessage.class) })
+    
+    /*
+     * XJC produced this XML annotation.  We only need SupplierRequestMessage for the upload suppliers functionality.
+     * THe following classes can be passed into this collection: SupplierResponseMessage, LookupRequestMessage, and LookupResponseMessage.
+     * Those classes have been removed as they aren't required at this time.
+     * If they are needed, this object can be updated to include them.  To regenerate the classes and child objects, run the following command
+     * 
+     * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd TSMSupplierXML.dtd
+     */
+    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
     protected List<Object> supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage;
 
     public String getVersion() {
