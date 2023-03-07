@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,12 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "telephoneNumber"
-})
+@XmlType(name = "", propOrder = { "telephoneNumber" })
 @XmlRootElement(name = "TollFreePhone")
 public class TollFreePhone {
 
@@ -25,24 +20,20 @@ public class TollFreePhone {
     @XmlElement(name = "TelephoneNumber")
     protected TelephoneNumber telephoneNumber;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public TelephoneNumber getTelephoneNumber() {
         return telephoneNumber;
     }
 
-    
-    public void setTelephoneNumber(TelephoneNumber value) {
-        this.telephoneNumber = value;
+    public void setTelephoneNumber(TelephoneNumber telephoneNumber) {
+        this.telephoneNumber = telephoneNumber;
     }
 
 }

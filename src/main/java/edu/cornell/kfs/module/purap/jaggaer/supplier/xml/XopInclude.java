@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -9,8 +8,6 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "xop:Include")
@@ -20,14 +17,12 @@ public class XopInclude {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String href;
 
-    
     public String getHref() {
         return href;
     }
 
-    
-    public void setHref(String value) {
-        this.href = value;
+    public void setHref(String href) {
+        this.href = href;
     }
 
 }

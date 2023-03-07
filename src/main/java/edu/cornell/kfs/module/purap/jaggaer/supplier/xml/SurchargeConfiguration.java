@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,14 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "fee",
-    "useOrderThreshold",
-    "orderThreshold"
-})
+@XmlType(name = "", propOrder = { "fee", "useOrderThreshold", "orderThreshold" })
 @XmlRootElement(name = "SurchargeConfiguration")
 public class SurchargeConfiguration {
 
@@ -31,44 +24,36 @@ public class SurchargeConfiguration {
     @XmlElement(name = "OrderThreshold")
     protected JaggaerBasicValue orderThreshold;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public Fee getFee() {
         return fee;
     }
 
-    
-    public void setFee(Fee value) {
-        this.fee = value;
+    public void setFee(Fee fee) {
+        this.fee = fee;
     }
 
-    
     public JaggaerBasicValue getUseOrderThreshold() {
         return useOrderThreshold;
     }
 
-    
-    public void setUseOrderThreshold(JaggaerBasicValue value) {
-        this.useOrderThreshold = value;
+    public void setUseOrderThreshold(JaggaerBasicValue useOrderThreshold) {
+        this.useOrderThreshold = useOrderThreshold;
     }
 
-    
     public JaggaerBasicValue getOrderThreshold() {
         return orderThreshold;
     }
 
-    
-    public void setOrderThreshold(JaggaerBasicValue value) {
-        this.orderThreshold = value;
+    public void setOrderThreshold(JaggaerBasicValue orderThreshold) {
+        this.orderThreshold = orderThreshold;
     }
 
 }
