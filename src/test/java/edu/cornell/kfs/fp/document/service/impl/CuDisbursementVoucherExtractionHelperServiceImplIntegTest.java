@@ -4,6 +4,9 @@ import static org.kuali.kfs.sys.fixture.UserNameFixture.ccs1;
 
 import java.sql.Date;
 
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.dataaccess.DisbursementVoucherDao;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
@@ -16,12 +19,10 @@ import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
+import org.kuali.kfs.sys.service.XmlUtilService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
@@ -45,6 +46,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImplIntegTest extends K
         cuDisbursementVoucherExtractionHelperService.setVendorService(SpringContext.getBean(VendorService.class));
         cuDisbursementVoucherExtractionHelperService.setPaymentSourceHelperService(SpringContext.getBean(PaymentSourceHelperService.class));
         cuDisbursementVoucherExtractionHelperService.setDisbursementVoucherDao(SpringContext.getBean(DisbursementVoucherDao.class));
+        cuDisbursementVoucherExtractionHelperService.setXmlUtilService(SpringContext.getBean(XmlUtilService.class));
 	}
                   
 	public void test(){
