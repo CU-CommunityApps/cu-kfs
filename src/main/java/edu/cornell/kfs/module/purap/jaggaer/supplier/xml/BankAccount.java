@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -11,27 +10,11 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "bankName",
-    "accountHoldersName",
-    "accountNumberType",
-    "routingNumber",
-    "bankAccountNumber",
-    "ibanBankAccountNumber",
-    "directDepositFormat",
-    "bankIdentifierCode",
-    "internationalRoutingCode",
-    "isoCountryCode",
-    "addressLine1",
-    "addressLine2",
-    "addressLine3",
-    "city",
-    "state",
-    "postalCode"
-})
+@XmlType(name = "", propOrder = { "bankName", "accountHoldersName", "accountNumberType", "routingNumber",
+        "bankAccountNumber", "ibanBankAccountNumber", "directDepositFormat", "bankIdentifierCode",
+        "internationalRoutingCode", "isoCountryCode", "addressLine1", "addressLine2", "addressLine3", "city", "state",
+        "postalCode" })
 @XmlRootElement(name = "BankAccount")
 public class BankAccount {
 
@@ -42,31 +25,31 @@ public class BankAccount {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "BankName")
-    protected BankName bankName;
+    protected JaggaerBasicValue bankName;
     @XmlElement(name = "AccountHoldersName")
-    protected AccountHoldersName accountHoldersName;
+    protected JaggaerBasicValue accountHoldersName;
     @XmlElement(name = "AccountNumberType")
-    protected AccountNumberType accountNumberType;
+    protected JaggaerBasicValue accountNumberType;
     @XmlElement(name = "RoutingNumber")
-    protected RoutingNumber routingNumber;
+    protected JaggaerBasicValue routingNumber;
     @XmlElement(name = "BankAccountNumber")
-    protected BankAccountNumber bankAccountNumber;
+    protected JaggaerBasicValue bankAccountNumber;
     @XmlElement(name = "IbanBankAccountNumber")
-    protected IbanBankAccountNumber ibanBankAccountNumber;
+    protected JaggaerBasicValue ibanBankAccountNumber;
     @XmlElement(name = "DirectDepositFormat")
-    protected DirectDepositFormat directDepositFormat;
+    protected JaggaerBasicValue directDepositFormat;
     @XmlElement(name = "BankIdentifierCode")
-    protected BankIdentifierCode bankIdentifierCode;
+    protected JaggaerBasicValue bankIdentifierCode;
     @XmlElement(name = "InternationalRoutingCode")
-    protected InternationalRoutingCode internationalRoutingCode;
+    protected JaggaerBasicValue internationalRoutingCode;
     @XmlElement(name = "IsoCountryCode")
     protected IsoCountryCode isoCountryCode;
     @XmlElement(name = "AddressLine1")
-    protected AddressLine1 addressLine1;
+    protected AddressLine addressLine1;
     @XmlElement(name = "AddressLine2")
-    protected AddressLine2 addressLine2;
+    protected AddressLine addressLine2;
     @XmlElement(name = "AddressLine3")
-    protected AddressLine3 addressLine3;
+    protected AddressLine addressLine3;
     @XmlElement(name = "City")
     protected City city;
     @XmlElement(name = "State")
@@ -74,184 +57,148 @@ public class BankAccount {
     @XmlElement(name = "PostalCode")
     protected PostalCode postalCode;
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public BankName getBankName() {
+    public JaggaerBasicValue getBankName() {
         return bankName;
     }
 
-    
-    public void setBankName(BankName value) {
-        this.bankName = value;
+    public void setBankName(JaggaerBasicValue bankName) {
+        this.bankName = bankName;
     }
 
-    
-    public AccountHoldersName getAccountHoldersName() {
+    public JaggaerBasicValue getAccountHoldersName() {
         return accountHoldersName;
     }
 
-    
-    public void setAccountHoldersName(AccountHoldersName value) {
-        this.accountHoldersName = value;
+    public void setAccountHoldersName(JaggaerBasicValue accountHoldersName) {
+        this.accountHoldersName = accountHoldersName;
     }
 
-    
-    public AccountNumberType getAccountNumberType() {
+    public JaggaerBasicValue getAccountNumberType() {
         return accountNumberType;
     }
 
-    
-    public void setAccountNumberType(AccountNumberType value) {
-        this.accountNumberType = value;
+    public void setAccountNumberType(JaggaerBasicValue accountNumberType) {
+        this.accountNumberType = accountNumberType;
     }
 
-    
-    public RoutingNumber getRoutingNumber() {
+    public JaggaerBasicValue getRoutingNumber() {
         return routingNumber;
     }
 
-    
-    public void setRoutingNumber(RoutingNumber value) {
-        this.routingNumber = value;
+    public void setRoutingNumber(JaggaerBasicValue routingNumber) {
+        this.routingNumber = routingNumber;
     }
 
-    
-    public BankAccountNumber getBankAccountNumber() {
+    public JaggaerBasicValue getBankAccountNumber() {
         return bankAccountNumber;
     }
 
-    
-    public void setBankAccountNumber(BankAccountNumber value) {
-        this.bankAccountNumber = value;
+    public void setBankAccountNumber(JaggaerBasicValue bankAccountNumber) {
+        this.bankAccountNumber = bankAccountNumber;
     }
 
-    
-    public IbanBankAccountNumber getIbanBankAccountNumber() {
+    public JaggaerBasicValue getIbanBankAccountNumber() {
         return ibanBankAccountNumber;
     }
 
-    
-    public void setIbanBankAccountNumber(IbanBankAccountNumber value) {
-        this.ibanBankAccountNumber = value;
+    public void setIbanBankAccountNumber(JaggaerBasicValue ibanBankAccountNumber) {
+        this.ibanBankAccountNumber = ibanBankAccountNumber;
     }
 
-    
-    public DirectDepositFormat getDirectDepositFormat() {
+    public JaggaerBasicValue getDirectDepositFormat() {
         return directDepositFormat;
     }
 
-    
-    public void setDirectDepositFormat(DirectDepositFormat value) {
-        this.directDepositFormat = value;
+    public void setDirectDepositFormat(JaggaerBasicValue directDepositFormat) {
+        this.directDepositFormat = directDepositFormat;
     }
 
-    
-    public BankIdentifierCode getBankIdentifierCode() {
+    public JaggaerBasicValue getBankIdentifierCode() {
         return bankIdentifierCode;
     }
 
-    
-    public void setBankIdentifierCode(BankIdentifierCode value) {
-        this.bankIdentifierCode = value;
+    public void setBankIdentifierCode(JaggaerBasicValue bankIdentifierCode) {
+        this.bankIdentifierCode = bankIdentifierCode;
     }
 
-    
-    public InternationalRoutingCode getInternationalRoutingCode() {
+    public JaggaerBasicValue getInternationalRoutingCode() {
         return internationalRoutingCode;
     }
 
-    
-    public void setInternationalRoutingCode(InternationalRoutingCode value) {
-        this.internationalRoutingCode = value;
+    public void setInternationalRoutingCode(JaggaerBasicValue internationalRoutingCode) {
+        this.internationalRoutingCode = internationalRoutingCode;
     }
 
-    
     public IsoCountryCode getIsoCountryCode() {
         return isoCountryCode;
     }
 
-    
-    public void setIsoCountryCode(IsoCountryCode value) {
-        this.isoCountryCode = value;
+    public void setIsoCountryCode(IsoCountryCode isoCountryCode) {
+        this.isoCountryCode = isoCountryCode;
     }
 
-    
-    public AddressLine1 getAddressLine1() {
+    public AddressLine getAddressLine1() {
         return addressLine1;
     }
 
-    
-    public void setAddressLine1(AddressLine1 value) {
-        this.addressLine1 = value;
+    public void setAddressLine1(AddressLine addressLine1) {
+        this.addressLine1 = addressLine1;
     }
 
-    
-    public AddressLine2 getAddressLine2() {
+    public AddressLine getAddressLine2() {
         return addressLine2;
     }
 
-    
-    public void setAddressLine2(AddressLine2 value) {
-        this.addressLine2 = value;
+    public void setAddressLine2(AddressLine addressLine2) {
+        this.addressLine2 = addressLine2;
     }
 
-    
-    public AddressLine3 getAddressLine3() {
+    public AddressLine getAddressLine3() {
         return addressLine3;
     }
 
-    
-    public void setAddressLine3(AddressLine3 value) {
-        this.addressLine3 = value;
+    public void setAddressLine3(AddressLine addressLine3) {
+        this.addressLine3 = addressLine3;
     }
 
-    
     public City getCity() {
         return city;
     }
 
-    
-    public void setCity(City value) {
-        this.city = value;
+    public void setCity(City city) {
+        this.city = city;
     }
 
-    
     public State getState() {
         return state;
     }
 
-    
-    public void setState(State value) {
-        this.state = value;
+    public void setState(State state) {
+        this.state = state;
     }
 
-    
     public PostalCode getPostalCode() {
         return postalCode;
     }
 
-    
-    public void setPostalCode(PostalCode value) {
-        this.postalCode = value;
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
     }
 
 }

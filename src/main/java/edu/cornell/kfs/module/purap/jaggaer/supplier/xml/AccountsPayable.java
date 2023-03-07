@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -13,28 +12,10 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "erpNumber",
-    "oldERPNumber",
-    "sqIntegrationNumber",
-    "thirdPartyRefNumber",
-    "name",
-    "active",
-    "associatedAddress",
-    "email",
-    "isoCurrencyCode",
-    "contactName",
-    "purpose",
-    "accountId",
-    "accountHolderName",
-    "accountType",
-    "countryCode",
-    "bankAccount",
-    "flexFields"
-})
+@XmlType(name = "", propOrder = { "erpNumber", "oldERPNumber", "sqIntegrationNumber", "thirdPartyRefNumber", "name",
+        "active", "associatedAddress", "email", "isoCurrencyCode", "contactName", "purpose", "accountId",
+        "accountHolderName", "accountType", "countryCode", "bankAccount", "flexFields" })
 @XmlRootElement(name = "AccountsPayable")
 public class AccountsPayable {
 
@@ -63,208 +44,172 @@ public class AccountsPayable {
     @XmlElement(name = "IsoCurrencyCode")
     protected IsoCurrencyCode isoCurrencyCode;
     @XmlElement(name = "ContactName")
-    protected ContactName contactName;
+    protected JaggaerBasicValue contactName;
     @XmlElement(name = "Purpose")
-    protected Purpose purpose;
+    protected JaggaerBasicValue purpose;
     @XmlElement(name = "AccountId")
-    protected AccountId accountId;
+    protected JaggaerBasicValue accountId;
     @XmlElement(name = "AccountHolderName")
-    protected AccountHolderName accountHolderName;
+    protected JaggaerBasicValue accountHolderName;
     @XmlElement(name = "AccountType")
-    protected AccountType accountType;
+    protected JaggaerBasicValue accountType;
     @XmlElement(name = "CountryCode")
-    protected CountryCode countryCode;
+    protected JaggaerBasicValue countryCode;
     @XmlElement(name = "BankAccount")
     protected BankAccount bankAccount;
     @XmlElement(name = "FlexFields")
     protected FlexFields flexFields;
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public ERPNumber getERPNumber() {
+    public ERPNumber getErpNumber() {
         return erpNumber;
     }
 
-    
-    public void setERPNumber(ERPNumber value) {
-        this.erpNumber = value;
+    public void setErpNumber(ERPNumber erpNumber) {
+        this.erpNumber = erpNumber;
     }
 
-    
     public String getOldERPNumber() {
         return oldERPNumber;
     }
 
-    
-    public void setOldERPNumber(String value) {
-        this.oldERPNumber = value;
+    public void setOldERPNumber(String oldERPNumber) {
+        this.oldERPNumber = oldERPNumber;
     }
 
-    
-    public SQIntegrationNumber getSQIntegrationNumber() {
+    public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
 
-    
-    public void setSQIntegrationNumber(SQIntegrationNumber value) {
-        this.sqIntegrationNumber = value;
+    public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
+        this.sqIntegrationNumber = sqIntegrationNumber;
     }
 
-    
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
 
-    
-    public void setThirdPartyRefNumber(ThirdPartyRefNumber value) {
-        this.thirdPartyRefNumber = value;
+    public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
+        this.thirdPartyRefNumber = thirdPartyRefNumber;
     }
 
-    
     public Name getName() {
         return name;
     }
 
-    
-    public void setName(Name value) {
-        this.name = value;
+    public void setName(Name name) {
+        this.name = name;
     }
 
-    
     public Active getActive() {
         return active;
     }
 
-    
-    public void setActive(Active value) {
-        this.active = value;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
-    
     public List<AssociatedAddress> getAssociatedAddress() {
-        if (associatedAddress == null) {
-            associatedAddress = new ArrayList<AssociatedAddress>();
-        }
-        return this.associatedAddress;
+        return associatedAddress;
     }
 
-    
+    public void setAssociatedAddress(List<AssociatedAddress> associatedAddress) {
+        this.associatedAddress = associatedAddress;
+    }
+
     public Email getEmail() {
         return email;
     }
 
-    
-    public void setEmail(Email value) {
-        this.email = value;
+    public void setEmail(Email email) {
+        this.email = email;
     }
 
-    
     public IsoCurrencyCode getIsoCurrencyCode() {
         return isoCurrencyCode;
     }
 
-    
-    public void setIsoCurrencyCode(IsoCurrencyCode value) {
-        this.isoCurrencyCode = value;
+    public void setIsoCurrencyCode(IsoCurrencyCode isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
     }
 
-    
-    public ContactName getContactName() {
+    public JaggaerBasicValue getContactName() {
         return contactName;
     }
 
-    
-    public void setContactName(ContactName value) {
-        this.contactName = value;
+    public void setContactName(JaggaerBasicValue contactName) {
+        this.contactName = contactName;
     }
 
-    
-    public Purpose getPurpose() {
+    public JaggaerBasicValue getPurpose() {
         return purpose;
     }
 
-    
-    public void setPurpose(Purpose value) {
-        this.purpose = value;
+    public void setPurpose(JaggaerBasicValue purpose) {
+        this.purpose = purpose;
     }
 
-    
-    public AccountId getAccountId() {
+    public JaggaerBasicValue getAccountId() {
         return accountId;
     }
 
-    
-    public void setAccountId(AccountId value) {
-        this.accountId = value;
+    public void setAccountId(JaggaerBasicValue accountId) {
+        this.accountId = accountId;
     }
 
-    
-    public AccountHolderName getAccountHolderName() {
+    public JaggaerBasicValue getAccountHolderName() {
         return accountHolderName;
     }
 
-    
-    public void setAccountHolderName(AccountHolderName value) {
-        this.accountHolderName = value;
+    public void setAccountHolderName(JaggaerBasicValue accountHolderName) {
+        this.accountHolderName = accountHolderName;
     }
 
-    
-    public AccountType getAccountType() {
+    public JaggaerBasicValue getAccountType() {
         return accountType;
     }
 
-    
-    public void setAccountType(AccountType value) {
-        this.accountType = value;
+    public void setAccountType(JaggaerBasicValue accountType) {
+        this.accountType = accountType;
     }
 
-    
-    public CountryCode getCountryCode() {
+    public JaggaerBasicValue getCountryCode() {
         return countryCode;
     }
 
-    
-    public void setCountryCode(CountryCode value) {
-        this.countryCode = value;
+    public void setCountryCode(JaggaerBasicValue countryCode) {
+        this.countryCode = countryCode;
     }
 
-    
     public BankAccount getBankAccount() {
         return bankAccount;
     }
 
-    
-    public void setBankAccount(BankAccount value) {
-        this.bankAccount = value;
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
-    
     public FlexFields getFlexFields() {
         return flexFields;
     }
 
-    
-    public void setFlexFields(FlexFields value) {
-        this.flexFields = value;
+    public void setFlexFields(FlexFields flexFields) {
+        this.flexFields = flexFields;
     }
 
 }

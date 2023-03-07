@@ -11,14 +11,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "taxDocumentName",
-    "taxDocumentYear",
-    "taxDocument"
-})
+@XmlType(name = "", propOrder = { "taxDocumentName", "taxDocumentYear", "taxDocument" })
 @XmlRootElement(name = "TaxInformation")
 public class TaxInformation {
 
@@ -29,60 +23,50 @@ public class TaxInformation {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "TaxDocumentName")
-    protected TaxDocumentName taxDocumentName;
+    protected JaggaerBasicValue taxDocumentName;
     @XmlElement(name = "TaxDocumentYear")
-    protected TaxDocumentYear taxDocumentYear;
+    protected JaggaerBasicValue taxDocumentYear;
     @XmlElement(name = "TaxDocument")
     protected TaxDocument taxDocument;
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public TaxDocumentName getTaxDocumentName() {
+    public JaggaerBasicValue getTaxDocumentName() {
         return taxDocumentName;
     }
 
-    
-    public void setTaxDocumentName(TaxDocumentName value) {
-        this.taxDocumentName = value;
+    public void setTaxDocumentName(JaggaerBasicValue taxDocumentName) {
+        this.taxDocumentName = taxDocumentName;
     }
 
-    
-    public TaxDocumentYear getTaxDocumentYear() {
+    public JaggaerBasicValue getTaxDocumentYear() {
         return taxDocumentYear;
     }
 
-    
-    public void setTaxDocumentYear(TaxDocumentYear value) {
-        this.taxDocumentYear = value;
+    public void setTaxDocumentYear(JaggaerBasicValue taxDocumentYear) {
+        this.taxDocumentYear = taxDocumentYear;
     }
 
-    
     public TaxDocument getTaxDocument() {
         return taxDocument;
     }
 
-    
-    public void setTaxDocument(TaxDocument value) {
-        this.taxDocument = value;
+    public void setTaxDocument(TaxDocument taxDocument) {
+        this.taxDocument = taxDocument;
     }
 
 }

@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,16 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "flexField1",
-    "flexField2",
-    "flexField3",
-    "flexField4",
-    "flexField5"
-})
+@XmlType(name = "", propOrder = { "flexField1", "flexField2", "flexField3", "flexField4", "flexField5" })
 @XmlRootElement(name = "FlexFields")
 public class FlexFields {
 
@@ -27,74 +18,62 @@ public class FlexFields {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "FlexField1")
-    protected FlexField1 flexField1;
+    protected JaggaerBasicValue flexField1;
     @XmlElement(name = "FlexField2")
-    protected FlexField2 flexField2;
+    protected JaggaerBasicValue flexField2;
     @XmlElement(name = "FlexField3")
-    protected FlexField3 flexField3;
+    protected JaggaerBasicValue flexField3;
     @XmlElement(name = "FlexField4")
-    protected FlexField4 flexField4;
+    protected JaggaerBasicValue flexField4;
     @XmlElement(name = "FlexField5")
-    protected FlexField5 flexField5;
+    protected JaggaerBasicValue flexField5;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public FlexField1 getFlexField1() {
+    public JaggaerBasicValue getFlexField1() {
         return flexField1;
     }
 
-    
-    public void setFlexField1(FlexField1 value) {
-        this.flexField1 = value;
+    public void setFlexField1(JaggaerBasicValue flexField1) {
+        this.flexField1 = flexField1;
     }
 
-    
-    public FlexField2 getFlexField2() {
+    public JaggaerBasicValue getFlexField2() {
         return flexField2;
     }
 
-    
-    public void setFlexField2(FlexField2 value) {
-        this.flexField2 = value;
+    public void setFlexField2(JaggaerBasicValue flexField2) {
+        this.flexField2 = flexField2;
     }
 
-    
-    public FlexField3 getFlexField3() {
+    public JaggaerBasicValue getFlexField3() {
         return flexField3;
     }
 
-    
-    public void setFlexField3(FlexField3 value) {
-        this.flexField3 = value;
+    public void setFlexField3(JaggaerBasicValue flexField3) {
+        this.flexField3 = flexField3;
     }
 
-    
-    public FlexField4 getFlexField4() {
+    public JaggaerBasicValue getFlexField4() {
         return flexField4;
     }
 
-    
-    public void setFlexField4(FlexField4 value) {
-        this.flexField4 = value;
+    public void setFlexField4(JaggaerBasicValue flexField4) {
+        this.flexField4 = flexField4;
     }
 
-    
-    public FlexField5 getFlexField5() {
+    public JaggaerBasicValue getFlexField5() {
         return flexField5;
     }
 
-    
-    public void setFlexField5(FlexField5 value) {
-        this.flexField5 = value;
+    public void setFlexField5(JaggaerBasicValue flexField5) {
+        this.flexField5 = flexField5;
     }
 
 }

@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -10,15 +9,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "countryCode",
-    "areaCode",
-    "number",
-    "extension"
-})
+@XmlType(name = "", propOrder = { "countryCode", "areaCode", "number", "extension" })
 @XmlRootElement(name = "TelephoneNumber")
 public class TelephoneNumber {
 
@@ -26,62 +18,52 @@ public class TelephoneNumber {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
     @XmlElement(name = "CountryCode", required = true)
-    protected CountryCode countryCode;
+    protected JaggaerBasicValue countryCode;
     @XmlElement(name = "AreaCode", required = true)
-    protected AreaCode areaCode;
+    protected JaggaerBasicValue areaCode;
     @XmlElement(name = "Number", required = true)
-    protected Number number;
+    protected JaggaerBasicValue number;
     @XmlElement(name = "Extension")
-    protected Extension extension;
+    protected JaggaerBasicValue extension;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
-    public CountryCode getCountryCode() {
+    public JaggaerBasicValue getCountryCode() {
         return countryCode;
     }
 
-    
-    public void setCountryCode(CountryCode value) {
-        this.countryCode = value;
+    public void setCountryCode(JaggaerBasicValue countryCode) {
+        this.countryCode = countryCode;
     }
 
-    
-    public AreaCode getAreaCode() {
+    public JaggaerBasicValue getAreaCode() {
         return areaCode;
     }
 
-    
-    public void setAreaCode(AreaCode value) {
-        this.areaCode = value;
+    public void setAreaCode(JaggaerBasicValue areaCode) {
+        this.areaCode = areaCode;
     }
 
-    
-    public Number getNumber() {
+    public JaggaerBasicValue getNumber() {
         return number;
     }
 
-    
-    public void setNumber(Number value) {
-        this.number = value;
+    public void setNumber(JaggaerBasicValue number) {
+        this.number = number;
     }
 
-    
-    public Extension getExtension() {
+    public JaggaerBasicValue getExtension() {
         return extension;
     }
 
-    
-    public void setExtension(Extension value) {
-        this.extension = value;
+    public void setExtension(JaggaerBasicValue extension) {
+        this.extension = extension;
     }
 
 }

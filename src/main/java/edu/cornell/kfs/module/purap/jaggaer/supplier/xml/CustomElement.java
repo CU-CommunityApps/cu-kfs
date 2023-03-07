@@ -14,14 +14,8 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "customElementIdentifier",
-    "displayName",
-    "customElementValueListOrAttachments"
-})
+@XmlType(name = "", propOrder = { "customElementIdentifier", "displayName", "customElementValueListOrAttachments" })
 @XmlRootElement(name = "CustomElement")
 public class CustomElement {
 
@@ -35,66 +29,53 @@ public class CustomElement {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String type;
     @XmlElement(name = "CustomElementIdentifier")
-    protected CustomElementIdentifier customElementIdentifier;
+    protected JaggaerBasicValue customElementIdentifier;
     @XmlElement(name = "DisplayName")
     protected DisplayName displayName;
-    @XmlElements({
-        @XmlElement(name = "CustomElementValueList", type = CustomElementValueList.class),
-        @XmlElement(name = "Attachments", type = Attachments.class)
-    })
+    @XmlElements({ @XmlElement(name = "CustomElementValueList", type = CustomElementValueList.class),
+            @XmlElement(name = "Attachments", type = Attachments.class) })
     protected List<Object> customElementValueListOrAttachments;
 
-    
     public String getIsChanged() {
         return isChanged;
     }
 
-    
-    public void setIsChanged(String value) {
-        this.isChanged = value;
+    public void setIsChanged(String isChanged) {
+        this.isChanged = isChanged;
     }
 
-    
     public String getIsActive() {
         return isActive;
     }
 
-    
-    public void setIsActive(String value) {
-        this.isActive = value;
+    public void setIsActive(String isActive) {
+        this.isActive = isActive;
     }
 
-    
     public String getType() {
         return type;
     }
 
-    
-    public void setType(String value) {
-        this.type = value;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    
-    public CustomElementIdentifier getCustomElementIdentifier() {
+    public JaggaerBasicValue getCustomElementIdentifier() {
         return customElementIdentifier;
     }
 
-    
-    public void setCustomElementIdentifier(CustomElementIdentifier value) {
-        this.customElementIdentifier = value;
+    public void setCustomElementIdentifier(JaggaerBasicValue customElementIdentifier) {
+        this.customElementIdentifier = customElementIdentifier;
     }
 
-    
     public DisplayName getDisplayName() {
         return displayName;
     }
 
-    
-    public void setDisplayName(DisplayName value) {
-        this.displayName = value;
+    public void setDisplayName(DisplayName displayName) {
+        this.displayName = displayName;
     }
 
-    
     public List<Object> getCustomElementValueListOrAttachments() {
         if (customElementValueListOrAttachments == null) {
             customElementValueListOrAttachments = new ArrayList<Object>();

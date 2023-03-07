@@ -1,26 +1,30 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "customElementValue" })
-@XmlRootElement(name = "CustomElementValueList")
-public class CustomElementValueList {
-
+@XmlType(name = "", propOrder = { "value" })
+public class AddressLine {
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String isChanged;
-    @XmlElement(name = "CustomElementValue", required = true)
-    protected List<CustomElementValue> customElementValue;
+    @XmlValue
+    protected String value;
+
+    public AddressLine() {
+
+    }
+
+    public AddressLine(String value, String isChanged) {
+        this.value = value;
+        this.isChanged = isChanged;
+    }
 
     public String getIsChanged() {
         return isChanged;
@@ -30,11 +34,11 @@ public class CustomElementValueList {
         this.isChanged = isChanged;
     }
 
-    public List<CustomElementValue> getCustomElementValue() {
-        if (customElementValue == null) {
-            customElementValue = new ArrayList<CustomElementValue>();
-        }
-        return this.customElementValue;
+    public String getValue() {
+        return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
 }
