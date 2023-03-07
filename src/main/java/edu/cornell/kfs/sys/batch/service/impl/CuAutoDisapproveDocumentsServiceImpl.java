@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
@@ -350,42 +349,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
                 "Disapproval of Outstanding Documents - Year End Cancellation Process");
         UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(), document.getDocumentHeader().getWorkflowDocument());
    }
-
-    /**
-     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.kfs.sys.businessobject.DocumentHeader)
-     */
-    @Override
-    protected boolean checkIfDocumentEligibleForAutoDispproval(
-            final DocumentHeader documentHeader,
-            final List<String> eligibleDocumentTypeIds
-    ) {
-        boolean documentEligible = false;
-        
-        List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
-        
-        final WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
-
-        // Documents that have been recalled may still have an enroute doc header status (due to a bug we need to
-        // fix), so we need to double-check the workflow doc here since only ENROUTE docs can be DISAPPROVED.
-        if (!workflowDocument.isEnroute()) {
-            return false;
-        }
-        
-        final String documentTypeName = workflowDocument.getDocumentTypeName();
-        final DocumentType documentType = documentTypeService.getDocumentTypeByName(documentTypeName);
-        
-        for (DocumentType parentDocumentType : parentDocumentTypes) {
-            documentEligible = documentType.getParentId().equals(parentDocumentType.getId());
-            
-            if (documentEligible) {
-                break;
-            }
-            
-        }
-        
-        return documentEligible;
-        
-    }
 
     /**
      * CU Customization:
