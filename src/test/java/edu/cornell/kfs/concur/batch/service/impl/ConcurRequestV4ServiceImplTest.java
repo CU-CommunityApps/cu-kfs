@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebserviceService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -270,10 +270,10 @@ public class ConcurRequestV4ServiceImplTest {
         mockCurrentTimeMillis = getTimeInMilliseconds(newDate);
     }
 
-    private ConcurEventNotificationApiService buildConcurEventNotificationApiService(
+    private ConcurEventNotificationWebserviceService buildConcurEventNotificationApiService(
             ConcurBatchUtilityService mockConcurBatchUtilityService) {
-        ConcurEventNotificationApiServiceImpl eventNotificationApiService
-                = new ConcurEventNotificationApiServiceImpl();
+        ConcurEventNotificationWebserviceServiceImpl eventNotificationApiService
+                = new ConcurEventNotificationWebserviceServiceImpl();
         eventNotificationApiService.setConcurBatchUtilityService(mockConcurBatchUtilityService);
         return eventNotificationApiService;
     }

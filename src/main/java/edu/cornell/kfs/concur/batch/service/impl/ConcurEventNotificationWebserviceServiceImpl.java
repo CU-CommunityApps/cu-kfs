@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebserviceService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +30,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.sys.util.CUJsonUtils;
 import edu.cornell.kfs.sys.util.CURestClientUtils;
 
-public class ConcurEventNotificationApiServiceImpl implements ConcurEventNotificationApiService {
+public class ConcurEventNotificationWebserviceServiceImpl implements ConcurEventNotificationWebserviceService {
     private static final Logger LOG = LogManager.getLogger();
 
     private static final String EMPTY_JSON_OBJECT = "{}";

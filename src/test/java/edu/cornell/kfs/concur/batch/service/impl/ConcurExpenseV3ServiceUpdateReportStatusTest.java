@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebserviceService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -116,10 +116,10 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
                 Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)));
     }
 
-    private ConcurEventNotificationApiService createConcurEventNotificationV2WebserviceService(
+    private ConcurEventNotificationWebserviceService createConcurEventNotificationV2WebserviceService(
             ConcurBatchUtilityService concurBatchUtilityService) {
-        ConcurEventNotificationApiServiceImpl concurEventNotificationV2WebserviceService
-                = new ConcurEventNotificationApiServiceImpl();
+        ConcurEventNotificationWebserviceServiceImpl concurEventNotificationV2WebserviceService
+                = new ConcurEventNotificationWebserviceServiceImpl();
         concurEventNotificationV2WebserviceService.setConcurBatchUtilityService(concurBatchUtilityService);
         return concurEventNotificationV2WebserviceService;
     }

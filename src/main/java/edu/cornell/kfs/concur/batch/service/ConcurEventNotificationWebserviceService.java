@@ -2,7 +2,7 @@ package edu.cornell.kfs.concur.batch.service;
 
 import edu.cornell.kfs.concur.batch.ConcurWebRequest;
 
-public interface ConcurEventNotificationApiService {
+public interface ConcurEventNotificationWebserviceService {
     
     /*
      * Builds a JSON annotated java POJO from a concur web service endpoint

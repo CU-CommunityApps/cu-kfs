@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebserviceService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -38,7 +39,6 @@ import edu.cornell.kfs.concur.ConcurTestConstants.ParameterTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.ConcurTestWorkflowInfo;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationApiService;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.service.ConcurAccountValidationService;
@@ -129,10 +129,10 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
                 Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)));
     }
 
-    private ConcurEventNotificationApiService createConcurEventNotificationApiService(
+    private ConcurEventNotificationWebserviceService createConcurEventNotificationApiService(
             ConcurBatchUtilityService concurBatchUtilityService) {
-        ConcurEventNotificationApiServiceImpl concurEventNotificationApiService
-                = new ConcurEventNotificationApiServiceImpl();
+        ConcurEventNotificationWebserviceServiceImpl concurEventNotificationApiService
+                = new ConcurEventNotificationWebserviceServiceImpl();
         concurEventNotificationApiService.setConcurBatchUtilityService(concurBatchUtilityService);
         return concurEventNotificationApiService;
     }
