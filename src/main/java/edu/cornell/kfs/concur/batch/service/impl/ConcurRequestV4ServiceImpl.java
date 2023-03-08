@@ -445,7 +445,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
-    public void setConcurEventNotificationApiService(
+    public void setConcurEventNotificationWebserviceService(
             ConcurEventNotificationWebserviceService concurEventNotificationWebserviceService) {
         this.concurEventNotificationWebserviceService = concurEventNotificationWebserviceService;
     }

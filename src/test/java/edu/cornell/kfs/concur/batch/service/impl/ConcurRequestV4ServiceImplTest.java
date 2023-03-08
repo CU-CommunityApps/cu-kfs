@@ -121,7 +121,7 @@ public class ConcurRequestV4ServiceImplTest {
         requestV4Service.setSimulateProductionMode(false);
         requestV4Service.setSkipRequestListItemProcessing(false);
         requestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        requestV4Service.setConcurEventNotificationApiService(
+        requestV4Service.setConcurEventNotificationWebserviceService(
                 buildConcurEventNotificationApiService(mockConcurBatchUtilityService));
         requestV4Service.setConfigurationService(buildMockConfigurationService());
         requestV4Service.setDateTimeService(buildSpiedDateTimeService(testDateTimeService));

@@ -92,7 +92,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         
         this.concurRequestV4Service = new TestConcurRequestV4ServiceImpl();
         concurRequestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        concurRequestV4Service.setConcurEventNotificationApiService(
+        concurRequestV4Service.setConcurEventNotificationWebserviceService(
                 createConcurEventNotificationApiService(mockConcurBatchUtilityService));
         concurRequestV4Service.setConfigurationService(createMockConfigurationService());
         concurRequestV4Service.setConcurAccountValidationService(Mockito.mock(ConcurAccountValidationService.class));
