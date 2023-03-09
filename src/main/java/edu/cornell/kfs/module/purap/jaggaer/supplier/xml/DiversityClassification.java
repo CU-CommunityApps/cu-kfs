@@ -20,6 +20,14 @@ public class DiversityClassification {
     protected String isChanged;
     @XmlElement(name = "InternalName", required = true)
     protected JaggaerBasicValue internalName;
+    @XmlElement(name = "DisplayName")
+    protected DisplayName displayName;
+    @XmlElement(name = "AdditionalDataList")
+    protected AdditionalDataList additionalDataList;
+    @XmlElement(name = "DD-214Certificate")
+    protected DD214Certificate dd214Certificate;
+    @XmlElement(name = "DiversityCertificate")
+    protected DiversityCertificate diversityCertificate;
 
     public String getIsChanged() {
         return isChanged;
@@ -68,14 +76,5 @@ public class DiversityClassification {
     public void setDiversityCertificate(DiversityCertificate diversityCertificate) {
         this.diversityCertificate = diversityCertificate;
     }
-
-    @XmlElement(name = "DisplayName")
-    protected DisplayName displayName;
-    @XmlElement(name = "AdditionalDataList")
-    protected AdditionalDataList additionalDataList;
-    @XmlElement(name = "DD-214Certificate")
-    protected DD214Certificate dd214Certificate;
-    @XmlElement(name = "DiversityCertificate")
-    protected DiversityCertificate diversityCertificate;
 
 }

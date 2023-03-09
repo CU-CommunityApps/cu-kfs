@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "header",
-        "supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage" })
+        "supplierRequestMessageItems" })
 @XmlRootElement(name = "SupplierSyncMessage")
 public class SupplierSyncMessage {
 
@@ -33,7 +33,7 @@ public class SupplierSyncMessage {
      * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd TSMSupplierXML.dtd
      */
     @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
-    protected List<Object> supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage;
+    protected List<SupplierRequestMessageItemInterface> supplierRequestMessageItems;
 
     public String getVersion() {
         return version;
@@ -51,11 +51,11 @@ public class SupplierSyncMessage {
         this.header = header;
     }
 
-    public List<Object> getSupplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage() {
-        if (supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage == null) {
-            supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage = new ArrayList<Object>();
+    public List<SupplierRequestMessageItemInterface> getSupplierRequestMessageItems() {
+        if (supplierRequestMessageItems == null) {
+            supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItemInterface>();
         }
-        return this.supplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage;
+        return this.supplierRequestMessageItems;
     }
 
 }

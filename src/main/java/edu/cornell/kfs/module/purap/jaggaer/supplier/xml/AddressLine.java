@@ -17,10 +17,6 @@ public class AddressLine {
     @XmlValue
     protected String value;
 
-    public AddressLine() {
-
-    }
-
     public AddressLine(String value, String isChanged) {
         this.value = value;
         this.isChanged = isChanged;

@@ -13,7 +13,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "discountPercentOrDiscountAmountOrIsoCurrencyCode" })
+@XmlType(name = "", propOrder = { "discountItems" })
 @XmlRootElement(name = "Discount")
 public class Discount {
 
@@ -26,7 +26,7 @@ public class Discount {
     @XmlElements({ @XmlElement(name = "DiscountPercent", required = true, type = DiscountPercent.class),
             @XmlElement(name = "DiscountAmount", required = true, type = DiscountAmount.class),
             @XmlElement(name = "IsoCurrencyCode", required = true, type = IsoCurrencyCode.class) })
-    protected List<Object> discountPercentOrDiscountAmountOrIsoCurrencyCode;
+    protected List<DiscountItemInterface> discountItems;
 
     public String getIsChanged() {
         return isChanged;
@@ -44,11 +44,11 @@ public class Discount {
         this.unit = unit;
     }
 
-    public List<Object> getDiscountPercentOrDiscountAmountOrIsoCurrencyCode() {
-        if (discountPercentOrDiscountAmountOrIsoCurrencyCode == null) {
-            discountPercentOrDiscountAmountOrIsoCurrencyCode = new ArrayList<Object>();
+    public List<DiscountItemInterface> getDiscountItems() {
+        if (discountItems == null) {
+            discountItems = new ArrayList<DiscountItemInterface>();
         }
-        return this.discountPercentOrDiscountAmountOrIsoCurrencyCode;
+        return this.discountItems;
     }
 
 }

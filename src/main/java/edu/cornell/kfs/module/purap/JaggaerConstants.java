@@ -8,4 +8,6 @@ public class JaggaerConstants {
     public static final String JAGGAER_PERMISSION_TEMPLATE_NAME = "Jaggaer Permission Template";
     public static final String JAGGAER_ATTRIBUTE_VALUE_KEY = "jaggaerRole";
     
+    public static final String DEFAULT_XML_NS_XPP = "http://www.w3.org/2004/08/xop/include/";
+    
 }

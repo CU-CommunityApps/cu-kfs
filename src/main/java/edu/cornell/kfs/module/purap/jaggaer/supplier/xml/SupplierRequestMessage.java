@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "supplier" })
 @XmlRootElement(name = "SupplierRequestMessage")
-public class SupplierRequestMessage {
+public class SupplierRequestMessage implements SupplierRequestMessageItemInterface{
 
     @XmlElement(name = "Supplier", required = true)
     protected List<Supplier> supplier;

@@ -68,9 +68,7 @@ public class SupplierSyncMessageTest {
 
         SupplierRequestMessage srm = new SupplierRequestMessage();
         srm.getSupplier().add(buildSupplier());
-        supplierSyncMessage
-                .getSupplierRequestMessageOrSupplierResponseMessageOrLookupRequestMessageOrLookupResponseMessage()
-                .add(srm);
+        supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
         logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, BATCH_DIRECTORY + "test.xml");
@@ -655,13 +653,13 @@ public class SupplierSyncMessageTest {
 
         DiscountAmount amount = new DiscountAmount();
         amount.setValue("10");
-        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(amount);
+        discount.getDiscountItems().add(amount);
 
-        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(buildIsoCurrencyCode("USD", null));
+        discount.getDiscountItems().add(buildIsoCurrencyCode("USD", null));
 
         DiscountPercent percent = new DiscountPercent();
         percent.setValue("5");
-        discount.getDiscountPercentOrDiscountAmountOrIsoCurrencyCode().add(percent);
+        discount.getDiscountItems().add(percent);
 
         paymentTerms.setDiscount(discount);
         paymentTerms.setDays(new JaggaerBasicValue("Monday, Tuesday"));

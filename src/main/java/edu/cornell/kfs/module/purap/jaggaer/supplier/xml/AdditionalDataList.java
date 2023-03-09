@@ -1,4 +1,3 @@
-
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "additionalData"
@@ -26,7 +24,6 @@ public class AdditionalDataList {
     protected String isChanged;
     @XmlElement(name = "AdditionalData")
     protected List<AdditionalData> additionalData;
-
     
     public String getIsChanged() {
         return isChanged;

@@ -2,6 +2,8 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.cornell.kfs.module.purap.JaggaerConstants;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -24,7 +26,7 @@ public class Attachments {
 
     public String getXmlnsXop() {
         if (xmlnsXop == null) {
-            return "http://www.w3.org/2004/08/xop/include/";
+            return JaggaerConstants.DEFAULT_XML_NS_XPP;
         } else {
             return xmlnsXop;
         }
