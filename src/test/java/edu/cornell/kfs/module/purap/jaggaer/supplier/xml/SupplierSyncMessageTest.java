@@ -1,22 +1,12 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +14,8 @@ import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
+import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
-import liquibase.pro.packaged.F;
-import liquibase.pro.packaged.T;
 
 public class SupplierSyncMessageTest {
     private static final String US_DOLLAR_CURRENCY_CODE = "usd";
@@ -37,25 +26,25 @@ public class SupplierSyncMessageTest {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final String BATCH_DIRECTORY = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/outputtemp/";
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
+    private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "outputtemp/";
     private static final String BASIC_FILE_EXAMPLE = "SupplierSyncMessageBasic.xml";
 
-    private File batchDirectoryFile;
+    private File outputFileDirectory;
 
     private CUMarshalService marshalService;
 
     @BeforeEach
     void setUpBeforeClass() throws Exception {
         marshalService = new CUMarshalServiceImpl();
-        batchDirectoryFile = new File(BATCH_DIRECTORY);
-        batchDirectoryFile.mkdir();
+        outputFileDirectory = new File(OUTPUT_FILE_PATH);
+        outputFileDirectory.mkdir();
     }
 
     @AfterEach
     void tearDownAfterClass() throws Exception {
         marshalService = null;
-        FileUtils.deleteDirectory(batchDirectoryFile);
+        FileUtils.deleteDirectory(outputFileDirectory);
     }
 
     @Test
@@ -71,8 +60,8 @@ public class SupplierSyncMessageTest {
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
         logActualXmlIfNeeded(supplierSyncMessage);
-        File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, BATCH_DIRECTORY + "test.xml");
-        compareXML(actualXmlFile, expectedXmlFile);
+        File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
+        CuXMLUnitTestUtils.compareXML(actualXmlFile, expectedXmlFile);
     }
 
     private Header buildHeader() {
@@ -1000,22 +989,4 @@ public class SupplierSyncMessageTest {
         }
     }
 
-    private void compareXML(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException {
-        FileInputStream actualFileInputStream = new FileInputStream(actualXmlFile);
-        FileInputStream expectedFIleInputStream = new FileInputStream(expectedXmlFile);
-
-        BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
-        BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));
-
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setIgnoreComments(true);
-
-        Diff xmlDiff = new Diff(expectedBufferedReader, actualBufferedReader);
-        DetailedDiff detailXmlDiff = new DetailedDiff(xmlDiff);
-        List<Difference> differences = detailXmlDiff.getAllDifferences();
-        for (Difference difference : differences) {
-            LOG.info("compareXML, difference: " + difference);
-        }
-        assertEquals(0, differences.size());
-    }
 }

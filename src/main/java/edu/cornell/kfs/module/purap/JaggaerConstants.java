@@ -10,4 +10,6 @@ public class JaggaerConstants {
     
     public static final String DEFAULT_XML_NS_XPP = "http://www.w3.org/2004/08/xop/include/";
     
+    public static final String SUPPLIER_SYNCH_MESSAGE_XML_VERSION = "1.0";
+    
 }
