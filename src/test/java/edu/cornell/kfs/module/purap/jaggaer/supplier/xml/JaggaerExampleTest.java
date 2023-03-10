@@ -53,6 +53,7 @@ public class JaggaerExampleTest {
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
         supplierSyncMessage.setVersion(JaggaerConstants.SUPPLIER_SYNCH_MESSAGE_XML_VERSION);
         supplierSyncMessage.setHeader(buildHeader());
+        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
 
 
         logActualXmlIfNeeded(supplierSyncMessage);
@@ -69,6 +70,35 @@ public class JaggaerExampleTest {
         auth.setSharedSecret("password");
         header.setAuthentication(auth);
         return header;
+    }
+    
+    private SupplierRequestMessage buildSupplierRequestMessage() {
+        SupplierRequestMessage message = new SupplierRequestMessage();
+        message.getSupplier().add(buildSupplier());
+        return message;
+    }
+    
+    private Supplier buildSupplier() {
+        Supplier supplier = new Supplier();
+        supplier.setErpNumber(JaggaerBuilder.buildERPNumber("als12345"));
+        supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511507"));
+        supplier.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("ALS0001"));
+        supplier.setName(JaggaerBuilder.buildName("Affordable Lab Supplies"));
+        supplier.setDoingBusinessAs(new JaggaerBasicValue("ALS"));
+        supplier.setOtherNames(new JaggaerBasicValue("AffLabs"));
+        supplier.setJaSupplierId("9142");
+        supplier.setCountryOfOrigin(new JaggaerBasicValue("US"));
+        supplier.setParentSupplier(buildParentSupplier());
+        supplier.setActive(JaggaerBuilder.buildActive(JaggaerConstants.NO));
+        
+        return supplier;
+    }
+    
+    private ParentSupplier buildParentSupplier() {
+        ParentSupplier parent = new ParentSupplier();
+        parent.setErpNumber(JaggaerBuilder.buildERPNumber("als12343"));
+        parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511504"));
+        return parent;
     }
     
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {

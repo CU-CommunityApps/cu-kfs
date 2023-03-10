@@ -12,4 +12,7 @@ public class JaggaerConstants {
     
     public static final String SUPPLIER_SYNCH_MESSAGE_XML_VERSION = "1.0";
     
+    public static final String YES = "Yes";
+    public static final String NO = "No";
+    
 }

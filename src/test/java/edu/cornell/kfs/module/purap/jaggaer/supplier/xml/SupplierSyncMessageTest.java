@@ -85,8 +85,8 @@ public class SupplierSyncMessageTest {
         supplier.setApprovedForERPSync(T_TRUE);
         supplier.setRequiresERP(T_TRUE);
         supplier.setOldERPNumber("old erp number");
-        supplier.setErpNumber(buildERPNumber("erp number", F_FALSE));
-        supplier.setName(buildName("Acme Test Company", null));
+        supplier.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", F_FALSE));
+        supplier.setName(JaggaerBuilder.buildName("Acme Test Company", null));
 
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(new JaggaerBasicValue("restrict", T_TRUE));
         supplier.setSic(new JaggaerBasicValue("SIC", F_FALSE));
@@ -121,7 +121,7 @@ public class SupplierSyncMessageTest {
         sqId.setValue("SO ID");
         supplier.setSupplierSQId(sqId);
 
-        supplier.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
+        supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
 
         supplier.setBrands(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
@@ -148,37 +148,14 @@ public class SupplierSyncMessageTest {
         return supplier;
     }
 
-    private ERPNumber buildERPNumber(String erpNumber, String changed) {
-        ERPNumber erp = new ERPNumber();
-        erp.setIsChanged(changed);
-        erp.setValue(erpNumber);
-        return erp;
-    }
-
-    private Name buildName(String nameString, String changed) {
-        Name name = new Name();
-        name.setValue(nameString);
-        name.setIsChanged(changed);
-        return name;
-    }
-
     private Active buildActive() {
-        Active active = new Active();
-        active.setValue("active");
-        return active;
+        return JaggaerBuilder.buildActive("active");
     }
 
     private ThirdPartyRefNumber buildThirdPartyRefNumber() {
-        ThirdPartyRefNumber refNumber = new ThirdPartyRefNumber();
-        refNumber.setValue("3rd party ref number");
-        return refNumber;
+        return JaggaerBuilder.buildThirdPartyRefNumber("3rd party ref number");
     }
 
-    private SQIntegrationNumber buildSQIntegrationNumber(String number) {
-        SQIntegrationNumber sqIntegrationNumber = new SQIntegrationNumber();
-        sqIntegrationNumber.setValue(number);
-        return sqIntegrationNumber;
-    }
 
     private Brands buildBrands() {
         Brands brands = new Brands();
@@ -339,9 +316,9 @@ public class SupplierSyncMessageTest {
 
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setErpNumber(buildERPNumber("parent erp number", F_FALSE));
+        parent.setErpNumber(JaggaerBuilder.buildERPNumber("parent erp number", F_FALSE));
         parent.setIsChanged(F_FALSE);
-        parent.setSqIntegrationNumber(buildSQIntegrationNumber("parent integration number"));
+        parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("parent integration number"));
         return parent;
     }
 
@@ -436,10 +413,10 @@ public class SupplierSyncMessageTest {
         ap.setIsChanged(T_TRUE);
         ap.setType("accounts payable type");
         ap.setOldERPNumber("old erp number");
-        ap.setErpNumber(buildERPNumber("erp number", F_FALSE));
-        ap.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
+        ap.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", F_FALSE));
+        ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        ap.setName(buildName("accounts payable name", T_TRUE));
+        ap.setName(JaggaerBuilder.buildName("accounts payable name", T_TRUE));
         ap.setActive(buildActive());
         ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
@@ -562,10 +539,10 @@ public class SupplierSyncMessageTest {
         location.setIsChanged(T_TRUE);
         location.setSupportsOrderFulfillment("Order Fulfillment(");
         location.setOldERPNumber("old erp number");
-        location.setErpNumber(buildERPNumber("erp number", T_TRUE));
-        location.setSqIntegrationNumber(buildSQIntegrationNumber("sqIntegrationNumber"));
+        location.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
         location.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        location.setName(buildName("silly location name", T_TRUE));
+        location.setName(JaggaerBuilder.buildName("silly location name", T_TRUE));
         location.setDescription(new JaggaerBasicValue("description value", T_TRUE));
         location.setActive(buildActive());
         location.setLocationActive(new JaggaerBasicValue("location is active", T_TRUE));
@@ -838,8 +815,8 @@ public class SupplierSyncMessageTest {
         contact.setType("contact type");
 
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(buildERPNumber("erp number", T_TRUE));
-        ref.setSqIntegrationNumber(buildSQIntegrationNumber("SQ number"));
+        ref.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ number"));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         contact.setContactRef(ref);
         return contact;
@@ -852,11 +829,11 @@ public class SupplierSyncMessageTest {
         Contact contact = new Contact();
         contact.setIsChanged(T_TRUE);
         contact.setType("contact type");
-        contact.setErpNumber(buildERPNumber("erp number", T_TRUE));
+        contact.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
         contact.setOldERPNumber("old erp number");
-        contact.setSqIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        contact.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sq integration number"));
         contact.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        contact.setName(buildName("contact name", T_TRUE));
+        contact.setName(JaggaerBuilder.buildName("contact name", T_TRUE));
         contact.setActive(buildActive());
 
         contact.setFirstName(new JaggaerBasicValue("Jane", T_TRUE));
@@ -904,8 +881,8 @@ public class SupplierSyncMessageTest {
         address.setType(addressType);
 
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(buildERPNumber(erpNumber, T_TRUE));
-        ref.setSqIntegrationNumber(buildSQIntegrationNumber(sqiNumber));
+        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber, T_TRUE));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(sqiNumber));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         address.setAddressRef(ref);
         return address;
@@ -918,11 +895,11 @@ public class SupplierSyncMessageTest {
         Address address = new Address();
         address.setIsChanged(T_TRUE);
         address.setType("home address");
-        address.setErpNumber(buildERPNumber("erp number", T_TRUE));
+        address.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
         address.setOldERPNumber("old erp number");
-        address.setSqIntegrationNumber(buildSQIntegrationNumber("sq integration number"));
+        address.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sq integration number"));
         address.setThirdPartyRefNumber(buildThirdPartyRefNumber());
-        address.setName(buildName("address name", T_TRUE));
+        address.setName(JaggaerBuilder.buildName("address name", T_TRUE));
         address.setActive(buildActive());
         address.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod());
 

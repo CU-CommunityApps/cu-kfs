@@ -38,6 +38,7 @@
 				<BusinessUnitVendorNumber
 					businessUnitInternalName="VA3">VACBO0003</BusinessUnitVendorNumber>
 			</BusinessUnitVendorNumberList>
+			<!-- 
 			<WebSiteURL>www.affordablelabsupplies.com</WebSiteURL>
 			<DUNS>123456789</DUNS>
 			<LegalStructure>LimitedLiabilityCompany_Partnership</LegalStructure>
@@ -759,6 +760,7 @@
 					</InsuranceCertificate>
 				</InsuranceInformation>
 			</InsuranceInformationList>
+			 -->
 		</Supplier>
 	</SupplierRequestMessage>
 </SupplierSyncMessage>
