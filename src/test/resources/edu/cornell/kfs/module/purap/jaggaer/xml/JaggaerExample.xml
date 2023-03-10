@@ -38,7 +38,6 @@
 				<BusinessUnitVendorNumber
 					businessUnitInternalName="VA3">VACBO0003</BusinessUnitVendorNumber>
 			</BusinessUnitVendorNumberList>
-			<!-- 
 			<WebSiteURL>www.affordablelabsupplies.com</WebSiteURL>
 			<DUNS>123456789</DUNS>
 			<LegalStructure>LimitedLiabilityCompany_Partnership</LegalStructure>
@@ -108,6 +107,7 @@
 				<IsoCurrencyCode isChanged="No">MXN</IsoCurrencyCode>
 			</EnabledCurrencyList>
 			<SupplierKeywords>Paper Products, Filters, Drinking Straws</SupplierKeywords>
+			<!-- 
 			<AddressList>
 				<Address type="remitto">
 					<ERPNumber>add123</ERPNumber>

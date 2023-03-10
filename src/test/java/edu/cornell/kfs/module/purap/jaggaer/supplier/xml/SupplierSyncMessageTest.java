@@ -167,22 +167,11 @@ public class SupplierSyncMessageTest {
     private NaicsCodes buildNaicsCodes() {
         NaicsCodes codes = new NaicsCodes();
         codes.setIsChanged(T_TRUE);
-        PrimaryNaics primary = new PrimaryNaics();
-        primary.setValue("primary code");
-        primary.setIsChanged(T_TRUE);
-        codes.getPrimaryNaicsOrSecondaryNaicsList().add(primary);
+        codes.getPrimaryNaicsOrSecondaryNaicsList().add(JaggaerBuilder.buildPrimaryNaics("primary code", T_TRUE));
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-
-        SecondaryNaics second = new SecondaryNaics();
-        second.setValue("second");
-        second.setIsChanged(F_FALSE);
-        secondaryList.getSecondaryNaics().add(second);
-
-        SecondaryNaics third = new SecondaryNaics();
-        third.setValue("third");
-        third.setIsChanged(T_TRUE);
-        secondaryList.getSecondaryNaics().add(third);
+        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("second", F_FALSE));
+        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("third", T_TRUE));
 
         codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
         return codes;
@@ -204,15 +193,15 @@ public class SupplierSyncMessageTest {
         }
 
         if (includeUSD) {
-            currencyList.getIsoCurrencyCode().add(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
+            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         }
 
         if (includePeso) {
-            currencyList.getIsoCurrencyCode().add(buildIsoCurrencyCode("peso", F_FALSE));
+            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode("peso", F_FALSE));
         }
 
         if (includeEuro) {
-            currencyList.getIsoCurrencyCode().add(buildIsoCurrencyCode("euro", null));
+            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode("euro", null));
         }
 
         return currencyList;
@@ -221,21 +210,9 @@ public class SupplierSyncMessageTest {
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
         unitNumberList.setIsChanged(T_TRUE);
-
-        BusinessUnitVendorNumber unit1 = new BusinessUnitVendorNumber();
-        unit1.setBusinessUnitInternalName("vendor number 1");
-        unit1.setValue("1232");
-        unit1.setIsChanged(T_TRUE);
-        unitNumberList.getBusinessUnitVendorNumber().add(unit1);
-
-        BusinessUnitVendorNumber unit2 = new BusinessUnitVendorNumber();
-        unit2.setBusinessUnitInternalName("vendor number 2");
-        unit2.setValue("56464");
-        unit2.setIsChanged(F_FALSE);
-        unitNumberList.getBusinessUnitVendorNumber().add(unit2);
-
+        unitNumberList.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 1", "1232", T_TRUE));
+        unitNumberList.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 2", "56464", F_FALSE));
         return unitNumberList;
-
     }
 
     private SupplierCapital buildSupplierCapital() {
@@ -243,21 +220,12 @@ public class SupplierSyncMessageTest {
         Amount ammount = buildAmount("50.00");
         capital.setAmount(ammount);
         capital.setIsChanged(T_TRUE);
-        capital.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
+        capital.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
         return capital;
     }
 
     private Amount buildAmount(String amountString) {
-        Amount ammount = new Amount();
-        ammount.setIsChanged(T_TRUE);
-        ammount.setValue(amountString);
-        return ammount;
-    }
-
-    private IsoCurrencyCode buildIsoCurrencyCode(String currencyCode, String changed) {
-        IsoCurrencyCode code = new IsoCurrencyCode(currencyCode);
-        code.setIsChanged(changed);
-        return code;
+        return JaggaerBuilder.buildAmount(amountString, T_TRUE);
     }
 
     private AnnualSalesList buildAnnualSalesList() {
@@ -267,7 +235,7 @@ public class SupplierSyncMessageTest {
         AnnualSales sale = new AnnualSales();
         sale.setIsChanged(F_FALSE);
 
-        sale.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
+        sale.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
 
         sale.setAnnualSalesYear(new JaggaerBasicValue("2023", T_TRUE));
 
@@ -305,10 +273,7 @@ public class SupplierSyncMessageTest {
         stateServiceAreaList.setIsChanged(T_TRUE);
 
         for (String name : names) {
-            StateServiceAreaInternalName internalName = new StateServiceAreaInternalName();
-            internalName.setIsChanged(T_TRUE);
-            internalName.setValue(name);
-            stateServiceAreaList.getStateServiceAreaInternalName().add(internalName);
+            stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName(name, T_TRUE));
         }
 
         return stateServiceAreaList;
@@ -420,7 +385,7 @@ public class SupplierSyncMessageTest {
         ap.setActive(buildActive());
         ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
-        ap.setIsoCurrencyCode(buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
+        ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         ap.setContactName(new JaggaerBasicValue("contact name", T_TRUE));
         ap.setPurpose(new JaggaerBasicValue("testing is the only purpose", T_TRUE));;
         ap.setAccountId(new JaggaerBasicValue("G234715", T_TRUE));
@@ -621,7 +586,7 @@ public class SupplierSyncMessageTest {
         amount.setValue("10");
         discount.getDiscountItems().add(amount);
 
-        discount.getDiscountItems().add(buildIsoCurrencyCode("USD", null));
+        discount.getDiscountItems().add(JaggaerBuilder.buildIsoCurrencyCode("USD", null));
 
         DiscountPercent percent = new DiscountPercent();
         percent.setValue("5");
