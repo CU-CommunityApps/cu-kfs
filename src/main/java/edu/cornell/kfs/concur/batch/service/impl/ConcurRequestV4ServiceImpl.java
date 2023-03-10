@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebserviceService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +66,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
             "The request failed validation but will be approved anyway. The resulting SAE entries may get rejected.";
 
     protected ConcurBatchUtilityService concurBatchUtilityService;
-    protected ConcurEventNotificationWebserviceService concurEventNotificationWebserviceService;
+    protected ConcurEventNotificationWebApiService concurEventNotificationWebApiService;
     protected ConcurAccountValidationService concurAccountValidationService;
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
@@ -128,7 +128,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         String messageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_LISTING),
                 page);
-        return concurEventNotificationWebserviceService.buildConcurDTOFromEndpoint(
+        return concurEventNotificationWebApiService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ListingDTO.class, messageDetail);
     }
 
@@ -263,7 +263,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
                 requestUuid, resultsDTO);
         
-        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebserviceService.callConcurEndpoint(
+        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(
                 accessToken, webRequest, logMessageDetail);
         
         try {
@@ -350,7 +350,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                 requestUuid);
         String queryUrl = getRequestV4Endpoint() + CUKFSConstants.SLASH + UrlFactory.encode(requestUuid);
         
-        return concurEventNotificationWebserviceService.buildConcurDTOFromEndpoint(
+        return concurEventNotificationWebApiService.buildConcurDTOFromEndpoint(
                 accessToken, queryUrl, ConcurRequestV4ReportDTO.class, messageDetail);
     }
 
@@ -445,9 +445,9 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         this.concurBatchUtilityService = concurBatchUtilityService;
     }
 
-    public void setConcurEventNotificationWebserviceService(
-            ConcurEventNotificationWebserviceService concurEventNotificationWebserviceService) {
-        this.concurEventNotificationWebserviceService = concurEventNotificationWebserviceService;
+    public void setConcurEventNotificationWebApiService(
+            ConcurEventNotificationWebApiService concurEventNotificationWebApiService) {
+        this.concurEventNotificationWebApiService = concurEventNotificationWebApiService;
     }
 
     public void setConcurAccountValidationService(ConcurAccountValidationService concurAccountValidationService) {

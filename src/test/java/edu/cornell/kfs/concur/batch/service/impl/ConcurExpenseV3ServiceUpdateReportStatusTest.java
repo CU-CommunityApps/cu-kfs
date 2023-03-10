@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebserviceService;
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -84,8 +84,8 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
         
         this.concurExpenseV3Service = new TestConcurExpenseV3ServiceImpl();
         concurExpenseV3Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        concurExpenseV3Service.setConcurEventNotificationWebserviceService(
-                createConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
+        concurExpenseV3Service.setConcurEventNotificationWebApiService(
+                createConcurEventNotificationWebApiService(mockConcurBatchUtilityService));
         concurExpenseV3Service.setConfigurationService(createMockConfigurationService());
         concurExpenseV3Service.setConcurAccountValidationService(Mockito.mock(ConcurAccountValidationService.class));
         concurExpenseV3Service.setSimulateProduction(true);
@@ -116,12 +116,12 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
                 Map.entry(ConcurParameterConstants.WEBSERVICE_MAX_RETRIES, String.valueOf(1)));
     }
 
-    private ConcurEventNotificationWebserviceService createConcurEventNotificationV2WebserviceService(
+    private ConcurEventNotificationWebApiService createConcurEventNotificationWebApiService(
             ConcurBatchUtilityService concurBatchUtilityService) {
-        ConcurEventNotificationWebserviceServiceImpl concurEventNotificationV2WebserviceService
-                = new ConcurEventNotificationWebserviceServiceImpl();
-        concurEventNotificationV2WebserviceService.setConcurBatchUtilityService(concurBatchUtilityService);
-        return concurEventNotificationV2WebserviceService;
+        ConcurEventNotificationWebApiServiceImpl concurEventNotificationWebApiService
+                = new ConcurEventNotificationWebApiServiceImpl();
+        concurEventNotificationWebApiService.setConcurBatchUtilityService(concurBatchUtilityService);
+        return concurEventNotificationWebApiService;
     }
 
     private ConfigurationService createMockConfigurationService() {
