@@ -180,7 +180,7 @@ public class ConcurConstants {
         public static final String REQUEST_HEADER_CONTENT_TYPE_KEY_NAME = "Content-Type";
     }
     
-    public enum ConcurEventNoticationVersion2EventType {
+    public enum ConcurEventNotificationType {
         ExpenseReport("Expense Report", "Expense Report ID", "Expense Report Name", "Expense Report Status", true),
         TravelRequest("Travel Request", "Request ID", "Request Name", "Request Status", false);
         
@@ -190,8 +190,8 @@ public class ConcurConstants {
         public final String reportStatusDescription;
         public final boolean displayTravelerEmail;
 
-        private ConcurEventNoticationVersion2EventType(String eventType, String reportNumberDescription, String reportNameDescription,
-                                                       String reportStatusDescription, boolean displayTravelerEmail) {
+        private ConcurEventNotificationType(String eventType, String reportNumberDescription, String reportNameDescription,
+                                            String reportStatusDescription, boolean displayTravelerEmail) {
             this.eventType = eventType;
             this.reportNumberDescription = reportNumberDescription;
             this.reportNameDescription = reportNameDescription;
@@ -200,7 +200,7 @@ public class ConcurConstants {
         }
     }
     
-    public enum ConcurEventNotificationVersion2ProcessingResults {
+    public enum ConcurEventNotificationStatus {
         validAccounts("valid", true, "Valid Accounts"),
         invalidAccounts("invalid", false, "Invalid Accounts"),
         processingError("processing error", false, "Processing Errors");
@@ -209,7 +209,7 @@ public class ConcurConstants {
         public final boolean valid;
         public final String statusForReport;
         
-        private ConcurEventNotificationVersion2ProcessingResults(String status, boolean valid, String statusForReport) {
+        private ConcurEventNotificationStatus(String status, boolean valid, String statusForReport) {
             this.status = status;
             this.valid = valid;
             this.statusForReport = statusForReport;

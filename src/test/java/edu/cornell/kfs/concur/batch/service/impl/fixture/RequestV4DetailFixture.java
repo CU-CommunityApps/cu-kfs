@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationVersion2ProcessingResults;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurTestConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
@@ -319,10 +319,10 @@ public enum RequestV4DetailFixture {
         }
     }
 
-    public ConcurEventNotificationVersion2ProcessingResults getExpectedProcessingResult() {
+    public ConcurEventNotificationStatus getExpectedProcessingResult() {
         return isExpectedToPassAccountValidation()
-                ? ConcurEventNotificationVersion2ProcessingResults.validAccounts
-                : ConcurEventNotificationVersion2ProcessingResults.invalidAccounts;
+                ? ConcurEventNotificationStatus.validAccounts
+                : ConcurEventNotificationStatus.invalidAccounts;
     }
 
     public boolean isExpectedToPassAccountValidation() {
