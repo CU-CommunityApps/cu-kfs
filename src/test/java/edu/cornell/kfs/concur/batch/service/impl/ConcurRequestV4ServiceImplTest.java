@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +39,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNoticationVersion2EventType;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
@@ -48,12 +49,11 @@ import edu.cornell.kfs.concur.ConcurTestConstants.PropertyTestValues;
 import edu.cornell.kfs.concur.ConcurTestConstants.RequestV4Dates;
 import edu.cornell.kfs.concur.batch.fixture.ConcurFixtureUtils;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationV2WebserviceService;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4DetailFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4ListingFixture;
 import edu.cornell.kfs.concur.batch.service.impl.fixture.RequestV4PersonFixture;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
-import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationProcessingResultsDTO;
+import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4CustomItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurRequestV4ListItemDTO;
@@ -121,8 +121,8 @@ public class ConcurRequestV4ServiceImplTest {
         requestV4Service.setSimulateProductionMode(false);
         requestV4Service.setSkipRequestListItemProcessing(false);
         requestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        requestV4Service.setConcurEventNotificationV2WebserviceService(
-                buildConcurEventNotificationV2WebserviceService(mockConcurBatchUtilityService));
+        requestV4Service.setConcurEventNotificationWebApiService(
+                buildConcurEventNotificationApiService(mockConcurBatchUtilityService));
         requestV4Service.setConfigurationService(buildMockConfigurationService());
         requestV4Service.setDateTimeService(buildSpiedDateTimeService(testDateTimeService));
         requestV4Service.setConcurAccountValidationService(buildMockConcurAccountValidationService());
@@ -270,12 +270,12 @@ public class ConcurRequestV4ServiceImplTest {
         mockCurrentTimeMillis = getTimeInMilliseconds(newDate);
     }
 
-    private ConcurEventNotificationV2WebserviceService buildConcurEventNotificationV2WebserviceService(
+    private ConcurEventNotificationWebApiService buildConcurEventNotificationApiService(
             ConcurBatchUtilityService mockConcurBatchUtilityService) {
-        ConcurEventNotificationV2WebserviceServiceImpl notificationV2Service
-                = new ConcurEventNotificationV2WebserviceServiceImpl();
-        notificationV2Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
-        return notificationV2Service;
+        ConcurEventNotificationWebApiServiceImpl eventNotificationApiService
+                = new ConcurEventNotificationWebApiServiceImpl();
+        eventNotificationApiService.setConcurBatchUtilityService(mockConcurBatchUtilityService);
+        return eventNotificationApiService;
     }
 
     private ConcurAccountValidationService buildMockConcurAccountValidationService() {
@@ -511,17 +511,17 @@ public class ConcurRequestV4ServiceImplTest {
             RequestV4ListingFixture expectedListing, boolean productionMode) {
         Map<String, RequestV4DetailFixture> expectedResults = expectedListing
                 .getExpectedProcessedRequestsKeyedByRequestId(productionMode);
-        List<ConcurEventNotificationProcessingResultsDTO> actualResults = requestV4Service.processTravelRequests(
+        List<ConcurEventNotificationResponse> actualResults = requestV4Service.processTravelRequests(
                 mockAccessToken);
         assertRequestsWereValidatedAsExpected(expectedResults, actualResults);
     }
 
     private void assertRequestsWereValidatedAsExpected(Map<String, RequestV4DetailFixture> expectedResults,
-            List<ConcurEventNotificationProcessingResultsDTO> actualResults) {
+            List<ConcurEventNotificationResponse> actualResults) {
         Set<String> encounteredResults = new HashSet<>();
         assertEquals(expectedResults.size(), actualResults.size(), "Wrong number of validation results");
         
-        for (ConcurEventNotificationProcessingResultsDTO actualResult : actualResults) {
+        for (ConcurEventNotificationResponse actualResult : actualResults) {
             String requestId = actualResult.getReportNumber();
             assertTrue(StringUtils.isNotBlank(requestId), "Validation result should have had a Request ID");
             assertTrue(encounteredResults.add(requestId), "Unexpected duplicate result for Request ID: " + requestId);
@@ -534,11 +534,11 @@ public class ConcurRequestV4ServiceImplTest {
     }
 
     private void assertRequestWasValidatedAsExpected(
-            RequestV4DetailFixture expectedResult, ConcurEventNotificationProcessingResultsDTO actualResult) {
+            RequestV4DetailFixture expectedResult, ConcurEventNotificationResponse actualResult) {
         assertEquals(expectedResult.requestId, actualResult.getReportNumber(), "Wrong Request ID for result");
-        assertEquals(ConcurEventNoticationVersion2EventType.TravelRequest, actualResult.getEventType(),
+        assertEquals(ConcurEventNotificationType.TravelRequest, actualResult.getEventType(),
                 "Wrong validation event type for result");
-        assertEquals(expectedResult.getExpectedProcessingResult(), actualResult.getProcessingResults(),
+        assertEquals(expectedResult.getExpectedProcessingResult(), actualResult.getEventNotificationStatus(),
                 "Wrong validation outcome for result");
         if (expectedResult.isExpectedToPassAccountValidation()) {
             assertTrue(CollectionUtils.isEmpty(actualResult.getMessages()),
@@ -558,7 +558,7 @@ public class ConcurRequestV4ServiceImplTest {
     private void assertSearchForRequestListingReturnsExpectedResults(RequestV4ListingFixture expectedResults) {
         requestV4Service.setSkipRequestListItemProcessing(true);
         String initialQueryUrl = requestV4Service.buildInitialRequestQueryUrl();
-        List<ConcurEventNotificationProcessingResultsDTO> processingResults = requestV4Service.processTravelRequests(
+        List<ConcurEventNotificationResponse> processingResults = requestV4Service.processTravelRequests(
                 mockAccessToken);
         assertEquals(0, processingResults.size(),
                 "No processing results should have been returned when running in skip-list-item mode");
@@ -725,7 +725,7 @@ public class ConcurRequestV4ServiceImplTest {
         private boolean skipRequestListItemProcessing;
         
         @Override
-        protected Stream<ConcurEventNotificationProcessingResultsDTO> processTravelRequestsSubset(
+        protected Stream<ConcurEventNotificationResponse> processTravelRequestsSubset(
                 String accessToken, Map<String, String> testUserIdMappings, ConcurRequestV4ListingDTO requestListing) {
             encounteredRequestListings.add(requestListing);
             if (skipRequestListItemProcessing) {
