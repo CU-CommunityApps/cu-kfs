@@ -107,7 +107,6 @@
 				<IsoCurrencyCode isChanged="No">MXN</IsoCurrencyCode>
 			</EnabledCurrencyList>
 			<SupplierKeywords>Paper Products, Filters, Drinking Straws</SupplierKeywords>
-			<!-- 
 			<AddressList>
 				<Address type="remitto">
 					<ERPNumber>add123</ERPNumber>
@@ -204,6 +203,7 @@
 					</AssignedBusinessUnitsList>
 				</Address>
 			</AddressList>
+			<!-- 
 			<PrimaryAddressList>
 				<AssociatedAddress type="remitto">
 					<AddressRef>

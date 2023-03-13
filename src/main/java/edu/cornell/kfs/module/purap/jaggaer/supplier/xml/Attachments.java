@@ -26,7 +26,7 @@ public class Attachments {
 
     public String getXmlnsXop() {
         if (xmlnsXop == null) {
-            return JaggaerConstants.DEFAULT_XML_NS_XPP;
+            return JaggaerConstants.DEFAULT_XML_NS_XOP;
         } else {
             return xmlnsXop;
         }

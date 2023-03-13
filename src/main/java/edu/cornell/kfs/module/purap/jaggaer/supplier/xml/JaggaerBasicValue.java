@@ -18,19 +18,6 @@ public class JaggaerBasicValue {
     @XmlValue
     protected String value;
 
-    public JaggaerBasicValue() {
-
-    }
-
-    public JaggaerBasicValue(String value) {
-        this(value, null);
-    }
-
-    public JaggaerBasicValue(String value, String isChanged) {
-        this.value = value;
-        this.isChanged = isChanged;
-    }
-
     public String getIsChanged() {
         return isChanged;
     }

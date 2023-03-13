@@ -124,5 +124,107 @@ public class JaggaerBuilder {
         return naic;
     }
     
+    public static Email buildEmail(String emailAddress) {
+        return buildEmail(emailAddress, null);
+    }
+    
+    public static Email buildEmail(String emailAddress, String isChanged) {    
+        Email email = new Email();
+        email.setValue(emailAddress);
+        email.setIsChanged(isChanged);
+        return email;
+    }
+    
+    public static AddressLine buildAddressLine(String addressString) {
+        return buildAddressLine(addressString, null);
+    }
+    
+    public static AddressLine buildAddressLine(String addressString, String isChanged) {
+        AddressLine line = new AddressLine();
+        line.setIsChanged(isChanged);
+        line.setValue(addressString);
+        return line;
+    }
+    
+    public static City buildCity(String cityString) {
+        return buildCity(cityString, null);
+    }
+    
+    public static City buildCity(String cityString, String isChanged) {
+        City city = new City();
+        city.setValue(cityString);
+        city.setIsChanged(isChanged);
+        return city;
+    }
+    
+    public static State buildState(String stateString) {
+        return buildState(stateString, null);
+    }
+    
+    public static State buildState(String stateString, String isChanged) {
+        State state = new State();
+        state.setValue(stateString);
+        state.setIsChanged(isChanged);
+        return state;
+    }
+    
+    public static PostalCode buildPostalCode(String postalString) {
+        return buildPostalCode(postalString, null);
+    }
+    
+    public static PostalCode buildPostalCode(String postalString, String isChanged) {
+        PostalCode postalCode = new PostalCode();
+        postalCode.setValue(postalString);
+        postalCode.setIsChanged(isChanged);
+        return postalCode;
+    }
+    
+    public static IsoCountryCode buildIsoCountryCode(String countryCode) {
+        return buildIsoCountryCode(countryCode, null);
+    }
+    
+    public static IsoCountryCode buildIsoCountryCode(String countryCode, String isChanged) {
+        IsoCountryCode country = new IsoCountryCode();
+        country.setValue(countryCode);
+        country.setIsChanged(isChanged);
+        return country;
+    }
+    
+    public static TelephoneNumber buildTelephoneNumber(String countryCode, String areaCode, String number, String extension) {
+        return buildTelephoneNumber(countryCode, areaCode, number, extension, null);
+    }
+    
+    public static TelephoneNumber buildTelephoneNumber(String countryCode, String areaCode, String number, String extensione, String isChanged) {
+        TelephoneNumber phone = new TelephoneNumber();
+        phone.setIsChanged(isChanged);
+        phone.setAreaCode(buildJaggaerBasicValue(areaCode, isChanged));
+        phone.setCountryCode(buildJaggaerBasicValue(countryCode, isChanged));
+        phone.setExtension(buildJaggaerBasicValue(extensione, isChanged));
+        phone.setNumber(buildJaggaerBasicValue(number, isChanged));
+        return phone;
+    }
+    
+    public static JaggaerBasicValue buildJaggaerBasicValue(String value) {
+        return buildJaggaerBasicValue(value, null);
+    }
+    
+    public static JaggaerBasicValue buildJaggaerBasicValue(String value, String isChanged) {
+        JaggaerBasicValue basic = new JaggaerBasicValue();
+        basic.setValue(value);
+        basic.setIsChanged(isChanged);
+        return basic;
+    }
+    
+    public static BusinessUnitInternalName buildBusinessUnitInternalName(String internalName, String preferredForThisBusinessUnit) {
+        return buildBusinessUnitInternalName(internalName, preferredForThisBusinessUnit, null);
+    }
+    
+    public static BusinessUnitInternalName buildBusinessUnitInternalName(String internalName, String preferredForThisBusinessUnit, String isChanged) {
+        BusinessUnitInternalName name = new BusinessUnitInternalName();
+        name.setIsChanged(isChanged);
+        name.setPreferredForThisBusinessUnit(preferredForThisBusinessUnit);
+        name.setValue(internalName);
+        return name;
+    }
 
 }
