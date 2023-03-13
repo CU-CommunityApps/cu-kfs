@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Contracts & Grants Invoice Document Presentation Controller class.
  */
-//CU customization: backport FINP-5292, FINP-8555; this file cab be removed when we upgrade to the 07/14/2022 version of financials
+//CU customization: backport FINP-8555; this file can be removed when we upgrade to the 07/14/2022 version of financials
 public class ContractsGrantsInvoiceDocumentPresentationController extends
         CustomerInvoiceDocumentPresentationController {
 
@@ -181,7 +181,7 @@ public class ContractsGrantsInvoiceDocumentPresentationController extends
     }
 
     @Override
-    //CU customization: FINP-8555, FINP-5292
+    //CU customization: FINP-8555
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
 

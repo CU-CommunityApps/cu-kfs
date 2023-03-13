@@ -1377,10 +1377,12 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                 delegateMember.getQualifier())) {
                         continue;
                     }
-                    // check if a role member ID is present on the delegateType record
+                    // check if a role member ID is present on the delegateType record and that it's not a wildcard
+                    // (since that would apply to more than one role member)
                     // if so, check that the original role member would match the given qualifiers
-                    if (StringUtils.isNotBlank(delegateMember.getRoleMemberId())) {
-                        RoleMember rm = getRoleMember(delegateMember.getRoleMemberId());
+                    final String roleMemberId = delegateMember.getRoleMemberId();
+                    if (StringUtils.isNotBlank(roleMemberId) && !StringUtils.equals("*", roleMemberId)) {
+                        final RoleMember rm = getRoleMember(roleMemberId);
                         if (rm != null) {
                             // check that the original role member's is active and that their qualifier would have
                             // matched this request's qualifications (that the original person would have the

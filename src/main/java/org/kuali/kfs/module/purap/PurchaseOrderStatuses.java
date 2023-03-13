@@ -95,8 +95,8 @@ public final class PurchaseOrderStatuses {
     private PurchaseOrderStatuses() {
     }
 
-    public static HashMap<String, String> getAllAppDocStatuses() {
-        HashMap<String, String> appDocStatusMap = new HashMap<>();
+    public static Map<String, String> getAllAppDocStatuses() {
+        Map<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_DAPRVD_UNORDERED_ITEM, APPDOC_DAPRVD_UNORDERED_ITEM);
         appDocStatusMap.put(APPDOC_DAPRVD_PURCHASING, APPDOC_DAPRVD_PURCHASING);
@@ -142,8 +142,8 @@ public final class PurchaseOrderStatuses {
         return appDocStatusMap;
     }
 
-    public static HashMap<String, String> getPurchaseOrderAppDocDisapproveStatuses() {
-        HashMap<String, String> poAppDocStatusMap = new HashMap<>();
+    public static Map<String, String> getPurchaseOrderAppDocDisapproveStatuses() {
+        Map<String, String> poAppDocStatusMap = new HashMap<>();
 
         poAppDocStatusMap.put(NODE_ADHOC_REVIEW, PurchaseOrderStatuses.APPDOC_CANCELLED);
         poAppDocStatusMap

@@ -18,7 +18,6 @@
  */
 package org.kuali.kfs.module.ar;
 
-//CU customization: backport FINP-5292, these changes can be removed when we upgrade to the 06/30/2022 version of financials
 //CU customization: backport FINP-8555, these changes can be removed when we upgrade to the 07/14/2022 version of financials
 public final class ArAuthorizationConstants {
 
@@ -40,7 +39,6 @@ public final class ArAuthorizationConstants {
         //CU customization: backport FINP-8555
         public static final String EDIT_FINAL_BILL_INDICATOR = "editFinalBillIndicator";
         public static final String MODIFY_TRANSMISSION_DATE = "modifyTransmissionDate";
-        //CU customization: backport FINP-5292
         public static final String UPDATE_FINAL_BILL_INDICATOR = "updateFinalBillIndicator";
 
     }

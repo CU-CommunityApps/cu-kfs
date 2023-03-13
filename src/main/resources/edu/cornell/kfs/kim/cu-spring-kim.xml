@@ -37,6 +37,7 @@
         <property name="lookupableHelperService">
             <bean class="edu.cornell.kfs.kim.lookup.CuRoleLookupableHelperServiceImpl"
                   parent="lookupableHelperService"
+                  p:dateTimeService-ref="dateTimeService"
                   p:groupService-ref="kimGroupService"
                   p:identityService-ref="identityService"    
                   p:kimTypeInfoService-ref="kimTypeInfoService"
