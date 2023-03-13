@@ -37,8 +37,10 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -49,17 +51,19 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
         ServletContextAware, SmartApplicationListener {
 
     private static final Logger LOG = LogManager.getLogger();
+    /* This is under the webapp context (i.e. .../fin/<SPRING_MVC_ROOT_PATH>) */
+    private static final String SPRING_MVC_ROOT_PATH = "/api";
     private static final String SCHEDULED_THREAD_POOL_SERVICE = "rice.ksb.scheduledThreadPool";
   
 
     private final List<Lifecycle> internalLifecycles;
     private ServletContext servletContext;
 
-    private boolean testMode = false;
+    private boolean testMode;
 
     public KFSConfigurer() {
         LOG.info("KFSConfigurer instantiated");
-        this.internalLifecycles = new ArrayList<>();
+        internalLifecycles = new ArrayList<>();
     }
 
     @Override
@@ -67,6 +71,26 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
         validateConfigurerState();
         initializeResourceLoaders();
         start();
+        enableSpringMvcForRestApis();
+    }
+
+    /*
+     * Ideally, in a non-Boot Spring world, the DispatcherServlet would be configured via an entry in web.xml, pointing
+     * the Servlet to the Spring XML config file(s) and allowing it to construct the ApplicationContext. However, due
+     * to the fact KFS is a) using Struts 1.x in a non-idiomatic manner & b) constructing Spring's ApplicationContext
+     * in a non-idiomatic manner, the web.xml approach is not possible at this time. That being the case, the
+     * DispatcherServlet is being configured here programmatically, after KFS has already constructed Spring's
+     * ApplicationContext.
+     *
+     * This REST API path will be completely separate from any other KFS paths currently in use; though still under
+     * the webapp context (i.e. /fin).
+     */
+    private void enableSpringMvcForRestApis() {
+        final DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet.setApplicationContext(GlobalResourceLoader.getContext());
+        final ServletRegistration.Dynamic servletRegistration =
+                servletContext.addServlet("SpringMvcDispatcherServlet", dispatcherServlet);
+        servletRegistration.addMapping(SPRING_MVC_ROOT_PATH + "/*");
     }
 
     @Override
@@ -81,7 +105,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
         doAdditionalModuleStartLogic();
     }
 
-    private void doAdditionalModuleStartLogic() {
+    private static void doAdditionalModuleStartLogic() {
         LOG.info("*********************************************************");
         LOG.info("KFS Starting Module");
         LOG.info("*********************************************************");
@@ -104,7 +128,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
         for (int index = internalLifecycles.size() - 1; index >= 0; index--) {
             try {
                 internalLifecycles.get(index).stop();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.error("Failed to properly execute shutdown logic.", e);
             }
         }
@@ -119,9 +143,9 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
         return files == null ? Collections.emptyList() : parseFileList(files);
     }
 
-    private static List<String> parseFileList(String files) {
+    private static List<String> parseFileList(final String files) {
         final List<String> parsedFiles = new ArrayList<>();
-        for (String file : files.split(",")) {
+        for (final String file : files.split(",")) {
             final String trimmedFile = file.trim();
             if (!trimmedFile.isEmpty()) {
                 parsedFiles.add(trimmedFile);
@@ -138,7 +162,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
 
     @Override
     public List<Lifecycle> loadLifecycles() {
-        List<Lifecycle> lifecycles = new LinkedList<>();
+        final List<Lifecycle> lifecycles = new LinkedList<>();
 
         // this validation of our service list needs to happen after we've loaded our configs so it's a lifecycle
         lifecycles.add(new BaseLifecycle() {
@@ -152,7 +176,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
     }
 
     @Override
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+    public void onApplicationEvent(final ApplicationEvent applicationEvent) {
         if (applicationEvent instanceof ContextRefreshedEvent) {
             loadDataDictionary();
             doAdditionalContextStartedLogic();
@@ -162,7 +186,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
     /**
      * Used to "poke" the Data Dictionary again after the Spring Context is initialized.
      */
-    private void loadDataDictionary() {
+    private static void loadDataDictionary() {
         LOG.info("KRAD Configurer - Loading DD");
         final DataDictionaryService dds =
                 GlobalResourceLoader.getService(KRADServiceLocatorWeb.DATA_DICTIONARY_SERVICE);
@@ -176,7 +200,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
     }
 
     private void doAdditionalContextStartedLogic() {
-        Lifecycle threadPool = new ServiceDelegatingLifecycle(KSBServiceLocator.THREAD_POOL_SERVICE);
+        final Lifecycle threadPool = new ServiceDelegatingLifecycle(KSBServiceLocator.THREAD_POOL_SERVICE);
         Lifecycle scheduledThreadPool =
                 new ServiceDelegatingLifecycle(SCHEDULED_THREAD_POOL_SERVICE);
 
@@ -185,7 +209,7 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
             internalLifecycles.add(threadPool);
             scheduledThreadPool.start();
             internalLifecycles.add(scheduledThreadPool);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
@@ -195,19 +219,19 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
         requeueMessages();
     }
 
-    private void requeueMessages() {
+    private static void requeueMessages() {
         // automatically requeue documents sitting with status of 'R'
-        MessageFetcher messageFetcher = new MessageFetcher((Integer) null);
+        final MessageFetcher messageFetcher = new MessageFetcher(null);
         KSBServiceLocator.getThreadPool().execute(messageFetcher);
     }
 
     @Override
-    public boolean supportsEventType(Class<? extends ApplicationEvent> aClass) {
+    public boolean supportsEventType(final Class<? extends ApplicationEvent> eventType) {
         return true;
     }
 
     @Override
-    public boolean supportsSourceType(Class<?> aClass) {
+    public boolean supportsSourceType(final Class<?> sourceType) {
         return true;
     }
 
@@ -230,11 +254,11 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
     }
 
     @Override
-    public void setServletContext(ServletContext servletContext) {
+    public void setServletContext(final ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
-    public void setTestMode(boolean testMode) {
+    public void setTestMode(final boolean testMode) {
         this.testMode = testMode;
     }
 

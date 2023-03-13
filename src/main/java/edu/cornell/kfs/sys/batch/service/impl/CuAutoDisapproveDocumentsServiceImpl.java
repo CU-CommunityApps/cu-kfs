@@ -11,17 +11,15 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.UserSessionUtils;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.exception.UnknownDocumentTypeException;
 import org.kuali.kfs.krad.document.Document;
@@ -32,6 +30,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSParameterKeyConstants;
 import org.kuali.kfs.sys.batch.AutoDisapproveDocumentsStep;
 import org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocumentBase;
@@ -43,22 +42,25 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     private static final String TAB = "\t";
 
     private RouteHeaderService routeHeaderService;
+    private ParameterService parameterService;
 
     @Override
-    protected boolean processAutoDisapproveDocuments(String principalId, String annotation) {
-        Collection<DocumentHeader> documentList = getDocumentsToDisapprove();
-        LOG.info("Total documents to process {}", documentList::size);
+    protected boolean processAutoDisapproveDocuments(final String principalId, final String annotation) {
+        final Collection<DocumentHeader> initialDocumentList = getDocumentsToDisapprove();
+        LOG.info("Total documents to process {}", initialDocumentList::size);
         String documentHeaderId = null;
 
         // CU Customization: Filter out documents whose workflow statuses are not actually ENROUTE (see referenced method for details).
-        documentList = getDocumentsWithActualWorkflowStatus(documentList, DocumentStatus.ENROUTE);
+        final Collection<DocumentHeader> documentList = getDocumentsWithActualWorkflowStatus(initialDocumentList, DocumentStatus.ENROUTE);
 
-        for (DocumentHeader result : documentList) {
-            documentHeaderId = result.getDocumentNumber();
+        final List<String> childDocumentTypeIds = determineEligibleDocumentTypes();
+
+        for (final DocumentHeader documentHeader : documentList) {
+            documentHeaderId = documentHeader.getDocumentNumber();
             Document document = findDocumentForAutoDisapproval(documentHeaderId);
 
            if (document != null) {
-               if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader())) {
+               if (checkIfDocumentEligibleForAutoDispproval(document.getDocumentHeader(), childDocumentTypeIds)) {
                    try {
                        String successMessage = buildSuccessMessage(document);
                        autoDisapprovalYearEndDocument(document, annotation);
@@ -68,9 +70,10 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
                                documentHeaderId
                        );
                        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(successMessage);
-                   } catch (Exception e) {
+                   } catch (final Exception e) {
                        LOG.error("Exception encountered trying to auto disapprove the document {}", e::getMessage);
-                       String message = "Exception encountered trying to auto disapprove the document: ".concat(documentHeaderId);
+                       String message = "Exception encountered trying to auto disapprove the document: "
+                               + documentHeaderId;
                        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);
                    }
                }
@@ -82,6 +85,31 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         }
 
         return true;
+    }
+
+    // Copied this private method from the superclass to make it available here.
+    private List<String> determineEligibleDocumentTypes() {
+        final String yearEndAutoDisapproveParentDocumentType = parameterService.getParameterValueAsString(
+                AutoDisapproveDocumentsStep.class,
+                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE
+        );
+
+        final DocumentType parentDocType =
+                documentTypeService.getDocumentTypeByName(yearEndAutoDisapproveParentDocumentType);
+        return recursivelyGetAllChildDocTypeIds(parentDocType);
+    }
+
+    // Copied this private method from the superclass to make it available here.
+    private List<String> recursivelyGetAllChildDocTypeIds(final DocumentType parentDocType) {
+        final List<String> childDocumentTypeIds = new ArrayList<>();
+
+        final List<DocumentType> childDocumentTypes = documentTypeService.getChildDocumentTypes(parentDocType.getId());
+        for (final DocumentType childDocumentType : childDocumentTypes) {
+            childDocumentTypeIds.add(childDocumentType.getId());
+            childDocumentTypeIds.addAll(recursivelyGetAllChildDocTypeIds(childDocumentType));
+        }
+
+        return childDocumentTypeIds;
     }
 
     protected boolean checkIfRunDateParameterExists() {
@@ -323,39 +351,6 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
    }
 
     /**
-     * @see org.kuali.kfs.sys.batch.service.impl.AutoDisapproveDocumentsServiceImpl#checkIfDocumentEligibleForAutoDispproval(org.kuali.kfs.sys.businessobject.DocumentHeader)
-     */
-    @Override
-    protected boolean checkIfDocumentEligibleForAutoDispproval(DocumentHeader documentHeader) {
-        boolean documentEligible = false;
-        
-        List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
-        
-        final WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
-
-        // Documents that have been recalled may still have an enroute doc header status (due to a bug we need to
-        // fix), so we need to double-check the workflow doc here since only ENROUTE docs can be DISAPPROVED.
-        if (!workflowDocument.isEnroute()) {
-            return false;
-        }
-        
-        String documentTypeName = workflowDocument.getDocumentTypeName();
-        DocumentType childDocumentType = documentTypeService.getDocumentTypeByName(documentTypeName);
-        
-        for (DocumentType parentDocumentType : parentDocumentTypes) {
-            documentEligible = childDocumentType.getParentId().equals(parentDocumentType.getId());
-            
-            if (documentEligible) {
-                break;
-            }
-            
-        }
-        
-        return documentEligible;
-        
-    }
-
-    /**
      * CU Customization:
      * 
      * There is a known issue where the KFS document headers are not auto-saved when a KFS
@@ -417,5 +412,11 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
     } 
+
+    @Override
+    public void setParameterService(ParameterService parameterService) {
+        super.setParameterService(parameterService);
+        this.parameterService = parameterService;
+    }
 
 }

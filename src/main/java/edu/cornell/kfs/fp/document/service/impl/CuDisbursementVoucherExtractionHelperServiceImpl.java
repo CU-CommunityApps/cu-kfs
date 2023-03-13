@@ -13,6 +13,9 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.batch.DvToPdpExtractStep;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
@@ -33,11 +36,9 @@ import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
+import org.kuali.kfs.sys.service.XmlUtilService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
@@ -51,6 +52,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
     private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherExtractionHelperServiceImpl.class);
     
     protected CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private XmlUtilService xmlUtilService;
 
     @Override
     public PaymentGroup createPaymentGroup(DisbursementVoucherDocument document, Date processRunDate) {
@@ -178,7 +180,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pd.setOrganizationDocNbr(document.getDocumentHeader().getOrganizationDocumentNumber());
         }
         pd.setCustPaymentDocNbr(document.getDocumentNumber());
-        pd.setInvoiceNbr(filterOutIllegalXmlCharacters(document.getInvoiceNumber()));
+        pd.setInvoiceNbr(xmlUtilService.filterOutIllegalXmlCharacters(document.getInvoiceNumber()));
         if (ObjectUtils.isNull(document.getInvoiceDate())) {
             pd.setInvoiceDate(new java.sql.Date(processRunDate.getTime()));
         } else {
@@ -336,7 +338,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             }
         }
 
-        final String text = filterOutIllegalXmlCharacters(document.getDisbVchrCheckStubText());
+        final String text = xmlUtilService.filterOutIllegalXmlCharacters(document.getDisbVchrCheckStubText());
         if (!StringUtils.isBlank(text)) {
             pd.addNotes(paymentSourceHelperService.buildNotesForCheckStubText(text, line));
         }
@@ -428,4 +430,10 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	   public PaymentSourceHelperService getPaymentSourceHelperService() {
 	             return paymentSourceHelperService;
 	   }
+
+    @Override
+    public void setXmlUtilService(XmlUtilService xmlUtilService) {
+        super.setXmlUtilService(xmlUtilService);
+        this.xmlUtilService = xmlUtilService;
+    }
 }
