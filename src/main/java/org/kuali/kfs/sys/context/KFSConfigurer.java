@@ -20,6 +20,7 @@ package org.kuali.kfs.sys.context;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.struts.mock.MockServletContext;
 import org.kuali.kfs.core.api.config.ConfigurationException;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.lifecycle.BaseCompositeLifecycle;
@@ -39,14 +40,25 @@ import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import javax.servlet.ServletSecurityElement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-/* CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz*/
+/*
+ * CU customization: this is still needed for our local customization of CuSchedulerServiceImpl
+ * to allow certain processes to run without Quartz.
+ * 
+ * In addition, we have backported FINP-8867 to fix a potential batch startup problem.
+ */
 public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableBean, InitializingBean,
         ServletContextAware, SmartApplicationListener {
 
@@ -69,9 +81,22 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
     @Override
     public final void afterPropertiesSet() throws Exception {
         validateConfigurerState();
+        // CU Customization: Backport ensureServletContext() call from FINP-8867 fix
+        ensureServletContext();
         initializeResourceLoaders();
         start();
         enableSpringMvcForRestApis();
+    }
+
+    // CU Customization: Backport FINP-8867 fix
+    private void ensureServletContext() {
+        if (servletContext == null) {
+            // For unit/integration tests or standalone utilities (e.g. BatchStepRunner, WorkFlowImporter, etc.), there
+            // is no ServletContext, since it is not running as a webapp. However, we need one to have the
+            // DispatcherServlet and for some beans that are auto-magically created to support Spring MVC annotated
+            // classes.
+            servletContext = new KfsMockServletContext();
+        }
     }
 
     /*
@@ -260,6 +285,90 @@ public class KFSConfigurer extends BaseCompositeLifecycle implements DisposableB
 
     public void setTestMode(final boolean testMode) {
         this.testMode = testMode;
+    }
+
+    // CU Customization: Backport FINP-8867 fix
+    /**
+     * This allows tests and standalone utilities (e.g. BatchStepRunner, WorkflowImporter, etc.) to run.
+     *
+     * This is a stop-gap measure. This entire class needs to cease to exist -- that'll be part of the Spring
+     * modernization work.
+     */
+    private static final class KfsMockServletContext extends MockServletContext {
+
+        @Override
+        public ServletRegistration.Dynamic addServlet(final String servletName, final Servlet servlet) {
+            return new KfsServletRegistrationDynamic();
+        }
+
+        private static final class KfsServletRegistrationDynamic implements ServletRegistration.Dynamic {
+
+            @Override
+            public void setLoadOnStartup(final int loadOnStartup) {
+            }
+
+            @Override
+            public Set<String> setServletSecurity(final ServletSecurityElement constraint) {
+                return Set.of();
+            }
+
+            @Override
+            public void setMultipartConfig(final MultipartConfigElement multipartConfig) {
+            }
+
+            @Override
+            public void setRunAsRole(final String roleName) {
+            }
+
+            @Override
+            public void setAsyncSupported(final boolean isAsyncSupported) {
+            }
+
+            @Override
+            public Set<String> addMapping(final String... urlPatterns) {
+                return Set.of();
+            }
+
+            @Override
+            public Collection<String> getMappings() {
+                return Set.of();
+            }
+
+            @Override
+            public String getRunAsRole() {
+                return null;
+            }
+
+            @Override
+            public String getName() {
+                return null;
+            }
+
+            @Override
+            public String getClassName() {
+                return null;
+            }
+
+            @Override
+            public boolean setInitParameter(final String name, final String value) {
+                return false;
+            }
+
+            @Override
+            public String getInitParameter(final String name) {
+                return null;
+            }
+
+            @Override
+            public Set<String> setInitParameters(final Map<String, String> initParameters) {
+                return Set.of();
+            }
+
+            @Override
+            public Map<String, String> getInitParameters() {
+                return Map.of();
+            }
+        }
     }
 
 }
