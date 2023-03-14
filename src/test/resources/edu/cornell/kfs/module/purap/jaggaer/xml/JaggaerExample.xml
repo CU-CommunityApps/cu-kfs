@@ -203,7 +203,6 @@
 					</AssignedBusinessUnitsList>
 				</Address>
 			</AddressList>
-			<!-- 
 			<PrimaryAddressList>
 				<AssociatedAddress type="remitto">
 					<AddressRef>
@@ -216,6 +215,7 @@
 					</AddressRef>
 				</AssociatedAddress>
 			</PrimaryAddressList>
+			<!-- 
 			<ContactList>
 				<Contact type="remitto">
 					<ERPNumber>CONTACT1</ERPNumber>

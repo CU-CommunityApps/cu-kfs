@@ -116,6 +116,7 @@ public class JaggaerExampleTest {
         supplier.setEnabledCurrencyList(buildCurrencyList("USD", "MXN"));
         supplier.setSupplierKeywords(JaggaerBuilder.buildJaggaerBasicValue("Paper Products, Filters, Drinking Straws"));
         supplier.setAddressList(buildAddressList());
+        supplier.setPrimaryAddressList(buildPrimaryAddressList());
         
         return supplier;
     }
@@ -286,6 +287,24 @@ public class JaggaerExampleTest {
         fulfill.setNotes(new JaggaerBasicValue());
         fulfill.setAssignedBusinessUnitsList(buildAssignedBusinessUnitsList("California Regional Office", "West Coast Distribution Center"));
         return fulfill;
+    }
+    
+    private PrimaryAddressList buildPrimaryAddressList() {
+        PrimaryAddressList primaryAddredssList = new PrimaryAddressList();
+        primaryAddredssList.getAssociatedAddress().add(buildAssociatedAddress("remitto", "ADDR1"));
+        primaryAddredssList.getAssociatedAddress().add(buildAssociatedAddress("fulfillment", "ADDR2"));
+        return primaryAddredssList;
+    }
+    
+    private AssociatedAddress buildAssociatedAddress(String addressType, String erpNumber) {
+        AssociatedAddress address = new AssociatedAddress();
+        address.setType(addressType);
+        
+        AddressRef ref = new AddressRef();
+        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
+        address.setAddressRef(ref);
+        
+        return address;
     }
     
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
