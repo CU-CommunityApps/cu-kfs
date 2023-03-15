@@ -66,19 +66,33 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         super.loadDocument(kualiDocumentFormBase);
         IWantDocumentForm iWantForm = (IWantDocumentForm) kualiDocumentFormBase;
         IWantDocument iWantDocument = iWantForm.getIWantDocument();
-
-        if (iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
-            iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
-            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
+        
+        if (ObjectUtils.isNotNull(iWantDocument.getPresentationMode()) &&
+                iWantDocument.getPresentationMode().equalsIgnoreCase(CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE) ) {
             
-            if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
-                iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
+            if (iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
+              iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
+              iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
+              
+              if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
+                  iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
+              }
+            } else if (!iWantDocument.getDocumentHeader().getWorkflowDocument().isInitiated()) {
+              iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+              iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             }
-        } else if (!iWantDocument.getDocumentHeader().getWorkflowDocument().isInitiated()) {
+        } else if (ObjectUtils.isNotNull(iWantDocument.getPresentationMode()) &&
+                iWantDocument.getPresentationMode().equalsIgnoreCase(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE) ) {
+            
             iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            
+            if (iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
+                if (StringUtils.isNotBlank(iWantDocument.getCurrentRouteToNetId())) {
+                    iWantForm.getNewAdHocRoutePerson().setId(iWantDocument.getCurrentRouteToNetId());
+                }
+            }
         }
-
     }
 
     /**
@@ -357,6 +371,60 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             HttpServletResponse response) throws Exception {
 
         return mapping.findForward("refresh");
+    }
+    
+    /**
+     * Changes display from multiple page mode to single (full) page mode
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward showFullPage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantForm.getIWantDocument();
+        
+        iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+        iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+        
+        iWantForm.setPresentationMode(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE);
+        iWantDocument.setPresentationMode(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE);
+        
+        iWantForm.setUsersRequestingPresentationModeChange(true);
+        iWantDocument.setUsersRequestingPresentationModeChange(true);
+
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    /**
+     * Changes display from single (full) page mode to multiple page mode
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    public ActionForward showMultiplePages(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantForm.getIWantDocument();
+        
+        iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
+        iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CUSTOMER_DATA_STEP);
+        
+        iWantForm.setPresentationMode(CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE);
+        iWantDocument.setPresentationMode(CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE);
+        
+        iWantForm.setUsersRequestingPresentationModeChange(true);
+        iWantDocument.setUsersRequestingPresentationModeChange(true);
+
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     /**
@@ -835,6 +903,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         ActionForward forward = null;
 
         if (request.getParameter(KRADConstants.PARAMETER_DOC_ID) == null) {
+            IWantDocumentForm iWantForm = (IWantDocumentForm) form;
+            iWantForm.setPresentationMode(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE);
+            iWantForm.setUsersRequestingPresentationModeChange(true);
+            
             forward = super.copy(mapping, form, request, response);
         } else {
             // this is copy document from Procurement Gateway:
@@ -846,6 +918,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             document = (IWantDocument) getDocumentService().getByDocumentHeaderId(docId);
             document.toCopyFromGateway();
 
+            document.setPresentationMode(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE);
+            document.setUsersRequestingPresentationModeChange(true);
+            IWantDocumentForm iWantForm = (IWantDocumentForm) form;
+            iWantForm.setPresentationMode(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE);
+            iWantForm.setUsersRequestingPresentationModeChange(true);
+            
             kualiDocumentFormBase.setDocument(document);
             WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
             kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());

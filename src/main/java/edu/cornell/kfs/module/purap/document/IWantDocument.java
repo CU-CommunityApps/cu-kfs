@@ -50,6 +50,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private static final long serialVersionUID = 1L;
 
     private String step;
+    private String presentationMode;
+    private boolean usersRequestingPresentationModeChange;
 
     private String initiatorNetID;
     private String initiatorName;
@@ -163,6 +165,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         items = new ArrayList<IWantItem>();
         accounts = new ArrayList<IWantAccount>();
         servicePerformedOnCampus = KFSConstants.ParameterValues.NO;
+        setPresentationForInitialization();
     }
 
     @Override
@@ -779,6 +782,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         
         this.completeOption = null;
         this.completed = false;
+        
+        setPresentationForCopyRequest();
     }
 
     @Override
@@ -793,6 +798,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        
+        setPresentationForCopyRequest();
+    }
+    
+    private void setPresentationForCopyRequest() {
+        //Copied IWant docs are presented as a single (full) page by default.
+        //Setting boolean to programmatically mimic an action to trigger creation of extra buttons on the form.
+        presentationMode = CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE;
+        usersRequestingPresentationModeChange = true;
+    }
+    
+    private void setPresentationForInitialization() {
+        //I Want document should be set to show data on multiple pages when it is initalized.
+        //Setting boolean to programmatically mimic an action to trigger creation of extra buttons on the form.
+        presentationMode = CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE;
+        usersRequestingPresentationModeChange = true;
     }
 
     /**
@@ -1506,6 +1527,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     
     public String getDvDocumentLabel() throws WorkflowException{
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName("DV");     
+    }
+
+    public String getPresentationMode() {
+        return presentationMode;
+    }
+
+    public void setPresentationMode(String presentationMode) {
+        this.presentationMode = presentationMode;
+    }
+
+    public boolean isUsersRequestingPresentationModeChange() {
+        return usersRequestingPresentationModeChange;
+    }
+
+    public void setUsersRequestingPresentationModeChange(boolean usersRequestingPresentationModeChange) {
+        this.usersRequestingPresentationModeChange = usersRequestingPresentationModeChange;
     }
 
 }
