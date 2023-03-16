@@ -24,7 +24,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected boolean isWizard;
     protected String step;
     protected String presentationMode;
-    protected boolean usersRequestingPresentationModeChange;
     protected String headerTitle;
 
     protected IWantItem newIWantItemLine;
@@ -40,7 +39,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         this.setDeptOrgKeyLabels(new ArrayList<KeyValue>());
         editingMode = new HashMap<Object,Object>();
         presentationMode = CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE;
-        usersRequestingPresentationModeChange = true;
     }
 
     @Override
@@ -217,31 +215,27 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     }
     
     private void createAppropriatePresentationModeChangeButton(boolean isFullPageAllowed, boolean isMultiplePagesAllowed) {
-        if (ObjectUtils.isNotNull(getPresentationMode()) && 
-               getPresentationMode().equalsIgnoreCase(CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE) &&
-               isFullPageAllowed && isUsersRequestingPresentationModeChange()) {
-            extraButtons.add(createShowFullPageButton());
-        } else if (ObjectUtils.isNotNull(getPresentationMode()) && 
-                getPresentationMode().equalsIgnoreCase(CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE) &&
-                isMultiplePagesAllowed && isUsersRequestingPresentationModeChange()) {
-            extraButtons.add(createShowMultiplePagesButton());
+        if (StringUtils.equalsIgnoreCase(getPresentationMode(), CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE) && isFullPageAllowed) {
+            extraButtons.add(createSwitchToFullPagePresentationButton());
+        } else if (StringUtils.equalsIgnoreCase(getPresentationMode(), CUPurapConstants.IWantPresentationModes.FULL_PAGE_MODE) && isMultiplePagesAllowed) {
+            extraButtons.add(createSwitchToMultipleStepsPresentationButton());
         }
     }
     
-    protected ExtraButton createShowFullPageButton() {
-        ExtraButton showFullPageButton = new ExtraButton();
-        showFullPageButton.setExtraButtonProperty("methodToCall.showFullPage");
-        showFullPageButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
-        showFullPageButton.setExtraButtonAltText("Show Full Page");
-        return showFullPageButton;
+    protected ExtraButton createSwitchToFullPagePresentationButton() {
+        ExtraButton switchToFullPagePresentationButton = new ExtraButton();
+        switchToFullPagePresentationButton.setExtraButtonProperty("methodToCall.switchToFullPagePresentation");
+        switchToFullPagePresentationButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
+        switchToFullPagePresentationButton.setExtraButtonAltText("Show 1 Page");
+        return switchToFullPagePresentationButton;
     }
     
-    protected ExtraButton createShowMultiplePagesButton() {
-        ExtraButton showMultiplePagesButton = new ExtraButton();
-        showMultiplePagesButton.setExtraButtonProperty("methodToCall.showMultiplePages");
-        showMultiplePagesButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
-        showMultiplePagesButton.setExtraButtonAltText("Show Multiple Pages");
-        return showMultiplePagesButton;
+    protected ExtraButton createSwitchToMultipleStepsPresentationButton() {
+        ExtraButton switchToMultipleStepsPresentationButton = new ExtraButton();
+        switchToMultipleStepsPresentationButton.setExtraButtonProperty("methodToCall.switchToMultipleStepsPresentation");
+        switchToMultipleStepsPresentationButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
+        switchToMultipleStepsPresentationButton.setExtraButtonAltText("Show 4 Steps");
+        return switchToMultipleStepsPresentationButton;
     }
 
     /**
@@ -375,13 +369,4 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     public void setPresentationMode(String presentationMode) {
         this.presentationMode = presentationMode;
     }
-
-    public boolean isUsersRequestingPresentationModeChange() {
-        return usersRequestingPresentationModeChange;
-    }
-
-    public void setUsersRequestingPresentationModeChange(boolean usersRequestingPresentationModeChange) {
-        this.usersRequestingPresentationModeChange = usersRequestingPresentationModeChange;
-    }
-
 }
