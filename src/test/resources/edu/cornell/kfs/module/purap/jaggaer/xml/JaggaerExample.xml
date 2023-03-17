@@ -215,7 +215,6 @@
 					</AddressRef>
 				</AssociatedAddress>
 			</PrimaryAddressList>
-			<!-- 
 			<ContactList>
 				<Contact type="remitto">
 					<ERPNumber>CONTACT1</ERPNumber>
@@ -363,6 +362,7 @@
 					<DiversityCertificate />
 				</DiversityClassification>
 			</DiversityClassificationList>
+			<!-- 
 			<LocationList>
 				<Location supportsOrderFulfillment="Yes">
 					<ERPNumber>loc123</ERPNumber>

@@ -117,6 +117,10 @@ public class JaggaerExampleTest {
         supplier.setSupplierKeywords(JaggaerBuilder.buildJaggaerBasicValue("Paper Products, Filters, Drinking Straws"));
         supplier.setAddressList(buildAddressList());
         supplier.setPrimaryAddressList(buildPrimaryAddressList());
+        supplier.setContactList(buildContactList());
+        supplier.setPrimaryContactList(buildPrimaryContactList());
+        supplier.setClassificationList(buildClassificationList());
+        supplier.setDiversityClassificationList(buildDiversityClassificationList());
         
         return supplier;
     }
@@ -305,6 +309,135 @@ public class JaggaerExampleTest {
         address.setAddressRef(ref);
         
         return address;
+    }
+    
+    private ContactList buildContactList() {
+        ContactList contactList = new ContactList();
+        contactList.getContact().add(buildRemitContact());
+        contactList.getContact().add(buildFulfillmentContact());
+        contactList.getContact().add(buildTechnicalContact());
+        return contactList;
+    }
+    
+    private Contact buildRemitContact() {
+        Contact remit = new Contact();
+        remit.setType("remitto");
+        remit.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT1"));
+        remit.setOldERPNumber("CONTACT1");
+        remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1237"));
+        remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
+        remit.setName(JaggaerBuilder.buildName("Primary ALS RemitTo and Fulfillment Contact"));
+        remit.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        remit.setFirstName(JaggaerBuilder.buildJaggaerBasicValue("John"));
+        remit.setLastName(JaggaerBuilder.buildJaggaerBasicValue("Smith"));
+        remit.setTitle(JaggaerBuilder.buildJaggaerBasicValue("Procurement Manager"));
+        remit.setEmail(JaggaerBuilder.buildEmail("jsmith@affordablelabsupplies.com"));
+        remit.setPhone(buildPhone("1", "619", "3456789", "0123"));
+        remit.setMobilePhone(buildMobilePhone("1", "619", "2468642", null));
+        remit.setTollFreePhone(new TollFreePhone());
+        remit.setFax(buildFax("1", "619", "9876543", null));
+        remit.setNotes(new JaggaerBasicValue());
+        remit.setAssociatedAddress(buildAssociatedAddress("remitto", "CONTACT1"));
+        return remit;
+    }
+    
+    private MobilePhone buildMobilePhone(String countryCode, String areaCode, String number, String extension) {
+        MobilePhone phone = new MobilePhone();
+        phone.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber(countryCode, areaCode, number, extension));
+        return phone;
+    }
+    
+    private Contact buildFulfillmentContact() {
+        Contact fulfillment = new Contact();
+        fulfillment.setType("fulfillment");
+        fulfillment.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT1"));
+        fulfillment.setOldERPNumber("CONTACT1");
+        fulfillment.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1236"));
+        fulfillment.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
+        fulfillment.setName(JaggaerBuilder.buildName("Primary ALS RemitTo and Fulfillment Contact"));
+        fulfillment.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        fulfillment.setFirstName(JaggaerBuilder.buildJaggaerBasicValue("John"));
+        fulfillment.setLastName(JaggaerBuilder.buildJaggaerBasicValue("Smith"));
+        fulfillment.setTitle(JaggaerBuilder.buildJaggaerBasicValue("Procurement Manager"));
+        fulfillment.setEmail(JaggaerBuilder.buildEmail("jsmith@affordablelabsupplies.com"));
+        fulfillment.setPhone(buildPhone("1", "619", "3456789", "0123"));
+        fulfillment.setMobilePhone(buildMobilePhone("1", "619", "2468642", null));
+        fulfillment.setTollFreePhone(new TollFreePhone());
+        fulfillment.setFax(buildFax("1", "619", "9876543", null));
+        fulfillment.setNotes(new JaggaerBasicValue());
+        fulfillment.setAssociatedAddress(buildAssociatedAddress("fulfillment", "CONTACT1"));
+        return fulfillment;
+    }
+    
+    private Contact buildTechnicalContact() {
+        Contact tech = new Contact();
+        tech.setType("technical");
+        tech.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT2"));
+        tech.setOldERPNumber("CONTACT2");
+        tech.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1240"));
+        tech.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID2"));
+        tech.setName(JaggaerBuilder.buildName("Primary ALS Technical Contact"));
+        tech.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        tech.setFirstName(JaggaerBuilder.buildJaggaerBasicValue("Ann"));
+        tech.setLastName(JaggaerBuilder.buildJaggaerBasicValue("Jones"));
+        tech.setTitle(JaggaerBuilder.buildJaggaerBasicValue("Technical Consultant"));
+        tech.setEmail(JaggaerBuilder.buildEmail("ajones@affordablelabsupplies.com"));
+        tech.setPhone(buildPhone("1", "619", "3456789", "4567"));
+        tech.setMobilePhone(buildMobilePhone("1", "619", "2268644", null));
+        tech.setTollFreePhone(new TollFreePhone());
+        tech.setFax(new Fax());
+        tech.setNotes(new JaggaerBasicValue());
+        tech.setAssociatedAddress(new AssociatedAddress());
+        return tech;
+    }
+    
+    private PrimaryContactList buildPrimaryContactList() {
+        PrimaryContactList primaryContactList = new PrimaryContactList();
+        primaryContactList.getAssociatedContact().add(buildAssociatedContact("remitto", "CONTACT1"));
+        primaryContactList.getAssociatedContact().add(buildAssociatedContact("fulfillment", "CONTACT1"));
+        return primaryContactList;
+    }
+    
+    private AssociatedContact buildAssociatedContact(String contactType, String erpNumber) {
+        AssociatedContact contact = new AssociatedContact();
+        contact.setType(contactType);
+        
+        ContactRef ref = new ContactRef();
+        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
+        contact.setContactRef(ref);
+        
+        return contact;
+    }
+    
+    private ClassificationList buildClassificationList() {
+        ClassificationList classificationList = new ClassificationList();
+        
+        Classification classification = new Classification();
+        classification.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("SupplierClassMinorityDisabled"));
+        
+        classificationList.getClassification().add(classification);
+        return classificationList;
+    }
+    
+    private DiversityClassificationList buildDiversityClassificationList() {
+        DiversityClassificationList classList = new DiversityClassificationList();
+        
+        DiversityClassification div = new DiversityClassification();
+        div.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("DOBE"));
+        div.setDd214Certificate(new DD214Certificate());
+        div.setDiversityCertificate(new DiversityCertificate());
+        
+        AdditionalDataList dataList = new AdditionalDataList();
+        
+        AdditionalData dataum = new AdditionalData();
+        dataum.setName("ethnicity");
+        dataum.getContent().add("NATAM");
+        
+        dataList.getAdditionalData().add(dataum);
+        div.setAdditionalDataList(dataList);
+        
+        classList.getDiversityClassification().add(div);
+        return classList;
     }
     
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
