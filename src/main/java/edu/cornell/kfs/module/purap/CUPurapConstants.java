@@ -110,6 +110,21 @@ public class CUPurapConstants {
         public static final String REGULAR = "regular";
     }
     
+    public static final class IWantPresentationModes {
+        //This mode steps the user through each of the four individual I Want doc data entry pages.
+        //This mode is only valid for I Want docs in Saved or Initiated status.
+        public static final String MULTIPLE_PAGE_MODE = "multiplePageMode";
+        //This mode shows all I Want doc data entry pages together on a single page.
+        public static final String FULL_PAGE_MODE = "fullPageMode";
+    }
+    
+    //These two constants were added to the editMode processing to provide the user functionality 
+    //for switching between a single form and multiple forms during I Want doc data entry.
+    //Using this methodology minimized the changes required for the presentation switching  
+    //while also ensuring the existing functionality for all other edit modes was retained. 
+    public static final String I_WANT_DOC_MULTIPLE_PAGE_IS_ALLOWED = "multiplePageIsAllowed";
+    public static final String I_WANT_DOC_FULL_PAGE_IS_ALLOWED = "fullPageIsAllowed";
+    
     public static final String IWNT_DOC_TYPE = "IWNT";
     public static final String IWNT_STEP_PARAMETER = "step";
     
