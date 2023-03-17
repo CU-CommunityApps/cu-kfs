@@ -80,8 +80,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 }
 
             } else if (!iWantDocument.getDocumentHeader().getWorkflowDocument().isInitiated()) {
-              iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
-              iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+                iWantForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+                iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             }
 
         } else if (StringUtils.equalsIgnoreCase(iWantForm.getPresentationMode(),
