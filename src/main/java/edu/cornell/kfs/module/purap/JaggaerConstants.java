@@ -15,5 +15,6 @@ public class JaggaerConstants {
     public static final String YES = "Yes";
     public static final String NO = "No";
     public static final String TRUE = "true";
+    public static final String FALSE = "false";
     
 }

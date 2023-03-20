@@ -362,7 +362,6 @@
 					<DiversityCertificate />
 				</DiversityClassification>
 			</DiversityClassificationList>
-			<!-- 
 			<LocationList>
 				<Location supportsOrderFulfillment="Yes">
 					<ERPNumber>loc123</ERPNumber>
@@ -573,9 +572,9 @@
 								<DiscountPercent>0.0000</DiscountPercent>
 							</Discount>
 							<Days>0</Days>
+							<FOB>notApplicable</FOB>
 							<TermsType>Net</TermsType>
 							<DaysAfter>30</DaysAfter>
-							<FOB>notApplicable</FOB>
 						</PaymentTerms>
 					</TermsAndCondition>
 					<OrderDistributionList>
@@ -634,7 +633,7 @@
 							<CustomElementIdentifier>WHT</CustomElementIdentifier>
 							<DisplayName>Withholding Tax</DisplayName>
 							<CustomElementValueList>
-								<CustomElementValue>Yes</CustomElementValue>
+								<CustomElementValue>No</CustomElementValue>
 							</CustomElementValueList>
 						</CustomElement>
 						<CustomElement isActive="Yes">
@@ -665,6 +664,7 @@
 					<AssociatedContactList />
 				</Location>
 			</LocationList>
+			<!-- 
 			<RestrictFulfillmentLocationsByBusinessUnit>No</RestrictFulfillmentLocationsByBusinessUnit>
 			<CustomElementList>
 				<CustomElement>
@@ -734,6 +734,7 @@
 					</TaxDocument>
 				</TaxInformation>
 			</TaxInformationList>
+			-->
 			<InsuranceInformationList>
 				<InsuranceInformation
 					type="AutomobileLiability">
@@ -760,7 +761,6 @@
 					</InsuranceCertificate>
 				</InsuranceInformation>
 			</InsuranceInformationList>
-			 -->
 		</Supplier>
 	</SupplierRequestMessage>
 </SupplierSyncMessage>

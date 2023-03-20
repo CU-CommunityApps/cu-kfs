@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
@@ -121,6 +122,8 @@ public class JaggaerExampleTest {
         supplier.setPrimaryContactList(buildPrimaryContactList());
         supplier.setClassificationList(buildClassificationList());
         supplier.setDiversityClassificationList(buildDiversityClassificationList());
+        supplier.setInsuranceInformationList(buildInsuranceInformationList());
+        supplier.setLocationList(buildLocationList());
         
         return supplier;
     }
@@ -438,6 +441,247 @@ public class JaggaerExampleTest {
         
         classList.getDiversityClassification().add(div);
         return classList;
+    }
+    
+    private InsuranceInformationList buildInsuranceInformationList() {
+        InsuranceInformationList infoList = new InsuranceInformationList();
+        InsuranceInformation info = new InsuranceInformation();
+        
+        info.setType("AutomobileLiability");
+        info.setPolicyNumber(JaggaerBuilder.buildJaggaerBasicValue("34576789"));
+        info.setInsuranceLimit(JaggaerBuilder.buildJaggaerBasicValue("INSURANCE_LIMIT_RANGE1"));
+        info.setExpirationDate(JaggaerBuilder.buildJaggaerBasicValue("2024-11-12"));
+        info.setInsuranceProvider(JaggaerBuilder.buildJaggaerBasicValue("ACME Insurance Co."));
+        info.setAgent(JaggaerBuilder.buildJaggaerBasicValue("Ned Ryerson"));
+        
+        InsuranceProviderPhone providerPhone = new InsuranceProviderPhone();
+        providerPhone.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber("1", "704", "1234567", null));
+        info.setInsuranceProviderPhone(providerPhone);
+        
+        InsuranceCertificate certificate = new InsuranceCertificate();
+        certificate.setAttachments(buildAttachments());
+        certificate.getAttachments().getAttachment().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
+        info.setInsuranceCertificate(certificate);
+        
+        infoList.getInsuranceInformation().add(info);
+        return infoList;
+    }
+    
+    private Attachments buildAttachments() {
+        Attachments attachments = new Attachments();
+        return attachments;
+    }
+    
+    private LocationList buildLocationList() {
+        LocationList locationList = new LocationList();
+        locationList.getLocation().add(buildFulfillLocation1());
+        locationList.getLocation().add(buildFulfillLocation2());
+        locationList.getLocation().add(buildLocation2());
+        return locationList;
+    }
+    
+    private Location buildFulfillLocation1() {
+        Location location = new Location();
+        location.setSupportsOrderFulfillment(JaggaerConstants.YES);
+        location.setErpNumber(JaggaerBuilder.buildERPNumber("loc123"));
+        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511493"));
+        location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        location.setName(JaggaerBuilder.buildName("Fulfillment Center 1"));
+        location.setDescription(JaggaerBuilder.buildJaggaerBasicValue(null));
+        location.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.YES));
+        location.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod("orders@affordablelabsupplies.com"));
+        location.setLocationEffectiveDate(JaggaerBuilder.buildJaggaerBasicValue("2024-10-20"));
+        location.setPaymentMethod(buildPaymentMethod());
+        location.setShipping(buildShipping());
+        location.setHandling(buildHandling());
+        location.setTaxInfo(buildTaxInfo());
+        location.setTermsAndCondition(buildTermsAndCondition());
+        location.setOrderDistributionList(buildOrderDistributionList());
+        location.setAssociatedAddressList(buildAssociatedAddressList());
+        location.setAssociatedContactList( new AssociatedContactList());
+        location.setCustomElementList(buildCustomElementList("xxxxxxxxx", "222-222"));
+        return location;
+    }
+    
+    private PaymentMethod buildPaymentMethod() {
+        PaymentMethod method = new PaymentMethod();
+        method.setType("po");
+        POPaymentMethod poPaymentMethod = new POPaymentMethod();
+        
+        POPayment poPayment = new POPayment();
+        poPayment.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        poPayment.setPoNumberSelection(new PONumberSelection());
+        poPayment.setAllowFreeForm(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        poPaymentMethod.setPoPayment(poPayment);
+
+        PCardPayment pcard = new PCardPayment();
+        pcard.setActive(JaggaerBuilder.buildActive(JaggaerConstants.FALSE));
+        pcard.setPoNumberSelection(new PONumberSelection());
+        pcard.setRequireCardSecurityCode(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        poPaymentMethod.setpCardPayment(pcard);
+        
+        method.setPoPaymentMethod(poPaymentMethod);
+        method.setPoPaymentMethod(poPaymentMethod);
+        return method;
+    }
+    
+    private Shipping buildShipping() {
+        Shipping shipping = new Shipping();
+        shipping.setSurchargeConfiguration(buildSurchargeConfiguration());
+        return shipping;
+    }
+    
+    private SurchargeConfiguration buildSurchargeConfiguration() {
+        SurchargeConfiguration config = new SurchargeConfiguration();
+        
+        Fee fee = new Fee();
+        fee.setFeeType(JaggaerBuilder.buildJaggaerBasicValue("FlatFee"));
+        fee.setPercentage(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
+        fee.setAmount(JaggaerBuilder.buildAmount("0.00"));
+        fee.setFeeScope(JaggaerBuilder.buildJaggaerBasicValue("ByOrder"));
+        config.setFee(fee);
+        
+        config.setOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue("0"));
+        config.setUseOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        
+        return config;
+    }
+    
+    private Handling buildHandling() {
+        Handling handling = new Handling();
+        handling.setSurchargeConfiguration(buildSurchargeConfiguration());
+        return handling;
+    }
+    
+    private TaxInfo buildTaxInfo() {
+        TaxInfo info = new TaxInfo();
+        info.setTaxableByDefault(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.TRUE));
+        info.setTax1(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
+        info.setTax1Active(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTax2(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
+        info.setTax2Active(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTaxShipping(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTaxHandling(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        return info;
+    }
+    
+    private TermsAndCondition buildTermsAndCondition() {
+        TermsAndCondition terms = new TermsAndCondition();
+        
+        PaymentTerms paymentTerms = new PaymentTerms();
+        paymentTerms.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        
+        Discount discount = new Discount();
+        discount.setUnit("percent");
+        DiscountPercent percent = new DiscountPercent();
+        percent.setValue("0.0000");
+        discount.getDiscountItems().add(percent);
+        paymentTerms.setDiscount(discount);
+        
+        paymentTerms.setDays(JaggaerBuilder.buildJaggaerBasicValue("0"));
+        paymentTerms.setFob(JaggaerBuilder.buildJaggaerBasicValue("notApplicable"));
+        paymentTerms.setTermsType(JaggaerBuilder.buildJaggaerBasicValue("Net"));
+        paymentTerms.setDaysAfter(JaggaerBuilder.buildJaggaerBasicValue("30"));
+        
+        terms.setPaymentTerms(paymentTerms);
+        
+        return terms;
+    }
+    
+    private OrderDistributionList buildOrderDistributionList() {
+        OrderDistributionList orderList = new OrderDistributionList();
+        
+        DistributionMethod faxMethod = buildDistributionMethod("fax", JaggaerConstants.FALSE, null);
+        faxMethod.setFax(buildFax("1", "619", "5773360", null));
+        orderList.getDistributionMethod().add(faxMethod);
+        orderList.getDistributionMethod().add(buildDistributionMethod("emailplain", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethod().add(buildDistributionMethod("emailbody", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethod().add(buildDistributionMethod("emailattach", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethod().add(buildDistributionMethod("manual", JaggaerConstants.TRUE, null));
+        
+        return orderList;
+    }
+    
+    private DistributionMethod buildDistributionMethod(String type, String active, String email) {
+        DistributionMethod method = new DistributionMethod();
+        method.setType(type);
+        method.setActive(JaggaerBuilder.buildActive(active));
+        if (StringUtils.isNotBlank(email)) {
+            method.setEmail(JaggaerBuilder.buildEmail(email));
+        }
+        return method;
+    }
+    
+    private AssociatedAddressList buildAssociatedAddressList() {
+        AssociatedAddressList addressList = new AssociatedAddressList();
+        
+        AssociatedAddress address = buildAssociatedAddress("fulfillment", "add123");
+        address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
+        address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        addressList.getAssociatedAddress().add(address);
+        
+        return addressList;
+    }
+    
+    private CustomElementList buildCustomElementList(String taxPayerId, String taxTypeCode) {
+        CustomElementList elementList = new CustomElementList();
+        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPID", "TXP Taxpayer ID", taxPayerId));
+        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPTC", "TXP Type Code", taxTypeCode));
+        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "WHT", "Withholding Tax", JaggaerConstants.NO));
+        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "ATD", "Always Take Discount", JaggaerConstants.YES));
+        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "HFP", "Hold Future Payments", JaggaerConstants.NO));
+        return elementList;
+    }
+    
+    private static CustomElement buildCustomElement(String active, String elementIdentifier, String displayName, String value) {
+        CustomElement element = new CustomElement();
+        element.setIsActive(active);
+        element.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue(elementIdentifier));
+        element.setDisplayName(JaggaerBuilder.buildDispalyName(displayName));
+        
+        CustomElementValueList valueList = new CustomElementValueList();
+        CustomElementValue elementValue = new CustomElementValue();
+        elementValue.setValue(value);
+        valueList.getCustomElementValue().add(elementValue);
+        element.getCustomElementValueListOrAttachments().add(valueList);
+        
+        return element;
+    }
+    
+    private Location buildFulfillLocation2() {
+        Location location = new Location();
+        location.setSupportsOrderFulfillment(JaggaerConstants.YES);
+        location.setErpNumber(JaggaerBuilder.buildERPNumber(null));
+        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1514101"));
+        location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        location.setName(JaggaerBuilder.buildName("Fulfillment Center 2"));
+        location.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        location.setPaymentMethod(buildPaymentMethod());
+        location.setShipping(buildShipping());
+        location.setHandling(buildHandling());
+        location.setTaxInfo(buildTaxInfo());
+        location.setTermsAndCondition(buildTermsAndCondition());
+        location.setOrderDistributionList(buildOrderDistributionList());
+        location.setAssociatedAddressList(buildAssociatedAddressList());
+        location.setCustomElementList(buildCustomElementList("yyyyyyyyy", "555-555"));
+        return location;
+    }
+    
+    private Location buildLocation2() {
+        Location location = new Location();
+        location.setSupportsOrderFulfillment(JaggaerConstants.NO);
+        location.setErpNumber(JaggaerBuilder.buildERPNumber(null));
+        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511564"));
+        location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        location.setName(JaggaerBuilder.buildName("Location 2"));
+        location.setDescription(JaggaerBuilder.buildJaggaerBasicValue(null));
+        location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.YES));
+        location.setLocationEffectiveDate(JaggaerBuilder.buildJaggaerBasicValue(null));
+        location.setAssociatedAddressList(new AssociatedAddressList());
+        location.setAssociatedContactList(new AssociatedContactList());
+        return location;
     }
     
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {

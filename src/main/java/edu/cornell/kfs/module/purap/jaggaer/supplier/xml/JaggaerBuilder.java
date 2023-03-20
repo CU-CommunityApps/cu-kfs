@@ -226,5 +226,26 @@ public class JaggaerBuilder {
         name.setValue(internalName);
         return name;
     }
+    
+    public static Attachment buildAttachment(String id, String type, String name, String size, String attachmentURL) {
+        Attachment attachment = new Attachment();
+        attachment.setId(id);
+        attachment.setType(type);
+        attachment.setAttachmentName(name);
+        attachment.setAttachmentSize(size);
+        attachment.setAttachmentURL(attachmentURL);
+        return attachment;
+    }
+    
+    public static DisplayName buildDispalyName(String name) {
+        return buildDispalyName(name, null);
+    }
+    
+    public static DisplayName buildDispalyName(String name, String isChanged) {
+        DisplayName displayName = new DisplayName();
+        displayName.setIsChanged(isChanged);
+        displayName.setValue(name);
+        return displayName;
+    }
 
 }
