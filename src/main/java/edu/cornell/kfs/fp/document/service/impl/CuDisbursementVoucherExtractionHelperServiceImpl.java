@@ -281,8 +281,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         }
 
         String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
-        if (/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
-                FPParameterConstants.NON_EMPLOYEE_TRAVEL_PAY_REASONS, paymentReasonCode).evaluationSucceeds()) {
+        if (parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
+                FPParameterConstants.NONEMPLOYEE_TRAVEL, paymentReasonCode).evaluationSucceeds()) {
             DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
 
             pnt = new PaymentNoteText();
