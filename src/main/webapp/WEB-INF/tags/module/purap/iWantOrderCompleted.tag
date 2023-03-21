@@ -9,7 +9,7 @@
     <h3>Order Completed Information</h3>
     <table class="datatable" summary="Complete Information">
         <tr>
-            <td class="center">
+            <td class="right">
                 <kul:htmlControlAttribute
                         attributeEntry="${documentAttributes.completeOption}"
                         property="document.completeOption"
