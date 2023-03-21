@@ -61,7 +61,7 @@ public class CuElectronicInvoiceHelperServiceImplIntegTest extends KualiIntegTes
         AccountingDocumentTestUtils.saveDocument(poDocument, documentService);
 
         String poNumber = String.valueOf(poDocument.getPurapDocumentIdentifier());
-        String vendorDUNS = "133251074";
+        String vendorDUNS = "055646846";
         String xmlChunk = CuElectronicInvoiceHelperServiceFixture.getCXMLForRejectDocCreation(vendorDUNS, poNumber);
         writeXMLFile(xmlChunk, rejectFile);
 
