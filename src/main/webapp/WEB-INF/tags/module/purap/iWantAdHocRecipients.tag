@@ -17,9 +17,8 @@
                         <strong>NOTE:</strong>
                     </p>
                     <ul>
-                        <li>Do not enter your Net ID in the box below.</li>
-                        <li>If additional approvals are required prior to submitting to your Service Center for processing, please list the individual's Net ID below.</li>
-                        <li>Please click the <strong>Submit</strong> button to route to the named approver or your Service Center.</li>
+                        <li>Account number and transaction approval are required.</li>
+                        <li>Please enter the NetID of the person in your college or department who can provide both.</li>
                     </ul>
                 </td>
             </tr>

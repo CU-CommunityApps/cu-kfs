@@ -74,12 +74,11 @@
                             <td height=30 class="neutral"
                                 style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic;font-weight: normal">
                                 <div class="left">
-                                    <b>If you have documents to send to the FTC/Vendor follow these instructions:</b>
+                                    <b>To attach supporting documentation:</b>
                                     <ul>
-                                        <li>Select an attachment description from the drop down box</li>
-                                        <li>Click browse to locate and attach your document</li>
-                                        <li>Click add</li>
-                                        <li>Repeat to add additional attachments</li>
+                                        <li>Select the appropriate attachment description from the drop-down.</li>
+                                        <li>Browse to select the attachment and click Add.</li>
+                                        <li>Enter note text related to the attachment (optional).</li>
                                     </ul>
                                 </div>
                             </td>
@@ -88,10 +87,8 @@
                                 <div class="left">
                                     <b>To include a Note:</b>
                                     <ul>
-                                        <li>Select Note from the attachment description drop down box</li>
-                                        <li>Type the note in the note text field</li>
-                                        <li>Click add</li>
-                                        <li>Repeat to add additional notes</li>
+                                        <li>Type in the Note Text field.</li>
+                                        <li>Click Add.</li>
                                     </ul>
                                 </div>
                             </td>

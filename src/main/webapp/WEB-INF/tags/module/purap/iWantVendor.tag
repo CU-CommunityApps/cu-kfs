@@ -14,8 +14,7 @@
             <tr>
                 <td height="30" colspan="2" class="neutral"
                     style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
-                    <b>NOTE:</b> Please provide as much Vendor information as you can, if you do not know the Vendor
-                    please leave blank
+                    <b>NOTE:</b> Please use Vendor Lookup to select. Or provide Vendor name, email address, and mailing address.
                 </td>
             </tr>
         </table>
