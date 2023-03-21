@@ -719,7 +719,6 @@
 					</FlexFields>
 				</AccountsPayable>
 			</AccountsPayableList>
-			<!-- 
 			<TaxInformationList>
 				<TaxInformation type="TAX_TYPE_W9">
 					<TaxDocumentName>W9</TaxDocumentName>
@@ -734,7 +733,6 @@
 					</TaxDocument>
 				</TaxInformation>
 			</TaxInformationList>
-			-->
 			<InsuranceInformationList>
 				<InsuranceInformation
 					type="AutomobileLiability">

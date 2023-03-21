@@ -127,6 +127,7 @@ public class JaggaerExampleTest {
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
         supplier.setCustomElementList(buildSupplierCustomElementList());
         supplier.setAccountsPayableList(buildAccountsPayableList());
+        supplier.setTaxInformationList(buildTaxInformationList());
         return supplier;
     }
     
@@ -750,6 +751,24 @@ public class JaggaerExampleTest {
         fields.setFlexField4(JaggaerBuilder.buildJaggaerBasicValue("90"));
         fields.setFlexField5(JaggaerBuilder.buildJaggaerBasicValue("-0"));
         return fields;
+    }
+    
+    private TaxInformationList buildTaxInformationList() {
+        TaxInformationList taxList = new TaxInformationList();
+        
+        TaxInformation info = new TaxInformation();
+        info.setType("TAX_TYPE_W9");
+        info.setTaxDocumentName(JaggaerBuilder.buildJaggaerBasicValue("W9"));
+        info.setTaxDocumentYear(JaggaerBuilder.buildJaggaerBasicValue("2022"));
+        
+        TaxDocument doc = new TaxDocument();
+        doc.setAttachments(buildAttachments());
+        doc.getAttachments().getAttachment().add(JaggaerBuilder.buildAttachment("42d", "file", "Tax", "883", null));
+        
+        info.setTaxDocument(doc);
+        
+        taxList.getTaxInformation().add(info);
+        return taxList;
     }
     
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
