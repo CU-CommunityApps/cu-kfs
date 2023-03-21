@@ -167,7 +167,6 @@ public class JaggaerExampleTest {
     
     private ServiceAreaList buildServiceAreaList() {
         ServiceAreaList serviceAreaList = new ServiceAreaList();
-        
         ServiceArea serviceArea = new ServiceArea();
         serviceArea.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("US"));
         
@@ -176,8 +175,6 @@ public class JaggaerExampleTest {
         stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-CA"));
         
         serviceArea.getStateServiceAreaList().add(stateServiceAreaList);
-        
-        
         serviceAreaList.getServiceArea().add(serviceArea);
         return serviceAreaList;
     }
@@ -510,23 +507,29 @@ public class JaggaerExampleTest {
     private PaymentMethod buildPaymentMethod() {
         PaymentMethod method = new PaymentMethod();
         method.setType("po");
-        POPaymentMethod poPaymentMethod = new POPaymentMethod();
         
+        POPaymentMethod poPaymentMethod = new POPaymentMethod();
+        poPaymentMethod.setPoPayment(buildPOPayment());
+        poPaymentMethod.setpCardPayment(buildPCardPayment());
+        
+        method.setPoPaymentMethod(poPaymentMethod);
+        return method;
+    }
+    
+    private POPayment buildPOPayment() {
         POPayment poPayment = new POPayment();
         poPayment.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
         poPayment.setPoNumberSelection(new PONumberSelection());
         poPayment.setAllowFreeForm(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
-        poPaymentMethod.setPoPayment(poPayment);
-
+        return poPayment;
+    }
+    
+    private PCardPayment buildPCardPayment() {
         PCardPayment pcard = new PCardPayment();
         pcard.setActive(JaggaerBuilder.buildActive(JaggaerConstants.FALSE));
         pcard.setPoNumberSelection(new PONumberSelection());
         pcard.setRequireCardSecurityCode(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
-        poPaymentMethod.setpCardPayment(pcard);
-        
-        method.setPoPaymentMethod(poPaymentMethod);
-        method.setPoPaymentMethod(poPaymentMethod);
-        return method;
+        return pcard;
     }
     
     private Shipping buildShipping() {
@@ -537,18 +540,20 @@ public class JaggaerExampleTest {
     
     private SurchargeConfiguration buildSurchargeConfiguration() {
         SurchargeConfiguration config = new SurchargeConfiguration();
+        config.setFee(buildFee());
+        config.setOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue("0"));
+        config.setUseOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
         
+        return config;
+    }
+    
+    private Fee buildFee() {
         Fee fee = new Fee();
         fee.setFeeType(JaggaerBuilder.buildJaggaerBasicValue("FlatFee"));
         fee.setPercentage(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
         fee.setAmount(JaggaerBuilder.buildAmount("0.00"));
         fee.setFeeScope(JaggaerBuilder.buildJaggaerBasicValue("ByOrder"));
-        config.setFee(fee);
-        
-        config.setOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue("0"));
-        config.setUseOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
-        
-        return config;
+        return fee;
     }
     
     private Handling buildHandling() {
@@ -574,14 +579,7 @@ public class JaggaerExampleTest {
         
         PaymentTerms paymentTerms = new PaymentTerms();
         paymentTerms.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
-        
-        Discount discount = new Discount();
-        discount.setUnit("percent");
-        DiscountPercent percent = new DiscountPercent();
-        percent.setValue("0.0000");
-        discount.getDiscountItems().add(percent);
-        paymentTerms.setDiscount(discount);
-        
+        paymentTerms.setDiscount(buildDiscount());
         paymentTerms.setDays(JaggaerBuilder.buildJaggaerBasicValue("0"));
         paymentTerms.setFob(JaggaerBuilder.buildJaggaerBasicValue("notApplicable"));
         paymentTerms.setTermsType(JaggaerBuilder.buildJaggaerBasicValue("Net"));
@@ -592,12 +590,22 @@ public class JaggaerExampleTest {
         return terms;
     }
     
+    private Discount buildDiscount() {
+        Discount discount = new Discount();
+        discount.setUnit("percent");
+        DiscountPercent percent = new DiscountPercent();
+        percent.setValue("0.0000");
+        discount.getDiscountItems().add(percent);
+        return discount;
+    }
+    
     private OrderDistributionList buildOrderDistributionList() {
         OrderDistributionList orderList = new OrderDistributionList();
         
         DistributionMethod faxMethod = buildDistributionMethod("fax", JaggaerConstants.FALSE, null);
         faxMethod.setFax(buildFax("1", "619", "5773360", null));
         orderList.getDistributionMethod().add(faxMethod);
+        
         orderList.getDistributionMethod().add(buildDistributionMethod("emailplain", JaggaerConstants.FALSE, "support@JAGGAER.com"));
         orderList.getDistributionMethod().add(buildDistributionMethod("emailbody", JaggaerConstants.FALSE, "support@JAGGAER.com"));
         orderList.getDistributionMethod().add(buildDistributionMethod("emailattach", JaggaerConstants.FALSE, "support@JAGGAER.com"));
@@ -646,7 +654,7 @@ public class JaggaerExampleTest {
         element.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue(elementIdentifier));
         
         if (StringUtils.isNotBlank(displayName)) {
-            element.setDisplayName(JaggaerBuilder.buildDispalyName(displayName));
+            element.setDisplayName(JaggaerBuilder.buildDisplayName(displayName));
         }
         
         CustomElementValueList valueList = new CustomElementValueList();

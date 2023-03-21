@@ -463,7 +463,7 @@ public class SupplierSyncMessageTest {
         element1.getCustomElementValueListOrAttachments().add(elementValueList);
 
         element1.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a custom identifer", T_TRUE));
-        element1.setDisplayName(buildDisplayName("a cool display name", T_TRUE));
+        element1.setDisplayName(JaggaerBuilder.buildDisplayName("a cool display name", T_TRUE));
         customList.getCustomElement().add(element1);
 
         CustomElement element2 = new CustomElement();
@@ -475,17 +475,10 @@ public class SupplierSyncMessageTest {
 
 
         element2.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a  different custom identifer", T_TRUE));
-        element2.setDisplayName(buildDisplayName("a lame display name", T_TRUE));
+        element2.setDisplayName(JaggaerBuilder.buildDisplayName("a lame display name", T_TRUE));
         customList.getCustomElement().add(element2);
 
         return customList;
-    }
-
-    private DisplayName buildDisplayName(String name, String changed) {
-        DisplayName displayName = new DisplayName();
-        displayName.setIsChanged(changed);
-        displayName.setValue(name);
-        return displayName;
     }
 
     private LocationList buildLocationList() {
@@ -710,7 +703,7 @@ public class SupplierSyncMessageTest {
         diversity.setIsChanged(T_TRUE);
 
         diversity.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name", T_TRUE));;
-        diversity.setDisplayName(buildDisplayName("display name", F_FALSE));
+        diversity.setDisplayName(JaggaerBuilder.buildDisplayName("display name", F_FALSE));
 
         DD214Certificate ddCertificate = new DD214Certificate();
         ddCertificate.setIsChanged(T_TRUE);
@@ -743,14 +736,14 @@ public class SupplierSyncMessageTest {
 
         Classification classification1 = new Classification();
         classification1.setIsChanged(T_TRUE);
-        classification1.setDisplayName(buildDisplayName("classification 1 name", T_TRUE));
+        classification1.setDisplayName(JaggaerBuilder.buildDisplayName("classification 1 name", T_TRUE));
 
         classification1.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name for classification 1", T_TRUE));
         classificationList.getClassification().add(classification1);
 
         Classification classification2 = new Classification();
         classification2.setIsChanged(F_FALSE);
-        classification2.setDisplayName(buildDisplayName("classification 2 name", F_FALSE));
+        classification2.setDisplayName(JaggaerBuilder.buildDisplayName("classification 2 name", F_FALSE));
 
         classification2.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name for classification 2", F_FALSE));
         classificationList.getClassification().add(classification2);
@@ -911,7 +904,7 @@ public class SupplierSyncMessageTest {
     }
 
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
-        if (false) {
+        if (true) {
             String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
             LOG.info("logActualXmlIfNeeded, actualResults: " + actualResults);
         }

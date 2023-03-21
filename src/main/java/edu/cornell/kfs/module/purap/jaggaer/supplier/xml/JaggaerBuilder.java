@@ -237,11 +237,11 @@ public class JaggaerBuilder {
         return attachment;
     }
     
-    public static DisplayName buildDispalyName(String name) {
-        return buildDispalyName(name, null);
+    public static DisplayName buildDisplayName(String name) {
+        return buildDisplayName(name, null);
     }
     
-    public static DisplayName buildDispalyName(String name, String isChanged) {
+    public static DisplayName buildDisplayName(String name, String isChanged) {
         DisplayName displayName = new DisplayName();
         displayName.setIsChanged(isChanged);
         displayName.setValue(name);
