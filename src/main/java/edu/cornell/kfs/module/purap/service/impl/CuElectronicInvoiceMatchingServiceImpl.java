@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,18 +21,22 @@ import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceItemHolder;
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceMatchingServiceImpl;
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceOrderHolder;
 import org.kuali.kfs.module.purap.util.ElectronicInvoiceUtils;
+import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.PurchaseOrderCostSource;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
+import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMatchingServiceImpl {
-    private VendorService vendorService;
+    private BusinessObjectService businessObjectService;
 
     protected void validateInvoiceItems(ElectronicInvoiceOrderHolder orderHolder){
         Set poLineNumbers = new HashSet();
@@ -329,7 +335,7 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
     }
     
     private boolean eInvoiceVendorMatchesPOVendor(PurchaseOrderDocument poDoc, ElectronicInvoiceOrderHolder orderHolder) {        
-        VendorDetail vendorByDunsDetail = vendorService.getVendorByDunsNumber(orderHolder.getDunsNumber());
+        VendorDetail vendorByDunsDetail = getActiveVendorByDunsNumber(orderHolder.getDunsNumber());
 
         if (poDoc.getVendorHeaderGeneratedIdentifier() == null || poDoc.getVendorDetailAssignedIdentifier() == null
                 || ObjectUtils.isNull(vendorByDunsDetail)) {
@@ -338,12 +344,22 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
         
         return poDoc.getVendorHeaderGeneratedIdentifier().equals(vendorByDunsDetail.getVendorHeaderGeneratedIdentifier());
     }
-
-    public void setVendorService(VendorService vendorService) {
-        super.setVendorService(vendorService);
-        this.vendorService = vendorService;
+    
+    protected VendorDetail getActiveVendorByDunsNumber(String vendorDunsNumber) {
+        HashMap<String, Object> criteria = new HashMap<>();
+        criteria.put(VendorPropertyConstants.VENDOR_DUNS_NUMBER, vendorDunsNumber);
+        criteria.put(CUVendorPropertyConstants.VENDOR_DETAIL_ACTIVE_INDICATOR, Boolean.TRUE);
+        Collection<VendorDetail> vds = businessObjectService.findMatching(VendorDetail.class, criteria);
+        if (vds.size() < 1) {
+            return null;
+        } else {
+            return vds.iterator().next();
+        }
     }
 
-
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        super.setBusinessObjectService(businessObjectService);
+        this.businessObjectService = businessObjectService;
+    }
 
 }
