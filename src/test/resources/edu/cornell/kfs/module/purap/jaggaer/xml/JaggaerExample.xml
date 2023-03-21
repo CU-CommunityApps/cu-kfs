@@ -664,7 +664,6 @@
 					<AssociatedContactList />
 				</Location>
 			</LocationList>
-			<!-- 
 			<RestrictFulfillmentLocationsByBusinessUnit>No</RestrictFulfillmentLocationsByBusinessUnit>
 			<CustomElementList>
 				<CustomElement>
@@ -720,6 +719,7 @@
 					</FlexFields>
 				</AccountsPayable>
 			</AccountsPayableList>
+			<!-- 
 			<TaxInformationList>
 				<TaxInformation type="TAX_TYPE_W9">
 					<TaxDocumentName>W9</TaxDocumentName>

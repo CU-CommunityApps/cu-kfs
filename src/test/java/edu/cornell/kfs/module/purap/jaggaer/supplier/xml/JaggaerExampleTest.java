@@ -124,7 +124,9 @@ public class JaggaerExampleTest {
         supplier.setDiversityClassificationList(buildDiversityClassificationList());
         supplier.setInsuranceInformationList(buildInsuranceInformationList());
         supplier.setLocationList(buildLocationList());
-        
+        supplier.setRestrictFulfillmentLocationsByBusinessUnit(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        supplier.setCustomElementList(buildSupplierCustomElementList());
+        supplier.setAccountsPayableList(buildAccountsPayableList());
         return supplier;
     }
     
@@ -500,7 +502,7 @@ public class JaggaerExampleTest {
         location.setOrderDistributionList(buildOrderDistributionList());
         location.setAssociatedAddressList(buildAssociatedAddressList());
         location.setAssociatedContactList( new AssociatedContactList());
-        location.setCustomElementList(buildCustomElementList("xxxxxxxxx", "222-222"));
+        location.setCustomElementList(buildLocationCustomElementList("xxxxxxxxx", "222-222"));
         return location;
     }
     
@@ -624,7 +626,7 @@ public class JaggaerExampleTest {
         return addressList;
     }
     
-    private CustomElementList buildCustomElementList(String taxPayerId, String taxTypeCode) {
+    private CustomElementList buildLocationCustomElementList(String taxPayerId, String taxTypeCode) {
         CustomElementList elementList = new CustomElementList();
         elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPID", "TXP Taxpayer ID", taxPayerId));
         elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPTC", "TXP Type Code", taxTypeCode));
@@ -634,16 +636,24 @@ public class JaggaerExampleTest {
         return elementList;
     }
     
-    private static CustomElement buildCustomElement(String active, String elementIdentifier, String displayName, String value) {
+    private static CustomElement buildCustomElement(String active, String elementIdentifier, String displayName, String... values) {
         CustomElement element = new CustomElement();
-        element.setIsActive(active);
+        if (StringUtils.isNoneBlank(active)) {
+            element.setIsActive(active);
+        }
+        
         element.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue(elementIdentifier));
-        element.setDisplayName(JaggaerBuilder.buildDispalyName(displayName));
+        
+        if (StringUtils.isNotBlank(displayName)) {
+            element.setDisplayName(JaggaerBuilder.buildDispalyName(displayName));
+        }
         
         CustomElementValueList valueList = new CustomElementValueList();
-        CustomElementValue elementValue = new CustomElementValue();
-        elementValue.setValue(value);
-        valueList.getCustomElementValue().add(elementValue);
+        for (String value : values) {
+            CustomElementValue elementValue = new CustomElementValue();
+            elementValue.setValue(value);
+            valueList.getCustomElementValue().add(elementValue);
+        }
         element.getCustomElementValueListOrAttachments().add(valueList);
         
         return element;
@@ -665,7 +675,7 @@ public class JaggaerExampleTest {
         location.setTermsAndCondition(buildTermsAndCondition());
         location.setOrderDistributionList(buildOrderDistributionList());
         location.setAssociatedAddressList(buildAssociatedAddressList());
-        location.setCustomElementList(buildCustomElementList("yyyyyyyyy", "555-555"));
+        location.setCustomElementList(buildLocationCustomElementList("yyyyyyyyy", "555-555"));
         return location;
     }
     
@@ -682,6 +692,64 @@ public class JaggaerExampleTest {
         location.setAssociatedAddressList(new AssociatedAddressList());
         location.setAssociatedContactList(new AssociatedContactList());
         return location;
+    }
+    
+    private CustomElementList buildSupplierCustomElementList() {
+        CustomElementList elementList = new CustomElementList();
+        elementList.getCustomElement().add(buildCustomElement(null, "CustomElementID1", null, "20"));
+        elementList.getCustomElement().add(buildCustomElement(null, "CustomElementID2", null, "Brake Inspection", "Tire Change", "Oil Change"));
+        return elementList;
+    }
+    
+    private AccountsPayableList buildAccountsPayableList() {
+        AccountsPayableList apList = new AccountsPayableList();
+        AccountsPayable ap = new AccountsPayable();
+        ap.setType("Check");
+        ap.setErpNumber(JaggaerBuilder.buildERPNumber("ap123"));;
+        ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511565"));
+        ap.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        ap.setName(JaggaerBuilder.buildName("ap 1"));
+        ap.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        
+        AssociatedAddress address = buildAssociatedAddress("remitto", "apremit123");
+        address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(null));
+        address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        ap.getAssociatedAddress().add(address);
+        
+        ap.setEmail(new Email());
+        ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode("USD"));
+        ap.setBankAccount(buildBankAccount());
+        ap.setFlexFields(buildFlexFields());
+        
+        apList.getAccountsPayable().add(ap);
+        return apList;
+    }
+    
+    private BankAccount buildBankAccount() {
+        BankAccount bank = new BankAccount();
+        bank.setType("Checking");
+        bank.setBankName(JaggaerBuilder.buildJaggaerBasicValue("Third National Bank of Cary"));
+        bank.setAccountHoldersName(JaggaerBuilder.buildJaggaerBasicValue(null));
+        bank.setAccountNumberType(JaggaerBuilder.buildJaggaerBasicValue("Account Number"));
+        bank.setRoutingNumber(JaggaerBuilder.buildJaggaerBasicValue("234765198"));
+        bank.setBankAccountNumber(JaggaerBuilder.buildJaggaerBasicValue("093827541899"));
+        bank.setIsoCountryCode(JaggaerBuilder.buildIsoCountryCode("USA"));
+        bank.setAddressLine1(JaggaerBuilder.buildAddressLine("Austin Bldg, Suite 717"));
+        bank.setAddressLine2(JaggaerBuilder.buildAddressLine("3400 Main Street"));
+        bank.setCity(JaggaerBuilder.buildCity("Cary"));
+        bank.setState(JaggaerBuilder.buildState("NC"));
+        bank.setPostalCode(JaggaerBuilder.buildPostalCode("27511"));
+        return bank;
+    }
+    
+    private FlexFields buildFlexFields() {
+        FlexFields fields = new FlexFields();
+        fields.setFlexField1(JaggaerBuilder.buildJaggaerBasicValue("NFS 12"));
+        fields.setFlexField2(JaggaerBuilder.buildJaggaerBasicValue("NFS 11"));
+        fields.setFlexField3(JaggaerBuilder.buildJaggaerBasicValue("NFS 34"));
+        fields.setFlexField4(JaggaerBuilder.buildJaggaerBasicValue("90"));
+        fields.setFlexField5(JaggaerBuilder.buildJaggaerBasicValue("-0"));
+        return fields;
     }
     
     private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
