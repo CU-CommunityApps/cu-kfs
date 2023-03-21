@@ -126,7 +126,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 	    try {
 	        Date runDate = getDateTimeService().convertToDate(
 	                getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class,
-	                        KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
+	                        KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_STEP_RUN_DATE));
 	    }
 	    catch (ParseException pe) {
 	        LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE can not be determined.");
