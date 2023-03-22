@@ -72,19 +72,5 @@
     
     <bean id="arEmailService" parent="arEmailService-parentBean"
         class="edu.cornell.kfs.module.ar.service.impl.CuAREmailServiceImpl" />
-    <!-- start backport FINP-8555 -->    
-    <bean id="ArAuthorizationConstants" class="org.kuali.kfs.core.api.util.collect.ConstantsMap"
-          p:constantClass="org.kuali.kfs.module.ar.ArAuthorizationConstants"/>
-          
-    <bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
-        <property name="attributes">
-            <map>
-                <entry key="ArAuthorizationConstants" value-ref="ArAuthorizationConstants"/>
-                <entry key="ArConstants" value-ref="ArConstants"/>
-                <entry key="ArKeyConstants" value-ref="ArKeyConstants"/>
-            </map>
-        </property>
-    </bean>
-    <!-- end backport FINP-8555 --> 
 
 </beans>
