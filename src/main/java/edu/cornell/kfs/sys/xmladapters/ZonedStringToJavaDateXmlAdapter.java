@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class ZonedStringToJavaDateXmlAdapter extends XmlAdapter<String, Date> {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
             CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_XXX, Locale.US);
 
     @Override

@@ -63,11 +63,11 @@ public abstract class ContractPartyBase {
         this.sciquestId = sciquestId;
     }
 
-    public String getERPNumber() {
+    public String getErpNumber() {
         return erpNumber;
     }
 
-    public void setERPNumber(String erpNumber) {
+    public void setErpNumber(String erpNumber) {
         this.erpNumber = erpNumber;
     }
 
