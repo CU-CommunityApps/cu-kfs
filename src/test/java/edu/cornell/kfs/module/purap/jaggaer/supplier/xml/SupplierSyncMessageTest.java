@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-
 import java.io.File;
 import java.io.IOException;
 
@@ -61,7 +60,7 @@ public class SupplierSyncMessageTest {
 
         logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
-        CuXMLUnitTestUtils.compareXML(actualXmlFile, expectedXmlFile);
+        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
     }
 
     private Header buildHeader() {

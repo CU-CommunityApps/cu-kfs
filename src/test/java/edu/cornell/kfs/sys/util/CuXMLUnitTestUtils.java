@@ -21,22 +21,26 @@ public class CuXMLUnitTestUtils {
     
     private static final Logger LOG = LogManager.getLogger();
     
-    public static void compareXML(File actualXmlFile, File expectedXmlFile) throws SAXException, IOException {
-        FileInputStream actualFileInputStream = new FileInputStream(actualXmlFile);
-        FileInputStream expectedFIleInputStream = new FileInputStream(expectedXmlFile);
+    public static void compareXML(File expectedXmlFile, File actualXmlFile) throws SAXException, IOException {
+        try (FileInputStream actualFileInputStream = new FileInputStream(actualXmlFile);
+                FileInputStream expectedFIleInputStream = new FileInputStream(expectedXmlFile);
+                BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
+                BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));) {
+            XMLUnit.setIgnoreWhitespace(true);
+            XMLUnit.setIgnoreComments(true);
 
-        BufferedReader actualBufferedReader = new BufferedReader(new InputStreamReader(actualFileInputStream));
-        BufferedReader expectedBufferedReader = new BufferedReader(new InputStreamReader(expectedFIleInputStream));
-
-        XMLUnit.setIgnoreWhitespace(true);
-        XMLUnit.setIgnoreComments(true);
-
-        Diff xmlDiff = new Diff(expectedBufferedReader, actualBufferedReader);
-        DetailedDiff detailXmlDiff = new DetailedDiff(xmlDiff);
-        List<Difference> differences = detailXmlDiff.getAllDifferences();
-        for (Difference difference : differences) {
-            LOG.info("compareXML, difference: " + difference);
+            Diff xmlDiff = new Diff(expectedBufferedReader, actualBufferedReader);
+            DetailedDiff detailXmlDiff = new DetailedDiff(xmlDiff);
+            List<Difference> differences = detailXmlDiff.getAllDifferences();
+            for (Difference difference : differences) {
+                LOG.info("compareXML, difference: " + difference);
+            }
+            assertEquals(0, differences.size());
+            
         }
-        assertEquals(0, differences.size());
+        
+        
+
+        
     }
 }

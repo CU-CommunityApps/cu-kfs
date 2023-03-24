@@ -9,9 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -59,7 +57,7 @@ public class JaggaerExampleTest {
 
         logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
-        CuXMLUnitTestUtils.compareXML(actualXmlFile, expectedXmlFile);
+        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
     }
     
     private Header buildHeader() {
