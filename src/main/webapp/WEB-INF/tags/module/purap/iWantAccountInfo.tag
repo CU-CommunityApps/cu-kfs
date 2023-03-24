@@ -17,8 +17,8 @@
         <tr>
             <td height="30" colspan="${mainColumnCount}" class="neutral"
                 style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
-                <b>NOTE:</b> If you do not know the specific account number to be charged, please provide information in
-                the <b>account description box</b> below (i.e. NSF research account, salary recovery account).
+                <b>NOTE:</b> If you do not know the account number, in Routing and Submission (Step 4) enter the NetID 
+                of the person in your college or department who can provide the account number and authorize the transaction.
             </td>
         </tr>
         <tr>
