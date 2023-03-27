@@ -9,16 +9,14 @@
 
 <div class="tab-container">
     <h3>Vendor Info</h3>
-    <c:if test="${wizard}">
-        <table class="standard side-margins">
-            <tr>
-                <td height="30" colspan="2" class="neutral"
-                    style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
-                    <b>NOTE:</b> Please use Vendor Lookup to select. Or provide Vendor name, email address, and mailing address.
-                </td>
-            </tr>
-        </table>
-    </c:if>
+    <table class="standard side-margins">
+        <tr>
+            <td height="30" colspan="2" class="neutral"
+                style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
+                <b>NOTE:</b> Please use Vendor Lookup to select. Or provide Vendor name, email address, and mailing address.
+            </td>
+        </tr>
+    </table>
     <table cellpadding="0" cellspacing="0" class="datatable" summary="Vendor Section">
         <tr>
             <th class="right">
