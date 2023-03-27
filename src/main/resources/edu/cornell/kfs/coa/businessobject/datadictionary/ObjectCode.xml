@@ -65,6 +65,13 @@
                 <ref bean="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
             </list>
         </property>
+        <property name="keyAttributes">
+            <list>
+                <ref bean="ObjectCode-universityFiscalYear"/>
+                <ref bean="ObjectCode-chartOfAccountsCode"/>
+                <ref bean="ObjectCode-financialObjectCode"/>
+            </list>
+        </property>
         <property name="relationships">
             <list>  
                 <bean parent="RelationshipDefinition">
@@ -443,7 +450,6 @@
                       p:attributeName="financialObjectCodeShortName"/>
                 <bean parent="FieldDefinition"
                       p:attributeName="financialObjectLevelCode"/>
-                <bean parent="FieldDefinition"
                 <bean parent="FieldDefinition" p:attributeName="extension.cgReportingCode"/>
                 <bean parent="FieldDefinition"
                       p:attributeName="financialObjectTypeCode"/>
