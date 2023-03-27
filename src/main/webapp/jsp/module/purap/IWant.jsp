@@ -93,13 +93,13 @@
     <c:choose>
         <c:when test="${isRegularStep}">
             <c:if test="${canAdHocRouteForApprove != null}">
-                <kul:tab tabTitle="Routing and Submission" defaultOpen="true">
+                <kul:tab tabTitle="College/Unit Routing and Approval" defaultOpen="true">
                     <purap:iWantAdHocRecipients/>
                 </kul:tab>
             </c:if>
         </c:when>
         <c:when test="${(step eq 'routingStep')}">
-            <kul:tabTop tabTitle="Routing and Submission" defaultOpen="true"
+            <kul:tabTop tabTitle="College/Unit Routing and Approval" defaultOpen="true"
                         tabErrorKey="${PurapConstants.VENDOR_ERRORS}">
                 <c:if test="${canAdHocRouteForApprove != null}">
                     <purap:iWantAdHocRecipients/>

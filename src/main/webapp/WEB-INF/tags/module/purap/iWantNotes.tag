@@ -77,8 +77,8 @@
                                     <b>To attach supporting documentation:</b>
                                     <ul>
                                         <li>Select the appropriate attachment description from the drop-down.</li>
-                                        <li>Browse to select the attachment and click Add.</li>
                                         <li>Enter note text related to the attachment (optional).</li>
+                                        <li>Browse to select the attachment and click Add.</li>
                                     </ul>
                                 </div>
                             </td>
