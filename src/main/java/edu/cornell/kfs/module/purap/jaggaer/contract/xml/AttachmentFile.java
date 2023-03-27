@@ -38,9 +38,11 @@ public class AttachmentFile {
     private Date dateUploaded;
 
     @XmlElement(name = "AttachmentDisplayName", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String attachmentDisplayName;
 
     @XmlElement(name = "AttachmentFileName", required = true)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String attachmentFileName;
 
     @XmlElement(name = "AttachmentType", required = true)

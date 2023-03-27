@@ -10,7 +10,8 @@ import edu.cornell.kfs.module.purap.jaggaer.contract.xml.SecondParty;
 
 public enum ContractPartyFixture {
 
-    FIRST_PARTY_CORNELL(true, true, "CORNELL UNIVERSITY", null, null, null, null);
+    CORNELL_UNIVERSITY(true, true, "CORNELL UNIVERSITY", "1002003004", null, null, null),
+    TESTING_AND_TRYING_LLC(false, true, "Testing & Trying LLC", "1002345678", "116543-0", null, "203142");
 
     public final boolean isFirstParty;
     public final boolean isPrimary;

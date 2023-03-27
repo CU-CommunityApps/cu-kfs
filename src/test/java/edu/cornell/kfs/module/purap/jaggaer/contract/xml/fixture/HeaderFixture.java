@@ -6,7 +6,7 @@ import edu.cornell.kfs.sys.xmladapters.ZonedStringToJavaDateXmlAdapter;
 
 public enum HeaderFixture {
 
-    HEADER01("Header01", "2023-03-01T05:05:05.123Z", "CornellU", "CornellSecret");
+    HEADER01("SingleTestContract", "2023-03-16T17:45:33.888-05:00", "CornellU", "CornellSecret");
 
     public final String messageId;
     public final ZonedDateTime timestamp;
@@ -15,7 +15,7 @@ public enum HeaderFixture {
 
     private HeaderFixture(String messageId, String timestamp, String identity, String sharedSecret) {
         this.messageId = messageId;
-        this.timestamp = ZonedDateTime.parse(timestamp, ZonedStringToJavaDateXmlAdapter.DATE_FORMATTER);
+        this.timestamp = ZonedStringToJavaDateXmlAdapter.parseToZonedDateTime(timestamp);
         this.identity = identity;
         this.sharedSecret = sharedSecret;
     }

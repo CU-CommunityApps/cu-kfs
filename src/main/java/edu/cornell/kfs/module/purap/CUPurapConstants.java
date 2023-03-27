@@ -487,4 +487,15 @@ public class CUPurapConstants {
         }
         
     }
+
+    public static final class JaggaerContractCustomFields {
+        public static final String PROCUREMENT_AGENT = "ProcurementAgent";
+        public static final String ACCOUNT = "Account";
+        public static final String SUB_ACCOUNT = "SubAccount";
+        public static final String OBJECT_CODE = "ObjectCode";
+        public static final String SUB_OBJECT_CODE = "SubObjectCode";
+        public static final String PROJECT = "Project";
+        public static final String ORG_REF_ID = "OrgRefID";
+    }
+
 }

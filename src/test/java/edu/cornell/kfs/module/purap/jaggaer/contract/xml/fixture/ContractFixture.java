@@ -16,13 +16,13 @@ public enum ContractFixture {
     public final String contractSummary;
     public final KualiDecimal contractValue;
     public final List<ContractPartyFixture> contractParties;
-    public final Map<FieldType, List<String>> customFields;
+    public final Map<String, List<String>> customFields;
     public final List<String> managers;
     public final List<AttachmentFileFixture> attachments;
 
     private ContractFixture(String contractId, String contractName, String contractNumber, String contractType,
             String contractStatus, String contractSummary, double contractValue,
-            ContractPartyFixture[] contractParties, Map.Entry<FieldType, List<String>>[] customFields,
+            ContractPartyFixture[] contractParties, Map.Entry<String, List<String>>[] customFields,
             String[] managers, AttachmentFileFixture[] attachments) {
         this.contractId = contractId;
         this.contractName = contractName;
@@ -46,13 +46,13 @@ public enum ContractFixture {
     }
 
     @SafeVarargs
-    private static Map.Entry<FieldType, List<String>>[] customFields(
-            Map.Entry<FieldType, List<String>>... customFields) {
+    private static Map.Entry<String, List<String>>[] customFields(
+            Map.Entry<String, List<String>>... customFields) {
         return customFields;
     }
 
-    private static Map.Entry<FieldType, List<String>> customField(FieldType fieldType, String... values) {
-        return Map.entry(fieldType, List.of(values));
+    private static Map.Entry<String, List<String>> customField(String name, String... values) {
+        return Map.entry(name, List.of(values));
     }
 
     private static String[] managers(String... managers) {

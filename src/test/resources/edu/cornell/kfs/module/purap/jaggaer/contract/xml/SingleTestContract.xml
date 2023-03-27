@@ -1,0 +1,601 @@
+<?xml version="1.0"?>
+<!DOCTYPE ContractMessage SYSTEM "https://integrations.sciquest.com/app_docs/dtd/contract/CMRContract.dtd">
+<ContractMessage version="1.0">
+    <Header>
+        <MessageId>SingleTestContract</MessageId>
+        <Timestamp>2023-03-16T17:45:33.888-05:00</Timestamp>
+        <Authentication>
+            <Identity>CornellU</Identity>
+            <SharedSecret>CornellSecret</SharedSecret>
+        </Authentication>
+    </Header>
+    <ContractList>
+        <Contract>
+            <ContractId>1890123</ContractId>
+            <ContractName>Example for Testing Adobe Sign</ContractName>
+            <ContractNumber>9876-PQR-000111-2323</ContractNumber>
+            <AmendmentNumber>1</AmendmentNumber>
+            <ContractType>ProfessionalServicesAgreement</ContractType>
+            <Project>6136</Project>
+            <JurisdictionCode>US</JurisdictionCode>
+            <Currency>USD</Currency>
+            <Status>ExecutedInEffect</Status>
+            <UseEsignature>Yes</UseEsignature>
+            <Archive>false</Archive>
+            <Summary>for testing only</Summary>
+            <ContractValue>1000.00</ContractValue>
+            <ContractTotalValue>3000.00</ContractTotalValue>
+            <ShareContractWithSecondParties>false</ShareContractWithSecondParties>
+            <ContractDates>
+                <StartOnExecution>false</StartOnExecution>
+                <TimeZone>US/Eastern</TimeZone>
+                <CreatedDate>2023-03-16 02:25 PM</CreatedDate>
+                <StartDate>2023-03-16 12:00 AM</StartDate>
+                <EndDate>2023-04-31 11:59 PM</EndDate>
+                <TerminationDate />
+                <TerminationReason />
+                <DoesNotExpire>false</DoesNotExpire>
+                <ContractRenewal
+                    autoApplyPriceFile="false" autoRenew="false">
+                    <RenewalNumber>0</RenewalNumber>
+                    <RenewalDate />
+                    <AutoRenewalLeadDays />
+                </ContractRenewal>
+                <ContractReview>
+                    <ReviewDate />
+                </ContractReview>
+                <FullyExecutedDate>2023-03-16 03:37 PM</FullyExecutedDate>
+                <OutForSignatureDate>2023-03-16 03:36 PM</OutForSignatureDate>
+            </ContractDates>
+            <ContractPartiesList>
+                <FirstParty isPrimary="true">
+                    <Name>Cornell University</Name>
+                    <SciquestId>1002003004</SciquestId>
+                    <ERPNumber />
+                    <ContactId />
+                    <AddressId />
+                </FirstParty>
+                <SecondParty isPrimary="true">
+                    <Name>Testing &amp; Trying LLC</Name>
+                    <SciquestId>1002345678</SciquestId>
+                    <ERPNumber>116543-0</ERPNumber>
+                    <ContactId />
+                    <AddressId>203142</AddressId>
+                </SecondParty>
+            </ContractPartiesList>
+            <CustomFieldList>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>PurchaseCategory</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>1) Software License| SaaS|
+                            Cloud Agreements (John Doe)</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>OtherPurchaseCategory</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>ProcurementAgent</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Test User - Janet Smith</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>VendorContactName</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>test</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>VendorEmail</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>test</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Multi-Line)">
+                    <InternalName>SecondPartyContactNotes</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>SecondPartySignatory</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>SecondPartySignatoryTitle</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>SecondPartySignatoryEmail</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>AmendmentYN</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Yes</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>ContractContact</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Numeric Text Box">
+                    <InternalName>ContractValue1</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>3000</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>SpecialPaymentTErms</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Not Applicable</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Multi-Line)">
+                    <InternalName>OtherPaymentTerms</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Multi-Line)">
+                    <InternalName>AmendSummary</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>add $1000 for testing</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Date">
+                    <InternalName>AmendEffectDate</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>2023-03-16</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>AmendChangeEndDate</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Date">
+                    <InternalName>AmendNewEndDate</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>AmendNewSoW</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Multi-Line)">
+                    <InternalName>AmendSoWChanges</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>AmendNewSpendValue</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Yes</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Monetary">
+                    <InternalName>AmendSpendValueChange</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>1000.00 USD</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField
+                    type="Multiple Choice (Pick One)">
+                    <InternalName>SupplierPaper</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>ProcurementTemplateType</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Cornell Contract Template</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>Account</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>1234567</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>SubAccount2</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>ObjectCode</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>SubObjectCode2</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>Project2</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>OrgRefID2</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>AdditionalAccounts</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Text (Multi-Line)">
+                    <InternalName>AdditionalAccountsText</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>VendorContractor</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>NewVendorTDXRequestLink2</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>SecondPartyNew</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>DBA</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField
+                    type="Multiple Choice (Pick One)">
+                    <InternalName>ServiceProviderQUestionaire</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Confirm</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Numeric Text Box">
+                    <InternalName>PONumber</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>SoftwareIT</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>StatementofNeed</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField
+                    type="Multiple Select (Pick Many)">
+                    <InternalName>StatementofNeedConfirmation</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>StatmentofNeedExceptionYN</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Multi-Line)">
+                    <InternalName>StatementOfNeedException</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField
+                    type="Multiple Choice (Pick One)">
+                    <InternalName>StatementOfNeedCompletion</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>ContractCompensation</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>Bidcompleted</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Text (Single Line)">
+                    <InternalName>RFPNumber</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>SoleSource</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>Bid402</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Dropdown List (Pick One)">
+                    <InternalName>ExemptionReason</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>USSanctionInvolvement</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>ChinaData</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>ChinaDataProtectionFollowUP</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>Minors</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>Employee4</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>No</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>Employee5</InternalName>
+                    <CustomFieldValueList />
+                </CustomField>
+                <CustomField type="Yes/No">
+                    <InternalName>ExpenditureContractSchedules</InternalName>
+                    <CustomFieldValueList>
+                        <CustomFieldValue>Yes</CustomFieldValue>
+                    </CustomFieldValueList>
+                </CustomField>
+            </CustomFieldList>
+            <SignerList>
+                <Signer>
+                    <UsesSigningOrder>Yes</UsesSigningOrder>
+                    <SentDate>2023-03-16 03:35 PM</SentDate>
+                    <SignedDate>2023-03-16 03:36 PM</SignedDate>
+                    <SigningOrder>1</SigningOrder>
+                    <Name>Janet Smith</Name>
+                    <Email>js123@someplace.edu</Email>
+                    <MobileNumber />
+                    <Title />
+                    <ContractParty>Testing &amp; Trying LLC</ContractParty>
+                </Signer>
+                <Signer>
+                    <UsesSigningOrder>Yes</UsesSigningOrder>
+                    <SentDate>2023-03-16 03:36 PM</SentDate>
+                    <SignedDate>2023-03-16 03:36 PM</SignedDate>
+                    <SigningOrder>2</SigningOrder>
+                    <Name>Jane Doe</Name>
+                    <Email>jd999@somewhere.net</Email>
+                    <MobileNumber />
+                    <Title>Test Title</Title>
+                    <ContractParty>Cornell University</ContractParty>
+                </Signer>
+            </SignerList>
+            <ObligationList />
+            <EProcurement>
+                <ActiveForShopping>true</ActiveForShopping>
+                <AllowSupplierEditItems>true</AllowSupplierEditItems>
+                <AutoApplyPurchase>false</AutoApplyPurchase>
+                <RequiresPriceSet>false</RequiresPriceSet>
+                <AdministrativeFee>
+                    <BusinessUnitFeeList />
+                </AdministrativeFee>
+                <AllowNonCatalogItems>false</AllowNonCatalogItems>
+                <Budget>0.00</Budget>
+                <EnforceBudget>false</EnforceBudget>
+                <MinimumContractSpendPerPR />
+                <MaximumContractSpendPerPR />
+                <MinimumLineItemQuantityPerPR />
+                <MaximumLineItemQuantityPerPR />
+                <UseReqLimitsForInvoice>false</UseReqLimitsForInvoice>
+                <MinimumContractSpendPerInvoice />
+                <MaximumContractSpendPerInvoice />
+                <MinimumLineItemQuantityPerInvoice />
+                <MaximumLineItemQuantityPerInvoice />
+                <PRSpend>0.00</PRSpend>
+                <POSpend>0.00</POSpend>
+                <InvoiceSpend>0.00</InvoiceSpend>
+                <AppliesTo restrictProductAppliesTo="false">
+                    <GrantAccessViaDeptAndRole>true</GrantAccessViaDeptAndRole>
+                    <UserList />
+                    <GroupAppliesTo>
+                        <RoleList />
+                        <DepartmentList />
+                        <BusinessUnitList />
+                    </GroupAppliesTo>
+                    <UNSPSCList>
+                        <UNSPSC>all</UNSPSC>
+                    </UNSPSCList>
+                    <FulfillmentCenterList>
+                        <FulfillmentCenter>all</FulfillmentCenter>
+                    </FulfillmentCenterList>
+                    <ProductSKUList />
+                </AppliesTo>
+                <GoodsAndServices>
+                    <OrderingInstructions>
+                        <DisplayInProductSearch>No</DisplayInProductSearch>
+                        <ProductDescription />
+                        <AdditionalInformation />
+                        <Instructions type="None" />
+                    </OrderingInstructions>
+                    <NonCatalogItems />
+                </GoodsAndServices>
+            </EProcurement>
+            <IsConfidential>false</IsConfidential>
+            <ManagerList>
+                <UserList>
+                    <User>jqd555</User>
+                </UserList>
+                <RoleList />
+                <DepartmentList />
+            </ManagerList>
+            <StakeholderList>
+                <UserList />
+                <RoleList />
+                <DepartmentList />
+                <BusinessUnitList />
+            </StakeholderList>
+            <InvoiceApproversList>
+                <UserList />
+            </InvoiceApproversList>
+            <ContractManagerVisibility>Full</ContractManagerVisibility>
+            <AllOtherUsersVisibility>Full</AllOtherUsersVisibility>
+            <ContractAdditionalDetails>
+                <Details />
+                <SearchableKeywords />
+                <HardCopyLocation />
+                <FlexFieldList>
+                    <FlexField index="1" />
+                    <FlexField index="2" />
+                    <FlexField index="3" />
+                    <FlexField index="4" />
+                    <FlexField index="5" />
+                    <FlexField index="6" />
+                    <FlexField index="7" />
+                    <FlexField index="8" />
+                </FlexFieldList>
+                <FlexListList>
+                    <FlexField index="1" />
+                    <FlexField index="2" />
+                    <FlexField index="3" />
+                    <FlexField index="4" />
+                    <FlexField index="5" />
+                    <FlexField index="6" />
+                    <FlexField index="7" />
+                    <FlexField index="8" />
+                </FlexListList>
+            </ContractAdditionalDetails>
+            <Notifications>
+                <Notification type="BudgetExceeded"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="PercentageTiers"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="AmountTiers"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="DateEffLead"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="DateEff"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="DateExpLead"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="DateExp"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="DateRenewLead"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="DateRenew"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <Notification type="ReviewDatePassed"
+                    contractManagers="false"
+                    contractManagersOnProject="false"
+                    stakeHolders="false" stakeHoldersOnProject="false"
+                    externalContacts="false" />
+                <AdvanceNoticeList>
+                    <StartDateLeadTimeList>
+                        <LeadTime index="1" />
+                    </StartDateLeadTimeList>
+                    <EndDateLeadTimeList>
+                        <LeadTime index="1" />
+                        <LeadTime index="2" />
+                        <LeadTime index="3" />
+                    </EndDateLeadTimeList>
+                    <RenewalDateLeadTimeList>
+                        <LeadTime index="1" />
+                        <LeadTime index="2" />
+                        <LeadTime index="3" />
+                    </RenewalDateLeadTimeList>
+                </AdvanceNoticeList>
+                <SpendTierNotification
+                    forPOSpend="false" forPRSpend="false"
+                    forInvoiceSpend="false" />
+                <NotificationTierList />
+            </Notifications>
+            <ContractFamily>
+                <ParentContract />
+                <ChildContractList />
+            </ContractFamily>
+            <AttachmentList>
+                <Attachment>
+                    <AttachmentFile id="1161789"
+                        version="1" size="308" dateUploaded="3/16/2023">
+                        <AttachmentDisplayName>Compiled Document</AttachmentDisplayName>
+                        <AttachmentFileName>John Adobe Sign Test 2 (no
+                            pre-set adobe fields).pdf</AttachmentFileName>
+                        <AttachmentType>CompiledDocument</AttachmentType>
+                        <PrintWithFullContract>No</PrintWithFullContract>
+                        <ShareWithSecondParties>No</ShareWithSecondParties>
+                        <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                    </AttachmentFile>
+                </Attachment>
+                <Attachment>
+                    <AttachmentFile id="1162987"
+                        version="1" size="382" dateUploaded="3/16/2023">
+                        <AttachmentDisplayName>John Adobe Sign Test 2
+                            (no pre-set adobe fields).pdf</AttachmentDisplayName>
+                        <AttachmentFileName>John Adobe Sign Test 2 (no
+                            pre-set adobe fields).pdf</AttachmentFileName>
+                        <AttachmentType>SignedDocument</AttachmentType>
+                        <PrintWithFullContract>No</PrintWithFullContract>
+                        <ShareWithSecondParties>No</ShareWithSecondParties>
+                        <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                    </AttachmentFile>
+                </Attachment>
+                <Attachment>
+                    <AttachmentFile id="1163555"
+                        version="2" size="36" dateUploaded="3/16/2023">
+                        <AttachmentDisplayName>Main Document</AttachmentDisplayName>
+                        <AttachmentFileName>2023-03-01
+                            ContractTemplate-1122334455667-8989898 -
+                            Buytest - Long Form Professional Services
+                            Agreement Amendment (version 2).docx</AttachmentFileName>
+                        <AttachmentType>MainDocument</AttachmentType>
+                        <PrintWithFullContract>Yes</PrintWithFullContract>
+                        <ShareWithSecondParties>No</ShareWithSecondParties>
+                        <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                    </AttachmentFile>
+                </Attachment>
+                <Attachment>
+                    <AttachmentFile id="1163556"
+                        version="1" size="207" dateUploaded="3/16/2023">
+                        <AttachmentDisplayName>John_Adobe_Sign_Test_2_(no_pre-set_adobe_fields)
+                            (print to pdf).pdf</AttachmentDisplayName>
+                        <AttachmentFileName>John_Adobe_Sign_Test_2_(no_pre-set_adobe_fields)
+                            (print to pdf).pdf</AttachmentFileName>
+                        <AttachmentType>Attachment</AttachmentType>
+                        <PrintWithFullContract>Yes</PrintWithFullContract>
+                        <ShareWithSecondParties>No</ShareWithSecondParties>
+                        <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                    </AttachmentFile>
+                </Attachment>
+            </AttachmentList>
+            <ContractCommodityCodesList />
+        </Contract>
+    </ContractList>
+</ContractMessage>

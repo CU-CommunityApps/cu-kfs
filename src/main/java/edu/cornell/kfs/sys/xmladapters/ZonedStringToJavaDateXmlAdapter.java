@@ -14,8 +14,12 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 public class ZonedStringToJavaDateXmlAdapter extends XmlAdapter<String, Date> {
 
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
             CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_XXX, Locale.US);
+
+    public static ZonedDateTime parseToZonedDateTime(String value) {
+        return ZonedDateTime.parse(value, DATE_FORMATTER);
+    }
 
     @Override
     public Date unmarshal(String value) throws Exception {
@@ -23,7 +27,7 @@ public class ZonedStringToJavaDateXmlAdapter extends XmlAdapter<String, Date> {
     }
 
     private Date parseDate(String value) {
-        long milliseconds = ZonedDateTime.parse(value, DATE_FORMATTER)
+        long milliseconds = parseToZonedDateTime(value)
                 .toInstant()
                 .toEpochMilli();
         return new Date(milliseconds);
