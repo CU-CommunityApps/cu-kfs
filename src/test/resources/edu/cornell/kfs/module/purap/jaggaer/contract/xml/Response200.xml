@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE DocumentExportResponse SYSTEM "https://integrations.sciquest.com/app_docs/dtd/documentExport/DocumentExport.dtd">
+<DocumentExportResponse version="1.0">
+    <Header>
+        <MessageId>2023-03-16T22:49:33.789Z</MessageId>
+        <Timestamp>2023-03-16T22:49:33.789Z</Timestamp>
+    </Header>
+    <Response>
+        <Status>
+            <StatusCode>200</StatusCode>
+            <StatusText>OK</StatusText>
+        </Status>
+    </Response>
+</DocumentExportResponse>

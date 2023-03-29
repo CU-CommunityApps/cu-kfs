@@ -2,13 +2,14 @@ package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
 import java.util.Date;
 
-import edu.cornell.kfs.sys.xmladapters.ZonedStringToJavaDateXmlAdapter;
+import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -33,16 +34,23 @@ public class AttachmentFile {
     @XmlAttribute(name = "size")
     private Integer size;
 
+    /*
+     * NOTE: For the phase 2 work (KFSPTS-26285), we need to revisit whether this attribute
+     * should be treated as date-only. Jaggaer's documentation treats this attribute as
+     * a date-time value but manually exported contract XML shows it as a date-only value.
+     * Alternatively, we could remove this from our bean since we don't need it for processing;
+     * it's just included here to provide more reference information for logging purposes.
+     */
     @XmlAttribute(name = "dateUploaded")
-    @XmlJavaTypeAdapter(ZonedStringToJavaDateXmlAdapter.class)
+    @XmlJavaTypeAdapter(StringToJavaDateAdapter.class)
     private Date dateUploaded;
 
     @XmlElement(name = "AttachmentDisplayName", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String attachmentDisplayName;
 
     @XmlElement(name = "AttachmentFileName", required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String attachmentFileName;
 
     @XmlElement(name = "AttachmentType", required = true)

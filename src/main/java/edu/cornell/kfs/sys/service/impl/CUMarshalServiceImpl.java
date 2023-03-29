@@ -13,6 +13,8 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.io.output.CloseShieldOutputStream;
@@ -64,11 +66,25 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     }
 
     @Override
-    public String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException {
-        LOG.debug("marshalObjectToXMLString, entering");
+    public String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException, IOException {
+        LOG.debug("marshalObjectToXmlString, entering");
+        return marshalObjectToXmlString(objectToMarshal, false);
+    }
+
+    @Override
+    public String marshalObjectToXmlFragmentString(Object objectToMarshal) throws JAXBException, IOException {
+        LOG.debug("marshalObjectToXmlFragmentString, entering");
+        return marshalObjectToXmlString(objectToMarshal, true);
+    }
+
+    protected String marshalObjectToXmlString(Object objectToMarshal, boolean marshalAsFragment)
+            throws JAXBException, IOException {
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        if (marshalAsFragment) {
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+        }
         StringWriter stringWriter = new StringWriter();
         jaxbMarshaller.marshal(objectToMarshal, stringWriter);
         String marshalledXml = stringWriter.toString();
@@ -99,6 +115,20 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.of(listener));
         StringReader reader = new StringReader(xmlString);
         return (T) unmarshaller.unmarshal(reader);
+    }
+
+    @Override
+    public <T> T unmarshalXMLStreamReader(XMLStreamReader xmlReader, Class<T> clazz)
+            throws JAXBException {
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.empty());
+        return (T) unmarshaller.unmarshal(xmlReader);
+    }
+
+    @Override
+    public <T> T unmarshalXMLStreamReader(XMLStreamReader xmlReader, Class<T> clazz, Object listener)
+            throws JAXBException {
+        Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.of(listener));
+        return (T) unmarshaller.unmarshal(xmlReader);
     }
 
     @Override

@@ -1,16 +1,8 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml.fixture;
 
-import static edu.cornell.kfs.sys.util.CuAssertions.assertStringEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import edu.cornell.kfs.module.purap.jaggaer.contract.xml.ContractPartyBase;
-import edu.cornell.kfs.module.purap.jaggaer.contract.xml.FirstParty;
-import edu.cornell.kfs.module.purap.jaggaer.contract.xml.SecondParty;
-
 public enum ContractPartyFixture {
 
-    CORNELL_UNIVERSITY(true, true, "CORNELL UNIVERSITY", "1002003004", null, null, null),
+    CORNELL_UNIVERSITY(true, true, "Cornell University", "1002003004", null, null, null),
     TESTING_AND_TRYING_LLC(false, true, "Testing & Trying LLC", "1002345678", "116543-0", null, "203142");
 
     public final boolean isFirstParty;
@@ -30,20 +22,6 @@ public enum ContractPartyFixture {
         this.erpNumber = erpNumber;
         this.contactId = contactId;
         this.addressId = addressId;
-    }
-
-    public void assertEqualsParty(ContractPartyBase contractParty) {
-        if (isFirstParty) {
-            assertTrue(contractParty instanceof FirstParty, "Contract party was not a 'first' party");
-        } else {
-            assertTrue(contractParty instanceof SecondParty, "Contract party was not a 'second' party");
-        }
-        assertEquals(isPrimary, contractParty.isPrimary(), "Wrong isPrimary setting");
-        assertStringEquals(name, contractParty.getName(), "Wrong name");
-        assertStringEquals(sciquestId, contractParty.getSciquestId(), "Wrong sciquestId");
-        assertStringEquals(erpNumber, contractParty.getErpNumber(), "Wrong erpNumber");
-        assertStringEquals(contactId, contractParty.getContactId(), "Wrong contactId");
-        assertStringEquals(addressId, contractParty.getAddressId(), "Wrong addressId");
     }
 
 }

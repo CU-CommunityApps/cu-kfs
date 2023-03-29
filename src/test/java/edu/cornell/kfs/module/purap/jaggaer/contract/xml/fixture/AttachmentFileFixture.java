@@ -12,18 +12,18 @@ public enum AttachmentFileFixture {
 
     JOHN_COMPILED_DOCUMENT("1161789", 1, 308, "3/16/2023", "Compiled Document",
             "John Adobe Sign Test 2 (no pre-set adobe fields).pdf",
-            "CompiledDocument", null, null),
+            "CompiledDocument", null, "This is a test compiled document"),
     JOHN_SIGN_TEST2("1162987", 1, 382, "3/16/2023", "John Adobe Sign Test 2 (no pre-set adobe fields).pdf",
             "John Adobe Sign Test 2 (no pre-set adobe fields).pdf",
-            "SignedDocument", null, null),
+            "SignedDocument", null, "This doc was signed!"),
     JOHN_MAIN_DOCUMENT("1163555", 2, 36, "3/16/2023", "Main Document",
             "2023-03-01 ContractTemplate-1122334455667-8989898 - Buytest - Long Form Professional Services "
                     + "Agreement Amendment (version 2).docx",
-            "MainDocument", null, null),
+            "MainDocument", null, "THE MAIN DOCUMENT"),
     JOHN_SIGN_TEST2_NO_PRESET("1163556", 1, 207, "3/16/2023",
             "John_Adobe_Sign_Test_2_(no_pre-set_adobe_fields) (print to pdf).pdf",
             "John_Adobe_Sign_Test_2_(no_pre-set_adobe_fields) (print to pdf).pdf",
-            "Attachment", null, null);
+            "Attachment", null, "Another attachment to test");
 
     public final String id;
     public final Integer version;
@@ -33,12 +33,11 @@ public enum AttachmentFileFixture {
     public final String attachmentFileName;
     public final String attachmentType;
     public final String attachmentFTPpath;
-    public final String attachmentAsString;
-    public final String attachmentBase64;
+    public final String attachmentAsPlainText;
 
     private AttachmentFileFixture(String id, Integer version, Integer size, String dateUploaded,
             String attachmentDisplayName, String attachmentFileName, String attachmentType,
-            String attachmentFTPpath, String attachmentAsString) {
+            String attachmentFTPpath, String attachmentAsPlainText) {
         this.id = id;
         this.version = version;
         this.size = size;
@@ -47,9 +46,12 @@ public enum AttachmentFileFixture {
         this.attachmentFileName = attachmentFileName;
         this.attachmentType = attachmentType;
         this.attachmentFTPpath = attachmentFTPpath;
-        this.attachmentAsString = attachmentAsString;
-        this.attachmentBase64 = StringUtils.isNotBlank(attachmentAsString)
-                ? Base64.encodeBase64String(attachmentAsString.getBytes(StandardCharsets.UTF_8))
+        this.attachmentAsPlainText = attachmentAsPlainText;
+    }
+
+    public String getAttachmentAsBase64String() {
+        return StringUtils.isNotBlank(attachmentAsPlainText)
+                ? Base64.encodeBase64String(attachmentAsPlainText.getBytes(StandardCharsets.UTF_8))
                 : null;
     }
 

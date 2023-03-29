@@ -17,20 +17,20 @@ public class ZonedStringToJavaDateXmlAdapter extends XmlAdapter<String, Date> {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
             CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_XXX, Locale.US);
 
+    public static Date parseToDate(String value) {
+        long milliseconds = parseToZonedDateTime(value)
+                .toInstant()
+                .toEpochMilli();
+        return new Date(milliseconds);
+    }
+
     public static ZonedDateTime parseToZonedDateTime(String value) {
         return ZonedDateTime.parse(value, DATE_FORMATTER);
     }
 
     @Override
     public Date unmarshal(String value) throws Exception {
-        return StringUtils.isNotBlank(value) ? parseDate(value) : null;
-    }
-
-    private Date parseDate(String value) {
-        long milliseconds = parseToZonedDateTime(value)
-                .toInstant()
-                .toEpochMilli();
-        return new Date(milliseconds);
+        return StringUtils.isNotBlank(value) ? parseToDate(value) : null;
     }
 
     @Override

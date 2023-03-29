@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE DocumentExportResponse SYSTEM "https://integrations.sciquest.com/app_docs/dtd/documentExport/DocumentExport.dtd">
+<DocumentExportResponse version="1.0">
+    <Header>
+        <MessageId>2023-02-15T23:51:33.789Z</MessageId>
+        <Timestamp>2023-02-15T23:51:33.789Z</Timestamp>
+    </Header>
+    <Response>
+        <Status>
+            <StatusCode>500</StatusCode>
+            <StatusText>Internal Server Error</StatusText>
+        </Status>
+        <Error type="Error">
+            <ErrorMessage>An unexpected error occurred while processing the Contract XML.</ErrorMessage>
+        </Error>
+    </Response>
+</DocumentExportResponse>

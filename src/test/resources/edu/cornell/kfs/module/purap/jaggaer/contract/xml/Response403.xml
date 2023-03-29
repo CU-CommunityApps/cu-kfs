@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE DocumentExportResponse SYSTEM "https://integrations.sciquest.com/app_docs/dtd/documentExport/DocumentExport.dtd">
+<DocumentExportResponse version="1.0">
+    <Header>
+        <MessageId>2023-03-15T15:51:33.789Z</MessageId>
+        <Timestamp>2023-03-15T15:51:33.789Z</Timestamp>
+    </Header>
+    <Response>
+        <Status>
+            <StatusCode>403</StatusCode>
+            <StatusText>Forbidden</StatusText>
+        </Status>
+        <Error type="Error">
+            <ErrorMessage>You are not authorized to export Contract XML to this environment.</ErrorMessage>
+        </Error>
+    </Response>
+</DocumentExportResponse>

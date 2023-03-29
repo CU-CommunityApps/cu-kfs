@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap;
 
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -496,6 +497,21 @@ public class CUPurapConstants {
         public static final String SUB_OBJECT_CODE = "SubObjectCode";
         public static final String PROJECT = "Project";
         public static final String ORG_REF_ID = "OrgRefID";
+
+        public static final Pattern SUFFIXED_FIELD_PATTERN = Pattern.compile("^(?<fieldName>[a-zA-Z]+)[0-9]+$");
+        public static final String FIELD_NAME_PATTERN_GROUP = "fieldName";
+    }
+
+    public static final class JaggaerResponseMessageTypes {
+        public static final String ERROR = "Error";
+        public static final String WARNING = "Warning";
+    }
+
+    public static final class JaggaerXmlConstants {
+        public static final String DEFAULT_MESSAGE_VERSION = "1.0";
+        public static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        public static final String DOCTYPE_DOCUMENT_EXPORT_RESPONSE_DECLARATION = "<!DOCTYPE DocumentExportResponse "
+                + "SYSTEM \"https://integrations.sciquest.com/app_docs/dtd/documentExport/DocumentExport.dtd\">";
     }
 
 }

@@ -552,6 +552,7 @@
                         <PrintWithFullContract>No</PrintWithFullContract>
                         <ShareWithSecondParties>No</ShareWithSecondParties>
                         <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                        <AttachmentBase64>VGhpcyBpcyBhIHRlc3QgY29tcGlsZWQgZG9jdW1lbnQ=</AttachmentBase64>
                     </AttachmentFile>
                 </Attachment>
                 <Attachment>
@@ -565,6 +566,7 @@
                         <PrintWithFullContract>No</PrintWithFullContract>
                         <ShareWithSecondParties>No</ShareWithSecondParties>
                         <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                        <AttachmentBase64>VGhpcyBkb2Mgd2FzIHNpZ25lZCE=</AttachmentBase64>
                     </AttachmentFile>
                 </Attachment>
                 <Attachment>
@@ -579,6 +581,7 @@
                         <PrintWithFullContract>Yes</PrintWithFullContract>
                         <ShareWithSecondParties>No</ShareWithSecondParties>
                         <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                        <AttachmentBase64>VEhFIE1BSU4gRE9DVU1FTlQ=</AttachmentBase64>
                     </AttachmentFile>
                 </Attachment>
                 <Attachment>
@@ -592,6 +595,7 @@
                         <PrintWithFullContract>Yes</PrintWithFullContract>
                         <ShareWithSecondParties>No</ShareWithSecondParties>
                         <ContractSummaryVisibility>UseSummaryConfigVisibility</ContractSummaryVisibility>
+                        <AttachmentBase64>QW5vdGhlciBhdHRhY2htZW50IHRvIHRlc3Q=</AttachmentBase64>
                     </AttachmentFile>
                 </Attachment>
             </AttachmentList>

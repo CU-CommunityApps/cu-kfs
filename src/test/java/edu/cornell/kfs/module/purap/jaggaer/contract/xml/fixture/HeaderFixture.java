@@ -6,7 +6,7 @@ import edu.cornell.kfs.sys.xmladapters.ZonedStringToJavaDateXmlAdapter;
 
 public enum HeaderFixture {
 
-    HEADER01("SingleTestContract", "2023-03-16T17:45:33.888-05:00", "CornellU", "CornellSecret");
+    SINGLE_TEST_CONTRACT("SingleTestContract", "2023-03-16T17:45:33.888-05:00", "CornellU", "CornellSecret");
 
     public final String messageId;
     public final ZonedDateTime timestamp;

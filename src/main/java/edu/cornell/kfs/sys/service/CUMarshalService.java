@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.stream.XMLStreamReader;
+
 import jakarta.xml.bind.JAXBException;
 
 public interface CUMarshalService {
@@ -15,6 +17,8 @@ public interface CUMarshalService {
 
     String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException, IOException;
     
+    String marshalObjectToXmlFragmentString(Object objectToMarshal) throws JAXBException, IOException;
+    
     <T> T unmarshalFile(File xmlFile, Class<T> clazz) throws JAXBException;
     
     <T> T unmarshalString(String xmlString, Class<T> clazz) throws JAXBException;
@@ -22,6 +26,10 @@ public interface CUMarshalService {
     <T> T unmarshalFile(File xmlFile, Class<T> clazz, Object listener) throws JAXBException;
 
     <T> T unmarshalString(String xmlString, Class<T> clazz, Object listener) throws JAXBException;
+
+    <T> T unmarshalXMLStreamReader(XMLStreamReader xmlReader, Class<T> clazz) throws JAXBException;
+
+    <T> T unmarshalXMLStreamReader(XMLStreamReader xmlReader, Class<T> clazz, Object listener) throws JAXBException;
 
     <T> T unmarshalStream(InputStream inputStream, Class<T> clazz) throws JAXBException, IOException;
 
