@@ -54,7 +54,7 @@
     				<property name="searchingAttribute">
 						<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
 							  p:attributeName="disbVchrPaymentReasonCode"
-							  p:businessObjectClassName="org.kuali.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"
+							  p:businessObjectClassName="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"
 							  p:noLookup="true"
 						/>
     				</property>

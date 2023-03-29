@@ -111,5 +111,35 @@
 
 	<sys:documentControls transactionalDocument="${documentEntry.transactionalDocument}" extraButtons="${KualiForm.extraButtons}"/>
 	<kul:modernLookupSupport />
+	<script type="application/javascript">
+		function removeXMLInvalidChars(str, removeDiscouragedChars) {
+
+			// remove everything forbidden by XML 1.0 specifications, plus the unicode replacement character U+FFFD
+			var regex = /((?:[\0-\x08\x0B\f\x0E-\x1F\uFFFD\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]))/g;
+
+			// ensure we have a string
+			str = String(str || '').replace(regex, '');
+
+			if (removeDiscouragedChars) {
+
+				// remove everything discouraged by XML 1.0 specifications
+				regex =
+						/([\x7F-\x84]|[\x86-\x9F]|[\uFDD0-\uFDEF]|[\u201C-\u201D]|(?:\uD83F[\uDFFE\uDFFF])|(?:\uD87F[\uDFFE\uDFFF])|(?:\uD8BF[\uDFFE\uDFFF])|(?:\uD8FF[\uDFFE\uDFFF])|(?:\uD93F[\uDFFE\uDFFF])|(?:\uD97F[\uDFFE\uDFFF])|(?:\uD9BF[\uDFFE\uDFFF])|(?:\uD9FF[\uDFFE\uDFFF])|(?:\uDA3F[\uDFFE\uDFFF])|(?:\uDA7F[\uDFFE\uDFFF])|(?:\uDABF[\uDFFE\uDFFF])|(?:\uDAFF[\uDFFE\uDFFF])|(?:\uDB3F[\uDFFE\uDFFF])|(?:\uDB7F[\uDFFE\uDFFF])|(?:\uDBBF[\uDFFE\uDFFF])|(?:\uDBFF[\uDFFE\uDFFF])(?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]))/gm;
+
+				str = str.replace(regex, '');
+			}
+
+			return str;
+		}
+		document.addEventListener('DOMContentLoaded', () => {
+			const textInputs = document.querySelectorAll('input[type="text"]');
+			const textAreas = document.querySelectorAll('textarea');
+			[...textInputs, ...textAreas].forEach((input) => {
+				input.addEventListener('blur', (event) => {
+					event.target.value = removeXMLInvalidChars(event.target.value, true);
+				});
+			});
+		});
+	</script>
 </kul:documentPage>
 
