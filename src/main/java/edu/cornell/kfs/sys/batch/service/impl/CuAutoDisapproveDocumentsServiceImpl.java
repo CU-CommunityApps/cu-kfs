@@ -119,7 +119,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE System parameter does not exist in the " +
                     "parameters list.  The job can not continue without this parameter");
             getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(
-                    "YEAR_END_AUTO_DISAPPROVE_DOCUMENTS_RUN_DATE System parameter does not exist in the parameters " +
+                    "YEAR_END_AUTO_DISAPPROVE_DOCUMENT_RUN_DATE System parameter does not exist in the parameters " +
                             "list.  The job can not continue without this parameter");
             return false;
         }
@@ -375,7 +375,7 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         // Assemble document IDs, then search for workflow headers.
         for (DocumentHeader docHeader : documentList) {
         	DocumentRouteHeaderValue routeHeader = routeHeaderService.getRouteHeader(docHeader.getDocumentNumber());
-        	if (status.equals(routeHeader.getStatus())) {
+        	if (ObjectUtils.isNotNull(routeHeader) && status.equals(routeHeader.getStatus())) {
                 documentIds.add(routeHeader.getDocumentId());
         	}
         }
