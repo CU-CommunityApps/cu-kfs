@@ -11,11 +11,8 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "additionalData"
-})
+@XmlType(name = "", propOrder = { "additionalData" })
 @XmlRootElement(name = "AdditionalDataList")
 public class AdditionalDataList {
 
@@ -24,17 +21,15 @@ public class AdditionalDataList {
     protected String isChanged;
     @XmlElement(name = "AdditionalData")
     protected List<AdditionalData> additionalData;
-    
+
     public String getIsChanged() {
         return isChanged;
     }
 
-    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    
     public List<AdditionalData> getAdditionalData() {
         if (additionalData == null) {
             additionalData = new ArrayList<AdditionalData>();
