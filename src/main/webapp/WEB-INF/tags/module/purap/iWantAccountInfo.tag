@@ -17,7 +17,7 @@
         <tr>
             <td height="30" colspan="${mainColumnCount}" class="neutral"
                 style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
-                <b>NOTE:</b> If you do not know the account number, in Routing and Submission (Step 4) enter the NetID 
+                <b>NOTE:</b> If you do not know the account number, in College/Unit Routing and Approval (Step 4) enter the NetID 
                 of the person in your college or department who can provide the account number and authorize the transaction.
             </td>
         </tr>
