@@ -233,6 +233,8 @@
           p:name="financialBudgetAggregationCd"
           p:required="true"/>
 
+    <bean id="ObjectCode-finObjMandatoryTrnfrelimCd"
+          parent="ObjectCode-finObjMandatoryTrnfrelimCd-parentBean"/>
     <bean id="ObjectCode-finObjMandatoryTrnfrelimCd-parentBean"
           abstract="true"
           parent="MandatoryTransferEliminationCode-code"
@@ -333,7 +335,10 @@
                 <ref bean="ObjectCode-reportsToFinancialObjectCode"/>
                 <ref bean="ObjectCode-financialObjectTypeCode"/>
                 <ref bean="ObjectCode-financialObjectLevelCode"/>
+                <ref bean="ObjectCode-extension-contractGrantReportingCode-cgReportingCode"/>
                 <ref bean="ObjectCode-financialObjectSubTypeCode"/>
+                <ref bean="ObjectCode-extension-sunyObjectCode"/>
+                <ref bean="ObjectCode-extension-financialObjectCodeDescr"/>
                 <ref bean="ObjectCode-historicalFinancialObjectCode"/>
                 <ref bean="ObjectCode-active"/>
                 <ref bean="ObjectCode-financialBudgetAggregationCd"/>
@@ -456,7 +461,7 @@
                 <bean parent="FieldDefinition"
                       p:attributeName="universityFiscalYear"
                       p:defaultValueFinder-ref="fiscalYearFinder"
-                      p:required="true"/> <!-- todo: confirm -->
+                      p:required="true"/>
                 <bean parent="FieldDefinition"
                       p:attributeName="chartOfAccountsCode"/>
                 <bean parent="FieldDefinition"
