@@ -10,9 +10,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "attachments"
-})
+@XmlType(name = "", propOrder = { "attachments" })
 @XmlRootElement(name = "DiversityCertificate")
 public class DiversityCertificate {
 
@@ -26,17 +24,14 @@ public class DiversityCertificate {
         return isChanged;
     }
 
-    
     public void setIsChanged(String value) {
         this.isChanged = value;
     }
 
-    
     public Attachments getAttachments() {
         return attachments;
     }
 
-    
     public void setAttachments(Attachments value) {
         this.attachments = value;
     }
