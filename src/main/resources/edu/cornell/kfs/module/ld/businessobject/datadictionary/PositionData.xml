@@ -55,39 +55,39 @@
           <bean parent="TextControlDefinition" p:datePicker="true" />
       </property>
   </bean>
-      
-  <!-- Business Object Inquiry Definition -->
-  <bean id="PositionData-inquiryDefinition-override" parent="DataDictionaryBeanOverride">
-    <property name="beanName" value="PositionData-inquiryDefinition" />
-    <property name="fieldOverrides">
-      <list>
-          <!-- Bean override for new standalone page field presentation -->
-          <bean parent="FieldOverrideForListElementInsert"
-            p:propertyName="sections[0].fields"
-            p:propertyNameForElementCompare="name"
-            p:element-ref="PositionData-departmentId"
-            p:insertAfter-ref="PositionData-extension-orgCode"/>
 
-          <bean parent="FieldOverrideForListElementInsert"
-            p:propertyName="sections[0].fields"
-            p:propertyNameForElementCompare="name"
-            p:insertAfter-ref="PositionData-extension-inactivationDate"/>
+    <!-- Business Object Inquiry Definition -->
+    <bean id="PositionData-inquiryDefinition-override" parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="PositionData-inquiryDefinition" />
+        <property name="fieldOverrides">
+            <list>
+                <!-- Bean override for new standalone page field presentation -->
+                <bean parent="FieldOverrideForListElementInsert"
+                    p:propertyName="sections[0].fields"
+                    p:propertyNameForElementCompare="name"
+                    p:element-ref="PositionData-departmentId"
+                    p:insertAfter-ref="PositionData-extension-orgCode"/>
 
-          <!-- Bean override for legacy modal style presentation -->
-          <bean parent="FieldOverrideForListElementInsert"
-            p:propertyName="inquirySections[0].inquiryFields"
-            p:propertyNameForElementCompare="name"
-            p:element-ref="PositionData-departmentId"
-            p:insertAfter-ref="PositionData-extension-orgCode"/>
+                <bean parent="FieldOverrideForListElementInsert"
+                    p:propertyName="sections[0].fields"
+                    p:propertyNameForElementCompare="name"
+                    p:insertAfter-ref="PositionData-extension-inactivationDate"/>
 
-          <bean parent="FieldOverrideForListElementInsert"
-            p:propertyName="inquirySections[0].inquiryFields"
-            p:propertyNameForElementCompare="name"
-            p:insertAfter-ref="PositionData-extension-inactivationDate"/>
+                <!-- Bean override for legacy modal style presentation -->
+                <bean parent="FieldOverrideForListElementInsert"
+                    p:propertyName="inquirySections[0].inquiryFields"
+                    p:propertyNameForElementCompare="name"
+                    p:element-ref="PositionData-departmentId"
+                    p:insertAfter-ref="PositionData-extension-orgCode"/>
 
-      </list>
-    </property>
-  </bean>
+                <bean parent="FieldOverrideForListElementInsert"
+                    p:propertyName="inquirySections[0].inquiryFields"
+                    p:propertyNameForElementCompare="name"
+                    p:insertAfter-ref="PositionData-extension-inactivationDate"/>
+
+            </list>
+        </property>
+    </bean>
 
 <!-- Business Object Lookup Definition -->
 
