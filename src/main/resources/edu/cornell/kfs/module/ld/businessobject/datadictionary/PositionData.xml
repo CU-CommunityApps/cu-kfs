@@ -55,48 +55,49 @@
           <bean parent="TextControlDefinition" p:datePicker="true" />
       </property>
   </bean>
-      
-  <!-- Business Object Inquiry Definition -->
 
-  <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="PositionData-inquiryDefinition" />
-      <property name="fieldOverrides">
-          <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquirySections[0].inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="departmentId" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.orgCode" />
-                      </list>
-                  </property>
-              </bean>
-          </list>
-      </property>
-  </bean>
-  
-  <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="PositionData-inquiryDefinition" />
-      <property name="fieldOverrides">
-          <list>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquirySections[0].inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" />
-                      </list>
-                  </property>
-              </bean>
-          </list>
-      </property>
-  </bean>
+    <!-- Business Object Inquiry Definition -->
+    <bean id="PositionData-inquiryDefinition-override" parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="PositionData-inquiryDefinition" />
+        <property name="fieldOverrides">
+            <list>
+                <!-- Bean override for new standalone page field presentation -->
+                <bean parent="FieldOverrideForListElementInsert"
+                    p:propertyName="sections[0].fields"
+                    p:propertyNameForElementCompare="name"
+                    p:element-ref="PositionData-departmentId"
+                    p:insertAfter-ref="PositionData-extension-orgCode"/>
+
+                <bean parent="FieldOverrideForListElementInsert"
+                    p:propertyName="sections[0].fields"
+                    p:propertyNameForElementCompare="name"
+                    p:insertAfter-ref="PositionData-extension-inactivationDate"/>
+
+                <!-- Bean override for legacy modal style presentation -->
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquirySections[0].inquiryFields" />
+                    <property name="propertyNameForElementCompare" value="attributeName" />
+                    <property name="element">
+                        <bean parent="FieldDefinition" p:attributeName="departmentId"/>
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.orgCode"/>
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="inquirySections[0].inquiryFields" />
+                    <property name="propertyNameForElementCompare" value="attributeName" />
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
 
 <!-- Business Object Lookup Definition -->
 

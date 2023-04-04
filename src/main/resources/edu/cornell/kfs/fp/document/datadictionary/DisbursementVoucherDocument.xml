@@ -52,10 +52,11 @@
     			</bean>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
     				<property name="searchingAttribute">
-    					<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-    						<property name="businessObjectClassName" value="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"/>
-    						<property name="attributeName" value="disbVchrPaymentReasonCode"/>
-    					</bean>
+						<bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+							  p:attributeName="disbVchrPaymentReasonCode"
+							  p:businessObjectClassName="edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail"
+							  p:noLookup="true"
+						/>
     				</property>
     				<property name="documentValues">
     					<list>
