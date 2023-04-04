@@ -76,15 +76,15 @@
           <!-- Bean override for legacy modal style presentation -->
           <bean parent="FieldOverrideForListElementInsert"
             p:propertyName="inquirySections[0].inquiryFields"
-            p:propertyNameForElementCompare="attributeName"
+            p:propertyNameForElementCompare="name"
             p:element-ref="PositionData-departmentId"
             p:insertAfter-ref="PositionData-extension-orgCode"/>
 
           <bean parent="FieldOverrideForListElementInsert"
             p:propertyName="inquirySections[0].inquiryFields"
-            p:propertyNameForElementCompare="attributeName"
+            p:propertyNameForElementCompare="name"
             p:insertAfter-ref="PositionData-extension-inactivationDate"/>
-          
+
       </list>
     </property>
   </bean>
