@@ -68,6 +68,11 @@
             p:element-ref="PositionData-departmentId"
             p:insertAfter-ref="PositionData-extension-orgCode"/>
 
+          <bean parent="FieldOverrideForListElementInsert"
+            p:propertyName="sections[0].fields"
+            p:propertyNameForElementCompare="name"
+            p:insertAfter-ref="PositionData-extension-inactivationDate"/>
+
           <!-- Bean override for legacy modal style presentation -->
           <bean parent="FieldOverrideForListElementInsert">
             <property name="propertyName" value="inquirySections[0].inquiryFields" />
@@ -78,6 +83,15 @@
             <property name="insertAfter">
               <list>
                 <bean parent="FieldDefinition" p:attributeName="extension.orgCode"/>
+              </list>
+            </property>
+          </bean>
+          <bean parent="FieldOverrideForListElementInsert">
+            <property name="propertyName" value="inquirySections[0].inquiryFields" />
+            <property name="propertyNameForElementCompare" value="attributeName" />
+            <property name="insertAfter">
+              <list>
+                <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate"/>
               </list>
             </property>
           </bean>
