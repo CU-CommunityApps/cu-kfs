@@ -87,16 +87,23 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         return true;
     }
 
-    // Copied this private method from the superclass to make it available here.
+    // Copied this private method from the superclass to make it available here and customized so that it processes multiple values
+    // for YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE system parameter
     private List<String> determineEligibleDocumentTypes() {
-        final String yearEndAutoDisapproveParentDocumentType = parameterService.getParameterValueAsString(
-                AutoDisapproveDocumentsStep.class,
-                KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE
-        );
+        final List<String> eligibleDocumentTypes = new ArrayList<>();
+        List<String> yearEndAutoDisapproveParentDocumentTypes = new ArrayList<>(
+                parameterService.getParameterValuesAsString(AutoDisapproveDocumentsStep.class,
+                        KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE));
 
-        final DocumentType parentDocType =
-                documentTypeService.getDocumentTypeByName(yearEndAutoDisapproveParentDocumentType);
-        return recursivelyGetAllChildDocTypeIds(parentDocType);
+        if (!yearEndAutoDisapproveParentDocumentTypes.isEmpty()) {
+            for (String yearEndAutoDisapproveParentDocumentType : yearEndAutoDisapproveParentDocumentTypes) {
+                final DocumentType parentDocType = documentTypeService
+                        .getDocumentTypeByName(yearEndAutoDisapproveParentDocumentType);
+                eligibleDocumentTypes.addAll(recursivelyGetAllChildDocTypeIds(parentDocType));
+            }
+        }
+
+        return eligibleDocumentTypes;
     }
 
     // Copied this private method from the superclass to make it available here.
