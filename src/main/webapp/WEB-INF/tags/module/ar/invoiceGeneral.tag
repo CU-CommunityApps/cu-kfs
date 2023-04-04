@@ -24,11 +24,9 @@
 <c:set var="invoiceAccountDetailsAttributes" value="${DataDictionary.InvoiceAccountDetail.attributes}" />
 <c:set var="invoiceGeneralDetailAttributes" value="${DataDictionary.InvoiceGeneralDetail.attributes}" />
 <c:set var="documentAttributes" value="${DataDictionary.ContractsGrantsInvoiceDocument.attributes}" />
-<%-- start backport FINP-8555 --%>
 <c:set var="editFinalBill"
        value="${KualiForm.editingMode[ArAuthorizationConstants.ContractsGrantsInvoiceDocumentEditMode.EDIT_FINAL_BILL_INDICATOR]}"/>
 <c:set var="readOnlyForFinal" value="${!(editFinalBill and KualiForm.document.finalizable)}" />
-<%-- end backport FINP-8555 --%>
 <c:set var="arDocHeaderAttributes" value="${DataDictionary.AccountsReceivableDocumentHeader.attributes}" />
 <kul:tab tabTitle="General" defaultOpen="true" tabErrorKey="${KFSConstants.CUSTOMER_INVOICE_DOCUMENT_GENERAL_ERRORS}">
     <div class="tab-container" align=center>
@@ -43,15 +41,15 @@
             </th>
             <td class="datacell" style="width: 25%;">
                 <div id="document.proposalNumber.div">
-					<kul:inquiry
-                                   boClassName="org.kuali.kfs.integration.cg.ContractsAndGrantsAward"
-                                   keyValues="proposalNumber=${KualiForm.document.invoiceGeneralDetail.proposalNumber}"
-                                   render="true">
-						<kul:htmlControlAttribute
-                               attributeEntry="${invoiceGeneralDetailAttributes.proposalNumber}"
-                               property="document.invoiceGeneralDetail.proposalNumber"
-                               readOnly="true" />
-					</kul:inquiry>
+                    <kul:inquiry
+                            boClassName="org.kuali.kfs.integration.cg.ContractsAndGrantsAward"
+                            keyValues="proposalNumber=${KualiForm.document.invoiceGeneralDetail.proposalNumber}"
+                            render="true">
+                        <kul:htmlControlAttribute
+                                attributeEntry="${invoiceGeneralDetailAttributes.proposalNumber}"
+                                property="document.invoiceGeneralDetail.proposalNumber"
+                                readOnly="true" />
+                    </kul:inquiry>
                 </div>
             </td>
             <th class="right" style="width: 25%;">
@@ -147,7 +145,7 @@
                                     <kul:htmlControlAttribute
                                             attributeEntry="${invoiceGeneralDetailAttributes.finalBillIndicator}"
                                             property="document.invoiceGeneralDetail.finalBillIndicator"
-                                            readOnly="${readOnly}" />
+                                            readOnly="${readOnly}" /> <!-- CU Customization -->
                                 </div>
                             </td>
                         </c:otherwise>
@@ -247,7 +245,7 @@
                             <kul:htmlControlAttribute
                                     attributeEntry="${invoiceGeneralDetailAttributes.billingPeriod}"
                                     property="document.invoiceGeneralDetail.billingPeriod"
-                                    readOnly="${readOnly}" />
+                                    readOnly="${readOnly}" />  <!-- CU Customization -->
                         </div>
                     </td>
                     <th class="right" style="width: 25%;">
@@ -276,7 +274,7 @@
                                     <kul:htmlControlAttribute
                                             attributeEntry="${invoiceGeneralDetailAttributes.finalBillIndicator}"
                                             property="document.invoiceGeneralDetail.finalBillIndicator"
-                                            readOnly="${readOnly}" />
+                                            readOnly="${readOnly}" />  <!-- CU Customization -->
                                 </div>
                             </td>
                         </c:otherwise>
