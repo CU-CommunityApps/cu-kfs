@@ -2357,6 +2357,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     public void setKimTypeInfoService(final KimTypeInfoService kimTypeInfoService) {
         this.kimTypeInfoService = kimTypeInfoService;
+        //CU Customization: Ensure service is set on abstract super class due to it being an attribute of both.
+        super.setKimTypeInfoService(kimTypeInfoService);
     }
 
     public void setIdentityService(final IdentityService identityService) {
