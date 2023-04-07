@@ -20,149 +20,330 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-   
-  <bean id="PositionData" parent="PositionData-parentBean">
-    <property name="attributes">
-      <list merge="true">
-        <ref bean="PositionData-extension-orgCode"/>
-        <ref bean="PositionData-extension-inactivationDate"/>
-      </list>
-    </property>
-  </bean>  
-    
-  <bean id="PositionData-extension-orgCode" parent="PositionData-extension-orgCode-parentBean"/>
-  <bean id="PositionData-extension-orgCode-parentBean" abstract="true" parent="PositionData-departmentId">
-    <property name="name" value="extension.orgCode"/>
-    <property name="label" value="Org Code"/>
-    <property name="shortLabel" value="OrgCode"/>
-    <property name="required" value="false"/>
-     <property name="maxLength" value="10"/>
-    <property name="validationPattern">
-      <ref bean="AnyCharacterValidation" />
-    </property>
-    <property name="control">
-      <ref bean="StandardShortNameTextControl" />
-    </property>
-  </bean>
-  
-  <bean id="PositionData-extension-inactivationDate" parent="PositionData-extension-inactivationDate-parentBean"/>
-  <bean id="PositionData-extension-inactivationDate-parentBean" abstract="true" parent="AttributeDefinition"
-        p:name="extension.inactivationDate" p:forceUppercase="true" p:label="Inactivation Date" p:shortLabel="Date" p:maxLength="7"
-        p:validationPattern-ref="DateValidation" p:type="DATE_RANGE">
-      <property name="control">
-          <bean parent="TextControlDefinition" p:datePicker="true" />
-      </property>
-  </bean>
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- Business Object Inquiry Definition -->
-    <bean id="PositionData-inquiryDefinition-override" parent="DataDictionaryBeanOverride">
-        <property name="beanName" value="PositionData-inquiryDefinition" />
-        <property name="fieldOverrides">
+    <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+
+    <bean id="PositionData" parent="PositionData-parentBean"/>
+    <bean abstract="true"
+          id="PositionData-parentBean"
+          parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectClass="org.kuali.kfs.module.ld.businessobject.PositionData"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="PositionData-inquiryDefinition"
+          p:lookupDefinition-ref="PositionData-lookupDefinition"
+          p:name="PositionData"
+          p:objectLabel="Position Data"
+          p:searchService-ref="defaultSearchService">
+        <property name="actions"><null/></property>
+        <property name="attributes">
             <list>
-                <!-- Bean override for new standalone page field presentation -->
-                <bean parent="FieldOverrideForListElementInsert"
-                    p:propertyName="sections[0].fields"
-                    p:propertyNameForElementCompare="name"
-                    p:element-ref="PositionData-departmentId"
-                    p:insertAfter-ref="PositionData-extension-orgCode"/>
-
-                <bean parent="FieldOverrideForListElementInsert"
-                    p:propertyName="sections[0].fields"
-                    p:propertyNameForElementCompare="name"
-                    p:insertAfter-ref="PositionData-extension-inactivationDate"/>
-
-                <!-- Bean override for legacy modal style presentation -->
-                <bean parent="FieldOverrideForListElementInsert">
-                    <property name="propertyName" value="inquirySections[0].inquiryFields" />
-                    <property name="propertyNameForElementCompare" value="attributeName" />
-                    <property name="element">
-                        <bean parent="FieldDefinition" p:attributeName="departmentId"/>
-                    </property>
-                    <property name="insertAfter">
-                        <list>
-                            <bean parent="FieldDefinition" p:attributeName="extension.orgCode"/>
-                        </list>
-                    </property>
-                </bean>
-                <bean parent="FieldOverrideForListElementInsert">
-                    <property name="propertyName" value="inquirySections[0].inquiryFields" />
-                    <property name="propertyNameForElementCompare" value="attributeName" />
-                    <property name="insertAfter">
-                        <list>
-                            <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate"/>
-                        </list>
-                    </property>
-                </bean>
+                <ref bean="PositionData-budgetedPosition"/>
+                <ref bean="PositionData-businessUnit"/>
+                <ref bean="PositionData-departmentId"/>
+                <ref bean="PositionData-description"/>
+                <ref bean="PositionData-effectiveDate"/>
+                <ref bean="PositionData-jobCode"/>
+                <ref bean="PositionData-positionEffectiveStatus"/>
+                <ref bean="PositionData-positionFullTimeEquivalency"/>
+                <ref bean="PositionData-positionGradeDefault"/>
+                <ref bean="PositionData-positionNumber"/>
+                <ref bean="PositionData-positionRegularTemporary"/>
+                <ref bean="PositionData-positionSalaryPlanDefault"/>
+                <ref bean="PositionData-positionStatus"/>
+                <ref bean="PositionData-shortDescription"/>
+                <ref bean="PositionData-standardHoursDefault"/>
+                <ref bean="PositionData-standardHoursFrequency"/>
+                <ref bean="PositionData-statusDate"/>
+                <ref bean="PositionData-dummyBusinessObject.linkButtonOption"/>
+                <ref bean="PositionData-extension-orgCode"/>
+                <ref bean="PositionData-extension-inactivationDate"/>
             </list>
         </property>
     </bean>
 
-<!-- Business Object Lookup Definition -->
+    <!-- Attribute Definitions -->
 
-   <bean parent="DataDictionaryBeanOverride">
-       <property name="beanName" value="PositionData-lookupDefinition" />
-       <property name="fieldOverrides">
-           <list>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="formAttributeDefinitions" />
-                   <property name="propertyNameForElementCompare" value="name" />
-                   <property name="element">
-                       <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
-                               parent="PositionData-departmentId"/>
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                           <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
-                                   parent="PositionData-extension-orgCode"/>
-                       </list>
-                   </property>
-               </bean>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="formAttributeDefinitions" />
-                   <property name="propertyNameForElementCompare" value="name" />
-                   <property name="element">
-                       <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
-                               parent="PositionData-effectiveDate"/>
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                           <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
-                                   parent="PositionData-extension-inactivationDate"/>
-                       </list>
-                   </property>
-               </bean>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="displayAttributeDefinitions" />
-                   <property name="propertyNameForElementCompare" value="name" />
-                   <property name="element">
-                       <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
-                               parent="PositionData-departmentId"/>
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                           <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
-                                   parent="PositionData-extension-orgCode"/>
-                       </list>
-                   </property>
-               </bean>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="displayAttributeDefinitions" />
-                   <property name="propertyNameForElementCompare" value="name" />
-                   <property name="element">
-                       <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
-                               parent="PositionData-effectiveDate"/>
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                           <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
-                                   parent="PositionData-extension-inactivationDate"/>
-                       </list>
-                   </property>
-               </bean>
-           </list>
-       </property>
-   </bean>
-    
+    <bean id="PositionData-budgetedPosition" parent="PositionData-budgetedPosition-parentBean"/>
+    <bean id="PositionData-budgetedPosition-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="budgetedPosition" p:forceUppercase="false" p:label="Budgeted Position" p:shortLabel="Position"
+          p:maxLength="1" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="3"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-businessUnit" parent="PositionData-businessUnit-parentBean"/>
+    <bean id="PositionData-businessUnit-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="businessUnit" p:forceUppercase="false" p:label="Business Unit" p:shortLabel="Unit" p:maxLength="5"
+          p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="7"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-departmentId" parent="PositionData-departmentId-parentBean"/>
+    <bean id="PositionData-departmentId-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="departmentId" p:forceUppercase="false" p:label="Department Id" p:shortLabel="Id" p:maxLength="10"
+          p:validationPattern-ref="AnyCharacterValidation" p:control-ref="StandardShortNameTextControl"/>
+
+    <bean id="PositionData-description" parent="PositionData-description-parentBean"/>
+    <bean id="PositionData-description-parentBean" abstract="true" parent="AttributeDefinition" p:name="description"
+          p:forceUppercase="false" p:label="Description" p:shortLabel="Description" p:maxLength="30"
+          p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="32"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-effectiveDate" parent="PositionData-effectiveDate-parentBean"/>
+    <bean id="PositionData-effectiveDate-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="effectiveDate" p:forceUppercase="true" p:label="Effective Date" p:shortLabel="Date" p:maxLength="7"
+          p:validationPattern-ref="DateValidation" p:type="DATE_RANGE">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:datePicker="true" />
+        </property>
+    </bean>
+
+    <bean id="PositionData-jobCode" parent="PositionData-jobCode-parentBean"/>
+    <bean id="PositionData-jobCode-parentBean" abstract="true" parent="AttributeDefinition" p:name="jobCode"
+          p:forceUppercase="false" p:label="Job Code" p:shortLabel="Code" p:maxLength="6"
+          p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="8"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-positionEffectiveStatus" parent="PositionData-positionEffectiveStatus-parentBean"/>
+    <bean id="PositionData-positionEffectiveStatus-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionEffectiveStatus" p:forceUppercase="false" p:label="Position Effective Status"
+          p:shortLabel="Status" p:maxLength="1" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="3"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-positionFullTimeEquivalency" parent="PositionData-positionFullTimeEquivalency-parentBean"/>
+    <bean id="PositionData-positionFullTimeEquivalency-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionFullTimeEquivalency" p:forceUppercase="true" p:label="Full Time Equivalency"
+          p:shortLabel="Equivalency" p:maxLength="3" p:validationPattern-ref="FloatingPointValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="5"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-positionGradeDefault" parent="PositionData-positionGradeDefault-parentBean"/>
+    <bean id="PositionData-positionGradeDefault-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionGradeDefault" p:forceUppercase="false" p:label="Position Grade Default"
+          p:shortLabel="Default" p:maxLength="3" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="5"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-positionNumber" parent="PositionData-positionNumber-parentBean"/>
+    <bean id="PositionData-positionNumber-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionNumber" p:forceUppercase="true" p:label="Position Number" p:shortLabel="Number"
+          p:maxLength="8" p:validationPattern-ref="AnyCharacterValidation" p:control-ref="TenCharacterTextControl"/>
+
+    <bean id="PositionData-positionRegularTemporary" parent="PositionData-positionRegularTemporary-parentBean"/>
+    <bean id="PositionData-positionRegularTemporary-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionRegularTemporary" p:forceUppercase="false" p:label="Position Regular Temporary"
+          p:shortLabel="Temporary" p:maxLength="1" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="3"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-positionSalaryPlanDefault" parent="PositionData-positionSalaryPlanDefault-parentBean"/>
+    <bean id="PositionData-positionSalaryPlanDefault-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionSalaryPlanDefault" p:forceUppercase="false" p:label="Position Salary Plan Default"
+          p:shortLabel="Default" p:maxLength="4" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="6"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-positionStatus" parent="PositionData-positionStatus-parentBean"/>
+    <bean id="PositionData-positionStatus-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="positionStatus" p:forceUppercase="false" p:label="Position Status" p:shortLabel="Status"
+          p:maxLength="1" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="3"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-shortDescription" parent="PositionData-shortDescription-parentBean"/>
+    <bean id="PositionData-shortDescription-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="shortDescription" p:forceUppercase="false" p:label="Short Description" p:shortLabel="Description"
+          p:maxLength="10" p:validationPattern-ref="AnyCharacterValidation"
+          p:control-ref="StandardShortNameTextControl"/>
+
+    <bean id="PositionData-standardHoursDefault" parent="PositionData-standardHoursDefault-parentBean"/>
+    <bean id="PositionData-standardHoursDefault-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="standardHoursDefault" p:forceUppercase="true" p:label="Standard Hours Default"
+          p:shortLabel="Default" p:maxLength="6" p:validationPattern-ref="FloatingPointValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="8"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-standardHoursFrequency" parent="PositionData-standardHoursFrequency-parentBean"/>
+    <bean id="PositionData-standardHoursFrequency-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="standardHoursFrequency" p:forceUppercase="false" p:label="Standard Hours Frequency"
+          p:shortLabel="Frequency" p:maxLength="5" p:validationPattern-ref="AnyCharacterValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="7"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-statusDate" parent="PositionData-statusDate-parentBean"/>
+    <bean id="PositionData-statusDate-parentBean" abstract="true" parent="AttributeDefinition" p:name="statusDate"
+          p:forceUppercase="true" p:label="Status Date" p:shortLabel="Date" p:maxLength="7"
+          p:validationPattern-ref="DateValidation">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="9"/>
+        </property>
+    </bean>
+
+    <bean id="PositionData-dummyBusinessObject.linkButtonOption"
+          parent="PositionData-dummyBusinessObject.linkButtonOption-parentBean"/>
+    <bean id="PositionData-dummyBusinessObject.linkButtonOption-parentBean" abstract="true"
+          parent="TransientBalanceInquiryAttributes-linkButtonOption" p:name="dummyBusinessObject.linkButtonOption"
+          p:label="Position Funding" p:shortLabel="Position Funding"/>
+
+    <!-- Start CU Customization -->
+    <bean id="PositionData-extension-orgCode" parent="PositionData-extension-orgCode-parentBean"/>
+    <bean id="PositionData-extension-orgCode-parentBean" abstract="true" parent="PositionData-departmentId">
+        <property name="name" value="extension.orgCode"/>
+        <property name="label" value="Org Code"/>
+        <property name="shortLabel" value="OrgCode"/>
+        <property name="required" value="false"/>
+        <property name="maxLength" value="10"/>
+        <property name="validationPattern">
+            <ref bean="AnyCharacterValidation" />
+        </property>
+        <property name="control">
+            <ref bean="StandardShortNameTextControl" />
+        </property>
+    </bean>
+
+    <bean id="PositionData-extension-inactivationDate" parent="PositionData-extension-inactivationDate-parentBean"/>
+    <bean id="PositionData-extension-inactivationDate-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="extension.inactivationDate" p:forceUppercase="true" p:label="Inactivation Date" p:shortLabel="Date" p:maxLength="7"
+          p:validationPattern-ref="DateValidation" p:type="DATE_RANGE">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:datePicker="true" />
+        </property>
+    </bean>
+
+    <!-- End CU Customization -->
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="PositionData-inquiryDefinition" parent="PositionData-inquiryDefinition-parentBean"/>
+    <bean id="PositionData-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="Position Data"
+          p:inquirableClass="org.kuali.kfs.module.ld.businessobject.inquiry.PositionDataDetailsInquirableImpl">
+        <property name="inquirySections">
+            <list>
+                <ref bean="PositionData-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PositionData-inquirySectionDefinition" parent="PositionData-inquirySectionDefinition-parentBean"/>
+    <bean id="PositionData-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="budgetedPosition"/>
+                <bean parent="FieldDefinition" p:attributeName="businessUnit"/>
+                <bean parent="FieldDefinition" p:attributeName="departmentId"/>
+                <bean parent="FieldDefinition" p:attributeName="description"/>
+                <bean parent="FieldDefinition" p:attributeName="extension.orgCode" /> <!-- CU Customization -->
+                <bean parent="FieldDefinition" p:attributeName="effectiveDate"/>
+                <bean parent="FieldDefinition" p:attributeName="jobCode"/>
+                <bean parent="FieldDefinition" p:attributeName="positionEffectiveStatus"/>
+                <bean parent="FieldDefinition" p:attributeName="positionFullTimeEquivalency"/>
+                <bean parent="FieldDefinition" p:attributeName="positionGradeDefault"/>
+                <bean parent="FieldDefinition" p:attributeName="positionNumber"/>
+                <bean parent="FieldDefinition" p:attributeName="positionRegularTemporary"/>
+                <bean parent="FieldDefinition" p:attributeName="positionSalaryPlanDefault"/>
+                <bean parent="FieldDefinition" p:attributeName="positionStatus"/>
+                <bean parent="FieldDefinition" p:attributeName="shortDescription"/>
+                <bean parent="FieldDefinition" p:attributeName="standardHoursDefault"/>
+                <bean parent="FieldDefinition" p:attributeName="standardHoursFrequency"/>
+                <bean parent="FieldDefinition" p:attributeName="statusDate"/>
+                <bean parent="FieldDefinition" p:attributeName="extension.inactivationDate" /> <!-- CU Customization -->
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="PositionData-lookupDefinition" parent="PositionData-lookupDefinition-parentBean"/>
+    <bean abstract="true"
+          id="PositionData-lookupDefinition-parentBean"
+          parent="LookupDefinition"
+          p:title="Position Lookup">
+        <property name="formAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-positionNumber"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-businessUnit"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-departmentId"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-extension-orgCode"/> <!-- CU Customization -->
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-jobCode"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-positionStatus"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-description"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-positionSalaryPlanDefault"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-positionGradeDefault"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-effectiveDate"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.FormAttributeDefinition"
+                      parent="PositionData-extension-inactivationDate"/> <!-- CU Customization -->
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-positionNumber"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-effectiveDate" />  <!-- CU Customization -->
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-extension-inactivationDate"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-description"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-businessUnit"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-departmentId"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-extension-orgCode"/> <!-- CU Customization -->
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-positionSalaryPlanDefault"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-positionGradeDefault"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-positionFullTimeEquivalency"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-jobCode"/>
+                <bean class="org.kuali.kfs.datadictionary.legacy.model.DisplayAttributeDefinition"
+                      parent="PositionData-positionStatus"/>
+            </list>
+        </property>
+    </bean>
 </beans>
