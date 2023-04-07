@@ -18,9 +18,9 @@ public class CommodityCodeList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "CommodityCode")
-    protected List<JaggaerBasicValue> commodityCode;
+    private List<JaggaerBasicValue> commodityCode;
 
     public String getIsChanged() {
         return isChanged;

@@ -21,44 +21,44 @@ public class AccountsPayable {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "ERPNumber")
-    protected ERPNumber erpNumber;
+    private ERPNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
-    protected String oldERPNumber;
+    private String oldERPNumber;
     @XmlElement(name = "SQIntegrationNumber")
-    protected SQIntegrationNumber sqIntegrationNumber;
+    private SQIntegrationNumber sqIntegrationNumber;
     @XmlElement(name = "ThirdPartyRefNumber")
-    protected ThirdPartyRefNumber thirdPartyRefNumber;
+    private ThirdPartyRefNumber thirdPartyRefNumber;
     @XmlElement(name = "Name")
-    protected Name name;
+    private Name name;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "AssociatedAddress")
-    protected List<AssociatedAddress> associatedAddress;
+    private List<AssociatedAddress> associatedAddress;
     @XmlElement(name = "Email")
-    protected Email email;
+    private Email email;
     @XmlElement(name = "IsoCurrencyCode")
-    protected IsoCurrencyCode isoCurrencyCode;
+    private IsoCurrencyCode isoCurrencyCode;
     @XmlElement(name = "ContactName")
-    protected JaggaerBasicValue contactName;
+    private JaggaerBasicValue contactName;
     @XmlElement(name = "Purpose")
-    protected JaggaerBasicValue purpose;
+    private JaggaerBasicValue purpose;
     @XmlElement(name = "AccountId")
-    protected JaggaerBasicValue accountId;
+    private JaggaerBasicValue accountId;
     @XmlElement(name = "AccountHolderName")
-    protected JaggaerBasicValue accountHolderName;
+    private JaggaerBasicValue accountHolderName;
     @XmlElement(name = "AccountType")
-    protected JaggaerBasicValue accountType;
+    private JaggaerBasicValue accountType;
     @XmlElement(name = "CountryCode")
-    protected JaggaerBasicValue countryCode;
+    private JaggaerBasicValue countryCode;
     @XmlElement(name = "BankAccount")
-    protected BankAccount bankAccount;
+    private BankAccount bankAccount;
     @XmlElement(name = "FlexFields")
-    protected FlexFields flexFields;
+    private FlexFields flexFields;
 
     public String getType() {
         return type;

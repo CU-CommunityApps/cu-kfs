@@ -18,9 +18,9 @@ public class AddressList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Address")
-    protected List<Address> address;
+    private List<Address> address;
 
     public String getIsChanged() {
         return isChanged;

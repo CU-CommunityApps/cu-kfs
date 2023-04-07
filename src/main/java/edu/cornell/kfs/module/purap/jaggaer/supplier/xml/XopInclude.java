@@ -15,7 +15,7 @@ public class XopInclude {
 
     @XmlAttribute(name = "href", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String href;
+    private String href;
 
     public String getHref() {
         return href;

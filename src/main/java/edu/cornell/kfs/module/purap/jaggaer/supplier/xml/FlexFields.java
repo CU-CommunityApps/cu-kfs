@@ -16,17 +16,17 @@ public class FlexFields {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "FlexField1")
-    protected JaggaerBasicValue flexField1;
+    private JaggaerBasicValue flexField1;
     @XmlElement(name = "FlexField2")
-    protected JaggaerBasicValue flexField2;
+    private JaggaerBasicValue flexField2;
     @XmlElement(name = "FlexField3")
-    protected JaggaerBasicValue flexField3;
+    private JaggaerBasicValue flexField3;
     @XmlElement(name = "FlexField4")
-    protected JaggaerBasicValue flexField4;
+    private JaggaerBasicValue flexField4;
     @XmlElement(name = "FlexField5")
-    protected JaggaerBasicValue flexField5;
+    private JaggaerBasicValue flexField5;
 
     public String getIsChanged() {
         return isChanged;

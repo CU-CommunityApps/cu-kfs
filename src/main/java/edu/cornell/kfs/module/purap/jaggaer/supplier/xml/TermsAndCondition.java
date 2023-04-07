@@ -16,9 +16,9 @@ public class TermsAndCondition {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "PaymentTerms")
-    protected PaymentTerms paymentTerms;
+    private PaymentTerms paymentTerms;
 
     public String getIsChanged() {
         return isChanged;

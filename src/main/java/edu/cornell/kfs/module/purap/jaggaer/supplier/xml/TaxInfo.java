@@ -17,21 +17,21 @@ public class TaxInfo {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "TaxableByDefault")
-    protected JaggaerBasicValue taxableByDefault;
+    private JaggaerBasicValue taxableByDefault;
     @XmlElement(name = "Tax1Active")
-    protected JaggaerBasicValue tax1Active;
+    private JaggaerBasicValue tax1Active;
     @XmlElement(name = "Tax1")
-    protected JaggaerBasicValue tax1;
+    private JaggaerBasicValue tax1;
     @XmlElement(name = "Tax2Active")
-    protected JaggaerBasicValue tax2Active;
+    private JaggaerBasicValue tax2Active;
     @XmlElement(name = "Tax2")
-    protected JaggaerBasicValue tax2;
+    private JaggaerBasicValue tax2;
     @XmlElement(name = "TaxShipping")
-    protected JaggaerBasicValue taxShipping;
+    private JaggaerBasicValue taxShipping;
     @XmlElement(name = "TaxHandling")
-    protected JaggaerBasicValue taxHandling;
+    private JaggaerBasicValue taxHandling;
 
     public String getIsChanged() {
         return isChanged;

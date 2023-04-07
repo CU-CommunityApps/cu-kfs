@@ -17,16 +17,16 @@ public class DistributionMethod {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "Fax")
-    protected Fax fax;
+    private Fax fax;
     @XmlElement(name = "Email")
-    protected Email email;
+    private Email email;
 
     public String getType() {
         return type;

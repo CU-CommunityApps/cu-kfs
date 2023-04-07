@@ -18,9 +18,9 @@ public class BusinessUnitVendorNumberList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "BusinessUnitVendorNumber")
-    protected List<BusinessUnitVendorNumber> businessUnitVendorNumber;
+    private List<BusinessUnitVendorNumber> businessUnitVendorNumber;
 
     public String getIsChanged() {
         return isChanged;

@@ -20,9 +20,9 @@ public class SupplierSyncMessage {
 
     @XmlAttribute(name = "version", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String version;
+    private String version;
     @XmlElement(name = "Header", required = true)
-    protected Header header;
+    private Header header;
     
     /*
      * XJC produced this XML annotation.  We only need SupplierRequestMessage for the upload suppliers functionality.
@@ -33,7 +33,7 @@ public class SupplierSyncMessage {
      * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd TSMSupplierXML.dtd
      */
     @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
-    protected List<SupplierRequestMessageItemInterface> supplierRequestMessageItems;
+    private List<SupplierRequestMessageItemInterface> supplierRequestMessageItems;
 
     public String getVersion() {
         return version;

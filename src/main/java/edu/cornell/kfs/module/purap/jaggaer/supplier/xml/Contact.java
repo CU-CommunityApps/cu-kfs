@@ -19,42 +19,42 @@ public class Contact {
 
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "ERPNumber")
-    protected ERPNumber erpNumber;
+    private ERPNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
-    protected String oldERPNumber;
+    private String oldERPNumber;
     @XmlElement(name = "SQIntegrationNumber")
-    protected SQIntegrationNumber sqIntegrationNumber;
+    private SQIntegrationNumber sqIntegrationNumber;
     @XmlElement(name = "ThirdPartyRefNumber")
-    protected ThirdPartyRefNumber thirdPartyRefNumber;
+    private ThirdPartyRefNumber thirdPartyRefNumber;
     @XmlElement(name = "Name")
-    protected Name name;
+    private Name name;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "FirstName")
-    protected JaggaerBasicValue firstName;
+    private JaggaerBasicValue firstName;
     @XmlElement(name = "LastName")
-    protected JaggaerBasicValue lastName;
+    private JaggaerBasicValue lastName;
     @XmlElement(name = "Title")
-    protected JaggaerBasicValue title;
+    private JaggaerBasicValue title;
     @XmlElement(name = "Email")
-    protected Email email;
+    private Email email;
     @XmlElement(name = "Phone")
-    protected Phone phone;
+    private Phone phone;
     @XmlElement(name = "MobilePhone")
-    protected MobilePhone mobilePhone;
+    private MobilePhone mobilePhone;
     @XmlElement(name = "TollFreePhone")
-    protected TollFreePhone tollFreePhone;
+    private TollFreePhone tollFreePhone;
     @XmlElement(name = "Fax")
-    protected Fax fax;
+    private Fax fax;
     @XmlElement(name = "Notes")
-    protected JaggaerBasicValue notes;
+    private JaggaerBasicValue notes;
     @XmlElement(name = "AssociatedAddress")
-    protected AssociatedAddress associatedAddress;
+    private AssociatedAddress associatedAddress;
 
     public String getType() {
         return type;

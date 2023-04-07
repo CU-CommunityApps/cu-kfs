@@ -16,12 +16,12 @@ public class PONumberSelection {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "NumberWheel")
-    protected JaggaerBasicValue numberWheel;
+    private JaggaerBasicValue numberWheel;
 
     public String getType() {
         return type;

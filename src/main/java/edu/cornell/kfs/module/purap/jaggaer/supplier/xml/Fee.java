@@ -16,15 +16,15 @@ public class Fee {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "FeeType")
-    protected JaggaerBasicValue feeType;
+    private JaggaerBasicValue feeType;
     @XmlElement(name = "Percentage")
-    protected JaggaerBasicValue percentage;
+    private JaggaerBasicValue percentage;
     @XmlElement(name = "Amount")
-    protected Amount amount;
+    private Amount amount;
     @XmlElement(name = "FeeScope")
-    protected JaggaerBasicValue feeScope;
+    private JaggaerBasicValue feeScope;
 
     public String getIsChanged() {
         return isChanged;

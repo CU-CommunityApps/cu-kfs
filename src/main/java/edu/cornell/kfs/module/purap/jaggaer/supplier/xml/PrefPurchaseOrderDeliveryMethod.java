@@ -20,12 +20,12 @@ public class PrefPurchaseOrderDeliveryMethod {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlElements({ @XmlElement(name = "Email", type = Email.class), @XmlElement(name = "Fax", type = Fax.class) })
-    protected List<Object> emailOrFax;
+    private List<Object> emailOrFax;
 
     public String getIsChanged() {
         return isChanged;

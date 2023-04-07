@@ -17,18 +17,18 @@ public class Attachment {
 
     @XmlAttribute(name = "id", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String id;
+    private String id;
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlElement(name = "AttachmentName", required = true)
-    protected String attachmentName;
+    private String attachmentName;
     @XmlElement(name = "AttachmentURL")
-    protected String attachmentURL;
+    private String attachmentURL;
     @XmlElement(name = "AttachmentSize")
-    protected String attachmentSize;
+    private String attachmentSize;
     @XmlElement(name = "xop:Include")
-    protected XopInclude xopInclude;
+    private XopInclude xopInclude;
 
     public String getId() {
         return id;

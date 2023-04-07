@@ -27,123 +27,123 @@ public class Supplier {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "approvedForERPSync")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String approvedForERPSync;
+    private String approvedForERPSync;
     @XmlAttribute(name = "requiresERP")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String requiresERP;
+    private String requiresERP;
     @XmlElement(name = "ERPNumber")
-    protected ERPNumber erpNumber;
+    private ERPNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
-    protected String oldERPNumber;
+    private String oldERPNumber;
     @XmlElement(name = "SupplierSQId")
-    protected SupplierSQId supplierSQId;
+    private SupplierSQId supplierSQId;
     @XmlElement(name = "SQIntegrationNumber")
-    protected SQIntegrationNumber sqIntegrationNumber;
+    private SQIntegrationNumber sqIntegrationNumber;
     @XmlElement(name = "ThirdPartyRefNumber")
-    protected ThirdPartyRefNumber thirdPartyRefNumber;
+    private ThirdPartyRefNumber thirdPartyRefNumber;
     @XmlElement(name = "JASupplierId")
-    protected String jaSupplierId;
+    private String jaSupplierId;
     @XmlElement(name = "Name")
-    protected Name name;
+    private Name name;
     @XmlElement(name = "DoingBusinessAs")
-    protected JaggaerBasicValue doingBusinessAs;
+    private JaggaerBasicValue doingBusinessAs;
     @XmlElement(name = "OtherNames")
-    protected JaggaerBasicValue otherNames;
+    private JaggaerBasicValue otherNames;
     @XmlElement(name = "CountryOfOrigin")
-    protected JaggaerBasicValue countryOfOrigin;
+    private JaggaerBasicValue countryOfOrigin;
     @XmlElement(name = "ParentSupplier")
-    protected ParentSupplier parentSupplier;
+    private ParentSupplier parentSupplier;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "BusinessUnitVendorNumberList")
-    protected BusinessUnitVendorNumberList businessUnitVendorNumberList;
+    private BusinessUnitVendorNumberList businessUnitVendorNumberList;
     @XmlElement(name = "WebSiteURL")
-    protected JaggaerBasicValue webSiteURL;
+    private JaggaerBasicValue webSiteURL;
     @XmlElement(name = "DUNS")
-    protected JaggaerBasicValue duns;
+    private JaggaerBasicValue duns;
     @XmlElement(name = "LegalStructure")
-    protected JaggaerBasicValue legalStructure;
+    private JaggaerBasicValue legalStructure;
     @XmlElement(name = "TaxIdentificationType")
-    protected JaggaerBasicValue taxIdentificationType;
+    private JaggaerBasicValue taxIdentificationType;
     @XmlElement(name = "TaxIdentificationNumber")
-    protected JaggaerBasicValue taxIdentificationNumber;
+    private JaggaerBasicValue taxIdentificationNumber;
     @XmlElement(name = "VatIdentificationNumber")
-    protected JaggaerBasicValue vatIdentificationNumber;
+    private JaggaerBasicValue vatIdentificationNumber;
     @XmlElement(name = "ExemptFromBackupWithholding")
-    protected JaggaerBasicValue exemptFromBackupWithholding;
+    private JaggaerBasicValue exemptFromBackupWithholding;
     @XmlElement(name = "NumberOfEmployees")
-    protected JaggaerBasicValue numberOfEmployees;
+    private JaggaerBasicValue numberOfEmployees;
     @XmlElement(name = "YearEstablished")
-    protected JaggaerBasicValue yearEstablished;
+    private JaggaerBasicValue yearEstablished;
     @XmlElement(name = "AnnualSalesList")
-    protected AnnualSalesList annualSalesList;
+    private AnnualSalesList annualSalesList;
     @XmlElement(name = "ServiceAreaList")
-    protected ServiceAreaList serviceAreaList;
+    private ServiceAreaList serviceAreaList;
     @XmlElement(name = "RegistrationProfileType")
-    protected JaggaerBasicValue registrationProfileType;
+    private JaggaerBasicValue registrationProfileType;
     @XmlElement(name = "RegistrationProfileStatus")
-    protected JaggaerBasicValue registrationProfileStatus;
+    private JaggaerBasicValue registrationProfileStatus;
     @XmlElement(name = "SupplierTaxRepresentativeId")
-    protected JaggaerBasicValue supplierTaxRepresentativeId;
+    private JaggaerBasicValue supplierTaxRepresentativeId;
     @XmlElement(name = "SupplierRegCourt")
-    protected JaggaerBasicValue supplierRegCourt;
+    private JaggaerBasicValue supplierRegCourt;
     @XmlElement(name = "SupplierRegSeat")
-    protected JaggaerBasicValue supplierRegSeat;
+    private JaggaerBasicValue supplierRegSeat;
     @XmlElement(name = "SupplierRegNumber")
-    protected JaggaerBasicValue supplierRegNumber;
+    private JaggaerBasicValue supplierRegNumber;
     @XmlElement(name = "SupplierCapital")
-    protected SupplierCapital supplierCapital;
+    private SupplierCapital supplierCapital;
     @XmlElement(name = "SupplierShareholders")
-    protected JaggaerBasicValue supplierShareholders;
+    private JaggaerBasicValue supplierShareholders;
     @XmlElement(name = "VATExempt")
-    protected JaggaerBasicValue vatExempt;
+    private JaggaerBasicValue vatExempt;
     @XmlElement(name = "CommodityCodeList")
-    protected CommodityCodeList commodityCodeList;
+    private CommodityCodeList commodityCodeList;
     @XmlElement(name = "Brands")
-    protected Brands brands;
+    private Brands brands;
     @XmlElement(name = "ShoppingCommodityCode")
-    protected JaggaerBasicValue shoppingCommodityCode;
+    private JaggaerBasicValue shoppingCommodityCode;
     @XmlElement(name = "AustinTetra")
-    protected JaggaerBasicValue austinTetra;
+    private JaggaerBasicValue austinTetra;
     @XmlElement(name = "SIC")
-    protected JaggaerBasicValue sic;
+    private JaggaerBasicValue sic;
     @XmlElement(name = "NaicsCodes")
-    protected NaicsCodes naicsCodes;
+    private NaicsCodes naicsCodes;
     @XmlElement(name = "SupportedCurrencyList")
-    protected CurrencyList supportedCurrencyList;
+    private CurrencyList supportedCurrencyList;
     @XmlElement(name = "EnabledCurrencyList")
-    protected CurrencyList enabledCurrencyList;
+    private CurrencyList enabledCurrencyList;
     @XmlElement(name = "SupplierKeywords")
-    protected JaggaerBasicValue supplierKeywords;
+    private JaggaerBasicValue supplierKeywords;
     @XmlElement(name = "AddressList")
-    protected AddressList addressList;
+    private AddressList addressList;
     @XmlElement(name = "PrimaryAddressList")
-    protected PrimaryAddressList primaryAddressList;
+    private PrimaryAddressList primaryAddressList;
     @XmlElement(name = "ContactList")
-    protected ContactList contactList;
+    private ContactList contactList;
     @XmlElement(name = "PrimaryContactList")
-    protected PrimaryContactList primaryContactList;
+    private PrimaryContactList primaryContactList;
     @XmlElement(name = "ClassificationList")
-    protected ClassificationList classificationList;
+    private ClassificationList classificationList;
     @XmlElement(name = "DiversityClassificationList")
-    protected DiversityClassificationList diversityClassificationList;
+    private DiversityClassificationList diversityClassificationList;
     @XmlElement(name = "LocationList")
-    protected LocationList locationList;
+    private LocationList locationList;
     @XmlElement(name = "RestrictFulfillmentLocationsByBusinessUnit")
-    protected JaggaerBasicValue restrictFulfillmentLocationsByBusinessUnit;
+    private JaggaerBasicValue restrictFulfillmentLocationsByBusinessUnit;
     @XmlElement(name = "CustomElementList")
-    protected CustomElementList customElementList;
+    private CustomElementList customElementList;
     @XmlElement(name = "AccountsPayableList")
-    protected AccountsPayableList accountsPayableList;
+    private AccountsPayableList accountsPayableList;
     @XmlElement(name = "TaxInformationList")
-    protected TaxInformationList taxInformationList;
+    private TaxInformationList taxInformationList;
     @XmlElement(name = "InsuranceInformationList")
-    protected InsuranceInformationList insuranceInformationList;
+    private InsuranceInformationList insuranceInformationList;
     @XmlElement(name = "EnablePaymentProvisioning")
-    protected JaggaerBasicValue enablePaymentProvisioning;
+    private JaggaerBasicValue enablePaymentProvisioning;
 
     public String getIsChanged() {
         return isChanged;

@@ -18,9 +18,9 @@ public class AdditionalDataList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "AdditionalData")
-    protected List<AdditionalData> additionalData;
+    private List<AdditionalData> additionalData;
 
     public String getIsChanged() {
         return isChanged;

@@ -17,12 +17,12 @@ public class AssociatedContact {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlElement(name = "ContactRef")
-    protected ContactRef contactRef;
+    private ContactRef contactRef;
 
     public String getIsChanged() {
         return isChanged;

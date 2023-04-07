@@ -16,13 +16,13 @@ public class POPayment {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "PONumberSelection")
-    protected PONumberSelection poNumberSelection;
+    private PONumberSelection poNumberSelection;
     @XmlElement(name = "AllowFreeForm", required = true)
-    protected JaggaerBasicValue allowFreeForm;
+    private JaggaerBasicValue allowFreeForm;
 
     public String getIsChanged() {
         return isChanged;

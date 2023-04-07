@@ -21,13 +21,13 @@ public class AdditionalData {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "name", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String name;
+    private String name;
     @XmlMixed
     @XmlAnyElement
-    protected List<Object> content;
+    private List<Object> content;
 
     public String getIsChanged() {
         return isChanged;

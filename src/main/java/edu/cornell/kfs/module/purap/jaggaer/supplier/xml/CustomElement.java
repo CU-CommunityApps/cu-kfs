@@ -21,20 +21,20 @@ public class CustomElement {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "isActive")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isActive;
+    private String isActive;
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlElement(name = "CustomElementIdentifier")
-    protected JaggaerBasicValue customElementIdentifier;
+    private JaggaerBasicValue customElementIdentifier;
     @XmlElement(name = "DisplayName")
-    protected DisplayName displayName;
+    private DisplayName displayName;
     @XmlElements({ @XmlElement(name = "CustomElementValueList", type = CustomElementValueList.class),
             @XmlElement(name = "Attachments", type = Attachments.class) })
-    protected List<Object> customElementValueListOrAttachments;
+    private List<Object> customElementValueListOrAttachments;
 
     public String getIsChanged() {
         return isChanged;

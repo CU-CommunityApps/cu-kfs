@@ -16,11 +16,11 @@ public class ParentSupplier {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "ERPNumber")
-    protected ERPNumber erpNumber;
+    private ERPNumber erpNumber;
     @XmlElement(name = "SQIntegrationNumber")
-    protected SQIntegrationNumber sqIntegrationNumber;
+    private SQIntegrationNumber sqIntegrationNumber;
 
     public String getIsChanged() {
         return isChanged;

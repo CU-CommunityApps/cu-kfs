@@ -20,9 +20,9 @@ public class Attachments {
 
     @XmlAttribute(name = "xmlns:xop")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String xmlnsXop;
+    private String xmlnsXop;
     @XmlElement(name = "Attachment")
-    protected List<Attachment> attachment;
+    private List<Attachment> attachment;
 
     public String getXmlnsXop() {
         if (xmlnsXop == null) {

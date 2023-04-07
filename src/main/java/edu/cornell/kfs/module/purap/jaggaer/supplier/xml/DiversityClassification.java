@@ -17,17 +17,17 @@ public class DiversityClassification {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "InternalName", required = true)
-    protected JaggaerBasicValue internalName;
+    private JaggaerBasicValue internalName;
     @XmlElement(name = "DisplayName")
-    protected DisplayName displayName;
+    private DisplayName displayName;
     @XmlElement(name = "AdditionalDataList")
-    protected AdditionalDataList additionalDataList;
+    private AdditionalDataList additionalDataList;
     @XmlElement(name = "DD-214Certificate")
-    protected DD214Certificate dd214Certificate;
+    private DD214Certificate dd214Certificate;
     @XmlElement(name = "DiversityCertificate")
-    protected DiversityCertificate diversityCertificate;
+    private DiversityCertificate diversityCertificate;
 
     public String getIsChanged() {
         return isChanged;

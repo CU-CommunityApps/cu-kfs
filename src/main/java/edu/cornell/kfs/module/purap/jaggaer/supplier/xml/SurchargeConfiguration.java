@@ -16,13 +16,13 @@ public class SurchargeConfiguration {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Fee")
-    protected Fee fee;
+    private Fee fee;
     @XmlElement(name = "UseOrderThreshold")
-    protected JaggaerBasicValue useOrderThreshold;
+    private JaggaerBasicValue useOrderThreshold;
     @XmlElement(name = "OrderThreshold")
-    protected JaggaerBasicValue orderThreshold;
+    private JaggaerBasicValue orderThreshold;
 
     public String getIsChanged() {
         return isChanged;

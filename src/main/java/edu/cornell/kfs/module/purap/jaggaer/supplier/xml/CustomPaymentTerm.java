@@ -17,15 +17,15 @@ public class CustomPaymentTerm {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "useCustomPaymentTerm")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String useCustomPaymentTerm;
+    private String useCustomPaymentTerm;
     @XmlAttribute(name = "id", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String id;
+    private String id;
     @XmlValue
-    protected String value;
+    private String value;
 
     public String getIsChanged() {
         return isChanged;

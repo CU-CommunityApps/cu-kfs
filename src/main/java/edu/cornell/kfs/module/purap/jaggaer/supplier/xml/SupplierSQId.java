@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlValue;
 public class SupplierSQId {
 
     @XmlValue
-    protected String value;
+    private String value;
 
     public String getValue() {
         return value;

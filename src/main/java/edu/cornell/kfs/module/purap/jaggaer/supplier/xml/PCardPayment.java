@@ -16,13 +16,13 @@ public class PCardPayment {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "PONumberSelection")
-    protected PONumberSelection poNumberSelection;
+    private PONumberSelection poNumberSelection;
     @XmlElement(name = "RequireCardSecurityCode")
-    protected JaggaerBasicValue requireCardSecurityCode;
+    private JaggaerBasicValue requireCardSecurityCode;
 
     public String getIsChanged() {
         return isChanged;

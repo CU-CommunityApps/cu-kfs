@@ -17,12 +17,12 @@ public class BusinessUnitVendorNumber {
 
     @XmlAttribute(name = "businessUnitInternalName", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String businessUnitInternalName;
+    private String businessUnitInternalName;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlValue
-    protected String value;
+    private String value;
 
     public String getBusinessUnitInternalName() {
         return businessUnitInternalName;

@@ -19,48 +19,48 @@ public class Address {
 
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "ERPNumber")
-    protected ERPNumber erpNumber;
+    private ERPNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
-    protected String oldERPNumber;
+    private String oldERPNumber;
     @XmlElement(name = "SQIntegrationNumber")
-    protected SQIntegrationNumber sqIntegrationNumber;
+    private SQIntegrationNumber sqIntegrationNumber;
     @XmlElement(name = "ThirdPartyRefNumber")
-    protected ThirdPartyRefNumber thirdPartyRefNumber;
+    private ThirdPartyRefNumber thirdPartyRefNumber;
     @XmlElement(name = "Name")
-    protected Name name;
+    private Name name;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "PrefPurchaseOrderDeliveryMethod")
-    protected PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod;
+    private PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod;
     @XmlElement(name = "AddressLine1")
-    protected AddressLine addressLine1;
+    private AddressLine addressLine1;
     @XmlElement(name = "AddressLine2")
-    protected AddressLine addressLine2;
+    private AddressLine addressLine2;
     @XmlElement(name = "AddressLine3")
-    protected AddressLine addressLine3;
+    private AddressLine addressLine3;
     @XmlElement(name = "City")
-    protected City city;
+    private City city;
     @XmlElement(name = "State")
-    protected State state;
+    private State state;
     @XmlElement(name = "PostalCode")
-    protected PostalCode postalCode;
+    private PostalCode postalCode;
     @XmlElement(name = "IsoCountryCode")
-    protected IsoCountryCode isoCountryCode;
+    private IsoCountryCode isoCountryCode;
     @XmlElement(name = "Phone")
-    protected Phone phone;
+    private Phone phone;
     @XmlElement(name = "TollFreePhone")
-    protected TollFreePhone tollFreePhone;
+    private TollFreePhone tollFreePhone;
     @XmlElement(name = "Fax")
-    protected Fax fax;
+    private Fax fax;
     @XmlElement(name = "Notes")
-    protected JaggaerBasicValue notes;
+    private JaggaerBasicValue notes;
     @XmlElement(name = "AssignedBusinessUnitsList")
-    protected AssignedBusinessUnitsList assignedBusinessUnitsList;
+    private AssignedBusinessUnitsList assignedBusinessUnitsList;
 
     public String getType() {
         return type;

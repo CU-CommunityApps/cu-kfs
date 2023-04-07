@@ -18,11 +18,11 @@ public class ServiceArea {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "ServiceAreaInternalName", required = true)
-    protected JaggaerBasicValue serviceAreaInternalName;
+    private JaggaerBasicValue serviceAreaInternalName;
     @XmlElement(name = "StateServiceAreaList")
-    protected List<StateServiceAreaList> stateServiceAreaList;
+    private List<StateServiceAreaList> stateServiceAreaList;
 
     public String getIsChanged() {
         return isChanged;

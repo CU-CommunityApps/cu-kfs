@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class AddressLine {
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlValue
-    protected String value;
+    private String value;
 
     public String getIsChanged() {
         return isChanged;

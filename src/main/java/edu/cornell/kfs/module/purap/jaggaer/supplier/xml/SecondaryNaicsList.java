@@ -18,9 +18,9 @@ public class SecondaryNaicsList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "SecondaryNaics")
-    protected List<SecondaryNaics> secondaryNaics;
+    private List<SecondaryNaics> secondaryNaics;
 
     public String getIsChanged() {
         return isChanged;

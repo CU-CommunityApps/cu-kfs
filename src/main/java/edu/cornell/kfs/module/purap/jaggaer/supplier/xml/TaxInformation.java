@@ -17,16 +17,16 @@ public class TaxInformation {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "TaxDocumentName")
-    protected JaggaerBasicValue taxDocumentName;
+    private JaggaerBasicValue taxDocumentName;
     @XmlElement(name = "TaxDocumentYear")
-    protected JaggaerBasicValue taxDocumentYear;
+    private JaggaerBasicValue taxDocumentYear;
     @XmlElement(name = "TaxDocument")
-    protected TaxDocument taxDocument;
+    private TaxDocument taxDocument;
 
     public String getType() {
         return type;

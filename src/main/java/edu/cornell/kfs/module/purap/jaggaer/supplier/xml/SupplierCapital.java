@@ -16,11 +16,11 @@ public class SupplierCapital {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Amount", required = true)
-    protected Amount amount;
+    private Amount amount;
     @XmlElement(name = "IsoCurrencyCode", required = true)
-    protected IsoCurrencyCode isoCurrencyCode;
+    private IsoCurrencyCode isoCurrencyCode;
 
     public String getIsChanged() {
         return isChanged;

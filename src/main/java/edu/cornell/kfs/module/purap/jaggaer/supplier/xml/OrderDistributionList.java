@@ -18,11 +18,11 @@ public class OrderDistributionList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "DistributionLanguage")
-    protected String distributionLanguage;
+    private String distributionLanguage;
     @XmlElement(name = "DistributionMethod", required = true)
-    protected List<DistributionMethod> distributionMethod;
+    private List<DistributionMethod> distributionMethod;
 
     public String getIsChanged() {
         return isChanged;

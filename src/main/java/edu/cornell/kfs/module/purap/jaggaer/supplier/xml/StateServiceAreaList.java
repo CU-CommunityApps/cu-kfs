@@ -18,9 +18,9 @@ public class StateServiceAreaList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "StateServiceAreaInternalName")
-    protected List<StateServiceAreaInternalName> stateServiceAreaInternalName;
+    private List<StateServiceAreaInternalName> stateServiceAreaInternalName;
 
     public String getIsChanged() {
         return isChanged;

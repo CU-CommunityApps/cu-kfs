@@ -16,15 +16,15 @@ public class TelephoneNumber {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "CountryCode", required = true)
-    protected JaggaerBasicValue countryCode;
+    private JaggaerBasicValue countryCode;
     @XmlElement(name = "AreaCode", required = true)
-    protected JaggaerBasicValue areaCode;
+    private JaggaerBasicValue areaCode;
     @XmlElement(name = "Number", required = true)
-    protected JaggaerBasicValue number;
+    private JaggaerBasicValue number;
     @XmlElement(name = "Extension")
-    protected JaggaerBasicValue extension;
+    private JaggaerBasicValue extension;
 
     public String getIsChanged() {
         return isChanged;

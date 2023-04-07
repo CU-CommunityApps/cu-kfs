@@ -19,14 +19,14 @@ public class Discount {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "unit", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String unit;
+    private String unit;
     @XmlElements({ @XmlElement(name = "DiscountPercent", required = true, type = DiscountPercent.class),
             @XmlElement(name = "DiscountAmount", required = true, type = DiscountAmount.class),
             @XmlElement(name = "IsoCurrencyCode", required = true, type = IsoCurrencyCode.class) })
-    protected List<DiscountItemInterface> discountItems;
+    private List<DiscountItemInterface> discountItems;
 
     public String getIsChanged() {
         return isChanged;

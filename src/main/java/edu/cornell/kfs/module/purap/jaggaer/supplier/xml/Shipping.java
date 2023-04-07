@@ -16,9 +16,9 @@ public class Shipping {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "SurchargeConfiguration")
-    protected SurchargeConfiguration surchargeConfiguration;
+    private SurchargeConfiguration surchargeConfiguration;
 
     public String getIsChanged() {
         return isChanged;

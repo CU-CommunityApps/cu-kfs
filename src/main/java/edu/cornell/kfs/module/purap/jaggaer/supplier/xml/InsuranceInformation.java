@@ -18,26 +18,26 @@ public class InsuranceInformation {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "PolicyNumber")
-    protected JaggaerBasicValue policyNumber;
+    private JaggaerBasicValue policyNumber;
     @XmlElement(name = "InsuranceLimit")
-    protected JaggaerBasicValue insuranceLimit;
+    private JaggaerBasicValue insuranceLimit;
     @XmlElement(name = "ExpirationDate")
-    protected JaggaerBasicValue expirationDate;
+    private JaggaerBasicValue expirationDate;
     @XmlElement(name = "InsuranceProvider")
-    protected JaggaerBasicValue insuranceProvider;
+    private JaggaerBasicValue insuranceProvider;
     @XmlElement(name = "Agent")
-    protected JaggaerBasicValue agent;
+    private JaggaerBasicValue agent;
     @XmlElement(name = "InsuranceProviderPhone")
-    protected InsuranceProviderPhone insuranceProviderPhone;
+    private InsuranceProviderPhone insuranceProviderPhone;
     @XmlElement(name = "InsuranceCertificate")
-    protected InsuranceCertificate insuranceCertificate;
+    private InsuranceCertificate insuranceCertificate;
     @XmlElement(name = "OtherTypeName")
-    protected JaggaerBasicValue otherTypeName;
+    private JaggaerBasicValue otherTypeName;
 
     public String getType() {
         return type;

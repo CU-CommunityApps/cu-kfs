@@ -18,9 +18,9 @@ public class Brands {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Brand")
-    protected List<JaggaerBasicValue> brand;
+    private List<JaggaerBasicValue> brand;
 
     public String getIsChanged() {
         return isChanged;

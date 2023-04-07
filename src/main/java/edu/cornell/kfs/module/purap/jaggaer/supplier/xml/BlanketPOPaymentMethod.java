@@ -16,9 +16,9 @@ public class BlanketPOPaymentMethod {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "BlanketPONumber", required = true)
-    protected JaggaerBasicValue blanketPONumber;
+    private JaggaerBasicValue blanketPONumber;
 
     public String getIsChanged() {
         return isChanged;

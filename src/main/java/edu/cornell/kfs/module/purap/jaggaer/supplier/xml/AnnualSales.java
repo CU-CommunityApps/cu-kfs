@@ -16,13 +16,13 @@ public class AnnualSales {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "AnnualSalesYear")
-    protected JaggaerBasicValue annualSalesYear;
+    private JaggaerBasicValue annualSalesYear;
     @XmlElement(name = "AnnualSalesAmount")
-    protected Amount annualSalesAmount;
+    private Amount annualSalesAmount;
     @XmlElement(name = "IsoCurrencyCode")
-    protected IsoCurrencyCode isoCurrencyCode;
+    private IsoCurrencyCode isoCurrencyCode;
 
     public String getIsChanged() {
         return isChanged;

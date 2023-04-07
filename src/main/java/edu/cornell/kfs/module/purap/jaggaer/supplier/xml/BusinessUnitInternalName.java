@@ -16,12 +16,12 @@ public class BusinessUnitInternalName {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "preferredForThisBusinessUnit")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String preferredForThisBusinessUnit;
+    private String preferredForThisBusinessUnit;
     @XmlValue
-    protected String value;
+    private String value;
 
     public String getIsChanged() {
         return isChanged;

@@ -18,9 +18,9 @@ public class ContactList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Contact")
-    protected List<Contact> contact;
+    private List<Contact> contact;
 
     public String getIsChanged() {
         return isChanged;

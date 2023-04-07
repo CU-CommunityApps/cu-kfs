@@ -17,14 +17,14 @@ public class PaymentMethod {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "POPaymentMethod")
-    protected POPaymentMethod poPaymentMethod;
+    private POPaymentMethod poPaymentMethod;
     @XmlElement(name = "BlanketPOPaymentMethod")
-    protected BlanketPOPaymentMethod blanketPOPaymentMethod;
+    private BlanketPOPaymentMethod blanketPOPaymentMethod;
 
     public String getType() {
         return type;

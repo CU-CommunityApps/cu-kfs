@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.XmlType;
 public class SupplierRequestMessage implements SupplierRequestMessageItemInterface{
 
     @XmlElement(name = "Supplier", required = true)
-    protected List<Supplier> supplier;
+    private List<Supplier> supplier;
 
     public List<Supplier> getSupplier() {
         if (supplier == null) {

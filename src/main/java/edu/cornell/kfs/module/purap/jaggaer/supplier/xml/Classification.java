@@ -16,11 +16,11 @@ public class Classification {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "InternalName", required = true)
-    protected JaggaerBasicValue internalName;
+    private JaggaerBasicValue internalName;
     @XmlElement(name = "DisplayName")
-    protected DisplayName displayName;
+    private DisplayName displayName;
 
     public String getIsChanged() {
         return isChanged;

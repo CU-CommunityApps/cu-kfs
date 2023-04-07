@@ -20,52 +20,52 @@ public class Location {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "supportsOrderFulfillment")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String supportsOrderFulfillment;
+    private String supportsOrderFulfillment;
     @XmlElement(name = "ERPNumber")
-    protected ERPNumber erpNumber;
+    private ERPNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
-    protected String oldERPNumber;
+    private String oldERPNumber;
     @XmlElement(name = "SQIntegrationNumber")
-    protected SQIntegrationNumber sqIntegrationNumber;
+    private SQIntegrationNumber sqIntegrationNumber;
     @XmlElement(name = "ThirdPartyRefNumber")
-    protected ThirdPartyRefNumber thirdPartyRefNumber;
+    private ThirdPartyRefNumber thirdPartyRefNumber;
     @XmlElement(name = "Name")
-    protected Name name;
+    private Name name;
     @XmlElement(name = "Description")
-    protected JaggaerBasicValue description;
+    private JaggaerBasicValue description;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "LocationActive")
-    protected JaggaerBasicValue locationActive;
+    private JaggaerBasicValue locationActive;
     @XmlElement(name = "Primary")
-    protected JaggaerBasicValue primary;
+    private JaggaerBasicValue primary;
     @XmlElement(name = "PrefPurchaseOrderDeliveryMethod")
-    protected PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod;
+    private PrefPurchaseOrderDeliveryMethod prefPurchaseOrderDeliveryMethod;
     @XmlElement(name = "LocationEffectiveDate")
-    protected JaggaerBasicValue locationEffectiveDate;
+    private JaggaerBasicValue locationEffectiveDate;
     @XmlElement(name = "PaymentMethod")
-    protected PaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod;
     @XmlElement(name = "Shipping")
-    protected Shipping shipping;
+    private Shipping shipping;
     @XmlElement(name = "Handling")
-    protected Handling handling;
+    private Handling handling;
     @XmlElement(name = "TaxInfo")
-    protected TaxInfo taxInfo;
+    private TaxInfo taxInfo;
     @XmlElement(name = "TermsAndCondition")
-    protected TermsAndCondition termsAndCondition;
+    private TermsAndCondition termsAndCondition;
     @XmlElement(name = "OrderDistributionList")
-    protected OrderDistributionList orderDistributionList;
+    private OrderDistributionList orderDistributionList;
     @XmlElement(name = "AssignedBusinessUnitsList")
-    protected AssignedBusinessUnitsList assignedBusinessUnitsList;
+    private AssignedBusinessUnitsList assignedBusinessUnitsList;
     @XmlElement(name = "AssociatedAddressList")
-    protected AssociatedAddressList associatedAddressList;
+    private AssociatedAddressList associatedAddressList;
     @XmlElement(name = "AssociatedContactList")
-    protected AssociatedContactList associatedContactList;
+    private AssociatedContactList associatedContactList;
     @XmlElement(name = "CustomElementList")
-    protected CustomElementList customElementList;
+    private CustomElementList customElementList;
 
     public String getIsChanged() {
         return isChanged;

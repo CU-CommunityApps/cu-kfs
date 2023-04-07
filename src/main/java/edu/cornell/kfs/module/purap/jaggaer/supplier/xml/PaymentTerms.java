@@ -17,25 +17,25 @@ public class PaymentTerms {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
     @XmlElement(name = "Discount")
-    protected Discount discount;
+    private Discount discount;
     @XmlElement(name = "Days")
-    protected JaggaerBasicValue days;
+    private JaggaerBasicValue days;
     @XmlElement(name = "Net")
-    protected JaggaerBasicValue net;
+    private JaggaerBasicValue net;
     @XmlElement(name = "CustomPaymentTerm")
-    protected CustomPaymentTerm customPaymentTerm;
+    private CustomPaymentTerm customPaymentTerm;
     @XmlElement(name = "FOB")
-    protected JaggaerBasicValue fob;
+    private JaggaerBasicValue fob;
     @XmlElement(name = "StandardPaymentTermsCode")
-    protected JaggaerBasicValue standardPaymentTermsCode;
+    private JaggaerBasicValue standardPaymentTermsCode;
     @XmlElement(name = "TermsType")
-    protected JaggaerBasicValue termsType;
+    private JaggaerBasicValue termsType;
     @XmlElement(name = "DaysAfter")
-    protected JaggaerBasicValue daysAfter;
+    private JaggaerBasicValue daysAfter;
 
     public String getIsChanged() {
         return isChanged;

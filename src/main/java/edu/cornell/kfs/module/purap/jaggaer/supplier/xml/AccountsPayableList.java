@@ -18,9 +18,9 @@ public class AccountsPayableList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "AccountsPayable")
-    protected List<AccountsPayable> accountsPayable;
+    private List<AccountsPayable> accountsPayable;
 
     public String getIsChanged() {
         return isChanged;

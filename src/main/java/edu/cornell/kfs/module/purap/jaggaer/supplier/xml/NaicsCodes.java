@@ -19,10 +19,10 @@ public class NaicsCodes {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElements({ @XmlElement(name = "PrimaryNaics", type = PrimaryNaics.class),
             @XmlElement(name = "SecondaryNaicsList", type = SecondaryNaicsList.class) })
-    protected List<Object> primaryNaicsOrSecondaryNaicsList;
+    private List<Object> primaryNaicsOrSecondaryNaicsList;
 
     public String getIsChanged() {
         return isChanged;

@@ -12,13 +12,13 @@ import jakarta.xml.bind.annotation.XmlType;
 public class Header {
 
     @XmlElement(name = "MessageId", required = true)
-    protected String messageId;
+    private String messageId;
     @XmlElement(name = "RelatedMessageId")
-    protected String relatedMessageId;
+    private String relatedMessageId;
     @XmlElement(name = "Timestamp", required = true)
-    protected String timestamp;
+    private String timestamp;
     @XmlElement(name = "Authentication")
-    protected Authentication authentication;
+    private Authentication authentication;
 
     public String getMessageId() {
         return messageId;

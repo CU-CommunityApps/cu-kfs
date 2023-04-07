@@ -12,9 +12,9 @@ import jakarta.xml.bind.annotation.XmlType;
 public class Authentication {
 
     @XmlElement(name = "Identity", required = true)
-    protected String identity;
+    private String identity;
     @XmlElement(name = "SharedSecret", required = true)
-    protected String sharedSecret;
+    private String sharedSecret;
 
     public String getIdentity() {
         return identity;

@@ -16,9 +16,9 @@ public class Phone {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "TelephoneNumber")
-    protected TelephoneNumber telephoneNumber;
+    private TelephoneNumber telephoneNumber;
 
     public String getIsChanged() {
         return isChanged;

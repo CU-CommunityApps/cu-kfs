@@ -17,12 +17,12 @@ public class AssociatedAddress {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlAttribute(name = "type")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlElement(name = "AddressRef")
-    protected AddressRef addressRef;
+    private AddressRef addressRef;
 
     public String getIsChanged() {
         return isChanged;

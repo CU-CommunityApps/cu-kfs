@@ -16,9 +16,9 @@ public class JPMorganVCardPayment {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Active")
-    protected Active active;
+    private Active active;
 
     public String getIsChanged() {
         return isChanged;

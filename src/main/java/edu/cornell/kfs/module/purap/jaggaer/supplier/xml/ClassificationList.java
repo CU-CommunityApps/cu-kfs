@@ -18,9 +18,9 @@ public class ClassificationList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Classification")
-    protected List<Classification> classification;
+    private List<Classification> classification;
 
     public String getIsChanged() {
         return isChanged;

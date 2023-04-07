@@ -16,9 +16,9 @@ public class InsuranceCertificate {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "Attachments")
-    protected Attachments attachments;
+    private Attachments attachments;
 
     public String getIsChanged() {
         return isChanged;

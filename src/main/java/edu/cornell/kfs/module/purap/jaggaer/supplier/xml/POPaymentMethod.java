@@ -16,13 +16,13 @@ public class POPaymentMethod {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "POPayment")
-    protected POPayment poPayment;
+    private POPayment poPayment;
     @XmlElement(name = "PCardPayment")
-    protected PCardPayment pCardPayment;
+    private PCardPayment pCardPayment;
     @XmlElement(name = "JPMorganVCardPayment")
-    protected JPMorganVCardPayment jpMorganVCardPayment;
+    private JPMorganVCardPayment jpMorganVCardPayment;
 
     public String getIsChanged() {
         return isChanged;

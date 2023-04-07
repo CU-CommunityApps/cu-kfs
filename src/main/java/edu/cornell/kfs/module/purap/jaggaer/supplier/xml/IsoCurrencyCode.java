@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class IsoCurrencyCode implements DiscountItemInterface{
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlValue
-    protected String value;
+    private String value;
     
     public IsoCurrencyCode() {
 

@@ -16,9 +16,9 @@ public class ThirdPartyRefNumber {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlValue
-    protected String value;
+    private String value;
 
     public String getIsChanged() {
         return isChanged;

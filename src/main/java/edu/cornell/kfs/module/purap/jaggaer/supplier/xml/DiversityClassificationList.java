@@ -18,9 +18,9 @@ public class DiversityClassificationList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "DiversityClassification")
-    protected List<DiversityClassification> diversityClassification;
+    private List<DiversityClassification> diversityClassification;
 
     public String getIsChanged() {
         return isChanged;

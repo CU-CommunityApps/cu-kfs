@@ -18,9 +18,9 @@ public class TaxInformationList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "TaxInformation")
-    protected List<TaxInformation> taxInformation;
+    private List<TaxInformation> taxInformation;
 
     public String getIsChanged() {
         return isChanged;

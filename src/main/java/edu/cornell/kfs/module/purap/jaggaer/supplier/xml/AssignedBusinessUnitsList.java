@@ -18,9 +18,9 @@ public class AssignedBusinessUnitsList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "BusinessUnitInternalName")
-    protected List<BusinessUnitInternalName> businessUnitInternalName;
+    private List<BusinessUnitInternalName> businessUnitInternalName;
 
     public String getIsChanged() {
         return isChanged;

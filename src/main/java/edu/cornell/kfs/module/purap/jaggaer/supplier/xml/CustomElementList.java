@@ -18,9 +18,9 @@ public class CustomElementList {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "CustomElement")
-    protected List<CustomElement> customElement;
+    private List<CustomElement> customElement;
 
     public String getIsChanged() {
         return isChanged;

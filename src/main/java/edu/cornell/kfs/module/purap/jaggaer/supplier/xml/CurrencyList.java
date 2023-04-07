@@ -16,9 +16,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class CurrencyList {
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "IsoCurrencyCode")
-    protected List<IsoCurrencyCode> isoCurrencyCode;
+    private List<IsoCurrencyCode> isoCurrencyCode;
 
     public String getIsChanged() {
         return isChanged;

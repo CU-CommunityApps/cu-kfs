@@ -20,42 +20,42 @@ public class BankAccount {
 
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
+    private String type;
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    protected String isChanged;
+    private String isChanged;
     @XmlElement(name = "BankName")
-    protected JaggaerBasicValue bankName;
+    private JaggaerBasicValue bankName;
     @XmlElement(name = "AccountHoldersName")
-    protected JaggaerBasicValue accountHoldersName;
+    private JaggaerBasicValue accountHoldersName;
     @XmlElement(name = "AccountNumberType")
-    protected JaggaerBasicValue accountNumberType;
+    private JaggaerBasicValue accountNumberType;
     @XmlElement(name = "RoutingNumber")
-    protected JaggaerBasicValue routingNumber;
+    private JaggaerBasicValue routingNumber;
     @XmlElement(name = "BankAccountNumber")
-    protected JaggaerBasicValue bankAccountNumber;
+    private JaggaerBasicValue bankAccountNumber;
     @XmlElement(name = "IbanBankAccountNumber")
-    protected JaggaerBasicValue ibanBankAccountNumber;
+    private JaggaerBasicValue ibanBankAccountNumber;
     @XmlElement(name = "DirectDepositFormat")
-    protected JaggaerBasicValue directDepositFormat;
+    private JaggaerBasicValue directDepositFormat;
     @XmlElement(name = "BankIdentifierCode")
-    protected JaggaerBasicValue bankIdentifierCode;
+    private JaggaerBasicValue bankIdentifierCode;
     @XmlElement(name = "InternationalRoutingCode")
-    protected JaggaerBasicValue internationalRoutingCode;
+    private JaggaerBasicValue internationalRoutingCode;
     @XmlElement(name = "IsoCountryCode")
-    protected IsoCountryCode isoCountryCode;
+    private IsoCountryCode isoCountryCode;
     @XmlElement(name = "AddressLine1")
-    protected AddressLine addressLine1;
+    private AddressLine addressLine1;
     @XmlElement(name = "AddressLine2")
-    protected AddressLine addressLine2;
+    private AddressLine addressLine2;
     @XmlElement(name = "AddressLine3")
-    protected AddressLine addressLine3;
+    private AddressLine addressLine3;
     @XmlElement(name = "City")
-    protected City city;
+    private City city;
     @XmlElement(name = "State")
-    protected State state;
+    private State state;
     @XmlElement(name = "PostalCode")
-    protected PostalCode postalCode;
+    private PostalCode postalCode;
 
     public String getType() {
         return type;
