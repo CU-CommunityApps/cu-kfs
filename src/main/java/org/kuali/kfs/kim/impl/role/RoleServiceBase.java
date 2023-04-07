@@ -34,8 +34,6 @@ import org.kuali.kfs.kim.framework.role.RoleTypeService;
 import org.kuali.kfs.kim.impl.common.attribute.KimAttribute;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
-import org.kuali.kfs.kim.impl.group.Group;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.impl.responsibility.ResponsibilityInternalService;
 import org.kuali.kfs.kim.impl.services.KimImplServiceLocator;
 import org.kuali.kfs.kim.impl.type.KimType;
@@ -532,6 +530,9 @@ abstract class RoleServiceBase {
         return attributeId;
     }
 
+    /*
+     * CU Customization:
+     */
     protected String getAttributeIdFromKimType(String kimTypeId, String attributeName) {
         KimType kimType = getKimTypeInfoService().getKimType(kimTypeId);
         if (ObjectUtils.isNull(kimType)) {
@@ -547,6 +548,8 @@ abstract class RoleServiceBase {
     }
 
     /*
+     * CU Customization:
+     *
      * This is a modified version of the base getKimAttributeId() code.
      */
     protected String getAttributeIdByName(String attributeName) {
@@ -605,7 +608,11 @@ abstract class RoleServiceBase {
     // CU Customization: Add KimTypeInfoService getter and setter.
     public KimTypeInfoService getKimTypeInfoService() {
         if (kimTypeInfoService == null) {
+            LOG.error("getKimTypeInfoService: Detected service as null. Attempting to obtain service with call to KimApiServiceLocator.");
             setKimTypeInfoService(KimApiServiceLocator.getKimTypeInfoService());
+            if (kimTypeInfoService == null) {
+                LOG.error("getKimTypeInfoService: KimApiServiceLocator returned a null for the service. Investigate adding call to extended class to set this service value in the abstract super class.");
+            }
         }
         return kimTypeInfoService;
     }
