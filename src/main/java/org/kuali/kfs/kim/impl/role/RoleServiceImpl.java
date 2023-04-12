@@ -2205,7 +2205,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
         if (nextSeq == null) {
             LOG.error(
-                    "Unable to get new role permission id from sequence {}",
+                    "Unable to get new role permission id from sequence {} ",
                     KimConstants.SequenceNames.KRIM_ROLE_PERM_ID_S
             );
             throw new RuntimeException("Unable to get new role permission id from sequence " +
