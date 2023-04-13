@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SupplierSyncMessage version="1.0">
+    <Header>
+        <MessageId>message id</MessageId>
+        <RelatedMessageId>related id</RelatedMessageId>
+        <Timestamp>20210218</Timestamp>
+        <Authentication>
+            <Identity>Cornell</Identity>
+            <SharedSecret>SuperCoolPassword</SharedSecret>
+        </Authentication>
+    </Header>
+    <SupplierRequestMessage>
+        <Supplier isChanged="T" approvedForERPSync="T" requiresERP="T">
+            <ERPNumber isChanged="F">erp number</ERPNumber>
+            <OldERPNumber>old erp number</OldERPNumber>
+            <SupplierSQId>SO ID</SupplierSQId>
+            <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+            <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+            <JASupplierId>ja supplier id</JASupplierId>
+            <Name>Acme Test Company</Name>
+            <DoingBusinessAs>doing business os</DoingBusinessAs>
+            <OtherNames>other name</OtherNames>
+            <CountryOfOrigin>USA</CountryOfOrigin>
+            <ParentSupplier isChanged="F">
+                <ERPNumber isChanged="F">parent erp number</ERPNumber>
+                <SQIntegrationNumber>parent integration number</SQIntegrationNumber>
+            </ParentSupplier>
+            <Active>active</Active>
+            <BusinessUnitVendorNumberList isChanged="T">
+                <BusinessUnitVendorNumber businessUnitInternalName="vendor number 1" isChanged="T">1232</BusinessUnitVendorNumber>
+                <BusinessUnitVendorNumber businessUnitInternalName="vendor number 2" isChanged="F">56464</BusinessUnitVendorNumber>
+            </BusinessUnitVendorNumberList>
+            <WebSiteURL>www.cornell.edu</WebSiteURL>
+            <DUNS>duns</DUNS>
+            <LegalStructure>legal structure</LegalStructure>
+            <TaxIdentificationType>tax type</TaxIdentificationType>
+            <TaxIdentificationNumber>tax id</TaxIdentificationNumber>
+            <VatIdentificationNumber>VAT ID</VatIdentificationNumber>
+            <ExemptFromBackupWithholding>back holding</ExemptFromBackupWithholding>
+            <NumberOfEmployees>69</NumberOfEmployees>
+            <YearEstablished>1977</YearEstablished>
+            <AnnualSalesList isChanged="T">
+                <AnnualSales isChanged="F">
+                    <AnnualSalesYear isChanged="T">2023</AnnualSalesYear>
+                    <AnnualSalesAmount isChanged="T">6900.00</AnnualSalesAmount>
+                    <IsoCurrencyCode isChanged="F">usd</IsoCurrencyCode>
+                </AnnualSales>
+            </AnnualSalesList>
+            <ServiceAreaList isChanged="T">
+                <ServiceArea isChanged="T">
+                    <ServiceAreaInternalName isChanged="T">internal name</ServiceAreaInternalName>
+                    <StateServiceAreaList isChanged="T">
+                        <StateServiceAreaInternalName isChanged="T">internal name 1</StateServiceAreaInternalName>
+                        <StateServiceAreaInternalName isChanged="T">internal name 2</StateServiceAreaInternalName>
+                    </StateServiceAreaList>
+                </ServiceArea>
+                <ServiceArea isChanged="F">
+                    <ServiceAreaInternalName isChanged="T">a different internal name</ServiceAreaInternalName>
+                    <StateServiceAreaList isChanged="T">
+                        <StateServiceAreaInternalName isChanged="T">internal name 3</StateServiceAreaInternalName>
+                        <StateServiceAreaInternalName isChanged="T">internal name 4</StateServiceAreaInternalName>
+                    </StateServiceAreaList>
+                </ServiceArea>
+            </ServiceAreaList>
+            <RegistrationProfileType>profile tyoe</RegistrationProfileType>
+            <RegistrationProfileStatus>profile status</RegistrationProfileStatus>
+            <SupplierTaxRepresentativeId isChanged="T">tax rep ID</SupplierTaxRepresentativeId>
+            <SupplierRegCourt>regular court</SupplierRegCourt>
+            <SupplierRegSeat>regular seat</SupplierRegSeat>
+            <SupplierRegNumber>reg number</SupplierRegNumber>
+            <SupplierCapital isChanged="T">
+                <Amount isChanged="T">50.00</Amount>
+                <IsoCurrencyCode isChanged="F">usd</IsoCurrencyCode>
+            </SupplierCapital>
+            <SupplierShareholders>holders</SupplierShareholders>
+            <VATExempt>VAT</VATExempt>
+            <CommodityCodeList>
+                <CommodityCode isChanged="T">Commodity Code 1</CommodityCode>
+                <CommodityCode isChanged="F">Commodity Code 2</CommodityCode>
+            </CommodityCodeList>
+            <Brands>
+                <Brand isChanged="T">brand 1</Brand>
+                <Brand isChanged="F">brand 2</Brand>
+            </Brands>
+            <ShoppingCommodityCode>commodity</ShoppingCommodityCode>
+            <AustinTetra>austin</AustinTetra>
+            <SIC isChanged="F">SIC</SIC>
+            <NaicsCodes isChanged="T">
+                <PrimaryNaics isChanged="T">primary code</PrimaryNaics>
+                <SecondaryNaicsList>
+                    <SecondaryNaics isChanged="F">second</SecondaryNaics>
+                    <SecondaryNaics isChanged="T">third</SecondaryNaics>
+                </SecondaryNaicsList>
+            </NaicsCodes>
+            <SupportedCurrencyList>
+                <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
+                <IsoCurrencyCode isChanged="F">peso</IsoCurrencyCode>
+                <IsoCurrencyCode>euro</IsoCurrencyCode>
+            </SupportedCurrencyList>
+            <EnabledCurrencyList isChanged="T">
+                <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
+            </EnabledCurrencyList>
+            <SupplierKeywords>keyword</SupplierKeywords>
+            <AddressList isChanged="T">
+                <Address type="home address" isChanged="T">
+                    <ERPNumber isChanged="T">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">address name</Name>
+                    <Active>active</Active>
+                    <PrefPurchaseOrderDeliveryMethod isChanged="T" type="delivery method">
+                        <Email isChanged="T">foo@bar.com</Email>
+                        <Fax isChanged="F">
+                            <TelephoneNumber isChanged="T">
+                                <CountryCode isChanged="T">USA</CountryCode>
+                                <AreaCode isChanged="T">607</AreaCode>
+                                <Number isChanged="T">255*9900</Number>
+                                <Extension isChanged="T">987</Extension>
+                            </TelephoneNumber>
+                        </Fax>
+                    </PrefPurchaseOrderDeliveryMethod>
+                    <AddressLine1 isChanged="T">line 1</AddressLine1>
+                    <AddressLine2 isChanged="T">line 2</AddressLine2>
+                    <AddressLine3 isChanged="T">line 3</AddressLine3>
+                    <City isChanged="T">Ithaca</City>
+                    <State isChanged="T">NY</State>
+                    <PostalCode isChanged="T">14850</PostalCode>
+                    <IsoCountryCode isChanged="T">USA</IsoCountryCode>
+                    <Phone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Phone>
+                    <TollFreePhone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </TollFreePhone>
+                    <Fax isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Fax>
+                    <Notes isChanged="T">just a simple note</Notes>
+                    <AssignedBusinessUnitsList isChanged="T">
+                        <BusinessUnitInternalName isChanged="T" preferredForThisBusinessUnit="is preferred">testing name</BusinessUnitInternalName>
+                    </AssignedBusinessUnitsList>
+                </Address>
+            </AddressList>
+            <PrimaryAddressList isChanged="T">
+                <AssociatedAddress isChanged="T" type="adddress type">
+                    <AddressRef>
+                        <ERPNumber isChanged="T">erp number</ERPNumber>
+                        <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
+                        <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    </AddressRef>
+                </AssociatedAddress>
+            </PrimaryAddressList>
+            <ContactList isChanged="T">
+                <Contact type="contact type" isChanged="T">
+                    <ERPNumber isChanged="T">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">contact name</Name>
+                    <Active>active</Active>
+                    <FirstName isChanged="T">Jane</FirstName>
+                    <LastName isChanged="T">Doe</LastName>
+                    <Title isChanged="T">cool title</Title>
+                    <Email isChanged="T">test@foo.com</Email>
+                    <Phone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Phone>
+                    <MobilePhone isChanged="F">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </MobilePhone>
+                    <TollFreePhone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </TollFreePhone>
+                    <Fax isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </Fax>
+                    <Notes isChanged="T">just a simple note</Notes>
+                </Contact>
+            </ContactList>
+            <PrimaryContactList isChanged="T">
+                <AssociatedContact isChanged="T" type="contact type">
+                    <ContactRef>
+                        <ERPNumber isChanged="T">erp number</ERPNumber>
+                        <SQIntegrationNumber>SQ number</SQIntegrationNumber>
+                        <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    </ContactRef>
+                </AssociatedContact>
+            </PrimaryContactList>
+            <ClassificationList isChanged="T">
+                <Classification isChanged="T">
+                    <InternalName isChanged="T">internal name for classification 1</InternalName>
+                    <DisplayName isChanged="T">classification 1 name</DisplayName>
+                </Classification>
+                <Classification isChanged="F">
+                    <InternalName isChanged="F">internal name for classification 2</InternalName>
+                    <DisplayName isChanged="F">classification 2 name</DisplayName>
+                </Classification>
+            </ClassificationList>
+            <DiversityClassificationList isChanged="T">
+                <DiversityClassification isChanged="T">
+                    <InternalName isChanged="T">internal name</InternalName>
+                    <DisplayName isChanged="F">display name</DisplayName>
+                    <AdditionalDataList isChanged="T">
+                        <AdditionalData isChanged="T" name="datum name">some additional piece of information</AdditionalData>
+                    </AdditionalDataList>
+                    <DD-214Certificate isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>DD 214 Certificate Attachments</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </DD-214Certificate>
+                    <DiversityCertificate isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>diversity certificate attachment</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </DiversityCertificate>
+                </DiversityClassification>
+            </DiversityClassificationList>
+            <LocationList>
+                <Location isChanged="T" supportsOrderFulfillment="Order Fulfillment(">
+                    <ERPNumber isChanged="T">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">silly location name</Name>
+                    <Description isChanged="T">description value</Description>
+                    <Active>active</Active>
+                    <LocationActive isChanged="T">location is active</LocationActive>
+                    <Primary isChanged="T">primary</Primary>
+                    <PrefPurchaseOrderDeliveryMethod isChanged="T" type="delivery method">
+                        <Email isChanged="T">foo@bar.com</Email>
+                        <Fax isChanged="F">
+                            <TelephoneNumber isChanged="T">
+                                <CountryCode isChanged="T">USA</CountryCode>
+                                <AreaCode isChanged="T">607</AreaCode>
+                                <Number isChanged="T">255*9900</Number>
+                                <Extension isChanged="T">987</Extension>
+                            </TelephoneNumber>
+                        </Fax>
+                    </PrefPurchaseOrderDeliveryMethod>
+                    <LocationEffectiveDate isChanged="T">02/28/2023</LocationEffectiveDate>
+                    <PaymentMethod type="payment type" isChanged="T">
+                        <POPaymentMethod isChanged="T">
+                            <POPayment isChanged="T">
+                                <Active>active</Active>
+                                <PONumberSelection type="selection type" isChanged="T">
+                                    <NumberWheel isChanged="T">wheel</NumberWheel>
+                                </PONumberSelection>
+                                <AllowFreeForm isChanged="T">allow free form</AllowFreeForm>
+                            </POPayment>
+                            <PCardPayment isChanged="T">
+                                <Active>active</Active>
+                                <PONumberSelection type="selection type" isChanged="T">
+                                    <NumberWheel isChanged="T">wheel</NumberWheel>
+                                </PONumberSelection>
+                                <RequireCardSecurityCode isChanged="T">security code</RequireCardSecurityCode>
+                            </PCardPayment>
+                            <JPMorganVCardPayment isChanged="T">
+                                <Active>active</Active>
+                            </JPMorganVCardPayment>
+                        </POPaymentMethod>
+                        <BlanketPOPaymentMethod isChanged="T">
+                            <BlanketPONumber isChanged="T">blanket number</BlanketPONumber>
+                        </BlanketPOPaymentMethod>
+                    </PaymentMethod>
+                    <Shipping isChanged="T">
+                        <SurchargeConfiguration isChanged="T">
+                            <Fee isChanged="T">
+                                <FeeType isChanged="T">fee type</FeeType>
+                                <Percentage>2</Percentage>
+                                <Amount isChanged="T">25.00</Amount>
+                                <FeeScope>scope</FeeScope>
+                            </Fee>
+                            <UseOrderThreshold isChanged="T">use threshhold</UseOrderThreshold>
+                            <OrderThreshold isChanged="T">order threshhold</OrderThreshold>
+                        </SurchargeConfiguration>
+                    </Shipping>
+                    <Handling isChanged="T">
+                        <SurchargeConfiguration isChanged="T">
+                            <Fee isChanged="T">
+                                <FeeType isChanged="T">fee type</FeeType>
+                                <Percentage>2</Percentage>
+                                <Amount isChanged="T">2.75</Amount>
+                                <FeeScope>scope</FeeScope>
+                            </Fee>
+                            <UseOrderThreshold isChanged="T">use threshhold</UseOrderThreshold>
+                            <OrderThreshold isChanged="T">order threshhold</OrderThreshold>
+                        </SurchargeConfiguration>
+                    </Handling>
+                    <TaxInfo isChanged="T">
+                        <TaxableByDefault isChanged="T">taxable by default</TaxableByDefault>
+                        <Tax1Active>tax 1 active</Tax1Active>
+                        <Tax1>tax 1</Tax1>
+                        <Tax2Active>tax 2 active</Tax2Active>
+                        <Tax2>tax 2</Tax2>
+                        <TaxShipping>tax shipping</TaxShipping>
+                        <TaxHandling>tax handling</TaxHandling>
+                    </TaxInfo>
+                    <TermsAndCondition isChanged="T">
+                        <PaymentTerms isChanged="T">
+                            <Active>active</Active>
+                            <Discount isChanged="T" unit="dollars">
+                                <DiscountAmount>10</DiscountAmount>
+                                <IsoCurrencyCode>USD</IsoCurrencyCode>
+                                <DiscountPercent>5</DiscountPercent>
+                            </Discount>
+                            <Days>Monday, Tuesday</Days>
+                            <Net>net</Net>
+                            <CustomPaymentTerm isChanged="T" useCustomPaymentTerm="use custom term" id="ID field">custom term</CustomPaymentTerm>
+                            <FOB isChanged="T">FOB</FOB>
+                            <StandardPaymentTermsCode>standard payment terms</StandardPaymentTermsCode>
+                            <TermsType>terms type</TermsType>
+                            <DaysAfter>Days After</DaysAfter>
+                        </PaymentTerms>
+                    </TermsAndCondition>
+                    <OrderDistributionList isChanged="T">
+                        <DistributionLanguage>US English</DistributionLanguage>
+                        <DistributionMethod>
+                            <Active>active</Active>
+                            <Fax isChanged="F">
+                                <TelephoneNumber isChanged="T">
+                                    <CountryCode isChanged="T">USA</CountryCode>
+                                    <AreaCode isChanged="T">607</AreaCode>
+                                    <Number isChanged="T">255*9900</Number>
+                                    <Extension isChanged="T">987</Extension>
+                                </TelephoneNumber>
+                            </Fax>
+                            <Email isChanged="T">foo@bar.com</Email>
+                        </DistributionMethod>
+                    </OrderDistributionList>
+                    <AssignedBusinessUnitsList isChanged="T">
+                        <BusinessUnitInternalName isChanged="T" preferredForThisBusinessUnit="is preferred">testing name</BusinessUnitInternalName>
+                    </AssignedBusinessUnitsList>
+                    <AssociatedAddressList isChanged="T">
+                        <AssociatedAddress isChanged="T" type="address type">
+                            <AddressRef>
+                                <ERPNumber isChanged="T">erp number</ERPNumber>
+                                <SQIntegrationNumber>sqi number</SQIntegrationNumber>
+                                <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                            </AddressRef>
+                        </AssociatedAddress>
+                    </AssociatedAddressList>
+                    <AssociatedContactList isChanged="T">
+                        <AssociatedContact isChanged="T" type="contact type">
+                            <ContactRef>
+                                <ERPNumber isChanged="T">erp number</ERPNumber>
+                                <SQIntegrationNumber>SQ number</SQIntegrationNumber>
+                                <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                            </ContactRef>
+                        </AssociatedContact>
+                    </AssociatedContactList>
+                    <CustomElementList isChanged="T">
+                        <CustomElement isChanged="T" isActive="F" type="custom type">
+                            <CustomElementIdentifier isChanged="T">a custom identifer</CustomElementIdentifier>
+                            <DisplayName isChanged="T">a cool display name</DisplayName>
+                            <CustomElementValueList isChanged="T">
+                                <CustomElementValue isChanged="T">some custom value</CustomElementValue>
+                            </CustomElementValueList>
+                        </CustomElement>
+                        <CustomElement isChanged="F" isActive="T" type="custom type2">
+                            <CustomElementIdentifier isChanged="T">a  different custom identifer</CustomElementIdentifier>
+                            <DisplayName isChanged="T">a lame display name</DisplayName>
+                            <Attachments xmlns:xop="test.dtd">
+                                <Attachment id="1000" type="pdf">
+                                    <AttachmentName>custom element attachment</AttachmentName>
+                                    <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                    <AttachmentSize>5000</AttachmentSize>
+                                    <xop:Include href="http://www.google.com"/>
+                                </Attachment>
+                            </Attachments>
+                        </CustomElement>
+                    </CustomElementList>
+                </Location>
+            </LocationList>
+            <RestrictFulfillmentLocationsByBusinessUnit isChanged="T">restrict</RestrictFulfillmentLocationsByBusinessUnit>
+            <CustomElementList isChanged="T">
+                <CustomElement isChanged="T" isActive="F" type="custom type">
+                    <CustomElementIdentifier isChanged="T">a custom identifer</CustomElementIdentifier>
+                    <DisplayName isChanged="T">a cool display name</DisplayName>
+                    <CustomElementValueList isChanged="T">
+                        <CustomElementValue isChanged="T">some custom value</CustomElementValue>
+                    </CustomElementValueList>
+                </CustomElement>
+                <CustomElement isChanged="F" isActive="T" type="custom type2">
+                    <CustomElementIdentifier isChanged="T">a  different custom identifer</CustomElementIdentifier>
+                    <DisplayName isChanged="T">a lame display name</DisplayName>
+                    <Attachments xmlns:xop="test.dtd">
+                        <Attachment id="1000" type="pdf">
+                            <AttachmentName>custom element attachment</AttachmentName>
+                            <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                            <AttachmentSize>5000</AttachmentSize>
+                            <xop:Include href="http://www.google.com"/>
+                        </Attachment>
+                    </Attachments>
+                </CustomElement>
+            </CustomElementList>
+            <AccountsPayableList isChanged="T">
+                <AccountsPayable type="accounts payable type" isChanged="T">
+                    <ERPNumber isChanged="F">erp number</ERPNumber>
+                    <OldERPNumber>old erp number</OldERPNumber>
+                    <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                    <Name isChanged="T">accounts payable name</Name>
+                    <Active>active</Active>
+                    <AssociatedAddress isChanged="T" type="type">
+                        <AddressRef>
+                            <ERPNumber isChanged="T">erp number</ERPNumber>
+                            <SQIntegrationNumber>sqIntegrationNumber</SQIntegrationNumber>
+                            <ThirdPartyRefNumber>3rd party ref number</ThirdPartyRefNumber>
+                        </AddressRef>
+                    </AssociatedAddress>
+                    <Email isChanged="T">user@cornell.edu</Email>
+                    <IsoCurrencyCode isChanged="T">usd</IsoCurrencyCode>
+                    <ContactName isChanged="T">contact name</ContactName>
+                    <Purpose isChanged="T">testing is the only purpose</Purpose>
+                    <AccountId isChanged="T">G234715</AccountId>
+                    <AccountHolderName isChanged="T">John Doe</AccountHolderName>
+                    <AccountType isChanged="T">account type</AccountType>
+                    <CountryCode isChanged="T">USA</CountryCode>
+                    <BankAccount type="bank account type" isChanged="T">
+                        <BankName isChanged="T">bank name</BankName>
+                        <AccountHoldersName isChanged="T">Jane Doe</AccountHoldersName>
+                        <AccountNumberType isChanged="T">account number type</AccountNumberType>
+                        <RoutingNumber isChanged="T">routing number</RoutingNumber>
+                        <BankAccountNumber isChanged="T">bank account number</BankAccountNumber>
+                        <IbanBankAccountNumber isChanged="T">iban number</IbanBankAccountNumber>
+                        <DirectDepositFormat isChanged="T">Deposit Format</DirectDepositFormat>
+                        <BankIdentifierCode isChanged="T">bank identifier code</BankIdentifierCode>
+                        <InternationalRoutingCode isChanged="T">international routing</InternationalRoutingCode>
+                        <IsoCountryCode isChanged="T">USA</IsoCountryCode>
+                        <AddressLine1 isChanged="T">Address Line 1</AddressLine1>
+                        <AddressLine2 isChanged="T">Address Line 2</AddressLine2>
+                        <AddressLine3 isChanged="T">Address Line 3</AddressLine3>
+                        <City isChanged="T">Ithaca</City>
+                        <State isChanged="T">NY</State>
+                        <PostalCode isChanged="T">14850</PostalCode>
+                    </BankAccount>
+                    <FlexFields>
+                        <FlexField1 isChanged="T">flex field 1</FlexField1>
+                        <FlexField2 isChanged="T">flex field 2</FlexField2>
+                        <FlexField3 isChanged="T">flex field 3</FlexField3>
+                        <FlexField4 isChanged="T">flex field 4</FlexField4>
+                        <FlexField5 isChanged="T">flex field 5</FlexField5>
+                    </FlexFields>
+                </AccountsPayable>
+            </AccountsPayableList>
+            <TaxInformationList isChanged="T">
+                <TaxInformation type="information type" isChanged="T">
+                    <TaxDocumentName isChanged="F">document name</TaxDocumentName>
+                    <TaxDocumentYear isChanged="T">2023</TaxDocumentYear>
+                    <TaxDocument isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>super cool tax document</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </TaxDocument>
+                </TaxInformation>
+            </TaxInformationList>
+            <InsuranceInformationList isChanged="T">
+                <InsuranceInformation type="auto" isChanged="T">
+                    <PolicyNumber isChanged="T">XYZ321</PolicyNumber>
+                    <InsuranceLimit isChanged="T">100</InsuranceLimit>
+                    <ExpirationDate isChanged="T">12/31/2069</ExpirationDate>
+                    <InsuranceProvider isChanged="T">USAA</InsuranceProvider>
+                    <Agent isChanged="T">Agent Name</Agent>
+                    <InsuranceProviderPhone isChanged="T">
+                        <TelephoneNumber isChanged="T">
+                            <CountryCode isChanged="T">USA</CountryCode>
+                            <AreaCode isChanged="T">607</AreaCode>
+                            <Number isChanged="T">255*9900</Number>
+                            <Extension isChanged="T">987</Extension>
+                        </TelephoneNumber>
+                    </InsuranceProviderPhone>
+                    <InsuranceCertificate isChanged="T">
+                        <Attachments xmlns:xop="test.dtd">
+                            <Attachment id="1000" type="pdf">
+                                <AttachmentName>attachment name</AttachmentName>
+                                <AttachmentURL>http://www.cornell.edu</AttachmentURL>
+                                <AttachmentSize>5000</AttachmentSize>
+                                <xop:Include href="http://www.google.com"/>
+                            </Attachment>
+                        </Attachments>
+                    </InsuranceCertificate>
+                    <OtherTypeName isChanged="T">some other name</OtherTypeName>
+                </InsuranceInformation>
+            </InsuranceInformationList>
+            <EnablePaymentProvisioning>prov</EnablePaymentProvisioning>
+        </Supplier>
+    </SupplierRequestMessage>
+</SupplierSyncMessage>
