@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE SupplierSyncMessage SYSTEM "https://integrations.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd">
+<SupplierSyncMessage version="1.0">
+	<Header>
+		<MessageId>f54311e2-364b-4cf4-8942-016e5ad308d9</MessageId>
+		<Timestamp>2023-10-30T09:06:42.209-04:00</Timestamp>
+		<Authentication>
+			<Identity>OrgID</Identity>
+			<SharedSecret>password</SharedSecret>
+		</Authentication>
+	</Header>
+	<SupplierRequestMessage>
+		<Supplier>
+			<ERPNumber>als12345</ERPNumber>
+			<SQIntegrationNumber>u1511507</SQIntegrationNumber>
+			<ThirdPartyRefNumber>ALS0001</ThirdPartyRefNumber>
+			<JASupplierId>9142</JASupplierId>
+			<Name>Affordable Lab Supplies</Name>
+			<DoingBusinessAs>ALS</DoingBusinessAs>
+			<OtherNames>AffLabs</OtherNames>
+			<CountryOfOrigin>US</CountryOfOrigin>
+			<ParentSupplier>
+				<ERPNumber>als12343</ERPNumber>
+				<SQIntegrationNumber>u1511504</SQIntegrationNumber>
+			</ParentSupplier>
+			<Active>No</Active>
+			<BusinessUnitVendorNumberList>
+				<BusinessUnitVendorNumber
+					businessUnitInternalName="NC1">NCCBO0001</BusinessUnitVendorNumber>
+				<BusinessUnitVendorNumber
+					businessUnitInternalName="VA1">VACBO0001</BusinessUnitVendorNumber>
+				<BusinessUnitVendorNumber
+					businessUnitInternalName="NC2">NCCBO0002</BusinessUnitVendorNumber>
+				<BusinessUnitVendorNumber
+					businessUnitInternalName="VA2">VACBO0002</BusinessUnitVendorNumber>
+				<BusinessUnitVendorNumber
+					businessUnitInternalName="NC3">NCCBO0003</BusinessUnitVendorNumber>
+				<BusinessUnitVendorNumber
+					businessUnitInternalName="VA3">VACBO0003</BusinessUnitVendorNumber>
+			</BusinessUnitVendorNumberList>
+			<WebSiteURL>www.affordablelabsupplies.com</WebSiteURL>
+			<DUNS>123456789</DUNS>
+			<LegalStructure>LimitedLiabilityCompany_Partnership</LegalStructure>
+			<TaxIdentificationNumber>123456789</TaxIdentificationNumber>
+			<VatIdentificationNumber>123456789</VatIdentificationNumber>
+			<ExemptFromBackupWithholding>Yes</ExemptFromBackupWithholding>
+			<NumberOfEmployees>400</NumberOfEmployees>
+			<YearEstablished>1983-06-04</YearEstablished>
+			<AnnualSalesList>
+				<AnnualSales>
+					<AnnualSalesYear>2024</AnnualSalesYear>
+					<AnnualSalesAmount>60,000.00</AnnualSalesAmount>
+					<IsoCurrencyCode>USD</IsoCurrencyCode>
+				</AnnualSales>
+				<AnnualSales>
+					<AnnualSalesYear>2024</AnnualSalesYear>
+					<AnnualSalesAmount>50,000.00</AnnualSalesAmount>
+					<IsoCurrencyCode>USD</IsoCurrencyCode>
+				</AnnualSales>
+				<AnnualSales>
+					<AnnualSalesYear>2024</AnnualSalesYear>
+					<AnnualSalesAmount>40,000.00</AnnualSalesAmount>
+					<IsoCurrencyCode>USD</IsoCurrencyCode>
+				</AnnualSales>
+			</AnnualSalesList>
+			<ServiceAreaList>
+				<ServiceArea>
+					<ServiceAreaInternalName>US</ServiceAreaInternalName>
+					<StateServiceAreaList>
+						<StateServiceAreaInternalName>US-NC</StateServiceAreaInternalName>
+						<StateServiceAreaInternalName>US-CA</StateServiceAreaInternalName>
+					</StateServiceAreaList>
+				</ServiceArea>
+			</ServiceAreaList>
+			<SupplierTaxRepresentativeId
+				isChanged="No" />
+			<SupplierRegCourt isChanged="No" />
+			<SupplierRegSeat isChanged="No" />
+			<SupplierRegNumber isChanged="No" />
+			<SupplierShareholders isChanged="No" />
+			<VATExempt isChanged="No">false</VATExempt>
+			<CommodityCodeList>
+				<CommodityCode>OM01</CommodityCode>
+				<CommodityCode>OM02</CommodityCode>
+			</CommodityCodeList>
+			<ShoppingCommodityCode>SC01</ShoppingCommodityCode>
+			<AustinTetra>Austin-Tetra Code</AustinTetra>
+			<SIC>SIC Code</SIC>
+			<NaicsCodes>
+				<PrimaryNaics>424120</PrimaryNaics>
+				<SecondaryNaicsList>
+					<SecondaryNaics>424121</SecondaryNaics>
+					<SecondaryNaics>524120</SecondaryNaics>
+					<SecondaryNaics>524121</SecondaryNaics>
+				</SecondaryNaicsList>
+			</NaicsCodes>
+			<SupportedCurrencyList isChanged="No">
+				<IsoCurrencyCode isChanged="No">USD</IsoCurrencyCode>
+				<IsoCurrencyCode isChanged="No">CAD</IsoCurrencyCode>
+				<IsoCurrencyCode isChanged="No">GBP</IsoCurrencyCode>
+				<IsoCurrencyCode isChanged="No">EUR</IsoCurrencyCode>
+				<IsoCurrencyCode isChanged="No">CHF</IsoCurrencyCode>
+				<IsoCurrencyCode isChanged="No">MXN</IsoCurrencyCode>
+			</SupportedCurrencyList>
+			<EnabledCurrencyList isChanged="No">
+				<IsoCurrencyCode isChanged="No">USD</IsoCurrencyCode>
+				<IsoCurrencyCode isChanged="No">MXN</IsoCurrencyCode>
+			</EnabledCurrencyList>
+			<SupplierKeywords>Paper Products, Filters, Drinking Straws</SupplierKeywords>
+			<AddressList>
+				<Address type="remitto">
+					<ERPNumber>add123</ERPNumber>
+					<SQIntegrationNumber>u15174772</SQIntegrationNumber>
+					<ThirdPartyRefNumber />
+					<Name>California Regional Office</Name>
+					<Active>No</Active>
+					<PrefPurchaseOrderDeliveryMethod
+						type="Email">
+						<Email>accountspayable@affordablelabsupplies.com</Email>
+					</PrefPurchaseOrderDeliveryMethod>
+					<AddressLine1>309 Pattern Ave.</AddressLine1>
+					<AddressLine2 />
+					<AddressLine3 />
+					<City>San Diego</City>
+					<State>CA</State>
+					<PostalCode>92093</PostalCode>
+					<IsoCountryCode>USA</IsoCountryCode>
+					<Phone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>1234567</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Phone>
+					<TollFreePhone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>800</AreaCode>
+							<Number>8901234</Number>
+							<Extension />
+						</TelephoneNumber>
+					</TollFreePhone>
+					<Fax>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>5678901</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Fax>
+					<Notes />
+					<AssignedBusinessUnitsList>
+						<BusinessUnitInternalName>California Regional Office</BusinessUnitInternalName>
+						<BusinessUnitInternalName>West Coast Distribution Center</BusinessUnitInternalName>
+					</AssignedBusinessUnitsList>
+				</Address>
+				<Address type="fulfillment">
+					<ERPNumber>add123</ERPNumber>
+					<SQIntegrationNumber>u1511560</SQIntegrationNumber>
+					<ThirdPartyRefNumber />
+					<Name>West Coast Distribution Center</Name>
+					<Active>Yes</Active>
+					<PrefPurchaseOrderDeliveryMethod
+						type="Email">
+						<Email>fulfillment@affordablelabsupplies.com</Email>
+					</PrefPurchaseOrderDeliveryMethod>
+					<AddressLine1>123 Park Ave.</AddressLine1>
+					<AddressLine2 />
+					<AddressLine3 />
+					<City>San Diego</City>
+					<State>CA</State>
+					<PostalCode>92093</PostalCode>
+					<IsoCountryCode>USA</IsoCountryCode>
+					<Phone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>2345678</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Phone>
+					<TollFreePhone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>800</AreaCode>
+							<Number>9012345</Number>
+							<Extension />
+						</TelephoneNumber>
+					</TollFreePhone>
+					<Fax>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>6789012</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Fax>
+					<Notes />
+					<AssignedBusinessUnitsList>
+						<BusinessUnitInternalName>California Regional Office</BusinessUnitInternalName>
+						<BusinessUnitInternalName>West Coast Distribution Center</BusinessUnitInternalName>
+					</AssignedBusinessUnitsList>
+				</Address>
+			</AddressList>
+			<PrimaryAddressList>
+				<AssociatedAddress type="remitto">
+					<AddressRef>
+						<ERPNumber>ADDR1</ERPNumber>
+					</AddressRef>
+				</AssociatedAddress>
+				<AssociatedAddress type="fulfillment">
+					<AddressRef>
+						<ERPNumber>ADDR2</ERPNumber>
+					</AddressRef>
+				</AssociatedAddress>
+			</PrimaryAddressList>
+			<ContactList>
+				<Contact type="remitto">
+					<ERPNumber>CONTACT1</ERPNumber>
+					<OldERPNumber>CONTACT1</OldERPNumber>
+					<SQIntegrationNumber>SQ_1237</SQIntegrationNumber>
+					<ThirdPartyRefNumber>3pID1</ThirdPartyRefNumber>
+					<Name>Primary ALS RemitTo and Fulfillment Contact</Name>
+					<Active>true</Active>
+					<FirstName>John</FirstName>
+					<LastName>Smith</LastName>
+					<Title>Procurement Manager</Title>
+					<Email>jsmith@affordablelabsupplies.com</Email>
+					<Phone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>3456789</Number>
+							<Extension>0123</Extension>
+						</TelephoneNumber>
+					</Phone>
+					<MobilePhone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>2468642</Number>
+							<Extension />
+						</TelephoneNumber>
+					</MobilePhone>
+					<TollFreePhone />
+					<Fax>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>9876543</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Fax>
+					<Notes />
+					<AssociatedAddress type="remitto">
+						<AddressRef>
+							<ERPNumber>CONTACT1</ERPNumber>
+						</AddressRef>
+					</AssociatedAddress>
+				</Contact>
+				<Contact type="fulfillment">
+					<ERPNumber>CONTACT1</ERPNumber>
+					<OldERPNumber>CONTACT1</OldERPNumber>
+					<SQIntegrationNumber>SQ_1236</SQIntegrationNumber>
+					<ThirdPartyRefNumber>3pID1</ThirdPartyRefNumber>
+					<Name>Primary ALS RemitTo and Fulfillment Contact</Name>
+					<Active>true</Active>
+					<FirstName>John</FirstName>
+					<LastName>Smith</LastName>
+					<Title>Procurement Manager</Title>
+					<Email>jsmith@affordablelabsupplies.com</Email>
+					<Phone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>3456789</Number>
+							<Extension>0123</Extension>
+						</TelephoneNumber>
+					</Phone>
+					<MobilePhone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>2468642</Number>
+							<Extension />
+						</TelephoneNumber>
+					</MobilePhone>
+					<TollFreePhone />
+					<Fax>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>9876543</Number>
+							<Extension />
+						</TelephoneNumber>
+					</Fax>
+					<Notes />
+					<AssociatedAddress type="fulfillment">
+						<AddressRef>
+							<ERPNumber>CONTACT1</ERPNumber>
+						</AddressRef>
+					</AssociatedAddress>
+				</Contact>
+				<Contact type="technical">
+					<ERPNumber>CONTACT2</ERPNumber>
+					<OldERPNumber>CONTACT2</OldERPNumber>
+					<SQIntegrationNumber>SQ_1240</SQIntegrationNumber>
+					<ThirdPartyRefNumber>3pID2</ThirdPartyRefNumber>
+					<Name>Primary ALS Technical Contact</Name>
+					<Active>true</Active>
+					<FirstName>Ann</FirstName>
+					<LastName>Jones</LastName>
+					<Title>Technical Consultant</Title>
+					<Email>ajones@affordablelabsupplies.com</Email>
+					<Phone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>3456789</Number>
+							<Extension>4567</Extension>
+						</TelephoneNumber>
+					</Phone>
+					<MobilePhone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>619</AreaCode>
+							<Number>2268644</Number>
+							<Extension />
+						</TelephoneNumber>
+					</MobilePhone>
+					<TollFreePhone />
+					<Fax />
+					<Notes />
+					<AssociatedAddress />
+				</Contact>
+			</ContactList>
+			<PrimaryContactList>
+				<AssociatedContact type="remitto">
+					<ContactRef>
+						<ERPNumber>CONTACT1</ERPNumber>
+					</ContactRef>
+				</AssociatedContact>
+				<AssociatedContact type="fulfillment">
+					<ContactRef>
+						<ERPNumber>CONTACT1</ERPNumber>
+					</ContactRef>
+				</AssociatedContact>
+			</PrimaryContactList>
+			<ClassificationList>
+				<Classification>
+					<InternalName>SupplierClassMinorityDisabled</InternalName>
+				</Classification>
+			</ClassificationList>
+			<DiversityClassificationList>
+				<DiversityClassification>
+					<InternalName>DOBE</InternalName>
+					<AdditionalDataList>
+						<AdditionalData name="ethnicity">NATAM</AdditionalData>
+					</AdditionalDataList>
+					<DD-214Certificate />
+					<DiversityCertificate />
+				</DiversityClassification>
+			</DiversityClassificationList>
+			<LocationList>
+				<Location supportsOrderFulfillment="Yes">
+					<ERPNumber>loc123</ERPNumber>
+					<SQIntegrationNumber>u1511493</SQIntegrationNumber>
+					<ThirdPartyRefNumber />
+					<Name>Fulfillment Center 1</Name>
+					<Description />
+					<Active>true</Active>
+					<Primary>Yes</Primary>
+					<PrefPurchaseOrderDeliveryMethod
+						type="Email">
+						<Email>orders@affordablelabsupplies.com</Email>
+					</PrefPurchaseOrderDeliveryMethod>
+					<LocationEffectiveDate>2024-10-20</LocationEffectiveDate>
+					<PaymentMethod type="po">
+						<POPaymentMethod>
+							<POPayment>
+								<Active>true</Active>
+								<PONumberSelection />
+								<AllowFreeForm>No</AllowFreeForm>
+							</POPayment>
+							<PCardPayment>
+								<Active>false</Active>
+								<PONumberSelection />
+								<RequireCardSecurityCode>No</RequireCardSecurityCode>
+							</PCardPayment>
+						</POPaymentMethod>
+					</PaymentMethod>
+					<Shipping>
+						<SurchargeConfiguration>
+							<Fee>
+								<FeeType>FlatFee</FeeType>
+								<Percentage>0.000</Percentage>
+								<Amount>0.00</Amount>
+								<FeeScope>ByOrder</FeeScope>
+							</Fee>
+							<UseOrderThreshold>No</UseOrderThreshold>
+							<OrderThreshold>0</OrderThreshold>
+						</SurchargeConfiguration>
+					</Shipping>
+					<Handling>
+						<SurchargeConfiguration>
+							<Fee>
+								<FeeType>FlatFee</FeeType>
+								<Percentage>0.000</Percentage>
+								<Amount>0.00</Amount>
+								<FeeScope>ByOrder</FeeScope>
+							</Fee>
+							<UseOrderThreshold>No</UseOrderThreshold>
+							<OrderThreshold>0</OrderThreshold>
+						</SurchargeConfiguration>
+					</Handling>
+					<TaxInfo>
+						<TaxableByDefault>true</TaxableByDefault>
+						<Tax1Active>No</Tax1Active>
+						<Tax1>0.000</Tax1>
+						<Tax2Active>No</Tax2Active>
+						<Tax2>0.000</Tax2>
+						<TaxShipping>No</TaxShipping>
+						<TaxHandling>No</TaxHandling>
+					</TaxInfo>
+					<TermsAndCondition>
+						<PaymentTerms>
+							<Active>true</Active>
+							<Discount unit="percent">
+								<DiscountPercent>0.0000</DiscountPercent>
+							</Discount>
+							<Days>0</Days>
+							<FOB>notApplicable</FOB>
+							<TermsType>Net</TermsType>
+							<DaysAfter>30</DaysAfter>
+						</PaymentTerms>
+					</TermsAndCondition>
+					<OrderDistributionList>
+						<DistributionMethod type="fax">
+							<Active>false</Active>
+							<Fax>
+								<TelephoneNumber>
+									<CountryCode>1</CountryCode>
+									<AreaCode>619</AreaCode>
+									<Number>5773360</Number>
+									<Extension />
+								</TelephoneNumber>
+							</Fax>
+						</DistributionMethod>
+						<DistributionMethod type="emailplain">
+							<Active>false</Active>
+							<Email>support@JAGGAER.com</Email>
+						</DistributionMethod>
+						<DistributionMethod type="emailbody">
+							<Active>false</Active>
+							<Email>support@JAGGAER.com</Email>
+						</DistributionMethod>
+						<DistributionMethod type="emailattach">
+							<Active>false</Active>
+							<Email>support@JAGGAER.com</Email>
+						</DistributionMethod>
+						<DistributionMethod type="manual">
+							<Active>true</Active>
+						</DistributionMethod>
+					</OrderDistributionList>
+					<AssociatedAddressList>
+						<AssociatedAddress type="fulfillment">
+							<AddressRef>
+								<ERPNumber>add123</ERPNumber>
+								<SQIntegrationNumber>u1511560</SQIntegrationNumber>
+								<ThirdPartyRefNumber />
+							</AddressRef>
+						</AssociatedAddress>
+					</AssociatedAddressList>
+					<AssociatedContactList />
+					<CustomElementList>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>TXPID</CustomElementIdentifier>
+							<DisplayName>TXP Taxpayer ID</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>xxxxxxxxx</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>TXPTC</CustomElementIdentifier>
+							<DisplayName>TXP Type Code</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>222-222</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>WHT</CustomElementIdentifier>
+							<DisplayName>Withholding Tax</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>No</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>ATD</CustomElementIdentifier>
+							<DisplayName>Always Take Discount</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>Yes</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>HFP</CustomElementIdentifier>
+							<DisplayName>Hold Future Payments</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>No</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+					</CustomElementList>
+				</Location>
+				<Location supportsOrderFulfillment="Yes">
+					<ERPNumber />
+					<SQIntegrationNumber>u1514101</SQIntegrationNumber>
+					<ThirdPartyRefNumber />
+					<Name>Fulfillment Center 2</Name>
+					<Active>true</Active>
+					<Primary>No</Primary>
+					<PaymentMethod type="po">
+						<POPaymentMethod>
+							<POPayment>
+								<Active>true</Active>
+								<PONumberSelection />
+								<AllowFreeForm>No</AllowFreeForm>
+							</POPayment>
+							<PCardPayment>
+								<Active>false</Active>
+								<PONumberSelection />
+								<RequireCardSecurityCode>No</RequireCardSecurityCode>
+							</PCardPayment>
+						</POPaymentMethod>
+					</PaymentMethod>
+					<Shipping>
+						<SurchargeConfiguration>
+							<Fee>
+								<FeeType>FlatFee</FeeType>
+								<Percentage>0.000</Percentage>
+								<Amount>0.00</Amount>
+								<FeeScope>ByOrder</FeeScope>
+							</Fee>
+							<UseOrderThreshold>No</UseOrderThreshold>
+							<OrderThreshold>0</OrderThreshold>
+						</SurchargeConfiguration>
+					</Shipping>
+					<Handling>
+						<SurchargeConfiguration>
+							<Fee>
+								<FeeType>FlatFee</FeeType>
+								<Percentage>0.000</Percentage>
+								<Amount>0.00</Amount>
+								<FeeScope>ByOrder</FeeScope>
+							</Fee>
+							<UseOrderThreshold>No</UseOrderThreshold>
+							<OrderThreshold>0</OrderThreshold>
+						</SurchargeConfiguration>
+					</Handling>
+					<TaxInfo>
+						<TaxableByDefault>true</TaxableByDefault>
+						<Tax1Active>No</Tax1Active>
+						<Tax1>0.000</Tax1>
+						<Tax2Active>No</Tax2Active>
+						<Tax2>0.000</Tax2>
+						<TaxShipping>No</TaxShipping>
+						<TaxHandling>No</TaxHandling>
+					</TaxInfo>
+					<TermsAndCondition>
+						<PaymentTerms>
+							<Active>true</Active>
+							<Discount unit="percent">
+								<DiscountPercent>0.0000</DiscountPercent>
+							</Discount>
+							<Days>0</Days>
+							<FOB>notApplicable</FOB>
+							<TermsType>Net</TermsType>
+							<DaysAfter>30</DaysAfter>
+						</PaymentTerms>
+					</TermsAndCondition>
+					<OrderDistributionList>
+						<DistributionMethod type="fax">
+							<Active>false</Active>
+							<Fax>
+								<TelephoneNumber>
+									<CountryCode>1</CountryCode>
+									<AreaCode>619</AreaCode>
+									<Number>5773360</Number>
+									<Extension />
+								</TelephoneNumber>
+							</Fax>
+						</DistributionMethod>
+						<DistributionMethod type="emailplain">
+							<Active>false</Active>
+							<Email>support@JAGGAER.com</Email>
+						</DistributionMethod>
+						<DistributionMethod type="emailbody">
+							<Active>false</Active>
+							<Email>support@JAGGAER.com</Email>
+						</DistributionMethod>
+						<DistributionMethod type="emailattach">
+							<Active>false</Active>
+							<Email>support@JAGGAER.com</Email>
+						</DistributionMethod>
+						<DistributionMethod type="manual">
+							<Active>true</Active>
+						</DistributionMethod>
+					</OrderDistributionList>
+					<AssociatedAddressList>
+						<AssociatedAddress type="fulfillment">
+							<AddressRef>
+								<ERPNumber>add123</ERPNumber>
+								<SQIntegrationNumber>u1511560</SQIntegrationNumber>
+								<ThirdPartyRefNumber />
+							</AddressRef>
+						</AssociatedAddress>
+					</AssociatedAddressList>
+					<CustomElementList>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>TXPID</CustomElementIdentifier>
+							<DisplayName>TXP Taxpayer ID</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>yyyyyyyyy</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>TXPTC</CustomElementIdentifier>
+							<DisplayName>TXP Type Code</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>555-555</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>WHT</CustomElementIdentifier>
+							<DisplayName>Withholding Tax</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>No</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>ATD</CustomElementIdentifier>
+							<DisplayName>Always Take Discount</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>Yes</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+						<CustomElement isActive="Yes">
+							<CustomElementIdentifier>HFP</CustomElementIdentifier>
+							<DisplayName>Hold Future Payments</DisplayName>
+							<CustomElementValueList>
+								<CustomElementValue>No</CustomElementValue>
+							</CustomElementValueList>
+						</CustomElement>
+					</CustomElementList>
+				</Location>
+				<Location supportsOrderFulfillment="No">
+					<ERPNumber />
+					<SQIntegrationNumber>u1511564</SQIntegrationNumber>
+					<ThirdPartyRefNumber />
+					<Name>Location 2</Name>
+					<Description />
+					<Primary>Yes</Primary>
+					<LocationEffectiveDate />
+					<AssociatedAddressList />
+					<AssociatedContactList />
+				</Location>
+			</LocationList>
+			<RestrictFulfillmentLocationsByBusinessUnit>No</RestrictFulfillmentLocationsByBusinessUnit>
+			<CustomElementList>
+				<CustomElement>
+					<CustomElementIdentifier>CustomElementID1</CustomElementIdentifier>
+					<CustomElementValueList>
+						<CustomElementValue>20</CustomElementValue>
+					</CustomElementValueList>
+				</CustomElement>
+				<CustomElement>
+					<CustomElementIdentifier>CustomElementID2</CustomElementIdentifier>
+					<CustomElementValueList>
+						<CustomElementValue>Brake Inspection</CustomElementValue>
+						<CustomElementValue>Tire Change</CustomElementValue>
+						<CustomElementValue>Oil Change</CustomElementValue>
+					</CustomElementValueList>
+				</CustomElement>
+			</CustomElementList>
+			<AccountsPayableList>
+				<AccountsPayable type="Check">
+					<ERPNumber>ap123</ERPNumber>
+					<SQIntegrationNumber>u1511565</SQIntegrationNumber>
+					<ThirdPartyRefNumber />
+					<Name>ap 1</Name>
+					<Active>true</Active>
+					<AssociatedAddress type="remitto">
+						<AddressRef>
+							<ERPNumber>apremit123</ERPNumber>
+							<SQIntegrationNumber />
+							<ThirdPartyRefNumber />
+						</AddressRef>
+					</AssociatedAddress>
+					<Email />
+					<IsoCurrencyCode>USD</IsoCurrencyCode>
+					<BankAccount type="Checking">
+						<BankName>Third National Bank of Cary</BankName>
+						<AccountHoldersName />
+						<AccountNumberType>Account Number</AccountNumberType>
+						<RoutingNumber>234765198</RoutingNumber>
+						<BankAccountNumber>093827541899</BankAccountNumber>
+						<IsoCountryCode>USA</IsoCountryCode>
+						<AddressLine1>Austin Bldg, Suite 717</AddressLine1>
+						<AddressLine2>3400 Main Street</AddressLine2>
+						<City>Cary</City>
+						<State>NC</State>
+						<PostalCode>27511</PostalCode>
+					</BankAccount>
+					<FlexFields>
+						<FlexField1>NFS 12</FlexField1>
+						<FlexField2>NFS 11</FlexField2>
+						<FlexField3>NFS 34</FlexField3>
+						<FlexField4>90</FlexField4>
+						<FlexField5>-0</FlexField5>
+					</FlexFields>
+				</AccountsPayable>
+			</AccountsPayableList>
+			<TaxInformationList>
+				<TaxInformation type="TAX_TYPE_W9">
+					<TaxDocumentName>W9</TaxDocumentName>
+					<TaxDocumentYear>2022</TaxDocumentYear>
+					<TaxDocument>
+						<Attachments>
+							<Attachment id="42d" type="file">
+								<AttachmentName>Tax</AttachmentName>
+								<AttachmentSize>883</AttachmentSize>
+							</Attachment>
+						</Attachments>
+					</TaxDocument>
+				</TaxInformation>
+			</TaxInformationList>
+			<InsuranceInformationList>
+				<InsuranceInformation
+					type="AutomobileLiability">
+					<PolicyNumber>34576789</PolicyNumber>
+					<InsuranceLimit>INSURANCE_LIMIT_RANGE1</InsuranceLimit>
+					<ExpirationDate>2024-11-12</ExpirationDate>
+					<InsuranceProvider>ACME Insurance Co.</InsuranceProvider>
+					<Agent>Ned Ryerson</Agent>
+					<InsuranceProviderPhone>
+						<TelephoneNumber>
+							<CountryCode>1</CountryCode>
+							<AreaCode>704</AreaCode>
+							<Number>1234567</Number>
+							<Extension />
+						</TelephoneNumber>
+					</InsuranceProviderPhone>
+					<InsuranceCertificate>
+						<Attachments>
+							<Attachment id="42ins" type="file">
+								<AttachmentName>Auto</AttachmentName>
+								<AttachmentSize>1180</AttachmentSize>
+							</Attachment>
+						</Attachments>
+					</InsuranceCertificate>
+				</InsuranceInformation>
+			</InsuranceInformationList>
+		</Supplier>
+	</SupplierRequestMessage>
+</SupplierSyncMessage>
