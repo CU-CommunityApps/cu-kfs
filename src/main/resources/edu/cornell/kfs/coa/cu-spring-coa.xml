@@ -251,6 +251,10 @@
         <property name="universityDateService" ref="universityDateService" />
     </bean>
 
+    <bean id="accountDelegateGlobalDao" parent="platformAwareDao"
+          class="edu.cornell.kfs.coa.dataaccess.impl.CuAccountDelegateGlobalDaoOjb"/>
 
+    <bean id="accountDelegateService" parent="accountDelegateService-parentBean"
+          class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl"/>
 
 </beans>
