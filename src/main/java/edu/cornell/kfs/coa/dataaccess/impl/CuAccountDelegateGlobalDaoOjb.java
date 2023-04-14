@@ -1,15 +1,16 @@
 package edu.cornell.kfs.coa.dataaccess.impl;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
 import org.kuali.kfs.coa.dataaccess.impl.AccountDelegateGlobalDaoOjb;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.coa.dataaccess.CuAccountDelegateGlobalDao;
 import edu.cornell.kfs.core.framework.persistence.ojb.QueryByPreparedSQL;
@@ -20,8 +21,11 @@ import edu.cornell.kfs.sys.util.CuSqlQuery;
 
 public class CuAccountDelegateGlobalDaoOjb extends AccountDelegateGlobalDaoOjb implements CuAccountDelegateGlobalDao {
 
+    private static final Logger LOG = LogManager.getLogger();
+
     @Override
     public String getAnyLockingDocumentNumber(List<String> lockingRepresentations, String documentNumber) {
+        LOG.debug("getAnyLockingDocumentNumber, Checking for locking document(s)");
         return MaintenanceLockUtils.doChunkedSearchForAnyLockingDocumentNumber(lockingRepresentations,
                 documentNumber, this::queryForAnyLockingDocumentNumber);
     }
@@ -31,15 +35,13 @@ public class CuAccountDelegateGlobalDaoOjb extends AccountDelegateGlobalDaoOjb i
         
         Criteria criteria = new Criteria();
         criteria.addIn(CUKFSPropertyConstants.LOCK_ID, lockRepSubquery);
+        criteria.addSql(getDbPlatform().applyLimitSql(1));
         
         QueryByCriteria query = QueryFactory.newQuery(MaintenanceLock.class, criteria);
-        Collection<?> maintenanceLocks = getPersistenceBrokerTemplate().getCollectionByQuery(query);
-        if (CollectionUtils.isNotEmpty(maintenanceLocks)) {
-            MaintenanceLock maintenanceLock = (MaintenanceLock) maintenanceLocks.iterator().next();
-            return maintenanceLock.getDocumentNumber();
-        } else {
-            return null;
-        }
+        MaintenanceLock maintenanceLock = (MaintenanceLock) getPersistenceBrokerTemplate().getObjectByQuery(query);
+        return ObjectUtils.isNotNull(maintenanceLock)
+                ? maintenanceLock.getDocumentNumber()
+                : null;
     }
 
     private QueryByPreparedSQL createPatternMatchSubquery(List<String> lockingRepresentations, String documentNumber) {
