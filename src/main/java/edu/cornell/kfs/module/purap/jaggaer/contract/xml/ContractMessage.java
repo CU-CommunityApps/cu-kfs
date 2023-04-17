@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -48,6 +49,9 @@ public class ContractMessage {
     }
 
     public List<Contract> getContracts() {
+        if (contracts == null) {
+            contracts = new ArrayList<>();
+        }
         return contracts;
     }
 

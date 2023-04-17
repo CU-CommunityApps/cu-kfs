@@ -1,6 +1,8 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -30,6 +32,9 @@ public class Response {
     }
 
     public List<Error> getErrors() {
+        if (errors == null) {
+            errors = new ArrayList<>();
+        }
         return errors;
     }
 

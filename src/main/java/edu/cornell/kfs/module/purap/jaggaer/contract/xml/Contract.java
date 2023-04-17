@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -128,6 +129,9 @@ public class Contract {
     }
 
     public List<ContractPartyBase> getContractParties() {
+        if (contractParties == null) {
+            contractParties = new ArrayList<>();
+        }
         return contractParties;
     }
 
@@ -136,10 +140,13 @@ public class Contract {
     }
 
     public List<CustomField> getCustomFields() {
+        if (customFields == null) {
+            customFields = new ArrayList<>();
+        }
         return customFields;
     }
 
-    public void setCustomFieldList(List<CustomField> customFields) {
+    public void setCustomFields(List<CustomField> customFields) {
         this.customFields = customFields;
     }
 
@@ -152,6 +159,9 @@ public class Contract {
     }
 
     public List<Attachment> getAttachments() {
+        if (attachments == null) {
+            attachments = new ArrayList<>();
+        }
         return attachments;
     }
 

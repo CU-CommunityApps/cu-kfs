@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -48,6 +49,9 @@ public class CustomField {
     }
 
     public List<String> getCustomFieldValues() {
+        if (customFieldValues == null) {
+            customFieldValues = new ArrayList<>();
+        }
         return customFieldValues;
     }
 

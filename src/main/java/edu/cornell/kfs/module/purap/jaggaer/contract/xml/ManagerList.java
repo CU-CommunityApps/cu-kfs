@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -21,6 +22,9 @@ public class ManagerList {
     private List<String> users;
 
     public List<String> getUsers() {
+        if (users == null) {
+            users = new ArrayList<>();
+        }
         return users;
     }
 
