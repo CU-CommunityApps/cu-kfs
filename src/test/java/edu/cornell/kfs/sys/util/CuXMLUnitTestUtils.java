@@ -16,9 +16,9 @@ public class CuXMLUnitTestUtils {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    public static void compareXML(File expectedXmlFile, File actualXmlFile) {
-        Diff xmlDiff = DiffBuilder.compare(expectedXmlFile)
-                .withTest(actualXmlFile)
+    public static void compareXML(Object expectedXmlContent, Object actualXmlContent) {
+        Diff xmlDiff = DiffBuilder.compare(expectedXmlContent)
+                .withTest(actualXmlContent)
                 .checkForIdentical()
                 .ignoreComments()
                 .ignoreWhitespace()

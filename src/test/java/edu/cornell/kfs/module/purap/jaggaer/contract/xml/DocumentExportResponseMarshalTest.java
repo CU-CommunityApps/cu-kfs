@@ -1,13 +1,10 @@
 package edu.cornell.kfs.module.purap.jaggaer.contract.xml;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +12,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.sys.KFSConstants;
+import org.xmlunit.builder.Input;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerXmlConstants;
 import edu.cornell.kfs.module.purap.jaggaer.contract.xml.fixture.DocumentExportResponseFixture;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
+import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 
 public class DocumentExportResponseMarshalTest {
 
@@ -53,18 +52,18 @@ public class DocumentExportResponseMarshalTest {
     @MethodSource("exportResponses")
     void testMarshalDocumentExportResponse(DocumentExportResponseFixture fixture, String responseXmlFileName)
             throws Exception {
-        String expectedResponseXml = getExpectedResponseXmlFromFile(responseXmlFileName);
-        DocumentExportResponse actualResponse = fixture.toDocumentExportResponse();
-        String actualResponseXml = generateResponseXmlFromDTO(actualResponse);
-        assertEquals(expectedResponseXml, actualResponseXml, "Wrong XML result");
-    }
-
-    private String getExpectedResponseXmlFromFile(String responseXmlFileName) throws Exception {
         try (
-            InputStream inputStream = CuCoreUtilities.getResourceAsStream(XML_TEST_FILE_PATH + responseXmlFileName);
-            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            InputStream expectedXmlStream = CuCoreUtilities.getResourceAsStream(
+                    XML_TEST_FILE_PATH + responseXmlFileName);
+            InputStreamReader expectedXmlReader = new InputStreamReader(expectedXmlStream, StandardCharsets.UTF_8);
         ) {
-            return IOUtils.toString(reader);
+            Input.Builder expectedXmlResult = Input.fromReader(expectedXmlReader);
+            
+            DocumentExportResponse actualResponse = fixture.toDocumentExportResponse();
+            String actualResponseXml = generateResponseXmlFromDTO(actualResponse);
+            Input.Builder actualXmlResult = Input.fromString(actualResponseXml);
+            
+            CuXMLUnitTestUtils.compareXML(expectedXmlResult, actualXmlResult);
         }
     }
 
