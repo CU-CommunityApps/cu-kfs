@@ -44,6 +44,13 @@ public class CuAccountDelegateGlobalDaoOjb extends AccountDelegateGlobalDaoOjb i
                 : null;
     }
 
+    /*
+     * The SQL logic from this class's createPatternMatchSubquery() and createWithClauseForSearchPatterns() methods
+     * is based on that from the URL below, except that the CU version makes a few additional changes (such as
+     * using a "CASE" block to support a larger number of pattern expressions):
+     * 
+     * https://asktom.oracle.com/pls/apex/asktom.search?tag=like-operator-with-in-clause#1688255100346222560
+     */
     private QueryByPreparedSQL createPatternMatchSubquery(List<String> lockingRepresentations, String documentNumber) {
         CuSqlQuery sqlQuery = CuSqlQuery.of(
                 createWithClauseForSearchPatterns(lockingRepresentations),
