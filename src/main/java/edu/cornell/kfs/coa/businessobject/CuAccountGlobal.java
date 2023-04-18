@@ -283,18 +283,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		    account.setBudgetRecordingLevelCode(budgetRecordingLevelCode);
 		}
 
-		if(extrnlFinEncumSufficntFndIndicator != null){
-			account.setExtrnlFinEncumSufficntFndIndicator(extrnlFinEncumSufficntFndIndicator);
-		}
-
-		if(intrnlFinEncumSufficntFndIndicator != null){
-			account.setIntrnlFinEncumSufficntFndIndicator(intrnlFinEncumSufficntFndIndicator);
-		}
-
-		if(finPreencumSufficientFundIndicator != null){
-			account.setFinPreencumSufficientFundIndicator(finPreencumSufficientFundIndicator);
-		}
-
 		if(financialObjectivePrsctrlIndicator != null){
 			account.setFinancialObjectivePrsctrlIndicator(financialObjectivePrsctrlIndicator);
 		}

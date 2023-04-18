@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSConstants.PaymentMethod;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -125,8 +125,8 @@ abstract class TransactionDetailSummary {
         this.scrubbedOutput = ConfigContext.getCurrentContextConfig().getBooleanProperty(CUTaxKeyConstants.TAX_OUTPUT_SCRUBBED, false);
         
         // Setup constants for Foreign Draft and Wire Transfer codes so that we don't need to keep calling the enum values.
-        this.foreignDraftCode = PaymentMethod.FOREIGN_DRAFT.getCode();
-        this.wireTransferCode = PaymentMethod.WIRE_TRANSFER.getCode();
+        this.foreignDraftCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT;
+        this.wireTransferCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE;
         
         // Setup convenience constant for a zero BigDecimal value of proper precision.
         this.zeroAmount = KualiDecimal.ZERO.bigDecimalValue();

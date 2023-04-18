@@ -310,8 +310,6 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         requisitionDocument.setPurchaseOrderCostSourceCode(PurapConstants.POCostSources.ESTIMATE);
         requisitionDocument.setPurchaseOrderTransmissionMethodCode(parameterService.getParameterValueAsString(
                 RequisitionDocument.class, PurapParameterConstants.PURAP_DEFAULT_PO_TRANSMISSION_CODE));
-        requisitionDocument.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(
-                RequisitionDocument.class, PurapParameterConstants.FUNDING_SOURCE));
         requisitionDocument.setUseTaxIndicator(SpringContext.getBean(PurchasingService.class).getDefaultUseTaxIndicatorValue(requisitionDocument));
         
         // if org doc number present on I Want doc, copy it to REQ

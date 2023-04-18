@@ -164,7 +164,6 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             req.setVendorName(vendor.getVendorName());
             req.setVendorRestrictedIndicator(vendor.getVendorRestrictedIndicator());
             req.setItems(itemsForVendor);
-            req.setDocumentFundingSourceCode(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.FUNDING_SOURCE));
             req.setRequisitionSourceCode(PurapConstants.RequisitionSources.B2B);
 
             req.updateAndSaveAppDocStatus(RequisitionStatuses.APPDOC_IN_PROCESS);

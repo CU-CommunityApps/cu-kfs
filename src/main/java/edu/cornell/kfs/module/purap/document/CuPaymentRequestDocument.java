@@ -54,7 +54,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     // default this value to "C" to preserve baseline behavior
     protected String paymentMethodCode = "P"; //ACH check
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
-    private PaymentMethod paymentMethod;
     
     public CuPaymentRequestDocument() {
 		super();
@@ -294,14 +293,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 
 	public void setPaymentMethodCode(String paymentMethodCode) {
 		this.paymentMethodCode = paymentMethodCode;
-	}
-
-	public PaymentMethod getPaymentMethod() {
-		return paymentMethod;
-	}
-
-	public void setPaymentMethod(PaymentMethod paymentMethod) {
-		this.paymentMethod = paymentMethod;
 	}
 
 	public PaymentRequestWireTransfer getPreqWireTransfer() {

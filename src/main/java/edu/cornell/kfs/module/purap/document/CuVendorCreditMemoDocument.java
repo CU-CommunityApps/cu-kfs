@@ -29,8 +29,6 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     protected String paymentMethodCode = "A"; //ACH check
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     protected CreditMemoWireTransfer cmWireTransfer;
-
-    private PaymentMethod paymentMethod;
     
     @Override
     public void prepareForSave(KualiDocumentEvent event) {
@@ -119,14 +117,6 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
         }
         return paymentMethodGeneralLedgerPendingEntryService;
     }
-
-	public PaymentMethod getPaymentMethod() {
-		return paymentMethod;
-	}
-
-	public void setPaymentMethod(PaymentMethod paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
 
 	public CreditMemoWireTransfer getCmWireTransfer() {
 		if (ObjectUtils.isNull(cmWireTransfer)) {

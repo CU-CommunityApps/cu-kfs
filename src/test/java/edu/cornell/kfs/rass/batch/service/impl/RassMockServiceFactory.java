@@ -54,14 +54,14 @@ public class RassMockServiceFactory {
     public static final int MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE = 1000;
     public static final int FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID = MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE + 1;
 
-    public MaintenanceDocumentService buildMockMaintenanceDocumentService() throws Exception {
-        MaintenanceDocumentService maintenanceDocumentService = Mockito.mock(MaintenanceDocumentService.class);
+    public DocumentService buildMockMaintenanceDocumentService() throws Exception {
+        DocumentService documentService = Mockito.mock(DocumentService.class);
         MutableInt documentIdSequence = new MutableInt(MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE);
         
-        Mockito.when(maintenanceDocumentService.setupNewMaintenanceDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+        Mockito.when(documentService.getNewDocument(Mockito.anyString()))
                 .then(invocation -> buildNewMaintenanceDocument(invocation, documentIdSequence.addAndGet(1)));
         
-        return maintenanceDocumentService;
+        return documentService;
     }
 
     protected MaintenanceDocument buildNewMaintenanceDocument(InvocationOnMock invocation, int documentNumberAsInt) {

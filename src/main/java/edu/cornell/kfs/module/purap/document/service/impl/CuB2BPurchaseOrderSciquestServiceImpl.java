@@ -633,16 +633,6 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }
  // end KFSUPGRADE-407    
         
-        // KFSUPGRADE-583
-        if (purchaseOrder.getDocumentFundingSourceCode().equalsIgnoreCase(CUPurapConstants.PurapFundingSources.FEDERAL_FUNDING_SOURCE)) {
-	        cxml.append("      <CustomFieldValueSet label=\"Funding\" name=\"Funding\">\n");
-	        cxml.append("        <CustomFieldValue>\n");
-	        cxml.append("          <Value><![CDATA[" + FEDERAL_FUNDING_TEXT + "]]></Value>\n");
-	        cxml.append("         </CustomFieldValue>\n");
-	        cxml.append("      </CustomFieldValueSet>\n");
-        }
-        // END KFSUPGRADE-583
-        
         // KFSUPGRADE-400 KFSPTS-427 : additional fields
         // do we have to check if field is empty or null ?
 		if (includeNewFields) {

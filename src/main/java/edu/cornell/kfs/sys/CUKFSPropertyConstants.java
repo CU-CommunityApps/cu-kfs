@@ -100,6 +100,8 @@ public class CUKFSPropertyConstants {
         public static final String ALTERNATE_CODE = CUKFSPropertyConstants.ALTERNATE_CODE;
         public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
     }
+    
+    public static final String DESCRIPTION = "description";
 
     
 }
