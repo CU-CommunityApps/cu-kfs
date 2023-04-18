@@ -5,13 +5,16 @@
     xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
     <!-- Text Control size defintions -->
+    <bean id="EightCharacterTextControl"     parent="TextControlDefinition" p:size="8"/>
     <bean id="TwelveCharacterTextControl"    parent="TextControlDefinition" p:size="12"/>
     <bean id="FifteenCharacterTextControl"   parent="TextControlDefinition" p:size="15"/>
     <bean id="FortyTwoCharacterTextControl"  parent="TextControlDefinition" p:size="42"/>
     <bean id="FortyFiveCharacterTextControl" parent="TextControlDefinition" p:size="45"/>
 
     <!-- Text Control validation patterns -->
+    <bean id="TwoCharacterAlphaNumericValidation"     parent="AlphaNumericValidation" p:maxLength="2"/>
     <bean id="FourCharacterAlphaNumericValidation"    parent="AlphaNumericValidation" p:maxLength="4"/>
+    <bean id="EightCharacterAlphaNumericValidation"   parent="AlphaNumericValidation" p:maxLength="8"/>
     <bean id="TenCharacterAlphaNumericValidation"     parent="AlphaNumericValidation" p:maxLength="10"/>
     <bean id="FifteenCharacterAlphaNumericValidation" parent="AnyCharacterValidation" p:maxLength="15"/>
 
