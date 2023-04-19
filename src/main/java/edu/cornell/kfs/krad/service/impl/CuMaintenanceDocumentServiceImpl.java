@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.kuali.kfs.kns.maintenance.Maintainable;
+import org.kuali.kfs.krad.dao.MaintenanceDocumentDao;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 import org.kuali.kfs.krad.service.impl.MaintenanceDocumentServiceImpl;
 
@@ -22,6 +23,15 @@ public class CuMaintenanceDocumentServiceImpl extends MaintenanceDocumentService
 
     private CuMaintenanceDocumentDao getCuMaintenanceDocumentDao() {
         return (CuMaintenanceDocumentDao) getMaintenanceDocumentDao();
+    }
+
+    @Override
+    public void setMaintenanceDocumentDao(MaintenanceDocumentDao maintenanceDocumentDao) {
+        if (!(maintenanceDocumentDao instanceof CuMaintenanceDocumentDao)) {
+            throw new IllegalArgumentException(
+                    "maintenanceDocumentDao was not an instance of CuMaintenanceDocumentDao");
+        }
+        super.setMaintenanceDocumentDao(maintenanceDocumentDao);
     }
 
 }

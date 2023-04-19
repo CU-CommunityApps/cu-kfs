@@ -61,7 +61,34 @@ public class CuAccountDelegateGlobalDaoOjb extends AccountDelegateGlobalDaoOjb i
         return new QueryByPreparedSQL(MaintenanceLock.class, sqlQuery);
     }
 
+    /*
+     * This method's generated SQL uses a technique for generating a list of consecutive integers
+     * by performing a hierarchical query against the DUAL table. In this situation, though,
+     * the SQL will use a CASE block to convert the integers into search expressions that will
+     * later be used in a LIKE condition.
+     */
     private CuSqlChunk createWithClauseForSearchPatterns(List<String> lockingRepresentations) {
+        CuSqlChunk caseBlock = createCaseBlockForReturningSearchPatterns(lockingRepresentations);
+        
+        return CuSqlChunk.of(
+                "WITH SEARCH_PATTERNS AS (",
+                        "SELECT ", caseBlock, "\"LIKE_EXPR\" FROM DUAL ",
+                        "CONNECT BY LEVEL <= ", String.valueOf(lockingRepresentations.size()),
+                ") "
+        );
+    }
+
+    /*
+     * This method creates the following SQL (where "LEVEL" represents tree-structure depth in a hierarchical query):
+     * 
+     * CASE LEVEL
+     *     WHERE 1 THEN ?
+     *     WHERE 2 THEN ?
+     *     ...
+     *     WHERE n THEN ?
+     * END
+     */
+    private CuSqlChunk createCaseBlockForReturningSearchPatterns(List<String> lockingRepresentations) {
         CuSqlChunk caseBlock = new CuSqlChunk();
         caseBlock.append("CASE LEVEL");
         int level = 1;
@@ -72,13 +99,7 @@ public class CuAccountDelegateGlobalDaoOjb extends AccountDelegateGlobalDaoOjb i
             level++;
         }
         caseBlock.append(" END ");
-        
-        return CuSqlChunk.of(
-                "WITH SEARCH_PATTERNS AS (",
-                        "SELECT ", caseBlock, "\"LIKE_EXPR\" FROM DUAL ",
-                        "CONNECT BY LEVEL <= ", String.valueOf(lockingRepresentations.size()),
-                ") "
-        );
+        return caseBlock;
     }
 
     private CuSqlChunk createAndedDocIdCriteria(String documentNumber) {

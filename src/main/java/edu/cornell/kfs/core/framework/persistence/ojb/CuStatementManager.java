@@ -19,12 +19,17 @@ public class CuStatementManager extends StatementManager {
 
     @Override
     public int bindStatement(PreparedStatement stmt, Query query, ClassDescriptor cld, int param) throws SQLException {
-        int newIndex = param;
+        int nextParamIndex = param;
         if (query instanceof QueryByPreparedSQL) {
             QueryByPreparedSQL preparedQuery = (QueryByPreparedSQL) query;
-            newIndex = bindValues(stmt, preparedQuery.getParameters(), newIndex);
+            nextParamIndex = bindQueryParametersToStatement(stmt, preparedQuery, nextParamIndex);
         }
-        return super.bindStatement(stmt, query, cld, newIndex);
+        return super.bindStatement(stmt, query, cld, nextParamIndex);
+    }
+
+    private int bindQueryParametersToStatement(PreparedStatement stmt, QueryByPreparedSQL query,
+            int nextParamIndex) throws SQLException {
+        return bindValues(stmt, query.getParameters(), nextParamIndex);
     }
 
 }

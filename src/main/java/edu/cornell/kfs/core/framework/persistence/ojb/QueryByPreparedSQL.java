@@ -30,12 +30,12 @@ public class QueryByPreparedSQL extends QueryBySQL {
     }
 
     private ValueContainer createValueContainerFromParameter(SqlParameterValue parameter) {
-        JdbcType jdbcType = JdbcTypesHelper.getJdbcTypeByTypesIndex(parameter.getSqlType());
-        if (jdbcType == null) {
-            throw new IllegalStateException("Could not find OJB variant of JDBC Type: " + parameter.getSqlType()
-                    + " -- " + parameter.getTypeName());
+        JdbcType ojbTypeHandler = JdbcTypesHelper.getJdbcTypeByTypesIndex(parameter.getSqlType());
+        if (ojbTypeHandler == null) {
+            throw new IllegalStateException("Could not find OJB handler class for JDBC Type: "
+                    + parameter.getSqlType() + " -- " + parameter.getTypeName());
         }
-        return new ValueContainer(parameter.getValue(), jdbcType);
+        return new ValueContainer(parameter.getValue(), ojbTypeHandler);
     }
 
 }
