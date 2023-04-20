@@ -478,9 +478,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                       invoiceAccounts.get(0).getAccountNumber(), awd.getProposalNumber());
                 } else {
                     errorMessage = new ErrorMessage(
-                            ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_ACCOUNT_AND_AWARD, null,
-                            awd.getProposalNumber());
-
+                            ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_AWARD,
+                            awd.getProposalNumber()
+                    );
                 }
                 errorMessages.add(errorMessage);
             }

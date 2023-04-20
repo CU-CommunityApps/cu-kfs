@@ -316,7 +316,7 @@
                 <kul:htmlControlAttribute attributeEntry="${dvAttributes.disbVchrPaymentMethodCode}"
                                           property="document.disbVchrPaymentMethodCode"
                                           extraReadOnlyProperty="document.disbVchrPaymentMethodName"
-                                          onchange="paymentMethodMessages(this.value);"
+                                          onchange="onDvPaymentMethodChanged(this);"
                                           readOnly="${!fullEntryMode && !frnEntryMode}"/>
               </td>
               <th  class="bord-l-b"><div align="right">

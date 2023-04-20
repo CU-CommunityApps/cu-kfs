@@ -1286,6 +1286,36 @@
                 <replacement/>
             </pattern>
         </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.Account</class>
+            <pattern>
+                <match>extrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>intrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>finPreencumSufficientFundIndicator</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.PriorYearAccount</class>
+            <pattern>
+                <match>extrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>intrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>finPreencumSufficientFundIndicator</match>
+                <replacement/>
+            </pattern>
+        </pattern>        
     </rule>
 
     <!-- Rules for any changes Dates from the format YYYY-MM-DD to other format.  The
