@@ -2,6 +2,7 @@ package edu.cornell.kfs.krad.dao.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +16,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.krad.dao.CuMaintenanceDocumentDao;
-import edu.cornell.kfs.krad.util.MaintenanceLockUtils;
 
 public class CuMaintenanceDocumentDaoOjb extends MaintenanceDocumentDaoOjb implements CuMaintenanceDocumentDao {
 
@@ -24,11 +24,13 @@ public class CuMaintenanceDocumentDaoOjb extends MaintenanceDocumentDaoOjb imple
     @Override
     public String getAnyLockingDocumentNumber(List<String> lockingRepresentations, String documentNumber) {
         LOG.debug("getAnyLockingDocumentNumber, Checking for locking document(s)");
-        return MaintenanceLockUtils.doChunkedSearchForAnyLockingDocumentNumber(lockingRepresentations,
-                documentNumber, this::queryForAnyLockingDocumentNumber);
-    }
-
-    private String queryForAnyLockingDocumentNumber(List<String> lockingRepresentations, String documentNumber) {
+        if (CollectionUtils.isEmpty(lockingRepresentations)) {
+            LOG.debug("getAnyLockingDocumentNumber, No lock representations specified, skipping search");
+            return null;
+        }
+        LOG.debug("getAnyLockingDocumentNumber, Performing search with {} lock representations",
+                lockingRepresentations::size);
+        
         Criteria criteria = new Criteria();
         criteria.addIn(KFSPropertyConstants.LOCKING_REPRESENTATION, lockingRepresentations);
         if (StringUtils.isNotBlank(documentNumber)) {
@@ -38,9 +40,14 @@ public class CuMaintenanceDocumentDaoOjb extends MaintenanceDocumentDaoOjb imple
         
         QueryByCriteria query = QueryFactory.newQuery(MaintenanceLock.class, criteria);
         MaintenanceLock maintenanceLock = (MaintenanceLock) getPersistenceBrokerTemplate().getObjectByQuery(query);
-        return ObjectUtils.isNotNull(maintenanceLock)
-                ? maintenanceLock.getDocumentNumber()
-                : null;
+        String lockingDocumentId = ObjectUtils.isNotNull(maintenanceLock) ? maintenanceLock.getDocumentNumber() : null;
+        
+        LOG.debug("getAnyLockingDocumentNumber, {}",
+                () -> StringUtils.isNotBlank(lockingDocumentId)
+                        ? "Found a matching lock owned by document " + lockingDocumentId
+                        : "No matching locks found");
+        
+        return lockingDocumentId;
     }
 
 }

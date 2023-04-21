@@ -254,7 +254,12 @@
     <bean id="accountDelegateGlobalDao" parent="platformAwareDao"
           class="edu.cornell.kfs.coa.dataaccess.impl.CuAccountDelegateGlobalDaoOjb"/>
 
+    <bean id="accountDelegateGlobalLockDao" parent="platformAwareDaoJdbc"
+          class="edu.cornell.kfs.coa.dataaccess.impl.AccountDelegateGlobalLockDaoJdbc"
+          p:accountDelegateGlobalDao-ref="accountDelegateGlobalDao"/>
+
     <bean id="accountDelegateService" parent="accountDelegateService-parentBean"
-          class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl"/>
+          class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl"
+          p:accountDelegateGlobalLockDao-ref="accountDelegateGlobalLockDao"/>
 
 </beans>

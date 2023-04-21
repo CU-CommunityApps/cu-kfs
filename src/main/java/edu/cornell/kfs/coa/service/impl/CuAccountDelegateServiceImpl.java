@@ -3,16 +3,15 @@ package edu.cornell.kfs.coa.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.kuali.kfs.coa.dataaccess.AccountDelegateGlobalDao;
 import org.kuali.kfs.coa.document.AccountDelegateGlobalMaintainableImpl;
 import org.kuali.kfs.coa.service.impl.AccountDelegateServiceImpl;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
 
-import edu.cornell.kfs.coa.dataaccess.CuAccountDelegateGlobalDao;
+import edu.cornell.kfs.coa.dataaccess.AccountDelegateGlobalLockDao;
 
 public class CuAccountDelegateServiceImpl extends AccountDelegateServiceImpl {
 
-    private CuAccountDelegateGlobalDao accountDelegateGlobalDao;
+    private AccountDelegateGlobalLockDao accountDelegateGlobalLockDao;
 
     @Override
     public String getLockingDocumentId(AccountDelegateGlobalMaintainableImpl global, String docNumber) {
@@ -20,13 +19,11 @@ public class CuAccountDelegateServiceImpl extends AccountDelegateServiceImpl {
         List<String> lockingRepresentations = maintenanceLocks.stream()
                 .map(MaintenanceLock::getLockingRepresentation)
                 .collect(Collectors.toUnmodifiableList());
-        return accountDelegateGlobalDao.getAnyLockingDocumentNumber(lockingRepresentations, docNumber);
+        return accountDelegateGlobalLockDao.getAnyLockingDocumentNumber(lockingRepresentations, docNumber);
     }
 
-    @Override
-    public void setAccountDelegateGlobalDao(AccountDelegateGlobalDao accountDelegateGlobalDao) {
-        super.setAccountDelegateGlobalDao(accountDelegateGlobalDao);
-        this.accountDelegateGlobalDao = (CuAccountDelegateGlobalDao) accountDelegateGlobalDao;
+    public void setAccountDelegateGlobalLockDao(AccountDelegateGlobalLockDao accountDelegateGlobalLockDao) {
+        this.accountDelegateGlobalLockDao = accountDelegateGlobalLockDao;
     }
 
 }

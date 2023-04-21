@@ -20,6 +20,10 @@
 
 -->
 
+    <bean id="AccountDelegateGlobalMaintenanceDocument"
+          parent="AccountDelegateGlobalMaintenanceDocument-parentBean"
+          p:maintainableClass="edu.cornell.kfs.coa.document.CuAccountDelegateGlobalMaintainableImpl"/>
+
 <!-- Maintenance Section Definitions -->
 <bean id="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts" parent="AccountDelegateGlobalMaintenanceDocument-EditListofAccounts-parentBean"/>
 

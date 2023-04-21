@@ -15,17 +15,28 @@ public final class CuSqlChunk implements CharSequence {
 
     private StringBuilder queryString;
     private Stream.Builder<SqlParameterValue> parameters;
+    private CharSequence underlyingCharSequence;
 
     public CuSqlChunk() {
         this.queryString = new StringBuilder(100);
         this.parameters = Stream.builder();
+        this.underlyingCharSequence = queryString;
     }
 
     public CuSqlChunk(SqlParameterValue parameter) {
         Objects.requireNonNull(parameter, "parameter cannot be null");
         this.queryString = new StringBuilder(1);
         this.parameters = Stream.builder();
+        this.underlyingCharSequence = queryString;
         append(parameter);
+    }
+
+    public CuSqlChunk appendAsParameter(String value) {
+        return append(new SqlParameterValue(Types.VARCHAR, value));
+    }
+
+    public CuSqlChunk appendAsParameter(int sqlType, Object value) {
+        return append(new SqlParameterValue(sqlType, value));
     }
 
     public CuSqlChunk append(SqlParameterValue parameter) {
@@ -74,8 +85,9 @@ public final class CuSqlChunk implements CharSequence {
     }
 
     private void switchToUnmodifiableState() {
-        queryString = new StringBuilder(0);
+        queryString = null;
         parameters = null;
+        underlyingCharSequence = KFSConstants.EMPTY_STRING;
     }
 
     private void verifyState() {
@@ -87,22 +99,22 @@ public final class CuSqlChunk implements CharSequence {
 
     @Override
     public int length() {
-        return queryString.length();
+        return underlyingCharSequence.length();
     }
 
     @Override
     public char charAt(int index) {
-        return queryString.charAt(index);
+        return underlyingCharSequence.charAt(index);
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return queryString.subSequence(start, end);
+        return underlyingCharSequence.subSequence(start, end);
     }
 
     @Override
     public String toString() {
-        return queryString.toString();
+        return underlyingCharSequence.toString();
     }
 
     public boolean isWriteable() {
@@ -136,10 +148,10 @@ public final class CuSqlChunk implements CharSequence {
         if (!valuesIterator.hasNext()) {
             throw new IllegalArgumentException("values collection cannot be empty");
         }
-        sqlChunk.append(new SqlParameterValue(sqlType, valuesIterator.next()));
+        sqlChunk.appendAsParameter(sqlType, valuesIterator.next());
         while (valuesIterator.hasNext()) {
-            SqlParameterValue parameter = new SqlParameterValue(sqlType, valuesIterator.next());
-            sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE).append(parameter);
+            sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE)
+                    .appendAsParameter(sqlType, valuesIterator.next());
         }
         return sqlChunk;
     }

@@ -65,6 +65,21 @@ public class CuSqlQueryTest {
     }
 
     @Test
+    void testBuildQueryFromManuallyConcatenatedChunk() throws Exception {
+        CuSqlQuery sqlQuery = new CuSqlChunk()
+                .append("SELECT * FROM KFS.KREW_DOC_HDR_T ", "WHERE DOC_HDR_STAT_CD = ")
+                .appendAsParameter(KewApiConstants.ROUTE_HEADER_SAVED_CD)
+                .append(" AND VER_NBR BETWEEN ")
+                .appendAsParameter(Types.BIGINT, 1L)
+                .append(" AND ")
+                .append(new SqlParameterValue(Types.BIGINT, 5L))
+                .toQuery();
+        String expectedSql = "SELECT * FROM KFS.KREW_DOC_HDR_T WHERE DOC_HDR_STAT_CD = ? AND VER_NBR BETWEEN ? AND ?";
+        assertQueryWasGeneratedCorrectly(sqlQuery, expectedSql,
+                parm(KewApiConstants.ROUTE_HEADER_SAVED_CD), parm(Types.BIGINT, 1L), parm(Types.BIGINT, 5L));
+    }
+
+    @Test
     void testBuildQueryWithParameterList() throws Exception {
         List<String> routeHeaderStatuses = List.of(
                 KewApiConstants.ROUTE_HEADER_DISAPPROVED_CD, KewApiConstants.ROUTE_HEADER_CANCEL_CD);
@@ -157,6 +172,8 @@ public class CuSqlQueryTest {
                 sqlChunk -> sqlChunk.append(" WHERE ROLE_NM", " IS NULL"),
                 sqlChunk -> sqlChunk.append(new CuSqlChunk()),
                 sqlChunk -> sqlChunk.append(new SqlParameterValue(Types.VARCHAR, DOC_ID_123456)),
+                sqlChunk -> sqlChunk.appendAsParameter(DOC_ID_123456),
+                sqlChunk -> sqlChunk.appendAsParameter(Types.BIGINT, 2L),
                 sqlChunk -> sqlChunk.toQuery());
     }
 
