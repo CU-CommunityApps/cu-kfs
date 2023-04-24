@@ -31,7 +31,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     protected CreditMemoWireTransfer cmWireTransfer;
     
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
     	super.prepareForSave(event);
     	
         try {
@@ -64,7 +64,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     }
     
     @Override
-	public void customizeExplicitGeneralLedgerPendingEntry( GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
+	public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
     	super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
     	
         // KFSPTS-1891
@@ -76,7 +76,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     }
     
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
     	   if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) return requiresAccountsPayableReviewRouting();
            // KFSPTS-1891, KFSPTS-2851
            if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER))

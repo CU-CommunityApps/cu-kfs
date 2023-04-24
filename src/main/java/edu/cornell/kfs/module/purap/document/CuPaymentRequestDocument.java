@@ -60,7 +60,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 		preqWireTransfer = new PaymentRequestWireTransfer();
 	}
 
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
     	
         // KFSPTS-1891.  purchasingPreDisbursementExtractJob has NPE issue.  need this null check
        // if (preqWireTransfer != null && !StringUtils.equals(preqWireTransfer.getDocumentNumber(),getDocumentNumber())) {
@@ -94,7 +94,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         // First, only do this if the document is in initiated status - after that, we don't want to 
         // accidentally reset the bank code
         // KFSPTS-1891
-        if ( getDocumentHeader().getWorkflowDocument().isInitiated() || getDocumentHeader().getWorkflowDocument().isSaved()  ) {
+        if (getDocumentHeader().getWorkflowDocument().isInitiated() || getDocumentHeader().getWorkflowDocument().isSaved()  ) {
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
             // was entered by the user or not.
@@ -142,7 +142,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
      * @see org.kuali.kfs.module.purap.document.PaymentRequestDocument#populatePaymentRequestFromPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument, java.util.HashMap)
      */
     @Override
-    public void populatePaymentRequestFromPurchaseOrder(PurchaseOrderDocument po, HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
+    public void populatePaymentRequestFromPurchaseOrder(final PurchaseOrderDocument po, final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
     	super.populatePaymentRequestFromPurchaseOrder(po, expiredOrClosedAccountList);
     	
     	 // KFSPTS-1891
@@ -165,13 +165,13 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
      * @see org.kuali.kfs.krad.document.DocumentBase#doRouteStatusChange()
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
+    public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
         LOG.debug("doRouteStatusChange() started");
         
-        if (this.getDocumentHeader().getWorkflowDocument().isProcessed()) {
+        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
         	// KFSPTS-1891
         	if (CollectionUtils.isEmpty(generalLedgerPendingEntries)) {
-        		this.refreshReferenceObject("generalLedgerPendingEntries");
+        		refreshReferenceObject("generalLedgerPendingEntries");
         	}
         }
 
@@ -236,7 +236,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
     @Override
-    public void customizeExplicitGeneralLedgerPendingEntry( GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
+    public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
     	super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
         // KFSPTS-1891
         // if the document is not processed using PDP, then the cash entries need to be created instead of liability
@@ -252,13 +252,13 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
     }
     
-    public void doActionTaken(ActionTakenEvent event) {
+    public void doActionTaken(final ActionTakenEvent event) {
         super.doActionTaken(event);
-        WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
+        final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
         String currentNode = null;
-        Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
+        final Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
         if (CollectionUtils.isNotEmpty(currentNodes)) {
-            Object[] names = currentNodes.toArray();
+            final Object[] names = currentNodes.toArray();
             if (names.length > 0) {
                 currentNode = (String)names[0];
             }
