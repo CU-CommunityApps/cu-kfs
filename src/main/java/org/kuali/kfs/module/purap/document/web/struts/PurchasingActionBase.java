@@ -132,6 +132,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final int SIZE_5MB =5242880;
+    private static final int SIZE10MB =10485760;
 
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -1661,7 +1662,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 			} else {
 				if (isAttachmentSizeExceedSqLimit(form, "add")) {
 					return mapping.findForward(KFSConstants.MAPPING_BASIC);
-				} else if (attachmentFile.getFileSize() > SIZE_5MB) {
+				} else if (attachmentFile.getFileSize() > SIZE10MB) {
 					GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
 							KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_FILE_SIZE_OVER_LIMIT, attachmentFile.getFileName(), "5");
 					return mapping.findForward(KFSConstants.MAPPING_BASIC);					
