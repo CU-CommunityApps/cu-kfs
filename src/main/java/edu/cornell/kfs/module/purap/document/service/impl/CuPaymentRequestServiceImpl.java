@@ -54,10 +54,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
 
     @Override
-    public void removeIneligibleAdditionalCharges(PaymentRequestDocument document) {
-        List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
+    public void removeIneligibleAdditionalCharges(final PaymentRequestDocument document) {
+        final List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
 
-        for (PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
+        for (final PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
         	// KFSUPGRADE-473
             //if no extended price or purchase order item unit price, and its an order discount or trade in, remove
 			if ((ObjectUtils.isNull(item.getPurchaseOrderItemUnitPrice())
@@ -70,7 +70,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
             // if a payment terms discount exists but not set on teh doc, remove
             if (StringUtils.equals(item.getItemTypeCode(), PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE)) {
-                PaymentTermType pt = document.getVendorPaymentTerms();
+                final PaymentTermType pt = document.getVendorPaymentTerms();
                 if ((pt == null) || (pt.getVendorPaymentTermsPercent() == null)
                         || (BigDecimal.ZERO.compareTo(pt.getVendorPaymentTermsPercent()) == 0)) {
                     // remove discount
@@ -80,7 +80,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         }
 
         // remove items marked for removal
-        for (PaymentRequestItem item : itemsToRemove) {
+        for (final PaymentRequestItem item : itemsToRemove) {
             document.getItems().remove(item);
         }
     }
@@ -209,7 +209,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    public void markPaid(PaymentRequestDocument pr, Date processDate) {
+    public void markPaid(final PaymentRequestDocument pr, final Date processDate) {
         LOG.debug("markPaid() started");
 
         pr.setPaymentPaidTimestamp(new Timestamp(processDate.getTime()));
@@ -294,11 +294,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    public void changeVendor(PaymentRequestDocument preq, Integer headerId, Integer detailId) {
+    public void changeVendor(final PaymentRequestDocument preq, final Integer headerId, final Integer detailId) {
     	super.changeVendor(preq, headerId, detailId);
     	// KFSPTS-1891
         if ( preq instanceof PaymentRequestDocument ) {
-            VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
+            final VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
             if (vdDetail != null
                     && ObjectUtils.isNotNull(vdDetail.getExtension()) ) {
                 if ( vdDetail.getExtension() instanceof VendorDetailExtension
