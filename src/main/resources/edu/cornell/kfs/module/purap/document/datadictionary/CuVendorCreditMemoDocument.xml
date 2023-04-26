@@ -12,12 +12,6 @@
     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.CuCreditMemoDocumentPreRules"/> 
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuVendorCreditMemoDocumentPresentationController"/>
-       <property name="attributes">
-      	<list merge="true">
-      	        <!-- KFSPTS-1891 -->
-        	<ref bean="VendorCreditMemoDocument-paymentMethodCode"/>
-      	</list>
-      </property>
    </bean>
    
     <!-- Attribute Definitions -->

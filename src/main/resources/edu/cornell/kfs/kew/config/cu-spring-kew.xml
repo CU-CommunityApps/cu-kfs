@@ -88,6 +88,7 @@
           p:deploymentEnvironment="${environment}"
           p:emailService-ref="emailService"
           p:groupService-ref="kimGroupService"
+          p:parameterService-ref="parameterService"
           p:personService-ref="personService"
           p:routeHeaderService-ref="documentRouteHeaderService"/>
 

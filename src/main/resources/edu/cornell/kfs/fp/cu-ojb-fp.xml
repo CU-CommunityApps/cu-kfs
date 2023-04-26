@@ -176,7 +176,16 @@
     
     <reference-descriptor name="bank" class-ref="org.kuali.kfs.sys.businessobject.Bank" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="disbVchrBankCode" />
-    </reference-descriptor>   
+    </reference-descriptor>  
+    
+    <reference-descriptor name="paymentMethod"
+                          auto-delete="none"
+                          auto-retrieve="true"
+                          auto-update="none"
+                          class-ref="org.kuali.kfs.sys.businessobject.PaymentMethod"
+                          proxy="true">
+         <foreignkey field-ref="disbVchrPaymentMethodCode"/>
+     </reference-descriptor> 
 
     <collection-descriptor name="sourceAccountingLines" proxy="true" element-class-ref="org.kuali.kfs.sys.businessobject.SourceAccountingLine" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <orderby name="sequenceNumber" sort="ASC" />
@@ -261,7 +270,17 @@
     
     <reference-descriptor name="bank" class-ref="org.kuali.kfs.sys.businessobject.Bank" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="disbVchrBankCode" />
-    </reference-descriptor>   
+    </reference-descriptor> 
+    
+    <reference-descriptor name="paymentMethod"
+                          auto-delete="none"
+                          auto-retrieve="true"
+                          auto-update="none"
+                          class-ref="org.kuali.kfs.sys.businessobject.PaymentMethod"
+                          proxy="true">
+         <foreignkey field-ref="disbVchrPaymentMethodCode"/>
+     </reference-descriptor> 
+       
     <!-- using scheduled accounting lines -->
     <collection-descriptor name="sourceAccountingLines" proxy="true" element-class-ref="edu.cornell.kfs.fp.businessobject.ScheduledSourceAccountingLine" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <orderby name="sequenceNumber" sort="ASC" />
