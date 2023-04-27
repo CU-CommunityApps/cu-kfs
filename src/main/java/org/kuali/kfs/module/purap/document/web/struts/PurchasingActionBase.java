@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.purap.document.web.struts;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -85,6 +86,7 @@ import org.kuali.kfs.module.purap.document.validation.event.AttributedUpdateCams
 import org.kuali.kfs.module.purap.exception.ItemParserException;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.util.ItemParser;
+import org.kuali.kfs.sys.FileUtil;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -131,7 +133,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final int SIZE_15MB = 15728640;
+    private static final String DEFAULT_FILE_SIZE_15M = "15M";
 
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -1661,7 +1663,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 			} else {
 				if (isAttachmentSizeExceedSqLimit(form, "add")) {
 					return mapping.findForward(KFSConstants.MAPPING_BASIC);
-				} else if (attachmentFile.getFileSize() > SIZE_15MB) {
+				} else if (attachmentFile.getFileSize() > getMaxPoSendToVendorFileSize()) {
 					GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
 							KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_FILE_SIZE_OVER_LIMIT, attachmentFile.getFileName(), "5");
 					return mapping.findForward(KFSConstants.MAPPING_BASIC);					
@@ -1697,6 +1699,16 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 			isExceed = true;
 		}
 		return isExceed;
+    }
+
+    private long getMaxPoSendToVendorFileSize() {
+        String maxAttachmentSizeString = getParameterService().getParameterValueAsString(
+                PurapConstants.PURAP_NAMESPACE,
+                CUPurapConstants.PURCHASE_ORDER_COMPONENT_CODE,
+                CUPurapParameterConstants.PO_SEND_TO_VENDOR_MAX_FILE_SIZE,
+                DEFAULT_FILE_SIZE_15M
+        );
+        return FileUtil.getBytes(maxAttachmentSizeString);
     }
     
     /*
