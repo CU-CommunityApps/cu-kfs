@@ -19,8 +19,6 @@ public class AccountDelegateGlobalLockDaoJdbc extends CuSqlQueryPlatformAwareDao
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private static final int IN_LIST_CHUNK_SIZE = 1000;
-
     private CuAccountDelegateGlobalDao accountDelegateGlobalDao;
 
     @Override
@@ -46,14 +44,14 @@ public class AccountDelegateGlobalLockDaoJdbc extends CuSqlQueryPlatformAwareDao
     private CuSqlQuery createQueryForLockingDocuments(List<String> lockingRepresentations, String documentNumber) {
         return CuSqlQuery.of(
                 "SELECT DOC_HDR_ID FROM KFS.KRNS_MAINT_LOCK_T WHERE ",
-                createAndedCriteriaForDocumentIdExclusion(documentNumber),
+                createANDedCriteriaForDocumentIdExclusion(documentNumber),
                 "(",
-                        createOredCriteriaForLockMatching(lockingRepresentations),
+                        createORedCriteriaForLockMatching(lockingRepresentations),
                 ") AND ROWNUM <= 1"
         );
     }
 
-    private CuSqlChunk createAndedCriteriaForDocumentIdExclusion(String documentNumber) {
+    private CuSqlChunk createANDedCriteriaForDocumentIdExclusion(String documentNumber) {
         if (StringUtils.isNotBlank(documentNumber)) {
             return CuSqlChunk.of(
                     "DOC_HDR_ID <> ", CuSqlChunk.forParameter(documentNumber), " AND ");
@@ -62,23 +60,13 @@ public class AccountDelegateGlobalLockDaoJdbc extends CuSqlQueryPlatformAwareDao
         }
     }
 
-    private CuSqlChunk createOredCriteriaForLockMatching(List<String> lockingRepresentations) {
+    private CuSqlChunk createORedCriteriaForLockMatching(List<String> lockingRepresentations) {
         List<String> lockRepPatterns = accountDelegateGlobalDao.createSearchPatternsFromLockingRepresentations(
                 lockingRepresentations);
-        CuSqlChunk lockMatchCriteria = new CuSqlChunk();
         LOG.debug("createOredCriteriaForLockMatching, Performing search with {} lock representations and {} patterns",
                 lockingRepresentations::size, lockRepPatterns::size);
         
-        for (int startIndex = 0; startIndex < lockingRepresentations.size(); startIndex += IN_LIST_CHUNK_SIZE) {
-            int endIndex = Math.min(startIndex + IN_LIST_CHUNK_SIZE, lockingRepresentations.size());
-            List<String> lockRepsChunk = lockingRepresentations.subList(startIndex, endIndex);
-            
-            if (startIndex > 0) {
-                lockMatchCriteria.append(" OR ");
-            }
-            lockMatchCriteria.append(
-                    "MAINT_LOCK_REP_TXT IN (", CuSqlChunk.forStringParameters(lockRepsChunk), ")");
-        }
+        CuSqlChunk lockMatchCriteria = CuSqlChunk.asSqlInCondition("MAINT_LOCK_REP_TXT", lockingRepresentations);
         
         for (String lockRepPattern : lockRepPatterns) {
             lockMatchCriteria.append(" OR MAINT_LOCK_REP_TXT LIKE ")
