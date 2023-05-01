@@ -6,12 +6,16 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.jdbc.core.SqlParameterValue;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public final class CuSqlChunk implements CharSequence {
+
+    public static final int MAX_IN_LIST_SIZE = 1000;
 
     private StringBuilder queryString;
     private Stream.Builder<SqlParameterValue> parameters;
@@ -26,6 +30,14 @@ public final class CuSqlChunk implements CharSequence {
         this.queryString = new StringBuilder(1);
         this.parameters = Stream.builder();
         append(parameter);
+    }
+
+    public CuSqlChunk appendAsParameter(String value) {
+        return append(new SqlParameterValue(Types.VARCHAR, value));
+    }
+
+    public CuSqlChunk appendAsParameter(int sqlType, Object value) {
+        return append(new SqlParameterValue(sqlType, value));
     }
 
     public CuSqlChunk append(SqlParameterValue parameter) {
@@ -74,7 +86,7 @@ public final class CuSqlChunk implements CharSequence {
     }
 
     private void switchToUnmodifiableState() {
-        queryString = new StringBuilder(0);
+        queryString = null;
         parameters = null;
     }
 
@@ -87,22 +99,24 @@ public final class CuSqlChunk implements CharSequence {
 
     @Override
     public int length() {
-        return queryString.length();
+        return isWriteable() ? queryString.length() : 0;
     }
 
     @Override
     public char charAt(int index) {
+        verifyState();
         return queryString.charAt(index);
     }
 
     @Override
     public CharSequence subSequence(int start, int end) {
+        verifyState();
         return queryString.subSequence(start, end);
     }
 
     @Override
     public String toString() {
-        return queryString.toString();
+        return isWriteable() ? queryString.toString() : KFSConstants.EMPTY_STRING;
     }
 
     public boolean isWriteable() {
@@ -136,12 +150,71 @@ public final class CuSqlChunk implements CharSequence {
         if (!valuesIterator.hasNext()) {
             throw new IllegalArgumentException("values collection cannot be empty");
         }
-        sqlChunk.append(new SqlParameterValue(sqlType, valuesIterator.next()));
+        sqlChunk.appendAsParameter(sqlType, valuesIterator.next());
         while (valuesIterator.hasNext()) {
-            SqlParameterValue parameter = new SqlParameterValue(sqlType, valuesIterator.next());
-            sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE).append(parameter);
+            sqlChunk.append(CUKFSConstants.COMMA_AND_SPACE)
+                    .appendAsParameter(sqlType, valuesIterator.next());
         }
         return sqlChunk;
+    }
+
+    public static CuSqlChunk asSqlInCondition(String columnName, Collection<? extends String> values) {
+        return asSqlInCondition(columnName, Types.VARCHAR, values, true);
+    }
+
+    public static CuSqlChunk asSqlNotInCondition(String columnName, Collection<? extends String> values) {
+        return asSqlInCondition(columnName, Types.VARCHAR, values, false);
+    }
+
+    public static CuSqlChunk asSqlInCondition(String columnName, int sqlType, Collection<?> values) {
+        return asSqlInCondition(columnName, sqlType, values, true);
+    }
+
+    public static CuSqlChunk asSqlNotInCondition(String columnName, int sqlType, Collection<?> values) {
+        return asSqlInCondition(columnName, sqlType, values, false);
+    }
+
+    private static CuSqlChunk asSqlInCondition(
+            String columnName, int sqlType, Collection<?> values, boolean positive) {
+        if (CollectionUtils.isEmpty(values)) {
+            throw new IllegalArgumentException("values collection cannot be null or empty");
+        } else if (StringUtils.isBlank(columnName)) {
+            throw new IllegalArgumentException("columnName cannot be blank");
+        }
+
+        CuSqlChunk fullCondition = new CuSqlChunk();
+        Iterator<?> valuesIterator = values.iterator();
+        if (!valuesIterator.hasNext()) {
+            throw new IllegalStateException("values collection was non-empty but returned an empty iterator");
+        } 
+
+        String inCondition = positive ? " IN " : " NOT IN ";
+        String subListCombiner = positive ? " OR " : " AND ";
+        int numSubLists = 1;
+
+        do {
+            fullCondition.append(columnName, inCondition, CUKFSConstants.LEFT_PARENTHESIS)
+                    .appendAsParameter(sqlType, valuesIterator.next());
+            int listChunkLength = 1;
+            
+            while (valuesIterator.hasNext() && listChunkLength < MAX_IN_LIST_SIZE) {
+                fullCondition.append(CUKFSConstants.COMMA_AND_SPACE)
+                        .appendAsParameter(sqlType, valuesIterator.next());
+                listChunkLength++;
+            }
+            
+            fullCondition.append(CUKFSConstants.RIGHT_PARENTHESIS);
+            if (listChunkLength == MAX_IN_LIST_SIZE && valuesIterator.hasNext()) {
+                fullCondition.append(subListCombiner);
+                numSubLists++;
+            }
+        } while (valuesIterator.hasNext());
+        
+        if (numSubLists > 1) {
+            return CuSqlChunk.of(CUKFSConstants.LEFT_PARENTHESIS, fullCondition, CUKFSConstants.RIGHT_PARENTHESIS);
+        } else {
+            return fullCondition;
+        }
     }
 
 }
