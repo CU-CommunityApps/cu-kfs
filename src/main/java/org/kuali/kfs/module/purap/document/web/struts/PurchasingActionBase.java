@@ -1661,11 +1661,13 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 						KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT);
 				return mapping.findForward(KFSConstants.MAPPING_BASIC);
 			} else {
+                String fileSizeLimitParameterValue = getMaxPoSendToVendorFileSizeParameterValue();
 				if (isAttachmentSizeExceedSqLimit(form, "add")) {
 					return mapping.findForward(KFSConstants.MAPPING_BASIC);
-				} else if (attachmentFile.getFileSize() > getMaxPoSendToVendorFileSize()) {
-					GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
-							KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_FILE_SIZE_OVER_LIMIT, attachmentFile.getFileName(), "5");
+				} else if (attachmentFile.getFileSize() > FileUtil.getBytes(fileSizeLimitParameterValue)) {
+                    GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+							KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT,
+                            attachmentFile.getFileName(), fileSizeLimitParameterValue);
 					return mapping.findForward(KFSConstants.MAPPING_BASIC);					
 				}
 			}
@@ -1701,14 +1703,12 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 		return isExceed;
     }
 
-    private long getMaxPoSendToVendorFileSize() {
-        String maxAttachmentSizeString = getParameterService().getParameterValueAsString(
-                PurapConstants.PURAP_NAMESPACE,
-                CUPurapConstants.PURCHASE_ORDER_COMPONENT_CODE,
-                CUPurapParameterConstants.PO_SEND_TO_VENDOR_MAX_FILE_SIZE,
+    private String getMaxPoSendToVendorFileSizeParameterValue() {
+        return getParameterService().getParameterValueAsString(
+                PurchaseOrderDocument.class,
+                CUPurapParameterConstants.MAX_FILE_SIZE_PO_SEND_TO_VENDOR,
                 DEFAULT_FILE_SIZE_15M
         );
-        return FileUtil.getBytes(maxAttachmentSizeString);
     }
     
     /*

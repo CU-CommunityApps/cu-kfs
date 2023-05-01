@@ -489,5 +489,4 @@ public class CUPurapConstants {
     }
 
     public static final String PURCHASE_ORDER_COMPONENT_CODE = "Purchase Order";
-    public static final String PO_SEND_TO_VENDOR_MAX_FILE_SIZE = "PO_SEND_TO_VENDOR_MAX_FILE_SIZE";
 }

@@ -23,7 +23,8 @@ public class CUPurapKeyConstants {
     public static final String ERROR_EXCEED_SQ_NUMBER_OF_ATT_LIMIT = "errors.exceed.sq.number.of.att.limit";
     public static final String ERROR_REASON_IS_REQUIRED = "errors.reason.is.required";
     public static final String ERROR_ATT_FILE_SIZE_OVER_LIMIT = "errors.att.filesize.over.limit";
-   
+    public static final String ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT = "errors.att.send.to.vendor.filesize.over.limit";
+
     public static final String ATTACHMENT_QUESTION_CONFIRM_CHANGE = "attachment.message.confirm.change";
     
     // KFSPTS-2096
