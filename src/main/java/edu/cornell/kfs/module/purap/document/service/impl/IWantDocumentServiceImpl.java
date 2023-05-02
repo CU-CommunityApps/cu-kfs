@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,9 +13,21 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
+import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -34,7 +47,6 @@ import org.kuali.kfs.module.purap.businessobject.DefaultPrincipalAddress;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionForm;
 import org.kuali.kfs.sys.KFSConstants;
@@ -50,17 +62,6 @@ import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -81,6 +82,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
 
 	private static final Logger LOG = LogManager.getLogger(IWantDocumentServiceImpl.class);
 
+	private static final String DOCUMENT_REFERENCE_NOTE_FORMAT = "{0} edoc {1} created";
     private static final String CMP_ADDRESS_TYPE = "CMP";
 
     
@@ -821,7 +823,35 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
         
     }
     
-	/**
+	@Override
+    public void updateIWantDocumentWithRequisitionReference(IWantDocument iWantDocument, String reqsDocumentNumber) {
+        iWantDocument.setReqsDocId(reqsDocumentNumber);
+        addDocumentReferenceNoteToIWantDocument(iWantDocument, reqsDocumentNumber, "Requisition");
+        purapService.saveDocumentNoValidation(iWantDocument);
+    }
+
+    @Override
+    public void updateIWantDocumentWithDisbursementVoucherReference(IWantDocument iWantDocument,
+            String dvDocumentNumber) {
+        iWantDocument.setDvDocId(dvDocumentNumber);
+        addDocumentReferenceNoteToIWantDocument(iWantDocument, dvDocumentNumber, "Disbursement Voucher");
+        purapService.saveDocumentNoValidation(iWantDocument);
+    }
+
+    private void addDocumentReferenceNoteToIWantDocument(IWantDocument iWantDocument, String documentNumber,
+            String documentLabel) {
+        try {
+            String noteText = MessageFormat.format(DOCUMENT_REFERENCE_NOTE_FORMAT, documentLabel, documentNumber);
+            UserSession systemUserSession = new UserSession(KFSConstants.SYSTEM_USER);
+            Note documentReferenceNote = GlobalVariables.doInNewGlobalVariables(systemUserSession,
+                    () -> documentService.createNoteFromDocument(iWantDocument, noteText));
+            noteService.save(documentReferenceNote);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
 	 * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#setIWantDocumentDescription(edu.cornell.kfs.module.purap.document.IWantDocument)
 	 */
 	@Override
