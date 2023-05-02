@@ -35,12 +35,14 @@
 			<list merge ="true">
 				<value>iWantDocumentBatchFeedJob</value>
 				<value>jaggaerGenerateContractPartyCsvJob</value>
+				<value>jaggaerGenerateAndUploadSupplierXmlJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
 			<list merge="true">
 				<value>${staging.directory}/purap</value>
 				<value>${staging.directory}/purap/jaggaer</value>
+				<value>${staging.directory}/purap/jaggaer/xml</value>
 			</list>
 		</property>
 	</bean>
@@ -322,5 +324,32 @@
 		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
+	
+	<bean id="jaggaerGenerateAndUploadSupplierXmlJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="jaggaerGenerateSupplierXmlStep" />
+                <ref bean="jaggaerUploadSupplierXmlStep" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="jaggaerGenerateSupplierXmlStep" class="edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep" parent="step">
+        <property name="jaggaerGenerateSupplierXmlService" ref="jaggaerGenerateSupplierXmlService" />
+        <property name="parameterService" ref="parameterService" />
+    </bean>
+    
+    <bean id="jaggaerUploadSupplierXmlStep" class="edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep" parent="step">
+    </bean>
+    
+    <bean id="jaggaerGenerateSupplierXmlService" parent="jaggaerGenerateSupplierXmlService-parentBean"/>
+    <bean id="jaggaerGenerateSupplierXmlService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateSupplierXmlServiceImpl">
+        <property name="jaggaerXmlDirectory">
+            <value>${staging.directory}/purap/jaggaer/xml/</value>
+        </property>
+        <property name="dateTimeService" ref="dateTimeService" />
+        <property name="cuMarshalService" ref="cuMarshalService" />
+        <property name="fileStorageService" ref="fileStorageService" />
+    </bean>
     
 </beans>
