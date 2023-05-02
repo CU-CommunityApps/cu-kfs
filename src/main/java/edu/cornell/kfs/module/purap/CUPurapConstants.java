@@ -488,5 +488,4 @@ public class CUPurapConstants {
         
     }
 
-    public static final String PURCHASE_ORDER_COMPONENT_CODE = "Purchase Order";
 }

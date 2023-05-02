@@ -1661,13 +1661,13 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 						KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT);
 				return mapping.findForward(KFSConstants.MAPPING_BASIC);
             } else {
-String fileSizeLimitParameterValue = getMaxPoSendToVendorFileSizeParameterValue();
-if (isAttachmentSizeExceedSqLimit(form, "add")) {
-return mapping.findForward(KFSConstants.MAPPING_BASIC);
-} else if (attachmentFile.getFileSize() > FileUtil.getBytes(fileSizeLimitParameterValue)) {
-GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
-KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT,
-attachmentFile.getFileName(), fileSizeLimitParameterValue);
+                String fileSizeLimitParameterValue = getMaxPoSendToVendorFileSizeParameterValue();
+                if (isAttachmentSizeExceedSqLimit(form, "add")) {
+                    return mapping.findForward(KFSConstants.MAPPING_BASIC);
+                } else if (attachmentFile.getFileSize() > FileUtil.getBytes(fileSizeLimitParameterValue)) {
+                    GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+                    KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT,
+                    attachmentFile.getFileName(), fileSizeLimitParameterValue);
                     return mapping.findForward(KFSConstants.MAPPING_BASIC);
 				}
 			}
