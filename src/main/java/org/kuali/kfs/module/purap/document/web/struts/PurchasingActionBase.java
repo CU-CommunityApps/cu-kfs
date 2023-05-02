@@ -1648,18 +1648,18 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     
     @Override
     public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // TODO : should use 'addnoteevent' ?
-        /*
-        * KFSPTS-794 : add rule check when adding note
-        */
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        FormFile attachmentFile = kualiDocumentFormBase.getAttachmentFile();
-        Note newNote = kualiDocumentFormBase.getNewNote();
-        if (StringUtils.equals(CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR,newNote.getNoteTopicText())) {
-            if (StringUtils.isBlank(attachmentFile.getFileName())) {
-                GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
-                KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT);
-                return mapping.findForward(KFSConstants.MAPPING_BASIC);
+       // TODO : should use 'addnoteevent' ?
+    	/*
+    	 * KFSPTS-794 : add rule check when adding note
+    	 */
+    	KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    	FormFile attachmentFile = kualiDocumentFormBase.getAttachmentFile();
+    	Note newNote = kualiDocumentFormBase.getNewNote();
+		if (StringUtils.equals(CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR,newNote.getNoteTopicText())) {
+			if (StringUtils.isBlank(attachmentFile.getFileName())) {
+				GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+						KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT);
+				return mapping.findForward(KFSConstants.MAPPING_BASIC);
             } else {
                 String fileSizeLimitParameterValue = getMaxPoSendToVendorFileSizeParameterValue();
                 if (isAttachmentSizeExceedSqLimit(form, "add")) {
@@ -1669,14 +1669,14 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                     KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT,
                     attachmentFile.getFileName(), fileSizeLimitParameterValue);
                     return mapping.findForward(KFSConstants.MAPPING_BASIC);
-                }
-            }
-        }
-        newNote.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
-
+				}
+			}
+		}
+		newNote.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
+		
         return super.insertBONote(mapping, form, request, response);
     }
-
+    
     /*
      * check if number of attachments, that are sent to SQ, is over the limit.
      * default to 10, and also use a system param to make it flexible.
