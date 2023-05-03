@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.batch.service.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.UUID;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.format.DateTimeFormat;
@@ -37,11 +35,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     private static final Logger LOG = LogManager.getLogger();
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US);
-    
+
     private static final String JAGGAER_UPLOAD_FILE_NAME = "jaggaerSupplierUploadFile_";
-    
+
     private String jaggaerXmlDirectory;
-    
+
     protected DateTimeService dateTimeService;
     protected CUMarshalService cuMarshalService;
     protected FileStorageService fileStorageService;
@@ -52,24 +50,25 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         List<Supplier> suppliers = getAllVendorsToUploadToJaggaer(processingMode, processingDate);
         return buildSupplierSyncMessageList(suppliers, maximumNumberOfSuppliersPerListItem);
     }
-    
-    private List<Supplier> getAllVendorsToUploadToJaggaer(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
-        LOG.info("getAllVendorsToUploadToJaggaer, processing mode {} and procesing date {}", processingMode.modeCode, processingDate);
+
+    private List<Supplier> getAllVendorsToUploadToJaggaer(JaggaerContractUploadProcessingMode processingMode,
+            Date processingDate) {
         List<Supplier> suppliers = new ArrayList<>();
-        
+
         /*
          * @todo fully implement this funciton in KFSPTS-28266
          * 
-         * for now just create some testing data 
+         * for now just create some testing data
          */
-        
+
         suppliers.add(buildTestSupplier("13456-0", "Acme test company", "123 main street", "321 foo lane"));
         suppliers.add(buildTestSupplier("13654-0", "foo test comapany", "789 main street", "456 foo lane"));
         suppliers.add(buildTestSupplier("13456-1", "Acme test company part 2", "951 main street", "753 foo lane"));
-        
+
+        LOG.info("getJaggaerContractsDto found {} suppliers.", suppliers.size());
         return suppliers;
     }
-    
+
     private Supplier buildTestSupplier(String erpNumber, String name, String addressLine1, String addressLine2) {
         Supplier supplier = new Supplier();
         supplier.setActive(JaggaerBuilder.buildActive(JaggaerConstants.YES));
@@ -80,15 +79,16 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         supplier.getAddressList().getAddress().add(buildTestAddress(addressLine2));
         return supplier;
     }
-    
+
     private Address buildTestAddress(String addressLine) {
         Address address = new Address();
         address.setActive(JaggaerBuilder.buildActive(JaggaerConstants.YES));
         address.setAddressLine1(JaggaerBuilder.buildAddressLine(addressLine));
         return address;
     }
-    
-    private List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers, int maximumNumberOfSuppliersPerListItem) {
+
+    private List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers,
+            int maximumNumberOfSuppliersPerListItem) {
         List<SupplierSyncMessage> messages = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(suppliers)) {
             for (List<Supplier> supplierChunk : ListUtils.partition(suppliers, maximumNumberOfSuppliersPerListItem)) {
@@ -97,35 +97,40 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 message.setHeader(buildHeader());
                 SupplierRequestMessage supplierRequest = new SupplierRequestMessage();
                 supplierRequest.getSupplier().addAll(supplierChunk);
-                
+
                 message.getSupplierRequestMessageItems().add(supplierRequest);
                 messages.add(message);
             }
         }
         return messages;
     }
-    
+
     private Header buildHeader() {
         Header header = new Header();
         header.setMessageId(UUID.randomUUID().toString());
-        header.setTimestamp(dateTimeService.getCurrentTimestamp().toLocaleString());
+        header.setTimestamp(DATE_FORMATTER.print(dateTimeService.getCurrentDate().getTime()));
         header.setAuthentication(buildAuthentication());
         return header;
     }
-    
+
+    /*
+     * @todo implement this with real values after we get credential details from
+     * Jaggaer
+     */
     private Authentication buildAuthentication() {
         Authentication auth = new Authentication();
         auth.setIdentity("CU - Identity");
         auth.setSharedSecret("CU - Share Secret");
         return auth;
     }
-    
+
     @Override
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages) {
         LOG.info("generateXMLForSyncMessages processing {} sync messages", messages.size());
         for (SupplierSyncMessage message : messages) {
-            String outputFileName = jaggaerXmlDirectory + JAGGAER_UPLOAD_FILE_NAME + 
-                    DATE_FORMATTER.print(dateTimeService.getCurrentDate().getTime()) + CUKFSConstants.XML_FILE_EXTENSION;
+            String outputFileName = jaggaerXmlDirectory + JAGGAER_UPLOAD_FILE_NAME
+                    + DATE_FORMATTER.print(dateTimeService.getCurrentDate().getTime())
+                    + CUKFSConstants.XML_FILE_EXTENSION;
             try {
                 LOG.info("generateXMLForSyncMessages, created XML file {}", outputFileName);
                 cuMarshalService.marshalObjectToXML(message, outputFileName);

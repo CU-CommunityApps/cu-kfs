@@ -340,6 +340,7 @@
     </bean>
     
     <bean id="jaggaerUploadSupplierXmlStep" class="edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep" parent="step">
+        <property name="jaggaerUploadFileService" ref="jaggaerUploadFileService" />
     </bean>
     
     <bean id="jaggaerGenerateSupplierXmlService" parent="jaggaerGenerateSupplierXmlService-parentBean"/>
@@ -350,6 +351,27 @@
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="cuMarshalService" ref="cuMarshalService" />
         <property name="fileStorageService" ref="fileStorageService" />
+    </bean>
+    
+    <bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean"/>
+    <bean id="jaggaerUploadFileService-parentBean" abstract="true" class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerUploadFileServiceImpl">
+        <property name="batchInputFileService" ref="batchInputFileService" />
+        <property name="fileStorageService" ref="fileStorageService" />
+        <property name="jaggaerUploadFileType" ref="jaggaerUploadFileType" />
+    </bean>
+    
+    <bean id="jaggaerUploadFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">
+        <property name="directoryPath" value="${staging.directory}/purap/jaggaer/xml"/>
+        <property name="fileExtension" value="xml"/>
+        <property name="fileTypeIdentifier" value="jaggaerUploadFileType"/>
+        <!-- 
+        <property name="dateTimeService" ref="dateTimeService"/>
+        <property name="cuMarshalService" ref="cuMarshalService"/>
+        <property name="titleKey" value="message.batchUpload.title.accountingXmlDocument"/>
+        <property name="fileNamePrefix" value="accountingXmlDocument_"/>
+        <property name="pojoClass" value="edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper"/>
+        <property name="listenerClass" value="edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener"/>
+         -->
     </bean>
     
 </beans>
