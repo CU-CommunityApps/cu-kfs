@@ -22,16 +22,16 @@ public class CUPurapKeyConstants {
     public static final String ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT = "errors.add.new.note.sendToVendor.noAtt";
     public static final String ERROR_EXCEED_SQ_NUMBER_OF_ATT_LIMIT = "errors.exceed.sq.number.of.att.limit";
     public static final String ERROR_REASON_IS_REQUIRED = "errors.reason.is.required";
-    public static final String ERROR_ATT_FILE_SIZE_OVER_LIMIT = "errors.att.filesize.over.limit";
-   
+    public static final String ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT = "errors.att.send.to.vendor.filesize.over.limit";
+
     public static final String ATTACHMENT_QUESTION_CONFIRM_CHANGE = "attachment.message.confirm.change";
     
     // KFSPTS-2096
     public static final String PURAP_MIX_ITEM_QTY_NONQTY = "error.purap.mix.item.itemtype.nonqty";
-    
+
   //KFSPTS-2527
     public static final String ERROR_DV_OR_REQ_ALREADY_CREATED_FROM_IWNT = "error.document.iwnt.dvOrReqAlreadyCreated";
-    
+
     // KFSUPGRADE-779
     public static final String ERROR_PAYMENTMETHODCODE_MUSTMATCHPREQ = "error.document.creditmemo.paymentmethodcode.mustmatchpreq";
     
