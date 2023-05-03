@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
@@ -65,6 +66,7 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
@@ -82,7 +84,6 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
 
 	private static final Logger LOG = LogManager.getLogger(IWantDocumentServiceImpl.class);
 
-	private static final String DOCUMENT_REFERENCE_NOTE_FORMAT = "{0} edoc {1} created";
     private static final String CMP_ADDRESS_TYPE = "CMP";
 
     
@@ -99,6 +100,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     private PersistenceService persistenceService;
     private DocumentService documentService;
     private PhoneNumberService phoneNumberService;
+    private ConfigurationService configurationService;
 
     /**
      * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#getPersonCampusAddress(java.lang.String)
@@ -826,7 +828,8 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 	@Override
     public void updateIWantDocumentWithRequisitionReference(IWantDocument iWantDocument, String reqsDocumentNumber) {
         iWantDocument.setReqsDocId(reqsDocumentNumber);
-        addDocumentReferenceNoteToIWantDocument(iWantDocument, reqsDocumentNumber, "Requisition");
+        addDocumentReferenceNoteToIWantDocument(iWantDocument, reqsDocumentNumber,
+                CUPurapKeyConstants.IWNT_NOTE_CREATE_REQS);
         purapService.saveDocumentNoValidation(iWantDocument);
     }
 
@@ -834,14 +837,18 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
     public void updateIWantDocumentWithDisbursementVoucherReference(IWantDocument iWantDocument,
             String dvDocumentNumber) {
         iWantDocument.setDvDocId(dvDocumentNumber);
-        addDocumentReferenceNoteToIWantDocument(iWantDocument, dvDocumentNumber, "Disbursement Voucher");
+        addDocumentReferenceNoteToIWantDocument(iWantDocument, dvDocumentNumber,
+                CUPurapKeyConstants.IWNT_NOTE_CREATE_DV);
         purapService.saveDocumentNoValidation(iWantDocument);
     }
 
     private void addDocumentReferenceNoteToIWantDocument(IWantDocument iWantDocument, String documentNumber,
-            String documentLabel) {
+            String messageKey) {
         try {
-            String noteText = MessageFormat.format(DOCUMENT_REFERENCE_NOTE_FORMAT, documentLabel, documentNumber);
+            Person currentUser = GlobalVariables.getUserSession().getPerson();
+            String noteFormat = configurationService.getPropertyValueAsString(messageKey);
+            String noteText = MessageFormat.format(noteFormat,
+                    documentNumber, currentUser.getName(), currentUser.getPrincipalName());
             UserSession systemUserSession = new UserSession(KFSConstants.SYSTEM_USER);
             Note documentReferenceNote = GlobalVariables.doInNewGlobalVariables(systemUserSession,
                     () -> documentService.createNoteFromDocument(iWantDocument, noteText));
@@ -1103,6 +1110,10 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 
     public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
         this.phoneNumberService = phoneNumberService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }
