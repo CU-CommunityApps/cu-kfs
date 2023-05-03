@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.purap.document.web.struts;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -85,6 +86,7 @@ import org.kuali.kfs.module.purap.document.validation.event.AttributedUpdateCams
 import org.kuali.kfs.module.purap.exception.ItemParserException;
 import org.kuali.kfs.module.purap.service.PurapAccountingService;
 import org.kuali.kfs.module.purap.util.ItemParser;
+import org.kuali.kfs.sys.FileUtil;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
@@ -130,8 +132,8 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
     private static final Logger LOG = LogManager.getLogger();
-    
-    private static final int SIZE_5MB =5242880;
+
+    private static final String DEFAULT_FILE_SIZE_15M = "15M";
 
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -1658,13 +1660,15 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 				GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
 						KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ADD_NEW_NOTE_SEND_TO_VENDOR_NO_ATT);
 				return mapping.findForward(KFSConstants.MAPPING_BASIC);
-			} else {
-				if (isAttachmentSizeExceedSqLimit(form, "add")) {
-					return mapping.findForward(KFSConstants.MAPPING_BASIC);
-				} else if (attachmentFile.getFileSize() > SIZE_5MB) {
-					GlobalVariables.getMessageMap().putError(String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
-							KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME), CUPurapKeyConstants.ERROR_ATT_FILE_SIZE_OVER_LIMIT, attachmentFile.getFileName(), "5");
-					return mapping.findForward(KFSConstants.MAPPING_BASIC);					
+            } else {
+                String fileSizeLimitParameterValue = getMaxPoSendToVendorFileSizeParameterValue();
+                if (isAttachmentSizeExceedSqLimit(form, "add")) {
+                    return mapping.findForward(KFSConstants.MAPPING_BASIC);
+                } else if (attachmentFile.getFileSize() > FileUtil.getBytes(fileSizeLimitParameterValue)) {
+                    String propertyName = String.format("%s.%s",KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME, KRADConstants.NOTE_TOPIC_TEXT_PROPERTY_NAME);
+                    GlobalVariables.getMessageMap().putError(propertyName, CUPurapKeyConstants.ERROR_ATT_SEND_TO_VENDOR_FILE_SIZE_OVER_LIMIT,
+                            attachmentFile.getFileName(), fileSizeLimitParameterValue);
+                    return mapping.findForward(KFSConstants.MAPPING_BASIC);
 				}
 			}
 		}
@@ -1697,6 +1701,14 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 			isExceed = true;
 		}
 		return isExceed;
+    }
+
+    private String getMaxPoSendToVendorFileSizeParameterValue() {
+        return getParameterService().getParameterValueAsString(
+                PurchaseOrderDocument.class,
+                CUPurapParameterConstants.MAX_FILE_SIZE_PO_SEND_TO_VENDOR,
+                DEFAULT_FILE_SIZE_15M
+        );
     }
     
     /*
