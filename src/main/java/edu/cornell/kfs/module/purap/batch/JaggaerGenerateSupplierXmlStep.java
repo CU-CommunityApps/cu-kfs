@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.batch;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -7,11 +8,15 @@ import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.coreservice.impl.parameter.Parameter;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
+import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateContractPartyCsvService;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     private static final Logger LOG = LogManager.getLogger();
@@ -21,8 +26,8 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     
     @Override
     public boolean execute(String jobName, java.util.Date jobRunDate) throws InterruptedException {
-        JaggaerContractUploadProcessingMode processingMode = findProcessingMode();
-        java.sql.Date processingDate = findProcessingDate();
+        JaggaerContractUploadProcessingMode processingMode = findJaggaerContractUploadProcessingMode();
+        java.sql.Date processingDate = findProcessingDate(processingMode);
         int maximumNumberOfSuppliersPerListItem = findMaximumNumberOfSuppliersPerListItem();
         LOG.info("execute, processing mode {} and procesing date {}, maximumNumberOfSuppliersPerListItem {}", processingMode.modeCode, processingDate, maximumNumberOfSuppliersPerListItem);
         List<SupplierSyncMessage> messages = jaggaerGenerateSupplierXmlService.getJaggaerContractsDto(processingMode, processingDate, maximumNumberOfSuppliersPerListItem);
@@ -30,19 +35,56 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
         return true;
     }
     
-    private JaggaerContractUploadProcessingMode findProcessingMode() {
-        return JaggaerContractUploadProcessingMode.PO;
+    protected JaggaerContractUploadProcessingMode findJaggaerContractUploadProcessingMode() {
+        String processingMode = getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_PROCESSING_MODE);
+        return JaggaerContractUploadProcessingMode.findJaggaerContractUploadProcessingModeByModeCode(processingMode);
     }
     
-    private java.sql.Date findProcessingDate() {
-        java.sql.Date processingDate = new java.sql.Date(Calendar.getInstance(Locale.US).getTimeInMillis());
-        return processingDate;
+    protected java.sql.Date findProcessingDate(JaggaerContractUploadProcessingMode processingMode) {
+        String dateString;
+        if(processingMode == JaggaerContractUploadProcessingMode.PO) {
+            dateString = findPODate();
+        } else if (processingMode == JaggaerContractUploadProcessingMode.VENDOR) {
+            dateString = findVendorDate();
+        } else {
+            throw new IllegalArgumentException("Unknown processing mode: " + processingMode);
+        }
+        java.sql.Date processDate;
+        try {
+            processDate = dateTimeService.convertToSqlDate(dateString);
+        } catch (ParseException e) {
+            LOG.error("Unable to convert " + dateString + " to Date object.", e);
+            throw new RuntimeException(e);
+        }
+        return processDate;
+        
     }
     
-    private int findMaximumNumberOfSuppliersPerListItem() {
-        return 2;
+    protected String findPODate() {
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_PO_DATE);
     }
-
+    
+    protected String findVendorDate() {
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
+    }
+    
+    protected int findMaximumNumberOfSuppliersPerListItem() {
+        String maxString = getParameterValueString(CUPurapParameterConstants.JAGGAER_MAX_NUMBER_OF_VENDORS_PER_XML_FILE);
+        return Integer.parseInt(maxString);
+    }
+    
+    protected String getParameterValueString(String parameterName) {
+        return parameterService.getParameterValueAsString(this.getClass(), parameterName);
+    }
+    
+    protected void updateVendorProcessingDate() {
+        String newDateString = dateTimeService.toString(dateTimeService.getCurrentDate(), CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
+        LOG.info("updateVendorProcessingDate, setting JAGGAER_UPLOAD_VENDOR_DATE to " + newDateString);
+        Parameter vendorDateParm = parameterService.getParameter(this.getClass(), CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
+        vendorDateParm.setValue(newDateString);
+        parameterService.updateParameter(vendorDateParm);
+    }
+    
     public void setJaggaerGenerateSupplierXmlService(JaggaerGenerateSupplierXmlService jaggaerGenerateSupplierXmlService) {
         this.jaggaerGenerateSupplierXmlService = jaggaerGenerateSupplierXmlService;
     }
