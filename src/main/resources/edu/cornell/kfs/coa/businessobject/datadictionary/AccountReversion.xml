@@ -24,6 +24,11 @@
                 <ref bean="AccountReversion-accountReversionViewer"/>
             </list>
         </property>
+        <property name="actions">
+            <list merge="true">
+                <value type="org.kuali.kfs.datadictionary.ActionType">VIEW</value>
+            </list>
+        </property>
         <property name="attributes">
             <list>
                 <ref bean="AccountReversion-accountReversionViewer"/>
@@ -54,6 +59,7 @@
     <bean id="AccountReversion-accountReversionViewer" parent="AccountReversion-accountReversionViewer-parentBean"/>
     <bean id="AccountReversion-accountReversionViewer-parentBean" abstract="true" parent="AttributeDefinition"
           p:name="accountReversionViewer"
+          p:forceUppercase="false"
           p:label="View"
           p:shortLabel="View"
           p:maxLength="100"
@@ -377,7 +383,6 @@
         </property>
         <property name="displayAttributeDefinitions">
             <list>
-                <ref bean="AccountReversion-accountReversionViewer"/>
                 <ref bean="AccountReversion-universityFiscalYear"/>
                 <ref bean="AccountReversion-chartOfAccountsCode"/>
                 <ref bean="AccountReversion-accountNumber"/>
