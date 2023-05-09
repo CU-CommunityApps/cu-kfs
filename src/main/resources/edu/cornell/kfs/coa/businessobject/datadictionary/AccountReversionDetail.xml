@@ -26,13 +26,15 @@
                 <ref bean="AccountReversionDetail-reversionCategory.reversionCategoryName"/>
                 <ref bean="AccountReversionDetail-universityFiscalYear"/>
                 <ref bean="AccountReversionDetail-chartOfAccountsCode"/>
-                <ref bean="AccountReversionDetail-reversionObject.financialObjectCodeName"/>
+                <ref bean="AccountReversionDetail-accountNumber"/>
                 <ref bean="AccountReversionDetail-accountReversionObjectCode"/>
+                <ref bean="AccountReversionDetail-reversionObject.financialObjectCodeName"/>
                 <ref bean="AccountReversionDetail-accountReversionCode"/>
                 <ref bean="AccountReversionDetail-active"/>
                 <ref bean="AccountReversionDetail-newCollectionRecord"/>
             </list>
         </property>
+
     </bean>
 
     <!-- Attribute Definitions -->

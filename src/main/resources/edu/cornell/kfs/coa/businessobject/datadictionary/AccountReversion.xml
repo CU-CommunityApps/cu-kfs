@@ -34,10 +34,13 @@
                 <ref bean="AccountReversion-accountReversionViewer"/>
                 <ref bean="AccountReversion-universityFiscalYear"/>
                 <ref bean="AccountReversion-chartOfAccountsCode"/>
+                <ref bean="AccountReversion-chartOfAccounts.finChartOfAccountDescription"/>
                 <ref bean="AccountReversion-accountNumber"/>
                 <ref bean="AccountReversion-budgetReversionChartOfAccountsCode"/>
+                <ref bean="AccountReversion-budgetReversionChartOfAccounts.finChartOfAccountDescription"/>
                 <ref bean="AccountReversion-budgetReversionAccountNumber"/>
                 <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode"/>
+                <ref bean="AccountReversion-cashReversionFinancialChartOfAccounts.finChartOfAccountDescription"/>
                 <ref bean="AccountReversion-cashReversionAccountNumber"/>
                 <ref bean="AccountReversion-carryForwardByObjectCodeIndicator"/>
                 <ref bean="AccountReversion-active"/>
@@ -48,7 +51,8 @@
                 <bean parent="CollectionDefinition"
                       p:name="accountReversionDetails"
                       p:label="Account Reversion Details"
-                      p:shortLabel="Account Reversion Details"/>
+                      p:shortLabel="Account Reversion Details"
+                      p:elementLabel="Account Reversion Detail"/>
             </list>
         </property>
     </bean>

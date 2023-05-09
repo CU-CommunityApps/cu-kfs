@@ -32,10 +32,10 @@
           p:title="Edit Reversion Category">
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="reversionCategoryCode" p:required="true" p:newLookup="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="reversionCategoryName" p:required="true" p:newLookup="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="reversionSortCode" p:required="true" p:newLookup="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true" p:required="true" p:newLookup="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="reversionCategoryCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="reversionCategoryName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="reversionSortCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true" p:required="true"/>
             </list>
         </property>
     </bean>
