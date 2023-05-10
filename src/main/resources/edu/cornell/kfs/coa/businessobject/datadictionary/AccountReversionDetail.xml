@@ -98,35 +98,4 @@
 
     <bean id="AccountReversionDetail-newCollectionRecord" parent="GenericAttributes-newCollectionRecord"/>
 
-
-    <!-- Field Definitions -->
-
-    <bean id="AccountReversionDetail-accountReversionCategoryCode-fieldDefinition" 
-          parent="AccountReversionDetail-accountReversionCategoryCode-fieldDefinition-parentBean"/>
-    <bean id="AccountReversionDetail-accountReversionCategoryCode-fieldDefinition-parentBean"
-          abstract="true"
-          parent="FieldDefinition"
-          p:attributeName="accountReversionCategoryCode"/>
-
-    <bean id="AccountReversionDetail-accountReversionObjectCode-fieldDefinition" 
-          parent="AccountReversionDetail-accountReversionObjectCode-fieldDefinition-parentBean"/>
-    <bean id="AccountReversionDetail-accountReversionObjectCode-fieldDefinition-parentBean"
-          abstract="true"
-          parent="FieldDefinition"
-          p:attributeName="accountReversionObjectCode"/>
-
-    <bean id="AccountReversionDetail-reversionObject.financialObjectCodeName-fieldDefinition" 
-          parent="AccountReversionDetail-reversionObject.financialObjectCodeName-fieldDefinition-parentBean"/>
-    <bean id="AccountReversionDetail-reversionObject.financialObjectCodeName-fieldDefinition-parentBean"
-          abstract="true"
-          parent="FieldDefinition"
-          p:attributeName="reversionObject.financialObjectCodeName"/>
-
-    <bean id="AccountReversionDetail-accountReversionCode-fieldDefinition" 
-          parent="AccountReversionDetail-accountReversionCode-fieldDefinition-parentBean"/>
-    <bean id="AccountReversionDetail-accountReversionCode-fieldDefinition-parentBean"
-          abstract="true"
-          parent="FieldDefinition"
-          p:attributeName="accountReversionCode"/>
-          
 </beans>

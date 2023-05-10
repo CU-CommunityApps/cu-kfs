@@ -155,72 +155,6 @@
     </bean>
 
 
-    <!-- Field Definitions -->
-
-    <bean id="AccountReversion-universityFiscalYear-fieldDefinition" 
-          parent="AccountReversion-universityFiscalYear-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-universityFiscalYear-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="universityFiscalYear"/>
-
-    <bean id="AccountReversion-chartOfAccountsCode-fieldDefinition" 
-          parent="AccountReversion-chartOfAccountsCode-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-chartOfAccountsCode-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="chartOfAccountsCode"/>
-
-    <bean id="AccountReversion-accountNumber-fieldDefinition" 
-          parent="AccountReversion-accountNumber-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-accountNumber-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="accountNumber"/>
-
-    <bean id="AccountReversion-budgetReversionChartOfAccountsCode-fieldDefinition" 
-          parent="AccountReversion-budgetReversionChartOfAccountsCode-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-budgetReversionChartOfAccountsCode-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="budgetReversionChartOfAccountsCode"/>
-
-    <bean id="AccountReversion-budgetReversionAccountNumber-fieldDefinition" 
-          parent="AccountReversion-budgetReversionAccountNumber-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-budgetReversionAccountNumber-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="budgetReversionAccountNumber"/>
-
-    <bean id="AccountReversion-cashReversionFinancialChartOfAccountsCode-fieldDefinition" 
-          parent="AccountReversion-cashReversionFinancialChartOfAccountsCode-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-cashReversionFinancialChartOfAccountsCode-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="cashReversionFinancialChartOfAccountsCode"/>
-
-    <bean id="AccountReversion-cashReversionAccountNumber-fieldDefinition" 
-          parent="AccountReversion-cashReversionAccountNumber-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-cashReversionAccountNumber-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="cashReversionAccountNumber"/>
-
-    <bean id="AccountReversion-carryForwardByObjectCodeIndicator-fieldDefinition" 
-          parent="AccountReversion-carryForwardByObjectCodeIndicator-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-carryForwardByObjectCodeIndicator-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="carryForwardByObjectCodeIndicator"/>
-
-    <bean id="AccountReversion-active-fieldDefinition" 
-          parent="AccountReversion-active-fieldDefinition-parentBean"/>
-    <bean id="AccountReversion-active-fieldDefinition-parentBean" 
-          parent="FieldDefinition"
-          abstract="true"
-          p:attributeName="active"/>
-
-
     <!-- Business Object Inquiry Definition -->
 
     <bean id="AccountReversion-inquiryDefinition" parent="AccountReversion-inquiryDefinition-parentBean"/>
@@ -250,15 +184,15 @@
           p:title="Account Reversion">
         <property name="inquiryFields">
             <list>
-                <ref bean="AccountReversion-universityFiscalYear-fieldDefinition"/>
-                <ref bean="AccountReversion-chartOfAccountsCode-fieldDefinition"/> 
-                <ref bean="AccountReversion-accountNumber-fieldDefinition"/>
-                <ref bean="AccountReversion-budgetReversionChartOfAccountsCode-fieldDefinition"/>
-                <ref bean="AccountReversion-budgetReversionAccountNumber-fieldDefinition"/>
-                <ref bean="AccountReversion-cashReversionFinancialChartOfAccountsCode-fieldDefinition"/>
-                <ref bean="AccountReversion-cashReversionAccountNumber-fieldDefinition"/>
-                <ref bean="AccountReversion-carryForwardByObjectCodeIndicator-fieldDefinition"/>
-                <ref bean="AccountReversion-active-fieldDefinition"/>
+                <bean parent="FieldDefinition" p:attributeName="universityFiscalYear"/>
+                <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+                <bean parent="FieldDefinition" p:attributeName="accountNumber"/>
+                <bean parent="FieldDefinition" p:attributeName="budgetReversionChartOfAccountsCode"/>
+                <bean parent="FieldDefinition" p:attributeName="budgetReversionAccountNumber"/>
+                <bean parent="FieldDefinition" p:attributeName="cashReversionFinancialChartOfAccountsCode"/>
+                <bean parent="FieldDefinition" p:attributeName="cashReversionAccountNumber"/>
+                <bean parent="FieldDefinition" p:attributeName="carryForwardByObjectCodeIndicator"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
     </bean>
@@ -287,10 +221,10 @@
           p:summaryTitle="">
         <property name="inquiryFields">
             <list>
-                <ref bean="AccountReversionDetail-accountReversionCategoryCode-fieldDefinition"/>
-                <ref bean="AccountReversionDetail-accountReversionObjectCode-fieldDefinition"/>
-                <ref bean="AccountReversionDetail-reversionObject.financialObjectCodeName-fieldDefinition"/>
-                <ref bean="AccountReversionDetail-accountReversionCode-fieldDefinition"/>
+                <bean parent="FieldDefinition" p:attributeName="accountReversionCategoryCode"/>
+                <bean parent="FieldDefinition" p:attributeName="accountReversionObjectCode"/>
+                <bean parent="FieldDefinition" p:attributeName="reversionObject.financialObjectCodeName"/>
+                <bean parent="FieldDefinition" p:attributeName="accountReversionCode"/>
             </list>
         </property>
     </bean>
