@@ -19,6 +19,7 @@
 package org.kuali.kfs.kns.kim.type;
 
 import org.apache.commons.beanutils.PropertyUtils;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +74,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+/*
+ * Cornell Modification: Changes for KFSPTS-27121 
+ */
 
 /**
  * A base class for {@code KimTypeService} implementations which read attribute-related information from the Data
@@ -480,16 +485,14 @@ public class DataDictionaryTypeServiceBase implements KimTypeService {
             //the fromAmount and toAmount role qualifier values entered by the users for money amount comparisons have
             //been validated by the system and only contain numerals or a period that can be converted to a KualiDecimal
             //value during downstream processing. This check will present an error on the Person document when the user
-            //attempts to "Add" an invalid from or to amount role qualifer.
+            //attempts to "Add" an invalid from or to amount role qualifier.
             if (errors.isEmpty() && StringUtils.isNotBlank(attributeName) && StringUtils.isNotBlank(attributeValue)
-                    && (StringUtils.equals(attributeName, KimAttributes.FROM_AMOUNT) 
-                            || StringUtils.equals(attributeName, KimAttributes.TO_AMOUNT))) {
+                    && StringUtils.equalsAny(attributeName, KimAttributes.FROM_AMOUNT, KimAttributes.TO_AMOUNT)) {
                 try {
                     KualiDecimal moneyAmount = new KualiDecimal(attributeValue);
-                }
-                catch (NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
                     errors.add(AttributeError.Builder.create(errorKey, DataDictionaryTypeServiceHelper
-                            .createErrorString(KFSKeyConstants.ERROR_CURRENCY, errorLabel, attributeValue.toString())).build());
+                            .createErrorString(KFSKeyConstants.ERROR_CURRENCY, errorLabel)).build());
                 }
             }
             //Cornell Modification: KFSPTS-27121 End
