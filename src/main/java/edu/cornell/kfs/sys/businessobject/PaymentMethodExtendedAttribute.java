@@ -1,4 +1,4 @@
-package org.kuali.kfs.sys.businessobject;
+package edu.cornell.kfs.sys.businessobject;
 
 import java.util.ArrayList;
 import java.util.List;
