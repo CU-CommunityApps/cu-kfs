@@ -13,7 +13,7 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
@@ -34,7 +34,7 @@ public class PaymentRequestWireTransferValidation extends GenericValidation  {
         PaymentRequestDocument document = (PaymentRequestDocument) accountingDocumentForValidation;
         PaymentRequestWireTransfer wireTransfer = ((CuPaymentRequestDocument)document).getPreqWireTransfer();
 
-        if (!PaymentMethod.PM_CODE_WIRE.equals(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
+        if (!KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equals(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
             return isValid;
         }
 

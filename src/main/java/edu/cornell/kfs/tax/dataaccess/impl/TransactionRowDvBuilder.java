@@ -1,6 +1,6 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.kew.routeheader.service.CuRouteHeaderService;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
@@ -355,7 +355,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
 
     private boolean isPaymentCodeWireOrForeignDraft(String paymentMethodCode) {
         return ObjectUtils.isNotNull(paymentMethodCode) &&
-                (paymentMethodCode.equals(PaymentMethod.PM_CODE_WIRE) || paymentMethodCode.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT));
+                (paymentMethodCode.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE) || paymentMethodCode.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT));
     }
 
     @Override

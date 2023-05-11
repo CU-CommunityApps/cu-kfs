@@ -222,4 +222,8 @@ public class CUKFSConstants {
     public static final boolean MAPPING_INACTIVE = false;
     public static final String ISO = "ISO";
     public static final String FIPS = "FIPS";
+    
+    public class CuPaymentSourceConstants{
+        public static final String PAYMENT_METHOD_INTERNAL_BILLING = "B";
+    }
 }
