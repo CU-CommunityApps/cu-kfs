@@ -30,7 +30,6 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -279,8 +278,8 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         iWantDocumentService.setUpDVDetailsFromIWantDoc(iWantDocument, disbursementVoucherDocument, disbursementVoucherForm);
         
         // Set the DV doc ID reference on the IWantDocument.
-        iWantDocument.setDvDocId(disbursementVoucherDocument.getDocumentNumber()); 
-        SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
+        iWantDocumentService.updateIWantDocumentWithDisbursementVoucherReference(
+                iWantDocument, disbursementVoucherDocument.getDocumentNumber());
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
