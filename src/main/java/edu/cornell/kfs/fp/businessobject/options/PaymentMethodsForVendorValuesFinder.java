@@ -18,6 +18,8 @@ package edu.cornell.kfs.fp.businessobject.options;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.kuali.kfs.sys.businessobject.options.PaymentMethodValuesFinderBase;
+
 import edu.cornell.kfs.fp.CuFPConstants;
 
 /**
@@ -28,14 +30,10 @@ import edu.cornell.kfs.fp.CuFPConstants;
  * @author jonathan
  * @see org.kuali.kfs.fp.businessobject.options.PaymentMethodValuesFinder
  */
-public class PaymentMethodsForVendorValuesFinder extends PaymentMethodValuesFinder {
-    static private Map<String,String> filterCriteria = new HashMap<String, String>();
-    static {
-        filterCriteria.put(CuFPConstants.ACTIVE, CuFPConstants.YES);
-        filterCriteria.put(CuFPConstants.DISPLAY_ON_VENDOR_DOCUMENT, CuFPConstants.YES);
-    }
-    
-    protected Map<String,String> getFilterCriteria() {
-        return filterCriteria;
-    }    
+public class PaymentMethodsForVendorValuesFinder extends PaymentMethodValuesFinderBase {
+    private static final String DISPLAY_ON_VENDOR_DOCUMENT = "displayOnVendorDocument";
+
+    public PaymentMethodsForVendorValuesFinder() {
+        super(DISPLAY_ON_VENDOR_DOCUMENT);
+    }  
 }

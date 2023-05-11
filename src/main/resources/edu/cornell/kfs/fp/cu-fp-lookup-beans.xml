@@ -25,10 +25,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">                      
 
-    <bean id="paymentMethodValuesFinder"
-          class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodValuesFinder"
-          p:businessObjectService-ref="grl.businessObjectService"/>
-
     <bean id="paymentMethodsForDVValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForDVValuesFinder"
           p:businessObjectService-ref="grl.businessObjectService"/>
