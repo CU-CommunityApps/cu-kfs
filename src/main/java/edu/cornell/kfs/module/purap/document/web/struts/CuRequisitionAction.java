@@ -30,7 +30,6 @@ import org.kuali.kfs.module.purap.businessobject.RequisitionItem;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.module.purap.document.PurchasingDocumentBase;
 import org.kuali.kfs.module.purap.document.RequisitionDocument;
-import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.validation.event.AttributedAddPurchasingAccountsPayableItemEvent;
 import org.kuali.kfs.module.purap.document.web.struts.PurchasingFormBase;
 import org.kuali.kfs.module.purap.document.web.struts.RequisitionAction;
@@ -201,8 +200,8 @@ public class CuRequisitionAction extends RequisitionAction {
         iWantDocumentService.setUpRequisitionDetailsFromIWantDoc(iWantDocument, requisitionDocument, requisitionForm);
 
         // Set the requisition doc ID reference on the IWantDocument.
-        iWantDocument.setReqsDocId(requisitionDocument.getDocumentNumber());
-        SpringContext.getBean(PurapService.class).saveDocumentNoValidation(iWantDocument);
+        iWantDocumentService.updateIWantDocumentWithRequisitionReference(
+                iWantDocument, requisitionDocument.getDocumentNumber());
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }

@@ -37,4 +37,7 @@ public class CUPurapKeyConstants {
     
     public static final String ERROR_REJECT_INVOICE_PO_VENDOR_MISMATCH = "errors.reject.invoice.po.vendor.mismatch";
 
+    public static final String IWNT_NOTE_CREATE_DV = "iwnt.note.create.dv";
+    public static final String IWNT_NOTE_CREATE_REQS = "iwnt.note.create.reqs";
+
 }

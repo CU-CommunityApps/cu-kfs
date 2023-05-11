@@ -134,6 +134,9 @@
 		<property name="phoneNumberService">
 			<ref bean="phoneNumberService" />
 		</property>
+		<property name="configurationService">
+			<ref bean="configurationService" />
+		</property>
 	</bean>
 	
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl"/>

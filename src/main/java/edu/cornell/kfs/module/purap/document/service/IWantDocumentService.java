@@ -102,7 +102,11 @@ public interface IWantDocumentService {
           */
     public boolean isDVgeneratedByIWantDoc(String dvID);
        // end KFSPTS-2527
-    
+
+    void updateIWantDocumentWithRequisitionReference(IWantDocument iWantDocument, String reqsDocumentNumber);
+
+    void updateIWantDocumentWithDisbursementVoucherReference(IWantDocument iWantDocument, String dvDocumentNumber);
+
     /**
      * Generates and sets the IWantDocument description based on the field values on the document.
      * 
