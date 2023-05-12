@@ -264,8 +264,13 @@
 	<property name="name" value="defaultB2BPaymentMethodCode" />
 	<property name="label" value="Default Payment Method" />
 	<property name="shortLabel" value="Dflt Pmt Mthd" />
-	<property name="control" ref="PaymentMethodsForVendorSelectControl" />
+	<property name="control">
+            <bean parent="SelectControlDefinition"
+                  p:valuesFinder-ref="vendorPaymentMethodValuesFinder"
+                  p:includeKeyInLabel="false"/>
+    </property>
   </bean>
+  
 
   <!-- KFSPTS-3918 -->
   <bean id="VendorDetailExtension-procurementMethods" parent="VendorDetailExtension-procurementMethods-parentBean" />
@@ -308,5 +313,9 @@
 
   <bean id="cuProcurementMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
+        
+  <bean id="vendorPaymentMethodValuesFinder"
+          class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder"
+          p:keyValuesService-ref="grl.keyValuesService"/>
           
 </beans>

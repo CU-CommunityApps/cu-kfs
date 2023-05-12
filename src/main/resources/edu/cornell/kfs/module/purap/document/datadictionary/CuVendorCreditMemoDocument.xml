@@ -15,17 +15,6 @@
    </bean>
    
     <!-- Attribute Definitions -->
-
-  <!-- KFSPTS-1891 -->
-  <bean id="VendorCreditMemoDocument-paymentMethodCode" parent="VendorCreditMemoDocument-paymentMethodCode-parentBean"/>
-
-  <bean id="VendorCreditMemoDocument-paymentMethodCode-parentBean" abstract="true" parent="PaymentMethod-paymentMethodCode">
-    <property name="name" value="paymentMethodCode"/>
-    <!-- probably a values finder -->
-    <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinder-ref="paymentMethodValuesFinder" p:includeKeyInLabel="false"/>
-    </property>
-  </bean>
   
   <bean id="VendorCreditMemoDocument-bankCode" parent="VendorCreditMemoDocument-bankCode-parentBean">
       <property name="required" value="false"/>

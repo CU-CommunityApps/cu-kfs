@@ -228,9 +228,6 @@
                 </property>
                 <property name="insertAfter">
                     <list>
-                       <bean parent="MaintainableFieldDefinition" p:name="extrnlFinEncumSufficntFndIndicator" />
-                       <bean parent="MaintainableFieldDefinition" p:name="intrnlFinEncumSufficntFndIndicator" />
-                       <bean parent="MaintainableFieldDefinition" p:name="finPreencumSufficientFundIndicator" />
                        <bean parent="MaintainableFieldDefinition" p:name="financialObjectivePrsctrlIndicator" />
                     </list>
                 </property>

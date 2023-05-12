@@ -1300,15 +1300,6 @@
 		<field-descriptor name="pendingAcctSufficientFundsIndicator"
 			column="ACCT_PND_SF_CD" jdbc-type="VARCHAR"
 			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-		<field-descriptor name="extrnlFinEncumSufficntFndIndicator"
-			column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-		<field-descriptor name="intrnlFinEncumSufficntFndIndicator"
-			column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-		<field-descriptor name="finPreencumSufficientFundIndicator"
-			column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR"
-			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 		<field-descriptor name="financialObjectivePrsctrlIndicator"
 			column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR"
 			conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
@@ -1605,9 +1596,6 @@
 	    <field-descriptor name="budgetRecordingLevelCode" column="BDGT_REC_LVL_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountSufficientFundsCode" column="ACCT_SF_CD" jdbc-type="VARCHAR" />
 	    <field-descriptor name="pendingAcctSufficientFundsIndicator" column="ACCT_PND_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="extrnlFinEncumSufficntFndIndicator" column="FIN_EXT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="intrnlFinEncumSufficntFndIndicator" column="FIN_INT_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-	    <field-descriptor name="finPreencumSufficientFundIndicator" column="FIN_PRE_ENC_SF_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	    <field-descriptor name="financialObjectivePrsctrlIndicator" column="FIN_OBJ_PRSCTRL_CD" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
 	    <field-descriptor name="accountCfdaNumber" column="CG_CFDA_NBR" jdbc-type="VARCHAR" />
 	    <field-descriptor name="accountOffCampusIndicator" column="ACCT_OFF_CMP_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
