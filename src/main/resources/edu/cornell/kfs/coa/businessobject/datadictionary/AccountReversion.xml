@@ -6,7 +6,6 @@
 
     <import resource="classpath:org/kuali/kfs/sys/sys-lookup-beans.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-sys-attribute-beans.xml"/>
-    <import resource="classpath:edu/cornell/kfs/coa/businessobject/datadictionary/AccountReversionDetail.xml"/>
 
     <bean id="AccountReversion" parent="AccountReversion-parentBean"/>
     <bean id="AccountReversion-parentBean" abstract="true" parent="BusinessObjectEntry"

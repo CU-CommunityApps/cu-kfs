@@ -16,8 +16,6 @@ public class AccountReversion extends Reversion implements MutableInactivatable,
     private List<Account> accounts; // This is only used by the "global" document
     private List<AccountReversionDetail> accountReversionDetails;
     
-    private String accountReversionViewer;
-    
     /**
      * Default constructor.
      */
@@ -88,12 +86,15 @@ public class AccountReversion extends Reversion implements MutableInactivatable,
         
         return accountNumber;
     }
-
+    
+    /**
+     * This method (a hack by any other name...) returns a string so that an Account Reversion can have a link to
+     * view its own inquiry page after a look up
+     *
+     * @return the String "View Account Reversion"
+     */
     public String getAccountReversionViewer() {
-        return accountReversionViewer;
+        return "View Account Reversion";
     }
 
-    public void setAccountReversionViewer(String accountReversionViewer) {
-        this.accountReversionViewer = accountReversionViewer;
-    }
 }
