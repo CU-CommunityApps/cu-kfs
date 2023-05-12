@@ -353,7 +353,7 @@
         jdbc-type="VARCHAR" index="true" />
       <field-descriptor name="versionNumber" column="VER_NBR"
         jdbc-type="BIGINT" locking="true" />
-      <field-descriptor name="paymentMethodCode" column="SUB_FUND_GRP_CD"
+      <field-descriptor name="paymentMethodCode" column="PMT_MTHD_CD"
         jdbc-type="VARCHAR" primarykey="true" index="true" />
       <field-descriptor name="assessedFees" column="FEE_IND" 
         jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
