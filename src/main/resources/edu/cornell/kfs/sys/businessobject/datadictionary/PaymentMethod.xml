@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="PaymentMethod" parent="PaymentMethod-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="PaymentMethod-extension-assessedFees"/>
+                <ref bean="PaymentMethod-extension-processedUsingPdp"/>
+                <ref bean="PaymentMethod-extension-displayOnVendorDocument"/>
+                <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentMethod-extension-assessedFees" parent="PaymentMethod-extension-assessedFees-parentBean"/>
+    <bean id="PaymentMethod-extension-assessedFees-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-assessedFees"
+            p:name="extension.assessedFees"/>
+            
+    <bean id="PaymentMethod-extension-processedUsingPdp" parent="PaymentMethod-extension-processedUsingPdp-parentBean"/>
+    <bean id="PaymentMethod-extension-processedUsingPdp-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-processedUsingPdp"
+            p:name="extension.processedUsingPdp"/>
+            
+    <bean id="PaymentMethod-extension-displayOnVendorDocument" parent="PaymentMethod-extension-displayOnVendorDocument-parentBean"/>
+    <bean id="PaymentMethod-extension-displayOnVendorDocument-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-displayOnVendorDocument"
+            p:name="extension.displayOnVendorDocument"/>
+            
+    <bean id="PaymentMethod-extension-displayOnRecurringDVDocument" parent="PaymentMethod-extension-displayOnRecurringDVDocument-parentBean"/>
+    <bean id="PaymentMethod-extension-displayOnRecurringDVDocument-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"
+            p:name="extension.displayOnRecurringDVDocument"/>
+
+    <bean id="PaymentMethod-sectionDefinition"
+            parent="PaymentMethod-sectionDefinition-parentBean">
+        <property name="fields">
+            <list merge="true">
+                <ref bean="PaymentMethod-extension-assessedFees"/>
+                <ref bean="PaymentMethod-extension-processedUsingPdp"/>
+                <ref bean="PaymentMethod-extension-displayOnVendorDocument"/>
+                <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

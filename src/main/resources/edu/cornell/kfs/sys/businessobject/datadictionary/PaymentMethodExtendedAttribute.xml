@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="PaymentMethodExtendedAttribute" parent="PaymentMethodExtendedAttribute-parentBean"/>
+ 
+    <bean id="PaymentMethodExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"
+            p:businessObjectClass="edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute"
+            p:objectLabel="Payment Method Extended Attribute">
+        <property name="attributes">
+            <list>
+                <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
+                <ref bean="PaymentMethodExtendedAttribute-assessedFees"/>
+                <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentMethodExtendedAttribute-paymentMethodCode" 
+          parent="PaymentMethodExtendedAttribute-paymentMethodCode-parentBean"/>
+    <bean id="PaymentMethodExtendedAttribute-paymentMethodCode-parentBean" 
+          abstract="true" 
+          parent="PaymentMethod-paymentMethodCode"/>
+
+    <bean id="PaymentMethodExtendedAttribute-assessedFees" 
+          parent="PaymentMethodExtendedAttribute-assessedFees-parentBean"/>
+    <bean id="PaymentMethodExtendedAttribute-assessedFees-parentBean"
+          abstract="true" 
+          parent="GenericAttributes-genericBoolean"
+          p:name="assessedFees"
+          p:label="Fee Indicator"
+          p:shortLabel="FeeInd"
+    />
+
+    <bean id="PaymentMethodExtendedAttribute-processedUsingPdp" 
+          parent="PaymentMethodExtendedAttribute-processedUsingPdp-parentBean"/>
+    <bean id="PaymentMethodExtendedAttribute-processedUsingPdp-parentBean"
+          abstract="true" 
+          parent="GenericAttributes-genericBoolean"
+          p:name="processedUsingPdp"
+          p:label="PDP Indicator"
+          p:shortLabel="PDPInd"
+    />
+    
+    <bean id="PaymentMethodExtendedAttribute-displayOnVendorDocument" 
+          parent="PaymentMethodExtendedAttribute-displayOnVendorDocument-parentBean"/>
+    <bean id="PaymentMethodExtendedAttribute-displayOnVendorDocument-parentBean"
+          abstract="true" 
+          parent="GenericAttributes-genericBoolean"
+          p:name="displayOnVendorDocument"
+          p:label="Display on Vendor Doc?"
+          p:shortLabel="Vendor Doc?"
+    />
+    
+    <bean id="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument" 
+          parent="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument-parentBean"/>
+    <bean id="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument-parentBean"
+          abstract="true" 
+          parent="GenericAttributes-genericBoolean"
+          p:name="displayOnRecurringDVDocument"
+          p:label="Display on Recurring DV?"
+          p:shortLabel="On Recurring DV?"
+    />
+
+</beans>
