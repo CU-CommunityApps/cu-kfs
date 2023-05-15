@@ -48,6 +48,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     public List<SupplierSyncMessage> getJaggaerContractsDto(JaggaerContractUploadProcessingMode processingMode,
             Date processingDate, int maximumNumberOfSuppliersPerListItem) {
         List<Supplier> suppliers = getAllVendorsToUploadToJaggaer(processingMode, processingDate);
+        LOG.info("getJaggaerContractsDto found {} suppliers.", suppliers.size());
         return buildSupplierSyncMessageList(suppliers, maximumNumberOfSuppliersPerListItem);
     }
 
@@ -56,7 +57,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         List<Supplier> suppliers = new ArrayList<>();
 
         /*
-         * @todo fully implement this funciton in KFSPTS-28266
+         * @todo fully implement this function in KFSPTS-28266
          * 
          * for now just create some testing data
          */
@@ -65,7 +66,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         suppliers.add(buildTestSupplier("13654-0", "foo test comapany", "789 main street", "456 foo lane"));
         suppliers.add(buildTestSupplier("13456-1", "Acme test company part 2", "951 main street", "753 foo lane"));
 
-        LOG.info("getJaggaerContractsDto found {} suppliers.", suppliers.size());
         return suppliers;
     }
 
@@ -87,7 +87,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return address;
     }
 
-    private List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers,
+    protected List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers,
             int maximumNumberOfSuppliersPerListItem) {
         List<SupplierSyncMessage> messages = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(suppliers)) {
@@ -102,6 +102,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 messages.add(message);
             }
         }
+        LOG.info("buildSupplierSyncMessageList, found {} suppliers, and returning {} SupplierSyncMessages", suppliers.size(), messages.size());
         return messages;
     }
 
@@ -115,7 +116,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     /*
      * @todo implement this with real values after we get credential details from
-     * Jaggaer
+     * Jaggaer on KFSPTS-28268 if not sooner in the project
      */
     private Authentication buildAuthentication() {
         Authentication auth = new Authentication();
@@ -126,7 +127,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     @Override
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages) {
-        LOG.info("generateXMLForSyncMessages processing {} sync messages", messages.size());
         for (SupplierSyncMessage message : messages) {
             String outputFileName = jaggaerXmlDirectory + JAGGAER_UPLOAD_FILE_NAME
                     + DATE_FORMATTER.print(dateTimeService.getCurrentDate().getTime())
