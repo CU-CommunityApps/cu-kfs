@@ -59,6 +59,9 @@
         <property name="key" value="${cu.encryption.key}"/>
         <property name="enabled" value="${cu.encryption.busEncryption}"/>
     </bean>
+    
+    <bean id="maintenanceDocumentService"
+          class="edu.cornell.kfs.krad.service.impl.CuMaintenanceDocumentServiceImpl"/>
 
     <bean id="maintenanceDocumentDao" parent="platformAwareDao"
           class="edu.cornell.kfs.krad.dao.impl.CuMaintenanceDocumentDaoOjb"/>

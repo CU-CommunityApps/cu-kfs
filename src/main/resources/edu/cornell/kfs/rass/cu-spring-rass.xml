@@ -75,6 +75,7 @@
 
 	<bean id="rassUpdateService" parent="rassUpdateService-parentBean"/>
 	<bean id="rassUpdateService-parentBean" abstract="true" class="edu.cornell.kfs.rass.batch.service.impl.RassUpdateServiceImpl"
+			p:maintenanceDocumentService-ref="maintenanceDocumentService"
 			p:documentService-ref="documentService"
 			p:dataDictionaryService-ref="dataDictionaryService"
 			p:configurationService-ref="configurationService"

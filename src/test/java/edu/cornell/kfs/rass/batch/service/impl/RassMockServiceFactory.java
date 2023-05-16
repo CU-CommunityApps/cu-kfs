@@ -36,6 +36,7 @@ import org.kuali.kfs.kim.api.identity.PersonService;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import edu.cornell.kfs.krad.service.CuMaintenanceDocumentService;
 import edu.cornell.kfs.module.cg.document.CuAgencyMaintainableImpl;
 import edu.cornell.kfs.module.cg.document.CuAwardMaintainableImpl;
 import edu.cornell.kfs.rass.RassKeyConstants;
@@ -54,14 +55,14 @@ public class RassMockServiceFactory {
     public static final int MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE = 1000;
     public static final int FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID = MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE + 1;
 
-    public DocumentService buildMockMaintenanceDocumentService() throws Exception {
-        DocumentService documentService = Mockito.mock(DocumentService.class);
+    public MaintenanceDocumentService buildMockMaintenanceDocumentService() throws Exception {
+        CuMaintenanceDocumentService maintenanceDocumentService = Mockito.mock(CuMaintenanceDocumentService.class);
         MutableInt documentIdSequence = new MutableInt(MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE);
         
-        Mockito.when(documentService.getNewDocument(Mockito.anyString()))
+        Mockito.when(maintenanceDocumentService.setupNewMaintenanceDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .then(invocation -> buildNewMaintenanceDocument(invocation, documentIdSequence.addAndGet(1)));
         
-        return documentService;
+        return maintenanceDocumentService;
     }
 
     protected MaintenanceDocument buildNewMaintenanceDocument(InvocationOnMock invocation, int documentNumberAsInt) {
