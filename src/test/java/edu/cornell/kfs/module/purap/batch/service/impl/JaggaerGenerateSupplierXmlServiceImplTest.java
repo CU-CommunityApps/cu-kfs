@@ -16,15 +16,18 @@ import org.kuali.kfs.core.impl.datetime.DateTimeServiceImpl;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilder;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
+import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
-class JaggaerGenerateSupplierXmlServiceImplTest {
+public class JaggaerGenerateSupplierXmlServiceImplTest {
     
     JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
 
     @BeforeEach
     void setUp() throws Exception {
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
-        jaggaerGenerateSupplierXmlServiceImpl.setDateTimeService(new DateTimeServiceImpl());
+        TestDateTimeServiceImpl dateTimeService = new TestDateTimeServiceImpl();
+        jaggaerGenerateSupplierXmlServiceImpl.setDateTimeService(dateTimeService);
+        dateTimeService.afterPropertiesSet();
     }
 
     @AfterEach
@@ -53,7 +56,7 @@ class JaggaerGenerateSupplierXmlServiceImplTest {
     
     private List<Supplier> buildListOfSuppliers(int numberOfSuppliers) {
         List<Supplier> suppliers = new ArrayList<>();
-        for (int i=0; i<numberOfSuppliers; i++) {
+        for (int i = 0; i < numberOfSuppliers; i++) {
             Supplier supplier = new Supplier();
             supplier.setName(JaggaerBuilder.buildName("Test supplier " + i));
             suppliers.add(supplier);

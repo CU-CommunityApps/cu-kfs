@@ -16,7 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.sys.service.FileStorageService;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProcessingMode;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Address;
@@ -45,14 +45,14 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected FileStorageService fileStorageService;
 
     @Override
-    public List<SupplierSyncMessage> getJaggaerContractsDto(JaggaerContractUploadProcessingMode processingMode,
+    public List<SupplierSyncMessage> getJaggaerContractsDto(JaggaerUploadSuppliersProcessingMode processingMode,
             Date processingDate, int maximumNumberOfSuppliersPerListItem) {
         List<Supplier> suppliers = getAllVendorsToUploadToJaggaer(processingMode, processingDate);
         LOG.info("getJaggaerContractsDto found {} suppliers.", suppliers.size());
         return buildSupplierSyncMessageList(suppliers, maximumNumberOfSuppliersPerListItem);
     }
 
-    private List<Supplier> getAllVendorsToUploadToJaggaer(JaggaerContractUploadProcessingMode processingMode,
+    private List<Supplier> getAllVendorsToUploadToJaggaer(JaggaerUploadSuppliersProcessingMode processingMode,
             Date processingDate) {
         List<Supplier> suppliers = new ArrayList<>();
 
@@ -136,7 +136,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 cuMarshalService.marshalObjectToXML(message, outputFileName);
                 fileStorageService.createDoneFile(outputFileName);
             } catch (JAXBException | IOException e) {
-                LOG.error("generateXMLForSyncMessages, unable to create output file " + outputFileName, e);
+                LOG.error("generateXMLForSyncMessages, unable to create {} output file", outputFileName, e);
                 throw new RuntimeException(e);
             }
         }
