@@ -31,7 +31,7 @@ import edu.cornell.kfs.fp.CuFPConstants;
  * @see org.kuali.kfs.fp.businessobject.options.PaymentMethodValuesFinder
  */
 public class PaymentMethodsForVendorValuesFinder extends PaymentMethodValuesFinderBase {
-    private static final String DISPLAY_ON_VENDOR_DOCUMENT = "displayOnVendorDocument";
+    private static final String DISPLAY_ON_VENDOR_DOCUMENT = "extension.displayOnVendorDocument";
 
     public PaymentMethodsForVendorValuesFinder() {
         super(DISPLAY_ON_VENDOR_DOCUMENT);
