@@ -8,7 +8,7 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 
 public interface JaggaerGenerateSupplierXmlService {
 
-    public List<SupplierSyncMessage> getJaggaerContractsDto(JaggaerUploadSuppliersProcessingMode processingMode,
+    public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
             Date processingDate, int maximumNumberOfSuppliersPerListItem);
 
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages);

@@ -17,17 +17,18 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     private static final Logger LOG = LogManager.getLogger();
+    private static final String COMPONENT_NAME = "JaggaerGenerateSupplierXmlStep";
     
     protected JaggaerGenerateSupplierXmlService jaggaerGenerateSupplierXmlService;
     protected ParameterService parameterService;
     
     @Override
     public boolean execute(String jobName, java.util.Date jobRunDate) throws InterruptedException {
-        JaggaerUploadSuppliersProcessingMode processingMode = findJaggaerContractUploadProcessingMode();
+        JaggaerUploadSuppliersProcessingMode processingMode = findJaggaerUploadSuppliersProcessingMode();
         java.sql.Date processingDate = findProcessingDate(processingMode);
         int maximumNumberOfSuppliersPerListItem = findMaximumNumberOfSuppliersPerListItem();
         LOG.info("execute, processing mode {} and procesing date {}, maximumNumberOfSuppliersPerListItem {}", processingMode.modeCode, processingDate, maximumNumberOfSuppliersPerListItem);
-        List<SupplierSyncMessage> messages = jaggaerGenerateSupplierXmlService.getJaggaerContractsDto(processingMode, processingDate, maximumNumberOfSuppliersPerListItem);
+        List<SupplierSyncMessage> messages = jaggaerGenerateSupplierXmlService.getSupplierSyncMessages(processingMode, processingDate, maximumNumberOfSuppliersPerListItem);
         jaggaerGenerateSupplierXmlService.generateXMLForSyncMessages(messages);
         
         if (shouldUpdateProcessingDate(processingMode)) {
@@ -37,7 +38,7 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
         return true;
     }
     
-    protected JaggaerUploadSuppliersProcessingMode findJaggaerContractUploadProcessingMode() {
+    protected JaggaerUploadSuppliersProcessingMode findJaggaerUploadSuppliersProcessingMode() {
         String processingMode = getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_PROCESSING_MODE);
         return JaggaerUploadSuppliersProcessingMode.findJaggaerUploadSuppliersProcessingModeByModeCode(processingMode);
     }
@@ -76,7 +77,7 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     }
     
     protected String getParameterValueString(String parameterName) {
-        return parameterService.getParameterValueAsString(this.getClass(), parameterName);
+        return parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING, COMPONENT_NAME, parameterName);
     }
     
     protected boolean shouldUpdateProcessingDate(JaggaerUploadSuppliersProcessingMode processingMode) {
@@ -86,7 +87,8 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     protected void updateVendorProcessingDate() {
         String newDateString = dateTimeService.toString(dateTimeService.getCurrentDate(), CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
         LOG.info("updateVendorProcessingDate, setting JAGGAER_UPLOAD_VENDOR_DATE to {}", newDateString);
-        Parameter vendorDateParm = parameterService.getParameter(this.getClass(), CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
+        Parameter vendorDateParm = parameterService.getParameter(CUKFSConstants.ParameterNamespaces.PURCHASING, COMPONENT_NAME, 
+                CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
         vendorDateParm.setValue(newDateString);
         parameterService.updateParameter(vendorDateParm);
     }

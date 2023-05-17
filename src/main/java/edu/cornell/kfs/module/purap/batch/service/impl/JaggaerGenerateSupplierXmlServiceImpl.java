@@ -47,7 +47,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected FileStorageService fileStorageService;
 
     @Override
-    public List<SupplierSyncMessage> getJaggaerContractsDto(JaggaerUploadSuppliersProcessingMode processingMode,
+    public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
             Date processingDate, int maximumNumberOfSuppliersPerListItem) {
         List<Supplier> suppliers = getAllVendorsToUploadToJaggaer(processingMode, processingDate);
         LOG.info("getJaggaerContractsDto found {} suppliers.", suppliers.size());
