@@ -43,6 +43,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String requestingCompanyLegalFirstName;
     private String requestingCompanyLegalLastName;
     private String requestingCompanyName;
+    private String requestingCompanyLegalNameForProcessing;
     private String requestingCompanyDesc;
     private String requestingCompanyTelephone;
     private String requestingCompanyDuns;
