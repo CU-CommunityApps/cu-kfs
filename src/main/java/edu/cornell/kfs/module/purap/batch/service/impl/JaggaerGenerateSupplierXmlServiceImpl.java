@@ -33,8 +33,10 @@ import jakarta.xml.bind.JAXBException;
 
 public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSupplierXmlService {
     private static final Logger LOG = LogManager.getLogger();
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat
+    protected static final DateTimeFormatter DATE_FORMATTER_FOR_HEADER_DATE = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US);
+    protected static final DateTimeFormatter DATE_FORMATTER_FOR_FILE_NAME = DateTimeFormat
+            .forPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withLocale(Locale.US);
 
     private static final String JAGGAER_UPLOAD_FILE_NAME = "jaggaerSupplierUploadFile_";
 
@@ -109,7 +111,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     private Header buildHeader() {
         Header header = new Header();
         header.setMessageId(UUID.randomUUID().toString());
-        header.setTimestamp(DATE_FORMATTER.print(dateTimeService.getCurrentDate().getTime()));
+        header.setTimestamp(DATE_FORMATTER_FOR_HEADER_DATE.print(dateTimeService.getCurrentDate().getTime()));
         header.setAuthentication(buildAuthentication());
         return header;
     }
@@ -129,7 +131,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages) {
         for (SupplierSyncMessage message : messages) {
             String outputFileName = jaggaerXmlDirectory + JAGGAER_UPLOAD_FILE_NAME
-                    + DATE_FORMATTER.print(dateTimeService.getCurrentDate().getTime())
+                    + DATE_FORMATTER_FOR_FILE_NAME.print(dateTimeService.getCurrentDate().getTime())
                     + CUKFSConstants.XML_FILE_EXTENSION;
             try {
                 LOG.info("generateXMLForSyncMessages, created XML file {}", outputFileName);

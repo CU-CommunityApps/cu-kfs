@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,7 +20,7 @@ import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 public class JaggaerGenerateSupplierXmlServiceImplTest {
     
-    JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
+    private JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -61,5 +62,14 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
             suppliers.add(supplier);
         }
         return suppliers;
+    }
+    
+    @Test
+    void testDateFormatters() {
+        long dateTime = Long.parseLong("1684345725727");
+        String actualFileNameDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_FILE_NAME.print(dateTime);
+        String actualHeaderDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_HEADER_DATE.print(dateTime);
+        assertEquals("20230517_134845727", actualFileNameDateString);
+        assertEquals("2023-05-17T13:48:45.727Z", actualHeaderDateString);
     }
 }
