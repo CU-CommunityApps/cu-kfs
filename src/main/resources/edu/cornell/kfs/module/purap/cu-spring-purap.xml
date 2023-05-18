@@ -35,12 +35,14 @@
 			<list merge ="true">
 				<value>iWantDocumentBatchFeedJob</value>
 				<value>jaggaerGenerateContractPartyCsvJob</value>
+				<value>jaggaerGenerateAndUploadSupplierXmlJob</value>
 			</list>
 		</property>
 		<property name="batchFileDirectories">
 			<list merge="true">
 				<value>${staging.directory}/purap</value>
 				<value>${staging.directory}/purap/jaggaer</value>
+				<value>${staging.directory}/purap/jaggaer/xml</value>
 			</list>
 		</property>
 	</bean>
@@ -325,5 +327,44 @@
 		<property name="jaggaerUploadDao" ref="jaggaerUploadDao" />
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
+
+	<bean id="jaggaerGenerateAndUploadSupplierXmlJob" parent="scheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="jaggaerGenerateSupplierXmlStep" />
+				<ref bean="jaggaerUploadSupplierXmlStep" />
+			</list>
+		</property>
+    </bean>
+
+	<bean id="jaggaerGenerateSupplierXmlStep" class="edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep"
+		parent="step"
+		p:jaggaerGenerateSupplierXmlService-ref="jaggaerGenerateSupplierXmlService"
+		p:parameterService-ref="parameterService" />
+
+
+	<bean id="jaggaerUploadSupplierXmlStep" class="edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep"
+		parent="step" p:jaggaerUploadFileService-ref="jaggaerUploadFileService" />
+
+	<bean id="jaggaerGenerateSupplierXmlService" parent="jaggaerGenerateSupplierXmlService-parentBean" />
+	<bean id="jaggaerGenerateSupplierXmlService-parentBean"
+		abstract="true"
+		class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateSupplierXmlServiceImpl"
+		p:jaggaerXmlDirectory="${staging.directory}/purap/jaggaer/xml/"
+		p:dateTimeService-ref="dateTimeService"
+		p:cuMarshalService-ref="cuMarshalService"
+		p:fileStorageService-ref="fileStorageService" />
+
+	<bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
+	<bean id="jaggaerUploadFileService-parentBean" abstract="true"
+		class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerUploadFileServiceImpl"
+		p:batchInputFileService-ref="batchInputFileService"
+		p:fileStorageService-ref="fileStorageService"
+		p:jaggaerUploadFileType-ref="jaggaerUploadFileType" />
+
+	<bean id="jaggaerUploadFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"
+		p:directoryPath="${staging.directory}/purap/jaggaer/xml"
+		p:fileExtension="xml" 
+		p:fileTypeIdentifier="jaggaerUploadFileType" />
     
 </beans>

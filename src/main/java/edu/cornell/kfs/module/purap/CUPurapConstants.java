@@ -487,4 +487,26 @@ public class CUPurapConstants {
         }
         
     }
+    
+    public enum JaggaerUploadSuppliersProcessingMode {
+        PO("PO", "JaggaerUpload_found_by_PO_search"),
+        VENDOR("V", "JaggaerUpload_found_by_Vendor_search");
+        
+        public final String modeCode;
+        public final String csvFileName;
+        
+        private JaggaerUploadSuppliersProcessingMode(String modeCode, String csvFileName) {
+            this.modeCode = modeCode;
+            this.csvFileName = csvFileName;
+        }
+        
+        public static JaggaerUploadSuppliersProcessingMode findJaggaerUploadSuppliersProcessingModeByModeCode(String modeCode) {
+            for (JaggaerUploadSuppliersProcessingMode mode : JaggaerUploadSuppliersProcessingMode.values()) {
+                if (StringUtils.equalsIgnoreCase(modeCode, mode.modeCode)) {
+                    return mode;
+                }
+            }
+            throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
+        }
+    }
 }
