@@ -17,7 +17,6 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     private static final Logger LOG = LogManager.getLogger();
-    private static final String COMPONENT_NAME = "JaggaerGenerateSupplierXmlStep";
     
     protected JaggaerGenerateSupplierXmlService jaggaerGenerateSupplierXmlService;
     protected ParameterService parameterService;
@@ -77,7 +76,7 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     }
     
     protected String getParameterValueString(String parameterName) {
-        return parameterService.getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING, COMPONENT_NAME, parameterName);
+        return parameterService.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, parameterName);
     }
     
     protected boolean shouldUpdateProcessingDate(JaggaerUploadSuppliersProcessingMode processingMode) {
@@ -87,8 +86,7 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
     protected void updateVendorProcessingDate() {
         String newDateString = dateTimeService.toString(dateTimeService.getCurrentDate(), CUKFSConstants.DATE_FORMAT_yyyy_MM_dd);
         LOG.info("updateVendorProcessingDate, setting JAGGAER_UPLOAD_VENDOR_DATE to {}", newDateString);
-        Parameter vendorDateParm = parameterService.getParameter(CUKFSConstants.ParameterNamespaces.PURCHASING, COMPONENT_NAME, 
-                CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
+        Parameter vendorDateParm = parameterService.getParameter(JaggaerGenerateSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_UPLOAD_VENDOR_DATE);
         vendorDateParm.setValue(newDateString);
         parameterService.updateParameter(vendorDateParm);
     }

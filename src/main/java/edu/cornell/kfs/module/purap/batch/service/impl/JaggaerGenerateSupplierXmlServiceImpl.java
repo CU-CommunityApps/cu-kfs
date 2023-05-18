@@ -34,7 +34,7 @@ import jakarta.xml.bind.JAXBException;
 public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSupplierXmlService {
     private static final Logger LOG = LogManager.getLogger();
     protected static final DateTimeFormatter DATE_FORMATTER_FOR_HEADER_DATE = DateTimeFormat
-            .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US);
+            .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
     protected static final DateTimeFormatter DATE_FORMATTER_FOR_FILE_NAME = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withLocale(Locale.US);
 

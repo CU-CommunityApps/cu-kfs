@@ -70,6 +70,6 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         String actualFileNameDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_FILE_NAME.print(dateTime);
         String actualHeaderDateString = JaggaerGenerateSupplierXmlServiceImpl.DATE_FORMATTER_FOR_HEADER_DATE.print(dateTime);
         assertEquals("20230517_134845727", actualFileNameDateString);
-        assertEquals("2023-05-17T13:48:45.727Z", actualHeaderDateString);
+        assertEquals("2023-05-17T17:48:45.727Z", actualHeaderDateString);
     }
 }
