@@ -53,9 +53,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     protected String endowmentIncomeAccountNumber;
     protected String programCode;
     protected String budgetRecordingLevelCode;
-    protected Boolean extrnlFinEncumSufficntFndIndicator;
-    protected Boolean intrnlFinEncumSufficntFndIndicator;
-    protected Boolean finPreencumSufficientFundIndicator;
     protected Boolean financialObjectivePrsctrlIndicator;
     protected String contractControlFinCoaCode;
     protected String contractControlAccountNumber;
@@ -556,30 +553,6 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
     public void setBudgetRecordingLevelCode(String budgetRecordingLevelCode) {
         this.budgetRecordingLevelCode = budgetRecordingLevelCode;
-    }
-
-    public Boolean getExtrnlFinEncumSufficntFndIndicator() {
-        return extrnlFinEncumSufficntFndIndicator;
-    }
-
-    public void setExtrnlFinEncumSufficntFndIndicator(Boolean extrnlFinEncumSufficntFndIndicator) {
-        this.extrnlFinEncumSufficntFndIndicator = extrnlFinEncumSufficntFndIndicator;
-    }
-
-    public Boolean getIntrnlFinEncumSufficntFndIndicator() {
-        return intrnlFinEncumSufficntFndIndicator;
-    }
-
-    public void setIntrnlFinEncumSufficntFndIndicator(Boolean intrnlFinEncumSufficntFndIndicator) {
-        this.intrnlFinEncumSufficntFndIndicator = intrnlFinEncumSufficntFndIndicator;
-    }
-
-    public Boolean getFinPreencumSufficientFundIndicator() {
-        return finPreencumSufficientFundIndicator;
-    }
-
-    public void setFinPreencumSufficientFundIndicator(Boolean finPreencumSufficientFundIndicator) {
-        this.finPreencumSufficientFundIndicator = finPreencumSufficientFundIndicator;
     }
 
     public Boolean getFinancialObjectivePrsctrlIndicator() {
