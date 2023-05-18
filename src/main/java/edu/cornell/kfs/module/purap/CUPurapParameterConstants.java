@@ -39,6 +39,7 @@ public class CUPurapParameterConstants {
     public static final String JAGGAER_UPLOAD_PROCESSING_MODE = "JAGGAER_UPLOAD_PROCESSING_MODE";
     public static final String JAGGAER_UPLOAD_PO_DATE = "JAGGAER_UPLOAD_PO_DATE";
     public static final String JAGGAER_UPLOAD_VENDOR_DATE = "JAGGAER_UPLOAD_VENDOR_DATE";
-
+    public static final String JAGGAER_MAX_NUMBER_OF_VENDORS_PER_XML_FILE = "JAGGAER_MAX_NUMBER_OF_VENDORS_PER_XML_FILE";
+    
     public static final String MAX_FILE_SIZE_PO_SEND_TO_VENDOR = "MAX_FILE_SIZE_PO_SEND_TO_VENDOR";
 }
