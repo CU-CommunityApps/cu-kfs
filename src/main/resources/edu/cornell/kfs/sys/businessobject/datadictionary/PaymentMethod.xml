@@ -51,7 +51,7 @@
             </list>
         </property>
         <property name="displayAttributeDefinitions">
-            <list>
+            <list merge="true">
                 <ref bean="PaymentMethod-extension-assessedFees" />
                 <ref bean="PaymentMethod-extension-processedUsingPdp" />
                 <ref bean="PaymentMethod-extension-displayOnVendorDocument" />
