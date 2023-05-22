@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "customElementValues" })
 @XmlRootElement(name = "CustomElementValueList")
-public class CustomElementValueList {
+public class CustomElementValueList implements CustomElementDetail {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

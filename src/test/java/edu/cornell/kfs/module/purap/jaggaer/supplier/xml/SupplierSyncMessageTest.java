@@ -459,7 +459,7 @@ public class SupplierSyncMessageTest {
         value.setIsChanged(T_TRUE);
         value.setValue("some custom value");
         elementValueList.getCustomElementValues().add(value);
-        element1.getCustomElementValueListOrAttachmentList().add(elementValueList);
+        element1.getCustomElementDetails().add(elementValueList);
 
         element1.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a custom identifer", T_TRUE));
         element1.setDisplayName(JaggaerBuilder.buildDisplayName("a cool display name", T_TRUE));
@@ -469,7 +469,7 @@ public class SupplierSyncMessageTest {
         element2.setIsActive(T_TRUE);
         element2.setIsChanged(F_FALSE);
         element2.setType("custom type2");
-        element2.getCustomElementValueListOrAttachmentList().add(buildAttachments("custom element attachment"));
+        element2.getCustomElementDetails().add(buildAttachments("custom element attachment"));
 
 
 

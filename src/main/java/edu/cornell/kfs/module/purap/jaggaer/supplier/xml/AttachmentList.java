@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "attachments" })
 @XmlRootElement(name = "Attachments")
-public class AttachmentList {
+public class AttachmentList implements CustomElementDetail {
 
     @XmlAttribute(name = "xmlns:xop")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

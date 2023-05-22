@@ -661,7 +661,7 @@ public class JaggaerExampleTest {
             elementValue.setValue(value);
             valueList.getCustomElementValues().add(elementValue);
         }
-        element.getCustomElementValueListOrAttachmentList().add(valueList);
+        element.getCustomElementDetails().add(valueList);
         
         return element;
     }
