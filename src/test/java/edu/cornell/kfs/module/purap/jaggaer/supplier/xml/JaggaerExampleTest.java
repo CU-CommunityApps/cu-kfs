@@ -430,11 +430,11 @@ public class JaggaerExampleTest {
         
         AdditionalDataList dataList = new AdditionalDataList();
         
-        AdditionalData dataum = new AdditionalData();
+        AdditionalDataItem dataum = new AdditionalDataItem();
         dataum.setName("ethnicity");
-        dataum.getContent().add("NATAM");
+        dataum.getContents().add("NATAM");
         
-        dataList.getAdditionalData().add(dataum);
+        dataList.getAdditionalDataItems().add(dataum);
         div.setAdditionalDataList(dataList);
         
         classList.getDiversityClassification().add(div);
@@ -721,14 +721,14 @@ public class JaggaerExampleTest {
         AssociatedAddress address = buildAssociatedAddress("remitto", "apremit123");
         address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(null));
         address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        ap.getAssociatedAddress().add(address);
+        ap.getAssociatedAddresses().add(address);
         
         ap.setEmail(new Email());
         ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode("USD"));
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
         
-        apList.getAccountsPayable().add(ap);
+        apList.getAccountsPayables().add(ap);
         return apList;
     }
     

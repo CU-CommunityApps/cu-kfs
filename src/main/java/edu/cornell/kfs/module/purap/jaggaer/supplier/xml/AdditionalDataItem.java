@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "content" })
+@XmlType(name = "", propOrder = { "contents" })
 @XmlRootElement(name = "AdditionalData")
-public class AdditionalData {
+public class AdditionalDataItem {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -27,7 +27,7 @@ public class AdditionalData {
     private String name;
     @XmlMixed
     @XmlAnyElement
-    private List<Object> content;
+    private List<Object> contents;
 
     public String getIsChanged() {
         return isChanged;
@@ -45,11 +45,11 @@ public class AdditionalData {
         this.name = name;
     }
 
-    public List<Object> getContent() {
-        if (content == null) {
-            content = new ArrayList<Object>();
+    public List<Object> getContents() {
+        if (contents == null) {
+            contents = new ArrayList<Object>();
         }
-        return this.content;
+        return this.contents;
     }
 
 }

@@ -376,7 +376,7 @@ public class SupplierSyncMessageTest {
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         ap.setName(JaggaerBuilder.buildName("accounts payable name", T_TRUE));
         ap.setActive(buildActive());
-        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
+        ap.getAssociatedAddresses().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
         ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         ap.setContactName(JaggaerBuilder.buildJaggaerBasicValue("contact name", T_TRUE));
@@ -388,7 +388,7 @@ public class SupplierSyncMessageTest {
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
 
-        apList.getAccountsPayable().add(ap);
+        apList.getAccountsPayables().add(ap);
         return apList;
     }
 
@@ -717,11 +717,11 @@ public class SupplierSyncMessageTest {
         AdditionalDataList dataList = new AdditionalDataList();
         dataList.setIsChanged(T_TRUE);
 
-        AdditionalData datum = new AdditionalData();
+        AdditionalDataItem datum = new AdditionalDataItem();
         datum.setIsChanged(T_TRUE);
         datum.setName("datum name");
-        datum.getContent().add("some additional piece of information");
-        dataList.getAdditionalData().add(datum);
+        datum.getContents().add("some additional piece of information");
+        dataList.getAdditionalDataItems().add(datum);
 
         diversity.setAdditionalDataList(dataList);
 
