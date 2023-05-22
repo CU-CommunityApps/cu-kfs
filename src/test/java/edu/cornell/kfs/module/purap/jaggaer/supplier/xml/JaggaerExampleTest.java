@@ -179,8 +179,8 @@ public class JaggaerExampleTest {
     
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList list = new CommodityCodeList();
-        list.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("OM01"));
-        list.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("OM02"));
+        list.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("OM01"));
+        list.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("OM02"));
         return list;
     }
     
@@ -201,7 +201,7 @@ public class JaggaerExampleTest {
         CurrencyList list = new CurrencyList();
         list.setIsChanged(JaggaerConstants.NO);
         for (String currency : currencies) {
-            list.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode(currency, JaggaerConstants.NO));
+            list.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode(currency, JaggaerConstants.NO));
         }
         return list;
     }
@@ -314,9 +314,9 @@ public class JaggaerExampleTest {
     
     private ContactList buildContactList() {
         ContactList contactList = new ContactList();
-        contactList.getContact().add(buildRemitContact());
-        contactList.getContact().add(buildFulfillmentContact());
-        contactList.getContact().add(buildTechnicalContact());
+        contactList.getContacts().add(buildRemitContact());
+        contactList.getContacts().add(buildFulfillmentContact());
+        contactList.getContacts().add(buildTechnicalContact());
         return contactList;
     }
     
@@ -635,11 +635,11 @@ public class JaggaerExampleTest {
     
     private CustomElementList buildLocationCustomElementList(String taxPayerId, String taxTypeCode) {
         CustomElementList elementList = new CustomElementList();
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPID", "TXP Taxpayer ID", taxPayerId));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPTC", "TXP Type Code", taxTypeCode));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "WHT", "Withholding Tax", JaggaerConstants.NO));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "ATD", "Always Take Discount", JaggaerConstants.YES));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "HFP", "Hold Future Payments", JaggaerConstants.NO));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "TXPID", "TXP Taxpayer ID", taxPayerId));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "TXPTC", "TXP Type Code", taxTypeCode));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "WHT", "Withholding Tax", JaggaerConstants.NO));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "ATD", "Always Take Discount", JaggaerConstants.YES));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "HFP", "Hold Future Payments", JaggaerConstants.NO));
         return elementList;
     }
     
@@ -659,7 +659,7 @@ public class JaggaerExampleTest {
         for (String value : values) {
             CustomElementValue elementValue = new CustomElementValue();
             elementValue.setValue(value);
-            valueList.getCustomElementValue().add(elementValue);
+            valueList.getCustomElementValues().add(elementValue);
         }
         element.getCustomElementValueListOrAttachmentList().add(valueList);
         
@@ -703,8 +703,8 @@ public class JaggaerExampleTest {
     
     private CustomElementList buildSupplierCustomElementList() {
         CustomElementList elementList = new CustomElementList();
-        elementList.getCustomElement().add(buildCustomElement(null, "CustomElementID1", null, "20"));
-        elementList.getCustomElement().add(buildCustomElement(null, "CustomElementID2", null, "Brake Inspection", "Tire Change", "Oil Change"));
+        elementList.getCustomElements().add(buildCustomElement(null, "CustomElementID1", null, "20"));
+        elementList.getCustomElements().add(buildCustomElement(null, "CustomElementID2", null, "Brake Inspection", "Tire Change", "Oil Change"));
         return elementList;
     }
     

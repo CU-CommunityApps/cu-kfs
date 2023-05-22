@@ -178,8 +178,8 @@ public class SupplierSyncMessageTest {
 
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList commodityCodeList = new CommodityCodeList();
-        commodityCodeList.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 1", T_TRUE));
-        commodityCodeList.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 2", F_FALSE));
+        commodityCodeList.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 1", T_TRUE));
+        commodityCodeList.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 2", F_FALSE));
         return commodityCodeList;
     }
 
@@ -192,15 +192,15 @@ public class SupplierSyncMessageTest {
         }
 
         if (includeUSD) {
-            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
+            currencyList.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         }
 
         if (includePeso) {
-            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode("peso", F_FALSE));
+            currencyList.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode("peso", F_FALSE));
         }
 
         if (includeEuro) {
-            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode("euro", null));
+            currencyList.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode("euro", null));
         }
 
         return currencyList;
@@ -458,12 +458,12 @@ public class SupplierSyncMessageTest {
         CustomElementValue value = new CustomElementValue();
         value.setIsChanged(T_TRUE);
         value.setValue("some custom value");
-        elementValueList.getCustomElementValue().add(value);
+        elementValueList.getCustomElementValues().add(value);
         element1.getCustomElementValueListOrAttachmentList().add(elementValueList);
 
         element1.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a custom identifer", T_TRUE));
         element1.setDisplayName(JaggaerBuilder.buildDisplayName("a cool display name", T_TRUE));
-        customList.getCustomElement().add(element1);
+        customList.getCustomElements().add(element1);
 
         CustomElement element2 = new CustomElement();
         element2.setIsActive(T_TRUE);
@@ -475,7 +475,7 @@ public class SupplierSyncMessageTest {
 
         element2.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a  different custom identifer", T_TRUE));
         element2.setDisplayName(JaggaerBuilder.buildDisplayName("a lame display name", T_TRUE));
-        customList.getCustomElement().add(element2);
+        customList.getCustomElements().add(element2);
 
         return customList;
     }
@@ -812,7 +812,7 @@ public class SupplierSyncMessageTest {
 
         contact.setNotes(JaggaerBuilder.buildJaggaerBasicValue("just a simple note", T_TRUE));
 
-        contactList.getContact().add(contact);
+        contactList.getContacts().add(contact);
         return contactList;
     }
 
