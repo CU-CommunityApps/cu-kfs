@@ -123,7 +123,7 @@ public class SupplierSyncMessageTest {
         supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
 
         supplier.setBrandList(buildBrands());
-        supplier.setNaicsCodes(buildNaicsCodes());
+        supplier.setNaicsCodeList(buildNaicsCodes());
         supplier.setCommodityCodeList(buildCommodityCodeList());
         supplier.setSupportedCurrencyList(buildCurrencyList(false, true, true, true));
         supplier.setEnabledCurrencyList(buildCurrencyList(true, true, false, false));
@@ -166,11 +166,11 @@ public class SupplierSyncMessageTest {
     private NaicsCodeList buildNaicsCodes() {
         NaicsCodeList codes = new NaicsCodeList();
         codes.setIsChanged(T_TRUE);
-        codes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaics("primary code", T_TRUE));
+        codes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("primary code", T_TRUE));
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("second", F_FALSE));
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("third", T_TRUE));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("second", F_FALSE));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("third", T_TRUE));
 
         codes.getNaicsCodeListItems().add(secondaryList);
         return codes;

@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "numberOfEmployees", "yearEstablished", "annualSalesList", "serviceAreaList", "registrationProfileType",
         "registrationProfileStatus", "supplierTaxRepresentativeId", "supplierRegCourt", "supplierRegSeat",
         "supplierRegNumber", "supplierCapital", "supplierShareholders", "vatExempt", "commodityCodeList", "brandList",
-        "shoppingCommodityCode", "austinTetra", "sic", "naicsCodes", "supportedCurrencyList", "enabledCurrencyList",
+        "shoppingCommodityCode", "austinTetra", "sic", "naicsCodeList", "supportedCurrencyList", "enabledCurrencyList",
         "supplierKeywords", "addressList", "primaryAddressList", "contactList", "primaryContactList",
         "classificationList", "diversityClassificationList", "locationList",
         "restrictFulfillmentLocationsByBusinessUnit", "customElementList", "accountsPayableList", "taxInformationList",
@@ -111,7 +111,7 @@ public class Supplier {
     @XmlElement(name = "SIC")
     private JaggaerBasicValue sic;
     @XmlElement(name = "NaicsCodes")
-    private NaicsCodeList naicsCodes;
+    private NaicsCodeList naicsCodeList;
     @XmlElement(name = "SupportedCurrencyList")
     private CurrencyList supportedCurrencyList;
     @XmlElement(name = "EnabledCurrencyList")
@@ -473,12 +473,12 @@ public class Supplier {
         this.sic = sic;
     }
 
-    public NaicsCodeList getNaicsCodes() {
-        return naicsCodes;
+    public NaicsCodeList getNaicsCodeList() {
+        return naicsCodeList;
     }
 
-    public void setNaicsCodes(NaicsCodeList naicsCodes) {
-        this.naicsCodes = naicsCodes;
+    public void setNaicsCodeList(NaicsCodeList naicsCodeList) {
+        this.naicsCodeList = naicsCodeList;
     }
 
     public CurrencyList getSupportedCurrencyList() {

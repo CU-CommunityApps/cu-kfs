@@ -110,7 +110,7 @@ public class JaggaerExampleTest {
         supplier.setShoppingCommodityCode(JaggaerBuilder.buildJaggaerBasicValue("SC01"));
         supplier.setAustinTetra(JaggaerBuilder.buildJaggaerBasicValue("Austin-Tetra Code"));
         supplier.setSic(JaggaerBuilder.buildJaggaerBasicValue("SIC Code"));
-        supplier.setNaicsCodes(buildNaicsCodes());
+        supplier.setNaicsCodeList(buildNaicsCodes());
         supplier.setSupportedCurrencyList(buildCurrencyList("USD", "CAD", "GBP", "EUR", "CHF", "MXN"));
         supplier.setEnabledCurrencyList(buildCurrencyList("USD", "MXN"));
         supplier.setSupplierKeywords(JaggaerBuilder.buildJaggaerBasicValue("Paper Products, Filters, Drinking Straws"));
@@ -186,12 +186,12 @@ public class JaggaerExampleTest {
     
     private NaicsCodeList buildNaicsCodes() {
         NaicsCodeList naicsCodes = new NaicsCodeList();
-        naicsCodes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaics("424120"));
+        naicsCodes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("424120"));
         
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("424121"));
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("524120"));
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("524121"));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("424121"));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524120"));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524121"));
         naicsCodes.getNaicsCodeListItems().add(secondaryList);
         
         return naicsCodes;

@@ -27,7 +27,7 @@ public class AdditionalDataItem {
     private String name;
     @XmlMixed
     @XmlAnyElement
-    private List<Object> contents;
+    private List<String> contents;
 
     public String getIsChanged() {
         return isChanged;
@@ -45,9 +45,9 @@ public class AdditionalDataItem {
         this.name = name;
     }
 
-    public List<Object> getContents() {
+    public List<String> getContents() {
         if (contents == null) {
-            contents = new ArrayList<Object>();
+            contents = new ArrayList<String>();
         }
         return this.contents;
     }
