@@ -437,7 +437,7 @@ public class JaggaerExampleTest {
         dataList.getAdditionalDataItems().add(dataum);
         div.setAdditionalDataList(dataList);
         
-        classList.getDiversityClassification().add(div);
+        classList.getDiversityClassifications().add(div);
         return classList;
     }
     
@@ -461,7 +461,7 @@ public class JaggaerExampleTest {
         certificate.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
         info.setInsuranceCertificate(certificate);
         
-        infoList.getInsuranceInformation().add(info);
+        infoList.getInsuranceInformations().add(info);
         return infoList;
     }
     
@@ -472,9 +472,9 @@ public class JaggaerExampleTest {
     
     private LocationList buildLocationList() {
         LocationList locationList = new LocationList();
-        locationList.getLocation().add(buildFulfillLocation1());
-        locationList.getLocation().add(buildFulfillLocation2());
-        locationList.getLocation().add(buildLocation2());
+        locationList.getLocations().add(buildFulfillLocation1());
+        locationList.getLocations().add(buildFulfillLocation2());
+        locationList.getLocations().add(buildLocation2());
         return locationList;
     }
     

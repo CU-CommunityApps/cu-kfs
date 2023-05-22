@@ -302,7 +302,7 @@ public class SupplierSyncMessageTest {
         info.setInsuranceProviderPhone(buildInsuranceProviderPhone());
         info.setInsuranceCertificate(buildInsuranceCertificate());
         info.setOtherTypeName(JaggaerBuilder.buildJaggaerBasicValue("some other name", T_TRUE));
-        insurance.getInsuranceInformation().add(info);
+        insurance.getInsuranceInformations().add(info);
         return insurance;
     }
 
@@ -518,7 +518,7 @@ public class SupplierSyncMessageTest {
         contactList.getAssociatedContacts().add(buildAssociatedContact());
         location.setAssociatedContactList(contactList);
 
-        locationList.getLocation().add(location);
+        locationList.getLocations().add(location);
         return locationList;
     }
     
@@ -725,7 +725,7 @@ public class SupplierSyncMessageTest {
 
         diversity.setAdditionalDataList(dataList);
 
-        diversityList.getDiversityClassification().add(diversity);
+        diversityList.getDiversityClassifications().add(diversity);
         return diversityList;
     }
 
