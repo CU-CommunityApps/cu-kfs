@@ -77,8 +77,8 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         supplier.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
         supplier.setName(JaggaerBuilder.buildName(name));
         supplier.setAddressList(new AddressList());
-        supplier.getAddressList().getAddress().add(buildTestAddress(addressLine1));
-        supplier.getAddressList().getAddress().add(buildTestAddress(addressLine2));
+        supplier.getAddressList().getAddresses().add(buildTestAddress(addressLine1));
+        supplier.getAddressList().getAddresses().add(buildTestAddress(addressLine2));
         return supplier;
     }
 

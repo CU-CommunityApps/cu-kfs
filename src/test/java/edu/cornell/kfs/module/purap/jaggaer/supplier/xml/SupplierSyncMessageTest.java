@@ -231,7 +231,7 @@ public class SupplierSyncMessageTest {
         AnnualSalesList salesList = new AnnualSalesList();
         salesList.setIsChanged(T_TRUE);
 
-        AnnualSales sale = new AnnualSales();
+        AnnualSalesItem sale = new AnnualSalesItem();
         sale.setIsChanged(F_FALSE);
 
         sale.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
@@ -243,7 +243,7 @@ public class SupplierSyncMessageTest {
         ammount.setValue("6900.00");
         sale.setAnnualSalesAmount(ammount);
 
-        salesList.getAnnualSales().add(sale);
+        salesList.getAnnualSalesItems().add(sale);
 
         return salesList;
     }
@@ -309,7 +309,7 @@ public class SupplierSyncMessageTest {
     private InsuranceCertificate buildInsuranceCertificate() {
         InsuranceCertificate certificate = new InsuranceCertificate();
         certificate.setIsChanged(T_TRUE);
-        certificate.setAttachments(buildAttachments("attachment name"));
+        certificate.setAttachmentList(buildAttachments("attachment name"));
         return certificate;
     }
 
@@ -338,7 +338,7 @@ public class SupplierSyncMessageTest {
         TaxDocument document = new TaxDocument();
         document.setIsChanged(T_TRUE);
 
-        document.setAttachments(buildAttachments("super cool tax document"));
+        document.setAttachmentList(buildAttachments("super cool tax document"));
 
         info.setTaxDocument(document);
 
@@ -346,8 +346,8 @@ public class SupplierSyncMessageTest {
         return taxList;
     }
 
-    private Attachments buildAttachments(String attachmentName) {
-        Attachments attachments = new Attachments();
+    private AttachmentList buildAttachments(String attachmentName) {
+        AttachmentList attachments = new AttachmentList();
         attachments.setXmlnsXop("test.dtd");
         Attachment attach = new Attachment();
         attach.setAttachmentName(attachmentName);
@@ -358,7 +358,7 @@ public class SupplierSyncMessageTest {
         XopInclude include = new XopInclude();
         include.setHref("http://www.google.com");
         attach.setXopInclude(include);
-        attachments.getAttachment().add(attach);
+        attachments.getAttachments().add(attach);
         return attachments;
     }
 
@@ -459,7 +459,7 @@ public class SupplierSyncMessageTest {
         value.setIsChanged(T_TRUE);
         value.setValue("some custom value");
         elementValueList.getCustomElementValue().add(value);
-        element1.getCustomElementValueListOrAttachments().add(elementValueList);
+        element1.getCustomElementValueListOrAttachmentList().add(elementValueList);
 
         element1.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a custom identifer", T_TRUE));
         element1.setDisplayName(JaggaerBuilder.buildDisplayName("a cool display name", T_TRUE));
@@ -469,7 +469,7 @@ public class SupplierSyncMessageTest {
         element2.setIsActive(T_TRUE);
         element2.setIsChanged(F_FALSE);
         element2.setType("custom type2");
-        element2.getCustomElementValueListOrAttachments().add(buildAttachments("custom element attachment"));
+        element2.getCustomElementValueListOrAttachmentList().add(buildAttachments("custom element attachment"));
 
 
 
@@ -507,7 +507,7 @@ public class SupplierSyncMessageTest {
 
         AssociatedAddressList addressList = new AssociatedAddressList();
         addressList.setIsChanged(T_TRUE);
-        addressList.getAssociatedAddress().add(buildAssociatedAddress("address type", "erp number", "sqi number"));
+        addressList.getAssociatedAddresses().add(buildAssociatedAddress("address type", "erp number", "sqi number"));
         location.setAssociatedAddressList(addressList);
 
         location.setCustomElementList(buildCustomElementList());
@@ -515,7 +515,7 @@ public class SupplierSyncMessageTest {
 
         AssociatedContactList contactList = new AssociatedContactList();
         contactList.setIsChanged(T_TRUE);
-        contactList.getAssociatedContact().add(buildAssociatedContact());
+        contactList.getAssociatedContacts().add(buildAssociatedContact());
         location.setAssociatedContactList(contactList);
 
         locationList.getLocation().add(location);
@@ -706,12 +706,12 @@ public class SupplierSyncMessageTest {
 
         DD214Certificate ddCertificate = new DD214Certificate();
         ddCertificate.setIsChanged(T_TRUE);
-        ddCertificate.setAttachments(buildAttachments("DD 214 Certificate Attachments"));
+        ddCertificate.setAttachmentList(buildAttachments("DD 214 Certificate Attachments"));
         diversity.setDd214Certificate(ddCertificate);
 
         DiversityCertificate certificate = new DiversityCertificate();
         certificate.setIsChanged(T_TRUE);
-        certificate.setAttachments(buildAttachments("diversity certificate attachment"));
+        certificate.setAttachmentList(buildAttachments("diversity certificate attachment"));
         diversity.setDiversityCertificate(certificate);
 
         AdditionalDataList dataList = new AdditionalDataList();
@@ -890,7 +890,7 @@ public class SupplierSyncMessageTest {
         address.setNotes(JaggaerBuilder.buildJaggaerBasicValue("just a simple note", T_TRUE));
 
         address.setAssignedBusinessUnitsList(buildAssignedBusinessUnitsList("is preferred", "testing name"));
-        addressList.getAddress().add(address);
+        addressList.getAddresses().add(address);
 
         return addressList;
     }
@@ -898,7 +898,7 @@ public class SupplierSyncMessageTest {
     private AssignedBusinessUnitsList buildAssignedBusinessUnitsList(String preferredForThisBusinessUnit, String name) {
         AssignedBusinessUnitsList businessList = new AssignedBusinessUnitsList();
         businessList.setIsChanged(T_TRUE);
-        businessList.getBusinessUnitInternalName().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
+        businessList.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
         return businessList;
     }
 

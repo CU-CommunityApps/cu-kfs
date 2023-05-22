@@ -149,14 +149,14 @@ public class JaggaerExampleTest {
     
     private AnnualSalesList buildAnnualSalesList() {
         AnnualSalesList list = new AnnualSalesList();
-        list.getAnnualSales().add(buildAnnualSales("60,000.00", "2024", "USD"));
-        list.getAnnualSales().add(buildAnnualSales("50,000.00", "2024", "USD"));
-        list.getAnnualSales().add(buildAnnualSales("40,000.00", "2024", "USD"));
+        list.getAnnualSalesItems().add(buildAnnualSales("60,000.00", "2024", "USD"));
+        list.getAnnualSalesItems().add(buildAnnualSales("50,000.00", "2024", "USD"));
+        list.getAnnualSalesItems().add(buildAnnualSales("40,000.00", "2024", "USD"));
         return list;
     }
     
-    private AnnualSales buildAnnualSales(String amountString, String salesYear, String currencyCode) {
-        AnnualSales sale = new AnnualSales();
+    private AnnualSalesItem buildAnnualSales(String amountString, String salesYear, String currencyCode) {
+        AnnualSalesItem sale = new AnnualSalesItem();
         sale.setAnnualSalesAmount(JaggaerBuilder.buildAmount(amountString));
         sale.setAnnualSalesYear(JaggaerBuilder.buildJaggaerBasicValue(salesYear));
         sale.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(currencyCode));
@@ -208,8 +208,8 @@ public class JaggaerExampleTest {
     
     private AddressList buildAddressList() {
         AddressList list = new AddressList();
-        list.getAddress().add(buildRemitToAddress());
-        list.getAddress().add(buildFulfillmentAddress());
+        list.getAddresses().add(buildRemitToAddress());
+        list.getAddresses().add(buildFulfillmentAddress());
         return list;
     }
     
@@ -265,7 +265,7 @@ public class JaggaerExampleTest {
     private AssignedBusinessUnitsList buildAssignedBusinessUnitsList(String... names) {
         AssignedBusinessUnitsList list = new AssignedBusinessUnitsList();
         for (String name : names) {
-            list.getBusinessUnitInternalName().add(JaggaerBuilder.buildBusinessUnitInternalName(name, null));
+            list.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, null));
         }
         return list;
     }
@@ -457,16 +457,16 @@ public class JaggaerExampleTest {
         info.setInsuranceProviderPhone(providerPhone);
         
         InsuranceCertificate certificate = new InsuranceCertificate();
-        certificate.setAttachments(buildAttachments());
-        certificate.getAttachments().getAttachment().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
+        certificate.setAttachmentList(buildAttachmentList());
+        certificate.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
         info.setInsuranceCertificate(certificate);
         
         infoList.getInsuranceInformation().add(info);
         return infoList;
     }
     
-    private Attachments buildAttachments() {
-        Attachments attachments = new Attachments();
+    private AttachmentList buildAttachmentList() {
+        AttachmentList attachments = new AttachmentList();
         return attachments;
     }
     
@@ -628,7 +628,7 @@ public class JaggaerExampleTest {
         AssociatedAddress address = buildAssociatedAddress("fulfillment", "add123");
         address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
         address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        addressList.getAssociatedAddress().add(address);
+        addressList.getAssociatedAddresses().add(address);
         
         return addressList;
     }
@@ -661,7 +661,7 @@ public class JaggaerExampleTest {
             elementValue.setValue(value);
             valueList.getCustomElementValue().add(elementValue);
         }
-        element.getCustomElementValueListOrAttachments().add(valueList);
+        element.getCustomElementValueListOrAttachmentList().add(valueList);
         
         return element;
     }
@@ -768,8 +768,8 @@ public class JaggaerExampleTest {
         info.setTaxDocumentYear(JaggaerBuilder.buildJaggaerBasicValue("2022"));
         
         TaxDocument doc = new TaxDocument();
-        doc.setAttachments(buildAttachments());
-        doc.getAttachments().getAttachment().add(JaggaerBuilder.buildAttachment("42d", "file", "Tax", "883", null));
+        doc.setAttachmentList(buildAttachmentList());
+        doc.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42d", "file", "Tax", "883", null));
         
         info.setTaxDocument(doc);
         
