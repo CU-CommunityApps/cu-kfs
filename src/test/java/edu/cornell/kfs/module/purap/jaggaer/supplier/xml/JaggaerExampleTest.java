@@ -240,7 +240,7 @@ public class JaggaerExampleTest {
     private PrefPurchaseOrderDeliveryMethod buildPrefPurchaseOrderDeliveryMethod(String emailAddress) {
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setType("Email");
-        method.getEmailOrFax().add(JaggaerBuilder.buildEmail(emailAddress));
+        method.getDeliveryMethodTypes().add(JaggaerBuilder.buildEmail(emailAddress));
         return method;
     }
     
@@ -296,8 +296,8 @@ public class JaggaerExampleTest {
     
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList primaryAddredssList = new PrimaryAddressList();
-        primaryAddredssList.getAssociatedAddress().add(buildAssociatedAddress("remitto", "ADDR1"));
-        primaryAddredssList.getAssociatedAddress().add(buildAssociatedAddress("fulfillment", "ADDR2"));
+        primaryAddredssList.getAssociatedAddresses().add(buildAssociatedAddress("remitto", "ADDR1"));
+        primaryAddredssList.getAssociatedAddresses().add(buildAssociatedAddress("fulfillment", "ADDR2"));
         return primaryAddredssList;
     }
     
@@ -602,12 +602,12 @@ public class JaggaerExampleTest {
         
         DistributionMethod faxMethod = buildDistributionMethod("fax", JaggaerConstants.FALSE, null);
         faxMethod.setFax(buildFax("1", "619", "5773360", null));
-        orderList.getDistributionMethod().add(faxMethod);
+        orderList.getDistributionMethods().add(faxMethod);
         
-        orderList.getDistributionMethod().add(buildDistributionMethod("emailplain", JaggaerConstants.FALSE, "support@JAGGAER.com"));
-        orderList.getDistributionMethod().add(buildDistributionMethod("emailbody", JaggaerConstants.FALSE, "support@JAGGAER.com"));
-        orderList.getDistributionMethod().add(buildDistributionMethod("emailattach", JaggaerConstants.FALSE, "support@JAGGAER.com"));
-        orderList.getDistributionMethod().add(buildDistributionMethod("manual", JaggaerConstants.TRUE, null));
+        orderList.getDistributionMethods().add(buildDistributionMethod("emailplain", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethods().add(buildDistributionMethod("emailbody", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethods().add(buildDistributionMethod("emailattach", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethods().add(buildDistributionMethod("manual", JaggaerConstants.TRUE, null));
         
         return orderList;
     }

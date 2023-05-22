@@ -609,7 +609,7 @@ public class SupplierSyncMessageTest {
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
         method.setFax(fax);
 
-        orderList.getDistributionMethod().add(method);
+        orderList.getDistributionMethods().add(method);
         return orderList;
     }
 
@@ -631,11 +631,11 @@ public class SupplierSyncMessageTest {
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setIsChanged(T_TRUE);
         method.setType("delivery method");
-        method.getEmailOrFax().add(buildEmail("foo@bar.com", T_TRUE));
+        method.getDeliveryMethodTypes().add(buildEmail("foo@bar.com", T_TRUE));
         Fax fax = new Fax();
         fax.setIsChanged(F_FALSE);
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
-        method.getEmailOrFax().add(fax);
+        method.getDeliveryMethodTypes().add(fax);
         return method;
     }
 
@@ -819,7 +819,7 @@ public class SupplierSyncMessageTest {
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList addressList = new PrimaryAddressList();
         addressList.setIsChanged(T_TRUE);
-        addressList.getAssociatedAddress().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
+        addressList.getAssociatedAddresses().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
         return addressList;
     }
 
