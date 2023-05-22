@@ -163,16 +163,16 @@ public class SupplierSyncMessageTest {
         return brands;
     }
 
-    private NaicsCodes buildNaicsCodes() {
-        NaicsCodes codes = new NaicsCodes();
+    private NaicsCodeList buildNaicsCodes() {
+        NaicsCodeList codes = new NaicsCodeList();
         codes.setIsChanged(T_TRUE);
-        codes.getPrimaryNaicsOrSecondaryNaicsList().add(JaggaerBuilder.buildPrimaryNaics("primary code", T_TRUE));
+        codes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaics("primary code", T_TRUE));
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("second", F_FALSE));
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("third", T_TRUE));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("second", F_FALSE));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("third", T_TRUE));
 
-        codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
+        codes.getNaicsCodeListItems().add(secondaryList);
         return codes;
     }
 

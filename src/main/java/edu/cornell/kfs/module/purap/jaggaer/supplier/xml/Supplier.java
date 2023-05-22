@@ -111,7 +111,7 @@ public class Supplier {
     @XmlElement(name = "SIC")
     private JaggaerBasicValue sic;
     @XmlElement(name = "NaicsCodes")
-    private NaicsCodes naicsCodes;
+    private NaicsCodeList naicsCodes;
     @XmlElement(name = "SupportedCurrencyList")
     private CurrencyList supportedCurrencyList;
     @XmlElement(name = "EnabledCurrencyList")
@@ -473,11 +473,11 @@ public class Supplier {
         this.sic = sic;
     }
 
-    public NaicsCodes getNaicsCodes() {
+    public NaicsCodeList getNaicsCodes() {
         return naicsCodes;
     }
 
-    public void setNaicsCodes(NaicsCodes naicsCodes) {
+    public void setNaicsCodes(NaicsCodeList naicsCodes) {
         this.naicsCodes = naicsCodes;
     }
 

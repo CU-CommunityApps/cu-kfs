@@ -184,15 +184,15 @@ public class JaggaerExampleTest {
         return list;
     }
     
-    private NaicsCodes buildNaicsCodes() {
-        NaicsCodes naicsCodes = new NaicsCodes();
-        naicsCodes.getPrimaryNaicsOrSecondaryNaicsList().add(JaggaerBuilder.buildPrimaryNaics("424120"));
+    private NaicsCodeList buildNaicsCodes() {
+        NaicsCodeList naicsCodes = new NaicsCodeList();
+        naicsCodes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaics("424120"));
         
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("424121"));
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("524120"));
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("524121"));
-        naicsCodes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("424121"));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("524120"));
+        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaics("524121"));
+        naicsCodes.getNaicsCodeListItems().add(secondaryList);
         
         return naicsCodes;
     }
