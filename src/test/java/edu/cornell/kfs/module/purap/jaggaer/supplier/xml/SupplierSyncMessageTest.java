@@ -55,7 +55,7 @@ public class SupplierSyncMessageTest {
         supplierSyncMessage.setHeader(buildHeader());
 
         SupplierRequestMessage srm = new SupplierRequestMessage();
-        srm.getSupplier().add(buildSupplier());
+        srm.getSuppliers().add(buildSupplier());
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
         logActualXmlIfNeeded(supplierSyncMessage);
@@ -256,13 +256,13 @@ public class SupplierSyncMessageTest {
         area1.setIsChanged(T_TRUE);
         area1.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name", T_TRUE));
         area1.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 1", "internal name 2"));
-        areaList.getServiceArea().add(area1);
+        areaList.getServiceAreas().add(area1);
 
         ServiceArea area2 = new ServiceArea();
         area2.setIsChanged(F_FALSE);
         area2.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("a different internal name", T_TRUE));
         area2.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 3", "internal name 4"));
-        areaList.getServiceArea().add(area2);
+        areaList.getServiceAreas().add(area2);
 
         return areaList;
     }
@@ -272,7 +272,7 @@ public class SupplierSyncMessageTest {
         stateServiceAreaList.setIsChanged(T_TRUE);
 
         for (String name : names) {
-            stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName(name, T_TRUE));
+            stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName(name, T_TRUE));
         }
 
         return stateServiceAreaList;
@@ -342,7 +342,7 @@ public class SupplierSyncMessageTest {
 
         info.setTaxDocument(document);
 
-        taxList.getTaxInformation().add(info);
+        taxList.getTaxInformations().add(info);
         return taxList;
     }
 
@@ -753,7 +753,7 @@ public class SupplierSyncMessageTest {
     private PrimaryContactList buildPrimaryContactList() {
         PrimaryContactList primaryContactList = new PrimaryContactList();
         primaryContactList.setIsChanged(T_TRUE);
-        primaryContactList.getAssociatedContact().add(buildAssociatedContact());
+        primaryContactList.getAssociatedContacts().add(buildAssociatedContact());
         return primaryContactList;
     }
 

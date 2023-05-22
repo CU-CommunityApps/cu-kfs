@@ -98,7 +98,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 message.setVersion(JaggaerConstants.XML_VERSION);
                 message.setHeader(buildHeader());
                 SupplierRequestMessage supplierRequest = new SupplierRequestMessage();
-                supplierRequest.getSupplier().addAll(supplierChunk);
+                supplierRequest.getSuppliers().addAll(supplierChunk);
 
                 message.getSupplierRequestMessageItems().add(supplierRequest);
                 messages.add(message);

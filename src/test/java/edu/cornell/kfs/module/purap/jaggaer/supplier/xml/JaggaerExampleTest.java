@@ -73,7 +73,7 @@ public class JaggaerExampleTest {
     
     private SupplierRequestMessage buildSupplierRequestMessage() {
         SupplierRequestMessage message = new SupplierRequestMessage();
-        message.getSupplier().add(buildSupplier());
+        message.getSuppliers().add(buildSupplier());
         return message;
     }
     
@@ -169,11 +169,11 @@ public class JaggaerExampleTest {
         serviceArea.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("US"));
         
         StateServiceAreaList stateServiceAreaList = new StateServiceAreaList();
-        stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-NC"));
-        stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-CA"));
+        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-NC"));
+        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-CA"));
         
         serviceArea.getStateServiceAreaList().add(stateServiceAreaList);
-        serviceAreaList.getServiceArea().add(serviceArea);
+        serviceAreaList.getServiceAreas().add(serviceArea);
         return serviceAreaList;
     }
     
@@ -394,8 +394,8 @@ public class JaggaerExampleTest {
     
     private PrimaryContactList buildPrimaryContactList() {
         PrimaryContactList primaryContactList = new PrimaryContactList();
-        primaryContactList.getAssociatedContact().add(buildAssociatedContact("remitto", "CONTACT1"));
-        primaryContactList.getAssociatedContact().add(buildAssociatedContact("fulfillment", "CONTACT1"));
+        primaryContactList.getAssociatedContacts().add(buildAssociatedContact("remitto", "CONTACT1"));
+        primaryContactList.getAssociatedContacts().add(buildAssociatedContact("fulfillment", "CONTACT1"));
         return primaryContactList;
     }
     
@@ -773,7 +773,7 @@ public class JaggaerExampleTest {
         
         info.setTaxDocument(doc);
         
-        taxList.getTaxInformation().add(info);
+        taxList.getTaxInformations().add(info);
         return taxList;
     }
     
