@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "businessUnitVendorNumber" })
+@XmlType(name = "", propOrder = { "businessUnitVendorNumbers" })
 @XmlRootElement(name = "BusinessUnitVendorNumberList")
 public class BusinessUnitVendorNumberList {
 
@@ -20,7 +20,7 @@ public class BusinessUnitVendorNumberList {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "BusinessUnitVendorNumber")
-    private List<BusinessUnitVendorNumber> businessUnitVendorNumber;
+    private List<BusinessUnitVendorNumber> businessUnitVendorNumbers;
 
     public String getIsChanged() {
         return isChanged;
@@ -30,15 +30,11 @@ public class BusinessUnitVendorNumberList {
         this.isChanged = isChanged;
     }
 
-    public void setBusinessUnitVendorNumber(List<BusinessUnitVendorNumber> businessUnitVendorNumber) {
-        this.businessUnitVendorNumber = businessUnitVendorNumber;
-    }
-
-    public List<BusinessUnitVendorNumber> getBusinessUnitVendorNumber() {
-        if (businessUnitVendorNumber == null) {
-            businessUnitVendorNumber = new ArrayList<BusinessUnitVendorNumber>();
+    public List<BusinessUnitVendorNumber> getBusinessUnitVendorNumbers() {
+        if (businessUnitVendorNumbers == null) {
+            businessUnitVendorNumbers = new ArrayList<BusinessUnitVendorNumber>();
         }
-        return this.businessUnitVendorNumber;
+        return this.businessUnitVendorNumbers;
     }
 
 }

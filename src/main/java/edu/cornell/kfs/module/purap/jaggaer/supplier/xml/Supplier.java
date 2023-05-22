@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "taxIdentificationType", "taxIdentificationNumber", "vatIdentificationNumber", "exemptFromBackupWithholding",
         "numberOfEmployees", "yearEstablished", "annualSalesList", "serviceAreaList", "registrationProfileType",
         "registrationProfileStatus", "supplierTaxRepresentativeId", "supplierRegCourt", "supplierRegSeat",
-        "supplierRegNumber", "supplierCapital", "supplierShareholders", "vatExempt", "commodityCodeList", "brands",
+        "supplierRegNumber", "supplierCapital", "supplierShareholders", "vatExempt", "commodityCodeList", "brandList",
         "shoppingCommodityCode", "austinTetra", "sic", "naicsCodes", "supportedCurrencyList", "enabledCurrencyList",
         "supplierKeywords", "addressList", "primaryAddressList", "contactList", "primaryContactList",
         "classificationList", "diversityClassificationList", "locationList",
@@ -103,7 +103,7 @@ public class Supplier {
     @XmlElement(name = "CommodityCodeList")
     private CommodityCodeList commodityCodeList;
     @XmlElement(name = "Brands")
-    private Brands brands;
+    private BrandList brandList;
     @XmlElement(name = "ShoppingCommodityCode")
     private JaggaerBasicValue shoppingCommodityCode;
     @XmlElement(name = "AustinTetra")
@@ -441,12 +441,12 @@ public class Supplier {
         this.commodityCodeList = commodityCodeList;
     }
 
-    public Brands getBrands() {
-        return brands;
+    public BrandList getBrandList() {
+        return brandList;
     }
 
-    public void setBrands(Brands brands) {
-        this.brands = brands;
+    public void setBrandList(BrandList brandList) {
+        this.brandList = brandList;
     }
 
     public JaggaerBasicValue getShoppingCommodityCode() {

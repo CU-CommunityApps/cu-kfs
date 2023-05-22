@@ -138,12 +138,12 @@ public class JaggaerExampleTest {
     
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList list = new BusinessUnitVendorNumberList();
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC1", "NCCBO0001"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA1", "VACBO0001"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC2", "NCCBO0002"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA2", "VACBO0002"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC3", "NCCBO0003"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA3", "VACBO0003"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC1", "NCCBO0001"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA1", "VACBO0001"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC2", "NCCBO0002"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA2", "VACBO0002"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC3", "NCCBO0003"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA3", "VACBO0003"));
         return list;
     }
     
@@ -416,7 +416,7 @@ public class JaggaerExampleTest {
         Classification classification = new Classification();
         classification.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("SupplierClassMinorityDisabled"));
         
-        classificationList.getClassification().add(classification);
+        classificationList.getClassifications().add(classification);
         return classificationList;
     }
     

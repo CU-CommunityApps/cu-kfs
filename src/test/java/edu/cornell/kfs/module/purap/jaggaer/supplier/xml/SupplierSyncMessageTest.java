@@ -122,7 +122,7 @@ public class SupplierSyncMessageTest {
 
         supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
 
-        supplier.setBrands(buildBrands());
+        supplier.setBrandList(buildBrands());
         supplier.setNaicsCodes(buildNaicsCodes());
         supplier.setCommodityCodeList(buildCommodityCodeList());
         supplier.setSupportedCurrencyList(buildCurrencyList(false, true, true, true));
@@ -156,10 +156,10 @@ public class SupplierSyncMessageTest {
     }
 
 
-    private Brands buildBrands() {
-        Brands brands = new Brands();
-        brands.getBrand().add(JaggaerBuilder.buildJaggaerBasicValue("brand 1", T_TRUE));
-        brands.getBrand().add(JaggaerBuilder.buildJaggaerBasicValue("brand 2", F_FALSE));
+    private BrandList buildBrands() {
+        BrandList brands = new BrandList();
+        brands.getBrands().add(JaggaerBuilder.buildJaggaerBasicValue("brand 1", T_TRUE));
+        brands.getBrands().add(JaggaerBuilder.buildJaggaerBasicValue("brand 2", F_FALSE));
         return brands;
     }
 
@@ -209,8 +209,8 @@ public class SupplierSyncMessageTest {
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
         unitNumberList.setIsChanged(T_TRUE);
-        unitNumberList.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 1", "1232", T_TRUE));
-        unitNumberList.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 2", "56464", F_FALSE));
+        unitNumberList.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 1", "1232", T_TRUE));
+        unitNumberList.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 2", "56464", F_FALSE));
         return unitNumberList;
     }
 
@@ -738,14 +738,14 @@ public class SupplierSyncMessageTest {
         classification1.setDisplayName(JaggaerBuilder.buildDisplayName("classification 1 name", T_TRUE));
 
         classification1.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name for classification 1", T_TRUE));
-        classificationList.getClassification().add(classification1);
+        classificationList.getClassifications().add(classification1);
 
         Classification classification2 = new Classification();
         classification2.setIsChanged(F_FALSE);
         classification2.setDisplayName(JaggaerBuilder.buildDisplayName("classification 2 name", F_FALSE));
 
         classification2.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name for classification 2", F_FALSE));
-        classificationList.getClassification().add(classification2);
+        classificationList.getClassifications().add(classification2);
 
         return classificationList;
     }
