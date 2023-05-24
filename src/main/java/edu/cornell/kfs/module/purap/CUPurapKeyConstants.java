@@ -12,6 +12,9 @@ public class CUPurapKeyConstants {
     
     public static final String I_WANT_ITEMS_SOLE_SOURCE_NOTE = "note.iWant.document.itemSoleSource";
     
+    public static final String MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED = "message.iwant.document.approve.finalized";
+    public static final String MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW = "message.iwant.document.approve.submit.to.workflow";
+    
     //error messages
     public static final String ERROR_IWNT_CONMPLETE_ORDER_OPTION_REQUIRED = "error.iWant.document.completeOption.required";
     public static final String ERROR_IWNT_REQUISITION_EXISTS = "error.iWant.document.requisition.exists";
