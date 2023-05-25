@@ -126,21 +126,21 @@
                 </td>          
             </tr>
 
-			<tr>
-	            <sys:bankLabel align="right"/>
-                <sys:bankControl property="document.bankCode" objectProperty="document.bank" readOnly="${not fullEntryMode}"/>
-<%-- MOD-PA2000-01: Baseline Modification Start --%>
-                    <th class="right">
-                        <kul:htmlAttributeLabel attributeEntry="${documentAttributes.paymentMethodCode}" />
-                    </th>
-                    <td class="datacell">
-                        <kul:htmlControlAttribute 
-                        	attributeEntry="${documentAttributes.paymentMethodCode}" property="document.paymentMethodCode" 
-                        	readOnly="${not fullEntryMode}"
-                        	onchange="paymentMethodChanged( this.value );" />
-                    </td>
-<%-- MOD-PA2000-01: Baseline Modification End --%>
-            </tr>   
+            <tr>
+                <th class="right">
+                    <label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.paymentMethodCode}" /></label>
+                </th>
+                <td class="datacell">
+                    <kul:htmlControlAttribute
+                        attributeEntry="${documentAttributes.paymentMethodCode}"
+                        extraReadOnlyProperty="document.paymentMethod.displayName"
+                        property="document.paymentMethodCode"
+                        readOnly="true" />
+                </td>
+                <sys:bankLabel align="right"/>
+                <sys:bankControl property="document.bankCode" objectProperty="document.bank"
+                                 readOnly="${not fullEntryMode}"/>
+            </tr>  
 		</table> 
     </div>
 <%-- MOD-PA2000-01: Baseline Modification Start --%>

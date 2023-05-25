@@ -1,13 +1,16 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -1794,6 +1797,25 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         Arrays.stream(attributes)
                 .filter(this::isUnsupportedXmlnsAttribute)
                 .forEach(element::removeAttributeNode);
+    }
+    
+    // CU customization: base code method is private and cannot be accessed from custom extension
+    private void logProcessElectronicInvoiceError(final String msg) {
+        final File file = new File(electronicInvoiceInputFileType.getReportPath() + "/" +
+            electronicInvoiceInputFileType.getReportPrefix() + "_" +
+            dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate()) + "." +
+            electronicInvoiceInputFileType.getReportExtension());
+
+        try (BufferedWriter writer = new BufferedWriter(new PrintWriter(file, StandardCharsets.UTF_8))) {
+            writer.write(msg);
+            writer.newLine();
+        } catch (final FileNotFoundException e) {
+            LOG.error("{} not found  {}", () -> file, e::getMessage);
+            throw new RuntimeException(file + " not found " + e.getMessage(), e);
+        } catch (final IOException e) {
+            LOG.error("Error writing to BufferedWriter {}", e::getMessage);
+            throw new RuntimeException("Error writing to BufferedWriter " + e.getMessage(), e);
+        }
     }
 
     protected boolean isUnsupportedXmlnsAttribute(Attr attribute) {

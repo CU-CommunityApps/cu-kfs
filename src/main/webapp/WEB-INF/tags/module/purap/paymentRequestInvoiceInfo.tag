@@ -170,15 +170,14 @@
             </tr>
 			
     		<tr>
-                <sys:bankLabel align="right"/>
+                
 <%-- KITT-592 / MOD-PA2000-01: Baseline Modification Start --%>
 	<%-- Changed editability of the bank field to lock down after full entry (initiation) if the payment
 		 will *not* be processed by PDP.  (When not, the GL entries which affect the bank accounts are created as
 		 part of the main document, not by PDP, and there is no good way to reverse them out. --%>
 	                <c:set var="canEditBank" value="${fullEntryMode or (editPreExtract and KualiForm.document.paymentMethod.processedUsingPdp)}" />
 	                <c:set var="canEditPaymentMethod" value="${fullEntryMode}" />
-                    <sys:bankControl property="document.bankCode" objectProperty="document.bank" readOnly="${not canEditBank}"/>
-                    
+                  
                     <th align=right valign=middle class="bord-l-b">
                         <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.paymentMethodCode}" /></div>
                     </th>
@@ -188,6 +187,8 @@
                         	readOnly="${not canEditPaymentMethod}" tabindexOverride="${tabindexOverrideBase + 4}"
                         	onchange="paymentMethodChanged( this.value );" />
                     </td>
+                    <sys:bankLabel align="right"/>
+                    <sys:bankControl property="document.bankCode" objectProperty="document.bank" readOnly="${not canEditBank}"/>
 <%-- KITT-592 / MOD-PA2000-01: Baseline Modification End --%>
             </tr>
 <%-- KITT-592 / MOD-PA2000-01: Baseline Modification Start --%>

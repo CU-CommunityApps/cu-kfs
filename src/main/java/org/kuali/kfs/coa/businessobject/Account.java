@@ -1134,7 +1134,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
             Account originalAcct = (Account) boService.retrieve(this);
 
             if (originalAcct != null) {
-                if (!originalAcct.getSufficientFundsCode().equals(getSufficientFundsCode())) {
+                if (originalAcct.isPendingAcctSufficientFundsIndicator() != isPendingAcctSufficientFundsIndicator()
+                        || !originalAcct.getSufficientFundsCode().equals(getSufficientFundsCode())) {
                     SufficientFundRebuild sfr = new SufficientFundRebuild();
                     sfr.setAccountFinancialObjectTypeCode(SufficientFundRebuild.REBUILD_ACCOUNT);
                     sfr.setChartOfAccountsCode(getChartOfAccountsCode());
