@@ -1,86 +1,72 @@
-<?xml version='1.0' encoding='UTF-8'?> 
-<!--
- Copyright 2009 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
-  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
-       <documentType>
-         <name>PREQ</name>
-         <parent>AP</parent>
-         <label>Payment Request</label>
-         <docHandler>${kfs.url}/purapPaymentRequest.do?methodToCall=docHandler</docHandler>
-         <helpDefinitionURL>default.htm?turl=WordDocuments%2Fpaymentrequest.htm</helpDefinitionURL>
-         <docSearchHelpURL>${kfs.externalizable.help.url}/default.htm?turl=WordDocuments%2Fpaymentrequests.htm</docSearchHelpURL>
-         <active>true</active>
-   			<validApplicationStatuses>
-   				<status>Initiated</status>
-   				<status>In Process</status>
-   				<status>Cancelled In Process</status>
-   				<status>Cancelled</status>
-   				<status>Department-Approved</status>
-   				<status>Auto-Approved</status>
-   				<status>Awaiting AP Review</status>
-   				<status>Awaiting Receiving</status>
-   				<status>Awaiting Sub-Account Manager Approval</status>
-   				<status>Awaiting Fiscal Officer Approval</status>
-   				<status>Awaiting Chart Approval</status>
-   				<status>Awaiting Tax Approval</status>
-   				<status>Awaiting Treasury Manager Approval</status>
-   				<status>Pending Route Electronic Invoice</status>
-   			</validApplicationStatuses>
-         <policies>
-           <policy>
-             <name>DOCUMENT_STATUS_POLICY</name>
-             <stringValue>APP</stringValue>
-           </policy>
-         </policies>
-         <routingVersion>2</routingVersion>
-         <routePaths>
-   				<routePath>
-   					<start name="AdHoc" nextNode="RequiresImageAttachment" nextAppDocStatus="Awaiting AP Review" />
-   					<split name="RequiresImageAttachment" nextNode="PurchaseWasReceived">
-   						<branch name="True">
-   							<role name="ImageAttachment" nextNode="JoinRequiresImageAttachment" nextAppDocStatus="Awaiting Receiving" />
-   						</branch>
-   						<branch name="False">
-   							<simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment" nextAppDocStatus="Awaiting Receiving" />
-   						</branch>
-   						<join name="JoinRequiresImageAttachment" />
-   					</split>
-   					<split name="PurchaseWasReceived" nextNode="SubAccount">
-   						<branch name="True">
-   							<role name="Receiving" nextNode="JoinReceiving"  nextAppDocStatus="Awaiting Sub-Account Manager Approval"/>
-   						</branch>
-   						<branch name="False">
-   							<simple name="NoOpReceiving" nextNode="JoinReceiving"  nextAppDocStatus="Awaiting Sub-Account Manager Approval"/>
-   						</branch>
-   						<join name="JoinReceiving" />
-   					</split>
-   					<role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer Approval" />
-   					<role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Chart Approval" />
-   					<role name="AccountingOrganizationHierarchy" nextNode="VendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Tax Approval" />
-   					 <split name="VendorIsEmployeeOrNonresident" nextNode="TreasuryManager">
-   						<branch name="True">
-   							<role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
-   						</branch>
-   						<branch name="False">
-   							<simple name="NoOpVendorIsEmployeeOrNonresident" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
-   						</branch>
-   						<join name="JoinVendorIsEmployeeOrNonresident" />
-   					</split>
-   				    <split name="TreasuryManager" nextNode="RequiresAutoApprovalNotification">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>PREQ</name>
+            <parent>AP</parent>
+            <label>Payment Request</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/purapPaymentRequest.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fpaymentrequest.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fpaymentrequest.htm</docSearchHelpURL>
+            <active>true</active>
+            <validApplicationStatuses>
+                <status>In Process</status>
+                <status>Awaiting Chart Approval</status>
+                <status>Awaiting Receiving</status>
+                <status>Awaiting Fiscal Officer Approval</status>
+                <status>Department-Approved</status>
+                <status>Awaiting Tax Approval</status>
+                <status>Auto-Approved</status>
+                <status>Initiated</status>
+                <status>Cancelled</status>
+                <status>Awaiting AP Review</status>
+                <status>Awaiting Sub-Account Manager Approval</status>
+                <status>Cancelled In Process</status>
+                <status>Awaiting Treasury Manager Approval</status>
+                <status>Pending Route Electronic Invoice</status>
+            </validApplicationStatuses>
+            <policies>
+                <policy>
+                    <name>DOCUMENT_STATUS_POLICY</name>
+                    <stringValue>APP</stringValue>
+                </policy>
+            </policies>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="RequiresImageAttachment" nextAppDocStatus="Awaiting AP Review"/>
+                    <split name="RequiresImageAttachment" nextNode="PurchaseWasReceived">
+                        <branch name="True">
+                            <role name="ImageAttachment" nextNode="JoinRequiresImageAttachment" nextAppDocStatus="Awaiting Receiving"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment" nextAppDocStatus="Awaiting Receiving"/>
+                        </branch>
+                        <join name="JoinRequiresImageAttachment"/>
+                    </split>
+                    <split name="PurchaseWasReceived" nextNode="SubAccount">
+                        <branch name="True">
+                            <role name="Receiving" nextNode="JoinReceiving" nextAppDocStatus="Awaiting Sub-Account Manager Approval"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpReceiving" nextNode="JoinReceiving" nextAppDocStatus="Awaiting Sub-Account Manager Approval"/>
+                        </branch>
+                        <join name="JoinReceiving"/>
+                    </split>
+                    <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer Approval"/>
+                    <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Chart Approval"/>
+                    <role name="AccountingOrganizationHierarchy" nextNode="VendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Tax Approval"/>
+                    <split name="VendorIsEmployeeOrNonresident" nextNode="TreasuryManager">
+                        <branch name="True">
+                            <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpVendorIsEmployeeOrNonresident" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                        </branch>
+                        <join name="JoinVendorIsEmployeeOrNonresident"/>
+                    </split>
+                    <split name="TreasuryManager" nextNode="RequiresAutoApprovalNotification">
                         <branch name="True">
                             <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
                         </branch>
@@ -89,96 +75,88 @@
                         </branch>
                         <join name="JoinTreasury"/>
                     </split>
-					<split name="RequiresAutoApprovalNotification">
-						<branch name = "True">
-							<role name="AutoApprove" nextNode="joinOnAutoApproval"/>
-						</branch>
-						<branch name="False">
-							<simple name="NoOpAutoApproval" nextNode="joinOnAutoApproval"/>
-						</branch>
-						<join name="joinOnAutoApproval"/>
-					</split>
-   				</routePath>
-         </routePaths>
-         <routeNodes>
-           <start name="AdHoc" />
-           <split name="RequiresImageAttachment">
-             <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-           </split>
-           <role name="ImageAttachment">
-             <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-             <activationType>P</activationType>
-           </role>
-           <join name="JoinRequiresImageAttachment" />
-           <simple name="NoOpRequiresImageAttachment">
-             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-           </simple>
-           <split name="PurchaseWasReceived">
-             <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-           </split>
-           <role name="Receiving">
-             <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-             <activationType>P</activationType>
-           </role>
-           <join name="JoinReceiving" />
-           <simple name="NoOpReceiving">
-             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-           </simple>
-           <role name="SubAccount">
-             <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-             <activationType>P</activationType>
-           </role>
-           <role name="Account">
-             <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-             <activationType>P</activationType>
-             <mandatoryRoute>true</mandatoryRoute>
-           </role>
-           <role name="AccountingOrganizationHierarchy">
-             <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-             <activationType>P</activationType>
-           </role>
-           <split name="VendorIsEmployeeOrNonresident">
-             <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-           </split>
-           <role name="Tax">
-             <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-             <activationType>P</activationType>
-           </role>
-                   <!-- KFSPTS-1891 -->
-           <role name="PaymentMethodReviewer">
-            <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-            <activationType>P</activationType>
-           </role>
-           <split name="TreasuryManager">
-            <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-           </split>
-           <join name="JoinVendorIsEmployeeOrNonresident" />
-           <simple name="NoOpVendorIsEmployeeOrNonresident">
-             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-           </simple>
-                   <!-- KFSPTS-1891 -->
-           <simple name="NoOpTreasury">
-             <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-           </simple>
-           <join name="JoinTreasury"/>
-          <split name="RequiresAutoApprovalNotification">
-          <type>
-            org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode
-          </type>
-        </split>
-        <role name="AutoApprove">
-          <qualifierResolverClass>
-            org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver
-          </qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="joinOnAutoApproval"/>
-        <simple name="NoOpAutoApproval">
-          <type>
-            org.kuali.kfs.kew.engine.node.NoOpNode
-          </type>
-        </simple>
-         </routeNodes>
-       </documentType>
-  </documentTypes>
+                    <split name="RequiresAutoApprovalNotification">
+                        <branch name="True">
+                            <role name="AutoApprove" nextNode="joinOnAutoApproval"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpAutoApproval" nextNode="joinOnAutoApproval"/>
+                        </branch>
+                        <join name="joinOnAutoApproval"/>
+                    </split>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <split name="RequiresImageAttachment">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="ImageAttachment">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresImageAttachment"/>
+                <split name="PurchaseWasReceived">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Receiving">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinReceiving"/>
+                <role name="SubAccount">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                    <mandatoryRoute>true</mandatoryRoute>
+                </role>
+                <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="VendorIsEmployeeOrNonresident">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Tax">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinVendorIsEmployeeOrNonresident"/>
+                <split name="TreasuryManager">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="PaymentMethodReviewer">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinTreasury"/>
+                <split name="RequiresAutoApprovalNotification">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="AutoApprove">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="joinOnAutoApproval"/>
+                <simple name="NoOpAutoApproval">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <simple name="NoOpTreasury">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <simple name="NoOpVendorIsEmployeeOrNonresident">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <simple name="NoOpReceiving">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <simple name="NoOpRequiresImageAttachment">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
 </data>

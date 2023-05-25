@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>INV</name>
+            <parent>AR</parent>
+            <label>Customer Invoice</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/arCustomerInvoice.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fcustomerinvoice.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fcustomerinvoice.htm</docSearchHelpURL>
+            <active>true</active>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="HasReccurence"/>
+                    <split name="HasReccurence">
+                        <branch name="True">
+                            <role name="Account" nextNode="Recurrence"/>
+                            <role name="Recurrence" nextNode="Join"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOp" nextNode="Join"/>
+                        </branch>
+                        <join name="Join"/>
+                    </split>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <split name="HasReccurence">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="Recurrence">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="Join"/>
+                <simple name="NoOp">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
+</data>
