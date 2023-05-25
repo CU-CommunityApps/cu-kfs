@@ -48,7 +48,7 @@ public class EnumConfiguredMappingStrategy<T, E extends Enum<E>> extends ColumnP
     }
 
     @Override
-    public String[] generateHeader(T bean) throws CsvRequiredFieldEmptyException{
+    public String[] generateHeader(T bean) throws CsvRequiredFieldEmptyException {
         return Arrays.copyOf(headerLabels, headerLabels.length);
     }
 

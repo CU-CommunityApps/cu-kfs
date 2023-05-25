@@ -129,9 +129,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
 	private static final String XMLNS_ATTRIBUTE_PREFIX = "xmlns";
 	private static final Pattern ALLOWED_XMLNS_ATTRIBUTES_PATTERN = Pattern.compile("^xmlns(:xsi)?$");
-
-    //KFSPTS-1891
-	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
 	
 	private WorkflowDocumentService workflowDocumentService;
 	private CUFinancialSystemDocumentService financialSystemDocumentService;
@@ -774,7 +771,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
                 hasPaymentMethodCode = true;
             } else {
-                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(DEFAULT_EINVOICE_PAYMENT_METHOD_CODE);
+                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
             }
         }
         Bank defaultBank = null;

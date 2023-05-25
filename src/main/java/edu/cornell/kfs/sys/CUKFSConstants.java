@@ -136,7 +136,7 @@ public class CUKFSConstants {
         public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
     }
 
-    public static class BasicAccountingCategory{
+    public static class BasicAccountingCategory {
         public static final String ASSET = "AS";
         public static final String EXPENSE = "EX";
     }
@@ -223,7 +223,7 @@ public class CUKFSConstants {
     public static final String ISO = "ISO";
     public static final String FIPS = "FIPS";
     
-    public class CuPaymentSourceConstants{
+    static final public class CuPaymentSourceConstants {
         public static final String PAYMENT_METHOD_INTERNAL_BILLING = "B";
     }
 }

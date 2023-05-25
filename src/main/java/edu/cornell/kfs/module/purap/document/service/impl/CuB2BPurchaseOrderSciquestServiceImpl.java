@@ -62,11 +62,6 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     private static final String NON_QUANTITY_UOM = "LOT"; 
     //end KFSUPGRADE-406
     
-    // KFSUPGRADE-583
-    // Text to pass to SciQuest in the case where a federally funded account is used on the PO
-    private static final String FEDERAL_FUNDING_TEXT = "Federal funding has been designated for this purchase order.";
-    // end KFSUPGRADE-583
-    
     private AttachmentService attachmentService;
     private BusinessObjectService businessObjectService;
     private PurchaseOrderService purchaseOrderService;

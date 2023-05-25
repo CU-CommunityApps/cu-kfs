@@ -3,6 +3,11 @@ package edu.cornell.kfs.module.purap.document;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kns.service.DocumentHelperService;
+import org.kuali.kfs.krad.document.DocumentAuthorizer;
+import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
 import org.kuali.kfs.sys.KFSConstants;
@@ -10,13 +15,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.kns.service.DocumentHelperService;
-import org.kuali.kfs.krad.document.DocumentAuthorizer;
-import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
@@ -26,9 +25,13 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
 	
     public static String DOCUMENT_TYPE_NON_CHECK = "CMNC";
 
-    protected String paymentMethodCode = "A"; //ACH check
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     protected CreditMemoWireTransfer cmWireTransfer;
+    
+    public CuVendorCreditMemoDocument() {
+        super();
+        setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+    }
     
     @Override
     public void prepareForSave(final KualiDocumentEvent event) {
@@ -89,15 +92,6 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     private boolean isWireOrForeignDraft() {
         return StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, this.getPaymentMethodCode());
     }
-    
-
-	public String getPaymentMethodCode() {
-		return paymentMethodCode;
-	}
-
-	public void setPaymentMethodCode(String paymentMethodCode) {
-		this.paymentMethodCode = paymentMethodCode;
-	}
     
     public void synchronizeBankCodeWithPaymentMethod() {
         Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getPaymentMethodCode() );

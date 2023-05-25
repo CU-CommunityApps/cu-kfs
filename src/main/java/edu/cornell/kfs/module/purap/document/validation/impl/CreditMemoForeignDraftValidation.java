@@ -32,7 +32,7 @@ public class CreditMemoForeignDraftValidation extends GenericValidation {
         boolean isValid = true;
         
         VendorCreditMemoDocument document = (VendorCreditMemoDocument) accountingDocumentForValidation;
-        if (!KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equals(((CuVendorCreditMemoDocument)document).getPaymentMethodCode())) {
+        if (!KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equals(document.getPaymentMethodCode())) {
             return true;
         }
 

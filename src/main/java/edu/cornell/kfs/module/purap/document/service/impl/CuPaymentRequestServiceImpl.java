@@ -274,18 +274,26 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    public void populatePaymentRequest(final PaymentRequestDocument paymentRequestDocument) {
-    	super.populatePaymentRequest(paymentRequestDocument);
-    	
-    	//KFSUPGRADE-779
-    	//reset bank code
-    	 paymentRequestDocument.setBankCode(null);
+    public void initializePaymentMethodAndBank(PaymentRequestDocument paymentRequestDocument) {
+        final PurchaseOrderDocument purchaseOrderDocument = paymentRequestDocument.getPurchaseOrderDocument();
+        if ( ObjectUtils.isNotNull(purchaseOrderDocument.getVendorDetail())
+                && ObjectUtils.isNotNull(purchaseOrderDocument) ) {
+            if ( purchaseOrderDocument.getVendorDetail().getExtension() instanceof VendorDetailExtension
+                    && StringUtils.isNotBlank( ((VendorDetailExtension)purchaseOrderDocument.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
+                paymentRequestDocument.setPaymentMethodCode(
+                        ((VendorDetailExtension)purchaseOrderDocument.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() );
+            }
+        }
+        
+        //KFSUPGRADE-779
+        //reset bank code
+         paymentRequestDocument.setBankCode(null);
          paymentRequestDocument.setBank(null);
          
         // set bank code to default bank code in the system parameter
         Bank defaultBank = null;
         if (StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
-        	defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
+            defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
         } else if (!StringUtils.equals(CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
             defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
         }

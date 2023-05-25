@@ -52,13 +52,12 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
     protected PaymentRequestWireTransfer preqWireTransfer;
     
-    // default this value to "C" to preserve baseline behavior
-    protected String paymentMethodCode = "P"; //ACH check
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     
     public CuPaymentRequestDocument() {
 		super();
 		preqWireTransfer = new PaymentRequestWireTransfer();
+		setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
 	}
 
     public void prepareForSave(final KualiDocumentEvent event) {
@@ -287,14 +286,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         return Stream.concat(otherDocIdsToLock, poDocIdsToLock)
                 .collect(Collectors.toUnmodifiableList());
     }
-
-	public String getPaymentMethodCode() {
-		return paymentMethodCode;
-	}
-
-	public void setPaymentMethodCode(String paymentMethodCode) {
-		this.paymentMethodCode = paymentMethodCode;
-	}
 
 	public PaymentRequestWireTransfer getPreqWireTransfer() {
 		if (ObjectUtils.isNull(preqWireTransfer)) {

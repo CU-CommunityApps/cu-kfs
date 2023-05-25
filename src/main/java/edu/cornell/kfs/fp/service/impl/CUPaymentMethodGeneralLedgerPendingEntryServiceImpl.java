@@ -64,7 +64,6 @@ import edu.cornell.kfs.sys.service.CuGeneralLedgerPendingEntryService;
 
 public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPaymentMethodGeneralLedgerPendingEntryService {
 	private static final Logger LOG = LogManager.getLogger(CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.class);
-    protected static final String DEFAULT_PAYMENT_METHOD_IF_MISSING = "A"; // check/ACH
 
     protected CuGeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     protected ObjectCodeService objectCodeService;
@@ -74,7 +73,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     @Cacheable(value=SystemOptions.CACHE_NAME, key="'{isPaymentMethodProcessedUsingPdp}'+#p0")
     public boolean isPaymentMethodProcessedUsingPdp(String paymentMethodCode) {
         if ( StringUtils.isBlank(paymentMethodCode) ) {
-            paymentMethodCode = DEFAULT_PAYMENT_METHOD_IF_MISSING;
+            paymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         }
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         if ( pm != null ) {
@@ -90,7 +89,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
      */
     public Bank getBankForPaymentMethod(String paymentMethodCode) {
         if ( StringUtils.isBlank(paymentMethodCode) ) {
-            paymentMethodCode = DEFAULT_PAYMENT_METHOD_IF_MISSING;
+            paymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         }
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         if ( pm != null ) {
@@ -136,7 +135,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             Map<String, KualiDecimal> actualTotalsByChart) {
 
         if ( StringUtils.isBlank(paymentMethodCode) ) {
-            paymentMethodCode = DEFAULT_PAYMENT_METHOD_IF_MISSING;
+            paymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         }
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         // no payment method? abort.
