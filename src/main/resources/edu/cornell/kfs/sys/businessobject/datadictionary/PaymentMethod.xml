@@ -9,7 +9,6 @@
     <bean id="PaymentMethod" parent="PaymentMethod-parentBean">
         <property name="attributes">
             <list merge="true">
-                <ref bean="PaymentMethod-extension-assessedFees"/>
                 <ref bean="PaymentMethod-extension-processedUsingPdp"/>
                 <ref bean="PaymentMethod-extension-displayOnVendorDocument"/>
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
@@ -17,10 +16,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentMethod-extension-assessedFees" parent="PaymentMethod-extension-assessedFees-parentBean"/>
-    <bean id="PaymentMethod-extension-assessedFees-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-assessedFees"
-            p:name="extension.assessedFees"/>
-            
     <bean id="PaymentMethod-extension-processedUsingPdp" parent="PaymentMethod-extension-processedUsingPdp-parentBean"/>
     <bean id="PaymentMethod-extension-processedUsingPdp-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-processedUsingPdp"
             p:name="extension.processedUsingPdp"/>
@@ -36,9 +31,6 @@
         <bean id="PaymentMethod-lookupDefinition" parent="PaymentMethod-lookupDefinition-parentBean" >
         <property name="formAttributeDefinitions">
             <list merge="true">
-                <bean parent="PaymentMethod-extension-assessedFees"
-                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
-                      p:defaultValue="" />
                 <bean parent="PaymentMethod-extension-processedUsingPdp"
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                       p:defaultValue="" />
@@ -52,7 +44,6 @@
         </property>
         <property name="displayAttributeDefinitions">
             <list merge="true">
-                <ref bean="PaymentMethod-extension-assessedFees" />
                 <ref bean="PaymentMethod-extension-processedUsingPdp" />
                 <ref bean="PaymentMethod-extension-displayOnVendorDocument" />
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument" />
@@ -64,7 +55,6 @@
             parent="PaymentMethod-sectionDefinition-parentBean">
         <property name="fields">
             <list merge="true">
-                <ref bean="PaymentMethod-extension-assessedFees"/>
                 <ref bean="PaymentMethod-extension-processedUsingPdp"/>
                 <ref bean="PaymentMethod-extension-displayOnVendorDocument"/>
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>

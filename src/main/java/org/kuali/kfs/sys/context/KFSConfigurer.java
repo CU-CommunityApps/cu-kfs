@@ -197,16 +197,6 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
             initDirectories(mainApplicationContext);
             updateWorkflow(mainApplicationContext);
             initScheduler(mainApplicationContext);
-            
-            // CU customization
-            if (shouldAllowLocalBatchExecution()) {
-                if (isQuartzSchedulingEnabled()) {
-                    throw new IllegalStateException("CU-specific local batch execution and Quartz scheduling "
-                            + "cannot both be enabled");
-                }
-                // Base code skips this initialize() call if Quartz is disabled, so we add it again in this block.
-                SpringContext.getBean(SchedulerService.class).initialize();
-            }
         }
 
         if (applicationEvent instanceof ContextClosedEvent) {
@@ -353,6 +343,16 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
                 LOG.error("Caught Exception while starting the scheduler", ex);
             }
         }
+        
+        // CU customization
+        if (shouldAllowLocalBatchExecution()) {
+            if (isQuartzSchedulingEnabled()) {
+                throw new IllegalStateException("CU-specific local batch execution and Quartz scheduling "
+                        + "cannot both be enabled");
+            }
+            // Base code skips this initialize() call if Quartz is disabled, so we add it again in this block.
+            SpringContext.getBean(SchedulerService.class).initialize();
+        }
     }
 
     @Override
@@ -476,15 +476,15 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     }
 
     // CU customization
-    private boolean shouldAllowLocalBatchExecution() {
+    private static boolean shouldAllowLocalBatchExecution() {
         return getBooleanProperty(CUKFSConstants.CU_ALLOW_LOCAL_BATCH_EXECUTION_KEY);
     }
 
-    private boolean isQuartzSchedulingEnabled() {
+    private static boolean isQuartzSchedulingEnabled() {
         return getBooleanProperty(KFSPropertyConstants.USE_QUARTZ_SCHEDULING_KEY);
     }
 
-    private boolean getBooleanProperty(String propertyName) {
+    private static boolean getBooleanProperty(String propertyName) {
         return KRADServiceLocator.getKualiConfigurationService().getPropertyValueAsBoolean(propertyName);
     }
 }

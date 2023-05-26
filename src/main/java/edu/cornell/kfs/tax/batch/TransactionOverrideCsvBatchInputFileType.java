@@ -138,10 +138,9 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
             
             //use csv reader to parse tab-delimited content
 
-            csvReader = new CSVReaderBuilder(new InputStreamReader(new ByteArrayInputStream(fileByteContent),
-                    StandardCharsets.UTF_8))
-            .withCSVParser(new CSVParserBuilder().withSeparator('\t').build())
-            .build();
+            csvReader = new CSVReaderBuilder(
+                    new InputStreamReader(new ByteArrayInputStream(fileByteContent), StandardCharsets.UTF_8))
+                    .withCSVParser(new CSVParserBuilder().withSeparator('\t').build()).build();
             List<String[]> dataList = csvReader.readAll();
             
             //remove first header line
@@ -179,11 +178,8 @@ public class TransactionOverrideCsvBatchInputFileType extends CsvBatchInputFileT
      */
     protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws CsvException, IOException {
         //use csv reader to parse tab-delimited content
-        CSVReader csvReader= new CSVReaderBuilder(new InputStreamReader(fileContents,
-                StandardCharsets.UTF_8))
-                .withCSVParser(new CSVParserBuilder()
-                .withSeparator('\t').build())
-                .build();
+        CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(fileContents, StandardCharsets.UTF_8))
+                .withCSVParser(new CSVParserBuilder().withSeparator('\t').build()).build();
         try {
             List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
 

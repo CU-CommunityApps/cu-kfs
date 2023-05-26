@@ -223,7 +223,7 @@ public class CUKFSConstants {
     public static final String ISO = "ISO";
     public static final String FIPS = "FIPS";
     
-    static final public class CuPaymentSourceConstants {
+    public static final class CuPaymentSourceConstants {
         public static final String PAYMENT_METHOD_INTERNAL_BILLING = "B";
     }
 }

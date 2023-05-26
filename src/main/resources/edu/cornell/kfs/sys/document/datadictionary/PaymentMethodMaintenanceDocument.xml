@@ -24,10 +24,7 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-    <bean id="PaymentMethodMaintenanceDocument" parent="PaymentMethodMaintenanceDocument-parentBean">
-    </bean>
-
+                
     <!-- Maintenance Section Definitions -->
     <bean parent="DataDictionaryBeanOverride">
         <property name="beanName" value="PaymentMethodMaintenanceDocument-EditPaymentMethod" />
@@ -35,12 +32,12 @@
            <list>
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
                    <property name="element">
                            <bean parent="MaintainableFieldDefinition" p:name="bankCode" />
                    </property>
                    <property name="insertAfter">
                        <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="extension.assessedFees" />
                           <bean parent="MaintainableFieldDefinition" p:name="extension.processedUsingPdp" />
                        </list>
                    </property>
@@ -55,6 +52,7 @@
            <list>
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
+                   <property name="propertyNameForElementCompare" value="attributeName" />
                    <property name="element">
                            <bean parent="MaintainableFieldDefinition" p:name="displayOnVendorCreditMemo" />
                    </property>

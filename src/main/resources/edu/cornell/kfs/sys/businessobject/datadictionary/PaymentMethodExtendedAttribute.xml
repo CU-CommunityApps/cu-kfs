@@ -12,8 +12,9 @@
         <property name="attributes">
             <list>
                 <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
-                <ref bean="PaymentMethodExtendedAttribute-assessedFees"/>
                 <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
+                <ref bean="PaymentMethodExtendedAttribute-displayOnVendorDocument"/>
+                <ref bean="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"/>
             </list>
         </property>
     </bean>
@@ -23,16 +24,6 @@
     <bean id="PaymentMethodExtendedAttribute-paymentMethodCode-parentBean" 
           abstract="true" 
           parent="PaymentMethod-paymentMethodCode"/>
-
-    <bean id="PaymentMethodExtendedAttribute-assessedFees" 
-          parent="PaymentMethodExtendedAttribute-assessedFees-parentBean"/>
-    <bean id="PaymentMethodExtendedAttribute-assessedFees-parentBean"
-          abstract="true" 
-          parent="GenericAttributes-genericBoolean"
-          p:name="assessedFees"
-          p:label="Fee Indicator"
-          p:shortLabel="FeeInd"
-    />
 
     <bean id="PaymentMethodExtendedAttribute-processedUsingPdp" 
           parent="PaymentMethodExtendedAttribute-processedUsingPdp-parentBean"/>

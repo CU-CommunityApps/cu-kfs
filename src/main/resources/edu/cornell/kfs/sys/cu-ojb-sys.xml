@@ -346,23 +346,13 @@
         </reference-descriptor>
     </class-descriptor>
     
-    <class-descriptor
-      class="edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute"
-      table="FS_PMT_MTHD_TX">
-      <field-descriptor name="objectId" column="OBJ_ID"
-        jdbc-type="VARCHAR" index="true" />
-      <field-descriptor name="versionNumber" column="VER_NBR"
-        jdbc-type="BIGINT" locking="true" />
-      <field-descriptor name="paymentMethodCode" column="PMT_MTHD_CD"
-        jdbc-type="VARCHAR" primarykey="true" index="true" />
-      <field-descriptor name="assessedFees" column="FEE_IND" 
-        jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-      <field-descriptor name="processedUsingPdp" column="PDP_IND" 
-        jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-      <field-descriptor name="displayOnVendorDocument" column="VENDOR_DISPLAY_IND" 
-        jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-      <field-descriptor name="displayOnRecurringDVDocument" column="RECURRING_DV_DISPLAY_IND" 
-        jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute" table="FS_PMT_MTHD_TX">
+        <field-descriptor name="paymentMethodCode" column="PMT_MTHD_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="processedUsingPdp" column="PDP_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="displayOnVendorDocument" column="VENDOR_DISPLAY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
+        <field-descriptor name="displayOnRecurringDVDocument" column="RECURRING_DV_DISPLAY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
   </class-descriptor>
     
 </descriptor-repository>

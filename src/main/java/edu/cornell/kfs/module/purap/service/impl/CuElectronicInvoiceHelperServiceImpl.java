@@ -888,27 +888,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         addShipToNotes(preqDoc,orderHolder);
 
-    	// KFSUPGRADE-483
-//        String routingAnnotation = null;
-//        if (!orderHolder.isRejectDocumentHolder()) {
-//            routingAnnotation = "Routed by electronic invoice batch job";
-//        }
-
-        try {
-            // KFSUPGRADE-483
-            // KFSUPGRADE-490: Do save-only operations for just non-EIRT-generated PREQs.
-            if (orderHolder.isRejectDocumentHolder()) {
-                documentService.routeDocument(preqDoc, null, null);
-            } else {
-                documentService.saveDocument(preqDoc,DocumentSystemSaveEvent.class);
-            }
-        } catch(ValidationException e) {
-            String extraDescription = GlobalVariables.getMessageMap().toString();
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
-            orderHolder.addInvoiceOrderRejectReason(rejectReason);
-            return null;
-        }
-
         return preqDoc;
     }
     
@@ -916,16 +895,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     protected boolean routeCreatedPaymentRequest(
             final ElectronicInvoiceOrderHolder orderHolder,
             final PaymentRequestDocument preqDoc) {
-        String routingAnnotation = null;
-        if (!orderHolder.isRejectDocumentHolder()) {
-            routingAnnotation = "Routed by electronic invoice batch job";
-        }
 
         try {
             // KFSUPGRADE-483
             // KFSUPGRADE-490: Do save-only operations for just non-EIRT-generated PREQs.
             if (orderHolder.isRejectDocumentHolder()) {
-                documentService.routeDocument(preqDoc, routingAnnotation, null);
+                documentService.routeDocument(preqDoc, null, null);
             } else {
                 documentService.saveDocument(preqDoc,DocumentSystemSaveEvent.class);
             }
