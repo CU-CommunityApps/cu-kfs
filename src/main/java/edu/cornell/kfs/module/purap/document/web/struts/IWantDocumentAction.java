@@ -845,30 +845,34 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         boolean shouldAddNote = getFinancialSystemWorkflowHelperService().isAdhocApprovalRequestedForPrincipal(
                 iwantDoc.getDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId()) && 
                 StringUtils.isNotBlank(iwantDoc.getCompleteOption());
-        LOG.info("approve, shouldAddNote: {}", shouldAddNote);
+        LOG.debug("approve, shouldAddNote: {}", shouldAddNote);
 
         ActionForward forward = super.approve(mapping, form, request, response);
         
         if (shouldAddNote) {
-            String noteText;
-            Person loggedInUser = GlobalVariables.getUserSession().getActualPerson();
-            if (StringUtils.equalsIgnoreCase(iwantDoc.getCompleteOption(), "Y")) {
-                noteText = MessageFormat.format(
-                        getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED),
-                        loggedInUser.getPrincipalName());
-            } else {
-                noteText = MessageFormat.format(
-                        getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW),
-                        loggedInUser.getPrincipalName());
-            }
-            
-            Note note = getDocumentService().createNoteFromDocument(iwantDoc, noteText);
-            note.setAuthorUniversalIdentifier(loggedInUser.getPrincipalId());
-            iwantDoc.addNote(getNoteService().save(note));
-            LOG.info("approve, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
+            addCompleteOptionNote(iwantDoc);
         }
         
         return forward;
+    }
+
+    private void addCompleteOptionNote(IWantDocument iwantDoc) {
+        String noteText;
+        Person loggedInUser = GlobalVariables.getUserSession().getPerson();
+        if (StringUtils.equalsIgnoreCase(iwantDoc.getCompleteOption(), "Y")) {
+            noteText = MessageFormat.format(
+                    getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED),
+                    loggedInUser.getPrincipalName());
+        } else {
+            noteText = MessageFormat.format(
+                    getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW),
+                    loggedInUser.getPrincipalName());
+        }
+        
+        Note note = getDocumentService().createNoteFromDocument(iwantDoc, noteText);
+        note.setAuthorUniversalIdentifier(loggedInUser.getPrincipalId());
+        iwantDoc.addNote(getNoteService().save(note));
+        LOG.debug("approve, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
     }
     
     protected FinancialSystemWorkflowHelperService getFinancialSystemWorkflowHelperService() {
