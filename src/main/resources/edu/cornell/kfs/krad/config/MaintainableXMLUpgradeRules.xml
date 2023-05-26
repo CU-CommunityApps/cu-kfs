@@ -1189,6 +1189,18 @@
         <pattern>
             <class>organizationOwnerAccount</class>
             <pattern>
+                <match>extrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>intrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>finPreencumSufficientFundIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
                 <match>indirectCostRcvyFinCoaCode</match>
                 <replacement/>
             </pattern>
@@ -1283,6 +1295,18 @@
         <!-- KDO-934 end -->
         <pattern>
             <class>account</class>
+            <pattern>
+                <match>extrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>intrnlFinEncumSufficntFndIndicator</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>finPreencumSufficientFundIndicator</match>
+                <replacement/>
+            </pattern>
             <pattern>
                 <match>indirectCostRcvyFinCoaCode</match>
                 <replacement/>
