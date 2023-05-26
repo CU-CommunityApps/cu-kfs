@@ -32,7 +32,7 @@
            <list>
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
-                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
                            <bean parent="MaintainableFieldDefinition" p:name="bankCode" />
                    </property>
@@ -52,7 +52,7 @@
            <list>
                <bean parent="FieldOverrideForListElementInsert">
                    <property name="propertyName" value="maintainableItems" />
-                   <property name="propertyNameForElementCompare" value="attributeName" />
+                   <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
                            <bean parent="MaintainableFieldDefinition" p:name="displayOnVendorCreditMemo" />
                    </property>
