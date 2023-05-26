@@ -34,7 +34,6 @@ import org.kuali.kfs.kew.xml.SqlDateJaxbAdapter;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KeyValuesService;
-import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
@@ -957,7 +956,19 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         setCity(addr.getVendorCityName());
         setState(ObjectUtils.isNotNull(addr.getVendorState()) ? addr.getVendorState().getCode() : "");
         setZipCd(addr.getVendorZipCode());
-        setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getName() : "");
+        
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        final boolean iso20022FormatIndicator = parameterService.getParameterValueAsBoolean(
+                KFSConstants.CoreModuleNamespaces.PDP,
+                "ExtractChecksStep",
+                PdpConstants.ISO20022_FORMAT_IND,
+                Boolean.FALSE
+        );
+        if (iso20022FormatIndicator) {
+            setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getCode() : "");
+        } else {
+            setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getName() : "");
+        }
     }
     
     /**
