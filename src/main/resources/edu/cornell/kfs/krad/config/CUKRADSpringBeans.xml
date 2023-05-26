@@ -63,12 +63,4 @@
     <bean id="maintenanceDocumentDao" parent="platformAwareDao"
           class="edu.cornell.kfs.krad.dao.impl.CuMaintenanceDocumentDaoOjb"/>
 
-    <bean class="edu.cornell.kfs.krad.service.impl.CuMaintenanceDocumentServiceImpl"
-          id="maintenanceDocumentService"
-          p:dataObjectMetaDataService-ref="dataObjectMetaDataService"
-          p:documentDictionaryService-ref="documentDictionaryService"
-          p:documentService-ref="documentService"
-          p:identityService-ref="identityService"
-          p:maintenanceDocumentDao-ref="maintenanceDocumentDao"/>
-
 </beans>
