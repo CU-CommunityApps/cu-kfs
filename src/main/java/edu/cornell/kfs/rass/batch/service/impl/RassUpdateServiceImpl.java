@@ -450,7 +450,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<T, R> objectDefinition) throws WorkflowException {
         String annotation = configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
         R newBo = businessObjects.getRight();
-        MaintenanceDocument maintenanceDocument = (MaintenanceDocument) documentService.getNewDocument(objectDefinition.getBusinessObjectClass().getName());
+        MaintenanceDocument maintenanceDocument = (MaintenanceDocument) documentService.getNewDocument(objectDefinition.getDocumentTypeName());
         if (StringUtils.equals(KRADConstants.MAINTENANCE_EDIT_ACTION, maintenanceAction)) {
             maintenanceDocument.getOldMaintainableObject().setDataObject(businessObjects.getLeft());
         }
