@@ -1297,6 +1297,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
     }
 
+    @Override
     protected void attachInvoiceXMLWithRejectDoc(
             final ElectronicInvoiceRejectDocument eInvoiceRejectDocument, 
             final File attachmentFile, 

@@ -143,31 +143,4 @@
             </tr>  
 		</table> 
     </div>
-<%-- MOD-PA2000-01: Baseline Modification Start --%>
-<c:if test="${fullEntryMode}">
-	<script type="text/javascript" src="dwr/interface/CUPaymentMethodGeneralLedgerPendingEntryService.js"></script>
-	<script type="text/javascript">
-		function paymentMethodChanged(selectedMethod) {
-		
-			if ( selectedMethod != "" ) {
-				var dwrReply = {
-					callback:function(data) {
-					if ( data != null && typeof data == 'object' ) {
-							setRecipientValue( "document.bankCode", data.bankCode );
-							setRecipientValue( "document.bank", data.bankName );
-						} else {
-							setRecipientValue( "document.bankCode", "" );
-							setRecipientValue( "document.bank", "" );
-						}
-					},
-					errorHandler:function( errorMessage ) { 
-						window.status = errorMessage;
-					}
-				};
-				CUPaymentMethodGeneralLedgerPendingEntryService.getBankForPaymentMethod( selectedMethod, dwrReply );
-			}
-		}	
-	</script>
-</c:if>
-<%-- MOD-PA2000-01: Baseline Modification End --%>    
 </kul:tab>

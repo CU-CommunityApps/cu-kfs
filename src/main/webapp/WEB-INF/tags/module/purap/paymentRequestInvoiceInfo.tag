@@ -175,7 +175,7 @@
 	<%-- Changed editability of the bank field to lock down after full entry (initiation) if the payment
 		 will *not* be processed by PDP.  (When not, the GL entries which affect the bank accounts are created as
 		 part of the main document, not by PDP, and there is no good way to reverse them out. --%>
-	                <c:set var="canEditBank" value="${fullEntryMode or (editPreExtract and KualiForm.document.paymentMethod.processedUsingPdp)}" />
+	                <c:set var="canEditBank" value="${fullEntryMode or (editPreExtract and KualiForm.document.paymentMethod.extension.processedUsingPdp)}" />
 	                <c:set var="canEditPaymentMethod" value="${fullEntryMode}" />
                   
                     <th align=right valign=middle class="bord-l-b">
