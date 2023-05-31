@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,6 +46,7 @@ import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumen
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -859,20 +859,17 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     private void addCompleteOptionNote(IWantDocument iwantDoc) {
         String noteText;
         Person loggedInUser = GlobalVariables.getUserSession().getPerson();
-        if (StringUtils.equalsIgnoreCase(iwantDoc.getCompleteOption(), "Y")) {
-            noteText = MessageFormat.format(
-                    getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED),
-                    loggedInUser.getPrincipalName());
+        if (StringUtils.equalsIgnoreCase(iwantDoc.getCompleteOption(), CuFPConstants.YES)) {
+            noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED);
         } else {
-            noteText = MessageFormat.format(
-                    getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW),
-                    loggedInUser.getPrincipalName());
+            noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW);
         }
         
         Note note = getDocumentService().createNoteFromDocument(iwantDoc, noteText);
         note.setAuthorUniversalIdentifier(loggedInUser.getPrincipalId());
-        iwantDoc.addNote(getNoteService().save(note));
-        LOG.debug("approve, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
+        Note savedNote = getNoteService().save(note);
+        iwantDoc.addNote(savedNote);
+        LOG.debug("addCompleteOptionNote, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
     }
     
     protected FinancialSystemWorkflowHelperService getFinancialSystemWorkflowHelperService() {
