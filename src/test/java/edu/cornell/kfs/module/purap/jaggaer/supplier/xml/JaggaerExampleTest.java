@@ -430,11 +430,11 @@ public class JaggaerExampleTest {
         
         AdditionalDataList dataList = new AdditionalDataList();
         
-        AdditionalDataItem dataum = new AdditionalDataItem();
-        dataum.setName("ethnicity");
-        dataum.getContents().add("NATAM");
+        AdditionalDataItem datum = new AdditionalDataItem();
+        datum.setName("ethnicity");
+        datum.getContents().add("NATAM");
         
-        dataList.getAdditionalDataItems().add(dataum);
+        dataList.getAdditionalDataItems().add(datum);
         div.setAdditionalDataList(dataList);
         
         classList.getDiversityClassifications().add(div);
