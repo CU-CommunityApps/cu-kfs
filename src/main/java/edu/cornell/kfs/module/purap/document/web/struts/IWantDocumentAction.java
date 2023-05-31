@@ -1,5 +1,52 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.ConcreteKeyValue;
+import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
+import org.kuali.kfs.kim.impl.identity.entity.Entity;
+import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
+import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
+import org.kuali.kfs.krad.service.KualiRuleService;
+import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
+
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -12,49 +59,9 @@ import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
 import edu.cornell.kfs.module.purap.util.PurApFavoriteAccountLineBuilderForIWantDocument;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
-import org.kuali.kfs.kns.util.KNSGlobalVariables;
-import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.krad.UserSessionUtils;
-import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
-import org.kuali.kfs.krad.service.KualiRuleService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentActionBase;
-import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
-import org.kuali.kfs.core.api.util.ConcreteKeyValue;
-import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @SuppressWarnings("deprecation")
 public class IWantDocumentAction extends FinancialSystemTransactionalDocumentActionBase {
-
+    private static final Logger LOG = LogManager.getLogger();
     private static final String IWANT_DEPT_ORGS_TO_EXCLUDE_PARM = "IWANT_DEPT_ORGS_TO_EXCLUDE";
 
     /**
@@ -833,7 +840,48 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
         }
-        return super.approve(mapping, form, request, response);
+        
+        IWantDocument iwantDoc = iWantDocForm.getIWantDocument();
+        boolean shouldAddNote = getFinancialSystemWorkflowHelperService().isAdhocApprovalRequestedForPrincipal(
+                iwantDoc.getDocumentHeader().getWorkflowDocument(), GlobalVariables.getUserSession().getPrincipalId()) && 
+                StringUtils.isNotBlank(iwantDoc.getCompleteOption());
+        LOG.debug("approve, shouldAddNote: {}", shouldAddNote);
+
+        ActionForward forward = super.approve(mapping, form, request, response);
+        
+        if (shouldAddNote) {
+            addCompleteOptionNote(iwantDoc);
+        }
+        
+        return forward;
+    }
+
+    private void addCompleteOptionNote(IWantDocument iwantDoc) {
+        String noteText;
+        Person loggedInUser = GlobalVariables.getUserSession().getPerson();
+        if (StringUtils.equalsIgnoreCase(iwantDoc.getCompleteOption(), CuFPConstants.YES)) {
+            noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED);
+        } else {
+            noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW);
+        }
+        
+        Note note = getDocumentService().createNoteFromDocument(iwantDoc, noteText);
+        note.setAuthorUniversalIdentifier(loggedInUser.getPrincipalId());
+        Note savedNote = getNoteService().save(note);
+        iwantDoc.addNote(savedNote);
+        LOG.debug("addCompleteOptionNote, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
+    }
+    
+    protected FinancialSystemWorkflowHelperService getFinancialSystemWorkflowHelperService() {
+        return SpringContext.getBean(FinancialSystemWorkflowHelperService.class);
+    }
+    
+    protected ConfigurationService getConfigurationService() {
+        return SpringContext.getBean(ConfigurationService.class);
+    }
+    
+    protected NoteService getNoteService() {
+        return SpringContext.getBean(NoteService.class);
     }
     
     /**
