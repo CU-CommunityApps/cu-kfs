@@ -338,7 +338,8 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         return filesToBeProcessed;
     }
 
-    private void logProcessElectronicInvoiceError(final String msg) {
+    // CU customization to change method access from private to protected
+    protected void logProcessElectronicInvoiceError(final String msg) {
         final File file = new File(electronicInvoiceInputFileType.getReportPath() + "/" +
             electronicInvoiceInputFileType.getReportPrefix() + "_" +
             dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate()) + "." +
