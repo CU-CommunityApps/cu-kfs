@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "addresses" })
+@XmlType(name = "", propOrder = { "addressDetails" })
 @XmlRootElement(name = "AddressList")
 public class AddressList {
 
@@ -20,7 +20,7 @@ public class AddressList {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "Address")
-    private List<Address> addresses;
+    private List<Address> addressDetails;
 
     public String getIsChanged() {
         return isChanged;
@@ -30,11 +30,11 @@ public class AddressList {
         this.isChanged = isChanged;
     }
 
-    public List<Address> getAddresses() {
-        if (addresses == null) {
-            addresses = new ArrayList<Address>();
+    public List<Address> getAddressDetails() {
+        if (addressDetails == null) {
+            addressDetails = new ArrayList<Address>();
         }
-        return this.addresses;
+        return addressDetails;
     }
 
 }

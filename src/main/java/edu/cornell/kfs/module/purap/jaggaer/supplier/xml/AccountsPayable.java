@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "erpNumber", "oldERPNumber", "sqIntegrationNumber", "thirdPartyRefNumber", "name",
-        "active", "associatedAddresses", "email", "isoCurrencyCode", "contactName", "purpose", "accountId",
+        "active", "associatedAddressDetails", "email", "isoCurrencyCode", "contactName", "purpose", "accountId",
         "accountHolderName", "accountType", "countryCode", "bankAccount", "flexFields" })
 @XmlRootElement(name = "AccountsPayable")
 public class AccountsPayable {
@@ -38,7 +38,7 @@ public class AccountsPayable {
     @XmlElement(name = "Active")
     private Active active;
     @XmlElement(name = "AssociatedAddress")
-    private List<AssociatedAddress> associatedAddresses;
+    private List<AssociatedAddress> associatedAddressDetails;
     @XmlElement(name = "Email")
     private Email email;
     @XmlElement(name = "IsoCurrencyCode")
@@ -124,11 +124,11 @@ public class AccountsPayable {
         this.active = active;
     }
 
-    public List<AssociatedAddress> getAssociatedAddresses() {
-        if (associatedAddresses == null) {
-            associatedAddresses = new ArrayList<AssociatedAddress>();
+    public List<AssociatedAddress> getAssociatedAddressDetails() {
+        if (associatedAddressDetails == null) {
+            associatedAddressDetails = new ArrayList<AssociatedAddress>();
         }
-        return associatedAddresses;
+        return associatedAddressDetails;
     }
 
     public Email getEmail() {

@@ -34,7 +34,7 @@ public class BrandList {
         if (brands == null) {
             brands = new ArrayList<JaggaerBasicValue>();
         }
-        return this.brands;
+        return brands;
     }
 
 }

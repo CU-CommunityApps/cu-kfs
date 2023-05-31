@@ -77,8 +77,8 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         supplier.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
         supplier.setName(JaggaerBuilder.buildName(name));
         supplier.setAddressList(new AddressList());
-        supplier.getAddressList().getAddresses().add(buildTestAddress(addressLine1));
-        supplier.getAddressList().getAddresses().add(buildTestAddress(addressLine2));
+        supplier.getAddressList().getAddressDetails().add(buildTestAddress(addressLine1));
+        supplier.getAddressList().getAddressDetails().add(buildTestAddress(addressLine2));
         return supplier;
     }
 
@@ -98,7 +98,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 message.setVersion(JaggaerConstants.XML_VERSION);
                 message.setHeader(buildHeader());
                 SupplierRequestMessage supplierRequest = new SupplierRequestMessage();
-                supplierRequest.getSuppliers().addAll(supplierChunk);
+                supplierRequest.getSupplierDetails().addAll(supplierChunk);
 
                 message.getSupplierRequestMessageItems().add(supplierRequest);
                 messages.add(message);

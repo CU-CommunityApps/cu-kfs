@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "customElements" })
+@XmlType(name = "", propOrder = { "customElementDetails" })
 @XmlRootElement(name = "CustomElementList")
 public class CustomElementList {
 
@@ -20,7 +20,7 @@ public class CustomElementList {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "CustomElement")
-    private List<CustomElement> customElements;
+    private List<CustomElement> customElementDetails;
 
     public String getIsChanged() {
         return isChanged;
@@ -30,11 +30,11 @@ public class CustomElementList {
         this.isChanged = isChanged;
     }
 
-    public List<CustomElement> getCustomElements() {
-        if (customElements == null) {
-            customElements = new ArrayList<CustomElement>();
+    public List<CustomElement> getCustomElementDetails() {
+        if (customElementDetails == null) {
+            customElementDetails = new ArrayList<CustomElement>();
         }
-        return this.customElements;
+        return customElementDetails;
     }
 
 }

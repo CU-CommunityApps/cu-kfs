@@ -14,15 +14,15 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "attachments" })
+@XmlType(name = "", propOrder = { "attachmentDetails" })
 @XmlRootElement(name = "Attachments")
-public class AttachmentList implements CustomElementDetail {
+public class AttachmentList implements CustomElementItem {
 
     @XmlAttribute(name = "xmlns:xop")
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String xmlnsXop;
     @XmlElement(name = "Attachment")
-    private List<Attachment> attachments;
+    private List<Attachment> attachmentDetails;
 
     public String getXmlnsXop() {
         if (xmlnsXop == null) {
@@ -36,11 +36,11 @@ public class AttachmentList implements CustomElementDetail {
         this.xmlnsXop = xmlnsXop;
     }
 
-    public List<Attachment> getAttachments() {
-        if (attachments == null) {
-            attachments = new ArrayList<Attachment>();
+    public List<Attachment> getAttachmentDetails() {
+        if (attachmentDetails == null) {
+            attachmentDetails = new ArrayList<Attachment>();
         }
-        return this.attachments;
+        return attachmentDetails;
     }
 
 }

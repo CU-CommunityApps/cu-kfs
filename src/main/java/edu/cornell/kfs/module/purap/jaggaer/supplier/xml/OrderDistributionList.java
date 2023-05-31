@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "distributionLanguage", "distributionMethods" })
+@XmlType(name = "", propOrder = { "distributionLanguage", "distributionMethodDetails" })
 @XmlRootElement(name = "OrderDistributionList")
 public class OrderDistributionList {
 
@@ -22,7 +22,7 @@ public class OrderDistributionList {
     @XmlElement(name = "DistributionLanguage")
     private String distributionLanguage;
     @XmlElement(name = "DistributionMethod", required = true)
-    private List<DistributionMethod> distributionMethods;
+    private List<DistributionMethod> distributionMethodDetails;
 
     public String getIsChanged() {
         return isChanged;
@@ -40,11 +40,11 @@ public class OrderDistributionList {
         this.distributionLanguage = distributionLanguage;
     }
 
-    public List<DistributionMethod> getDistributionMethods() {
-        if (distributionMethods == null) {
-            distributionMethods = new ArrayList<DistributionMethod>();
+    public List<DistributionMethod> getDistributionMethodDetails() {
+        if (distributionMethodDetails == null) {
+            distributionMethodDetails = new ArrayList<DistributionMethod>();
         }
-        return this.distributionMethods;
+        return distributionMethodDetails;
     }
 
 }

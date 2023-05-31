@@ -12,13 +12,13 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "isoCurrencyCodes" })
+@XmlType(name = "", propOrder = { "isoCurrencyCodeDetails" })
 public class CurrencyList {
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "IsoCurrencyCode")
-    private List<IsoCurrencyCode> isoCurrencyCodes;
+    private List<IsoCurrencyCode> isoCurrencyCodeDetails;
 
     public String getIsChanged() {
         return isChanged;
@@ -28,10 +28,10 @@ public class CurrencyList {
         this.isChanged = isChanged;
     }
 
-    public List<IsoCurrencyCode> getIsoCurrencyCodes() {
-        if (isoCurrencyCodes == null) {
-            isoCurrencyCodes = new ArrayList<IsoCurrencyCode>();
+    public List<IsoCurrencyCode> getIsoCurrencyCodeDetails() {
+        if (isoCurrencyCodeDetails == null) {
+            isoCurrencyCodeDetails = new ArrayList<IsoCurrencyCode>();
         }
-        return this.isoCurrencyCodes;
+        return isoCurrencyCodeDetails;
     }
 }
