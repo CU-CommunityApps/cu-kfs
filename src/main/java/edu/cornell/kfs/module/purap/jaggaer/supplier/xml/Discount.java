@@ -26,7 +26,7 @@ public class Discount {
     @XmlElements({ @XmlElement(name = "DiscountPercent", required = true, type = DiscountPercent.class),
             @XmlElement(name = "DiscountAmount", required = true, type = DiscountAmount.class),
             @XmlElement(name = "IsoCurrencyCode", required = true, type = IsoCurrencyCode.class) })
-    private List<DiscountItemInterface> discountItems;
+    private List<DiscountItem> discountItems;
 
     public String getIsChanged() {
         return isChanged;
@@ -44,9 +44,9 @@ public class Discount {
         this.unit = unit;
     }
 
-    public List<DiscountItemInterface> getDiscountItems() {
+    public List<DiscountItem> getDiscountItems() {
         if (discountItems == null) {
-            discountItems = new ArrayList<DiscountItemInterface>();
+            discountItems = new ArrayList<DiscountItem>();
         }
         return this.discountItems;
     }

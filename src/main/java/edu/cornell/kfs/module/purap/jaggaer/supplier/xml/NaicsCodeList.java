@@ -36,7 +36,7 @@ public class NaicsCodeList {
         if (naicsCodeListItems == null) {
             naicsCodeListItems = new ArrayList<NaicsCodeListItem>();
         }
-        return this.naicsCodeListItems;
+        return naicsCodeListItems;
     }
 
 }

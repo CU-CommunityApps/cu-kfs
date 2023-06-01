@@ -33,7 +33,7 @@ public class SupplierSyncMessage {
      * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd TSMSupplierXML.dtd
      */
     @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
-    private List<SupplierRequestMessageItemInterface> supplierRequestMessageItems;
+    private List<SupplierRequestMessageItem> supplierRequestMessageItems;
 
     public String getVersion() {
         return version;
@@ -51,9 +51,9 @@ public class SupplierSyncMessage {
         this.header = header;
     }
 
-    public List<SupplierRequestMessageItemInterface> getSupplierRequestMessageItems() {
+    public List<SupplierRequestMessageItem> getSupplierRequestMessageItems() {
         if (supplierRequestMessageItems == null) {
-            supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItemInterface>();
+            supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItem>();
         }
         return supplierRequestMessageItems;
     }
