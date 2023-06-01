@@ -189,9 +189,9 @@ public class JaggaerExampleTest {
         naicsCodes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("424120"));
         
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("424121"));
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524120"));
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524121"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("424121"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524120"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524121"));
         naicsCodes.getNaicsCodeListItems().add(secondaryList);
         
         return naicsCodes;
@@ -461,7 +461,7 @@ public class JaggaerExampleTest {
         certificate.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
         info.setInsuranceCertificate(certificate);
         
-        infoList.getInsuranceInformations().add(info);
+        infoList.getInsuranceInformationDetails().add(info);
         return infoList;
     }
     
@@ -728,7 +728,7 @@ public class JaggaerExampleTest {
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
         
-        apList.getAccountsPayables().add(ap);
+        apList.getAccountsPayableDetails().add(ap);
         return apList;
     }
     
@@ -773,7 +773,7 @@ public class JaggaerExampleTest {
         
         info.setTaxDocument(doc);
         
-        taxList.getTaxInformations().add(info);
+        taxList.getTaxInformationDetails().add(info);
         return taxList;
     }
     

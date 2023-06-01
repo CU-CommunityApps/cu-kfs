@@ -169,8 +169,8 @@ public class SupplierSyncMessageTest {
         codes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("primary code", T_TRUE));
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("second", F_FALSE));
-        secondaryList.getSecondaryNaicItems().add(JaggaerBuilder.buildSecondaryNaicsItem("third", T_TRUE));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("second", F_FALSE));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("third", T_TRUE));
 
         codes.getNaicsCodeListItems().add(secondaryList);
         return codes;
@@ -302,7 +302,7 @@ public class SupplierSyncMessageTest {
         info.setInsuranceProviderPhone(buildInsuranceProviderPhone());
         info.setInsuranceCertificate(buildInsuranceCertificate());
         info.setOtherTypeName(JaggaerBuilder.buildJaggaerBasicValue("some other name", T_TRUE));
-        insurance.getInsuranceInformations().add(info);
+        insurance.getInsuranceInformationDetails().add(info);
         return insurance;
     }
 
@@ -342,7 +342,7 @@ public class SupplierSyncMessageTest {
 
         info.setTaxDocument(document);
 
-        taxList.getTaxInformations().add(info);
+        taxList.getTaxInformationDetails().add(info);
         return taxList;
     }
 
@@ -388,7 +388,7 @@ public class SupplierSyncMessageTest {
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
 
-        apList.getAccountsPayables().add(ap);
+        apList.getAccountsPayableDetails().add(ap);
         return apList;
     }
 

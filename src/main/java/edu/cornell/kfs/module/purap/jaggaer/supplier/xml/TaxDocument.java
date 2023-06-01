@@ -32,8 +32,8 @@ public class TaxDocument {
         return attachmentList;
     }
 
-    public void setAttachmentList(AttachmentList attachments) {
-        this.attachmentList = attachments;
+    public void setAttachmentList(AttachmentList attachmentList) {
+        this.attachmentList = attachmentList;
     }
 
 }

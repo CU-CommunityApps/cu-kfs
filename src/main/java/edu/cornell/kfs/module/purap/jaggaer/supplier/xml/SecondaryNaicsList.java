@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "secondaryNaicItems" })
+@XmlType(name = "", propOrder = { "secondaryNaicsItems" })
 @XmlRootElement(name = "SecondaryNaicsList")
 public class SecondaryNaicsList implements NaicsCodeListItem {
 
@@ -20,7 +20,7 @@ public class SecondaryNaicsList implements NaicsCodeListItem {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "SecondaryNaics")
-    private List<SecondaryNaicsItem> secondaryNaicItems;
+    private List<SecondaryNaicsItem> secondaryNaicsItems;
 
     public String getIsChanged() {
         return isChanged;
@@ -30,11 +30,11 @@ public class SecondaryNaicsList implements NaicsCodeListItem {
         this.isChanged = isChanged;
     }
 
-    public List<SecondaryNaicsItem> getSecondaryNaicItems() {
-        if (secondaryNaicItems == null) {
-            secondaryNaicItems = new ArrayList<SecondaryNaicsItem>();
+    public List<SecondaryNaicsItem> getSecondaryNaicsItems() {
+        if (secondaryNaicsItems == null) {
+            secondaryNaicsItems = new ArrayList<SecondaryNaicsItem>();
         }
-        return this.secondaryNaicItems;
+        return secondaryNaicsItems;
     }
 
 }
