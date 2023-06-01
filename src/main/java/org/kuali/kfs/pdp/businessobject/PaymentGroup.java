@@ -956,19 +956,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         setCity(addr.getVendorCityName());
         setState(ObjectUtils.isNotNull(addr.getVendorState()) ? addr.getVendorState().getCode() : "");
         setZipCd(addr.getVendorZipCode());
-        
-        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        final boolean iso20022FormatIndicator = parameterService.getParameterValueAsBoolean(
-                KFSConstants.CoreModuleNamespaces.PDP,
-                "ExtractChecksStep",
-                PdpConstants.ISO20022_FORMAT_IND,
-                Boolean.FALSE
-        );
-        if (iso20022FormatIndicator) {
-            setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getCode() : "");
-        } else {
-            setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getName() : "");
-        }
+        setCountry(ObjectUtils.isNotNull(addr.getVendorCountry()) ? addr.getVendorCountry().getCode() : "");
     }
     
     /**
