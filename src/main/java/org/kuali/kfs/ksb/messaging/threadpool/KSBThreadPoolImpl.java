@@ -62,11 +62,6 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
     }
 
     @Override
-    public boolean isStarted() {
-        return started;
-    }
-
-    @Override
     public void start() {
         LOG.info("Starting the KSB thread pool...");
         loadSettings();

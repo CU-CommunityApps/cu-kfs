@@ -1,13 +1,16 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -126,9 +129,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	private static final int NOTE_TEXT_DEFAULT_MAX_LENGTH = 800;
 	private static final String XMLNS_ATTRIBUTE_PREFIX = "xmlns";
 	private static final Pattern ALLOWED_XMLNS_ATTRIBUTES_PATTERN = Pattern.compile("^xmlns(:xsi)?$");
-
-    //KFSPTS-1891
-	protected static final String DEFAULT_EINVOICE_PAYMENT_METHOD_CODE = "A";
 	
 	private WorkflowDocumentService workflowDocumentService;
 	private CUFinancialSystemDocumentService financialSystemDocumentService;
@@ -141,9 +141,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         //add a step to check for directory paths
         prepareDirectories(getRequiredDirectoryNames());
 
-        String rejectDirName = getRejectDirName();
-        String acceptDirName = getAcceptDirName();
-        String extractFailureDirName = getExtractFailureDirName();
+        final String rejectDirName = getRejectDirName();
+        final String acceptDirName = getAcceptDirName();
+        final String extractFailureDirName = getExtractFailureDirName();
         emailTextErrorList = new StringBuffer();
 
         int failedCnt = 0;
@@ -164,13 +164,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
 
-        File[] filesToBeProcessed = getFilesToBeProcessed();
-        ElectronicInvoiceLoad eInvoiceLoad = new ElectronicInvoiceLoad();
+        final File[] filesToBeProcessed = getFilesToBeProcessed();
+        final ElectronicInvoiceLoad eInvoiceLoad = new ElectronicInvoiceLoad();
 
         if (filesToBeProcessed == null ||
             filesToBeProcessed.length == 0) {
 
-            StringBuffer mailText = new StringBuffer();
+            final StringBuffer mailText = new StringBuffer();
 
             mailText.append("\n\n");
             mailText.append(PurapConstants.ElectronicInvoice.NO_FILES_PROCESSED_EMAIL_MESSAGE);
@@ -184,13 +184,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             FileUtils.forceMkdir(new File(acceptDirName));
             FileUtils.forceMkdir(new File(rejectDirName));
             FileUtils.forceMkdir(new File(extractFailureDirName));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
         LOG.info("{} file(s) available for processing", filesToBeProcessed.length);
         
-        StringBuilder emailMsg = new StringBuilder();
+        final StringBuilder emailMsg = new StringBuilder();
 
         for (File xmlFile : filesToBeProcessed) {
 
@@ -200,13 +200,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             
             try {
                 processElectronicInvoice(eInvoiceLoad, xmlFile, modifiedXML);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 String msg = xmlFile.getName() + "\n";
                 LOG.error(msg, e);
 
                 //since getMessage() is empty we'll compose the stack trace and nicely format it.
-                StackTraceElement[] elements = e.getStackTrace();
-                StringBuffer trace = new StringBuffer();
+                final StackTraceElement[] elements = e.getStackTrace();
+                final StringBuffer trace = new StringBuffer();
                 trace.append(e.getClass().getName());
                 if (e.getMessage() != null) {
                     trace.append(": ");
@@ -257,8 +257,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         return eInvoiceLoad;
     }
 
-	private static String describeStackTraceElement(StackTraceElement element) {
-		StringBuffer description = new StringBuffer();
+	private static String describeStackTraceElement(final StackTraceElement element) {
+		final StringBuffer description = new StringBuffer();
 		if (element == null) {
 			description.append("invalid (null) element");
 		}
@@ -275,7 +275,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	}
 
 	@Override
-	protected void processAboveTheLineItem(PaymentRequestItem purapItem, ElectronicInvoiceOrderHolder orderHolder) {
+	protected void processAboveTheLineItem(
+	        final PaymentRequestItem purapItem, 
+	        final ElectronicInvoiceOrderHolder orderHolder) {
 		LOG.info("Processing above the line item");
 
 		ElectronicInvoiceItemHolder itemHolder = orderHolder.getItemByLineNumber(purapItem.getItemLineNumber().intValue());
@@ -321,7 +323,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	}
 
 	@Override
-	protected void processItemsForDiscount(PaymentRequestDocument preqDocument, ElectronicInvoiceOrderHolder orderHolder) {
+	protected void processItemsForDiscount(
+	        final PaymentRequestDocument preqDocument, 
+	        final ElectronicInvoiceOrderHolder orderHolder) {
 		LOG.info("Processing payment request items for discount");
 
 		if (!orderHolder.isItemTypeAvailableInItemMapping(ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT)) {
@@ -336,17 +340,14 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			return;
 		}
 
-		KualiDecimal discountValueToUse = new KualiDecimal(orderHolder.getInvoiceDiscountAmount().negate());
-		List<PaymentRequestItem> preqItems = preqDocument.getItems();
+		final KualiDecimal discountValueToUse = new KualiDecimal(orderHolder.getInvoiceDiscountAmount().negate());
+		final List<PaymentRequestItem> preqItems = preqDocument.getItems();
 
 		boolean alreadyProcessedInvoiceDiscount = false;
 		boolean hasKualiPaymentTermsDiscountItem = false;
 
 		// if e-invoice amount is negative... it is a penalty and we must pay extra
-		for (int i = 0; i < preqItems.size(); i++) {
-
-			PaymentRequestItem preqItem = preqItems.get(i);
-
+		for (final PaymentRequestItem preqItem : preqItems) {
 			hasKualiPaymentTermsDiscountItem = hasKualiPaymentTermsDiscountItem || StringUtils.equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE, preqItem.getItemTypeCode());
 
 			if (isItemValidForUpdation(preqItem.getItemTypeCode(), ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT,orderHolder)) {
@@ -361,7 +362,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                             preqItem::getItemTypeCode
                     );
 
-					KualiDecimal preqExtendedPrice = preqItem.getExtendedPrice() == null ? KualiDecimal.ZERO : preqItem.getExtendedPrice();
+					final KualiDecimal preqExtendedPrice = preqItem.getExtendedPrice() == null ? KualiDecimal.ZERO : preqItem.getExtendedPrice();
 					if (discountValueToUse.compareTo(preqExtendedPrice) < 0) {
 						LOG.info(
                                 "Discount Check - Using E-Invoice amount ({}) as it is more discount than current payment terms amount {}",
@@ -401,11 +402,11 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
 			if (hasKualiPaymentTermsDiscountItem ||
                 !orderHolder.isItemTypeAvailableInItemMapping(ElectronicInvoice.INVOICE_AMOUNT_TYPE_CODE_DISCOUNT)) {
-				ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_DISCOUNT_ERROR, null, orderHolder.getFileName());
+				final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_DISCOUNT_ERROR, null, orderHolder.getFileName());
 				orderHolder.addInvoiceOrderRejectReason(rejectReason);
 				return;
 			} else if (discountValueToUse.isNonZero()) {
-				PaymentRequestItem newItem = new PaymentRequestItem();
+				final PaymentRequestItem newItem = new PaymentRequestItem();
 				newItem.setItemUnitPrice(discountValueToUse.bigDecimalValue());
 				// KFSUPGRADE-473
 			    //	newItem.setItemTypeCode(PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE);
@@ -421,9 +422,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	}
 
 	@Override
-    protected void removeEmptyItems(List<PurApItem> preqItems) {
+    protected void removeEmptyItems(final List<PurApItem> preqItems) {
         for(int i=preqItems.size()-1; i >= 0; i--) {
-            PurApItem item = preqItems.get(i);
+            final PurApItem item = preqItems.get(i);
 
             // KFSUPGRADE-478 : allow '0' unit price item for einvoice.  3.0.1 did not remove this line (0 unit price), so keep it.
             //if the unit and extended price have null or zero as a combo, remove item
@@ -434,7 +435,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void setVendorDetails(ElectronicInvoice eInvoice) {
+    protected void setVendorDetails(final ElectronicInvoice eInvoice) {
     	// based on code found in this class
     	// Marcia mentioned that each einvoice just for one po.
     	String poID = eInvoice.getInvoiceDetailOrders().get(0).getOrderReferenceOrderID();
@@ -470,7 +471,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void validateVendorDetails(ElectronicInvoiceRejectDocument rejectDocument) {
+    protected void validateVendorDetails(final ElectronicInvoiceRejectDocument rejectDocument) {
 
         boolean vendorFound = false;
 
@@ -507,12 +508,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             rejectDocument.setVendorDetail(null);
         }
 
-        String newDocumentDesc = generateRejectDocumentDescription(rejectDocument);
+        final String newDocumentDesc = generateRejectDocumentDescription(rejectDocument);
         rejectDocument.getDocumentHeader().setDocumentDescription(newDocumentDesc);
     }
 
     @Override
-    protected void setProcessingCampus(PaymentRequestDocument preqDoc, String initiatorCampusCode) {
+    protected void setProcessingCampus(final PaymentRequestDocument preqDoc, final String initiatorCampusCode) {
         String campusCode = parameterService.getParameterValueAsString(ElectronicInvoiceStep.class,
                 PurapParameterConstants.ElectronicInvoiceParameters.OVERRIDE_PROCESSING_CAMPUS);
         if(!StringHelper.isNullOrEmpty(campusCode)) {
@@ -648,22 +649,22 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
     
     @Override
-    protected StringBuffer saveLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
+    protected StringBuffer saveLoadSummary(final ElectronicInvoiceLoad eInvoiceLoad) {
     	NumberFormat twoDecForm = DecimalFormat.getCurrencyInstance(Locale.US);
     	
-        Map<String, ElectronicInvoiceLoadSummary> savedLoadSummariesMap = new HashMap<String, ElectronicInvoiceLoadSummary>();
+        final Map<String, ElectronicInvoiceLoadSummary> savedLoadSummariesMap = new HashMap<String, ElectronicInvoiceLoadSummary>();
 
-        StringBuffer summaryMessage = new StringBuffer();
+        final StringBuffer summaryMessage = new StringBuffer();
 
         for (Iterator iter = eInvoiceLoad.getInvoiceLoadSummaries().keySet().iterator(); iter.hasNext();) {
 
-            String dunsNumber = (String) iter.next();
-            ElectronicInvoiceLoadSummary eInvoiceLoadSummary = (ElectronicInvoiceLoadSummary) eInvoiceLoad.getInvoiceLoadSummaries().get(dunsNumber);
+            final String dunsNumber = (String) iter.next();
+            final ElectronicInvoiceLoadSummary eInvoiceLoadSummary = (ElectronicInvoiceLoadSummary) eInvoiceLoad.getInvoiceLoadSummaries().get(dunsNumber);
 
               if (!eInvoiceLoadSummary.isEmpty().booleanValue()) {
                 LOG.info("Saving Load Summary for DUNS '{}'", dunsNumber);
 
-                ElectronicInvoiceLoadSummary currentLoadSummary = saveElectronicInvoiceLoadSummary(eInvoiceLoadSummary);
+                final ElectronicInvoiceLoadSummary currentLoadSummary = saveElectronicInvoiceLoadSummary(eInvoiceLoadSummary);
 
                 summaryMessage.append("DUNS Number - ").append(eInvoiceLoadSummary.getVendorDescriptor()).append(":\n");
 
@@ -693,7 +694,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         summaryMessage.append("\n\n");
 
         for (Iterator rejectIter = eInvoiceLoad.getRejectDocuments().iterator(); rejectIter.hasNext();) {
-            ElectronicInvoiceRejectDocument rejectDoc = (ElectronicInvoiceRejectDocument) rejectIter.next();
+            final ElectronicInvoiceRejectDocument rejectDoc = (ElectronicInvoiceRejectDocument) rejectIter.next();
             saveRejectDocument(rejectDoc,savedLoadSummariesMap);
         }
 
@@ -722,7 +723,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected PaymentRequestDocument createPaymentRequest(ElectronicInvoiceOrderHolder orderHolder) {
+    protected PaymentRequestDocument initializePaymentRequestDocument(ElectronicInvoiceOrderHolder orderHolder) {
         LOG.info("Creating Payment Request document");
 
         KNSGlobalVariables.getMessageList().clear();
@@ -739,11 +740,11 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             return null;
         }
 
-        PaymentRequestDocument preqDoc =  (PaymentRequestDocument) documentService.getNewDocument("PREQ");
+        final PaymentRequestDocument preqDoc =  (PaymentRequestDocument) documentService.getNewDocument("PREQ");
 
-        PurchaseOrderDocument poDoc = orderHolder.getPurchaseOrderDocument();
+        final PurchaseOrderDocument poDoc = orderHolder.getPurchaseOrderDocument();
         if (poDoc == null) {
-            throw new RuntimeException("Purchase Order document (POId=" + poDoc.getPurapDocumentIdentifier() + ") does not exist in the system");
+            throw new RuntimeException("Purchase Order document does not exist in the system");
         }
 
         preqDoc.getDocumentHeader().setDocumentDescription(generatePREQDocumentDescription(poDoc));
@@ -770,7 +771,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
                 ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
                 hasPaymentMethodCode = true;
             } else {
-                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(DEFAULT_EINVOICE_PAYMENT_METHOD_CODE);
+                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
             }
         }
         Bank defaultBank = null;
@@ -787,16 +788,16 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setBank(defaultBank);
         }
 
-        RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
-        String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        final RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
+        final String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
-            Person user = personService.getPerson(reqDocInitiator);
+            final Person user = personService.getPerson(reqDocInitiator);
 
             setProcessingCampus(preqDoc, user.getCampusCode());
 
-        } catch (Exception e) {
-            String extraDescription = "Error setting processing campus code - " + e.getMessage();
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
+        } catch (final Exception e) {
+            final String extraDescription = "Error setting processing campus code - " + e.getMessage();
+            final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
             return null;
         }
@@ -865,10 +866,10 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         if(GlobalVariables.getMessageMap().hasErrors()) {
             LOG.info("***************Error in rules processing - {}", GlobalVariables::getMessageMap);
-            Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
+            final Map<String, AutoPopulatingList<ErrorMessage>> errorMessages = GlobalVariables.getMessageMap().getErrorMessages();
 
-            String errors = errorMessages.toString();
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, errors, orderHolder.getFileName());
+            final String errors = errorMessages.toString();
+            final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, errors, orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
             return null;
         }
@@ -887,11 +888,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         addShipToNotes(preqDoc,orderHolder);
 
-    	// KFSUPGRADE-483
-//        String routingAnnotation = null;
-//        if (!orderHolder.isRejectDocumentHolder()) {
-//            routingAnnotation = "Routed by electronic invoice batch job";
-//        }
+        return preqDoc;
+    }
+    
+    @Override
+    protected boolean routeCreatedPaymentRequest(
+            final ElectronicInvoiceOrderHolder orderHolder,
+            final PaymentRequestDocument preqDoc) {
 
         try {
             // KFSUPGRADE-483
@@ -901,14 +904,14 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             } else {
                 documentService.saveDocument(preqDoc,DocumentSystemSaveEvent.class);
             }
-        } catch(ValidationException e) {
-            String extraDescription = GlobalVariables.getMessageMap().toString();
-            ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
+        } catch(final ValidationException e) {
+            final String extraDescription = GlobalVariables.getMessageMap().toString();
+            final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(
+                    PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
             orderHolder.addInvoiceOrderRejectReason(rejectReason);
-            return null;
+            return false;
         }
-
-        return preqDoc;
+        return true;
     }
 
 	
@@ -919,7 +922,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     
     @Transactional
     @Override
-    protected boolean processElectronicInvoice(ElectronicInvoiceLoad eInvoiceLoad, File invoiceFile, byte[] xmlAsBytes) {
+    protected boolean processElectronicInvoice(
+            final ElectronicInvoiceLoad eInvoiceLoad, 
+            final File invoiceFile, byte[] xmlAsBytes) {
 
         // Checks parameter to see if files should be moved to the accept/reject folders after load
         boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
@@ -929,7 +934,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         try {
             eInvoice = loadElectronicInvoice(xmlAsBytes);
-        } catch (CxmlParseException e) {
+        } catch (final CxmlParseException e) {
             LOG.info("Error loading file - {}", e::getMessage);
             rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(),PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
             isExtractFailure = true;
@@ -953,8 +958,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		        setVendorDetails(eInvoice);
 		        
 		        // CU also refactored getItemTypeMappings with overlay
-		        Map<String, ElectronicInvoiceItemMapping> itemTypeMappings = getItemTypeMappings(eInvoice.getVendorHeaderID(),eInvoice.getVendorDetailID());
-		        Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
+		        final Map<String, ElectronicInvoiceItemMapping> itemTypeMappings = getItemTypeMappings(eInvoice.getVendorHeaderID(),eInvoice.getVendorDetailID());
+		        final Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
 		        
 		        if (itemTypeMappings != null && itemTypeMappings.size() > 0) {
 		            LOG.info("Item mappings found");
@@ -967,9 +972,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		            Pattern specialCharsPattern = Pattern.compile("[^\\p{Graph}\\p{Space}]");
 		            Pattern specialCharsOrWhitespacePattern = Pattern.compile("[^\\p{Graph}]");
 		            
-			        for (ElectronicInvoiceOrder order : eInvoice.getInvoiceDetailOrders()) {
+			        for (final ElectronicInvoiceOrder order : eInvoice.getInvoiceDetailOrders()) {
 			
-			            String poID = order.getOrderReferenceOrderID();
+			            final String poID = order.getOrderReferenceOrderID();
 			            PurchaseOrderDocument po = null;
 			            
 			            if (NumberUtils.isDigits(StringUtils.defaultString(poID)) && !isIntegerTooLarge(poID)) {
@@ -1019,22 +1024,22 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			            
 			            
 			            
-			            CuElectronicInvoiceOrderHolder orderHolder = new CuElectronicInvoiceOrderHolder(eInvoice,order,po,itemTypeMappings,kualiItemTypes,validateHeader);
+			            final CuElectronicInvoiceOrderHolder orderHolder = new CuElectronicInvoiceOrderHolder(eInvoice,order,po,itemTypeMappings,kualiItemTypes,validateHeader);
 			            matchingService.doMatchingProcess(orderHolder);
 			            
 			            if (orderHolder.isInvoiceRejected()) {
 			                
-			                ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order,eInvoiceLoad);
+			                final ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order,eInvoiceLoad);
 			                
 			                if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null) {
 			                    rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
 			                }
 			                
-			                String dunsNumber = StringUtils.isEmpty(eInvoice.getDunsNumber()) ?
+			                final String dunsNumber = StringUtils.isEmpty(eInvoice.getDunsNumber()) ?
 			                                    UNKNOWN_DUNS_IDENTIFIER :
 			                                    eInvoice.getDunsNumber();
 			                
-			                ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, dunsNumber);
+			                final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, dunsNumber);
 			                loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
 			                eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                
@@ -1043,18 +1048,18 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                updateSummaryCounts(REJECT);
 			            } else {
 			                
-			                PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
+			                final PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
 			                
 			                if (orderHolder.isInvoiceRejected()) {
 			                    clearErrorMessagesToPreventSaveAndRouteErrors();
 			                    
-			                    ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
+			                    final ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
 			                    
 			                    if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null) {
 			                        rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
 			                    }
 			                    
-			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
+			                    final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
 			                    loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                    
@@ -1062,7 +1067,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 				                getBusinessObjectService().save(loadSummary);
 				                updateSummaryCounts(REJECT);
 			                } else {
-			                    ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
+			                    final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
 			                    loadSummary.addSuccessfulInvoiceOrder(preqDoc.getTotalDollarAmount(),eInvoice);
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 
@@ -1143,20 +1148,22 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
     
     @Override
-	public ElectronicInvoiceRejectDocument createRejectDocument(ElectronicInvoice eInvoice,
-			ElectronicInvoiceOrder electronicInvoiceOrder, ElectronicInvoiceLoad eInvoiceLoad) {
+	public ElectronicInvoiceRejectDocument createRejectDocument(
+	        final ElectronicInvoice eInvoice,
+			final ElectronicInvoiceOrder electronicInvoiceOrder, 
+			final ElectronicInvoiceLoad eInvoiceLoad) {
 		LOG.info(
                 "Creating reject document [DUNS={},POID={}]",
                 eInvoice::getDunsNumber,
                 electronicInvoiceOrder::getInvoicePurchaseOrderID
         );
 
-        ElectronicInvoiceRejectDocument eInvoiceRejectDocument;
+        final ElectronicInvoiceRejectDocument eInvoiceRejectDocument;
 
         eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
         eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
-        String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
+        final String rejectdocDesc = generateRejectDocumentDescription(eInvoice,electronicInvoiceOrder);
         eInvoiceRejectDocument.getDocumentHeader().setDocumentDescription(rejectdocDesc);
         eInvoiceRejectDocument.setDocumentCreationInProgress(true);
 
@@ -1165,7 +1172,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         documentService.saveDocument(eInvoiceRejectDocument);
 
-        String noteText = "Invoice file";
+        final String noteText = "Invoice file";
         attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
 
         eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
@@ -1191,7 +1198,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         rejectReasonNote.append("This reject document has been created because of the following reason(s):\n");
 
         int index = 1;
-        for (ElectronicInvoiceRejectReason reason : eInvoiceRejectDocument.getInvoiceRejectReasons()) {
+        for (final ElectronicInvoiceRejectReason reason : eInvoiceRejectDocument.getInvoiceRejectReasons()) {
             emailTextErrorList.append("    - " + reason.getInvoiceRejectReasonDescription() + "\n");
             emailTextErrorList.append("    - PO  " + eInvoiceRejectDocument.getPurchaseOrderIdentifier() + "\n");
             emailTextErrorList.append("    - EIRT  " + eInvoiceRejectDocument.getDocumentNumber() + "\n");
@@ -1216,15 +1223,15 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
     
     @Override
-    protected void rejectElectronicInvoiceFile(ElectronicInvoiceLoad eInvoiceLoad, String fileDunsNumber, File invoiceFile, String extraDescription, String rejectReasonTypeCode) {
+    protected void rejectElectronicInvoiceFile(final ElectronicInvoiceLoad eInvoiceLoad, final String fileDunsNumber, final File invoiceFile, final String extraDescription, final String rejectReasonTypeCode) {
         clearErrorMessagesToPreventSaveAndRouteErrors();       
         LOG.info("Rejecting the entire invoice file - {}", invoiceFile::getName);
 
-        ElectronicInvoiceLoadSummary eInvoiceLoadSummary = getOrCreateLoadSummary(eInvoiceLoad, fileDunsNumber);
+        final ElectronicInvoiceLoadSummary eInvoiceLoadSummary = getOrCreateLoadSummary(eInvoiceLoad, fileDunsNumber);
         eInvoiceLoadSummary.addFailedInvoiceOrder();
         eInvoiceLoad.insertInvoiceLoadSummary(eInvoiceLoadSummary);
 
-        ElectronicInvoiceRejectDocument eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
+        final ElectronicInvoiceRejectDocument eInvoiceRejectDocument = (ElectronicInvoiceRejectDocument) documentService.getNewDocument("EIRT");
 
         eInvoiceRejectDocument.setInvoiceProcessTimestamp(dateTimeService.getCurrentTimestamp());
         eInvoiceRejectDocument.setVendorDunsNumber(fileDunsNumber);
@@ -1234,12 +1241,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             eInvoiceRejectDocument.setInvoiceFileName(invoiceFile.getName());
         }
 
-        List<ElectronicInvoiceRejectReason> list = new ArrayList<ElectronicInvoiceRejectReason>(1);
+        final List<ElectronicInvoiceRejectReason> list = new ArrayList<ElectronicInvoiceRejectReason>(1);
 
-        String message = "Complete failure document has been created for the Invoice with Filename '" + invoiceFile.getName() + "' due to the following error:\n";
+        final String message = "Complete failure document has been created for the Invoice with Filename '" + invoiceFile.getName() + "' due to the following error:\n";
         emailTextErrorList.append(message);
 
-        ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(rejectReasonTypeCode,extraDescription, invoiceFile.getName());
+        final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(rejectReasonTypeCode,extraDescription, invoiceFile.getName());
         list.add(rejectReason);
 
         emailTextErrorList.append("    - " + rejectReason.getInvoiceRejectReasonDescription());
@@ -1251,7 +1258,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         // KFSCNTRB-1369: Need to Save document
         documentService.saveDocument(eInvoiceRejectDocument);
 
-        String noteText = "Invoice file";
+        final String noteText = "Invoice file";
 //        if (invoiceFile.length() > 0) {
         	// empty file will casuse attachment creation exception.  Hence, job will be stopped
         attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument,invoiceFile,noteText);
@@ -1295,7 +1302,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             final ElectronicInvoiceRejectDocument eInvoiceRejectDocument, 
             final File attachmentFile, 
             final String noteText) {
-        Note note = null;
+        final Note note;
         try {
             note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
@@ -1340,9 +1347,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
      * @return
      */
     protected StringBuffer buildLoadSummary(ElectronicInvoiceLoad eInvoiceLoad) {
-        StringBuffer summaryText = saveLoadSummary(eInvoiceLoad);
+        final StringBuffer summaryText = saveLoadSummary(eInvoiceLoad);
 
-        StringBuffer finalText = new StringBuffer();
+        final StringBuffer finalText = new StringBuffer();
         finalText.append("======================================\n");
         finalText.append("               TOTALS\n");
         finalText.append("======================================\n\n");
@@ -1386,18 +1393,18 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 // end KFSUPGRADE-484
     // KFSUPGRADE-485
     @Override
-    public boolean doMatchingProcess(ElectronicInvoiceRejectDocument rejectDocument){
+    public boolean doMatchingProcess(final ElectronicInvoiceRejectDocument rejectDocument){
         /*
          * This is needed here since if the user changes the DUNS number.
          */
         validateVendorDetails(rejectDocument);
 
-        Map itemTypeMappings = getItemTypeMappings(rejectDocument.getVendorHeaderGeneratedIdentifier(),
+        final Map itemTypeMappings = getItemTypeMappings(rejectDocument.getVendorHeaderGeneratedIdentifier(),
                                                    rejectDocument.getVendorDetailAssignedIdentifier());
 
-        Map kualiItemTypes = getKualiItemTypes();
+        final Map kualiItemTypes = getKualiItemTypes();
 
-        CuElectronicInvoiceOrderHolder rejectDocHolder = new CuElectronicInvoiceOrderHolder(rejectDocument,itemTypeMappings,kualiItemTypes);
+        final CuElectronicInvoiceOrderHolder rejectDocHolder = new CuElectronicInvoiceOrderHolder(rejectDocument,itemTypeMappings,kualiItemTypes);
         matchingService.doMatchingProcess(rejectDocHolder);
         // KFSPTS-1719 : save the nomatchingitems found during match process.
         ((CuElectronicInvoiceRejectDocument)rejectDocument).setNonMatchItems(((CuElectronicInvoiceOrderHolder)rejectDocHolder).getNonMatchItems());
@@ -1411,12 +1418,12 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         }
 
         //  determine which of the reject reasons we should suppress based on the parameter
-        List<String> ignoreRejectTypes = new ArrayList<String>(parameterService
+        final List<String> ignoreRejectTypes = new ArrayList<String>(parameterService
                 .getParameterValuesAsString(PurapConstants.PURAP_NAMESPACE, "ElectronicInvoiceReject",
                         "SUPPRESS_REJECT_REASON_CODES_ON_EIRT_APPROVAL"));
-        List<ElectronicInvoiceRejectReason> rejectReasonsToDelete = new ArrayList<ElectronicInvoiceRejectReason>();
-        for (ElectronicInvoiceRejectReason rejectReason : rejectDocument.getInvoiceRejectReasons()) {
-            String rejectedReasonTypeCode = rejectReason.getInvoiceRejectReasonTypeCode();
+        final List<ElectronicInvoiceRejectReason> rejectReasonsToDelete = new ArrayList<ElectronicInvoiceRejectReason>();
+        for (final ElectronicInvoiceRejectReason rejectReason : rejectDocument.getInvoiceRejectReasons()) {
+            final String rejectedReasonTypeCode = rejectReason.getInvoiceRejectReasonTypeCode();
             if (StringUtils.isNotBlank(rejectedReasonTypeCode)) {
                 if (ignoreRejectTypes.contains(rejectedReasonTypeCode)) {
                     rejectReasonsToDelete.add(rejectReason);
@@ -1585,7 +1592,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void processInvoiceItem(PaymentRequestItem preqItem, ElectronicInvoiceOrderHolder orderHolder){
+    protected void processInvoiceItem(
+            final PaymentRequestItem preqItem, 
+            final ElectronicInvoiceOrderHolder orderHolder){
     	// TODO : 'no qty' po line item may have 'qty inv item'
     	// force it to match like qty item.
     	CuPaymentRequestItemExtension preqItemExt = (CuPaymentRequestItemExtension)preqItem.getExtension() ;
@@ -1641,7 +1650,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void processTaxItem (PaymentRequestItem preqItem, ElectronicInvoiceOrderHolder orderHolder){
+    protected void processTaxItem (final PaymentRequestItem preqItem, final ElectronicInvoiceOrderHolder orderHolder){
 
         if (LOG.isInfoEnabled()){
             LOG.info("Processing Tax Item");
@@ -1664,15 +1673,17 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void addRejectReasonsToNote(String rejectReasons, ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
+    protected void addRejectReasonsToNote(
+            final String rejectReasons, 
+            final ElectronicInvoiceRejectDocument eInvoiceRejectDocument){
 
         try {
-            Note note = documentService.createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
+            final Note note = documentService.createNoteFromDocument(eInvoiceRejectDocument, rejectReasons);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
             note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
             PersistableBusinessObject noteParent = eInvoiceRejectDocument.getNoteTarget();
             noteService.save(note);
-        }catch (Exception e) {
+        }catch (final Exception e) {
             LOG.error("Error creating reject reason note - {}", e::getMessage);
         }
     }
@@ -1686,40 +1697,40 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
      * org.kuali.kfs.module.purap.businessobject.ElectronicInvoiceLoad, java.io.File)
      */
     @Override
-    protected byte[] addNamespaceDefinition(ElectronicInvoiceLoad eInvoiceLoad, File invoiceFile) {
+    protected byte[] addNamespaceDefinition(final ElectronicInvoiceLoad eInvoiceLoad, final File invoiceFile) {
         LOG.debug("addNamespaceDefinition() started");
 
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setValidating(false); // It's not needed to validate here
         builderFactory.setIgnoringElementContentWhitespace(true);
 
-        DocumentBuilder builder = null;
+        final DocumentBuilder builder;
         try {
             builder = builderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
+        } catch (final ParserConfigurationException e) {
             LOG.error("addNamespaceDefinition() Error getting document builder - {}", e::getMessage);
             throw new RuntimeException(e);
         }
 
-        Document xmlDoc = null;
+        final Document xmlDoc;
 
         try {
             LOG.info("addNamespaceDefinition: builder.parse");
             xmlDoc = builder.parse(invoiceFile);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.info("addNamespaceDefinition: Error parsing the file - {}", e::getMessage);
             rejectElectronicInvoiceFile(eInvoiceLoad, UNKNOWN_DUNS_IDENTIFIER, invoiceFile, e.getMessage(), PurapConstants.ElectronicInvoice.FILE_FORMAT_INVALID);
             return null;
         }
         LOG.info("addNamespaceDefinition: xmlDoc.getDocumentElement()");
 
-        Node node = xmlDoc.getDocumentElement();
-        Element element = (Element) node;
+        final Node node = xmlDoc.getDocumentElement();
+        final Element element = (Element) node;
 
         removeUnsupportedXmlnsAttributes(element);
 
-        String xmlnsValue = element.getAttribute("xmlns");
-        String xmlnsXsiValue = element.getAttribute("xmlns:xsi");
+        final String xmlnsValue = element.getAttribute("xmlns");
+        final String xmlnsXsiValue = element.getAttribute("xmlns:xsi");
 
         LOG.info("addNamespaceDefinition: getInvoiceFile");
 
@@ -1731,14 +1742,14 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             element.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         }
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            Source source = new DOMSource(xmlDoc);
-            Result result = new StreamResult(out);
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final Transformer transformer = transformerFactory.newTransformer();
+            final Source source = new DOMSource(xmlDoc);
+            final Result result = new StreamResult(out);
             transformer.transform(source, result);
-        } catch (TransformerException e) {
+        } catch (final TransformerException e) {
             LOG.fatal("Failed to transform {} xml.{}", invoiceFile.getName(), e);
             throw new RuntimeException(e);
         }

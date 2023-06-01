@@ -55,15 +55,15 @@ import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.springframework.cache.annotation.Cacheable;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
-import edu.cornell.kfs.fp.businessobject.PaymentMethodChart;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute;
 import edu.cornell.kfs.sys.service.CuGeneralLedgerPendingEntryService;
 
 public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPaymentMethodGeneralLedgerPendingEntryService {
 	private static final Logger LOG = LogManager.getLogger(CUPaymentMethodGeneralLedgerPendingEntryServiceImpl.class);
-    protected static final String DEFAULT_PAYMENT_METHOD_IF_MISSING = "A"; // check/ACH
 
     protected CuGeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     protected ObjectCodeService objectCodeService;
@@ -73,11 +73,12 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
     @Cacheable(value=SystemOptions.CACHE_NAME, key="'{isPaymentMethodProcessedUsingPdp}'+#p0")
     public boolean isPaymentMethodProcessedUsingPdp(String paymentMethodCode) {
         if ( StringUtils.isBlank(paymentMethodCode) ) {
-            paymentMethodCode = DEFAULT_PAYMENT_METHOD_IF_MISSING;
+            paymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         }
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         if ( pm != null ) {
-            return pm.isProcessedUsingPdp();
+            PaymentMethodExtendedAttribute extendedAttribute = (PaymentMethodExtendedAttribute)pm.getExtension();
+            return extendedAttribute.isProcessedUsingPdp();
         }
         return false;
     }
@@ -88,7 +89,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
      */
     public Bank getBankForPaymentMethod(String paymentMethodCode) {
         if ( StringUtils.isBlank(paymentMethodCode) ) {
-            paymentMethodCode = DEFAULT_PAYMENT_METHOD_IF_MISSING;
+            paymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         }
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         if ( pm != null ) {
@@ -134,7 +135,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             Map<String, KualiDecimal> actualTotalsByChart) {
 
         if ( StringUtils.isBlank(paymentMethodCode) ) {
-            paymentMethodCode = DEFAULT_PAYMENT_METHOD_IF_MISSING;
+            paymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         }
         PaymentMethod pm = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCode);
         // no payment method? abort.
@@ -142,18 +143,10 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
             return false;
         }
         
-        if ( pm.isAssessedFees() ) {
-            if ( !feesWaived ) {
-                generateFeeAssessmentEntries(pm, document, templatePendingEntry, sequenceHelper, reverseCharge);
-            }                        
-        }
+        PaymentMethodExtendedAttribute extendedAttribute = (PaymentMethodExtendedAttribute)pm.getExtension();
         
-        if ( pm.isOffsetUsingClearingAccount() ) {
-            generateClearingAccountOffsetEntries(pm, document, sequenceHelper, actualTotalsByChart);
-        }
-        
-        if ( !pm.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
-            if(PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode)){
+        if ( !extendedAttribute.isProcessedUsingPdp() && StringUtils.isNotBlank( bankCode ) ) {
+            if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode)){
                 //do not create bank offsets unless DM approval
             }
             else{
@@ -163,98 +156,7 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         
         return true;
     }
-    
-    /**
-     * Generates the GL entries to charge the department for the foreign draft and credit the Wire Charge
-     * Fee Account as specified by system parameters.
-     * 
-     * @param document Document into which to add the generated GL Entries.
-     * 
-     */
-    protected boolean generateFeeAssessmentEntries(PaymentMethod pm, AccountingDocument document, GeneralLedgerPendingEntry templatePendingEntry, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, boolean reverseEntries) {
-        LOG.debug("generateForeignDraftChargeEntries started");
-        
-        PaymentMethodChart pmc = pm.getPaymentMethodChartInfo(templatePendingEntry.getChartOfAccountsCode(), new java.sql.Date( document.getDocumentHeader().getWorkflowDocument().getDateCreated().getMillis() ) );
-        if ( pmc == null ) {
-            LOG.warn( "No Applicable PaymentMethodChart found for chart: " + templatePendingEntry.getChartOfAccountsCode() + " and date: " + document.getDocumentHeader().getWorkflowDocument().getDateCreated() );
-            return false;
-        }
-        // Get all the parameters which control these entries
-        String feeIncomeChartCode = pmc.getFeeIncomeChartOfAccountsCode();
-        String feeIncomeAccountNumber = pmc.getFeeIncomeAccountNumber();
-        String feeExpenseObjectCode = pmc.getFeeExpenseFinancialObjectCode();
-        String feeIncomeObjectCode = pmc.getFeeIncomeFinancialObjectCode();
-        KualiDecimal feeAmount = pmc.getFeeAmount();
 
-        // skip creation if the fee has been set to zero
-        if ( !KualiDecimal.ZERO.equals(feeAmount) ) {
-            // grab the explicit entry for the first accounting line and adjust for the foreign draft fee
-            GeneralLedgerPendingEntry chargeEntry = new GeneralLedgerPendingEntry(document.getGeneralLedgerPendingEntry(0));        
-            chargeEntry.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
-            
-            // change the object code (expense to the department)
-            chargeEntry.setFinancialObjectCode(feeExpenseObjectCode);
-            chargeEntry.setFinancialSubObjectCode(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankFinancialSubObjectCode());
-            chargeEntry.setTransactionLedgerEntryDescription( StringUtils.left( "Automatic debit for " + pm.getPaymentMethodName() + " fee", 40 ));
-            chargeEntry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
-    
-            // retrieve object type
-            ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(chargeEntry.getChartOfAccountsCode(), chargeEntry.getFinancialObjectCode());
-            if ( objectCode == null ) {
-                LOG.fatal("Specified offset object code: " + chargeEntry.getChartOfAccountsCode() + "-" + chargeEntry.getFinancialObjectCode() + " does not exist - failed to generate foreign draft fee entries", new RuntimeException() );
-                return false;
-            }       
-            chargeEntry.setFinancialObjectTypeCode(objectCode.getFinancialObjectTypeCode());
-            
-            // Set the amount from the parameter
-            chargeEntry.setTransactionLedgerEntryAmount(feeAmount);
-            chargeEntry.setTransactionDebitCreditCode(reverseEntries?GL_CREDIT_CODE:GL_DEBIT_CODE);
-    
-            document.addPendingEntry(chargeEntry);
-            sequenceHelper.increment();
-    
-            // handle the offset entry
-            GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry(chargeEntry);
-            generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), chargeEntry, sequenceHelper, offsetEntry);
-    
-            document.addPendingEntry(offsetEntry);
-            sequenceHelper.increment();
-            
-            // Now, create the income entry in the AP Foreign draft fee account
-            
-            GeneralLedgerPendingEntry feeIncomeEntry = new GeneralLedgerPendingEntry(document.getGeneralLedgerPendingEntry(0));
-            feeIncomeEntry.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
-    
-            feeIncomeEntry.setChartOfAccountsCode(feeIncomeChartCode);
-            feeIncomeEntry.setAccountNumber(feeIncomeAccountNumber);
-            feeIncomeEntry.setFinancialObjectCode(feeIncomeObjectCode);
-            feeIncomeEntry.setFinancialSubObjectCode(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankFinancialSubObjectCode());
-            feeIncomeEntry.setSubAccountNumber(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankSubAccountNumber());
-            feeIncomeEntry.setProjectCode(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankProjectCode());
-    
-            // retrieve object type
-            objectCode = objectCodeService.getByPrimaryIdForCurrentYear(feeIncomeChartCode, feeIncomeObjectCode);
-            if ( objectCode == null ) {
-                LOG.fatal("Specified income object code: " + feeIncomeChartCode + "-" + feeIncomeObjectCode + " does not exist - failed to generate foreign draft income entries", new RuntimeException() );
-                return false;
-            }
-            feeIncomeEntry.setFinancialObjectTypeCode(objectCode.getFinancialObjectTypeCode());       
-            feeIncomeEntry.setTransactionLedgerEntryAmount(feeAmount);
-            feeIncomeEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
-            feeIncomeEntry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
-    
-            document.addPendingEntry(feeIncomeEntry);
-            sequenceHelper.increment();
-            
-            // create the offset entry
-            offsetEntry = new GeneralLedgerPendingEntry(feeIncomeEntry);
-            generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), feeIncomeEntry, sequenceHelper, offsetEntry);
-    
-            document.addPendingEntry(offsetEntry);
-            sequenceHelper.increment();
-        }
-        return true;
-    }
     
     /**
      * Adds up the amounts of all cash to offset GeneralLedgerPendingEntry records on the given AccountingDocument
@@ -285,73 +187,6 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         }
         return totals;
     }    
-
-    /**
-     * When the "A" payment method is used for AP Credit Cards - generate the needed entries in the clearing account.
-     * 
-     * @param document Document into which to add the generated GL Entries.
-     * @param sequenceHelper helper class to keep track of GLPE sequence
-     * 
-     */
-    public boolean generateClearingAccountOffsetEntries(PaymentMethod pm, AccountingDocument document, GeneralLedgerPendingEntrySequenceHelper sequenceHelper, Map<String,KualiDecimal> actualTotalsByChart) {
-        if ( actualTotalsByChart == null ) {
-            actualTotalsByChart = getNonOffsetActualTotalsByChart(document);
-        }
-
-        for ( String chart : actualTotalsByChart.keySet() ) {
-            KualiDecimal offsetAmount = actualTotalsByChart.get(chart);
-            if ( !KualiDecimal.ZERO.equals(offsetAmount) ) {
-                PaymentMethodChart pmc = pm.getPaymentMethodChartInfo(chart, new java.sql.Date( document.getDocumentHeader().getWorkflowDocument().getDateCreated().getMillis() ) );
-                if ( pmc == null ) {
-                    LOG.warn( "No Applicable PaymentMethodChart found for chart: " + chart + " and date: " + document.getDocumentHeader().getWorkflowDocument().getDateCreated() );
-                    // skip this line - still attempt for other charts
-                    continue;
-                }
-                String clearingChartCode = pmc.getClearingChartOfAccountsCode();
-                String clearingAccountNumber = pmc.getClearingAccountNumber();
-                String clearingObjectCode = pmc.getClearingFinancialObjectCode(); // liability object code
-                
-                GeneralLedgerPendingEntry apOffsetEntry = new GeneralLedgerPendingEntry(document.getGeneralLedgerPendingEntry(0));
-                apOffsetEntry.setTransactionLedgerEntrySequenceNumber(new Integer(sequenceHelper.getSequenceCounter()));
-    
-                apOffsetEntry.setChartOfAccountsCode(clearingChartCode);
-                apOffsetEntry.setAccountNumber(clearingAccountNumber);
-                apOffsetEntry.setFinancialObjectCode(clearingObjectCode);
-                // if internal billing
-                if (StringUtils.equals(PaymentMethod.PM_CODE_INTERNAL_BILLING, pm.getPaymentMethodCode())) {
-                    apOffsetEntry.setFinancialSubObjectCode(pmc.getClearingFinancialSubObjectCode());
-                    apOffsetEntry.setSubAccountNumber(pmc.getClearingSubAccountNumber());
-                } else {
-                apOffsetEntry.setFinancialSubObjectCode(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankFinancialSubObjectCode());
-                apOffsetEntry.setSubAccountNumber(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankSubAccountNumber());
-                }
-                apOffsetEntry.setProjectCode(GENERAL_LEDGER_PENDING_ENTRY_CODE.getBlankProjectCode());
-    
-                // retrieve object type
-                ObjectCode objectCode = objectCodeService.getByPrimaryIdForCurrentYear(clearingChartCode, clearingObjectCode);
-                if ( objectCode == null ) {
-                    LOG.fatal("Specified offset object code: " + clearingChartCode + "-" + clearingObjectCode + " does not exist - failed to generate CC offset entries", new RuntimeException() );
-                    return false;
-                }
-                apOffsetEntry.setFinancialObjectTypeCode(objectCode.getFinancialObjectTypeCode());       
-                apOffsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
-                apOffsetEntry.setTransactionDebitCreditCode(offsetAmount.isNegative()?KFSConstants.GL_DEBIT_CODE:KFSConstants.GL_CREDIT_CODE);
-                apOffsetEntry.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
-    
-                document.addPendingEntry(apOffsetEntry);
-                sequenceHelper.increment();
-                
-                // handle the offset entry
-                GeneralLedgerPendingEntry offsetEntry = new GeneralLedgerPendingEntry(apOffsetEntry);
-                generalLedgerPendingEntryService.populateOffsetGeneralLedgerPendingEntry(document.getPostingYear(), apOffsetEntry, sequenceHelper, offsetEntry);
-    
-                document.addPendingEntry(offsetEntry);
-                sequenceHelper.increment();
-            }
-        }
-        
-        return true;
-    }
 
     /**
      * If bank specification is enabled generates bank offsetting entries for the document amount
@@ -403,13 +238,13 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
 
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(document.getDocumentNumber()));
         String documentType = CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK;
-        if (PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())){
+        if (CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())){
         	documentType = CuPaymentRequestDocument.DOCUMENT_TYPE_INTERNAL_BILLING;
         }
         
 
         // generate bank offset
-        if (PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode()) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
+        if (KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode()) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
             generateDocumentBankOffsetEntries((AccountingDocument) document, document.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", documentType, sequenceHelper, document.getTotalDollarAmount().negated());
         }
 

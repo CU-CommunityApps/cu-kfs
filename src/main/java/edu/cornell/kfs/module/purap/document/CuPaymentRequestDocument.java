@@ -37,11 +37,12 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
@@ -51,17 +52,15 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
     protected PaymentRequestWireTransfer preqWireTransfer;
     
-    // default this value to "C" to preserve baseline behavior
-    protected String paymentMethodCode = "P"; //ACH check
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
-    private PaymentMethod paymentMethod;
     
     public CuPaymentRequestDocument() {
 		super();
 		preqWireTransfer = new PaymentRequestWireTransfer();
+		setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
 	}
 
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
     	
         // KFSPTS-1891.  purchasingPreDisbursementExtractJob has NPE issue.  need this null check
        // if (preqWireTransfer != null && !StringUtils.equals(preqWireTransfer.getDocumentNumber(),getDocumentNumber())) {
@@ -95,7 +94,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         // First, only do this if the document is in initiated status - after that, we don't want to 
         // accidentally reset the bank code
         // KFSPTS-1891
-        if ( getDocumentHeader().getWorkflowDocument().isInitiated() || getDocumentHeader().getWorkflowDocument().isSaved()  ) {
+        if (getDocumentHeader().getWorkflowDocument().isInitiated() || getDocumentHeader().getWorkflowDocument().isSaved()  ) {
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
             // was entered by the user or not.
@@ -136,14 +135,14 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     
     // KFSPTS-1891
     private boolean isWireOrForeignDraft() {
-        return StringUtils.equals(PaymentMethod.PM_CODE_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, this.getPaymentMethodCode());
+        return StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, this.getPaymentMethodCode());
     }
     
     /**
      * @see org.kuali.kfs.module.purap.document.PaymentRequestDocument#populatePaymentRequestFromPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument, java.util.HashMap)
      */
     @Override
-    public void populatePaymentRequestFromPurchaseOrder(PurchaseOrderDocument po, HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
+    public void populatePaymentRequestFromPurchaseOrder(final PurchaseOrderDocument po, final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
     	super.populatePaymentRequestFromPurchaseOrder(po, expiredOrClosedAccountList);
     	
     	 // KFSPTS-1891
@@ -166,13 +165,13 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
      * @see org.kuali.kfs.krad.document.DocumentBase#doRouteStatusChange()
      */
     @Override
-    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
+    public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
         LOG.debug("doRouteStatusChange() started");
         
-        if (this.getDocumentHeader().getWorkflowDocument().isProcessed()) {
+        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
         	// KFSPTS-1891
         	if (CollectionUtils.isEmpty(generalLedgerPendingEntries)) {
-        		this.refreshReferenceObject("generalLedgerPendingEntries");
+        		refreshReferenceObject("generalLedgerPendingEntries");
         	}
         }
 
@@ -187,7 +186,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 
     		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
     		String paymentMethodCode = getPaymentMethodCode();
-    		if(PaymentMethod.PM_CODE_FOREIGN_DRAFT.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_WIRE.equalsIgnoreCase(paymentMethodCode) || PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
+    		if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode) || CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
     			getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
     		}
 
@@ -237,14 +236,14 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
     @Override
-    public void customizeExplicitGeneralLedgerPendingEntry( GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
+    public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
     	super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
         // KFSPTS-1891
         // if the document is not processed using PDP, then the cash entries need to be created instead of liability
         // so, switch the document type so the offset generation uses a cash offset object code
         if ( !getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp(getPaymentMethodCode())) {
         	
-        	if (PaymentMethod.PM_CODE_INTERNAL_BILLING.equalsIgnoreCase(getPaymentMethodCode())){
+        	if (CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(getPaymentMethodCode())){
         		 explicitEntry.setFinancialDocumentTypeCode(DOCUMENT_TYPE_INTERNAL_BILLING);
             }
         	else{
@@ -253,13 +252,13 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
     }
     
-    public void doActionTaken(ActionTakenEvent event) {
+    public void doActionTaken(final ActionTakenEvent event) {
         super.doActionTaken(event);
-        WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
+        final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
         String currentNode = null;
-        Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
+        final Set<String> currentNodes = workflowDocument.getCurrentNodeNames();
         if (CollectionUtils.isNotEmpty(currentNodes)) {
-            Object[] names = currentNodes.toArray();
+            final Object[] names = currentNodes.toArray();
             if (names.length > 0) {
                 currentNode = (String)names[0];
             }
@@ -287,22 +286,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         return Stream.concat(otherDocIdsToLock, poDocIdsToLock)
                 .collect(Collectors.toUnmodifiableList());
     }
-
-	public String getPaymentMethodCode() {
-		return paymentMethodCode;
-	}
-
-	public void setPaymentMethodCode(String paymentMethodCode) {
-		this.paymentMethodCode = paymentMethodCode;
-	}
-
-	public PaymentMethod getPaymentMethod() {
-		return paymentMethod;
-	}
-
-	public void setPaymentMethod(PaymentMethod paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
 
 	public PaymentRequestWireTransfer getPreqWireTransfer() {
 		if (ObjectUtils.isNull(preqWireTransfer)) {

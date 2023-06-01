@@ -62,11 +62,6 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     private static final String NON_QUANTITY_UOM = "LOT"; 
     //end KFSUPGRADE-406
     
-    // KFSUPGRADE-583
-    // Text to pass to SciQuest in the case where a federally funded account is used on the PO
-    private static final String FEDERAL_FUNDING_TEXT = "Federal funding has been designated for this purchase order.";
-    // end KFSUPGRADE-583
-    
     private AttachmentService attachmentService;
     private BusinessObjectService businessObjectService;
     private PurchaseOrderService purchaseOrderService;
@@ -632,16 +627,6 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 	        cxml.append("      </CustomFieldValueSet>\n");
         }
  // end KFSUPGRADE-407    
-        
-        // KFSUPGRADE-583
-        if (purchaseOrder.getDocumentFundingSourceCode().equalsIgnoreCase(CUPurapConstants.PurapFundingSources.FEDERAL_FUNDING_SOURCE)) {
-	        cxml.append("      <CustomFieldValueSet label=\"Funding\" name=\"Funding\">\n");
-	        cxml.append("        <CustomFieldValue>\n");
-	        cxml.append("          <Value><![CDATA[" + FEDERAL_FUNDING_TEXT + "]]></Value>\n");
-	        cxml.append("         </CustomFieldValue>\n");
-	        cxml.append("      </CustomFieldValueSet>\n");
-        }
-        // END KFSUPGRADE-583
         
         // KFSUPGRADE-400 KFSPTS-427 : additional fields
         // do we have to check if field is empty or null ?

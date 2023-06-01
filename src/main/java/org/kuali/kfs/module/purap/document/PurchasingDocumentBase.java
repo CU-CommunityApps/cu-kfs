@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.integration.purap.CapitalAssetSystem;
 import org.kuali.kfs.krad.rules.rule.event.ApproveDocumentEvent;
@@ -40,7 +42,6 @@ import org.kuali.kfs.module.purap.businessobject.BillingAddress;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemState;
 import org.kuali.kfs.module.purap.businessobject.CapitalAssetSystemType;
 import org.kuali.kfs.module.purap.businessobject.DeliveryRequiredDateReason;
-import org.kuali.kfs.module.purap.businessobject.FundingSource;
 import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderTransmissionMethod;
@@ -69,8 +70,6 @@ import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -85,8 +84,6 @@ import java.util.Map;
 public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDocumentBase implements
         PurchasingDocument {
 
-    // SHARED FIELDS BETWEEN REQUISITION AND PURCHASE ORDER
-    protected String documentFundingSourceCode;
     protected String requisitionSourceCode;
     protected String purchaseOrderTransmissionMethodCode;
     protected String purchaseOrderCostSourceCode;
@@ -159,8 +156,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     protected String supplierDiversityLabel;
     protected String vendorContactsLabel;
 
-    // REFERENCE OBJECTS
-    protected FundingSource fundingSource;
     protected RequisitionSource requisitionSource;
     protected PurchaseOrderTransmissionMethod purchaseOrderTransmissionMethod;
     protected PurchaseOrderCostSource purchaseOrderCostSource;
@@ -894,16 +889,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public String getDocumentFundingSourceCode() {
-        return documentFundingSourceCode;
-    }
-
-    @Override
-    public void setDocumentFundingSourceCode(String documentFundingSourceCode) {
-        this.documentFundingSourceCode = documentFundingSourceCode;
-    }
-
-    @Override
     public String getInstitutionContactEmailAddress() {
         return institutionContactEmailAddress;
     }
@@ -1217,11 +1202,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public FundingSource getFundingSource() {
-        return fundingSource;
-    }
-
-    @Override
     public Account getNonInstitutionFundAccount() {
         return nonInstitutionFundAccount;
     }
@@ -1289,12 +1269,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public void setDeliveryRequiredDateReason(DeliveryRequiredDateReason deliveryRequiredDateReason) {
         this.deliveryRequiredDateReason = deliveryRequiredDateReason;
-    }
-
-    @Deprecated
-    @Override
-    public void setFundingSource(FundingSource fundingSource) {
-        this.fundingSource = fundingSource;
     }
 
     @Deprecated
@@ -1544,35 +1518,6 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
                     .getDefaultUseTaxIndicatorValue(this);
             SpringContext.getBean(PurapService.class).updateUseTaxIndicator(this,
                     defaultUseTaxIndicatorValue);
-        }
-        // KFSUPGRADE-583
-        checkForFederalAccount();
-    }
-    
-    // KFSUPGRADE-583
-    /**
-     * Check for Federal Accounts, and if any are found, set Funding Source to Federal, 
-     * otherwise set Funding Source to default.
-     */
-    private void checkForFederalAccount() {
-        boolean federalFunding = false;
-        
-        for (SourceAccountingLine sourceAccountingLine : (List<SourceAccountingLine>)this.getSourceAccountingLines()) {
-            // On the PO, the sourceAccountingLine.account wasn't always populated even when we have an account number, so
-            // we refresh the reference object so we can check for CFDA number
-            if (ObjectUtils.isNotNull(sourceAccountingLine.getAccountNumber()) && ObjectUtils.isNull(sourceAccountingLine.getAccount().getAccountNumber())) {
-                sourceAccountingLine.refreshReferenceObject("account");
-            }
-            if (ObjectUtils.isNotNull(sourceAccountingLine.getAccount().getAccountCfdaNumber())) {
-                federalFunding = true;
-                break;
-            }
-        }
-        
-        if (federalFunding) {
-            this.setDocumentFundingSourceCode(CUPurapConstants.PurapFundingSources.FEDERAL_FUNDING_SOURCE);
-        } else {
-            this.setDocumentFundingSourceCode(SpringContext.getBean(ParameterService.class).getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.FUNDING_SOURCE));
         }
     }
 

@@ -185,10 +185,6 @@ public class CUPurapConstants {
         public static final String CONVERSION = "CNVS";
     }
     
-    public static final class PurapFundingSources {
-        public static final String FEDERAL_FUNDING_SOURCE = "FEDR";
-    }
-    
     public static class ElectronicInvoice {
      // ELECTRONIC INVOICE DISCOUNT DESCRIPTION
         public static String DISCOUNT_DESCRIPTION = "Full Order Discount";

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 public class EnumConfiguredMappingStrategy<T, E extends Enum<E>> extends ColumnPositionMappingStrategy<T> {
 
@@ -47,7 +48,7 @@ public class EnumConfiguredMappingStrategy<T, E extends Enum<E>> extends ColumnP
     }
 
     @Override
-    public String[] generateHeader() {
+    public String[] generateHeader(T bean) throws CsvRequiredFieldEmptyException {
         return Arrays.copyOf(headerLabels, headerLabels.length);
     }
 

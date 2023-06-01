@@ -207,9 +207,8 @@
 
     <!-- Listeners -->
 
-    <!-- Use CU-specific KFSInitializeListener implementation. -->
     <listener>
-        <listener-class>edu.cornell.kfs.sys.context.CuKFSInitializeListener</listener-class>
+        <listener-class>org.kuali.kfs.sys.context.KFSInitializeListener</listener-class>
     </listener>
 
     <listener>

@@ -43,6 +43,9 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     private String requestingCompanyLegalFirstName;
     private String requestingCompanyLegalLastName;
     private String requestingCompanyName;
+    // instance field added as OpenCSV is expecting it to be present, even if the
+    // library relies upon the getter/setter methods to access its value
+    private String requestingCompanyLegalNameForProcessing;
     private String requestingCompanyDesc;
     private String requestingCompanyTelephone;
     private String requestingCompanyDuns;

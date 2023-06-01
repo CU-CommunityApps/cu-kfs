@@ -21,7 +21,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2022-07-13</kfs.version>
+        <kfs.version>2022-08-31</kfs.version>
 
         <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
@@ -38,7 +38,7 @@
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <junit.version>5.8.2</junit.version>
         <ojdbc.version>19.18.0.0</ojdbc.version>
-        <opencsv.version>4.1</opencsv.version>
+        <opencsv.version>5.6</opencsv.version>
         <plexus-utils.version>3.0.24</plexus-utils.version>
         <mockito.version>4.6.1</mockito.version>
         <powermock.version>2.0.7</powermock.version>
@@ -62,7 +62,7 @@
         <plugin.war.version>3.3.2</plugin.war.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
-        <log4j.version>2.17.2</log4j.version>
+        <log4j.version>2.18.0</log4j.version>
         <ehcache.version>2.10.10.3.24</ehcache.version>
         <cxf.version>3.4.10</cxf.version>
         <wss4j.version>2.2.5</wss4j.version>

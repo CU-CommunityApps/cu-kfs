@@ -52,9 +52,13 @@ import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.PaymentMethodAdditionalDisbursementVoucherData;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
+import org.kuali.kfs.sys.businessobject.Bank;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.util.DuplicatePaymentCheckUtils;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
@@ -76,7 +80,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This class handles Actions for the DisbursementVoucher.
@@ -84,11 +90,15 @@ import java.util.Set;
 public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase {
 	
 	private static final Logger LOG = LogManager.getLogger();
+    private static final String PAYMENT_METHOD_PROPERTY_ADDITIONAL_DISBURSEMENT_VOUCHER_DATA_CODE =
+            "additionalDisbursementVoucherDataCode";
+    private static final String UPDATE_BANK_BASED_ON_PAYMENT_METHOD = "updateBankBasedOnPaymentMethod";
 
     private static final String DV_ADHOC_NODE = "AdHoc"; // ==== CU Customization ====
 
     protected DisbursementVoucherPayeeService disbursementVoucherPayeeService;
     protected DisbursementVoucherValidationService disbursementVoucherValidationService;
+    private BankService bankService;
 
     /**
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
@@ -153,32 +163,86 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ActionForward dest = super.execute(mapping, form, request, response);
-
         DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        if (form != null) {
-            DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
-            if (dvDoc != null) {
-                DisbursementVoucherNonEmployeeTravel dvNet = dvDoc.getDvNonEmployeeTravel();
-                if (dvNet != null) {
-                    // clear values derived from travelMileageAmount if that amount has been (manually) cleared
-                    Integer amount = dvNet.getDvPersonalCarMileageAmount();
-                    if ((amount == null) || (amount == 0)) {
-                        clearTravelMileageAmount(dvNet);
-                    }
+        populatePaymentMethodCodesRequiringAdditionalDvData(dvForm);
 
-                    // clear values derived from perDiemRate if that amount has been (manually) cleared
-                    KualiDecimal rate = dvNet.getDisbVchrPerdiemRate();
-                    if (rate == null || rate.isZero()) {
-                        clearTravelPerDiem(dvNet);
-                    }
+        final ActionForward dest;
+        if (documentIsAvailable(dvForm) && shouldUpdateBank(dvForm)) {
+            dest = dispatchMethod(mapping, form, request, response, UPDATE_BANK_BASED_ON_PAYMENT_METHOD);
+        } else {
+            dest = super.execute(mapping, form, request, response);
+        }
+
+        final DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
+
+        if (dvDoc != null) {
+            DisbursementVoucherNonEmployeeTravel dvNet = dvDoc.getDvNonEmployeeTravel();
+            if (dvNet != null) {
+                // clear values derived from travelMileageAmount if that amount has been (manually) cleared
+                Integer amount = dvNet.getDvPersonalCarMileageAmount();
+                if (amount == null || amount == 0) {
+                    clearTravelMileageAmount(dvNet);
                 }
 
-                dvDoc.setAchSignUpStatusFlag(getDisbursementVoucherPayeeService().isPayeeSignedUpForACH(dvDoc.getDvPayeeDetail()));
+                // clear values derived from perDiemRate if that amount has been (manually) cleared
+                KualiDecimal rate = dvNet.getDisbVchrPerdiemRate();
+                if (rate == null || rate.isZero()) {
+                    clearTravelPerDiem(dvNet);
+                }
             }
+
+            dvDoc.setAchSignUpStatusFlag(getDisbursementVoucherPayeeService().isPayeeSignedUpForACH(dvDoc.getDvPayeeDetail()));
+            dvForm.setOriginalPaymentMethodCode(Objects.requireNonNullElse(dvDoc.getPaymentMethodCode(), ""));
         }
 
         return dest;
+    }
+    
+    private void populatePaymentMethodCodesRequiringAdditionalDvData(final DisbursementVoucherForm dvForm) {
+        if (dvForm.getPaymentMethodCodesRequiringAdditionalData() != null) {
+            return;
+        }
+        final Map<String, Object> fieldValues = new HashMap<>();
+        fieldValues.put(KFSPropertyConstants.ACTIVE, true);
+        fieldValues.put(
+                PAYMENT_METHOD_PROPERTY_ADDITIONAL_DISBURSEMENT_VOUCHER_DATA_CODE,
+                PaymentMethodAdditionalDisbursementVoucherData.REQUIRED.getCode());
+        final Set<String> paymentMethodsRequiringAdditionalData = getBusinessObjectService()
+                .findMatching(PaymentMethod.class, fieldValues)
+                .stream()
+                .map(PaymentMethod::getPaymentMethodCode)
+                .collect(Collectors.toSet());
+        dvForm.setPaymentMethodCodesRequiringAdditionalData(paymentMethodsRequiringAdditionalData);
+        LOG.debug("Payment methods requiring additional data: {}", paymentMethodsRequiringAdditionalData);
+    }
+    
+    private static boolean documentIsAvailable(final DisbursementVoucherForm dvForm) {
+        return dvForm.getDocument() != null && StringUtils.isNotBlank(dvForm.getDocument().getDocumentNumber());
+    }
+
+    private static boolean shouldUpdateBank(final DisbursementVoucherForm dvForm) {
+        final DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
+        return dvDoc != null
+               && StringUtils.isNotBlank(dvDoc.getPaymentMethodCode())
+               && !dvDoc.getPaymentMethodCode().equals(dvForm.getOriginalPaymentMethodCode());
+    }
+
+    public ActionForward updateBankBasedOnPaymentMethod(
+            final ActionMapping mapping,
+            final ActionForm form,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDoc = dvForm.getDisbursementVoucherDocument();
+        final PaymentMethod paymentMethod = getBusinessObjectService().findBySinglePrimaryKey(
+                PaymentMethod.class,
+                dvDoc.getDisbVchrPaymentMethodCode());
+        final Bank newBank = paymentMethod.getBank() != null
+                ? paymentMethod.getBank()
+                : getBankService().getDefaultBankByDocType(DisbursementVoucherDocument.class);
+        dvDoc.setDisbVchrBankCode(newBank.getBankCode());
+        dvDoc.setBank(newBank);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
     @Override
@@ -915,5 +979,12 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         }
 
         return disbursementVoucherValidationService;
+    }
+    
+    private BankService getBankService() {
+        if (bankService == null) {
+            bankService = SpringContext.getBean(BankService.class);
+        }
+        return bankService;
     }
 }

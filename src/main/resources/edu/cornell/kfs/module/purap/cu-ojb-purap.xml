@@ -341,7 +341,6 @@
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
         <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requisitionSourceCode" column="REQS_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <!--<field-descriptor name="statusCode" column="REQS_STAT_CD" jdbc-type="VARCHAR" index="true"/>-->
         <field-descriptor name="purchaseOrderTransmissionMethodCode" column="PO_TRNS_MTHD_CD" jdbc-type="VARCHAR" index="true"/>
@@ -466,10 +465,7 @@
         <collection-descriptor name="purchasingCapitalAssetSystems" proxy="true" element-class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionCapitalAssetSystem" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
             <orderby name="capitalAssetSystemIdentifier" sort="ASC" />
             <inverse-foreignkey field-ref="purapDocumentIdentifier" />
-        </collection-descriptor>     
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
+        </collection-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -554,7 +550,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -671,9 +666,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -802,7 +794,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -921,9 +912,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -1050,7 +1038,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -1164,9 +1151,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -1296,7 +1280,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -1413,9 +1396,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -1545,7 +1525,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -1660,9 +1639,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -1792,7 +1768,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -1907,9 +1882,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -2039,7 +2011,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -2154,9 +2125,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -2286,7 +2254,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -2401,9 +2368,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -2533,7 +2497,6 @@
         <field-descriptor name="vendorContractGeneratedIdentifier" column="VNDR_CONTR_GNRTD_ID" jdbc-type="INTEGER"/>
         <field-descriptor name="vendorNoteText" column="VNDR_NTE_TXT" jdbc-type="VARCHAR"/>
         <field-descriptor name="vendorShippingPaymentTermsCode" column="VNDR_SHP_PMT_TERM_CD" jdbc-type="VARCHAR"/>
-        <field-descriptor name="documentFundingSourceCode" column="FND_SRC_CD" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="requestorPersonName" column="RQSTR_PRSN_NM" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonEmailAddress" column="RQSTR_PRSN_EMAIL_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="requestorPersonPhoneNumber" column="RQSTR_PRSN_PHN_NBR" jdbc-type="VARCHAR"/>
@@ -2648,9 +2611,6 @@
         </collection-descriptor>
     
         <!-- COMMON TO REQ AND PO DOCUMENTS -->
-        <reference-descriptor name="fundingSource" class-ref="org.kuali.kfs.module.purap.businessobject.FundingSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
-            <foreignkey field-ref="documentFundingSourceCode" />
-        </reference-descriptor>
         <reference-descriptor name="requisitionSource" class-ref="org.kuali.kfs.module.purap.businessobject.RequisitionSource" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
             <foreignkey field-ref="requisitionSourceCode" />
         </reference-descriptor>
@@ -2941,10 +2901,17 @@
     </collection-descriptor>
     
         <!-- KFSPTS-1891 -->
-   <reference-descriptor name="preqWireTransfer" class-ref="edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer" auto-retrieve="true" auto-update="object" auto-delete="object" >
+    <reference-descriptor name="preqWireTransfer" class-ref="edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer" auto-retrieve="true" auto-update="object" auto-delete="object" >
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
-
+    <reference-descriptor name="paymentMethod"
+                          auto-delete="none"
+                          auto-retrieve="true"
+                          auto-update="none"
+                          class-ref="org.kuali.kfs.sys.businessobject.PaymentMethod"
+                          proxy="true">
+         <foreignkey field-ref="paymentMethodCode"/>
+     </reference-descriptor>
 </class-descriptor>
  
  
@@ -3434,6 +3401,14 @@
                           auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
         <foreignkey field-ref="vendorCountryCode" target-field-ref="code"/>
     </reference-descriptor> 
+    <reference-descriptor name="paymentMethod"
+                          auto-delete="none"
+                          auto-retrieve="true"
+                          auto-update="none"
+                          class-ref="org.kuali.kfs.sys.businessobject.PaymentMethod"
+                          proxy="true">
+         <foreignkey field-ref="paymentMethodCode"/>
+    </reference-descriptor>
     <collection-descriptor name="items" proxy="true" element-class-ref="org.kuali.kfs.module.purap.businessobject.CreditMemoItem" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object">
         <inverse-foreignkey field-ref="purapDocumentIdentifier" />
         <query-customizer class="org.kuali.kfs.module.purap.dataaccess.impl.PurapItemQueryCustomizer">

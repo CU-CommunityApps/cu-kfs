@@ -23,7 +23,6 @@ import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MaintenanceDocumentService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
@@ -64,7 +63,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     private static final Logger LOG = LogManager.getLogger(RassUpdateServiceImpl.class);
 
-    protected MaintenanceDocumentService maintenanceDocumentService;
     protected DocumentService documentService;
     protected DataDictionaryService dataDictionaryService;
     protected ConfigurationService configurationService;
@@ -452,8 +450,7 @@ public class RassUpdateServiceImpl implements RassUpdateService {
             Pair<R, R> businessObjects, String maintenanceAction, RassObjectTranslationDefinition<T, R> objectDefinition) throws WorkflowException {
         String annotation = configurationService.getPropertyValueAsString(RassKeyConstants.MESSAGE_RASS_DOCUMENT_ANNOTATION_ROUTE);
         R newBo = businessObjects.getRight();
-        MaintenanceDocument maintenanceDocument = maintenanceDocumentService.setupNewMaintenanceDocument(objectDefinition.getBusinessObjectClass().getName(),
-                objectDefinition.getDocumentTypeName(), maintenanceAction);
+        MaintenanceDocument maintenanceDocument = (MaintenanceDocument) documentService.getNewDocument(objectDefinition.getDocumentTypeName());
         if (StringUtils.equals(KRADConstants.MAINTENANCE_EDIT_ACTION, maintenanceAction)) {
             maintenanceDocument.getOldMaintainableObject().setDataObject(businessObjects.getLeft());
         }
@@ -522,10 +519,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
 
     protected int getDocumentDescriptionMaxLength() {
         return dataDictionaryService.getAttributeMaxLength(DocumentHeader.class, KFSPropertyConstants.DOCUMENT_DESCRIPTION).intValue();
-    }
-
-    public void setMaintenanceDocumentService(MaintenanceDocumentService maintenanceDocumentService) {
-        this.maintenanceDocumentService = maintenanceDocumentService;
     }
 
     public void setDocumentService(DocumentService documentService) {

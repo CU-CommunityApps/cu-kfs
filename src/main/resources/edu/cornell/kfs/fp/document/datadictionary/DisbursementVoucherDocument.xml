@@ -13,12 +13,6 @@
   	<property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDisbursementVoucherDocumentPresentationController"/>
   	<property name="promptBeforeValidationClass" value="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"/>
   </bean>
-
-  
-    <!-- KFSPTS-1891 -->
-	<bean id="DisbursementVoucherDocument-disbVchrPaymentMethodCode" parent="DisbursementVoucherDocument-disbVchrPaymentMethodCode-parentBean">
-		<property name="control" ref="PaymentMethodsForDVSelectControl" />
-	</bean>
   
   <bean id="DisbursementVoucherDocument-workflowAttributes-parentBean" abstract="true" parent="WorkflowAttributes"> 
  

@@ -25,6 +25,7 @@ import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
@@ -38,12 +39,13 @@ import org.kuali.kfs.krad.exception.InfrastructureException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.CUBankService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -54,10 +56,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
 
     @Override
-    public void removeIneligibleAdditionalCharges(PaymentRequestDocument document) {
-        List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
+    public void removeIneligibleAdditionalCharges(final PaymentRequestDocument document) {
+        final List<PaymentRequestItem> itemsToRemove = new ArrayList<>();
 
-        for (PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
+        for (final PaymentRequestItem item : (List<PaymentRequestItem>) document.getItems()) {
         	// KFSUPGRADE-473
             //if no extended price or purchase order item unit price, and its an order discount or trade in, remove
 			if ((ObjectUtils.isNull(item.getPurchaseOrderItemUnitPrice())
@@ -70,7 +72,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
             // if a payment terms discount exists but not set on teh doc, remove
             if (StringUtils.equals(item.getItemTypeCode(), PurapConstants.ItemTypeCodes.ITEM_TYPE_PMT_TERMS_DISCOUNT_CODE)) {
-                PaymentTermType pt = document.getVendorPaymentTerms();
+                final PaymentTermType pt = document.getVendorPaymentTerms();
                 if ((pt == null) || (pt.getVendorPaymentTermsPercent() == null)
                         || (BigDecimal.ZERO.compareTo(pt.getVendorPaymentTermsPercent()) == 0)) {
                     // remove discount
@@ -80,14 +82,14 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         }
 
         // remove items marked for removal
-        for (PaymentRequestItem item : itemsToRemove) {
+        for (final PaymentRequestItem item : itemsToRemove) {
             document.getItems().remove(item);
         }
     }
 
     @Override
-    public PaymentRequestDocument addHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
-        Note noteObj = documentService.createNoteFromDocument(document, note);
+    public PaymentRequestDocument addHoldOnPaymentRequest(final PaymentRequestDocument document, final String note) {
+        final Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
 
@@ -104,8 +106,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#removeHoldOnPaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
     @Override
-    public PaymentRequestDocument removeHoldOnPaymentRequest(PaymentRequestDocument document, String note) {
-        Note noteObj = documentService.createNoteFromDocument(document, note);
+    public PaymentRequestDocument removeHoldOnPaymentRequest(final PaymentRequestDocument document, final String note) {
+        final Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
 
@@ -119,8 +121,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    public void requestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
-        Note noteObj = documentService.createNoteFromDocument(document, note);
+    public void requestCancelOnPaymentRequest(final PaymentRequestDocument document, final String note) {
+        final Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
 
@@ -136,8 +138,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#removeHoldOnPaymentRequest(org.kuali.kfs.module.purap.document.PaymentRequestDocument)
      */
     @Override
-    public void removeRequestCancelOnPaymentRequest(PaymentRequestDocument document, String note) {
-        Note noteObj = documentService.createNoteFromDocument(document, note);
+    public void removeRequestCancelOnPaymentRequest(final PaymentRequestDocument document, final String note) {
+        final Note noteObj = documentService.createNoteFromDocument(document, note);
         document.addNote(noteObj);
         noteService.save(noteObj);
 
@@ -149,7 +151,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    public void cancelExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note) {
+    public void cancelExtractedPaymentRequest(final PaymentRequestDocument paymentRequest, final String note) {
         LOG.debug("cancelExtractedPaymentRequest() started");
         if (PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequest.getApplicationDocumentStatus())) {
             LOG.debug("cancelExtractedPaymentRequest() ended");
@@ -157,10 +159,10 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         }
 
         try {
-            Note cancelNote = documentService.createNoteFromDocument(paymentRequest, note);
+            final Note cancelNote = documentService.createNoteFromDocument(paymentRequest, note);
             paymentRequest.addNote(cancelNote);
             noteService.save(cancelNote);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE, e);
         }
 
@@ -183,7 +185,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      *      java.lang.String)
      */
     @Override
-    public void resetExtractedPaymentRequest(PaymentRequestDocument paymentRequest, String note) {
+    public void resetExtractedPaymentRequest(final PaymentRequestDocument paymentRequest, final String note) {
         LOG.debug("resetExtractedPaymentRequest() started");
         if (PaymentRequestStatuses.CANCELLED_STATUSES.contains(paymentRequest.getApplicationDocumentStatus())) {
             LOG.debug("resetExtractedPaymentRequest() ended");
@@ -191,12 +193,12 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
         }
         paymentRequest.setExtractedTimestamp(null);
         paymentRequest.setPaymentPaidTimestamp(null);
-        String noteText = "This Payment Request is being reset for extraction by PDP " + note;
+        final String noteText = "This Payment Request is being reset for extraction by PDP " + note;
         try {
-            Note resetNote = documentService.createNoteFromDocument(paymentRequest, noteText);
+            final Note resetNote = documentService.createNoteFromDocument(paymentRequest, noteText);
             paymentRequest.addNote(resetNote);
             noteService.save(resetNote);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
         }
         purapService.saveDocumentNoValidation(paymentRequest);
@@ -209,7 +211,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    public void markPaid(PaymentRequestDocument pr, Date processDate) {
+    public void markPaid(final PaymentRequestDocument pr, final Date processDate) {
         LOG.debug("markPaid() started");
 
         pr.setPaymentPaidTimestamp(new Timestamp(processDate.getTime()));
@@ -234,15 +236,17 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    protected void addTaxItem(PaymentRequestDocument preq, String itemTypeCode, BigDecimal taxableAmount) {
-
-        PurApItem taxItem;
+    protected void addTaxItem(
+            final PaymentRequestDocument preq, 
+            final String itemTypeCode, 
+            final BigDecimal taxableAmount) {
+        final PurApItem taxItem;
 
         try {
         	taxItem = (PurApItem) preq.getItemClass().getDeclaredConstructor().newInstance();
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new InfrastructureException("Unable to access itemClass", e);
-        } catch (ReflectiveOperationException e) {
+        } catch (final ReflectiveOperationException e) {
             throw new InfrastructureException("Unable to instantiate itemClass", e);
         }
 
@@ -270,19 +274,27 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    public void populatePaymentRequest(PaymentRequestDocument paymentRequestDocument) {
-    	super.populatePaymentRequest(paymentRequestDocument);
-    	
-    	//KFSUPGRADE-779
-    	//reset bank code
-    	 paymentRequestDocument.setBankCode(null);
+    public void initializePaymentMethodAndBank(PaymentRequestDocument paymentRequestDocument) {
+        final PurchaseOrderDocument purchaseOrderDocument = paymentRequestDocument.getPurchaseOrderDocument();
+        if ( ObjectUtils.isNotNull(purchaseOrderDocument) 
+                && ObjectUtils.isNotNull(purchaseOrderDocument.getVendorDetail())) {
+            if ( purchaseOrderDocument.getVendorDetail().getExtension() instanceof VendorDetailExtension
+                    && StringUtils.isNotBlank( ((VendorDetailExtension)purchaseOrderDocument.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
+                paymentRequestDocument.setPaymentMethodCode(
+                        ((VendorDetailExtension)purchaseOrderDocument.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() );
+            }
+        }
+        
+        //KFSUPGRADE-779
+        //reset bank code
+         paymentRequestDocument.setBankCode(null);
          paymentRequestDocument.setBank(null);
          
         // set bank code to default bank code in the system parameter
         Bank defaultBank = null;
-        if (StringUtils.equals(PaymentMethod.PM_CODE_WIRE, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode()) || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
-        	defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
-        } else if (!StringUtils.equals(PaymentMethod.PM_CODE_INTERNAL_BILLING, ((CuPaymentRequestDocument)paymentRequestDocument).getPaymentMethodCode())) {
+        if (StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, paymentRequestDocument.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, paymentRequestDocument.getPaymentMethodCode())) {
+            defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
+        } else if (!StringUtils.equals(CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING, paymentRequestDocument.getPaymentMethodCode())) {
             defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
         }
         if (defaultBank != null) {
@@ -292,11 +304,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    public void changeVendor(PaymentRequestDocument preq, Integer headerId, Integer detailId) {
+    public void changeVendor(final PaymentRequestDocument preq, final Integer headerId, final Integer detailId) {
     	super.changeVendor(preq, headerId, detailId);
     	// KFSPTS-1891
         if ( preq instanceof PaymentRequestDocument ) {
-            VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
+            final VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
             if (vdDetail != null
                     && ObjectUtils.isNotNull(vdDetail.getExtension()) ) {
                 if ( vdDetail.getExtension() instanceof VendorDetailExtension
@@ -317,7 +329,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
 
     @Override
-    public void clearTax(PaymentRequestDocument document) {
+    public void clearTax(final PaymentRequestDocument document) {
         // remove all existing tax items added by previous calculation
         removeTaxItems(document);
         // reset values
@@ -339,9 +351,9 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      * @see org.kuali.kfs.module.purap.document.service.PaymentRequestService#getPaymentRequestsByStatusAndPurchaseOrderId(java.lang.String, java.lang.Integer)
      */
     @Override
-	public Map<String, String> getPaymentRequestsByStatusAndPurchaseOrderId(String applicationDocumentStatus,
-			Integer purchaseOrderId) {
-    	Map<String, String> paymentRequestResults = new HashMap<>();
+	public Map<String, String> getPaymentRequestsByStatusAndPurchaseOrderId(final String applicationDocumentStatus,
+			final Integer purchaseOrderId) {
+    	final Map<String, String> paymentRequestResults = new HashMap<>();
     	paymentRequestResults.put("hasInProcess", "N");
     	paymentRequestResults.put("checkInProcess", "N");
 
@@ -366,14 +378,14 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      *      org.kuali.kfs.vnd.businessobject.PaymentTermType)
      */
     @Override
-    public java.sql.Date calculatePayDate(Date invoiceDate, PaymentTermType terms) {
+    public java.sql.Date calculatePayDate(final Date invoiceDate, final PaymentTermType terms) {
         LOG.debug("calculatePayDate() started");
         // calculate the invoice + processed calendar
-        Calendar invoicedDateCalendar = dateTimeService.getCalendar(invoiceDate);
-        Calendar processedDateCalendar = dateTimeService.getCurrentCalendar();
+        final Calendar invoicedDateCalendar = dateTimeService.getCalendar(invoiceDate);
+        final Calendar processedDateCalendar = dateTimeService.getCurrentCalendar();
 
         // add default number of days to processed
-		String defaultDays = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+		final String defaultDays = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
 				PurapParameterConstants.PURAP_PREQ_PAY_DATE_DEFAULT_NUMBER_OF_DAYS);
         processedDateCalendar.add(Calendar.DAY_OF_MONTH, Integer.parseInt(defaultDays));
 
@@ -384,9 +396,9 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
 
         // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation
         // of it's use.
-		String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
+		final String payDateVariance = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
 				PurapParameterConstants.PURAP_PREQ_PAY_DATE_VARIANCE);
-		int payDateVarianceInt = Integer.parseInt(payDateVariance);
+		final int payDateVarianceInt = Integer.parseInt(payDateVariance);
 
         Integer discountDueNumber = terms.getVendorDiscountDueNumber();
         Integer netDueNumber = terms.getVendorNetDueNumber();
@@ -397,7 +409,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             if (discountDueNumber < 0) {
                 discountDueNumber = 0;
             }
-            String discountDueTypeDescription = terms.getVendorDiscountDueTypeDescription();
+            final String discountDueTypeDescription = terms.getVendorDiscountDueTypeDescription();
             paymentTermsDateCalculation(discountDueTypeDescription, invoicedDateCalendar, discountDueNumber);
         } else if (ObjectUtils.isNotNull(netDueNumber)) {
             // Decrease net due number by the pay date variance
@@ -405,7 +417,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             if (netDueNumber < 0) {
                 netDueNumber = 0;
             }
-            String netDueTypeDescription = terms.getVendorNetDueTypeDescription();
+            final String netDueTypeDescription = terms.getVendorNetDueTypeDescription();
             paymentTermsDateCalculation(netDueTypeDescription, invoicedDateCalendar, netDueNumber);
         }
         else {
@@ -460,8 +472,8 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
      */
     protected boolean isPRNCDocument(PaymentRequestDocument paymentRequestDocument) {
         String paymentMethodCode = ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode();
-        boolean isPRNC = StringUtils.equals(PaymentMethod.PM_CODE_WIRE, paymentMethodCode)
-                || StringUtils.equals(PaymentMethod.PM_CODE_FOREIGN_DRAFT, paymentMethodCode);
+        boolean isPRNC = StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, paymentMethodCode)
+                || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, paymentMethodCode);
         LOG.info(" -- PayReq [" + paymentRequestDocument.getDocumentNumber() + "] skipped as it is of type PRNC.");
         return isPRNC;
     }

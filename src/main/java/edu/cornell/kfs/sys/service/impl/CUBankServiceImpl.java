@@ -19,18 +19,18 @@ public class CUBankServiceImpl implements CUBankService {
     private ParameterService parameterService;
 
 
-    public Bank getDefaultBankByDocType(String documentTypeCode) {
+    public Bank getDefaultBankByDocType(final String documentTypeCode) {
         if (StringUtils.isBlank(documentTypeCode)) {
             throw new RuntimeException("Document type not found for document type: " + documentTypeCode);
         }
 
         if (parameterService.parameterExists(Bank.class, KFSParameterKeyConstants.DEFAULT_BANK_BY_DOCUMENT_TYPE)) {
-            List<String> parmValues = new ArrayList<>(parameterService
+            final List<String> parmValues = new ArrayList<>(parameterService
                     .getSubParameterValuesAsString(Bank.class, KFSParameterKeyConstants.DEFAULT_BANK_BY_DOCUMENT_TYPE,
                             documentTypeCode));
             if (!parmValues.isEmpty()) {
-                String defaultBankCode = parmValues.get(0);
-                Bank defaultBank = this.getByPrimaryId(defaultBankCode);
+                final String defaultBankCode = parmValues.get(0);
+                final Bank defaultBank = this.getByPrimaryId(defaultBankCode);
                 
                 // check active status, if not return continuation bank if active
                 if (!defaultBank.isActive() && defaultBank.getContinuationBank() != null && defaultBank.getContinuationBank().isActive()) {
@@ -44,7 +44,7 @@ public class CUBankServiceImpl implements CUBankService {
         return null;
     }
 
-    private Bank getByPrimaryId(String bankCode) {
+    private Bank getByPrimaryId(final String bankCode) {
         Map primaryKeys = new HashMap();
         primaryKeys.put(KFSPropertyConstants.BANK_CODE, bankCode);
 

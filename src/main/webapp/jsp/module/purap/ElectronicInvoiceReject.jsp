@@ -335,17 +335,11 @@
                         </tr>
 
                         <tr>
-                            <th align="right" valign="middle" class="bord-l-b">
+                            <th align="right" valign="middle" class="bord-l-b" width="25%">
                                 <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.purapDocumentIdentifier}"/></div>
                             </th>
-                            <td align="left" valign="middle" class="datacell">
+                            <td align="left" valign="middle" class="datacell" colspan="3">
                                 <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.purapDocumentIdentifier}" property="document.currentPurchaseOrderDocument.purapDocumentIdentifier" readOnly="true"/>
-                            </td>
-                            <th align="right" valign="middle" class="bord-l-b">
-                                <div align="right"><kul:htmlAttributeLabel attributeEntry="${purchaseOrderAttributes.documentFundingSourceCode}"/></div>
-                            </th>
-                            <td align="left" valign="middle" class="datacell">
-                                <kul:htmlControlAttribute attributeEntry="${purchaseOrderAttributes.documentFundingSourceCode}" property="document.currentPurchaseOrderDocument.documentFundingSourceCode" readOnly="true"/>
                             </td>
                         </tr>
 

@@ -887,9 +887,6 @@
     <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
     <accountSufficientFundsCode>N</accountSufficientFundsCode>
     <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
-    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
-    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
-    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
     <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
     <accountOffCampusIndicator>false</accountOffCampusIndicator>
     <active>true</active>
@@ -988,9 +985,6 @@
     <budgetRecordingLevelCode>O</budgetRecordingLevelCode>
     <accountSufficientFundsCode>N</accountSufficientFundsCode>
     <pendingAcctSufficientFundsIndicator>false</pendingAcctSufficientFundsIndicator>
-    <extrnlFinEncumSufficntFndIndicator>false</extrnlFinEncumSufficntFndIndicator>
-    <intrnlFinEncumSufficntFndIndicator>false</intrnlFinEncumSufficntFndIndicator>
-    <finPreencumSufficientFundIndicator>false</finPreencumSufficientFundIndicator>
     <financialObjectivePrsctrlIndicator>false</financialObjectivePrsctrlIndicator>
     <accountOffCampusIndicator>false</accountOffCampusIndicator>
     <active>true</active>

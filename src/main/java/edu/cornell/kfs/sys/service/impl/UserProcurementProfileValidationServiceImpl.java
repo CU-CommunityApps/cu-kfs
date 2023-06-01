@@ -27,6 +27,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
+import edu.cornell.kfs.sys.CUKFSPropertyConstants;
 import edu.cornell.kfs.sys.businessobject.FavoriteAccount;
 import edu.cornell.kfs.sys.businessobject.UserProcurementProfile;
 import edu.cornell.kfs.sys.service.UserProcurementProfileValidationService;
@@ -85,7 +86,7 @@ public class UserProcurementProfileValidationServiceImpl implements UserProcurem
 					if (account != account1) {
 						if (StringUtils.isNotBlank(account.getDescription()) && StringUtils.isNotBlank(account1.getDescription()) 
 								&& StringUtils.equals(account.getDescription(), account1.getDescription())) {
-							GlobalVariables.getMessageMap().putError(KRADPropertyConstants.DESCRIPTION, CUKFSKeyConstants.ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION);
+							GlobalVariables.getMessageMap().putError(CUKFSPropertyConstants.DESCRIPTION, CUKFSKeyConstants.ERROR_DUPLICATE_FAVORITE_ACCOUNT_DESCRIPTION);
 							
 						}
 						if (account.equals(account1)) {

@@ -54,26 +54,13 @@ public class RassMockServiceFactory {
     public static final int MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE = 1000;
     public static final int FIRST_AUTO_GENERATED_MOCK_DOCUMENT_ID = MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE + 1;
 
-    public MaintenanceDocumentService buildMockMaintenanceDocumentService() throws Exception {
-        MaintenanceDocumentService maintenanceDocumentService = Mockito.mock(MaintenanceDocumentService.class);
-        MutableInt documentIdSequence = new MutableInt(MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE);
-        
-        Mockito.when(maintenanceDocumentService.setupNewMaintenanceDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-                .then(invocation -> buildNewMaintenanceDocument(invocation, documentIdSequence.addAndGet(1)));
-        
-        return maintenanceDocumentService;
-    }
-
     protected MaintenanceDocument buildNewMaintenanceDocument(InvocationOnMock invocation, int documentNumberAsInt) {
         try {
-            String businessObjectClassName = Objects.requireNonNull(invocation.getArgument(0));
-            String documentTypeName = Objects.requireNonNull(invocation.getArgument(1));
-            String maintenanceAction = Objects.requireNonNull(invocation.getArgument(2));
+            String documentTypeName = Objects.requireNonNull(invocation.getArgument(0));
             String documentNumber = String.valueOf(documentNumberAsInt);
             
-            Class<? extends PersistableBusinessObject> businessObjectClass = getBusinessObjectClass(businessObjectClassName, documentTypeName);
+            Class<? extends PersistableBusinessObject> businessObjectClass = getBusinessObjectClass(documentTypeName);
             Class<? extends Maintainable> maintainableClass = getMaintainableClass(documentTypeName);
-            validateMaintenanceAction(maintenanceAction);
             
             FinancialSystemMaintenanceDocument maintenanceDocument = Mockito.mock(
                     FinancialSystemMaintenanceDocument.class, Mockito.CALLS_REAL_METHODS);
@@ -100,9 +87,8 @@ public class RassMockServiceFactory {
     }
 
     @SuppressWarnings("unchecked")
-    protected Class<? extends PersistableBusinessObject> getBusinessObjectClass(String businessObjectClassName, String documentTypeName)
+    protected Class<? extends PersistableBusinessObject> getBusinessObjectClass(String documentTypeName)
             throws ClassNotFoundException {
-        Class<? extends PersistableBusinessObject> businessObjectClass = (Class<? extends PersistableBusinessObject>) Class.forName(businessObjectClassName);
         Class<? extends PersistableBusinessObject> expectedBusinessObjectClass;
         
         switch (documentTypeName) {
@@ -119,12 +105,7 @@ public class RassMockServiceFactory {
                 throw new IllegalArgumentException("Cannot find BO class for document type " + documentTypeName);
         }
         
-        if (!expectedBusinessObjectClass.isAssignableFrom(businessObjectClass)) {
-            throw new IllegalArgumentException(
-                    expectedBusinessObjectClass.getSimpleName() + " does not support BO type " + businessObjectClassName);
-        }
-        
-        return businessObjectClass;
+        return expectedBusinessObjectClass;
     }
 
     protected Class<? extends Maintainable> getMaintainableClass(String documentTypeName) {
@@ -140,21 +121,16 @@ public class RassMockServiceFactory {
         }
     }
 
-    protected void validateMaintenanceAction(String maintenanceAction) {
-        switch (maintenanceAction) {
-            case KRADConstants.MAINTENANCE_NEW_ACTION :
-            case KRADConstants.MAINTENANCE_EDIT_ACTION :
-                return;
-            default :
-                throw new IllegalArgumentException("Unexpected or unsupported maintenance action " + maintenanceAction);
-        }
-    }
-
     public DocumentService buildMockDocumentService() throws Exception {
         DocumentService documentService = Mockito.mock(DocumentService.class);
         
         Mockito.when(documentService.routeDocument(Mockito.any(MaintenanceDocument.class), Mockito.anyString(), Mockito.any()))
                 .then(invocation -> invocation.getArgument(0));
+        
+        MutableInt documentIdSequence = new MutableInt(MOCK_DOCUMENT_ID_SEQUENCE_START_VALUE);
+        
+        Mockito.when(documentService.getNewDocument(Mockito.anyString()))
+                .then(invocation -> buildNewMaintenanceDocument(invocation, documentIdSequence.addAndGet(1)));
         
         return documentService;
     }
