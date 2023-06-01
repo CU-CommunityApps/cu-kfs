@@ -34,7 +34,7 @@ public class AdditionalDataList {
         if (additionalDataItems == null) {
             additionalDataItems = new ArrayList<AdditionalDataItem>();
         }
-        return additionalDataItems;
+        return this.additionalDataItems;
     }
 
 }

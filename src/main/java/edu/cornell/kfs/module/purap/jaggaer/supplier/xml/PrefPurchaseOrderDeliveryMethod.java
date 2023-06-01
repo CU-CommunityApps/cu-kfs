@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "deliveryMethodTypeItems" })
+@XmlType(name = "", propOrder = { "deliveryMethodTypes" })
 @XmlRootElement(name = "PrefPurchaseOrderDeliveryMethod")
 public class PrefPurchaseOrderDeliveryMethod {
 
@@ -25,7 +25,7 @@ public class PrefPurchaseOrderDeliveryMethod {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String type;
     @XmlElements({ @XmlElement(name = "Email", type = Email.class), @XmlElement(name = "Fax", type = Fax.class) })
-    private List<PurchaseOrderDeliveryMethodTypeInterface> deliveryMethodTypeItems;
+    private List<PurchaseOrderDeliveryMethodType> deliveryMethodTypes;
 
     public String getIsChanged() {
         return isChanged;
@@ -43,11 +43,11 @@ public class PrefPurchaseOrderDeliveryMethod {
         this.type = type;
     }
 
-    public List<PurchaseOrderDeliveryMethodTypeInterface> getDeliveryMethodTypeItems() {
-        if (deliveryMethodTypeItems == null) {
-            deliveryMethodTypeItems = new ArrayList<PurchaseOrderDeliveryMethodTypeInterface>();
+    public List<PurchaseOrderDeliveryMethodType> getDeliveryMethodTypes() {
+        if (deliveryMethodTypes == null) {
+            deliveryMethodTypes = new ArrayList<PurchaseOrderDeliveryMethodType>();
         }
-        return deliveryMethodTypeItems;
+        return this.deliveryMethodTypes;
     }
 
 }

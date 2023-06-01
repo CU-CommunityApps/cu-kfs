@@ -113,12 +113,12 @@ public class JaggaerBuilder {
         return naic;
     }
     
-    public static SecondaryNaicsDetail buildSecondaryNaicsItem(String code) {
+    public static SecondaryNaicsItem buildSecondaryNaicsItem(String code) {
         return buildSecondaryNaicsItem(code, null);
     }
     
-    public static SecondaryNaicsDetail buildSecondaryNaicsItem(String code, String isChanged) {
-        SecondaryNaicsDetail naic = new SecondaryNaicsDetail();
+    public static SecondaryNaicsItem buildSecondaryNaicsItem(String code, String isChanged) {
+        SecondaryNaicsItem naic = new SecondaryNaicsItem();
         naic.setValue(code);
         naic.setIsChanged(isChanged);
         return naic;

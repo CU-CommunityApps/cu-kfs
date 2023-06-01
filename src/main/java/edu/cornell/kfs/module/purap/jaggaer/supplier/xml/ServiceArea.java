@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "serviceAreaInternalName", "stateServiceAreaListDetails" })
+@XmlType(name = "", propOrder = { "serviceAreaInternalName", "stateServiceAreaList" })
 @XmlRootElement(name = "ServiceArea")
 public class ServiceArea {
 
@@ -22,7 +22,7 @@ public class ServiceArea {
     @XmlElement(name = "ServiceAreaInternalName", required = true)
     private JaggaerBasicValue serviceAreaInternalName;
     @XmlElement(name = "StateServiceAreaList")
-    private List<StateServiceAreaList> stateServiceAreaListDetails;
+    private List<StateServiceAreaList> stateServiceAreaList;
 
     public String getIsChanged() {
         return isChanged;
@@ -40,11 +40,11 @@ public class ServiceArea {
         this.serviceAreaInternalName = serviceAreaInternalName;
     }
 
-    public List<StateServiceAreaList> getStateServiceAreaListDetails() {
-        if (stateServiceAreaListDetails == null) {
-            stateServiceAreaListDetails = new ArrayList<StateServiceAreaList>();
+    public List<StateServiceAreaList> getStateServiceAreaList() {
+        if (stateServiceAreaList == null) {
+            stateServiceAreaList = new ArrayList<StateServiceAreaList>();
         }
-        return stateServiceAreaListDetails;
+        return this.stateServiceAreaList;
     }
 
 }

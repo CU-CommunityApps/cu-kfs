@@ -9,18 +9,18 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "supplierDetails" })
+@XmlType(name = "", propOrder = { "suppliers" })
 @XmlRootElement(name = "SupplierRequestMessage")
 public class SupplierRequestMessage implements SupplierRequestMessageItemInterface{
 
     @XmlElement(name = "Supplier", required = true)
-    private List<Supplier> supplierDetails;
+    private List<Supplier> suppliers;
 
-    public List<Supplier> getSupplierDetails() {
-        if (supplierDetails == null) {
-            supplierDetails = new ArrayList<Supplier>();
+    public List<Supplier> getSuppliers() {
+        if (suppliers == null) {
+            suppliers = new ArrayList<Supplier>();
         }
-        return supplierDetails;
+        return this.suppliers;
     }
 
 }
