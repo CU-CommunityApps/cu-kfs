@@ -42,8 +42,10 @@ public class CuActionListEmailServiceImpl extends CustomizableActionListEmailSer
         }
     }
 
+    @Override
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+        super.setParameterService(parameterService);
     }
 
 }

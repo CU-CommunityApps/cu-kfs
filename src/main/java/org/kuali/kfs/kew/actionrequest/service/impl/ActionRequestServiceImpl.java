@@ -21,7 +21,7 @@ package org.kuali.kfs.kew.actionrequest.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.actionitem.ActionItem;
 import org.kuali.kfs.kew.actionlist.service.ActionListService;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
@@ -46,8 +46,8 @@ import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kew.util.FutureRequestDocumentStateManager;
 import org.kuali.kfs.kew.util.ResponsibleParty;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.Group;
@@ -81,9 +81,9 @@ public class ActionRequestServiceImpl implements ActionRequestService {
     private static final Logger LOG = LogManager.getLogger();
 
     private ActionRequestDAO actionRequestDAO;
-    private IdentityService identityService;
-
     private GroupService groupService;
+    private IdentityService identityService;
+    private ParameterService parameterService;
 
     @Override
     public ActionRequest findByActionRequestId(String actionRequestId) {
@@ -595,7 +595,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
     private void updateActionRequestsForResponsibilityChange(
             Collection documentsAffected, int responsibilityChangeCount
     ) {
-        String cacheWaitValue = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
+        String cacheWaitValue = parameterService.getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.WORKFLOW, KRADConstants.DetailTypes.RULE_DETAIL_TYPE,
                 KewApiConstants.RULE_CACHE_REQUEUE_DELAY);
         Long cacheWait = KewApiConstants.DEFAULT_CACHE_REQUEUE_WAIT_TIME;
@@ -842,5 +842,9 @@ public class ActionRequestServiceImpl implements ActionRequestService {
 
     public void setIdentityService(final IdentityService identityService) {
         this.identityService = identityService;
+    }
+
+    public void setParameterService(final ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 }

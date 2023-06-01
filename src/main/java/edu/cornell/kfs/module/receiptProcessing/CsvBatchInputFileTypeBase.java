@@ -34,6 +34,8 @@ import java.util.Map;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -107,7 +109,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
             }
 
             parsedContents = dataMapList;
-        } catch (IOException ex) {
+        } catch (final CsvException | IOException ex) {
             LOG.error(ex);
             throw new ParseException(ex.getMessage(), ex);
         }
@@ -117,7 +119,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     protected void validateCSVHeader(byte[] fileByteContent, List<String> headerList) throws ParseException {
         try (ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent)) {
             validateCSVFileInput(headerList, validateFileContents);
-        } catch (IOException ex) {
+        } catch (CsvException | IOException ex) {
             LOG.error("validateCSVHeader: " + ex.getMessage(), ex);
             throw new ParseException(ex.getMessage(), ex);
         }
@@ -132,8 +134,8 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
      * @param fileContents       contents to validate
      * @throws IOException
      */
-    protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws
-            IOException {
+    protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws 
+            CsvException, IOException {
         //use csv reader to parse the csv content
         try (
                 final InputStreamReader inputStreamReader = new InputStreamReader(fileContents, StandardCharsets.UTF_8);
@@ -160,7 +162,7 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     }
     
     private String validateDetailRowsContainExpectedNumberOfFields(List<String> expectedHeaderList,
-            CSVReader csvReader) throws IOException {
+            CSVReader csvReader) throws CsvException, IOException {
         String errorMessage = null;
 
         int line = 1;

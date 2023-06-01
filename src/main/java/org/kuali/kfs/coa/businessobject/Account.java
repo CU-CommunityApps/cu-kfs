@@ -57,7 +57,7 @@ import java.util.Map;
 public class Account extends PersistableBusinessObjectBase implements AccountIntf, MutableInactivatable {
 
     private static final Logger LOG = LogManager.getLogger();
-    
+
     public static final String CACHE_NAME = "Account";
 
     protected String chartOfAccountsCode;
@@ -80,9 +80,6 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected String budgetRecordingLevelCode;
     protected String accountSufficientFundsCode;
     protected boolean pendingAcctSufficientFundsIndicator;
-    protected boolean extrnlFinEncumSufficntFndIndicator;
-    protected boolean intrnlFinEncumSufficntFndIndicator;
-    protected boolean finPreencumSufficientFundIndicator;
     protected boolean financialObjectivePrsctrlIndicator;
     protected String accountCfdaNumber;
     protected boolean accountOffCampusIndicator;
@@ -444,36 +441,6 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     @Override
     public void setPendingAcctSufficientFundsIndicator(boolean pendingAcctSufficientFundsIndicator) {
         this.pendingAcctSufficientFundsIndicator = pendingAcctSufficientFundsIndicator;
-    }
-
-    @Override
-    public boolean isExtrnlFinEncumSufficntFndIndicator() {
-        return extrnlFinEncumSufficntFndIndicator;
-    }
-
-    @Override
-    public void setExtrnlFinEncumSufficntFndIndicator(boolean extrnlFinEncumSufficntFndIndicator) {
-        this.extrnlFinEncumSufficntFndIndicator = extrnlFinEncumSufficntFndIndicator;
-    }
-
-    @Override
-    public boolean isIntrnlFinEncumSufficntFndIndicator() {
-        return intrnlFinEncumSufficntFndIndicator;
-    }
-
-    @Override
-    public void setIntrnlFinEncumSufficntFndIndicator(boolean intrnlFinEncumSufficntFndIndicator) {
-        this.intrnlFinEncumSufficntFndIndicator = intrnlFinEncumSufficntFndIndicator;
-    }
-
-    @Override
-    public boolean isFinPreencumSufficientFundIndicator() {
-        return finPreencumSufficientFundIndicator;
-    }
-
-    @Override
-    public void setFinPreencumSufficientFundIndicator(boolean finPreencumSufficientFundIndicator) {
-        this.finPreencumSufficientFundIndicator = finPreencumSufficientFundIndicator;
     }
 
     @Override
@@ -1168,10 +1135,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
             if (originalAcct != null) {
                 if (!originalAcct.getSufficientFundsCode().equals(getSufficientFundsCode())
-                        || originalAcct.isExtrnlFinEncumSufficntFndIndicator() != isExtrnlFinEncumSufficntFndIndicator()
-                        || originalAcct.isIntrnlFinEncumSufficntFndIndicator() != isIntrnlFinEncumSufficntFndIndicator()
-                        || originalAcct.isPendingAcctSufficientFundsIndicator() != isPendingAcctSufficientFundsIndicator()
-                        || originalAcct.isFinPreencumSufficientFundIndicator() != isFinPreencumSufficientFundIndicator()) {
+                        || originalAcct.isPendingAcctSufficientFundsIndicator() != isPendingAcctSufficientFundsIndicator()) {
                     SufficientFundRebuild sfr = new SufficientFundRebuild();
                     sfr.setAccountFinancialObjectTypeCode(SufficientFundRebuild.REBUILD_ACCOUNT);
                     sfr.setChartOfAccountsCode(getChartOfAccountsCode());

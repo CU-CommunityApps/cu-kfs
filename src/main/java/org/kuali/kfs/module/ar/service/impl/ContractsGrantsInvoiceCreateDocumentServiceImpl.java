@@ -56,6 +56,7 @@ import org.kuali.kfs.module.ar.batch.service.VerifyBillingFrequencyService;
 import org.kuali.kfs.module.ar.businessobject.AccountsReceivableDocumentHeader;
 import org.kuali.kfs.module.ar.businessobject.AwardAccountObjectCodeTotalBilled;
 import org.kuali.kfs.module.ar.businessobject.Bill;
+import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDetail;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorLog;
 import org.kuali.kfs.module.ar.businessobject.ContractsGrantsInvoiceDocumentErrorMessage;
@@ -70,7 +71,6 @@ import org.kuali.kfs.module.ar.businessobject.InvoiceDetailAccountObjectCode;
 import org.kuali.kfs.module.ar.businessobject.InvoiceGeneralDetail;
 import org.kuali.kfs.module.ar.businessobject.InvoiceMilestone;
 import org.kuali.kfs.module.ar.businessobject.Milestone;
-import org.kuali.kfs.module.ar.businessobject.BillingPeriod;
 import org.kuali.kfs.module.ar.dataaccess.AwardAccountObjectCodeTotalBilledDao;
 import org.kuali.kfs.module.ar.document.ContractsGrantsInvoiceDocument;
 import org.kuali.kfs.module.ar.document.service.AccountsReceivableDocumentHeaderService;
@@ -404,7 +404,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                             creationProcessType, accountDetails, locCreationType);
                 } else {
                     final ErrorMessage errorMessage = new ErrorMessage(
-                            ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE,
+                            ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_ACCOUNT_AND_AWARD,
                             awardAccount.getAccountNumber(), award.getProposalNumber());
                     errorMessages.add(errorMessage);
                 }
@@ -474,13 +474,13 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                 List<InvoiceAccountDetail> invoiceAccounts = cgInvoiceDocument.getAccountDetails();
                 if (!invoiceAccounts.isEmpty()) {
                     errorMessage = new ErrorMessage(
-                      ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE,
+                      ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_ACCOUNT_AND_AWARD,
                       invoiceAccounts.get(0).getAccountNumber(), awd.getProposalNumber());
                 } else {
                     errorMessage = new ErrorMessage(
-                            ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE, null,
-                            awd.getProposalNumber());
-
+                            ArKeyConstants.ContractsGrantsInvoiceCreateDocumentConstants.NON_BILLABLE_AWARD,
+                            awd.getProposalNumber()
+                    );
                 }
                 errorMessages.add(errorMessage);
             }
@@ -1917,10 +1917,8 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
 
     protected void writeErrorToFile(Map<ContractsAndGrantsBillingAward, List<String>> invalidGroup,
             String errOutputFile) {
-        PrintStream outputFileStream = null;
         File errOutPutfile = new File(errOutputFile);
-        try {
-            outputFileStream = new PrintStream(errOutPutfile, StandardCharsets.UTF_8);
+        try (PrintStream outputFileStream = new PrintStream(errOutPutfile, StandardCharsets.UTF_8)) {
             writeReportHeader(outputFileStream);
 
             for (ContractsAndGrantsBillingAward award : invalidGroup.keySet()) {
@@ -1935,10 +1933,6 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             );
             throw new RuntimeException("Could not write errors in Contracts & Grants Invoice Document creation " +
                     "process to file", ioe);
-        } finally {
-            if (outputFileStream != null) {
-                outputFileStream.close();
-            }
         }
     }
 

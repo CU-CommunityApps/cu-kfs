@@ -31,8 +31,6 @@
     
     <bean id="testServiceFactory" class="edu.cornell.kfs.rass.batch.service.impl.RassMockServiceFactory"/>
 
-    <bean id="maintenanceDocumentService" factory-bean="testServiceFactory" factory-method="buildMockMaintenanceDocumentService"/>
-
     <bean id="documentService" factory-bean="testServiceFactory" factory-method="buildMockDocumentService"/>  
     
     <bean id="parameterService" factory-bean="testServiceFactory" factory-method="buildMockParameterService"/>   
@@ -104,7 +102,6 @@
                 <idref bean="cuMarshalService"/>
                 <idref bean="cuMarshalService-parentBean"/>
                 <idref bean="testServiceFactory"/>
-                <idref bean="maintenanceDocumentService"/>
                 <idref bean="documentService"/>
                 <idref bean="businessObjectService"/>
                 <idref bean="dataDictionaryService"/>

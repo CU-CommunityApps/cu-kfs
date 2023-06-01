@@ -31,14 +31,14 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
     private CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
     @Override
-    public VendorCreditMemoDocument addHoldOnCreditMemo(VendorCreditMemoDocument cmDocument, String note) throws Exception {
+    public VendorCreditMemoDocument addHoldOnCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) throws Exception {
         // save the note
-        Note noteObj = documentService.createNoteFromDocument(cmDocument, note);
+        final Note noteObj = documentService.createNoteFromDocument(cmDocument, note);
         cmDocument.addNote(noteObj);
         noteService.save(noteObj);
 
         // retrieve and save with hold indicator set to true
-        VendorCreditMemoDocument cmDoc = getCreditMemoDocumentById(cmDocument.getPurapDocumentIdentifier());
+        final VendorCreditMemoDocument cmDoc = getCreditMemoDocumentById(cmDocument.getPurapDocumentIdentifier());
         cmDoc.setHoldIndicator(true);
         cmDoc.setLastActionPerformedByPersonId(GlobalVariables.getUserSession().getPerson().getPrincipalId());
         purapService.saveDocumentNoValidation(cmDoc);
@@ -59,14 +59,14 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
      *      java.lang.String)
      */
     @Override
-    public VendorCreditMemoDocument removeHoldOnCreditMemo(VendorCreditMemoDocument cmDocument, String note) throws Exception {
+    public VendorCreditMemoDocument removeHoldOnCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) throws Exception {
         // save the note
-        Note noteObj = documentService.createNoteFromDocument(cmDocument, note);
+        final Note noteObj = documentService.createNoteFromDocument(cmDocument, note);
         cmDocument.addNote(noteObj);
         noteService.save(noteObj);
 
         // retrieve and save with hold indicator set to false
-        VendorCreditMemoDocument cmDoc = getCreditMemoDocumentById(cmDocument.getPurapDocumentIdentifier());
+        final VendorCreditMemoDocument cmDoc = getCreditMemoDocumentById(cmDocument.getPurapDocumentIdentifier());
         cmDoc.setHoldIndicator(false);
         cmDoc.setLastActionPerformedByPersonId(null);
         purapService.saveDocumentNoValidation(cmDoc);
@@ -87,7 +87,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
      *      java.lang.String)
      */
     @Override
-    public void resetExtractedCreditMemo(VendorCreditMemoDocument cmDocument, String note) {
+    public void resetExtractedCreditMemo(final VendorCreditMemoDocument cmDocument, final String note) {
         LOG.debug("resetExtractedCreditMemo() started");
         if (CreditMemoStatuses.CANCELLED_STATUSES.contains(cmDocument.getApplicationDocumentStatus())) {
             LOG.debug("resetExtractedCreditMemo() ended");
@@ -96,12 +96,12 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
         cmDocument.setExtractedTimestamp(null);
         cmDocument.setCreditMemoPaidTimestamp(null);
 
-        Note noteObj;
+        final Note noteObj;
         try {
             noteObj = documentService.createNoteFromDocument(cmDocument, note);
             cmDocument.addNote(noteObj);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             throw new RuntimeException(e.getMessage());
         }
         purapService.saveDocumentNoValidation(cmDocument);
@@ -114,7 +114,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
         LOG.debug("resetExtractedCreditMemo() ended");
     }
 
-    protected String updateStatusByNode(String currentNodeName, VendorCreditMemoDocument cmDoc) {
+    protected String updateStatusByNode(final String currentNodeName, final VendorCreditMemoDocument cmDoc) {
         // update the status on the document
 
         String cancelledStatusCode = "";
@@ -140,7 +140,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
 
 
     @Override
-    public void markPaid(VendorCreditMemoDocument cm, Date processDate) {
+    public void markPaid(final VendorCreditMemoDocument cm, final Date processDate) {
         LOG.debug("markPaid() started");
 
         cm.setCreditMemoPaidTimestamp(new Timestamp(processDate.getTime()));
@@ -168,10 +168,10 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
       * @see org.kuali.kfs.module.purap.document.service.CreditMemoCreateService#populateDocumentAfterInit(org.kuali.kfs.module.purap.document.CreditMemoDocument)
       */
      @Override
-     public void populateDocumentAfterInit(VendorCreditMemoDocument cmDocument) {
+     public void populateDocumentAfterInit(final VendorCreditMemoDocument cmDocument) {
 
          // make a call to search for expired/closed accounts
-         HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.getExpiredOrClosedAccountList(cmDocument);
+         final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = accountsPayableService.getExpiredOrClosedAccountList(cmDocument);
 
          if (cmDocument.isSourceDocumentPaymentRequest()) {
              populateDocumentFromPreq(cmDocument, expiredOrClosedAccountList);

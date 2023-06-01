@@ -13,25 +13,8 @@
    <!--   <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"/> --> 
    <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPaymentRequestDocumentPresentationController"/>
    <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestDocumentPreRules"/>
-   
-   <property name="attributes">
-      <list merge="true">
-              <!-- KFSPTS-1891 -->
-        <ref bean="PaymentRequestDocument-paymentMethodCode"/>
-      </list>
-   </property>
- 
    </bean>
-     <!-- KFSPTS-1891 -->
-  <bean id="PaymentRequestDocument-paymentMethodCode" parent="PaymentRequestDocument-paymentMethodCode-parentBean"/>
 
-  <bean id="PaymentRequestDocument-paymentMethodCode-parentBean" abstract="true" parent="PaymentMethod-paymentMethodCode">
-    <property name="name" value="paymentMethodCode"/>
-    <!-- probably a values finder -->
-    <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinder-ref="paymentMethodValuesFinder" p:includeKeyInLabel="false"/>
-    </property>
-  </bean>
    
   <bean id="PaymentRequestDocument-bankCode" parent="PaymentRequestDocument-bankCode-parentBean">
       <property name="required" value="false"/>

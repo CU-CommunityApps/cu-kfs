@@ -18,11 +18,10 @@
  */
 package org.kuali.kfs.ksb.messaging.threadpool;
 
-import org.kuali.kfs.core.api.lifecycle.Lifecycle;
 
 import java.util.concurrent.ScheduledExecutorService;
 
 /* CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz*/
-public interface KSBScheduledPool extends ScheduledExecutorService, Lifecycle {
+public interface KSBScheduledPool extends ScheduledExecutorService {
 
 }

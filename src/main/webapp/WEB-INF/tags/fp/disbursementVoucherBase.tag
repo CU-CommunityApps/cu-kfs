@@ -41,6 +41,21 @@
        }
     </script>
     <sys:paymentMessages />
+    <script type="text/javascript">
+        const paymentMethodCodesRequiringAdditionalData = new Set();
+        <c:forEach items="${KualiForm.paymentMethodCodesRequiringAdditionalData}" var="code">
+            paymentMethodCodesRequiringAdditionalData.add('<e:forJavaScript value="${code}" />');
+        </c:forEach>
+
+        function onDvPaymentMethodChanged(input) {
+            const selectedMethod = input.value;
+            if (paymentMethodCodesRequiringAdditionalData.has(selectedMethod)) {
+                paymentMethodMessages(selectedMethod);
+            }
+
+            input.form.submit();
+        }
+    </script>
     
 	<fp:dvTripLink />
 	<fp:dvIWantLink />
@@ -128,6 +143,10 @@
 
 				str = str.replace(regex, '');
 			}
+			
+			// Replace bad dashes with ascii dash
+            const es5_dash_regex = /[-\u058A\u05BE\u1400\u1806\u2010-\u2015\u2053\u207B\u208B\u2212\u2E17\u2E1A\u2E3A\u2E3B\u2E40\u2E5D\u301C\u3030\u30A0\uFE31\uFE32\uFE58\uFE63\uFF0D]|\uD803\uDEAD/g;
+            str = str.replace(es5_dash_regex, '-');
 
 			return str;
 		}

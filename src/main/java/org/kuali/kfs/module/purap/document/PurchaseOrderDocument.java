@@ -516,7 +516,6 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.setPostingYear(requisitionDocument.getPostingYear());
         this.setPurchaseOrderEndDate(requisitionDocument.getPurchaseOrderEndDate());
         this.setChartOfAccountsCode(requisitionDocument.getChartOfAccountsCode());
-        this.setDocumentFundingSourceCode(requisitionDocument.getDocumentFundingSourceCode());
         this.setInstitutionContactEmailAddress(requisitionDocument.getInstitutionContactEmailAddress());
         this.setInstitutionContactName(requisitionDocument.getInstitutionContactName());
         this.setInstitutionContactPhoneNumber(requisitionDocument.getInstitutionContactPhoneNumber());

@@ -16,7 +16,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
@@ -72,10 +72,10 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         CreditMemoWireTransfer cmWireTransfer = ((CuVendorCreditMemoDocument)cmDocument).getCmWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
-        if (!StringUtils.equals(PaymentMethod.PM_CODE_WIRE, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode()) && hasWireTransferValues(cmWireTransfer)) {
+        if (!StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode()) && hasWireTransferValues(cmWireTransfer)) {
             String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB);
 
-            Object[] args = { CUPurapConstants.PAYMENT_METHOD, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode(), CUPurapConstants.WIRE_TRANSFER, PaymentMethod.PM_CODE_WIRE };
+            Object[] args = { CUPurapConstants.PAYMENT_METHOD, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode(), CUPurapConstants.WIRE_TRANSFER, KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE };
             questionText = MessageFormat.format(questionText, args);
 
             boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);

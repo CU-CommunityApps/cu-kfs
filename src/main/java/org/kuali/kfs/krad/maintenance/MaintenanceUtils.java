@@ -179,12 +179,12 @@ public final class MaintenanceUtils {
                     ex
             );
 
-            cleanOrphanLocks(blockingDocId, ex);
+            cleanOrphanLocks(blockingDocId);
             return;
         }
         if (lockedDocument == null) {
             MaintenanceUtils.LOG.warn("Locking document header for {}came back null.", blockingDocId);
-            cleanOrphanLocks(blockingDocId, null);
+            cleanOrphanLocks(blockingDocId);
         }
 
         // if we can ignore the lock (see method notes), then exit cause we're done
@@ -246,7 +246,7 @@ public final class MaintenanceUtils {
         return lockedDocument.isInitiated();
     }
 
-    protected static void cleanOrphanLocks(String lockingDocumentNumber, Exception workflowException) {
+    protected static void cleanOrphanLocks(String lockingDocumentNumber) {
         // put a try/catch around the whole thing - the whole reason we are doing this is to prevent data errors
         // from stopping a document
         try {

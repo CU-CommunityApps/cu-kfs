@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.document.AccountingDocument;
@@ -12,7 +13,7 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
-import edu.cornell.kfs.fp.businessobject.PaymentMethod;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
@@ -31,7 +32,7 @@ public class PaymentRequestForeignDraftValidation extends GenericValidation {
         boolean isValid = true;
         
         PaymentRequestDocument document = (PaymentRequestDocument) accountingDocumentForValidation;
-        if (!PaymentMethod.PM_CODE_FOREIGN_DRAFT.equals(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
+        if (!KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equals(((CuPaymentRequestDocument)document).getPaymentMethodCode())) {
             return true;
         }
 

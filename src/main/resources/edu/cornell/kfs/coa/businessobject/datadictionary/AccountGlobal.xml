@@ -25,9 +25,6 @@
         <ref bean="AccountGlobal-endowmentIncomeAccountNumber"/>
         <ref bean="AccountGlobal-programCode"/>
         <ref bean="AccountGlobal-budgetRecordingLevelCode"/>
-        <ref bean="AccountGlobal-extrnlFinEncumSufficntFndIndicator"/>
-        <ref bean="AccountGlobal-intrnlFinEncumSufficntFndIndicator"/>
-        <ref bean="AccountGlobal-finPreencumSufficientFundIndicator"/>
         <ref bean="AccountGlobal-financialObjectivePrsctrlIndicator"/>
         <ref bean="AccountGlobal-contractControlFinCoaCode"/>
         <ref bean="AccountGlobal-contractControlAccountNumber"/>
@@ -137,24 +134,6 @@
 	<bean id="AccountGlobal-budgetRecordingLevelCode" parent="AccountGlobal-budgetRecordingLevelCode-parentBean" />
 	<bean id="AccountGlobal-budgetRecordingLevelCode-parentBean" abstract="true"
 		parent="Account-budgetRecordingLevelCode">
-	</bean>
-	
-	<bean id="AccountGlobal-extrnlFinEncumSufficntFndIndicator" parent="AccountGlobal-extrnlFinEncumSufficntFndIndicator-parentBean" />
-	<bean id="AccountGlobal-extrnlFinEncumSufficntFndIndicator-parentBean" abstract="true" 
-		parent="Account-extrnlFinEncumSufficntFndIndicator">
-		<property name="control" ref="IndicatorYNNullSelectControl" />
-	</bean>
-	
-	<bean id="AccountGlobal-intrnlFinEncumSufficntFndIndicator" parent="AccountGlobal-intrnlFinEncumSufficntFndIndicator-parentBean" />
-	<bean id="AccountGlobal-intrnlFinEncumSufficntFndIndicator-parentBean" abstract="true"
-		parent="Account-intrnlFinEncumSufficntFndIndicator">
-		<property name="control" ref="IndicatorYNNullSelectControl" />
-	</bean>
-	
-	<bean id="AccountGlobal-finPreencumSufficientFundIndicator" parent="AccountGlobal-finPreencumSufficientFundIndicator-parentBean" />
-	<bean id="AccountGlobal-finPreencumSufficientFundIndicator-parentBean" abstract="true"
-		parent="Account-finPreencumSufficientFundIndicator">
-		<property name="control" ref="IndicatorYNNullSelectControl" />
 	</bean>
 	
 	<bean id="AccountGlobal-financialObjectivePrsctrlIndicator" parent="AccountGlobal-financialObjectivePrsctrlIndicator-parentBean" />

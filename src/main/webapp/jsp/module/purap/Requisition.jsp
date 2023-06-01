@@ -36,7 +36,6 @@
         <purap:purapDocumentDetail
                 documentAttributes="${DataDictionary.RequisitionDocument.attributes}"
                 detailSectionLabel="Requisition Detail"
-                editableFundingSource="false"
                 editableAccountDistributionMethod="${KualiForm.readOnlyAccountDistributionMethod}"/>
     </sys:documentOverview>
 

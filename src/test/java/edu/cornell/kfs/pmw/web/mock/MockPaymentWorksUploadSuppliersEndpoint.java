@@ -26,6 +26,7 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.springframework.http.HttpMethod;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 
 import edu.cornell.kfs.pmw.PaymentWorksTestConstants.SupplierUploadErrorMessages;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksUploadFileColumn;
@@ -121,8 +122,8 @@ public class MockPaymentWorksUploadSuppliersEndpoint extends MockServiceEndpoint
             bufferedReader = new BufferedReader(streamReader);
             csvReader = new CSVReader(bufferedReader);
             return csvReader.readAll();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (CsvException | IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(csvReader);
             IOUtils.closeQuietly(bufferedReader);
