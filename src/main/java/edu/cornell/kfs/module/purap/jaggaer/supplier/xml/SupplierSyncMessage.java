@@ -55,7 +55,7 @@ public class SupplierSyncMessage {
         if (supplierRequestMessageItems == null) {
             supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItemInterface>();
         }
-        return this.supplierRequestMessageItems;
+        return supplierRequestMessageItems;
     }
 
 }

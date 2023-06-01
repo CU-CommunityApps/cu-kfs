@@ -34,7 +34,7 @@ public class AddressList {
         if (addresses == null) {
             addresses = new ArrayList<Address>();
         }
-        return this.addresses;
+        return addresses;
     }
 
 }

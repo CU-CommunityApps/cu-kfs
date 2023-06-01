@@ -47,7 +47,7 @@ public class PrefPurchaseOrderDeliveryMethod {
         if (deliveryMethodTypes == null) {
             deliveryMethodTypes = new ArrayList<PurchaseOrderDeliveryMethodType>();
         }
-        return this.deliveryMethodTypes;
+        return deliveryMethodTypes;
     }
 
 }

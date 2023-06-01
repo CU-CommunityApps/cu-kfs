@@ -44,7 +44,7 @@ public class OrderDistributionList {
         if (distributionMethods == null) {
             distributionMethods = new ArrayList<DistributionMethod>();
         }
-        return this.distributionMethods;
+        return distributionMethods;
     }
 
 }

@@ -20,7 +20,7 @@ public class SupplierRequestMessage implements SupplierRequestMessageItemInterfa
         if (suppliers == null) {
             suppliers = new ArrayList<Supplier>();
         }
-        return this.suppliers;
+        return suppliers;
     }
 
 }

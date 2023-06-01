@@ -34,7 +34,7 @@ public class PrimaryContactList {
         if (associatedContacts == null) {
             associatedContacts = new ArrayList<AssociatedContact>();
         }
-        return this.associatedContacts;
+        return associatedContacts;
     }
 
 }

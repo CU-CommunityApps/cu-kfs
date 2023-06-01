@@ -34,7 +34,7 @@ public class CommodityCodeList {
         if (commodityCodes == null) {
             commodityCodes = new ArrayList<JaggaerBasicValue>();
         }
-        return this.commodityCodes;
+        return commodityCodes;
     }
 
 }

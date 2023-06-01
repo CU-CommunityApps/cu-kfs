@@ -34,7 +34,7 @@ public class CustomElementValueList implements CustomElementDetail {
         if (customElementValues == null) {
             customElementValues = new ArrayList<CustomElementValue>();
         }
-        return this.customElementValues;
+        return customElementValues;
     }
 
 }

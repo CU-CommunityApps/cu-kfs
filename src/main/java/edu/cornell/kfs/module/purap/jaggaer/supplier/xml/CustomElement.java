@@ -80,7 +80,7 @@ public class CustomElement {
         if (customElementDetails == null) {
             customElementDetails = new ArrayList<CustomElementDetail>();
         }
-        return this.customElementDetails;
+        return customElementDetails;
     }
 
 }

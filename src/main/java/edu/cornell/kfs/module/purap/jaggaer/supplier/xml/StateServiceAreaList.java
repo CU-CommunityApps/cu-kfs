@@ -34,7 +34,7 @@ public class StateServiceAreaList {
         if (stateServiceAreaInternalNames == null) {
             stateServiceAreaInternalNames = new ArrayList<StateServiceAreaInternalName>();
         }
-        return this.stateServiceAreaInternalNames;
+        return stateServiceAreaInternalNames;
     }
 
 }

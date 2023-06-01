@@ -34,7 +34,7 @@ public class BusinessUnitVendorNumberList {
         if (businessUnitVendorNumbers == null) {
             businessUnitVendorNumbers = new ArrayList<BusinessUnitVendorNumber>();
         }
-        return this.businessUnitVendorNumbers;
+        return businessUnitVendorNumbers;
     }
 
 }

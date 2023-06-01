@@ -34,7 +34,7 @@ public class LocationList {
         if (locations == null) {
             locations = new ArrayList<Location>();
         }
-        return this.locations;
+        return locations;
     }
 
 }

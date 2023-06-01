@@ -34,7 +34,7 @@ public class ServiceAreaList {
         if (serviceAreas == null) {
             serviceAreas = new ArrayList<ServiceArea>();
         }
-        return this.serviceAreas;
+        return serviceAreas;
     }
 
 }

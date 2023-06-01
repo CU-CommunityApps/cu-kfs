@@ -34,7 +34,7 @@ public class AssignedBusinessUnitsList {
         if (businessUnitInternalNames == null) {
             businessUnitInternalNames = new ArrayList<BusinessUnitInternalName>();
         }
-        return this.businessUnitInternalNames;
+        return businessUnitInternalNames;
     }
 
 }

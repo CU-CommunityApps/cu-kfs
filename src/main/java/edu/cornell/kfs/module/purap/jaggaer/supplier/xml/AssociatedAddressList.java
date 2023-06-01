@@ -34,7 +34,7 @@ public class AssociatedAddressList {
         if (associatedAddresses == null) {
             associatedAddresses = new ArrayList<AssociatedAddress>();
         }
-        return this.associatedAddresses;
+        return associatedAddresses;
     }
 
 }

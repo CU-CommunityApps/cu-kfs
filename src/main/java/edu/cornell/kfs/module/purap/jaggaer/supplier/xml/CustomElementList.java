@@ -34,7 +34,7 @@ public class CustomElementList {
         if (customElements == null) {
             customElements = new ArrayList<CustomElement>();
         }
-        return this.customElements;
+        return customElements;
     }
 
 }

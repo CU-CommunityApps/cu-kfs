@@ -32,6 +32,6 @@ public class CurrencyList {
         if (isoCurrencyCodes == null) {
             isoCurrencyCodes = new ArrayList<IsoCurrencyCode>();
         }
-        return this.isoCurrencyCodes;
+        return isoCurrencyCodes;
     }
 }

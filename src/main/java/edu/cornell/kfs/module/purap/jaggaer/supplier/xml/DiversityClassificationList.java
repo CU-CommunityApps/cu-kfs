@@ -34,7 +34,7 @@ public class DiversityClassificationList {
         if (diversityClassifications == null) {
             diversityClassifications = new ArrayList<DiversityClassification>();
         }
-        return this.diversityClassifications;
+        return diversityClassifications;
     }
 
 }

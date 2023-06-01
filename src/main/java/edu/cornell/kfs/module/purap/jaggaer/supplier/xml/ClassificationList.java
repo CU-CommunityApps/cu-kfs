@@ -34,7 +34,7 @@ public class ClassificationList {
         if (classifications == null) {
             classifications = new ArrayList<Classification>();
         }
-        return this.classifications;
+        return classifications;
     }
 
 }

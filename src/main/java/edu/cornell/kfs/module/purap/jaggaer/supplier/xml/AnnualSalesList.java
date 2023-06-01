@@ -34,7 +34,7 @@ public class AnnualSalesList {
         if (annualSalesItems == null) {
             annualSalesItems = new ArrayList<AnnualSalesItem>();
         }
-        return this.annualSalesItems;
+        return annualSalesItems;
     }
 
 }

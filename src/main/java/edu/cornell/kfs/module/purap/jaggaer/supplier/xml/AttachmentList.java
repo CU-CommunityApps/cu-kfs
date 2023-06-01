@@ -40,7 +40,7 @@ public class AttachmentList implements CustomElementDetail {
         if (attachments == null) {
             attachments = new ArrayList<Attachment>();
         }
-        return this.attachments;
+        return attachments;
     }
 
 }

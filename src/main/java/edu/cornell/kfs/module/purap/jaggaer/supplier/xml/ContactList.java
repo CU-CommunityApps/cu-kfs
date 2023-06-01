@@ -34,7 +34,7 @@ public class ContactList {
         if (contacts == null) {
             contacts = new ArrayList<Contact>();
         }
-        return this.contacts;
+        return contacts;
     }
 
 }
