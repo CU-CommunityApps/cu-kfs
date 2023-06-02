@@ -1,87 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
-  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
-    <documentType>
-      <name>CM</name>
-      <parent>AP</parent>
-      <label>Vendor Credit Memo</label>
-      <docHandler>${kfs.url}/purapVendorCreditMemo.do?methodToCall=docHandler</docHandler>
-      <helpDefinitionURL>default.htm?turl=WordDocuments%2Fvendorcreditmemo.htm</helpDefinitionURL>
-      <docSearchHelpURL>${kfs.externalizable.help.url}/default.htm?turl=WordDocuments%2Fcreditmemos.htm</docSearchHelpURL>
-      <active>true</active>
-      <validApplicationStatuses>
-      	<status>Initiated</status>
-      	<status>In Process</status>
-      	<status>Cancelled In Process</status>
-      	<status>Void</status>
-      	<status>Cancelled</status>
-      	<status>Complete</status>
-      	<status>Awaiting AP Review</status>      	
-      	<status>Awaiting Fiscal Officer Approval</status>   
-      	<status>Awaiting Treasury Manager Approval</status>   	
-      </validApplicationStatuses>
-      <policies>  
-        <policy>
-          <name>DOCUMENT_STATUS_POLICY</name>
-          <stringValue>APP</stringValue>
-        </policy>
-      </policies>
-      <routingVersion>2</routingVersion>
-      <routePaths>
-        <routePath>
-          <start name="AdHoc" nextNode="RequiresImageAttachment"  nextAppDocStatus="Awaiting AP Review"/>
-          <split name="RequiresImageAttachment" nextNode="Account">
-            <branch name="True">
-              <role name="ImageAttachment" nextNode="JoinRequiresImageAttachment" />
-            </branch>
-            <branch name="False">
-              <simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment"/>
-            </branch>
-            <join name="JoinRequiresImageAttachment" />
-          </split>
-          <role name="Account" nextNode="TreasuryManager" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
-          <split name="TreasuryManager">
-           <branch name="True">
-             <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
-           </branch>
-           <branch name="False">
-             <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
-           </branch>
-           <join name="JoinTreasury"/>
-         </split>
-        </routePath>
-      </routePaths>
-      <routeNodes>
-        <start name="AdHoc" />
-        <split name="RequiresImageAttachment">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="ImageAttachment">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinRequiresImageAttachment" />
-        <simple name="NoOpRequiresImageAttachment">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <role name="Account">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-       <!-- KFSPTS-1891 -->
-       <role name="PaymentMethodReviewer">
-         <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-         <activationType>P</activationType>
-       </role>
-       <split name="TreasuryManager">
-         <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-       </split>
-       <simple name="NoOpTreasury">
-         <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-       </simple>
-       <join name="JoinTreasury"/>
-      </routeNodes>
-    </documentType>
-  </documentTypes>
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>CM</name>
+            <parent>AP</parent>
+            <label>Vendor Credit Memo</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/purapVendorCreditMemo.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fvendorcreditmemo.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fvendorcreditmemo.htm</docSearchHelpURL>
+            <active>true</active>
+            <validApplicationStatuses>
+                <status>Initiated</status>
+                <status>In Process</status>
+                <status>Cancelled In Process</status>
+                <status>Void</status>
+                <status>Cancelled</status>
+                <status>Complete</status>
+                <status>Awaiting AP Review</status>
+                <status>Awaiting Fiscal Officer Approval</status>
+                <status>Awaiting Treasury Manager Approval</status>
+            </validApplicationStatuses>
+            <policies>
+                <policy>
+                    <name>DOCUMENT_STATUS_POLICY</name>
+                    <stringValue>APP</stringValue>
+                </policy>
+            </policies>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="RequiresImageAttachment" nextAppDocStatus="Awaiting AP Review"/>
+                    <split name="RequiresImageAttachment" nextNode="Account">
+                        <branch name="True">
+                            <role name="ImageAttachment" nextNode="JoinRequiresImageAttachment"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpRequiresImageAttachment" nextNode="JoinRequiresImageAttachment"/>
+                        </branch>
+                        <join name="JoinRequiresImageAttachment"/>
+                    </split>
+                    <role name="Account" nextNode="TreasuryManager" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                    <split name="TreasuryManager">
+                        <branch name="True">
+                            <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
+                        </branch>
+                        <join name="JoinTreasury"/>
+                    </split>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <split name="RequiresImageAttachment">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="ImageAttachment">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresImageAttachment"/>
+                <simple name="NoOpRequiresImageAttachment">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="TreasuryManager">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="PaymentMethodReviewer">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinTreasury"/>
+                <simple name="NoOpTreasury">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
 </data>
-
