@@ -48,7 +48,7 @@ public class Discount {
         if (discountItems == null) {
             discountItems = new ArrayList<DiscountItem>();
         }
-        return this.discountItems;
+        return discountItems;
     }
 
 }

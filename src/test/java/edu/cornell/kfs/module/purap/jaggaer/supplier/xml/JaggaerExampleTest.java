@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.io.IOException;
 
