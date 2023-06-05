@@ -102,23 +102,23 @@ public class JaggaerBuilder {
         return name;
     }
     
-    public static PrimaryNaics buildPrimaryNaics(String code) {
-        return buildPrimaryNaics(code, null);
+    public static PrimaryNaicsItem buildPrimaryNaicsItem(String code) {
+        return buildPrimaryNaicsItem(code, null);
     }
     
-    public static PrimaryNaics buildPrimaryNaics(String code, String isChanged) {
-        PrimaryNaics naic = new PrimaryNaics();
+    public static PrimaryNaicsItem buildPrimaryNaicsItem(String code, String isChanged) {
+        PrimaryNaicsItem naic = new PrimaryNaicsItem();
         naic.setValue(code);
         naic.setIsChanged(isChanged);
         return naic;
     }
     
-    public static SecondaryNaics buildSecondaryNaics(String code) {
-        return buildSecondaryNaics(code, null);
+    public static SecondaryNaicsItem buildSecondaryNaicsItem(String code) {
+        return buildSecondaryNaicsItem(code, null);
     }
     
-    public static SecondaryNaics buildSecondaryNaics(String code, String isChanged) {
-        SecondaryNaics naic = new SecondaryNaics();
+    public static SecondaryNaicsItem buildSecondaryNaicsItem(String code, String isChanged) {
+        SecondaryNaicsItem naic = new SecondaryNaicsItem();
         naic.setValue(code);
         naic.setIsChanged(isChanged);
         return naic;

@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "Email")
-public class Email {
+public class Email implements PurchaseOrderDeliveryMethodType {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

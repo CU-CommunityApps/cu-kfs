@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "annualSalesYear", "annualSalesAmount", "isoCurrencyCode" })
 @XmlRootElement(name = "AnnualSales")
-public class AnnualSales {
+public class AnnualSalesItem {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

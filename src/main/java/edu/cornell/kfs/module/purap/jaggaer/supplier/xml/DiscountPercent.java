@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "value" })
 @XmlRootElement(name = "DiscountPercent")
-public class DiscountPercent implements DiscountItemInterface{
+public class DiscountPercent implements DiscountItem {
 
     @XmlAttribute(name = "isChanged")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
