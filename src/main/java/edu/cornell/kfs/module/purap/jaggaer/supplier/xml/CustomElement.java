@@ -15,7 +15,7 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "customElementIdentifier", "displayName", "customElementValueListOrAttachments" })
+@XmlType(name = "", propOrder = { "customElementIdentifier", "displayName", "customElementDetails" })
 @XmlRootElement(name = "CustomElement")
 public class CustomElement {
 
@@ -33,8 +33,8 @@ public class CustomElement {
     @XmlElement(name = "DisplayName")
     private DisplayName displayName;
     @XmlElements({ @XmlElement(name = "CustomElementValueList", type = CustomElementValueList.class),
-            @XmlElement(name = "Attachments", type = Attachments.class) })
-    private List<Object> customElementValueListOrAttachments;
+            @XmlElement(name = "Attachments", type = AttachmentList.class) })
+    private List<CustomElementDetail> customElementDetails;
 
     public String getIsChanged() {
         return isChanged;
@@ -76,11 +76,11 @@ public class CustomElement {
         this.displayName = displayName;
     }
 
-    public List<Object> getCustomElementValueListOrAttachments() {
-        if (customElementValueListOrAttachments == null) {
-            customElementValueListOrAttachments = new ArrayList<Object>();
+    public List<CustomElementDetail> getCustomElementDetails() {
+        if (customElementDetails == null) {
+            customElementDetails = new ArrayList<CustomElementDetail>();
         }
-        return this.customElementValueListOrAttachments;
+        return customElementDetails;
     }
 
 }

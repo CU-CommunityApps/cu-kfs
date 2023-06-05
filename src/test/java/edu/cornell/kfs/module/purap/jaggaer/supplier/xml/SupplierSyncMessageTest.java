@@ -55,7 +55,7 @@ public class SupplierSyncMessageTest {
         supplierSyncMessage.setHeader(buildHeader());
 
         SupplierRequestMessage srm = new SupplierRequestMessage();
-        srm.getSupplier().add(buildSupplier());
+        srm.getSuppliers().add(buildSupplier());
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
         logActualXmlIfNeeded(supplierSyncMessage);
@@ -122,8 +122,8 @@ public class SupplierSyncMessageTest {
 
         supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
 
-        supplier.setBrands(buildBrands());
-        supplier.setNaicsCodes(buildNaicsCodes());
+        supplier.setBrandList(buildBrands());
+        supplier.setNaicsCodeList(buildNaicsCodes());
         supplier.setCommodityCodeList(buildCommodityCodeList());
         supplier.setSupportedCurrencyList(buildCurrencyList(false, true, true, true));
         supplier.setEnabledCurrencyList(buildCurrencyList(true, true, false, false));
@@ -156,30 +156,30 @@ public class SupplierSyncMessageTest {
     }
 
 
-    private Brands buildBrands() {
-        Brands brands = new Brands();
-        brands.getBrand().add(JaggaerBuilder.buildJaggaerBasicValue("brand 1", T_TRUE));
-        brands.getBrand().add(JaggaerBuilder.buildJaggaerBasicValue("brand 2", F_FALSE));
+    private BrandList buildBrands() {
+        BrandList brands = new BrandList();
+        brands.getBrands().add(JaggaerBuilder.buildJaggaerBasicValue("brand 1", T_TRUE));
+        brands.getBrands().add(JaggaerBuilder.buildJaggaerBasicValue("brand 2", F_FALSE));
         return brands;
     }
 
-    private NaicsCodes buildNaicsCodes() {
-        NaicsCodes codes = new NaicsCodes();
+    private NaicsCodeList buildNaicsCodes() {
+        NaicsCodeList codes = new NaicsCodeList();
         codes.setIsChanged(T_TRUE);
-        codes.getPrimaryNaicsOrSecondaryNaicsList().add(JaggaerBuilder.buildPrimaryNaics("primary code", T_TRUE));
+        codes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("primary code", T_TRUE));
 
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("second", F_FALSE));
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("third", T_TRUE));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("second", F_FALSE));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("third", T_TRUE));
 
-        codes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
+        codes.getNaicsCodeListItems().add(secondaryList);
         return codes;
     }
 
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList commodityCodeList = new CommodityCodeList();
-        commodityCodeList.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 1", T_TRUE));
-        commodityCodeList.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 2", F_FALSE));
+        commodityCodeList.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 1", T_TRUE));
+        commodityCodeList.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("Commodity Code 2", F_FALSE));
         return commodityCodeList;
     }
 
@@ -192,15 +192,15 @@ public class SupplierSyncMessageTest {
         }
 
         if (includeUSD) {
-            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
+            currencyList.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         }
 
         if (includePeso) {
-            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode("peso", F_FALSE));
+            currencyList.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode("peso", F_FALSE));
         }
 
         if (includeEuro) {
-            currencyList.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode("euro", null));
+            currencyList.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode("euro", null));
         }
 
         return currencyList;
@@ -209,8 +209,8 @@ public class SupplierSyncMessageTest {
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList unitNumberList = new BusinessUnitVendorNumberList();
         unitNumberList.setIsChanged(T_TRUE);
-        unitNumberList.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 1", "1232", T_TRUE));
-        unitNumberList.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 2", "56464", F_FALSE));
+        unitNumberList.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 1", "1232", T_TRUE));
+        unitNumberList.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("vendor number 2", "56464", F_FALSE));
         return unitNumberList;
     }
 
@@ -231,7 +231,7 @@ public class SupplierSyncMessageTest {
         AnnualSalesList salesList = new AnnualSalesList();
         salesList.setIsChanged(T_TRUE);
 
-        AnnualSales sale = new AnnualSales();
+        AnnualSalesItem sale = new AnnualSalesItem();
         sale.setIsChanged(F_FALSE);
 
         sale.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, F_FALSE));
@@ -243,7 +243,7 @@ public class SupplierSyncMessageTest {
         ammount.setValue("6900.00");
         sale.setAnnualSalesAmount(ammount);
 
-        salesList.getAnnualSales().add(sale);
+        salesList.getAnnualSalesItems().add(sale);
 
         return salesList;
     }
@@ -256,13 +256,13 @@ public class SupplierSyncMessageTest {
         area1.setIsChanged(T_TRUE);
         area1.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name", T_TRUE));
         area1.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 1", "internal name 2"));
-        areaList.getServiceArea().add(area1);
+        areaList.getServiceAreas().add(area1);
 
         ServiceArea area2 = new ServiceArea();
         area2.setIsChanged(F_FALSE);
         area2.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("a different internal name", T_TRUE));
         area2.getStateServiceAreaList().add(buildStateServiceAreaList("internal name 3", "internal name 4"));
-        areaList.getServiceArea().add(area2);
+        areaList.getServiceAreas().add(area2);
 
         return areaList;
     }
@@ -272,7 +272,7 @@ public class SupplierSyncMessageTest {
         stateServiceAreaList.setIsChanged(T_TRUE);
 
         for (String name : names) {
-            stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName(name, T_TRUE));
+            stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName(name, T_TRUE));
         }
 
         return stateServiceAreaList;
@@ -302,14 +302,14 @@ public class SupplierSyncMessageTest {
         info.setInsuranceProviderPhone(buildInsuranceProviderPhone());
         info.setInsuranceCertificate(buildInsuranceCertificate());
         info.setOtherTypeName(JaggaerBuilder.buildJaggaerBasicValue("some other name", T_TRUE));
-        insurance.getInsuranceInformation().add(info);
+        insurance.getInsuranceInformationDetails().add(info);
         return insurance;
     }
 
     private InsuranceCertificate buildInsuranceCertificate() {
         InsuranceCertificate certificate = new InsuranceCertificate();
         certificate.setIsChanged(T_TRUE);
-        certificate.setAttachments(buildAttachments("attachment name"));
+        certificate.setAttachmentList(buildAttachments("attachment name"));
         return certificate;
     }
 
@@ -338,16 +338,16 @@ public class SupplierSyncMessageTest {
         TaxDocument document = new TaxDocument();
         document.setIsChanged(T_TRUE);
 
-        document.setAttachments(buildAttachments("super cool tax document"));
+        document.setAttachmentList(buildAttachments("super cool tax document"));
 
         info.setTaxDocument(document);
 
-        taxList.getTaxInformation().add(info);
+        taxList.getTaxInformationDetails().add(info);
         return taxList;
     }
 
-    private Attachments buildAttachments(String attachmentName) {
-        Attachments attachments = new Attachments();
+    private AttachmentList buildAttachments(String attachmentName) {
+        AttachmentList attachments = new AttachmentList();
         attachments.setXmlnsXop("test.dtd");
         Attachment attach = new Attachment();
         attach.setAttachmentName(attachmentName);
@@ -358,7 +358,7 @@ public class SupplierSyncMessageTest {
         XopInclude include = new XopInclude();
         include.setHref("http://www.google.com");
         attach.setXopInclude(include);
-        attachments.getAttachment().add(attach);
+        attachments.getAttachments().add(attach);
         return attachments;
     }
 
@@ -376,7 +376,7 @@ public class SupplierSyncMessageTest {
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         ap.setName(JaggaerBuilder.buildName("accounts payable name", T_TRUE));
         ap.setActive(buildActive());
-        ap.getAssociatedAddress().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
+        ap.getAssociatedAddresses().add(buildAssociatedAddress("type", ap.getErpNumber().getValue(), ap.getSqIntegrationNumber().getValue()));
         ap.setEmail(buildEmail("user@cornell.edu", T_TRUE));
         ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(US_DOLLAR_CURRENCY_CODE, T_TRUE));
         ap.setContactName(JaggaerBuilder.buildJaggaerBasicValue("contact name", T_TRUE));
@@ -388,7 +388,7 @@ public class SupplierSyncMessageTest {
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
 
-        apList.getAccountsPayable().add(ap);
+        apList.getAccountsPayableDetails().add(ap);
         return apList;
     }
 
@@ -458,24 +458,24 @@ public class SupplierSyncMessageTest {
         CustomElementValue value = new CustomElementValue();
         value.setIsChanged(T_TRUE);
         value.setValue("some custom value");
-        elementValueList.getCustomElementValue().add(value);
-        element1.getCustomElementValueListOrAttachments().add(elementValueList);
+        elementValueList.getCustomElementValues().add(value);
+        element1.getCustomElementDetails().add(elementValueList);
 
         element1.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a custom identifer", T_TRUE));
         element1.setDisplayName(JaggaerBuilder.buildDisplayName("a cool display name", T_TRUE));
-        customList.getCustomElement().add(element1);
+        customList.getCustomElements().add(element1);
 
         CustomElement element2 = new CustomElement();
         element2.setIsActive(T_TRUE);
         element2.setIsChanged(F_FALSE);
         element2.setType("custom type2");
-        element2.getCustomElementValueListOrAttachments().add(buildAttachments("custom element attachment"));
+        element2.getCustomElementDetails().add(buildAttachments("custom element attachment"));
 
 
 
         element2.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("a  different custom identifer", T_TRUE));
         element2.setDisplayName(JaggaerBuilder.buildDisplayName("a lame display name", T_TRUE));
-        customList.getCustomElement().add(element2);
+        customList.getCustomElements().add(element2);
 
         return customList;
     }
@@ -507,7 +507,7 @@ public class SupplierSyncMessageTest {
 
         AssociatedAddressList addressList = new AssociatedAddressList();
         addressList.setIsChanged(T_TRUE);
-        addressList.getAssociatedAddress().add(buildAssociatedAddress("address type", "erp number", "sqi number"));
+        addressList.getAssociatedAddresses().add(buildAssociatedAddress("address type", "erp number", "sqi number"));
         location.setAssociatedAddressList(addressList);
 
         location.setCustomElementList(buildCustomElementList());
@@ -515,10 +515,10 @@ public class SupplierSyncMessageTest {
 
         AssociatedContactList contactList = new AssociatedContactList();
         contactList.setIsChanged(T_TRUE);
-        contactList.getAssociatedContact().add(buildAssociatedContact());
+        contactList.getAssociatedContacts().add(buildAssociatedContact());
         location.setAssociatedContactList(contactList);
 
-        locationList.getLocation().add(location);
+        locationList.getLocations().add(location);
         return locationList;
     }
     
@@ -609,7 +609,7 @@ public class SupplierSyncMessageTest {
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
         method.setFax(fax);
 
-        orderList.getDistributionMethod().add(method);
+        orderList.getDistributionMethods().add(method);
         return orderList;
     }
 
@@ -631,11 +631,11 @@ public class SupplierSyncMessageTest {
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setIsChanged(T_TRUE);
         method.setType("delivery method");
-        method.getEmailOrFax().add(buildEmail("foo@bar.com", T_TRUE));
+        method.getDeliveryMethodTypes().add(buildEmail("foo@bar.com", T_TRUE));
         Fax fax = new Fax();
         fax.setIsChanged(F_FALSE);
         fax.setTelephoneNumber(buildBasicTelephoneNumber());
-        method.getEmailOrFax().add(fax);
+        method.getDeliveryMethodTypes().add(fax);
         return method;
     }
 
@@ -706,26 +706,26 @@ public class SupplierSyncMessageTest {
 
         DD214Certificate ddCertificate = new DD214Certificate();
         ddCertificate.setIsChanged(T_TRUE);
-        ddCertificate.setAttachments(buildAttachments("DD 214 Certificate Attachments"));
+        ddCertificate.setAttachmentList(buildAttachments("DD 214 Certificate Attachments"));
         diversity.setDd214Certificate(ddCertificate);
 
         DiversityCertificate certificate = new DiversityCertificate();
         certificate.setIsChanged(T_TRUE);
-        certificate.setAttachments(buildAttachments("diversity certificate attachment"));
+        certificate.setAttachmentList(buildAttachments("diversity certificate attachment"));
         diversity.setDiversityCertificate(certificate);
 
         AdditionalDataList dataList = new AdditionalDataList();
         dataList.setIsChanged(T_TRUE);
 
-        AdditionalData datum = new AdditionalData();
+        AdditionalDataItem datum = new AdditionalDataItem();
         datum.setIsChanged(T_TRUE);
         datum.setName("datum name");
-        datum.getContent().add("some additional piece of information");
-        dataList.getAdditionalData().add(datum);
+        datum.getContents().add("some additional piece of information");
+        dataList.getAdditionalDataItems().add(datum);
 
         diversity.setAdditionalDataList(dataList);
 
-        diversityList.getDiversityClassification().add(diversity);
+        diversityList.getDiversityClassifications().add(diversity);
         return diversityList;
     }
 
@@ -738,14 +738,14 @@ public class SupplierSyncMessageTest {
         classification1.setDisplayName(JaggaerBuilder.buildDisplayName("classification 1 name", T_TRUE));
 
         classification1.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name for classification 1", T_TRUE));
-        classificationList.getClassification().add(classification1);
+        classificationList.getClassifications().add(classification1);
 
         Classification classification2 = new Classification();
         classification2.setIsChanged(F_FALSE);
         classification2.setDisplayName(JaggaerBuilder.buildDisplayName("classification 2 name", F_FALSE));
 
         classification2.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("internal name for classification 2", F_FALSE));
-        classificationList.getClassification().add(classification2);
+        classificationList.getClassifications().add(classification2);
 
         return classificationList;
     }
@@ -753,7 +753,7 @@ public class SupplierSyncMessageTest {
     private PrimaryContactList buildPrimaryContactList() {
         PrimaryContactList primaryContactList = new PrimaryContactList();
         primaryContactList.setIsChanged(T_TRUE);
-        primaryContactList.getAssociatedContact().add(buildAssociatedContact());
+        primaryContactList.getAssociatedContacts().add(buildAssociatedContact());
         return primaryContactList;
     }
 
@@ -812,14 +812,14 @@ public class SupplierSyncMessageTest {
 
         contact.setNotes(JaggaerBuilder.buildJaggaerBasicValue("just a simple note", T_TRUE));
 
-        contactList.getContact().add(contact);
+        contactList.getContacts().add(contact);
         return contactList;
     }
 
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList addressList = new PrimaryAddressList();
         addressList.setIsChanged(T_TRUE);
-        addressList.getAssociatedAddress().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
+        addressList.getAssociatedAddresses().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
         return addressList;
     }
 
@@ -890,7 +890,7 @@ public class SupplierSyncMessageTest {
         address.setNotes(JaggaerBuilder.buildJaggaerBasicValue("just a simple note", T_TRUE));
 
         address.setAssignedBusinessUnitsList(buildAssignedBusinessUnitsList("is preferred", "testing name"));
-        addressList.getAddress().add(address);
+        addressList.getAddresses().add(address);
 
         return addressList;
     }
@@ -898,7 +898,7 @@ public class SupplierSyncMessageTest {
     private AssignedBusinessUnitsList buildAssignedBusinessUnitsList(String preferredForThisBusinessUnit, String name) {
         AssignedBusinessUnitsList businessList = new AssignedBusinessUnitsList();
         businessList.setIsChanged(T_TRUE);
-        businessList.getBusinessUnitInternalName().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
+        businessList.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
         return businessList;
     }
 

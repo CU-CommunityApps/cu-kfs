@@ -16,8 +16,8 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
         "taxIdentificationType", "taxIdentificationNumber", "vatIdentificationNumber", "exemptFromBackupWithholding",
         "numberOfEmployees", "yearEstablished", "annualSalesList", "serviceAreaList", "registrationProfileType",
         "registrationProfileStatus", "supplierTaxRepresentativeId", "supplierRegCourt", "supplierRegSeat",
-        "supplierRegNumber", "supplierCapital", "supplierShareholders", "vatExempt", "commodityCodeList", "brands",
-        "shoppingCommodityCode", "austinTetra", "sic", "naicsCodes", "supportedCurrencyList", "enabledCurrencyList",
+        "supplierRegNumber", "supplierCapital", "supplierShareholders", "vatExempt", "commodityCodeList", "brandList",
+        "shoppingCommodityCode", "austinTetra", "sic", "naicsCodeList", "supportedCurrencyList", "enabledCurrencyList",
         "supplierKeywords", "addressList", "primaryAddressList", "contactList", "primaryContactList",
         "classificationList", "diversityClassificationList", "locationList",
         "restrictFulfillmentLocationsByBusinessUnit", "customElementList", "accountsPayableList", "taxInformationList",
@@ -103,7 +103,7 @@ public class Supplier {
     @XmlElement(name = "CommodityCodeList")
     private CommodityCodeList commodityCodeList;
     @XmlElement(name = "Brands")
-    private Brands brands;
+    private BrandList brandList;
     @XmlElement(name = "ShoppingCommodityCode")
     private JaggaerBasicValue shoppingCommodityCode;
     @XmlElement(name = "AustinTetra")
@@ -111,7 +111,7 @@ public class Supplier {
     @XmlElement(name = "SIC")
     private JaggaerBasicValue sic;
     @XmlElement(name = "NaicsCodes")
-    private NaicsCodes naicsCodes;
+    private NaicsCodeList naicsCodeList;
     @XmlElement(name = "SupportedCurrencyList")
     private CurrencyList supportedCurrencyList;
     @XmlElement(name = "EnabledCurrencyList")
@@ -441,12 +441,12 @@ public class Supplier {
         this.commodityCodeList = commodityCodeList;
     }
 
-    public Brands getBrands() {
-        return brands;
+    public BrandList getBrandList() {
+        return brandList;
     }
 
-    public void setBrands(Brands brands) {
-        this.brands = brands;
+    public void setBrandList(BrandList brandList) {
+        this.brandList = brandList;
     }
 
     public JaggaerBasicValue getShoppingCommodityCode() {
@@ -473,12 +473,12 @@ public class Supplier {
         this.sic = sic;
     }
 
-    public NaicsCodes getNaicsCodes() {
-        return naicsCodes;
+    public NaicsCodeList getNaicsCodeList() {
+        return naicsCodeList;
     }
 
-    public void setNaicsCodes(NaicsCodes naicsCodes) {
-        this.naicsCodes = naicsCodes;
+    public void setNaicsCodeList(NaicsCodeList naicsCodeList) {
+        this.naicsCodeList = naicsCodeList;
     }
 
     public CurrencyList getSupportedCurrencyList() {

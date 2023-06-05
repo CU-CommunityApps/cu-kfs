@@ -10,7 +10,7 @@ import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "attachments" })
+@XmlType(name = "", propOrder = { "attachmentList" })
 @XmlRootElement(name = "TaxDocument")
 public class TaxDocument {
 
@@ -18,7 +18,7 @@ public class TaxDocument {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "Attachments")
-    private Attachments attachments;
+    private AttachmentList attachmentList;
 
     public String getIsChanged() {
         return isChanged;
@@ -28,12 +28,12 @@ public class TaxDocument {
         this.isChanged = isChanged;
     }
 
-    public Attachments getAttachments() {
-        return attachments;
+    public AttachmentList getAttachmentList() {
+        return attachmentList;
     }
 
-    public void setAttachments(Attachments attachments) {
-        this.attachments = attachments;
+    public void setAttachmentList(AttachmentList attachmentList) {
+        this.attachmentList = attachmentList;
     }
 
 }

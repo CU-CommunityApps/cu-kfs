@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -73,7 +71,7 @@ public class JaggaerExampleTest {
     
     private SupplierRequestMessage buildSupplierRequestMessage() {
         SupplierRequestMessage message = new SupplierRequestMessage();
-        message.getSupplier().add(buildSupplier());
+        message.getSuppliers().add(buildSupplier());
         return message;
     }
     
@@ -110,7 +108,7 @@ public class JaggaerExampleTest {
         supplier.setShoppingCommodityCode(JaggaerBuilder.buildJaggaerBasicValue("SC01"));
         supplier.setAustinTetra(JaggaerBuilder.buildJaggaerBasicValue("Austin-Tetra Code"));
         supplier.setSic(JaggaerBuilder.buildJaggaerBasicValue("SIC Code"));
-        supplier.setNaicsCodes(buildNaicsCodes());
+        supplier.setNaicsCodeList(buildNaicsCodes());
         supplier.setSupportedCurrencyList(buildCurrencyList("USD", "CAD", "GBP", "EUR", "CHF", "MXN"));
         supplier.setEnabledCurrencyList(buildCurrencyList("USD", "MXN"));
         supplier.setSupplierKeywords(JaggaerBuilder.buildJaggaerBasicValue("Paper Products, Filters, Drinking Straws"));
@@ -138,25 +136,25 @@ public class JaggaerExampleTest {
     
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList list = new BusinessUnitVendorNumberList();
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC1", "NCCBO0001"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA1", "VACBO0001"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC2", "NCCBO0002"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA2", "VACBO0002"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC3", "NCCBO0003"));
-        list.getBusinessUnitVendorNumber().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA3", "VACBO0003"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC1", "NCCBO0001"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA1", "VACBO0001"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC2", "NCCBO0002"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA2", "VACBO0002"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC3", "NCCBO0003"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA3", "VACBO0003"));
         return list;
     }
     
     private AnnualSalesList buildAnnualSalesList() {
         AnnualSalesList list = new AnnualSalesList();
-        list.getAnnualSales().add(buildAnnualSales("60,000.00", "2024", "USD"));
-        list.getAnnualSales().add(buildAnnualSales("50,000.00", "2024", "USD"));
-        list.getAnnualSales().add(buildAnnualSales("40,000.00", "2024", "USD"));
+        list.getAnnualSalesItems().add(buildAnnualSales("60,000.00", "2024", "USD"));
+        list.getAnnualSalesItems().add(buildAnnualSales("50,000.00", "2024", "USD"));
+        list.getAnnualSalesItems().add(buildAnnualSales("40,000.00", "2024", "USD"));
         return list;
     }
     
-    private AnnualSales buildAnnualSales(String amountString, String salesYear, String currencyCode) {
-        AnnualSales sale = new AnnualSales();
+    private AnnualSalesItem buildAnnualSales(String amountString, String salesYear, String currencyCode) {
+        AnnualSalesItem sale = new AnnualSalesItem();
         sale.setAnnualSalesAmount(JaggaerBuilder.buildAmount(amountString));
         sale.setAnnualSalesYear(JaggaerBuilder.buildJaggaerBasicValue(salesYear));
         sale.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(currencyCode));
@@ -169,30 +167,30 @@ public class JaggaerExampleTest {
         serviceArea.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("US"));
         
         StateServiceAreaList stateServiceAreaList = new StateServiceAreaList();
-        stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-NC"));
-        stateServiceAreaList.getStateServiceAreaInternalName().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-CA"));
+        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-NC"));
+        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-CA"));
         
         serviceArea.getStateServiceAreaList().add(stateServiceAreaList);
-        serviceAreaList.getServiceArea().add(serviceArea);
+        serviceAreaList.getServiceAreas().add(serviceArea);
         return serviceAreaList;
     }
     
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList list = new CommodityCodeList();
-        list.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("OM01"));
-        list.getCommodityCode().add(JaggaerBuilder.buildJaggaerBasicValue("OM02"));
+        list.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("OM01"));
+        list.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("OM02"));
         return list;
     }
     
-    private NaicsCodes buildNaicsCodes() {
-        NaicsCodes naicsCodes = new NaicsCodes();
-        naicsCodes.getPrimaryNaicsOrSecondaryNaicsList().add(JaggaerBuilder.buildPrimaryNaics("424120"));
+    private NaicsCodeList buildNaicsCodes() {
+        NaicsCodeList naicsCodes = new NaicsCodeList();
+        naicsCodes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("424120"));
         
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("424121"));
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("524120"));
-        secondaryList.getSecondaryNaics().add(JaggaerBuilder.buildSecondaryNaics("524121"));
-        naicsCodes.getPrimaryNaicsOrSecondaryNaicsList().add(secondaryList);
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("424121"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524120"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524121"));
+        naicsCodes.getNaicsCodeListItems().add(secondaryList);
         
         return naicsCodes;
     }
@@ -201,15 +199,15 @@ public class JaggaerExampleTest {
         CurrencyList list = new CurrencyList();
         list.setIsChanged(JaggaerConstants.NO);
         for (String currency : currencies) {
-            list.getIsoCurrencyCode().add(JaggaerBuilder.buildIsoCurrencyCode(currency, JaggaerConstants.NO));
+            list.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode(currency, JaggaerConstants.NO));
         }
         return list;
     }
     
     private AddressList buildAddressList() {
         AddressList list = new AddressList();
-        list.getAddress().add(buildRemitToAddress());
-        list.getAddress().add(buildFulfillmentAddress());
+        list.getAddresses().add(buildRemitToAddress());
+        list.getAddresses().add(buildFulfillmentAddress());
         return list;
     }
     
@@ -240,7 +238,7 @@ public class JaggaerExampleTest {
     private PrefPurchaseOrderDeliveryMethod buildPrefPurchaseOrderDeliveryMethod(String emailAddress) {
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setType("Email");
-        method.getEmailOrFax().add(JaggaerBuilder.buildEmail(emailAddress));
+        method.getDeliveryMethodTypes().add(JaggaerBuilder.buildEmail(emailAddress));
         return method;
     }
     
@@ -265,7 +263,7 @@ public class JaggaerExampleTest {
     private AssignedBusinessUnitsList buildAssignedBusinessUnitsList(String... names) {
         AssignedBusinessUnitsList list = new AssignedBusinessUnitsList();
         for (String name : names) {
-            list.getBusinessUnitInternalName().add(JaggaerBuilder.buildBusinessUnitInternalName(name, null));
+            list.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, null));
         }
         return list;
     }
@@ -296,8 +294,8 @@ public class JaggaerExampleTest {
     
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList primaryAddredssList = new PrimaryAddressList();
-        primaryAddredssList.getAssociatedAddress().add(buildAssociatedAddress("remitto", "ADDR1"));
-        primaryAddredssList.getAssociatedAddress().add(buildAssociatedAddress("fulfillment", "ADDR2"));
+        primaryAddredssList.getAssociatedAddresses().add(buildAssociatedAddress("remitto", "ADDR1"));
+        primaryAddredssList.getAssociatedAddresses().add(buildAssociatedAddress("fulfillment", "ADDR2"));
         return primaryAddredssList;
     }
     
@@ -314,9 +312,9 @@ public class JaggaerExampleTest {
     
     private ContactList buildContactList() {
         ContactList contactList = new ContactList();
-        contactList.getContact().add(buildRemitContact());
-        contactList.getContact().add(buildFulfillmentContact());
-        contactList.getContact().add(buildTechnicalContact());
+        contactList.getContacts().add(buildRemitContact());
+        contactList.getContacts().add(buildFulfillmentContact());
+        contactList.getContacts().add(buildTechnicalContact());
         return contactList;
     }
     
@@ -394,8 +392,8 @@ public class JaggaerExampleTest {
     
     private PrimaryContactList buildPrimaryContactList() {
         PrimaryContactList primaryContactList = new PrimaryContactList();
-        primaryContactList.getAssociatedContact().add(buildAssociatedContact("remitto", "CONTACT1"));
-        primaryContactList.getAssociatedContact().add(buildAssociatedContact("fulfillment", "CONTACT1"));
+        primaryContactList.getAssociatedContacts().add(buildAssociatedContact("remitto", "CONTACT1"));
+        primaryContactList.getAssociatedContacts().add(buildAssociatedContact("fulfillment", "CONTACT1"));
         return primaryContactList;
     }
     
@@ -416,7 +414,7 @@ public class JaggaerExampleTest {
         Classification classification = new Classification();
         classification.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("SupplierClassMinorityDisabled"));
         
-        classificationList.getClassification().add(classification);
+        classificationList.getClassifications().add(classification);
         return classificationList;
     }
     
@@ -430,14 +428,14 @@ public class JaggaerExampleTest {
         
         AdditionalDataList dataList = new AdditionalDataList();
         
-        AdditionalData dataum = new AdditionalData();
-        dataum.setName("ethnicity");
-        dataum.getContent().add("NATAM");
+        AdditionalDataItem datum = new AdditionalDataItem();
+        datum.setName("ethnicity");
+        datum.getContents().add("NATAM");
         
-        dataList.getAdditionalData().add(dataum);
+        dataList.getAdditionalDataItems().add(datum);
         div.setAdditionalDataList(dataList);
         
-        classList.getDiversityClassification().add(div);
+        classList.getDiversityClassifications().add(div);
         return classList;
     }
     
@@ -457,24 +455,24 @@ public class JaggaerExampleTest {
         info.setInsuranceProviderPhone(providerPhone);
         
         InsuranceCertificate certificate = new InsuranceCertificate();
-        certificate.setAttachments(buildAttachments());
-        certificate.getAttachments().getAttachment().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
+        certificate.setAttachmentList(buildAttachmentList());
+        certificate.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
         info.setInsuranceCertificate(certificate);
         
-        infoList.getInsuranceInformation().add(info);
+        infoList.getInsuranceInformationDetails().add(info);
         return infoList;
     }
     
-    private Attachments buildAttachments() {
-        Attachments attachments = new Attachments();
+    private AttachmentList buildAttachmentList() {
+        AttachmentList attachments = new AttachmentList();
         return attachments;
     }
     
     private LocationList buildLocationList() {
         LocationList locationList = new LocationList();
-        locationList.getLocation().add(buildFulfillLocation1());
-        locationList.getLocation().add(buildFulfillLocation2());
-        locationList.getLocation().add(buildLocation2());
+        locationList.getLocations().add(buildFulfillLocation1());
+        locationList.getLocations().add(buildFulfillLocation2());
+        locationList.getLocations().add(buildLocation2());
         return locationList;
     }
     
@@ -602,12 +600,12 @@ public class JaggaerExampleTest {
         
         DistributionMethod faxMethod = buildDistributionMethod("fax", JaggaerConstants.FALSE, null);
         faxMethod.setFax(buildFax("1", "619", "5773360", null));
-        orderList.getDistributionMethod().add(faxMethod);
+        orderList.getDistributionMethods().add(faxMethod);
         
-        orderList.getDistributionMethod().add(buildDistributionMethod("emailplain", JaggaerConstants.FALSE, "support@JAGGAER.com"));
-        orderList.getDistributionMethod().add(buildDistributionMethod("emailbody", JaggaerConstants.FALSE, "support@JAGGAER.com"));
-        orderList.getDistributionMethod().add(buildDistributionMethod("emailattach", JaggaerConstants.FALSE, "support@JAGGAER.com"));
-        orderList.getDistributionMethod().add(buildDistributionMethod("manual", JaggaerConstants.TRUE, null));
+        orderList.getDistributionMethods().add(buildDistributionMethod("emailplain", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethods().add(buildDistributionMethod("emailbody", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethods().add(buildDistributionMethod("emailattach", JaggaerConstants.FALSE, "support@JAGGAER.com"));
+        orderList.getDistributionMethods().add(buildDistributionMethod("manual", JaggaerConstants.TRUE, null));
         
         return orderList;
     }
@@ -628,18 +626,18 @@ public class JaggaerExampleTest {
         AssociatedAddress address = buildAssociatedAddress("fulfillment", "add123");
         address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
         address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        addressList.getAssociatedAddress().add(address);
+        addressList.getAssociatedAddresses().add(address);
         
         return addressList;
     }
     
     private CustomElementList buildLocationCustomElementList(String taxPayerId, String taxTypeCode) {
         CustomElementList elementList = new CustomElementList();
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPID", "TXP Taxpayer ID", taxPayerId));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "TXPTC", "TXP Type Code", taxTypeCode));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "WHT", "Withholding Tax", JaggaerConstants.NO));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "ATD", "Always Take Discount", JaggaerConstants.YES));
-        elementList.getCustomElement().add(buildCustomElement(JaggaerConstants.YES, "HFP", "Hold Future Payments", JaggaerConstants.NO));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "TXPID", "TXP Taxpayer ID", taxPayerId));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "TXPTC", "TXP Type Code", taxTypeCode));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "WHT", "Withholding Tax", JaggaerConstants.NO));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "ATD", "Always Take Discount", JaggaerConstants.YES));
+        elementList.getCustomElements().add(buildCustomElement(JaggaerConstants.YES, "HFP", "Hold Future Payments", JaggaerConstants.NO));
         return elementList;
     }
     
@@ -659,9 +657,9 @@ public class JaggaerExampleTest {
         for (String value : values) {
             CustomElementValue elementValue = new CustomElementValue();
             elementValue.setValue(value);
-            valueList.getCustomElementValue().add(elementValue);
+            valueList.getCustomElementValues().add(elementValue);
         }
-        element.getCustomElementValueListOrAttachments().add(valueList);
+        element.getCustomElementDetails().add(valueList);
         
         return element;
     }
@@ -703,8 +701,8 @@ public class JaggaerExampleTest {
     
     private CustomElementList buildSupplierCustomElementList() {
         CustomElementList elementList = new CustomElementList();
-        elementList.getCustomElement().add(buildCustomElement(null, "CustomElementID1", null, "20"));
-        elementList.getCustomElement().add(buildCustomElement(null, "CustomElementID2", null, "Brake Inspection", "Tire Change", "Oil Change"));
+        elementList.getCustomElements().add(buildCustomElement(null, "CustomElementID1", null, "20"));
+        elementList.getCustomElements().add(buildCustomElement(null, "CustomElementID2", null, "Brake Inspection", "Tire Change", "Oil Change"));
         return elementList;
     }
     
@@ -721,14 +719,14 @@ public class JaggaerExampleTest {
         AssociatedAddress address = buildAssociatedAddress("remitto", "apremit123");
         address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(null));
         address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        ap.getAssociatedAddress().add(address);
+        ap.getAssociatedAddresses().add(address);
         
         ap.setEmail(new Email());
         ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode("USD"));
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
         
-        apList.getAccountsPayable().add(ap);
+        apList.getAccountsPayableDetails().add(ap);
         return apList;
     }
     
@@ -768,12 +766,12 @@ public class JaggaerExampleTest {
         info.setTaxDocumentYear(JaggaerBuilder.buildJaggaerBasicValue("2022"));
         
         TaxDocument doc = new TaxDocument();
-        doc.setAttachments(buildAttachments());
-        doc.getAttachments().getAttachment().add(JaggaerBuilder.buildAttachment("42d", "file", "Tax", "883", null));
+        doc.setAttachmentList(buildAttachmentList());
+        doc.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42d", "file", "Tax", "883", null));
         
         info.setTaxDocument(doc);
         
-        taxList.getTaxInformation().add(info);
+        taxList.getTaxInformationDetails().add(info);
         return taxList;
     }
     

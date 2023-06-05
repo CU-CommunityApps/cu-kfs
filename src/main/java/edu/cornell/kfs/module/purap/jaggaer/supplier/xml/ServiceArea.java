@@ -44,7 +44,7 @@ public class ServiceArea {
         if (stateServiceAreaList == null) {
             stateServiceAreaList = new ArrayList<StateServiceAreaList>();
         }
-        return this.stateServiceAreaList;
+        return stateServiceAreaList;
     }
 
 }

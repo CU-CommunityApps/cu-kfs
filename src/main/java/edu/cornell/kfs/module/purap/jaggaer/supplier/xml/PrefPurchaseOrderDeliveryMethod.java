@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "emailOrFax" })
+@XmlType(name = "", propOrder = { "deliveryMethodTypes" })
 @XmlRootElement(name = "PrefPurchaseOrderDeliveryMethod")
 public class PrefPurchaseOrderDeliveryMethod {
 
@@ -25,7 +25,7 @@ public class PrefPurchaseOrderDeliveryMethod {
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String type;
     @XmlElements({ @XmlElement(name = "Email", type = Email.class), @XmlElement(name = "Fax", type = Fax.class) })
-    private List<Object> emailOrFax;
+    private List<PurchaseOrderDeliveryMethodType> deliveryMethodTypes;
 
     public String getIsChanged() {
         return isChanged;
@@ -43,11 +43,11 @@ public class PrefPurchaseOrderDeliveryMethod {
         this.type = type;
     }
 
-    public List<Object> getEmailOrFax() {
-        if (emailOrFax == null) {
-            emailOrFax = new ArrayList<Object>();
+    public List<PurchaseOrderDeliveryMethodType> getDeliveryMethodTypes() {
+        if (deliveryMethodTypes == null) {
+            deliveryMethodTypes = new ArrayList<PurchaseOrderDeliveryMethodType>();
         }
-        return this.emailOrFax;
+        return deliveryMethodTypes;
     }
 
 }
