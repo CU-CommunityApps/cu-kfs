@@ -857,19 +857,17 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     }
 
     private void addCompleteOptionNote(IWantDocument iwantDoc) {
-        String noteText;
         Person loggedInUser = GlobalVariables.getUserSession().getPerson();
         if (StringUtils.equalsIgnoreCase(iwantDoc.getCompleteOption(), CuFPConstants.YES)) {
-            noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED);
+            String noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_FINALIZED);
+            Note note = getDocumentService().createNoteFromDocument(iwantDoc, noteText);
+            note.setAuthorUniversalIdentifier(loggedInUser.getPrincipalId());
+            Note savedNote = getNoteService().save(note);
+            iwantDoc.addNote(savedNote);
+            LOG.debug("addCompleteOptionNote, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
         } else {
-            noteText = getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_APPROVE_SUBMIT_TO_WORKFLOW);
+            LOG.debug("addCompleteOptionNote. submit for futher workflow was selected, no note need be added");
         }
-        
-        Note note = getDocumentService().createNoteFromDocument(iwantDoc, noteText);
-        note.setAuthorUniversalIdentifier(loggedInUser.getPrincipalId());
-        Note savedNote = getNoteService().save(note);
-        iwantDoc.addNote(savedNote);
-        LOG.debug("addCompleteOptionNote, adding note to I want document {} with a text of {}", iwantDoc.getDocumentNumber(), noteText);
     }
     
     protected FinancialSystemWorkflowHelperService getFinancialSystemWorkflowHelperService() {
