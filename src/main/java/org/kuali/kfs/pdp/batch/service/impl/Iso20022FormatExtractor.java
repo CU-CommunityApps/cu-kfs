@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringJoiner;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -133,7 +132,8 @@ public class Iso20022FormatExtractor {
     private static final int ADDTL_RMT_INF_MAX_LENGTH = 140;
     private static final String CURRENCY_USD = "USD";
     private static final int REF_MAX_LENGTH = 30;
-    private static final int USTRD_MAX_LENGTH = 140;
+    // CU Customization: Removed a constant that is no longer in use because of our code customizations.
+    //private static final int USTRD_MAX_LENGTH = 140;
     private static final int VENDOR_NUM_MAX_LENGTH = 20;
 
     private final AchService achService;
@@ -884,7 +884,9 @@ public class Iso20022FormatExtractor {
             }
             return StringUtils.equals(payeeAchAccount.getStandardEntryClass(), StandardEntryClass.CTX.name());
         } else {
-            throw new IllegalStateException("Extraction was for neither Check nor ACH; this should NEVER happen!");
+            throw new IllegalStateException("Extraction context with Java type "
+                    + extractTypeContext.getClass().getName()
+                    + " was for neither Check nor ACH; this should NEVER happen!");
         }
     }
 
@@ -1107,9 +1109,12 @@ public class Iso20022FormatExtractor {
 
         /*
          * CU Customization: Removed the setup of unstructured remittance information.
+         *
+        final String ustrd = constructUstrd(templatePaymentGroup);
+        remittanceInformation.addUstrd(ustrd);
+         *
+         * End of CU Customization involving code removal.
          */
-        //final String ustrd = constructUstrd(templatePaymentGroup);
-        //remittanceInformation.addUstrd(ustrd);
 
         paymentDetails.forEach(paymentDetail -> {
             final StructuredRemittanceInformation7 structuredRemittanceInformation =
@@ -1121,9 +1126,8 @@ public class Iso20022FormatExtractor {
     }
 
     /*
-     * CU Customization: Marked this method as "unused" since the customized code no longer calls it.
-     */
-    @SuppressWarnings("unused")
+     * CU Customization: Removed methods that are no longer in use because of our code customizations.
+     *
     private static String constructUstrd(
             final PaymentGroup templatePaymentGroup
     ) {
@@ -1147,7 +1151,10 @@ public class Iso20022FormatExtractor {
             joiner.add(checkHeaderNotTextLine);
         }
     }
-
+     *
+     * End of CU Customization involving code removal.
+     */
+    
     private StructuredRemittanceInformation7 constructStructuredRemittanceInformation(
             final PaymentDetail paymentDetail,
             final ExtractTypeContext extractTypeContext
