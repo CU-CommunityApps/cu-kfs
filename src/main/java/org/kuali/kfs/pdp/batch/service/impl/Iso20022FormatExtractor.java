@@ -132,8 +132,11 @@ public class Iso20022FormatExtractor {
     private static final int ADDTL_RMT_INF_MAX_LENGTH = 140;
     private static final String CURRENCY_USD = "USD";
     private static final int REF_MAX_LENGTH = 30;
-    // CU Customization: Removed a constant that is no longer in use because of our code customizations.
-    //private static final int USTRD_MAX_LENGTH = 140;
+
+    /*
+     * CU Customization: Removed the private USTRD_MAX_LENGTH constant because our customized code no longer uses it.
+     */
+
     private static final int VENDOR_NUM_MAX_LENGTH = 20;
 
     private final AchService achService;
@@ -1109,11 +1112,6 @@ public class Iso20022FormatExtractor {
 
         /*
          * CU Customization: Removed the setup of unstructured remittance information.
-         *
-        final String ustrd = constructUstrd(templatePaymentGroup);
-        remittanceInformation.addUstrd(ustrd);
-         *
-         * End of CU Customization involving code removal.
          */
 
         paymentDetails.forEach(paymentDetail -> {
@@ -1126,35 +1124,13 @@ public class Iso20022FormatExtractor {
     }
 
     /*
-     * CU Customization: Removed methods that are no longer in use because of our code customizations.
-     *
-    private static String constructUstrd(
-            final PaymentGroup templatePaymentGroup
-    ) {
-        final StringJoiner joiner = new StringJoiner(System.lineSeparator());
-
-        final CustomerProfile templateCustomerProfile = getCustomerProfile(templatePaymentGroup);
-
-        addToJoinerIfNotBlank(joiner, templateCustomerProfile.getCheckHeaderNoteTextLine1());
-        addToJoinerIfNotBlank(joiner, templateCustomerProfile.getCheckHeaderNoteTextLine2());
-        addToJoinerIfNotBlank(joiner, templateCustomerProfile.getCheckHeaderNoteTextLine3());
-        addToJoinerIfNotBlank(joiner, templateCustomerProfile.getCheckHeaderNoteTextLine4());
-
-        return StringUtils.truncate(joiner.toString(), USTRD_MAX_LENGTH);
-    }
-
-    private static void addToJoinerIfNotBlank(
-            final StringJoiner joiner,
-            final String checkHeaderNotTextLine
-    ) {
-        if (StringUtils.isNotBlank(checkHeaderNotTextLine)) {
-            joiner.add(checkHeaderNotTextLine);
-        }
-    }
-     *
-     * End of CU Customization involving code removal.
+     * CU Customization: Removed the following private methods that are no longer in use,
+     *     as a result of our code customizations:
+     * 
+     * constructUstrd
+     * addToJoinerIfNotBlank
      */
-    
+
     private StructuredRemittanceInformation7 constructStructuredRemittanceInformation(
             final PaymentDetail paymentDetail,
             final ExtractTypeContext extractTypeContext
