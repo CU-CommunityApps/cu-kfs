@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>DV</name>
+            <parent>FP</parent>
+            <label>Disbursement Voucher</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/financialDisbursementVoucher.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fdisbursementvoucher.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fdisbursementvoucher.htm</docSearchHelpURL>
+            <active>true</active>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="Account"/>
+                    <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
+                    <role name="AccountingOrganizationHierarchy" nextNode="RequiresTaxReview"/>
+                    <split name="RequiresTaxReview" nextNode="RequiresAwardReview">
+                        <branch name="True">
+                            <role name="Tax" nextNode="JoinRequiresTaxReview"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpTaxReview" nextNode="JoinRequiresTaxReview"/>
+                        </branch>
+                        <join name="JoinRequiresTaxReview"/>
+                    </split>
+                    <split name="RequiresAwardReview" nextNode="RequiresTravelReview">
+                        <branch name="True">
+                            <role name="Award" nextNode="JoinRequiresAwardReview"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpAwardReview" nextNode="JoinRequiresAwardReview"/>
+                        </branch>
+                        <join name="JoinRequiresAwardReview"/>
+                    </split>
+                    <split name="RequiresTravelReview" nextNode="RequiresCampusReview">
+                        <branch name="True">
+                            <role name="Travel" nextNode="JoinRequiresTravelReview"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpTravelReview" nextNode="JoinRequiresTravelReview"/>
+                        </branch>
+                        <join name="JoinRequiresTravelReview"/>
+                    </split>
+                    <split name="RequiresCampusReview" nextNode="PaymentMethod">
+                        <branch name="True">
+                            <role name="Campus" nextNode="JoinRequiresCampusReview"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpCampusReview" nextNode="JoinRequiresCampusReview"/>
+                        </branch>
+                        <join name="JoinRequiresCampusReview"/>
+                    </split>
+                    <role name="PaymentMethod" nextNode="RequiresSeparationOfDutiesReview"/>
+                    <split name="RequiresSeparationOfDutiesReview">
+                        <branch name="True">
+                            <role name="SeparationOfDuties" nextNode="Join"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOp" nextNode="Join"/>
+                        </branch>
+                        <join name="Join"/>
+                    </split>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="RequiresTaxReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Tax">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresTaxReview"/>
+                <simple name="NoOpTaxReview">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <split name="RequiresAwardReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Award">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresAwardReview"/>
+                <simple name="NoOpAwardReview">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <split name="RequiresTravelReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Travel">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresTravelReview"/>
+                <simple name="NoOpTravelReview">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <split name="RequiresCampusReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Campus">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresCampusReview"/>
+                <simple name="NoOpCampusReview">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <role name="PaymentMethod">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="RequiresSeparationOfDutiesReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="SeparationOfDuties">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                </role>
+                <join name="Join"/>
+                <simple name="NoOp">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
+</data>
