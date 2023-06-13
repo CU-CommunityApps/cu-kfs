@@ -1,218 +1,204 @@
-<?xml version='1.0' encoding='UTF-8'?> 
-<!--
- Copyright 2009 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
+<?xml version="1.0" encoding="UTF-8"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
-  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
-    <documentType>
-      <name>POA</name>
-      <parent>PO</parent>
-      <label>Purchase Order Amendment</label>
-      <docHandler>${kfs.url}/purapPurchaseOrder.do?methodToCall=docHandler</docHandler>
-      <helpDefinitionURL>default.htm?turl=WordDocuments%2Fpurchaseorderamend.htm</helpDefinitionURL>
-      <active>true</active>
-      <policies>
-        <policy>
-          <name>DOCUMENT_STATUS_POLICY</name>
-          <stringValue>APP</stringValue>
-        </policy>
-      </policies>
-      <routingVersion>2</routingVersion>
-      <validApplicationStatuses>
-        <category name="COMPLETE STATUSES">
-          <status>Cancelled</status>
-          <status>Cancelled Change</status>
-          <status>Change in Process</status>
-          <status>Closed</status>
-          <status>Disapproved Budget</status>
-		  <status>Disapproved Fiscal</status>
-          <status>Disapproved C and G</status>
-          <status>Disapproved Change</status>
-		  <status>Disapproved Sub Account</status>
-          <status>Disapproved Commodity Code</status>
-          <status>Disapproved Purchasing</status>
-          <status>Disapproved Tax</status>
-		  <status>Disapproved Base Org Review</status>
-          <status>Open</status>
-          <status>Pending Amendment</status>
-          <status>Pending Close</status>
-          <status>Pending Payment Hold</status>
-          <status>Pending Remove Hold</status>
-          <status>Pending Reopen</status>
-          <status>Pending Retransmit</status>
-          <status>Pending Void</status>
-          <status>Retired Version</status>
-          <status>Void</status>
-        </category>
-        <category name="INCOMPLETE STATUSES">
-          <status>In Process</status>
-          <status>Awaiting Fiscal Officer</status>
-          <status>Awaiting New Unordered Item Review</status>
-          <status>Disapproved New Unordered Item Review</status>
-          <status>Awaiting Purchasing Approval</status>
-          <status>Awaiting Commodity Code Approval</status>
-          <status>Awaiting C and G Approval</status>
-          <status>Awaiting Budget Approval</status>
-          <status>Awaiting Base Org Review</status>
-    	  <status>Awaiting Sub Account</status>
-          <status>Awaiting Tax Approval</status>
-          <status>Awaiting Separation of Duties</status>
-          <status>Error occurred sending cxml</status>
-          <status>Error occurred sending fax</status>
-          <status>Out for Quote</status>
-          <status>Payment Hold</status>
-          <status>Pending Fax</status>
-          <status>Pending Print</status>
-          <status>Pending cxml</status>
-          <status>Waiting for Department</status>
-          <status>Waiting for Vendor</status>
-        </category>
-      </validApplicationStatuses>
-      <routePaths>
-        <routePath>
-          <start name="AdHoc" nextNode="HasNewUnorderedItems" nextAppDocStatus="Awaiting New Unordered Item Review"/>
-          <split name="HasNewUnorderedItems" nextNode="SubAccount" >
-            <branch name="True">
-              <role name="NewUnorderedItems" nextNode="JoinNewUnorderedItems"  nextAppDocStatus="Awaiting Sub Account" />
-            </branch>
-            <branch name="False">
-              <simple name="NoOpNewUnorderedItems" nextNode="JoinNewUnorderedItems"  nextAppDocStatus="Awaiting Sub Account"/>
-            </branch>
-            <join name="JoinNewUnorderedItems" />
-          </split>
-          <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer" />
-          <role name="Account" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval" />
-          <split name="RequiresAwardReview" nextNode="Commodity" >
-            <branch name="True">
-              <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
-            </branch>
-            <branch name="False">
-              <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval" />
-            </branch>
-            <join name="JoinRequiresAwardReview" />
-          </split>
-          <role name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" nextAppDocStatus="Awaiting Separation of Duties" />
-          <split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview"  nextAppDocStatus="Awaiting Purchasing Approval">
-            <branch name="True">
-              <role name="SeparationOfDuties" nextNode="JoinSOD" />
-            </branch>
-            <branch name="False">
-              <simple name="NoOp" nextNode="JoinSOD" />
-            </branch>
-            <join name="JoinSOD" />
-          </split>
-          <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
-            <branch name="True">
-              <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview"  nextAppDocStatus="Awaiting Budget Approval"/>
-            </branch>
-            <branch name="False">
-              <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview"  nextAppDocStatus="Awaiting Budget Approval"/>
-            </branch>
-            <join name="JoinRequiresContractManagementReview" />
-          </split>
-          <split name="RequiresBudgetReview" nextNode="AccountingOrganizationHierarchy">
-            <branch name="True">
-              <role name="Budget" nextNode="JoinRequiresBudgetReview"  nextAppDocStatus="Awaiting Base Org Review"/>
-            </branch>
-            <branch name="False">
-              <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview"  nextAppDocStatus="Awaiting Base Org Review"/>
-            </branch>
-            <join name="JoinRequiresBudgetReview" />
-          </split>
-          <role name="AccountingOrganizationHierarchy" nextNode="NoOpFinal"  nextAppDocStatus="Pending cxml" />
-          <simple name="NoOpFinal" />
-        </routePath>
-      </routePaths>
-      <routeNodes>
-        <start name="AdHoc" />
-        <split name="HasNewUnorderedItems">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="NewUnorderedItems">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinNewUnorderedItems" />
-        <simple name="NoOpNewUnorderedItems">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <role name="SubAccount">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="Account">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <split name="RequiresAwardReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="Award">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinRequiresAwardReview" />
-        <simple name="NoOpRequiresAwardReview">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <role name="Commodity">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <split name="AmountRequiresSeparationOfDutiesReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="SeparationOfDuties">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinSOD" />
-        <simple name="NoOp">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <split name="RequiresContractManagementReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="ContractManagement">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinRequiresContractManagementReview" />
-        <simple name="NoOpRequiresContractManagementReview">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <split name="RequiresBudgetReview">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <role name="Budget">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <join name="JoinRequiresBudgetReview" />
-        <simple name="NoOpBudget">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <role name="AccountingOrganizationHierarchy">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <simple name="NoOpFinal">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-      </routeNodes>
-    </documentType>
-  </documentTypes>
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>POA</name>
+            <parent>PO</parent>
+            <label>Purchase Order Amendment</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/purapPurchaseOrder.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fpurchaseorderamend.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fpurchaseorderamend.htm</docSearchHelpURL>
+            <active>true</active>
+            <validApplicationStatuses>
+                <category name="COMPLETE STATUSES">
+                    <status>Cancelled</status>
+                    <status>Cancelled Change</status>
+                    <status>Change in Process</status>
+                    <status>Closed</status>
+                    <status>Disapproved Budget</status>
+                    <status>Disapproved Fiscal</status>
+                    <status>Disapproved C and G</status>
+                    <status>Disapproved Change</status>
+                    <status>Disapproved Sub Account</status>
+                    <status>Disapproved Commodity Code</status>
+                    <status>Disapproved Purchasing</status>
+                    <status>Disapproved Tax</status>
+                    <status>Disapproved Base Org Review</status>
+                    <status>Open</status>
+                    <status>Pending Amendment</status>
+                    <status>Pending Close</status>
+                    <status>Pending Payment Hold</status>
+                    <status>Pending Remove Hold</status>
+                    <status>Pending Reopen</status>
+                    <status>Pending Retransmit</status>
+                    <status>Pending Void</status>
+                    <status>Retired Version</status>
+                    <status>Void</status>
+                </category>
+                <category name="INCOMPLETE STATUSES">
+                    <status>In Process</status>
+                    <status>Awaiting Fiscal Officer</status>
+                    <status>Awaiting New Unordered Item Review</status>
+                    <status>Disapproved New Unordered Item Review</status>
+                    <status>Awaiting Purchasing Approval</status>
+                    <status>Awaiting Commodity Code Approval</status>
+                    <status>Awaiting C and G Approval</status>
+                    <status>Awaiting Budget Approval</status>
+                    <status>Awaiting Base Org Review</status>
+                    <status>Awaiting Sub Account</status>
+                    <status>Awaiting Tax Approval</status>
+                    <status>Awaiting Separation of Duties</status>
+                    <status>Error occurred sending cxml</status>
+                    <status>Error occurred sending fax</status>
+                    <status>Out for Quote</status>
+                    <status>Payment Hold</status>
+                    <status>Pending Fax</status>
+                    <status>Pending Print</status>
+                    <status>Pending cxml</status>
+                    <status>Waiting for Department</status>
+                    <status>Waiting for Vendor</status>
+                </category>
+            </validApplicationStatuses>
+            <policies>
+                <policy>
+                    <name>DOCUMENT_STATUS_POLICY</name>
+                    <stringValue>APP</stringValue>
+                </policy>
+            </policies>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="HasNewUnorderedItems" nextAppDocStatus="Awaiting New Unordered Item Review"/>
+                    <split name="HasNewUnorderedItems" nextNode="SubAccount">
+                        <branch name="True">
+                            <role name="NewUnorderedItems" nextNode="JoinNewUnorderedItems" nextAppDocStatus="Awaiting Sub Account"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpNewUnorderedItems" nextNode="JoinNewUnorderedItems" nextAppDocStatus="Awaiting Sub Account"/>
+                        </branch>
+                        <join name="JoinNewUnorderedItems"/>
+                    </split>
+                    <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer"/>
+                    <role name="Account" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval"/>
+                    <split name="RequiresAwardReview" nextNode="Commodity">
+                        <branch name="True">
+                            <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
+                        </branch>
+                        <join name="JoinRequiresAwardReview"/>
+                    </split>
+                    <role name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" nextAppDocStatus="Awaiting Separation of Duties"/>
+                    <split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview" nextAppDocStatus="Awaiting Purchasing Approval">
+                        <branch name="True">
+                            <role name="SeparationOfDuties" nextNode="JoinSOD"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOp" nextNode="JoinSOD"/>
+                        </branch>
+                        <join name="JoinSOD"/>
+                    </split>
+                    <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
+                        <branch name="True">
+                            <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Budget Approval"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Budget Approval"/>
+                        </branch>
+                        <join name="JoinRequiresContractManagementReview"/>
+                    </split>
+                    <split name="RequiresBudgetReview" nextNode="AccountingOrganizationHierarchy">
+                        <branch name="True">
+                            <role name="Budget" nextNode="JoinRequiresBudgetReview" nextAppDocStatus="Awaiting Base Org Review"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="NoOpBudget" nextNode="JoinRequiresBudgetReview" nextAppDocStatus="Awaiting Base Org Review"/>
+                        </branch>
+                        <join name="JoinRequiresBudgetReview"/>
+                    </split>
+                    <role name="AccountingOrganizationHierarchy" nextNode="NoOpFinal" nextAppDocStatus="Pending cxml"/>
+                    <simple name="NoOpFinal"/>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <split name="HasNewUnorderedItems">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="NewUnorderedItems">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinNewUnorderedItems"/>
+                <simple name="NoOpNewUnorderedItems">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <role name="SubAccount">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="RequiresAwardReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Award">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresAwardReview"/>
+                <simple name="NoOpRequiresAwardReview">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <role name="Commodity">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="AmountRequiresSeparationOfDutiesReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="SeparationOfDuties">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinSOD"/>
+                <simple name="NoOp">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <split name="RequiresContractManagementReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="ContractManagement">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresContractManagementReview"/>
+                <simple name="NoOpRequiresContractManagementReview">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <split name="RequiresBudgetReview">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Budget">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequiresBudgetReview"/>
+                <simple name="NoOpBudget">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <simple name="NoOpFinal">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
 </data>
-

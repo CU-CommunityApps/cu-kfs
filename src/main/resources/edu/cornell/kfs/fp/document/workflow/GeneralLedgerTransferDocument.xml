@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>GLT</name>
+            <parent>FP</parent>
+            <label>General Ledger Transfer</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <docHandler>${application.url}/financialGeneralLedgerTransfer.do?methodToCall=docHandler</docHandler>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Fgeneralledgertransfer.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Fgeneralledgertransfer.htm</docSearchHelpURL>
+            <active>true</active>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="DoFullRoutingSplit"/>
+                    <split name="DoFullRoutingSplit">
+                        <branch name="True">
+                            <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
+                            <role name="AccountingOrganizationHierarchy" nextNode="SubFund"/>
+                            <role name="SubFund" nextNode="Award"/>
+                            <role name="Award" nextNode="JoinRequireFullRoutingReview"/>
+                        </branch>
+                        <branch name="False">
+                            <role name="Account" nextNode="JoinRequireFullRoutingReview"/>
+                        </branch>
+                        <join name="JoinRequireFullRoutingReview"/>
+                    </split>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <split name="DoFullRoutingSplit">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="SubFund">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="Award">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="JoinRequireFullRoutingReview"/>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
+</data>
