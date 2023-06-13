@@ -34,7 +34,7 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
-import org.kuali.kfs.pdp.batch.service.impl.CuExtractPaymentServiceBase;
+import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
 import org.kuali.kfs.pdp.batch.service.impl.Iso20022FormatExtractor;
 import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
@@ -54,13 +54,14 @@ import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
-public class CuExtractPaymentServiceImpl extends CuExtractPaymentServiceBase {
+public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private static final Logger LOG = LogManager.getLogger();
     public static final String DV_EXTRACT_SUB_UNIT_CODE = "DV";
     public static final String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
     
     protected AchBundlerHelperService achBundlerHelperService;
     protected CuPayeeAddressService cuPayeeAddressService;
+    protected Iso20022FormatExtractor iso20022FormatExtractor;
 
     public CuExtractPaymentServiceImpl() {
     	super(null);
@@ -70,6 +71,7 @@ public class CuExtractPaymentServiceImpl extends CuExtractPaymentServiceBase {
             final Iso20022FormatExtractor iso20022FormatExtractor
     ) {
     	super(iso20022FormatExtractor);
+    	this.iso20022FormatExtractor = iso20022FormatExtractor;
     }
     
     /**
@@ -84,7 +86,7 @@ public class CuExtractPaymentServiceImpl extends CuExtractPaymentServiceBase {
                 PdpConstants.PaymentStatusCodes.EXTRACTED);
 
         if (shouldUseIso20022Format()) {
-            extractAchsInIso20022Format(extractedStatus, directoryName);
+            iso20022FormatExtractor.extractAchs(extractedStatus, directoryName);
             return;
         }
 
