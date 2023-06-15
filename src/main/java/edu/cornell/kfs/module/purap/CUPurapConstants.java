@@ -346,7 +346,7 @@ public class CUPurapConstants {
         }
     }
     
-    public enum JaggaerAddressType {
+    public enum JaggaerAddressTypeForCSV {
         FULFILLMENT("Fulfillment", "PO"),
         REMIT("Remittance", "RM"),
         OTHER(StringUtils.EMPTY, StringUtils.EMPTY);
@@ -354,13 +354,13 @@ public class CUPurapConstants {
         public final String jaggaerAddressType;
         public final String kfsAddressTypeCode;
 
-        private JaggaerAddressType(String jaggaerAddressType, String kfsAddressTypeCode) {
+        private JaggaerAddressTypeForCSV(String jaggaerAddressType, String kfsAddressTypeCode) {
             this.jaggaerAddressType = jaggaerAddressType;
             this.kfsAddressTypeCode = kfsAddressTypeCode;
         }
         
-        public static JaggaerAddressType findJaggaerAddressTypeFromKfsAddressTypeCode(String kfsAddressTypeCode) {
-            for (JaggaerAddressType addressType : JaggaerAddressType.values()) {
+        public static JaggaerAddressTypeForCSV findJaggaerAddressTypeFromKfsAddressTypeCode(String kfsAddressTypeCode) {
+            for (JaggaerAddressTypeForCSV addressType : JaggaerAddressTypeForCSV.values()) {
                 if (StringUtils.equalsIgnoreCase(addressType.kfsAddressTypeCode, kfsAddressTypeCode)) {
                     return addressType;
                 }
@@ -370,9 +370,12 @@ public class CUPurapConstants {
         }
     }
     
+    public static final String JAGGAER_MODE_CODE_PO = "PO";
+    public static final String JAGGAER_MODE_CODE_VENDOR = "V";
+    
     public enum JaggaerContractUploadProcessingMode {
-        PO("PO", "JaggaerUpload_found_by_PO_search"),
-        VENDOR("V", "JaggaerUpload_found_by_Vendor_search");
+        PO(JAGGAER_MODE_CODE_PO, "JaggaerUpload_found_by_PO_search"),
+        VENDOR(JAGGAER_MODE_CODE_VENDOR, "JaggaerUpload_found_by_Vendor_search");
         
         public final String modeCode;
         public final String csvFileName;
@@ -485,8 +488,8 @@ public class CUPurapConstants {
     }
     
     public enum JaggaerUploadSuppliersProcessingMode {
-        PO("PO", "JaggaerUpload_found_by_PO_search"),
-        VENDOR("V", "JaggaerUpload_found_by_Vendor_search");
+        PO(JAGGAER_MODE_CODE_PO, "JaggaerUpload_found_by_PO_search"),
+        VENDOR(JAGGAER_MODE_CODE_VENDOR, "JaggaerUpload_found_by_Vendor_search");
         
         public final String modeCode;
         public final String csvFileName;
@@ -504,5 +507,29 @@ public class CUPurapConstants {
             }
             throw new IllegalArgumentException("Invalid mode code provided: " + modeCode);
         }
+    }
+    
+    public enum JaggaerAddressTypeForXML {
+        FULFILLMENT("fulfillment", "PO"),
+        REMITTO("remitto", "RM"),
+        PHYSICAL("Physical", StringUtils.EMPTY);
+        
+        public final String jaggaerAddressType;
+        public final String kfsAddressType;
+        
+        private JaggaerAddressTypeForXML(String jaggaerAddressType, String kfsAddressType) {
+            this.jaggaerAddressType = jaggaerAddressType;
+            this.kfsAddressType = kfsAddressType;
+        }
+        
+        public static JaggaerAddressTypeForXML findJaggaerAddressTypeForXMLByKfsAddressType(String kfsAddressType) {
+            for (JaggaerAddressTypeForXML type : JaggaerAddressTypeForXML.values()) {
+                if (StringUtils.equalsIgnoreCase(type.kfsAddressType, kfsAddressType)) {
+                    return type;
+                }
+            }
+            return JaggaerAddressTypeForXML.PHYSICAL;
+        }
+        
     }
 }

@@ -316,6 +316,7 @@
 
 	<bean id="jaggaerUploadDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.module.purap.batch.dataaccess.impl.JaggaerUploadDaoJdbc">
 	 <property name="isoFipsConversionService" ref="isoFipsConversionService" />
+	 <property name="cuVendorService" ref="cuVendorService" />
 	</bean>
 	
 	<bean id="jaggaerGenerateContractPartyCsvService" parent="jaggaerGenerateContractPartyCsvService-parentBean" />
@@ -353,7 +354,9 @@
 		p:jaggaerXmlDirectory="${staging.directory}/purap/jaggaer/xml/"
 		p:dateTimeService-ref="dateTimeService"
 		p:cuMarshalService-ref="cuMarshalService"
-		p:fileStorageService-ref="fileStorageService" />
+		p:fileStorageService-ref="fileStorageService"
+		p:isoFipsConversionService-ref="isoFipsConversionService"
+		p:jaggaerUploadDao-ref="jaggaerUploadDao" />
 
 	<bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
 	<bean id="jaggaerUploadFileService-parentBean" abstract="true"
