@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -23,7 +24,9 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForXML;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProcessingMode;
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Address;
@@ -58,6 +61,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected FileStorageService fileStorageService;
     protected JaggaerUploadDao jaggaerUploadDao;
     protected ISOFIPSConversionService isoFipsConversionService;
+    protected ParameterService parameterService;
 
     @Override
     public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
@@ -72,9 +76,13 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         List<Supplier> suppliers = new ArrayList<>();
 
         List<VendorDetail> vendorDetails = jaggaerUploadDao.findVendors(processingMode, processingDate);
-
+        int supplierCount = 0;
         for (VendorDetail detail : vendorDetails) {
             if (detail.isActiveIndicator()) {
+                supplierCount++;
+                if (supplierCount % 100 == 0) {
+                    LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
+                }
                 Supplier supplier = new Supplier();
                 supplier.setErpNumber(JaggaerBuilder.buildERPNumber(detail.getVendorNumber()));
                 supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
@@ -115,10 +123,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String getDefaultActiveValue() {
-        /*
-         * @todo before merging this code, this should pull from a parameter
-         */
-        return "No";
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ACTIVE_VALUE);
     }
 
     private JaggaerBasicValue buildJaggerLegalStructure(VendorDetail detail) {
@@ -154,10 +159,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String getDefaultAddressActiveValue() {
-        /*
-         * @todo before merging this code, this should pull from a parameter
-         */
-        return "Yes";
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_ACTIVE_VALUE);
     }
 
     private IsoCountryCode buildIsoCountry(String fipsCountryCode) {
@@ -179,10 +181,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String findAddressNoteTextStarter() {
-        /*
-         * @todo before merging this code, this should pull from a parameter
-         */
-        return "KFS Vendor Address Type is";
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_NOTE_TEXT);
     }
 
     protected List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers,
@@ -239,6 +238,10 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             }
         }
     }
+    
+    protected String getParameterValueString(String parameterName) {
+        return parameterService.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, parameterName);
+    }
 
     public void setJaggaerXmlDirectory(String jaggaerXmlDirectory) {
         this.jaggaerXmlDirectory = jaggaerXmlDirectory;
@@ -262,6 +265,10 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     public void setIsoFipsConversionService(ISOFIPSConversionService isoFipsConversionService) {
         this.isoFipsConversionService = isoFipsConversionService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }

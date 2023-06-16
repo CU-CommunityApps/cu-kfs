@@ -356,6 +356,7 @@
 		p:cuMarshalService-ref="cuMarshalService"
 		p:fileStorageService-ref="fileStorageService"
 		p:isoFipsConversionService-ref="isoFipsConversionService"
+		p:parameterService-ref="parameterService"
 		p:jaggaerUploadDao-ref="jaggaerUploadDao" />
 
 	<bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
