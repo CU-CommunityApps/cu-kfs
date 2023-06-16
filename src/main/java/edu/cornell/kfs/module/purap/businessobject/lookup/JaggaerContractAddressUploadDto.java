@@ -5,13 +5,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForCSV;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 
 public class JaggaerContractAddressUploadDto extends JaggaerContractUploadBaseDto {
 
     private String addressID;
     private String name;
-    private JaggaerAddressTypeForCSV addressType;
+    private JaggaerAddressType addressType;
     private String primaryType;
     private String country;
     private String streetLine1;
@@ -41,11 +41,11 @@ public class JaggaerContractAddressUploadDto extends JaggaerContractUploadBaseDt
         this.name = name;
     }
 
-    public JaggaerAddressTypeForCSV getAddressType() {
+    public JaggaerAddressType getAddressType() {
         return addressType;
     }
 
-    public void setAddressType(JaggaerAddressTypeForCSV addressType) {
+    public void setAddressType(JaggaerAddressType addressType) {
         this.addressType = addressType;
     }
 

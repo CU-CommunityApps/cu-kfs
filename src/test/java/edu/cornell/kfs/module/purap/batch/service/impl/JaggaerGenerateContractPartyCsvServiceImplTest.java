@@ -27,7 +27,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressHeader;
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForCSV;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerPartyHeader;
@@ -102,7 +102,7 @@ public class JaggaerGenerateContractPartyCsvServiceImplTest {
         JaggaerContractAddressUploadDto dto = new JaggaerContractAddressUploadDto();
         dto.setRowType(JaggaerContractPartyUploadRowType.ADDRESS);
         dto.setAddressID("321");
-        dto.setAddressType(JaggaerAddressTypeForCSV.REMIT);
+        dto.setAddressType(JaggaerAddressType.REMIT);
         return dto;
     }
 

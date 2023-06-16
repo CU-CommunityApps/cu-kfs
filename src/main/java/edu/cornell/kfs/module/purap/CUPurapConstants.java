@@ -346,7 +346,7 @@ public class CUPurapConstants {
         }
     }
     
-    public enum JaggaerAddressTypeForCSV {
+    public enum JaggaerAddressType {
         FULFILLMENT("Fulfillment", "PO"),
         REMIT("Remittance", "RM"),
         OTHER(StringUtils.EMPTY, StringUtils.EMPTY);
@@ -354,13 +354,13 @@ public class CUPurapConstants {
         public final String jaggaerAddressType;
         public final String kfsAddressTypeCode;
 
-        private JaggaerAddressTypeForCSV(String jaggaerAddressType, String kfsAddressTypeCode) {
+        private JaggaerAddressType(String jaggaerAddressType, String kfsAddressTypeCode) {
             this.jaggaerAddressType = jaggaerAddressType;
             this.kfsAddressTypeCode = kfsAddressTypeCode;
         }
         
-        public static JaggaerAddressTypeForCSV findJaggaerAddressTypeFromKfsAddressTypeCode(String kfsAddressTypeCode) {
-            for (JaggaerAddressTypeForCSV addressType : JaggaerAddressTypeForCSV.values()) {
+        public static JaggaerAddressType findJaggaerAddressTypeFromKfsAddressTypeCode(String kfsAddressTypeCode) {
+            for (JaggaerAddressType addressType : JaggaerAddressType.values()) {
                 if (StringUtils.equalsIgnoreCase(addressType.kfsAddressTypeCode, kfsAddressTypeCode)) {
                     return addressType;
                 }

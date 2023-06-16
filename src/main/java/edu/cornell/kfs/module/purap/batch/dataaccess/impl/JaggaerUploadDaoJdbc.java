@@ -15,7 +15,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.jdbc.core.RowMapper;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForCSV;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
@@ -83,7 +83,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 dto.setRowType(JaggaerContractPartyUploadRowType.ADDRESS);
                 dto.setAddressID(resultSet.getString(FIELD_NAMES.VNDR_ADDR_GNRTD_ID));
                 dto.setSciQuestID(StringUtils.EMPTY);
-                dto.setAddressType(JaggaerAddressTypeForCSV.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
+                dto.setAddressType(JaggaerAddressType.findJaggaerAddressTypeFromKfsAddressTypeCode(resultSet.getString(FIELD_NAMES.VNDR_ADDR_TYP_CD)));
                 if (StringUtils.equals(resultSet.getString(FIELD_NAMES.VNDR_DFLT_ADDR_IND), KRADConstants.YES_INDICATOR_VALUE)) {
                     dto.setPrimaryType(dto.getAddressType().jaggaerAddressType);
                 } else {
@@ -162,8 +162,8 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
     }
     
     private CuSqlQuery buildVendorAddressSql(String processingModeCode, Date processingDate) {
-        Collection<String> addressTypes = Arrays.asList(CUPurapConstants.JaggaerAddressTypeForCSV.REMIT.kfsAddressTypeCode, 
-                CUPurapConstants.JaggaerAddressTypeForCSV.FULFILLMENT.kfsAddressTypeCode);
+        Collection<String> addressTypes = Arrays.asList(CUPurapConstants.JaggaerAddressType.REMIT.kfsAddressTypeCode, 
+                CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode);
         
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VA.VNDR_ADDR_GNRTD_ID, VA.VNDR_ADDR_TYP_CD, VA.VNDR_DFLT_ADDR_IND, VA.VNDR_CNTRY_CD, VA.VNDR_LN1_ADDR, ",
                 "VA.VNDR_LN2_ADDR, VA.VNDR_CTY_NM, VA.VNDR_ST_CD, VA.VNDR_ADDR_INTL_PROV_NM, VA.VNDR_ZIP_CD, VA.VNDR_HDR_GNRTD_ID, VA.VNDR_DTL_ASND_ID ",
@@ -194,7 +194,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                     "AND VA.VNDR_DTL_ASND_ID = VD.VNDR_DTL_ASND_ID ");
         }
         chunk.append("AND VH.VNDR_TYP_CD = ", 
-                CuSqlChunk.forParameter(CUPurapConstants.JaggaerAddressTypeForCSV.FULFILLMENT.kfsAddressTypeCode),
+                CuSqlChunk.forParameter(CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode),
                 StringUtils.SPACE);
         return chunk;
     }
