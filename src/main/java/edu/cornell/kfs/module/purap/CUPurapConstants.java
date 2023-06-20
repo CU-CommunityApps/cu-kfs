@@ -488,15 +488,13 @@ public class CUPurapConstants {
     }
     
     public enum JaggaerUploadSuppliersProcessingMode {
-        PO(JAGGAER_MODE_CODE_PO, "JaggaerUpload_found_by_PO_search"),
-        VENDOR(JAGGAER_MODE_CODE_VENDOR, "JaggaerUpload_found_by_Vendor_search");
+        PO(JAGGAER_MODE_CODE_PO),
+        VENDOR(JAGGAER_MODE_CODE_VENDOR);
         
         public final String modeCode;
-        public final String csvFileName;
         
-        private JaggaerUploadSuppliersProcessingMode(String modeCode, String csvFileName) {
+        private JaggaerUploadSuppliersProcessingMode(String modeCode) {
             this.modeCode = modeCode;
-            this.csvFileName = csvFileName;
         }
         
         public static JaggaerUploadSuppliersProcessingMode findJaggaerUploadSuppliersProcessingModeByModeCode(String modeCode) {

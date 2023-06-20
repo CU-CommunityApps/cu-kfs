@@ -87,7 +87,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 supplier.setErpNumber(JaggaerBuilder.buildERPNumber(detail.getVendorNumber()));
                 supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
                 supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
-                supplier.setActive(JaggaerBuilder.buildActive(getDefaultActiveValue()));
+                supplier.setActive(JaggaerBuilder.buildActive(getDefaultSupplierActiveValue()));
                 supplier.setLegalStructure(buildJaggerLegalStructure(detail));
                 supplier.setWebSiteURL(JaggaerBuilder.buildJaggaerBasicValue(detail.getVendorUrlAddress()));
                 supplier.setAddressList(buildAddressList(detail));
@@ -122,7 +122,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return isoCountry;
     }
 
-    private String getDefaultActiveValue() {
+    private String getDefaultSupplierActiveValue() {
         return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ACTIVE_VALUE);
     }
 
@@ -143,7 +143,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                         .buildERPNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
                 jaggaerAddress.setType(JaggaerAddressTypeForXML.findJaggaerAddressTypeForXMLByKfsAddressType(
                         vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
-                jaggaerAddress.setActive(JaggaerBuilder.buildActive(getDefaultAddressActiveValue()));
+                jaggaerAddress.setActive(JaggaerBuilder.buildActive(getDefaultSupplierAddressActiveValue()));
                 jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
                 jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
                 jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));
@@ -158,7 +158,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return addressList;
     }
 
-    private String getDefaultAddressActiveValue() {
+    private String getDefaultSupplierAddressActiveValue() {
         return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_ACTIVE_VALUE);
     }
 
