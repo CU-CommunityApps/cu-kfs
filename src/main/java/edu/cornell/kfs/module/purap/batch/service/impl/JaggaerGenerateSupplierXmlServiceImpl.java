@@ -52,8 +52,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected static final DateTimeFormatter DATE_FORMATTER_FOR_FILE_NAME = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withLocale(Locale.US);
 
-    private static final String JAGGAER_UPLOAD_FILE_NAME = "jaggaerSupplierUploadFile_";
-
     private String jaggaerXmlDirectory;
 
     protected DateTimeService dateTimeService;
@@ -67,7 +65,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
             Date processingDate, int maximumNumberOfSuppliersPerListItem) {
         List<Supplier> suppliers = getAllVendorsToUploadToJaggaer(processingMode, processingDate);
-        LOG.info("getJaggaerContractsDto found {} suppliers.", suppliers.size());
+        LOG.info("getSupplierSyncMessages found {} suppliers.", suppliers.size());
         return buildSupplierSyncMessageList(suppliers, maximumNumberOfSuppliersPerListItem);
     }
 
@@ -225,7 +223,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     @Override
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages) {
         for (SupplierSyncMessage message : messages) {
-            String outputFileName = jaggaerXmlDirectory + JAGGAER_UPLOAD_FILE_NAME
+            String outputFileName = jaggaerXmlDirectory + findOutputFileNameStarter()
                     + DATE_FORMATTER_FOR_FILE_NAME.print(dateTimeService.getCurrentDate().getTime())
                     + CUKFSConstants.XML_FILE_EXTENSION;
             try {
@@ -237,6 +235,10 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 throw new RuntimeException(e);
             }
         }
+    }
+    
+    private String findOutputFileNameStarter() {
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_OUTPUT_FILE_NAME_STARTER);
     }
     
     protected String getParameterValueString(String parameterName) {
