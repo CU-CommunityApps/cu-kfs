@@ -54,7 +54,6 @@ import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.PaymentMethodAdditionalDisbursementVoucherData;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
-import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -234,14 +233,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             final HttpServletResponse response) {
         final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
         final DisbursementVoucherDocument dvDoc = dvForm.getDisbursementVoucherDocument();
-        final PaymentMethod paymentMethod = getBusinessObjectService().findBySinglePrimaryKey(
-                PaymentMethod.class,
-                dvDoc.getDisbVchrPaymentMethodCode());
-        final Bank newBank = paymentMethod.getBank() != null
-                ? paymentMethod.getBank()
-                : getBankService().getDefaultBankByDocType(DisbursementVoucherDocument.class);
-        dvDoc.setDisbVchrBankCode(newBank.getBankCode());
-        dvDoc.setBank(newBank);
+        dvDoc.updateBankBasedOnPaymentMethodCode();
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
