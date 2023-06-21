@@ -622,12 +622,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, FPParameterConstants.DOCUMENTATION_LOCATION));
         }
 
-        // default bank code
-        final Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(this.getClass());
-        if (defaultBank != null) {
-            disbVchrBankCode = defaultBank.getBankCode();
-            bank = defaultBank;
-        }
+        updateBankBasedOnPaymentMethodCode();
     }
 
     @Override
