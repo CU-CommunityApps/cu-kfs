@@ -30,4 +30,17 @@ public class CuXMLUnitTestUtils {
 
         assertEquals(IterableUtils.size(xmlDiff.getDifferences()), 0);
     }
+    
+    public static void compareXMLIncludeComments(File expectedXmlFile, File actualXmlFile) {
+        Diff xmlDiff = DiffBuilder.compare(expectedXmlFile)
+                .withTest(actualXmlFile)
+                .checkForIdentical()
+                .build();
+
+        for (Difference dff : xmlDiff.getDifferences()) {
+            LOG.info("compareXML, difference: " + dff);
+        }
+
+        assertEquals(IterableUtils.size(xmlDiff.getDifferences()), 0);
+    }
 }
