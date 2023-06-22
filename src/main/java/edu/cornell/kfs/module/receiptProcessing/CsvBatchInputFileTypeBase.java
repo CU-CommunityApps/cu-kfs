@@ -137,9 +137,10 @@ public abstract class CsvBatchInputFileTypeBase<CSVEnum extends Enum<CSVEnum>> e
     protected void validateCSVFileInput(final List<String> expectedHeaderList, InputStream fileContents) throws 
             CsvException, IOException {
         //use csv reader to parse the csv content
+        final CSVParser csvParser = new CSVParserBuilder().withSeparator(',').withQuoteChar('"').withEscapeChar('|').build();
         try (
                 final InputStreamReader inputStreamReader = new InputStreamReader(fileContents, StandardCharsets.UTF_8);
-                final CSVReader csvReader = new CSVReader(inputStreamReader);
+                CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(csvParser).build();
         ) {
             List<String> inputHeaderList = Arrays.asList(csvReader.readNext());
 
