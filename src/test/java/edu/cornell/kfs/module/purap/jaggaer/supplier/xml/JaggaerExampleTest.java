@@ -55,7 +55,7 @@ public class JaggaerExampleTest {
 
         logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
-        CuXMLUnitTestUtils.compareXMLIncludeComments(expectedXmlFile, actualXmlFile);
+        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
     }
     
     private Header buildHeader() {
