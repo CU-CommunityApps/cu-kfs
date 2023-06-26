@@ -43,12 +43,13 @@
         </property>
     </bean>
 
-    <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" >
-    		<property name="documentService" ref="documentService"/>
-    		<property name="noteService" ref="noteService"/>
-            <property name="checkReconciliationDao" ref="crCheckReconciliationDao" />
-            <property name="purapAccountRevisionService" ref="purapAccountRevisionService" />
-    </bean>
+    <bean id="pdpGlPendingTransactionService" parent="pdpGlPendingTransactionService-parentBean" 
+          class="edu.cornell.kfs.pdp.service.impl.CuPendingTransactionServiceImpl" 
+          p:documentService-ref="documentService"
+          p:noteService-ref="noteService"
+          p:checkReconciliationDao-ref="crCheckReconciliationDao"
+          p:purapAccountRevisionService-ref="purapAccountRevisionService"
+    />
 
     
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>
@@ -64,16 +65,18 @@
     <bean id="processIndividualPdpCancelPaidService" parent="processIndividualPdpCancelPaidService-parentBean"
             class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessIndividualPdpCancelPaidServiceImpl"/>
     
-    <bean id="pdpFormatService" parent="pdpFormatService-parentBean" class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl">
-        <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
-    </bean>
-
-    <bean id="paymentFileService" parent="paymentFileService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl">
-        <property name="vendorService" ref="vendorService" />
-        <property name="emailService" ref="emailService" />
-        <property name="personService" ref="personService" />
-        <property name="cuPdpEmployeeService" ref="cuPdpEmployeeService" />
-    </bean>
+    <bean id="pdpFormatService" parent="pdpFormatService-parentBean" 
+          class="com.rsmart.kuali.kfs.pdp.service.impl.AchBundlerFormatServiceImpl"
+          p:achBundlerHelperService-ref="pdpAchBundlerHelperService"
+    />
+    
+    <bean id="paymentFileService" parent="paymentFileService-parentBean" 
+          class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileServiceImpl" 
+          p:cuPdpEmployeeService-ref="cuPdpEmployeeService"
+          p:emailService-ref="emailService"
+          p:personService-ref="personService"
+          p:vendorService-ref="vendorService"
+    />
 
     <bean id="paymentFileValidationService" parent="paymentFileValidationService-parentBean" class="edu.cornell.kfs.pdp.service.impl.CuPaymentFileValidationServiceImpl">
         <property name="personService" ref="personService" />

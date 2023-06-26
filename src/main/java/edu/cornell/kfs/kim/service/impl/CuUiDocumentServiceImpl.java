@@ -16,8 +16,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
-    private BusinessObjectService businessObjectService;
-
     /**
      * Overridden to allow for loading unmodified role members even when there are no delegations,
      * and to create a copy of the RoleBo's members list (to prevent potential member auto-deletion).
@@ -49,12 +47,6 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
             identityManagementRoleDocument.setMembers(loadRoleMembers(identityManagementRoleDocument, members));
             loadMemberRoleRspActions(identityManagementRoleDocument);
         }
-    }
-
-    @Override
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        super.setBusinessObjectService(businessObjectService);
-        this.businessObjectService = businessObjectService;
     }
 
 }
