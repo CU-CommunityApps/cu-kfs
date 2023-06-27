@@ -243,6 +243,9 @@ public class CUKFSKeyConstants {
     
     //** CU Generic ISO-FIPS Country modification **
     public static final String ERROR_NO_COUNTRY_FOUND_FOR_CODE = "error.no.country.found.for.code";
+    public static final String ERROR_NO_COUNTRY_FOUND_FOR_NAME = "error.no.country.found.for.name";
+    public static final String ERROR_MANY_COUNTRIES_FOR_NAME = "error.many.countries.for.name";
+    public static final String MESSAGE_ONE_COUNTRY_FOR_NAME = "message.one.country.for.name";
     public static final String MESSAGE_COUNTRY_CODE_INDICATOR = "message.country.code.indicator";
     public static final String ERROR_NO_ISO_TO_FIPS_MAPPINGS = "error.no.iso.to.fips.mappings";
     public static final String ERROR_MANY_ISO_TO_FIPS_MAPPINGS = "error.many.iso.to.fips.mappings";

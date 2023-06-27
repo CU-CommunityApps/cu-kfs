@@ -420,11 +420,13 @@
     <bean id="countryService" class="edu.cornell.kfs.sys.service.impl.CountryServiceImpl">
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="configurationService" ref="configurationService" />
+        <property name="criteriaLookupService" ref="criteriaLookupService" />
     </bean>
  
     <bean id="isoCountryService" class="edu.cornell.kfs.sys.service.impl.ISOCountryServiceImpl">
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="configurationService" ref="configurationService" />
+        <property name="criteriaLookupService" ref="criteriaLookupService" />
     </bean>
     
     <bean id="rice.ksb.scheduledThreadPool"

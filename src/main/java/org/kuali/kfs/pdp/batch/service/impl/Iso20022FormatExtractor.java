@@ -117,6 +117,13 @@ import com.prowidesoftware.swift.model.mx.dic.RemittanceInformation5;
 import com.prowidesoftware.swift.model.mx.dic.ServiceLevel8Choice;
 import com.prowidesoftware.swift.model.mx.dic.StructuredRemittanceInformation7;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.exception.ManyFIPSCountriesForNameException;
+import edu.cornell.kfs.sys.exception.ManyFIPStoISOMappingException;
+import edu.cornell.kfs.sys.exception.NoFIPSCountriesForNameException;
+import edu.cornell.kfs.sys.exception.NoFIPStoISOMappingException;
+import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
+
 /**
  * ====
  * CU Customization: Modified this class extensively to meet Cornell's needs. See the other code comments for details.
@@ -151,6 +158,8 @@ public class Iso20022FormatExtractor {
     private final PdpEmailService pdpEmailService;
     private final ProcessDao processDao;
     private final XmlUtilService xmlUtilService;
+    // CU Customization: Added service for converting country codes/names into ISO country code format.
+    private final ISOFIPSConversionService isoFipsConversionService;
 
     private enum CheckDeliveryPriority {
         // 00000: Mail via Post to creditor's address. (Default if 'prtry' is omitted.)
@@ -173,6 +182,9 @@ public class Iso20022FormatExtractor {
         }
     }
 
+    /*
+     * CU Customization: Added setup for ISO FIPS conversion service.
+     */
     public Iso20022FormatExtractor(
             final AchService achService,
             final AchBankService achBankService,
@@ -185,7 +197,8 @@ public class Iso20022FormatExtractor {
             final PaymentGroupService paymentGroupService,
             final PdpEmailService pdpEmailService,
             final ProcessDao processDao,
-            final XmlUtilService xmlUtilService
+            final XmlUtilService xmlUtilService,
+            final ISOFIPSConversionService isoFipsConversionService
     ) {
         this.achService = achService;
         this.achBankService = achBankService;
@@ -199,6 +212,7 @@ public class Iso20022FormatExtractor {
         this.pdpEmailService = pdpEmailService;
         this.processDao = processDao;
         this.xmlUtilService = xmlUtilService;
+        this.isoFipsConversionService = isoFipsConversionService;
     }
 
     /*
@@ -678,9 +692,14 @@ public class Iso20022FormatExtractor {
         return debtorId;
     }
 
-    private static PostalAddress6 constructPostalAddress(
+    /*
+     * CU Customization: Converted this from a static method to an instance method.
+     * Also added conversion of the country code to ISO.
+     */
+    private PostalAddress6 constructPostalAddress(
             final CustomerProfile templateCustomerProfile
     ) {
+        String isoCountryCode = convertFIPSCountryCodeToISOCountryCode(templateCustomerProfile.getCountryCode());
         return constructPostalAddress(
                 templateCustomerProfile.getAddress1(),
                 templateCustomerProfile.getAddress2(),
@@ -689,7 +708,7 @@ public class Iso20022FormatExtractor {
                 templateCustomerProfile.getCity(),
                 templateCustomerProfile.getStateCode(),
                 templateCustomerProfile.getZipCode(),
-                templateCustomerProfile.getCountryCode()
+                isoCountryCode
         );
     }
 
@@ -708,9 +727,17 @@ public class Iso20022FormatExtractor {
         );
     }
 
-    private static PostalAddress6 constructPostalAddress(
+    /*
+     * CU Customization: Converted this from a static method to an instance method.
+     * Also added conversion of the country code to ISO.
+     */
+    private PostalAddress6 constructPostalAddress(
             final PaymentGroup templatePaymentGroup
     ) {
+        String isoCountryCode = wasPaymentGroupCreatedPriorToISOCountryConversion(templatePaymentGroup)
+                ? convertFIPSCountryValueToISOCountryCode(templatePaymentGroup.getCountry())
+                : convertISOCountryValueToISOCountryCode(templatePaymentGroup.getCountry());
+        
         return constructPostalAddress(
                 templatePaymentGroup.getLine1Address(),
                 templatePaymentGroup.getLine2Address(),
@@ -719,7 +746,7 @@ public class Iso20022FormatExtractor {
                 templatePaymentGroup.getCity(),
                 templatePaymentGroup.getState(),
                 templatePaymentGroup.getZipCd(),
-                templatePaymentGroup.getCountry()
+                isoCountryCode
         );
     }
 
@@ -769,6 +796,93 @@ public class Iso20022FormatExtractor {
 
         return postalAddress;
     }
+
+    /*
+     * ==========
+     * CU Customization: Added several helper methods for converting country names and FIPS country codes
+     * into ISO country codes.
+     * ==========
+     */
+
+    private boolean wasPaymentGroupCreatedPriorToISOCountryConversion(PaymentGroup templatePaymentGroup) {
+        LOG.debug("wasPaymentGroupCreatedPriorToISOCountryConversion, Automatically returning true; "
+                + "we will fully implement this method as part of the global FIPS-to-ISO conversion in KFS.");
+        return true;
+    }
+
+    private String convertISOCountryValueToISOCountryCode(String countryValue) {
+        throw new IllegalStateException("The ISO-value-to-ISO-code conversion should not be reachable at this time; "
+                + "we will fully implement this feature as part of the global FIPS-to-ISO conversion in KFS.");
+    }
+
+    private String convertFIPSCountryValueToISOCountryCode(String countryValue) {
+        String trimmedValue = StringUtils.trim(countryValue);
+        if (StringUtils.equals(trimmedValue, KFSConstants.COUNTRY_CODE_UNITED_STATES)) {
+            LOG.debug("convertFIPSCountryValueToISOCountryCode, Country code is for the United States;"
+                    + " no conversion is necessary because FIPS and ISO share the same code for this country");
+            return trimmedValue;
+        } else if (StringUtils.length(trimmedValue) == 2) {
+            return convertFIPSCountryCodeToISOCountryCode(trimmedValue);
+        } else {
+            return convertFIPSCountryNameToISOCountryCode(trimmedValue);
+        }
+    }
+
+    private String convertFIPSCountryCodeToISOCountryCode(String fipsCountryCode) {
+        String isoCountryCode;
+        
+        try {
+            isoCountryCode = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
+            LOG.debug("convertFIPSCountryCodeToISOCountryCode, Converted FIPS country '{}' to ISO country '{}'",
+                    fipsCountryCode, isoCountryCode);
+        } catch (NoFIPStoISOMappingException | ManyFIPStoISOMappingException e) {
+            LOG.error("convertFIPSCountryCodeToISOCountryCode, Could not map FIPS country '{}' "
+                    + "to a unique active ISO country; will default to ISO country '{}' instead",
+                    fipsCountryCode, CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN, e);
+            isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
+        } catch (RuntimeException e) {
+            LOG.error("convertFIPSCountryCodeToISOCountryCode, An unexpected error occurred while attempting to map "
+                    + "FIPS country '{}' to an ISO country", fipsCountryCode, e);
+            throw e;
+        }
+        
+        return isoCountryCode;
+    }
+
+    private String convertFIPSCountryNameToISOCountryCode(String fipsCountryName) {
+        String isoCountryCode;
+        
+        try {
+            String fipsCountryCode = isoFipsConversionService
+                    .findSingleActiveFIPSCountryCodeByFIPSCountryName(fipsCountryName);
+            isoCountryCode = isoFipsConversionService
+                    .convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
+            LOG.debug("convertFIPSCountryNameToISOCountryCode, Converted FIPS country '{}' to ISO country code '{}'",
+                    fipsCountryName, isoCountryCode);
+        } catch (NoFIPSCountriesForNameException | ManyFIPSCountriesForNameException e) {
+            LOG.error("convertFIPSCountryNameToISOCountryCode, Could not find a unique FIPS country named '{}'; "
+                    + "will default to ISO country '{}' instead",
+                    fipsCountryName, CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN, e);
+            isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
+        } catch (NoFIPStoISOMappingException | ManyFIPStoISOMappingException e) {
+            LOG.error("convertFIPSCountryNameToISOCountryCode, Could not find a unique ISO country that maps to "
+                    + "FIPS country named '{}'; will default to ISO country '{}' instead",
+                    fipsCountryName, CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN, e);
+            isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
+        } catch (RuntimeException e) {
+            LOG.error("convertFIPSCountryNameToISOCountryCode, An unexpected error occurred while attempting to map "
+                    + "FIPS country named '{}' to an ISO country", fipsCountryName, e);
+            throw e;
+        }
+        
+        return isoCountryCode;
+    }
+
+    /*
+     * ==========
+     * End CU Customization Block
+     * ==========
+     */
 
     private static CashAccount16 constructDebtorAccount(
             final PaymentGroup templatePaymentGroup
@@ -1063,7 +1177,10 @@ public class Iso20022FormatExtractor {
         return "A1";
     }
 
-    private static PartyIdentification32 constructCreditor(
+    /*
+     * CU Customization: Converted this from a static method to an instance method.
+     */
+    private PartyIdentification32 constructCreditor(
             final PaymentGroup templatePaymentGroup,
             final ExtractTypeContext extractTypeContext
     ) {

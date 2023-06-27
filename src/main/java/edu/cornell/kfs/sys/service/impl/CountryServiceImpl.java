@@ -2,13 +2,21 @@ package edu.cornell.kfs.sys.service.impl;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
+import org.kuali.kfs.core.api.criteria.GenericQueryResults;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Country;
@@ -23,10 +31,11 @@ import edu.cornell.kfs.sys.service.CountryService;
  */
 public class CountryServiceImpl implements CountryService {
 
-    private static final Logger LOG = LogManager.getLogger(CountryServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
  
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
+    protected CriteriaLookupService criteriaLookupService;
     
     @Override
     public boolean isCountryActive(String countryCode) {
@@ -91,6 +100,21 @@ public class CountryServiceImpl implements CountryService {
     }
     
     @Override
+    public List<String> findCountryCodesByCountryName(String countryName) {
+        if (isBlank(countryName)) {
+            return List.of();
+        }
+        QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
+                PredicateFactory.equalIgnoreCase(CUKFSPropertyConstants.Country.NAME, countryName),
+                PredicateFactory.equal(KRADPropertyConstants.ACTIVE, KRADConstants.YES_INDICATOR_VALUE));
+        GenericQueryResults<Country> results = criteriaLookupService.lookup(Country.class, criteria);
+        List<Country> countries = results.getResults();
+        return countries.stream()
+                .map(Country::getCode)
+                .collect(Collectors.toUnmodifiableList());
+    }
+    
+    @Override
     public boolean countryExists(String countryCode) {
         if (isBlank(countryCode)) {
             return false;
@@ -119,6 +143,10 @@ public class CountryServiceImpl implements CountryService {
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setCriteriaLookupService(CriteriaLookupService criteriaLookupService) {
+        this.criteriaLookupService = criteriaLookupService;
     }
 
 }

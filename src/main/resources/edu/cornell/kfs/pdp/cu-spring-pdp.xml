@@ -2,6 +2,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
@@ -101,6 +102,10 @@
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />
         <property name="cuPayeeAddressService" ref="cuPayeeAddressService" />  
     </bean>
+    
+    <bean id="iso20022FormatExtractor"
+          parent="iso20022FormatExtractor-parentBean"
+          c:isoFipsConversionService-ref="isoFipsConversionService"/>
     
     <bean id="cuPayeeAddressService" parent="cuPayeeAddressService-parentBean" />
 	<bean id="cuPayeeAddressService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuPayeeAddressServiceImpl" abstract="true">
