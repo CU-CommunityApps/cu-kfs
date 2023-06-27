@@ -32,33 +32,25 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     @Override
     public File marshalObjectToXML(Object objectToMarshal, String outputFilePath) throws JAXBException, IOException {
         LOG.debug("marshalObjectToXML, entering, outputFilePath: " + outputFilePath);
-        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
-        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        if (LOG.isDebugEnabled()) {
-            jaxbMarshaller.marshal( objectToMarshal, System.out );
-        }
-
-        File marshalledXml = new File(outputFilePath);
-        FileUtils.touch(marshalledXml);
-        jaxbMarshaller.marshal(objectToMarshal, marshalledXml);
-        LOG.debug("marshalObjectToXML, returning an XML file with the size of " + FileUtils.sizeOf(marshalledXml));
-        return marshalledXml;
+        String xmlString = marshalObjectToXmlString(objectToMarshal);
+        File marshalledXmlFile = new File(outputFilePath);
+        FileUtils.touch(marshalledXmlFile);
+        FileUtils.write(marshalledXmlFile, xmlString);
+        LOG.debug("marshalObjectToXML, returning an XML file with the size of " + FileUtils.sizeOf(marshalledXmlFile));
+        return marshalledXmlFile;
     }
 
     @Override
     public void marshalObjectToXML(Object objectToMarshal, OutputStream outputStream)
             throws JAXBException, IOException {
         LOG.debug("marshalObjectToXML, entering");
-        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
-        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        String xmlString = marshalObjectToXmlString(objectToMarshal);
         try (
             CloseShieldOutputStream wrappedStream = new CloseShieldOutputStream(outputStream);
             OutputStreamWriter streamWriter = new OutputStreamWriter(wrappedStream, StandardCharsets.UTF_8);
             BufferedWriter writer = new BufferedWriter(streamWriter);
         ) {
-            jaxbMarshaller.marshal(objectToMarshal, writer);
+            writer.append(xmlString);
             writer.flush();
         }
     }
