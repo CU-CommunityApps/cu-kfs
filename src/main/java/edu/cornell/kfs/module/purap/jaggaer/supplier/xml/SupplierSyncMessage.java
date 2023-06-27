@@ -2,6 +2,14 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
+import edu.cornell.kfs.sys.businessobject.ManuallXMLPrefix;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -16,13 +24,15 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = { "header",
         "supplierRequestMessageItems" })
 @XmlRootElement(name = "SupplierSyncMessage")
-public class SupplierSyncMessage {
+public class SupplierSyncMessage implements ManuallXMLPrefix {
 
     @XmlAttribute(name = "version", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     private String version;
     @XmlElement(name = "Header", required = true)
     private Header header;
+    
+    private transient ParameterService parameterService;
     
     /*
      * XJC produced this XML annotation.  We only need SupplierRequestMessage for the upload suppliers functionality.
@@ -56,6 +66,33 @@ public class SupplierSyncMessage {
             supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItem>();
         }
         return supplierRequestMessageItems;
+    }
+
+    @Override
+    public String getXMLPrefix() {
+        String headerTag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        return headerTag + KFSConstants.NEWLINE + getDocTypeTag();
+    }
+    
+    private String getDocTypeTag() {
+        return getParameterService().getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, 
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG);
+    }
+    
+    @Override
+    public boolean shouldMarshalAsFragment() {
+        return true;
+    }
+
+    public ParameterService getParameterService() {
+        if (parameterService == null) {
+            parameterService = SpringContext.getBean(ParameterService.class);
+        }
+        return parameterService;
+    }
+
+    public void setParameterService(ParameterService parameterService) {
+        this.parameterService = parameterService;
     }
 
 }

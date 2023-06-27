@@ -5,23 +5,27 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
 public class JaggaerExampleTest {
-    
-    private static final Logger LOG = LogManager.getLogger();
-
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
     private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "jaggaertemp/";
     private static final String BASIC_FILE_EXAMPLE = "JaggaerExample.xml";
@@ -32,6 +36,7 @@ public class JaggaerExampleTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
@@ -48,14 +53,21 @@ public class JaggaerExampleTest {
         File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
 
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
+        supplierSyncMessage.setParameterService(buildMockParameterService());
         supplierSyncMessage.setVersion(JaggaerConstants.SUPPLIER_SYNCH_MESSAGE_XML_VERSION);
         supplierSyncMessage.setHeader(buildHeader());
         supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
 
 
-        logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
         CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+    }
+    
+    private ParameterService buildMockParameterService() {
+        ParameterService service = Mockito.mock(ParameterService.class);
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+        return service;
     }
     
     private Header buildHeader() {
@@ -773,13 +785,6 @@ public class JaggaerExampleTest {
         
         taxList.getTaxInformationDetails().add(info);
         return taxList;
-    }
-    
-    private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
-        if (true) {
-            String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
-            LOG.info("logActualXmlIfNeeded, actualResults: " + actualResults);
-        }
     }
 
 }

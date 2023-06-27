@@ -22,6 +22,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProcessingMode;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
@@ -135,6 +136,8 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
                 CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_ACTIVE_VALUE)).thenReturn("Yes");
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_NOTE_TEXT)).thenReturn("The KFS vendor addres type is");
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
     }
     

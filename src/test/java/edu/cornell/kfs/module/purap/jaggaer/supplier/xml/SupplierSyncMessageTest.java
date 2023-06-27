@@ -4,13 +4,20 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
@@ -23,8 +30,6 @@ public class SupplierSyncMessageTest {
 
     private static final String T_TRUE = "T";
 
-    private static final Logger LOG = LogManager.getLogger();
-
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
     private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "outputtemp/";
     private static final String BASIC_FILE_EXAMPLE = "SupplierSyncMessageBasic.xml";
@@ -35,6 +40,7 @@ public class SupplierSyncMessageTest {
 
     @BeforeEach
     void setUpBeforeClass() throws Exception {
+        Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
@@ -51,6 +57,7 @@ public class SupplierSyncMessageTest {
         File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
 
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
+        supplierSyncMessage.setParameterService(buildMockParameterService());
         supplierSyncMessage.setVersion("1.0");
         supplierSyncMessage.setHeader(buildHeader());
 
@@ -58,9 +65,15 @@ public class SupplierSyncMessageTest {
         srm.getSuppliers().add(buildSupplier());
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
-        logActualXmlIfNeeded(supplierSyncMessage);
         File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+    }
+    
+    private ParameterService buildMockParameterService() {
+        ParameterService service = Mockito.mock(ParameterService.class);
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+        return service;
     }
 
     private Header buildHeader() {
@@ -900,13 +913,6 @@ public class SupplierSyncMessageTest {
         businessList.setIsChanged(T_TRUE);
         businessList.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
         return businessList;
-    }
-
-    private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
-        if (true) {
-            String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
-            LOG.info("logActualXmlIfNeeded, actualResults: " + actualResults);
-        }
     }
 
 }

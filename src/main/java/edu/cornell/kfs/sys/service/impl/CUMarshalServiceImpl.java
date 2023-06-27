@@ -18,7 +18,9 @@ import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.sys.businessobject.ManuallXMLPrefix;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -61,10 +63,24 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        if (objectToMarshal instanceof ManuallXMLPrefix) {
+            ManuallXMLPrefix xmlObjectToMarshal = (ManuallXMLPrefix) objectToMarshal;
+            if (xmlObjectToMarshal.shouldMarshalAsFragment()) {
+                jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            }
+        }
         StringWriter stringWriter = new StringWriter();
         jaxbMarshaller.marshal(objectToMarshal, stringWriter);
         String marshalledXml = stringWriter.toString();
-        return marshalledXml;
+        
+        String returnXMLString = marshalledXml;
+        if (objectToMarshal instanceof ManuallXMLPrefix) {
+            ManuallXMLPrefix xmlObjectToMarshal = (ManuallXMLPrefix) objectToMarshal;
+            returnXMLString = xmlObjectToMarshal.getXMLPrefix() + KFSConstants.NEWLINE + marshalledXml; 
+        }
+        
+        LOG.debug("marshalObjectToXmlString, the XML with manual prefix output is {}", returnXMLString);
+        return returnXMLString;
     }
     
     @Override
