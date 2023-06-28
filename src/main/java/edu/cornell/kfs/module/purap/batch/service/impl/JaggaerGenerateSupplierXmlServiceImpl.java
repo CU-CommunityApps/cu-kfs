@@ -43,6 +43,7 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import jakarta.xml.bind.JAXBException;
 
 public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSupplierXmlService {
@@ -60,6 +61,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected JaggaerUploadDao jaggaerUploadDao;
     protected ISOFIPSConversionService isoFipsConversionService;
     protected ParameterService parameterService;
+    protected WebServiceCredentialService webServiceCredentialService;
 
     @Override
     public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
@@ -209,15 +211,15 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return header;
     }
 
-    /*
-     * @todo implement this with real values after we get credential details from
-     * Jaggaer on KFSPTS-28268 if not sooner in the project
-     */
     private Authentication buildAuthentication() {
         Authentication auth = new Authentication();
-        auth.setIdentity("CU - Identity");
-        auth.setSharedSecret("CU - Share Secret");
+        auth.setIdentity(getWebserviceCredentialValue(CUPurapParameterConstants.JAGGAER_WEBSERVICE_UPLOAD_SUPPLIER_NAME));
+        auth.setSharedSecret(getWebserviceCredentialValue(CUPurapParameterConstants.JAGGAER_WEBSERVICE_UPLOAD_SUPPLIER_PASSWORD));
         return auth;
+    }
+    
+    private String getWebserviceCredentialValue(String key) {
+        return webServiceCredentialService.getWebServiceCredentialValue(CUPurapParameterConstants.JAGGAER_WEBSERVICE_GROUP_CODE, key);
     }
 
     @Override
@@ -271,6 +273,10 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     public void setParameterService(ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
+        this.webServiceCredentialService = webServiceCredentialService;
     }
 
 }

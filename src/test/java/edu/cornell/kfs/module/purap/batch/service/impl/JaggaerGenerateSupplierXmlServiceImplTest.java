@@ -35,6 +35,7 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 public class JaggaerGenerateSupplierXmlServiceImplTest {
@@ -49,11 +50,21 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     @BeforeEach
     void setUp() throws Exception {
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
+        jaggaerGenerateSupplierXmlServiceImpl.setWebServiceCredentialService(buildMockWebServiceCredentialService());
         dateTimeService = new TestDateTimeServiceImpl();
         jaggaerGenerateSupplierXmlServiceImpl.setDateTimeService(dateTimeService);
         dateTimeService.afterPropertiesSet();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
+    }
+    
+    private WebServiceCredentialService buildMockWebServiceCredentialService() {
+        WebServiceCredentialService service = Mockito.mock(WebServiceCredentialService.class);
+        Mockito.when(service.getWebServiceCredentialValue(CUPurapParameterConstants.JAGGAER_WEBSERVICE_GROUP_CODE,
+                CUPurapParameterConstants.JAGGAER_WEBSERVICE_UPLOAD_SUPPLIER_NAME)).thenReturn("Cornell");
+        Mockito.when(service.getWebServiceCredentialValue(CUPurapParameterConstants.JAGGAER_WEBSERVICE_GROUP_CODE,
+                CUPurapParameterConstants.JAGGAER_WEBSERVICE_UPLOAD_SUPPLIER_PASSWORD)).thenReturn("test password");
+        return service;
     }
 
     @AfterEach
