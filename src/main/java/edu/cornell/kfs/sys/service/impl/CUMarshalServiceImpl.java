@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,12 +54,14 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     public File marshalObjectToXMLFragment(XMLFragmentable objectToMarshal, String outputFilePath) throws JAXBException, IOException {
         LOG.debug("marshalObjectToXMLFragment, entering, outputFilePath: " + outputFilePath);
         String xmlData = marshalObjectToXmlFragmentString(objectToMarshal);
-        File marshalledXml = new File(outputFilePath);
-        try (PrintWriter out = new PrintWriter(marshalledXml)) {
-            out.write(xmlData);
-            out.flush();
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath);
+                OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            ) {
+            bufferedWriter.write(xmlData);
         }
-        return marshalledXml;
+        return new File(outputFilePath);
     }
 
     @Override
