@@ -699,7 +699,16 @@ public class Iso20022FormatExtractor {
     private PostalAddress6 constructPostalAddress(
             final CustomerProfile templateCustomerProfile
     ) {
-        String isoCountryCode = convertFIPSCountryCodeToISOCountryCode(templateCustomerProfile.getCountryCode());
+        String countryCode = templateCustomerProfile.getCountryCode();
+        String isoCountryCode;
+        if (StringUtils.isNotBlank(countryCode)) {
+            isoCountryCode = convertFIPSCountryCodeToISOCountryCode(countryCode);
+        } else {
+            LOG.warn("constructPostalAddress, Customer Profile {} has a blank country code; defaulting to '{}'",
+                    templateCustomerProfile.getId(), CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
+            isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
+        }
+        
         return constructPostalAddress(
                 templateCustomerProfile.getAddress1(),
                 templateCustomerProfile.getAddress2(),
@@ -734,9 +743,17 @@ public class Iso20022FormatExtractor {
     private PostalAddress6 constructPostalAddress(
             final PaymentGroup templatePaymentGroup
     ) {
-        String isoCountryCode = wasPaymentGroupCreatedPriorToISOCountryConversion(templatePaymentGroup)
-                ? convertFIPSCountryValueToISOCountryCode(templatePaymentGroup.getCountry())
-                : convertISOCountryValueToISOCountryCode(templatePaymentGroup.getCountry());
+        String countryValue = templatePaymentGroup.getCountry();
+        String isoCountryCode;
+        if (StringUtils.isNotBlank(countryValue)) {
+            isoCountryCode = wasPaymentGroupCreatedPriorToISOCountryConversion(templatePaymentGroup)
+                    ? convertFIPSCountryValueToISOCountryCode(countryValue)
+                    : convertISOCountryValueToISOCountryCode(countryValue);
+        } else {
+            LOG.warn("constructPostalAddress, Payment Group {} has a blank country value; defaulting to '{}'",
+                    templatePaymentGroup.getId(), CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
+            isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
+        }
         
         return constructPostalAddress(
                 templatePaymentGroup.getLine1Address(),
