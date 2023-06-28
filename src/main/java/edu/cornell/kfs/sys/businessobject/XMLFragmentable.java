@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.businessobject;
 
-public interface ManuallXMLPrefix {
+public interface XMLFragmentable {
     
     public String getXMLPrefix();
     

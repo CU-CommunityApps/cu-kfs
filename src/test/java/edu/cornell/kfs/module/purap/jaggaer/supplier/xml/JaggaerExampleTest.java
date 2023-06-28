@@ -59,7 +59,7 @@ public class JaggaerExampleTest {
         supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
 
 
-        File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
         CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
     }
     

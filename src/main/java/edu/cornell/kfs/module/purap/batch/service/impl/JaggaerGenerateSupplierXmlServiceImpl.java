@@ -230,7 +230,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                     + CUKFSConstants.XML_FILE_EXTENSION;
             try {
                 LOG.info("generateXMLForSyncMessages, created XML file {}", outputFileName);
-                cuMarshalService.marshalObjectToXML(message, outputFileName);
+                cuMarshalService.marshalObjectToXMLFragment(message, outputFileName);
                 fileStorageService.createDoneFile(outputFileName);
             } catch (JAXBException | IOException e) {
                 LOG.error("generateXMLForSyncMessages, unable to create {} output file", outputFileName, e);

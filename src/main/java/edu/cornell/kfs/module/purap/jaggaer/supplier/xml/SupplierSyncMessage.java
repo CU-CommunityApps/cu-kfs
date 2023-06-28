@@ -9,7 +9,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
-import edu.cornell.kfs.sys.businessobject.ManuallXMLPrefix;
+import edu.cornell.kfs.sys.businessobject.XMLFragmentable;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = { "header",
         "supplierRequestMessageItems" })
 @XmlRootElement(name = "SupplierSyncMessage")
-public class SupplierSyncMessage implements ManuallXMLPrefix {
+public class SupplierSyncMessage implements XMLFragmentable {
 
     @XmlAttribute(name = "version", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)

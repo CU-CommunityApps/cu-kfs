@@ -65,7 +65,7 @@ public class SupplierSyncMessageTest {
         srm.getSuppliers().add(buildSupplier());
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
-        File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
     }
     

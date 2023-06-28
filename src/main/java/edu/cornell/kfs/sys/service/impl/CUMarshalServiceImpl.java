@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.sys.businessobject.ManuallXMLPrefix;
+import edu.cornell.kfs.sys.businessobject.XMLFragmentable;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -34,25 +35,45 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     @Override
     public File marshalObjectToXML(Object objectToMarshal, String outputFilePath) throws JAXBException, IOException {
         LOG.debug("marshalObjectToXML, entering, outputFilePath: " + outputFilePath);
-        String xmlString = marshalObjectToXmlString(objectToMarshal);
-        File marshalledXmlFile = new File(outputFilePath);
-        FileUtils.touch(marshalledXmlFile);
-        FileUtils.write(marshalledXmlFile, xmlString);
-        LOG.debug("marshalObjectToXML, returning an XML file with the size of " + FileUtils.sizeOf(marshalledXmlFile));
-        return marshalledXmlFile;
+        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        if (LOG.isDebugEnabled()) {
+            jaxbMarshaller.marshal( objectToMarshal, System.out );
+        }
+
+        File marshalledXml = new File(outputFilePath);
+        FileUtils.touch(marshalledXml);
+        jaxbMarshaller.marshal(objectToMarshal, marshalledXml);
+        LOG.debug("marshalObjectToXML, returning an XML file with the size of " + FileUtils.sizeOf(marshalledXml));
+        return marshalledXml;
+    }
+    
+    @Override
+    public File marshalObjectToXMLFragment(XMLFragmentable objectToMarshal, String outputFilePath) throws JAXBException, IOException {
+        LOG.debug("marshalObjectToXMLFragment, entering, outputFilePath: " + outputFilePath);
+        String xmlData = marshalObjectToXmlFragmentString(objectToMarshal);
+        File marshalledXml = new File(outputFilePath);
+        try (PrintWriter out = new PrintWriter(marshalledXml)) {
+            out.write(xmlData);
+            out.flush();
+        }
+        return marshalledXml;
     }
 
     @Override
     public void marshalObjectToXML(Object objectToMarshal, OutputStream outputStream)
             throws JAXBException, IOException {
         LOG.debug("marshalObjectToXML, entering");
-        String xmlString = marshalObjectToXmlString(objectToMarshal);
+        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         try (
             CloseShieldOutputStream wrappedStream = new CloseShieldOutputStream(outputStream);
             OutputStreamWriter streamWriter = new OutputStreamWriter(wrappedStream, StandardCharsets.UTF_8);
             BufferedWriter writer = new BufferedWriter(streamWriter);
         ) {
-            writer.append(xmlString);
+            jaxbMarshaller.marshal(objectToMarshal, writer);
             writer.flush();
         }
     }
@@ -63,22 +84,25 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        if (objectToMarshal instanceof ManuallXMLPrefix) {
-            ManuallXMLPrefix xmlObjectToMarshal = (ManuallXMLPrefix) objectToMarshal;
-            if (xmlObjectToMarshal.shouldMarshalAsFragment()) {
-                jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-            }
+        StringWriter stringWriter = new StringWriter();
+        jaxbMarshaller.marshal(objectToMarshal, stringWriter);
+        String marshalledXml = stringWriter.toString();
+        return marshalledXml;
+    }
+    
+    @Override
+    public String marshalObjectToXmlFragmentString(XMLFragmentable objectToMarshal) throws JAXBException, IOException {
+        LOG.debug("marshalObjectToXmlFragmentString, entering");
+        JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        if (objectToMarshal.shouldMarshalAsFragment()) {
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         }
         StringWriter stringWriter = new StringWriter();
         jaxbMarshaller.marshal(objectToMarshal, stringWriter);
         String marshalledXml = stringWriter.toString();
-        
-        String returnXMLString = marshalledXml;
-        if (objectToMarshal instanceof ManuallXMLPrefix) {
-            ManuallXMLPrefix xmlObjectToMarshal = (ManuallXMLPrefix) objectToMarshal;
-            returnXMLString = xmlObjectToMarshal.getXMLPrefix() + KFSConstants.NEWLINE + marshalledXml; 
-        }
-        
+        String returnXMLString = objectToMarshal.getXMLPrefix() + KFSConstants.NEWLINE + marshalledXml;
         LOG.debug("marshalObjectToXmlString, the XML with manual prefix output is {}", returnXMLString);
         return returnXMLString;
     }

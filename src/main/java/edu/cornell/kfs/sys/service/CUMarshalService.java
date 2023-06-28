@@ -5,15 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import edu.cornell.kfs.sys.businessobject.XMLFragmentable;
 import jakarta.xml.bind.JAXBException;
 
 public interface CUMarshalService {
     
     File marshalObjectToXML(Object objectToMarshal, String outputFilePath) throws JAXBException, IOException;
+    
+    File marshalObjectToXMLFragment(XMLFragmentable objectToMarshal, String outputFilePath) throws JAXBException, IOException;
 
     void marshalObjectToXML(Object objectToMarshal, OutputStream outputStream) throws JAXBException, IOException;
 
     String marshalObjectToXmlString(Object objectToMarshal) throws JAXBException, IOException;
+    
+    String marshalObjectToXmlFragmentString(XMLFragmentable objectToMarshal) throws JAXBException, IOException;
     
     <T> T unmarshalFile(File xmlFile, Class<T> clazz) throws JAXBException;
     
