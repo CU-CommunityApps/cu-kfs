@@ -47,7 +47,7 @@
 		</property>
 	</bean>
 	
-	<bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" 
+    <bean id="b2bPurchaseOrderService" parent="b2bPurchaseOrderService-parentBean" 
           class="edu.cornell.kfs.module.purap.document.service.impl.CuB2BPurchaseOrderSciquestServiceImpl" 
           p:attachmentService-ref="attachmentService"
           p:businessObjectService-ref="businessObjectService"
@@ -228,7 +228,7 @@
 
 	<bean id="autoClosePurchaseOrderService" parent="autoClosePurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.batch.service.impl.CuAutoClosePurchaseOrderServiceImpl" />
 	<bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
- 	<bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" 
+    <bean id="purchaseOrderService" parent="purchaseOrderService-parentBean" 
           class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchaseOrderServiceImpl"
           p:attachmentService-ref="attachmentService"
     />

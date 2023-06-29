@@ -269,7 +269,7 @@
 		</property>
 	</bean> 
 
-	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" 
+    <bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" 
         class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl" 
         p:vendorService-ref="vendorService"
         p:parameterEvaluatorService-ref="parameterEvaluatorService"
@@ -332,7 +332,7 @@
     </bean>
 
     <!-- KFSUPGRADE-973 -->
-	<bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" 
+    <bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" 
         class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl"
         p:paymentMethodGeneralLedgerPendingEntryService-ref="cUPaymentMethodGeneralLedgerPendingEntryService"
     />
