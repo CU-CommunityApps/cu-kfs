@@ -82,9 +82,8 @@
    
    <bean id="laborBenefitsCalculationService" parent="laborBenefitsCalculationService-parentBean" class="edu.cornell.kfs.module.ld.service.impl.CuLaborBenefitsCalculationServiceImpl" />
 
-   <bean id="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService" parent="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService-parentBean" />
-   <bean id="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService-parentBean" abstract="true"
-           class="edu.cornell.kfs.module.ld.identity.CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl" />
+   <bean id="cuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeService" parent="contractsAndGrantsResponsibilityRoleTypeService-parentBean" 
+           class="edu.cornell.kfs.module.ld.identity.CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl"/>
 
    <bean id="laborScrubberValidator" parent="laborScrubberValidator-parentBean"
            class="edu.cornell.kfs.module.ld.batch.service.impl.CuScrubberValidatorImpl"/>
