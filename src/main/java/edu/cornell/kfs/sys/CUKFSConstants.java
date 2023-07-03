@@ -223,6 +223,7 @@ public class CUKFSConstants {
     public static final String ISO = "ISO";
     public static final String FIPS = "FIPS";
 
+    public static final String COUNTRY_NAME_UNITED_STATES = "United States";
     public static final String ISO_COUNTRY_CODE_UNKNOWN = "ZZ";
     
     public static final class CuPaymentSourceConstants {

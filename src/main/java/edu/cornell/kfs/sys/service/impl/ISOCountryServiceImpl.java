@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     
     @Override
     public boolean isISOCountryActive(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return false;
         }
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
@@ -55,7 +56,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public boolean isISOCountryInactive(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return false;
         }
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
@@ -69,27 +70,34 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         }
     }
     
-    private boolean isBlank(String isoCountryCode) {
-        if (StringUtils.isBlank(isoCountryCode)) {
-            LOG.debug("isBlank: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), "isoCountryCode"));
+    private boolean isBlankCountryCode(String isoCountryCode) {
+        return isBlank(isoCountryCode, "isoCountryCode");
+    }
+    
+    private boolean isBlank(String isoCountryValue, String propertyName) {
+        if (StringUtils.isBlank(isoCountryValue)) {
+            LOG.debug("isBlank: {}",
+                    () -> MessageFormat.format(getConfigurationService().getPropertyValueAsString(
+                            CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), propertyName));
             return true;
         }
         return false;
     }
     
     protected ISOCountry getByPrimaryId(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return null;
         }
-        return getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode));
+        String uppercasedCode = isoCountryCode.toUpperCase(Locale.US);
+        return getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(uppercasedCode));
     }
     
     @Override
     public String findISOCountryNameByCountryCode(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return KFSConstants.EMPTY_STRING;
         }
-        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
         if (ObjectUtils.isNotNull(isoCountryFound)) {
             return isoCountryFound.getName();
         } else {
@@ -99,11 +107,12 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public List<String> findISOCountryCodesByCountryName(String isoCountryName) {
-        if (isBlank(isoCountryName)) {
+        if (isBlank(isoCountryName, "isoCountryName")) {
             return List.of();
         }
+        String trimmedName = StringUtils.trim(isoCountryName);
         QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.equalIgnoreCase(CUKFSPropertyConstants.Country.NAME, isoCountryName),
+                PredicateFactory.equalIgnoreCase(CUKFSPropertyConstants.ISOCountry.NAME, trimmedName),
                 PredicateFactory.equal(KRADPropertyConstants.ACTIVE, KRADConstants.YES_INDICATOR_VALUE));
         GenericQueryResults<ISOCountry> results = criteriaLookupService.lookup(ISOCountry.class, criteria);
         List<ISOCountry> countries = results.getResults();
@@ -114,10 +123,10 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public boolean isoCountryExists(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return false;
         }
-        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
         return ObjectUtils.isNotNull(isoCountryFound);
     }
     

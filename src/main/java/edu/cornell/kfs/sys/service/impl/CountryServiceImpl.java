@@ -3,6 +3,7 @@ package edu.cornell.kfs.sys.service.impl;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean isCountryActive(String countryCode) {
-        if (isBlank(countryCode)) {
+        if (isBlankCountryCode(countryCode)) {
             return false;
         }
         Country countryFound = getByPrimaryId(countryCode);
@@ -56,7 +57,7 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean isCountryInactive(String countryCode) {
-        if (isBlank(countryCode)) {
+        if (isBlankCountryCode(countryCode)) {
             return false;
         }
         Country countryFound = getByPrimaryId(countryCode);
@@ -71,27 +72,34 @@ public class CountryServiceImpl implements CountryService {
         }
     }
     
-    private boolean isBlank(String countryCode) {
-        if (StringUtils.isBlank(countryCode)) {
-            LOG.debug("isBlank: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), "countryCode"));
+    private boolean isBlankCountryCode(String countryCode) {
+        return isBlank(countryCode, "countryCode");
+    }
+    
+    private boolean isBlank(String countryValue, String propertyName) {
+        if (StringUtils.isBlank(countryValue)) {
+            LOG.debug("isBlank: {}",
+                    () -> MessageFormat.format(getConfigurationService().getPropertyValueAsString(
+                            CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), propertyName));
             return true;
         }
         return false;
     }
     
     protected Country getByPrimaryId(String countryCode) {
-        if (isBlank(countryCode)) {
+        if (isBlankCountryCode(countryCode)) {
             return null;
         }
-        return getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode));
+        String uppercasedCode = countryCode.toUpperCase(Locale.US);
+        return getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(uppercasedCode));
     }
     
     @Override
     public String findCountryNameByCountryCode(String countryCode) {
-        if (isBlank(countryCode)) {
+        if (isBlankCountryCode(countryCode)) {
             return KFSConstants.EMPTY_STRING;
         }
-        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        Country countryFound = getByPrimaryId(countryCode);
         if (ObjectUtils.isNotNull(countryFound)) {
             return countryFound.getName();
         } else {
@@ -101,11 +109,12 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public List<String> findCountryCodesByCountryName(String countryName) {
-        if (isBlank(countryName)) {
+        if (isBlank(countryName, "countryName")) {
             return List.of();
         }
+        String trimmedName = StringUtils.trim(countryName);
         QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.equalIgnoreCase(CUKFSPropertyConstants.Country.NAME, countryName),
+                PredicateFactory.equalIgnoreCase(CUKFSPropertyConstants.Country.NAME, trimmedName),
                 PredicateFactory.equal(KRADPropertyConstants.ACTIVE, KRADConstants.YES_INDICATOR_VALUE));
         GenericQueryResults<Country> results = criteriaLookupService.lookup(Country.class, criteria);
         List<Country> countries = results.getResults();
@@ -116,10 +125,10 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public boolean countryExists(String countryCode) {
-        if (isBlank(countryCode)) {
+        if (isBlankCountryCode(countryCode)) {
             return false;
         }
-        Country countryFound = getBusinessObjectService().findByPrimaryKey(Country.class, mapPrimaryKeys(countryCode.toUpperCase()));
+        Country countryFound = getByPrimaryId(countryCode);
         return ObjectUtils.isNotNull(countryFound);
     }
     

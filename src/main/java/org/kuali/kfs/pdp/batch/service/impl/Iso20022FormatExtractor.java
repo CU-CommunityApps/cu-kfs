@@ -834,10 +834,12 @@ public class Iso20022FormatExtractor {
 
     private String convertFIPSCountryValueToISOCountryCode(String countryValue) {
         String trimmedValue = StringUtils.trim(countryValue);
-        if (StringUtils.equals(trimmedValue, KFSConstants.COUNTRY_CODE_UNITED_STATES)) {
-            LOG.debug("convertFIPSCountryValueToISOCountryCode, Country code is for the United States;"
-                    + " no conversion is necessary because FIPS and ISO share the same code for this country");
-            return trimmedValue;
+        if (StringUtils.equalsAnyIgnoreCase(trimmedValue,
+                KFSConstants.COUNTRY_CODE_UNITED_STATES, CUKFSConstants.COUNTRY_NAME_UNITED_STATES)) {
+            LOG.debug("convertFIPSCountryValueToISOCountryCode, Country code/name is for the United States;"
+                    + " automatically returning '{}' because FIPS and ISO share the same code for this country",
+                    KFSConstants.COUNTRY_CODE_UNITED_STATES);
+            return KFSConstants.COUNTRY_CODE_UNITED_STATES;
         } else if (StringUtils.length(trimmedValue) == 2) {
             return convertFIPSCountryCodeToISOCountryCode(trimmedValue);
         } else {

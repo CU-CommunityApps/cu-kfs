@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,14 +35,16 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
         if (isBlank(isoCountryCode, "isoCountryCode")) {
             return new ArrayList<ISOFIPSCountryMap>(); 
         }
-        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, isoCountryCode);
+        String uppercaseCode = isoCountryCode.toUpperCase(Locale.US);
+        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, uppercaseCode);
     }
     
     public List<ISOFIPSCountryMap> findActiveMapsByFIPSCountryId(String fipsCountryCode) {
         if (isBlank(fipsCountryCode, "fipsCountryCode")) {
             return new ArrayList<ISOFIPSCountryMap>(); 
-        } 
-        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, fipsCountryCode);
+        }
+        String uppercaseCode = fipsCountryCode.toUpperCase(Locale.US);
+        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, uppercaseCode);
     }
 
     private List<ISOFIPSCountryMap> performMappingConversion(String key, String value) {
