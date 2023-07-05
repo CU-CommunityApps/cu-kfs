@@ -71,7 +71,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     }
     
     private boolean isBlankCountryCode(String isoCountryCode) {
-        return isBlank(isoCountryCode, "isoCountryCode");
+        return isBlank(isoCountryCode, CUKFSPropertyConstants.Location.ISO_COUNTRY_CODE);
     }
     
     private boolean isBlank(String isoCountryValue, String propertyName) {
@@ -107,7 +107,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public List<String> findISOCountryCodesByCountryName(String isoCountryName) {
-        if (isBlank(isoCountryName, "isoCountryName")) {
+        if (isBlank(isoCountryName, CUKFSPropertyConstants.Location.ISO_COUNTRY_NAME)) {
             return List.of();
         }
         String trimmedName = StringUtils.trim(isoCountryName);

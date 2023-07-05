@@ -32,7 +32,7 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
     protected ConfigurationService configurationService;
            
     public List<ISOFIPSCountryMap> findActiveMapsByISOCountryId(String isoCountryCode) {
-        if (isBlank(isoCountryCode, "isoCountryCode")) {
+        if (isBlank(isoCountryCode, CUKFSPropertyConstants.Location.ISO_COUNTRY_CODE)) {
             return new ArrayList<ISOFIPSCountryMap>(); 
         }
         String uppercaseCode = isoCountryCode.toUpperCase(Locale.US);
@@ -40,7 +40,7 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
     }
     
     public List<ISOFIPSCountryMap> findActiveMapsByFIPSCountryId(String fipsCountryCode) {
-        if (isBlank(fipsCountryCode, "fipsCountryCode")) {
+        if (isBlank(fipsCountryCode, CUKFSPropertyConstants.Location.FIPS_COUNTRY_CODE)) {
             return new ArrayList<ISOFIPSCountryMap>(); 
         }
         String uppercaseCode = fipsCountryCode.toUpperCase(Locale.US);

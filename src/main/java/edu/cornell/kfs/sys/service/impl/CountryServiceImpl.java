@@ -73,7 +73,7 @@ public class CountryServiceImpl implements CountryService {
     }
     
     private boolean isBlankCountryCode(String countryCode) {
-        return isBlank(countryCode, "countryCode");
+        return isBlank(countryCode, CUKFSPropertyConstants.Location.COUNTRY_CODE);
     }
     
     private boolean isBlank(String countryValue, String propertyName) {
@@ -109,7 +109,7 @@ public class CountryServiceImpl implements CountryService {
     
     @Override
     public List<String> findCountryCodesByCountryName(String countryName) {
-        if (isBlank(countryName, "countryName")) {
+        if (isBlank(countryName, CUKFSPropertyConstants.Location.COUNTRY_NAME)) {
             return List.of();
         }
         String trimmedName = StringUtils.trim(countryName);
