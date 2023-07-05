@@ -55,12 +55,6 @@
     <bean id="achBundlerAdviceDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.AchBundlerAdviceDaoObj"/>
     <bean id="pdpFormatPaymentDao" parent="platformAwareDao" class="edu.cornell.kfs.pdp.dataaccess.impl.CuFormatPaymentDaoOjb"/>
     
-    <bean id="paymentInputFileType" parent="paymentInputFileType-parentBean">
-        <property name="digestorRulesFileName">
-           <value>edu/cornell/kfs/pdp/batch/paymentDigesterRules.xml</value>
-        </property>
-    </bean>
-    
     
     <bean id="processIndividualPdpCancelPaidService" parent="processIndividualPdpCancelPaidService-parentBean"
             class="edu.cornell.kfs.pdp.batch.service.impl.CuProcessIndividualPdpCancelPaidServiceImpl"/>
