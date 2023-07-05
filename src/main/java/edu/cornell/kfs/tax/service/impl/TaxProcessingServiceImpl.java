@@ -25,7 +25,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
-import edu.cornell.kfs.sys.batch.service.DigestorXMLBatchInputFileType;
+import edu.cornell.kfs.sys.batch.service.DigesterXMLBatchInputFileType;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
@@ -182,7 +182,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
     /*
      * Helper method for parsing TaxOutputDefinition or TaxDataDefinition objects from XML.
      */
-    private <E> E getXMLBasedDefinition(String taxParamPrefix, int reportYear, Class<E> definitionClass, DigestorXMLBatchInputFileType xmlFileType) {
+    private <E> E getXMLBasedDefinition(String taxParamPrefix, int reportYear, Class<E> definitionClass, DigesterXMLBatchInputFileType xmlFileType) {
         InputStream definitionStream = null;
         byte[] definitionContent;
     

@@ -32,12 +32,12 @@ import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.batch.service.DigestorXMLBatchInputFileType;
+import edu.cornell.kfs.sys.batch.service.DigesterXMLBatchInputFileType;
 
 /**
  * Batch input type for the disbursement voucher files
  */
-public class DisbursementVoucherInputFileType extends DigestorXMLBatchInputFileType {
+public class DisbursementVoucherInputFileType extends DigesterXMLBatchInputFileType {
     private DateTimeService dateTimeService;
     private DisbursementVoucherDocumentBatchService disbursementVoucherDocumentBatchService;
 

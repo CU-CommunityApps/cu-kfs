@@ -412,25 +412,25 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
-             <dependency>
-             <groupId>org.apache.commons</groupId>
-             <artifactId>commons-digester3</artifactId>
-             <version>${commons-digester3.version}</version>
-             <exclusions>
-                 <exclusion>
-                     <groupId>commons-beanutils</groupId>
-                     <artifactId>commons-beanutils</artifactId>
-                 </exclusion>
-                 <exclusion>
-                     <groupId>commons-logging</groupId>
-                     <artifactId>commons-logging</artifactId>
-                 </exclusion>
-                 <exclusion>
-                     <groupId>cglib</groupId>
-                     <artifactId>cglib</artifactId>
-                 </exclusion>
-             </exclusions>
-         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-digester3</artifactId>
+            <version>${commons-digester3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.kuali.kfs</groupId>
             <artifactId>kfs-ar</artifactId>
