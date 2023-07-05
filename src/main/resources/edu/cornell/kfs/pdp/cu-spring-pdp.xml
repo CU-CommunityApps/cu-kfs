@@ -138,7 +138,7 @@
         <property name="achBundlerHelperService" ref="pdpAchBundlerHelperService" />   
     </bean>
     
-    <bean id="achPayeeLookupableHelperService" parent="achPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" />
+    <bean id="achPayeeLookupableHelperService" parent="achPayeeLookupableHelperService-parentBean" class="edu.cornell.kfs.pdp.businessobject.lookup.CuACHPayeeLookupableHelperServiceImpl" scope="prototype"/>
 
     <bean id="payeeACHAccountLookupableHelperService" parent="payeeACHAccountLookupableHelperService-parentBean" scope="prototype"
             class="edu.cornell.kfs.pdp.businessobject.lookup.CuPayeeACHAccountLookupableHelperServiceImpl">

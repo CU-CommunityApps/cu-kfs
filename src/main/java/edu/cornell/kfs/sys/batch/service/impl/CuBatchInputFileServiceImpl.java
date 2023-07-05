@@ -66,8 +66,9 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
             }
             //CU Mod
             
+            LOG.info("process() - Begin processing");
             inputType.process(saveFileName, parsedObject);
-            
+            LOG.info("process() - End processing");
         } catch (final IOException e) {
             LOG.error("unable to save contents to file {}", saveFileName, e);
             throw new RuntimeException("errors encountered while writing file " + saveFileName, e);
