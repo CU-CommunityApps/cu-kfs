@@ -27,5 +27,6 @@ public final class CuPurapTestConstants {
 
     public static final int REQUISITION_ITEM_DESCRIPTION_MAX_LENGTH = 254;
     
+    public static final String JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
     public static final String JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG = "<!DOCTYPE SupplierSyncMessage SYSTEM \"https://usertest-messages.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd\">";
 }

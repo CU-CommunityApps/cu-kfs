@@ -26,7 +26,7 @@ public class JaggaerGenerateSupplierXmlStep extends AbstractStep {
         JaggaerUploadSuppliersProcessingMode processingMode = findJaggaerUploadSuppliersProcessingMode();
         java.sql.Date processingDate = findProcessingDate(processingMode);
         int maximumNumberOfSuppliersPerListItem = findMaximumNumberOfSuppliersPerListItem();
-        LOG.info("execute, processing mode {} and procesing date {}, maximumNumberOfSuppliersPerListItem {}", processingMode.modeCode, processingDate, maximumNumberOfSuppliersPerListItem);
+        LOG.info("execute, processing mode {} and processing date {}, maximumNumberOfSuppliersPerListItem {}", processingMode.modeCode, processingDate, maximumNumberOfSuppliersPerListItem);
         List<SupplierSyncMessage> messages = jaggaerGenerateSupplierXmlService.getSupplierSyncMessages(processingMode, processingDate, maximumNumberOfSuppliersPerListItem);
         jaggaerGenerateSupplierXmlService.generateXMLForSyncMessages(messages);
         
