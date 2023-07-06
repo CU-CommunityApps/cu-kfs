@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.sys.businessobject.XMLFragmentable;
+import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -51,7 +50,7 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     }
     
     @Override
-    public File marshalObjectToXMLFragment(XMLFragmentable objectToMarshal, String outputFilePath) throws JAXBException, IOException {
+    public File marshalObjectToXMLFragment(XmlFragmentable objectToMarshal, String outputFilePath) throws JAXBException, IOException {
         LOG.debug("marshalObjectToXMLFragment, entering, outputFilePath: " + outputFilePath);
         String xmlData = marshalObjectToXmlFragmentString(objectToMarshal);
         try (
@@ -94,7 +93,7 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     }
     
     @Override
-    public String marshalObjectToXmlFragmentString(XMLFragmentable objectToMarshal) throws JAXBException, IOException {
+    public String marshalObjectToXmlFragmentString(XmlFragmentable objectToMarshal) throws JAXBException, IOException {
         LOG.debug("marshalObjectToXmlFragmentString, entering");
         JAXBContext jaxbContext = JAXBContext.newInstance(objectToMarshal.getClass());
         Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

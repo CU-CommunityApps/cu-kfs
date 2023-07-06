@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
+import org.kuali.kfs.vnd.VendorConstants;
 
 /**
  * Cornell University specific constants class for holding and defining constants necessary for Cornell's implementation of the Kuali Financial System.
@@ -335,7 +336,7 @@ public class CUPurapConstants {
             this.kfsOwnerShipTypeCode = kfsOwnerShipTypeCode;
         }
         
-        public static JaggaerLegalStructure findJaggaerLegalStructureByKFSOwnershipCode(String ownerShipCode) {
+        public static JaggaerLegalStructure findJaggaerLegalStructureByKfsOwnershipCode(String ownerShipCode) {
             for (JaggaerLegalStructure struct : JaggaerLegalStructure.values()) {
                 if (StringUtils.equalsAnyIgnoreCase(struct.kfsOwnerShipTypeCode, ownerShipCode)) {
                     return struct;
@@ -370,12 +371,12 @@ public class CUPurapConstants {
         }
     }
     
-    public static final String JAGGAER_MODE_CODE_PO = "PO";
-    public static final String JAGGAER_MODE_CODE_VENDOR = "V";
+    public static final String JAGGAER_PROCESSING_MODE_CODE_PO = "PO";
+    public static final String JAGGAER_PROCESSING_MODE_CODE_VENDOR = "V";
     
     public enum JaggaerContractUploadProcessingMode {
-        PO(JAGGAER_MODE_CODE_PO, "JaggaerUpload_found_by_PO_search"),
-        VENDOR(JAGGAER_MODE_CODE_VENDOR, "JaggaerUpload_found_by_Vendor_search");
+        PO(JAGGAER_PROCESSING_MODE_CODE_PO, "JaggaerUpload_found_by_PO_search"),
+        VENDOR(JAGGAER_PROCESSING_MODE_CODE_VENDOR, "JaggaerUpload_found_by_Vendor_search");
         
         public final String modeCode;
         public final String csvFileName;
@@ -488,8 +489,8 @@ public class CUPurapConstants {
     }
     
     public enum JaggaerUploadSuppliersProcessingMode {
-        PO(JAGGAER_MODE_CODE_PO),
-        VENDOR(JAGGAER_MODE_CODE_VENDOR);
+        PO(JAGGAER_PROCESSING_MODE_CODE_PO),
+        VENDOR(JAGGAER_PROCESSING_MODE_CODE_VENDOR);
         
         public final String modeCode;
         
@@ -507,26 +508,26 @@ public class CUPurapConstants {
         }
     }
     
-    public enum JaggaerAddressTypeForXML {
-        FULFILLMENT("fulfillment", "PO"),
-        REMITTO("remitto", "RM"),
+    public enum JaggaerAddressTypeForXml {
+        FULFILLMENT("fulfillment", VendorConstants.AddressTypes.PURCHASE_ORDER),
+        REMITTO("remitto", VendorConstants.AddressTypes.REMIT),
         PHYSICAL("Physical", StringUtils.EMPTY);
         
         public final String jaggaerAddressType;
         public final String kfsAddressType;
         
-        private JaggaerAddressTypeForXML(String jaggaerAddressType, String kfsAddressType) {
+        private JaggaerAddressTypeForXml(String jaggaerAddressType, String kfsAddressType) {
             this.jaggaerAddressType = jaggaerAddressType;
             this.kfsAddressType = kfsAddressType;
         }
         
-        public static JaggaerAddressTypeForXML findJaggaerAddressTypeForXMLByKfsAddressType(String kfsAddressType) {
-            for (JaggaerAddressTypeForXML type : JaggaerAddressTypeForXML.values()) {
+        public static JaggaerAddressTypeForXml findJaggaerAddressTypeForXmlByKfsAddressType(String kfsAddressType) {
+            for (JaggaerAddressTypeForXml type : JaggaerAddressTypeForXml.values()) {
                 if (StringUtils.equalsIgnoreCase(type.kfsAddressType, kfsAddressType)) {
                     return type;
                 }
             }
-            return JaggaerAddressTypeForXML.PHYSICAL;
+            return JaggaerAddressTypeForXml.PHYSICAL;
         }
         
     }

@@ -9,7 +9,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
-import edu.cornell.kfs.sys.businessobject.XMLFragmentable;
+import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(name = "", propOrder = { "header",
         "supplierRequestMessageItems" })
 @XmlRootElement(name = "SupplierSyncMessage")
-public class SupplierSyncMessage implements XMLFragmentable {
+public class SupplierSyncMessage implements XmlFragmentable {
 
     @XmlAttribute(name = "version", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
@@ -70,13 +70,17 @@ public class SupplierSyncMessage implements XMLFragmentable {
 
     @Override
     public String getXMLPrefix() {
-        String headerTag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        return headerTag + KFSConstants.NEWLINE + getDocTypeTag();
+        return getVersionTag() + KFSConstants.NEWLINE + getDocTypeTag();
+    }
+    
+    private String getVersionTag() {
+        return getParameterService().getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, 
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_VERSION_NUMBER_TAG);
     }
     
     private String getDocTypeTag() {
         return getParameterService().getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, 
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG);
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG);
     }
     
     @Override

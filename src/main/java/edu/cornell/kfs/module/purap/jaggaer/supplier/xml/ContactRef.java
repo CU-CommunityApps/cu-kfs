@@ -12,17 +12,17 @@ import jakarta.xml.bind.annotation.XmlType;
 public class ContactRef {
 
     @XmlElement(name = "ERPNumber")
-    private ERPNumber erpNumber;
+    private ErpNumber erpNumber;
     @XmlElement(name = "SQIntegrationNumber")
     private SQIntegrationNumber sqIntegrationNumber;
     @XmlElement(name = "ThirdPartyRefNumber")
     private ThirdPartyRefNumber thirdPartyRefNumber;
 
-    public ERPNumber getErpNumber() {
+    public ErpNumber getErpNumber() {
         return erpNumber;
     }
 
-    public void setErpNumber(ERPNumber erpNumber) {
+    public void setErpNumber(ErpNumber erpNumber) {
         this.erpNumber = erpNumber;
     }
 

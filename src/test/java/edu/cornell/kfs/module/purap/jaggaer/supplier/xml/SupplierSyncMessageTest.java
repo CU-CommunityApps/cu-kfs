@@ -70,7 +70,7 @@ public class SupplierSyncMessageTest {
     private ParameterService buildMockParameterService() {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
     }
 
@@ -95,7 +95,7 @@ public class SupplierSyncMessageTest {
         supplier.setApprovedForERPSync(T_TRUE);
         supplier.setRequiresERP(T_TRUE);
         supplier.setOldERPNumber("old erp number");
-        supplier.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", F_FALSE));
+        supplier.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", F_FALSE));
         supplier.setName(JaggaerBuilder.buildName("Acme Test Company", null));
 
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(JaggaerBuilder.buildJaggaerBasicValue("restrict", T_TRUE));
@@ -291,7 +291,7 @@ public class SupplierSyncMessageTest {
 
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setErpNumber(JaggaerBuilder.buildERPNumber("parent erp number", F_FALSE));
+        parent.setErpNumber(JaggaerBuilder.buildErpNumber("parent erp number", F_FALSE));
         parent.setIsChanged(F_FALSE);
         parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("parent integration number"));
         return parent;
@@ -382,7 +382,7 @@ public class SupplierSyncMessageTest {
         ap.setIsChanged(T_TRUE);
         ap.setType("accounts payable type");
         ap.setOldERPNumber("old erp number");
-        ap.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", F_FALSE));
+        ap.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", F_FALSE));
         ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         ap.setName(JaggaerBuilder.buildName("accounts payable name", T_TRUE));
@@ -498,7 +498,7 @@ public class SupplierSyncMessageTest {
         location.setIsChanged(T_TRUE);
         location.setSupportsOrderFulfillment("Order Fulfillment(");
         location.setOldERPNumber("old erp number");
-        location.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
         location.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         location.setName(JaggaerBuilder.buildName("silly location name", T_TRUE));
@@ -774,7 +774,7 @@ public class SupplierSyncMessageTest {
         contact.setType("contact type");
 
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ number"));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         contact.setContactRef(ref);
@@ -788,7 +788,7 @@ public class SupplierSyncMessageTest {
         Contact contact = new Contact();
         contact.setIsChanged(T_TRUE);
         contact.setType("contact type");
-        contact.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        contact.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         contact.setOldERPNumber("old erp number");
         contact.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sq integration number"));
         contact.setThirdPartyRefNumber(buildThirdPartyRefNumber());
@@ -840,7 +840,7 @@ public class SupplierSyncMessageTest {
         address.setType(addressType);
 
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber, T_TRUE));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber, T_TRUE));
         ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(sqiNumber));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         address.setAddressRef(ref);
@@ -854,7 +854,7 @@ public class SupplierSyncMessageTest {
         Address address = new Address();
         address.setIsChanged(T_TRUE);
         address.setType("home address");
-        address.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        address.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         address.setOldERPNumber("old erp number");
         address.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sq integration number"));
         address.setThirdPartyRefNumber(buildThirdPartyRefNumber());

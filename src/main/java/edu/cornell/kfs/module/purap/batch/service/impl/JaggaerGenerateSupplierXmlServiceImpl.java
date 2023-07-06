@@ -21,7 +21,7 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForXML;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForXml;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProcessingMode;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -84,7 +84,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                     LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
                 }
                 Supplier supplier = new Supplier();
-                supplier.setErpNumber(JaggaerBuilder.buildERPNumber(detail.getVendorNumber()));
+                supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
                 supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
                 supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
                 supplier.setActive(JaggaerBuilder.buildActive(getDefaultSupplierActiveValue()));
@@ -129,7 +129,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     private JaggaerBasicValue buildJaggerLegalStructure(VendorDetail detail) {
         String kfsOwnerShipCode = detail.getVendorHeader().getVendorOwnershipCode();
         JaggaerLegalStructure legalStructure = JaggaerLegalStructure
-                .findJaggaerLegalStructureByKFSOwnershipCode(kfsOwnerShipCode);
+                .findJaggaerLegalStructureByKfsOwnershipCode(kfsOwnerShipCode);
         return JaggaerBuilder.buildJaggaerBasicValue(legalStructure.jaggaerLegalStructureName);
     }
 
@@ -140,8 +140,8 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             if (vendorAddress.isActive()) {
                 Address jaggaerAddress = new Address();
                 jaggaerAddress.setErpNumber(JaggaerBuilder
-                        .buildERPNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
-                jaggaerAddress.setType(JaggaerAddressTypeForXML.findJaggaerAddressTypeForXMLByKfsAddressType(
+                        .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
+                jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
                         vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
                 jaggaerAddress.setActive(JaggaerBuilder.buildActive(getDefaultSupplierAddressActiveValue()));
                 jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
@@ -159,7 +159,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String getDefaultSupplierAddressActiveValue() {
-        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_ACTIVE_VALUE);
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDDRESS_ACTIVE_VALUE);
     }
 
     private IsoCountryCode buildIsoCountry(String fipsCountryCode) {
@@ -181,7 +181,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String findAddressNoteTextStarter() {
-        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_NOTE_TEXT);
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDDRESS_NOTE_TEXT);
     }
 
     protected List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers,

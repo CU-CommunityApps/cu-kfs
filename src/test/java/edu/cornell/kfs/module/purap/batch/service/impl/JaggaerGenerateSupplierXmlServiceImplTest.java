@@ -144,11 +144,11 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ACTIVE_VALUE)).thenReturn("Yes");
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_ACTIVE_VALUE)).thenReturn("Yes");
+                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDDRESS_ACTIVE_VALUE)).thenReturn("Yes");
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRDESS_NOTE_TEXT)).thenReturn("The KFS vendor addres type is");
+                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDDRESS_NOTE_TEXT)).thenReturn("The KFS vendor addres type is");
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
     }
     
@@ -167,7 +167,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         assertEquals(vendorDetailFixture.countryOfOrigin, supplier.getCountryOfOrigin().getValue());
         assertEquals(vendorDetailFixture.url, supplier.getWebSiteURL().getValue());
         
-        String expectedLegalStructureCode = JaggaerLegalStructure.findJaggaerLegalStructureByKFSOwnershipCode(vendorDetailFixture.ownershipCode).jaggaerLegalStructureName;
+        String expectedLegalStructureCode = JaggaerLegalStructure.findJaggaerLegalStructureByKfsOwnershipCode(vendorDetailFixture.ownershipCode).jaggaerLegalStructureName;
         assertEquals(expectedLegalStructureCode, supplier.getLegalStructure().getValue());
         
         assertEquals(vendorDetailFixture.expectedVendorAdressIds.size(), supplier.getAddressList().getAddresses().size());

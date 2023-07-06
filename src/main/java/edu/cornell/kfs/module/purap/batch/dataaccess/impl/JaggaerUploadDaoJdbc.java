@@ -56,7 +56,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 dto.setActive(StringUtils.EMPTY);
                 dto.setContractPartyType(JaggaerContractPartyType.SUPPLIER);
                 dto.setPrimary(StringUtils.EMPTY);
-                dto.setLegalStructure(JaggaerLegalStructure.findJaggaerLegalStructureByKFSOwnershipCode(resultSet.getString(FIELD_NAMES.VNDR_OWNR_CD)));
+                dto.setLegalStructure(JaggaerLegalStructure.findJaggaerLegalStructureByKfsOwnershipCode(resultSet.getString(FIELD_NAMES.VNDR_OWNR_CD)));
                 dto.setTaxIDType(StringUtils.EMPTY);
                 dto.setTaxIdentificationNumber(StringUtils.EMPTY);
                 dto.setVATRegistrationNumber(StringUtils.EMPTY);
@@ -211,7 +211,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
     }
     
     private CuSqlChunk buildTimeFrameRestrictionClause(String processingModeCode, Date processingDate) {
-        if (StringUtils.equalsIgnoreCase(processingModeCode, CUPurapConstants.JAGGAER_MODE_CODE_PO)) {
+        if (StringUtils.equalsIgnoreCase(processingModeCode, CUPurapConstants.JAGGAER_PROCESSING_MODE_CODE_PO)) {
             CuSqlChunk chunk = CuSqlChunk.of("AND VH.VNDR_HDR_GNRTD_ID IN (",
                     buildPurchaseOrderLimitSubQuery(processingDate),
                     ") ");

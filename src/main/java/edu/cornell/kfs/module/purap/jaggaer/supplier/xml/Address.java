@@ -24,7 +24,7 @@ public class Address {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String isChanged;
     @XmlElement(name = "ERPNumber")
-    private ERPNumber erpNumber;
+    private ErpNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
     private String oldERPNumber;
     @XmlElement(name = "SQIntegrationNumber")
@@ -78,11 +78,11 @@ public class Address {
         this.isChanged = isChanged;
     }
 
-    public ERPNumber getErpNumber() {
+    public ErpNumber getErpNumber() {
         return erpNumber;
     }
 
-    public void setErpNumber(ERPNumber erpNumber) {
+    public void setErpNumber(ErpNumber erpNumber) {
         this.erpNumber = erpNumber;
     }
 

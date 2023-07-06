@@ -64,7 +64,7 @@ public class JaggaerExampleTest {
     private ParameterService buildMockParameterService() {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
     }
     
@@ -87,7 +87,7 @@ public class JaggaerExampleTest {
     
     private Supplier buildSupplier() {
         Supplier supplier = new Supplier();
-        supplier.setErpNumber(JaggaerBuilder.buildERPNumber("als12345"));
+        supplier.setErpNumber(JaggaerBuilder.buildErpNumber("als12345"));
         supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511507"));
         supplier.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("ALS0001"));
         supplier.setName(JaggaerBuilder.buildName("Affordable Lab Supplies"));
@@ -139,7 +139,7 @@ public class JaggaerExampleTest {
     
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setErpNumber(JaggaerBuilder.buildERPNumber("als12343"));
+        parent.setErpNumber(JaggaerBuilder.buildErpNumber("als12343"));
         parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511504"));
         return parent;
     }
@@ -224,7 +224,7 @@ public class JaggaerExampleTest {
     private Address buildRemitToAddress() {
         Address remit = new Address();
         remit.setType("remitto");
-        remit.setErpNumber(JaggaerBuilder.buildERPNumber("add123"));
+        remit.setErpNumber(JaggaerBuilder.buildErpNumber("add123"));
         remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u15174772"));
         remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         remit.setName(JaggaerBuilder.buildName("California Regional Office"));
@@ -281,7 +281,7 @@ public class JaggaerExampleTest {
     private Address buildFulfillmentAddress() {
         Address fulfill = new Address();
         fulfill.setType("fulfillment");
-        fulfill.setErpNumber(JaggaerBuilder.buildERPNumber("add123"));
+        fulfill.setErpNumber(JaggaerBuilder.buildErpNumber("add123"));
         fulfill.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
         fulfill.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         fulfill.setName(JaggaerBuilder.buildName("West Coast Distribution Center"));
@@ -314,7 +314,7 @@ public class JaggaerExampleTest {
         address.setType(addressType);
         
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber));
         address.setAddressRef(ref);
         
         return address;
@@ -331,7 +331,7 @@ public class JaggaerExampleTest {
     private Contact buildRemitContact() {
         Contact remit = new Contact();
         remit.setType("remitto");
-        remit.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT1"));
+        remit.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT1"));
         remit.setOldERPNumber("CONTACT1");
         remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1237"));
         remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
@@ -359,7 +359,7 @@ public class JaggaerExampleTest {
     private Contact buildFulfillmentContact() {
         Contact fulfillment = new Contact();
         fulfillment.setType("fulfillment");
-        fulfillment.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT1"));
+        fulfillment.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT1"));
         fulfillment.setOldERPNumber("CONTACT1");
         fulfillment.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1236"));
         fulfillment.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
@@ -381,7 +381,7 @@ public class JaggaerExampleTest {
     private Contact buildTechnicalContact() {
         Contact tech = new Contact();
         tech.setType("technical");
-        tech.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT2"));
+        tech.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT2"));
         tech.setOldERPNumber("CONTACT2");
         tech.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1240"));
         tech.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID2"));
@@ -412,7 +412,7 @@ public class JaggaerExampleTest {
         contact.setType(contactType);
         
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber));
         contact.setContactRef(ref);
         
         return contact;
@@ -489,7 +489,7 @@ public class JaggaerExampleTest {
     private Location buildFulfillLocation1() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.YES);
-        location.setErpNumber(JaggaerBuilder.buildERPNumber("loc123"));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber("loc123"));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511493"));
         location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         location.setName(JaggaerBuilder.buildName("Fulfillment Center 1"));
@@ -677,7 +677,7 @@ public class JaggaerExampleTest {
     private Location buildFulfillLocation2() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.YES);
-        location.setErpNumber(JaggaerBuilder.buildERPNumber(null));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber(null));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1514101"));
         location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         location.setName(JaggaerBuilder.buildName("Fulfillment Center 2"));
@@ -697,7 +697,7 @@ public class JaggaerExampleTest {
     private Location buildLocation2() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.NO);
-        location.setErpNumber(JaggaerBuilder.buildERPNumber(null));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber(null));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511564"));
         location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         location.setName(JaggaerBuilder.buildName("Location 2"));
@@ -720,7 +720,7 @@ public class JaggaerExampleTest {
         AccountsPayableList apList = new AccountsPayableList();
         AccountsPayable ap = new AccountsPayable();
         ap.setType("Check");
-        ap.setErpNumber(JaggaerBuilder.buildERPNumber("ap123"));;
+        ap.setErpNumber(JaggaerBuilder.buildErpNumber("ap123"));;
         ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511565"));
         ap.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         ap.setName(JaggaerBuilder.buildName("ap 1"));
