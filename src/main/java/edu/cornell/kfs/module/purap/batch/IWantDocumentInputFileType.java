@@ -13,9 +13,9 @@ import com.rsmart.kuali.kfs.fp.FPKeyConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.batch.service.DigesterXMLBatchInputFileType;
+import edu.cornell.kfs.sys.batch.service.DigesterXmlBatchInputFileType;
 
-public class IWantDocumentInputFileType extends DigesterXMLBatchInputFileType {
+public class IWantDocumentInputFileType extends DigesterXmlBatchInputFileType {
     private DateTimeService dateTimeService;
 
     /**

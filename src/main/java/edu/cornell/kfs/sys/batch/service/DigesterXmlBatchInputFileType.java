@@ -17,12 +17,12 @@ import org.kuali.kfs.sys.exception.XmlErrorHandler;
 
 // CU customization to continue support for commons-digester after KualiCo has removed it from base code;
 // This can be removed once all code has been updated to use jaxb or other framework to replace commons-digester.
-public abstract class DigesterXMLBatchInputFileType<T> extends XmlBatchInputFileTypeBase {
+public abstract class DigesterXmlBatchInputFileType extends XmlBatchInputFileTypeBase<Object> {
     
     private static final Logger LOG = LogManager.getLogger();
     
     @Override
-    public T parse(byte[] fileByteContent) throws ParseException {
+    public Object parse(byte[] fileByteContent) throws ParseException {
         if (fileByteContent == null) {
             LOG.error("an invalid(null) argument was given");
             throw new IllegalArgumentException("an invalid(null) argument was given");
@@ -41,7 +41,7 @@ public abstract class DigesterXMLBatchInputFileType<T> extends XmlBatchInputFile
         // setup digester for parsing the xml file
         Digester digester = buildDigester(getSchemaLocation(), getDigestorRulesFileName());
 
-        T parsedContents;
+        Object parsedContents;
         try {
             ByteArrayInputStream parseFileContents = new ByteArrayInputStream(fileByteContent);
             parsedContents = digester.parse(parseFileContents);
