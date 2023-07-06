@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -31,17 +32,19 @@ public class ISOFIPSCountryMapServiceImpl implements ISOFIPSCountryMapService {
     protected ConfigurationService configurationService;
            
     public List<ISOFIPSCountryMap> findActiveMapsByISOCountryId(String isoCountryCode) {
-        if (isBlank(isoCountryCode, "isoCountryCode")) {
+        if (isBlank(isoCountryCode, CUKFSPropertyConstants.Location.ISO_COUNTRY_CODE)) {
             return new ArrayList<ISOFIPSCountryMap>(); 
         }
-        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, isoCountryCode);
+        String uppercaseCode = isoCountryCode.toUpperCase(Locale.US);
+        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.ISO_COUNTRY_CODE, uppercaseCode);
     }
     
     public List<ISOFIPSCountryMap> findActiveMapsByFIPSCountryId(String fipsCountryCode) {
-        if (isBlank(fipsCountryCode, "fipsCountryCode")) {
+        if (isBlank(fipsCountryCode, CUKFSPropertyConstants.Location.FIPS_COUNTRY_CODE)) {
             return new ArrayList<ISOFIPSCountryMap>(); 
-        } 
-        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, fipsCountryCode);
+        }
+        String uppercaseCode = fipsCountryCode.toUpperCase(Locale.US);
+        return performMappingConversion(CUKFSPropertyConstants.ISOFIPSCountryMap.FIPS_COUNTRY_CODE, uppercaseCode);
     }
 
     private List<ISOFIPSCountryMap> performMappingConversion(String key, String value) {

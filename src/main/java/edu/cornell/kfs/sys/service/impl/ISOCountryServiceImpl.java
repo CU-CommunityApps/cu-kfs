@@ -2,13 +2,22 @@ package edu.cornell.kfs.sys.service.impl;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
+import org.kuali.kfs.core.api.criteria.GenericQueryResults;
+import org.kuali.kfs.core.api.criteria.PredicateFactory;
+import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -23,14 +32,15 @@ import edu.cornell.kfs.sys.service.ISOCountryService;
  */
 public class ISOCountryServiceImpl implements ISOCountryService {
 
-    private static final Logger LOG = LogManager.getLogger(ISOCountryServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
     
     protected BusinessObjectService businessObjectService;
     protected ConfigurationService configurationService;
+    protected CriteriaLookupService criteriaLookupService;
     
     @Override
     public boolean isISOCountryActive(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return false;
         }
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
@@ -46,7 +56,7 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     @Override
     public boolean isISOCountryInactive(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return false;
         }
         ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
@@ -60,27 +70,34 @@ public class ISOCountryServiceImpl implements ISOCountryService {
         }
     }
     
-    private boolean isBlank(String isoCountryCode) {
-        if (StringUtils.isBlank(isoCountryCode)) {
-            LOG.debug("isBlank: " + MessageFormat.format(getConfigurationService().getPropertyValueAsString(CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), "isoCountryCode"));
+    private boolean isBlankCountryCode(String isoCountryCode) {
+        return isBlank(isoCountryCode, CUKFSPropertyConstants.Location.ISO_COUNTRY_CODE);
+    }
+    
+    private boolean isBlank(String isoCountryValue, String propertyName) {
+        if (StringUtils.isBlank(isoCountryValue)) {
+            LOG.debug("isBlank: {}",
+                    () -> MessageFormat.format(getConfigurationService().getPropertyValueAsString(
+                            CUKFSKeyConstants.NULL_OR_BLANK_CODE_PARAMETER), propertyName));
             return true;
         }
         return false;
     }
     
     protected ISOCountry getByPrimaryId(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return null;
         }
-        return getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode));
+        String uppercasedCode = isoCountryCode.toUpperCase(Locale.US);
+        return getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(uppercasedCode));
     }
     
     @Override
     public String findISOCountryNameByCountryCode(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return KFSConstants.EMPTY_STRING;
         }
-        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
         if (ObjectUtils.isNotNull(isoCountryFound)) {
             return isoCountryFound.getName();
         } else {
@@ -89,11 +106,27 @@ public class ISOCountryServiceImpl implements ISOCountryService {
     }
 
     @Override
+    public List<String> findISOCountryCodesByCountryName(String isoCountryName) {
+        if (isBlank(isoCountryName, CUKFSPropertyConstants.Location.ISO_COUNTRY_NAME)) {
+            return List.of();
+        }
+        String trimmedName = StringUtils.trim(isoCountryName);
+        QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
+                PredicateFactory.equalIgnoreCase(CUKFSPropertyConstants.ISOCountry.NAME, trimmedName),
+                PredicateFactory.equal(KRADPropertyConstants.ACTIVE, KRADConstants.YES_INDICATOR_VALUE));
+        GenericQueryResults<ISOCountry> results = criteriaLookupService.lookup(ISOCountry.class, criteria);
+        List<ISOCountry> countries = results.getResults();
+        return countries.stream()
+                .map(ISOCountry::getCode)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
     public boolean isoCountryExists(String isoCountryCode) {
-        if (isBlank(isoCountryCode)) {
+        if (isBlankCountryCode(isoCountryCode)) {
             return false;
         }
-        ISOCountry isoCountryFound = getBusinessObjectService().findByPrimaryKey(ISOCountry.class, mapPrimaryKeys(isoCountryCode.toUpperCase()));
+        ISOCountry isoCountryFound = getByPrimaryId(isoCountryCode);
         return ObjectUtils.isNotNull(isoCountryFound);
     }
     
@@ -117,6 +150,10 @@ public class ISOCountryServiceImpl implements ISOCountryService {
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setCriteriaLookupService(CriteriaLookupService criteriaLookupService) {
+        this.criteriaLookupService = criteriaLookupService;
     }
 
 }

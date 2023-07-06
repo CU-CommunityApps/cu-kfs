@@ -9,4 +9,8 @@ public interface ISOFIPSConversionService {
 
     public String convertFIPSCountryCodeToActiveISOCountryCode(String fipsCountryCode);
 
+    public String findSingleActiveISOCountryCodeByISOCountryName(String isoCountryName);
+
+    public String findSingleActiveFIPSCountryCodeByFIPSCountryName(String fipsCountryName);
+
 }

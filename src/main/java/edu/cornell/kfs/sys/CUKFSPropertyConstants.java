@@ -80,9 +80,16 @@ public class CUKFSPropertyConstants {
     public static final String FINALIZED_DATE = "finalizedDate";
 
     //** CU Generic ISO-FIPS Country modification items **
-    public static class ISOFIPSCountryMap {
+    public static class Location {
+        public static final String COUNTRY_CODE = "countryCode";
         public static final String ISO_COUNTRY_CODE = "isoCountryCode";
         public static final String FIPS_COUNTRY_CODE = "fipsCountryCode";
+        public static final String COUNTRY_NAME = "countryName";
+        public static final String ISO_COUNTRY_NAME = "isoCountryName";
+    }
+    public static class ISOFIPSCountryMap {
+        public static final String ISO_COUNTRY_CODE = Location.ISO_COUNTRY_CODE;
+        public static final String FIPS_COUNTRY_CODE = Location.FIPS_COUNTRY_CODE;
         public static final String ACTIVE = KFSPropertyConstants.ACTIVE;
     }
     private static final String NAME = "name";
