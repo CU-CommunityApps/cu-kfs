@@ -2,7 +2,7 @@ package edu.cornell.kfs.sys.businessobject;
 
 public interface XmlFragmentable {
     
-    public String getXMLPrefix();
+    public String getXmlPrefix();
     
     public boolean shouldMarshalAsFragment();
 }

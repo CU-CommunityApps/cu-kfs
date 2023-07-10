@@ -41,6 +41,8 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.exception.ManyFIPStoISOMappingException;
+import edu.cornell.kfs.sys.exception.NoFIPStoISOMappingException;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
@@ -100,25 +102,31 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private JaggaerBasicValue buildCountryOfOrigin(VendorDetail detail) {
-        String isoCountryCode = convertToISOCountry(detail.getVendorHeader().getVendorCorpCitizenCode());
+        String isoCountryCode = convertToValidCountryOfOrigin(detail.getVendorHeader().getVendorCorpCitizenCode());
         return JaggaerBuilder.buildJaggaerBasicValue(isoCountryCode);
     }
-
-    private String convertToISOCountry(String fipsCountryCode) {
-        if (StringUtils.isBlank(fipsCountryCode)) {
-            LOG.debug("convertToISOCountry, empty FIPS country found returning US as default");
-            fipsCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
+    
+    private String convertToValidCountryOfOrigin(String countryCode) {
+        if (StringUtils.isBlank(countryCode)) {
+            LOG.debug("convertToValidCountryOfOrigin, empty countryCode received converting US as default");
+            countryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         }
-
+        
         String isoCountry = StringUtils.EMPTY;
-
+        
         try {
-            isoCountry = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(fipsCountryCode);
+            isoCountry = isoFipsConversionService.convertFIPSCountryCodeToActiveISOCountryCode(countryCode);
+            
+        } catch (NoFIPStoISOMappingException noFIPStoISOMappingException ) {
+            LOG.error("convertToValidCountryOfOrigin, returning empty string, no valid mapping for FIPs country code "
+                + countryCode, noFIPStoISOMappingException);
+        } catch (ManyFIPStoISOMappingException manyFIPStoISOMappingException ) {
+            LOG.error("convertToValidCountryOfOrigin, returning empty string, many ISO countries found for FIPS country code "
+                    + countryCode, manyFIPStoISOMappingException);
         } catch (RuntimeException runtimeException) {
-            LOG.error("convertToISOCountry, returning empty string, unable to get ISO country for FIPS country "
-                    + fipsCountryCode, runtimeException);
+            LOG.error("convertToValidCountryOfOrigin, returning empty string, encountered a general error for fips country code "
+                    + countryCode, runtimeException);
         }
-
         return isoCountry;
     }
 
@@ -159,11 +167,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String getDefaultSupplierAddressActiveValue() {
-        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDDRESS_ACTIVE_VALUE);
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_ACTIVE_VALUE);
     }
 
     private IsoCountryCode buildIsoCountry(String fipsCountryCode) {
-        String isoCountry = convertToISOCountry(fipsCountryCode);
+        String isoCountry = convertToValidCountryOfOrigin(fipsCountryCode);
         return JaggaerBuilder.buildIsoCountryCode(isoCountry);
     }
 
@@ -181,7 +189,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
 
     private String findAddressNoteTextStarter() {
-        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDDRESS_NOTE_TEXT);
+        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_NOTE_TEXT);
     }
 
     protected List<SupplierSyncMessage> buildSupplierSyncMessageList(List<Supplier> suppliers,

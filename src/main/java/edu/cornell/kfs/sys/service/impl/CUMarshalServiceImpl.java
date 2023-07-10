@@ -104,9 +104,9 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         StringWriter stringWriter = new StringWriter();
         jaxbMarshaller.marshal(objectToMarshal, stringWriter);
         String marshalledXml = stringWriter.toString();
-        String returnXMLString = objectToMarshal.getXMLPrefix() + KFSConstants.NEWLINE + marshalledXml;
-        LOG.debug("marshalObjectToXmlString, the XML with manual prefix output is {}", returnXMLString);
-        return returnXMLString;
+        String returnXmlString = objectToMarshal.getXmlPrefix() + KFSConstants.NEWLINE + marshalledXml;
+        LOG.debug("marshalObjectToXmlString, the XML with manual prefix output is {}", returnXmlString);
+        return returnXmlString;
     }
     
     @Override

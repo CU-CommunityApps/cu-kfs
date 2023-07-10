@@ -832,7 +832,7 @@ public class SupplierSyncMessageTest {
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList addressList = new PrimaryAddressList();
         addressList.setIsChanged(T_TRUE);
-        addressList.getAssociatedAddresses().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
+        addressList.getAssociatedAddresses().add(buildAssociatedAddress("address type", "erp number", "sq integration number"));        
         return addressList;
     }
 

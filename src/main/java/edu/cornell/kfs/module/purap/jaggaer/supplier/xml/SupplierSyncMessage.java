@@ -69,7 +69,7 @@ public class SupplierSyncMessage implements XmlFragmentable {
     }
 
     @Override
-    public String getXMLPrefix() {
+    public String getXmlPrefix() {
         return getVersionTag() + KFSConstants.NEWLINE + getDocTypeTag();
     }
     

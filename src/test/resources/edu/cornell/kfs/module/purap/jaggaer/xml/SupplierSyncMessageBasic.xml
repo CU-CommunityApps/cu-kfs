@@ -158,7 +158,7 @@
                 </Address>
             </AddressList>
             <PrimaryAddressList isChanged="T">
-                <AssociatedAddress isChanged="T" type="adddress type">
+                <AssociatedAddress isChanged="T" type="address type">
                     <AddressRef>
                         <ERPNumber isChanged="T">erp number</ERPNumber>
                         <SQIntegrationNumber>sq integration number</SQIntegrationNumber>
