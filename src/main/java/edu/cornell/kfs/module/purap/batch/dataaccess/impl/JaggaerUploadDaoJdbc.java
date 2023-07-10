@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.jdbc.core.RowMapper;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -19,6 +20,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractPartyUploadRowType;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerContractUploadProcessingMode;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
+import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProcessingMode;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractAddressUploadDto;
 import edu.cornell.kfs.module.purap.businessobject.lookup.JaggaerContractPartyUploadDto;
@@ -27,11 +29,13 @@ import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
 import edu.cornell.kfs.vnd.CUVendorConstants.FIELD_NAMES;
+import edu.cornell.kfs.vnd.document.service.CUVendorService;
 
 public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc implements JaggaerUploadDao {
     private static final Logger LOG = LogManager.getLogger();
     
     protected ISOFIPSConversionService isoFipsConversionService;
+    private CUVendorService cuVendorService;
     
     @Override
     public List<JaggaerContractPartyUploadDto> findJaggaerContractParty(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
@@ -52,14 +56,14 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 dto.setActive(StringUtils.EMPTY);
                 dto.setContractPartyType(JaggaerContractPartyType.SUPPLIER);
                 dto.setPrimary(StringUtils.EMPTY);
-                dto.setLegalStructure(JaggaerLegalStructure.findJaggaerLegalStructureByKFSOwnershipCode(resultSet.getString(FIELD_NAMES.VNDR_OWNR_CD)));
+                dto.setLegalStructure(JaggaerLegalStructure.findJaggaerLegalStructureByKfsOwnershipCode(resultSet.getString(FIELD_NAMES.VNDR_OWNR_CD)));
                 dto.setTaxIDType(StringUtils.EMPTY);
                 dto.setTaxIdentificationNumber(StringUtils.EMPTY);
                 dto.setVATRegistrationNumber(StringUtils.EMPTY);
                 dto.setWebsiteURL(resultSet.getString(FIELD_NAMES.VNDR_URL_ADDR));
                 return dto;
             };
-            CuSqlQuery sqlQuery = buildVendorSql(processingMode, processingDate);
+            CuSqlQuery sqlQuery = buildVendorSql(processingMode.modeCode, processingDate);
             logSQL(sqlQuery);
             return queryForValues(sqlQuery, rowMapper, false);
         } catch (Exception e) {
@@ -107,7 +111,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 
                 return dto;
             };
-            CuSqlQuery sqlQuery = buildVendorAddressSql(processingMode, processingDate);
+            CuSqlQuery sqlQuery = buildVendorAddressSql(processingMode.modeCode, processingDate);
             logSQL(sqlQuery);
             return queryForValues(sqlQuery, rowMapper, false);
         } catch (Exception e) {
@@ -116,17 +120,48 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         }
     }
     
-    private CuSqlQuery buildVendorSql(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
+    @Override
+    public List<VendorDetail> findVendors(JaggaerUploadSuppliersProcessingMode processingMode, Date processingDate) {
+        try {
+            RowMapper<VendorDetail> rowMapper = (resultSet, rowNumber) -> {
+                if (rowNumber % 100 == 0) {
+                    LOG.info("findVendors, processing row number " + rowNumber);
+                }
+                int headerId = resultSet.getInt(FIELD_NAMES.VNDR_HDR_GNRTD_ID);
+                int detailId = resultSet.getInt(FIELD_NAMES.VNDR_DTL_ASND_ID);
+                VendorDetail vendor = cuVendorService.getVendorDetail(headerId, detailId);
+                return vendor;
+            };
+            CuSqlQuery sqlQuery = buildVendorHeaderIdAndDetailIdSql(processingMode.modeCode, processingDate);
+            logSQL(sqlQuery);
+            return queryForValues(sqlQuery, rowMapper, false);
+        } catch (Exception e) {
+            LOG.error("findVendors, had an error finding vendors: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private CuSqlQuery buildVendorSql(String processingModeCode, Date processingDate) {
         CuSqlChunk chunk = CuSqlChunk.of("SELECT VH.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID, VD.VNDR_NM, VH.VNDR_CORP_CTZN_CNTRY_CD, VH.VNDR_OWNR_CD, VD.VNDR_URL_ADDR ",
                 buildFromClause(false),
                 buildJoinClauseWithPOVendor(false),
                 buildRestrictActiveRows(false),
-                buildTimeFrameRestrictionClause(processingMode, processingDate),
+                buildTimeFrameRestrictionClause(processingModeCode, processingDate),
                 buildOrderByClause());
         return chunk.toQuery();
     }
     
-    private CuSqlQuery buildVendorAddressSql(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
+    private CuSqlQuery buildVendorHeaderIdAndDetailIdSql(String processingModeCode, Date processingDate) {
+        CuSqlChunk chunk = CuSqlChunk.of("SELECT VH.VNDR_HDR_GNRTD_ID, VD.VNDR_DTL_ASND_ID ",
+                buildFromClause(false),
+                buildJoinClauseWithPOVendor(false),
+                buildRestrictActiveRows(false),
+                buildTimeFrameRestrictionClause(processingModeCode, processingDate),
+                buildOrderByClause());
+        return chunk.toQuery();
+    }
+    
+    private CuSqlQuery buildVendorAddressSql(String processingModeCode, Date processingDate) {
         Collection<String> addressTypes = Arrays.asList(CUPurapConstants.JaggaerAddressType.REMIT.kfsAddressTypeCode, 
                 CUPurapConstants.JaggaerAddressType.FULFILLMENT.kfsAddressTypeCode);
         
@@ -135,7 +170,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 buildFromClause(true),
                 buildJoinClauseWithPOVendor(true),
                 buildRestrictActiveRows(true),
-                buildTimeFrameRestrictionClause(processingMode, processingDate),
+                buildTimeFrameRestrictionClause(processingModeCode, processingDate),
                 "AND VA.VNDR_ADDR_TYP_CD in (",
                 CuSqlChunk.forStringParameters(addressTypes),
                 ") ",
@@ -175,8 +210,8 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
         return chunk;
     }
     
-    private CuSqlChunk buildTimeFrameRestrictionClause(JaggaerContractUploadProcessingMode processingMode, Date processingDate) {
-        if (processingMode == JaggaerContractUploadProcessingMode.PO) {
+    private CuSqlChunk buildTimeFrameRestrictionClause(String processingModeCode, Date processingDate) {
+        if (StringUtils.equalsIgnoreCase(processingModeCode, CUPurapConstants.JAGGAER_PROCESSING_MODE_CODE_PO)) {
             CuSqlChunk chunk = CuSqlChunk.of("AND VH.VNDR_HDR_GNRTD_ID IN (",
                     buildPurchaseOrderLimitSubQuery(processingDate),
                     ") ");
@@ -227,6 +262,10 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
 
     public void setIsoFipsConversionService(ISOFIPSConversionService isoFipsConversionService) {
         this.isoFipsConversionService = isoFipsConversionService;
+    }
+
+    public void setCuVendorService(CUVendorService cuVendorService) {
+        this.cuVendorService = cuVendorService;
     }
 
 }
