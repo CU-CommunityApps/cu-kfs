@@ -329,8 +329,7 @@
 		<property name="dateTimeService" ref="dateTimeService" />
 	</bean>
 
-    <bean id="jaggaerGenerateAndUploadSupplierXmlJob"
-        parent="scheduledJobDescriptor">
+    <bean id="jaggaerGenerateAndUploadSupplierXmlJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
                 <ref bean="jaggaerGenerateSupplierXmlStep" />
@@ -348,18 +347,18 @@
 	<bean id="jaggaerUploadSupplierXmlStep" class="edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep"
 		parent="step" p:jaggaerUploadFileService-ref="jaggaerUploadFileService" />
 
-	<bean id="jaggaerGenerateSupplierXmlService" parent="jaggaerGenerateSupplierXmlService-parentBean" />
-	<bean id="jaggaerGenerateSupplierXmlService-parentBean"
-		abstract="true"
-		class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateSupplierXmlServiceImpl"
-		p:jaggaerXmlDirectory="${staging.directory}/purap/jaggaer/xml/"
-		p:dateTimeService-ref="dateTimeService"
-		p:cuMarshalService-ref="cuMarshalService"
-		p:fileStorageService-ref="fileStorageService"
-		p:isoFipsConversionService-ref="isoFipsConversionService"
-		p:parameterService-ref="parameterService"
-		p:jaggaerUploadDao-ref="jaggaerUploadDao"
-		p:webServiceCredentialService-ref="webServiceCredentialService" />
+    <bean id="jaggaerGenerateSupplierXmlService" parent="jaggaerGenerateSupplierXmlService-parentBean" />
+    <bean id="jaggaerGenerateSupplierXmlService-parentBean"
+        abstract="true"
+        class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateSupplierXmlServiceImpl"
+        p:jaggaerXmlDirectory="${staging.directory}/purap/jaggaer/xml/"
+        p:dateTimeService-ref="dateTimeService"
+        p:cuMarshalService-ref="cuMarshalService"
+        p:fileStorageService-ref="fileStorageService"
+        p:isoFipsConversionService-ref="isoFipsConversionService"
+        p:parameterService-ref="parameterService"
+        p:jaggaerUploadDao-ref="jaggaerUploadDao"
+        p:webServiceCredentialService-ref="webServiceCredentialService" />
 
 	<bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
 	<bean id="jaggaerUploadFileService-parentBean" abstract="true"
