@@ -25,7 +25,7 @@ public class Location {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String supportsOrderFulfillment;
     @XmlElement(name = "ERPNumber")
-    private ERPNumber erpNumber;
+    private ErpNumber erpNumber;
     @XmlElement(name = "OldERPNumber")
     private String oldERPNumber;
     @XmlElement(name = "SQIntegrationNumber")
@@ -83,11 +83,11 @@ public class Location {
         this.supportsOrderFulfillment = supportsOrderFulfillment;
     }
 
-    public ERPNumber getErpNumber() {
+    public ErpNumber getErpNumber() {
         return erpNumber;
     }
 
-    public void setErpNumber(ERPNumber erpNumber) {
+    public void setErpNumber(ErpNumber erpNumber) {
         this.erpNumber = erpNumber;
     }
 

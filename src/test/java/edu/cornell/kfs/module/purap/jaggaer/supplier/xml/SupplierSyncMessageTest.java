@@ -4,13 +4,18 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
@@ -23,8 +28,6 @@ public class SupplierSyncMessageTest {
 
     private static final String T_TRUE = "T";
 
-    private static final Logger LOG = LogManager.getLogger();
-
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
     private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "outputtemp/";
     private static final String BASIC_FILE_EXAMPLE = "SupplierSyncMessageBasic.xml";
@@ -35,6 +38,7 @@ public class SupplierSyncMessageTest {
 
     @BeforeEach
     void setUpBeforeClass() throws Exception {
+        Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
@@ -51,6 +55,7 @@ public class SupplierSyncMessageTest {
         File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
 
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
+        supplierSyncMessage.setParameterService(buildMockParameterService());
         supplierSyncMessage.setVersion("1.0");
         supplierSyncMessage.setHeader(buildHeader());
 
@@ -58,9 +63,17 @@ public class SupplierSyncMessageTest {
         srm.getSuppliers().add(buildSupplier());
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
-        logActualXmlIfNeeded(supplierSyncMessage);
-        File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+    }
+    
+    private ParameterService buildMockParameterService() {
+        ParameterService service = Mockito.mock(ParameterService.class);
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_VERSION_NUMBER_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG);
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+        return service;
     }
 
     private Header buildHeader() {
@@ -84,7 +97,7 @@ public class SupplierSyncMessageTest {
         supplier.setApprovedForERPSync(T_TRUE);
         supplier.setRequiresERP(T_TRUE);
         supplier.setOldERPNumber("old erp number");
-        supplier.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", F_FALSE));
+        supplier.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", F_FALSE));
         supplier.setName(JaggaerBuilder.buildName("Acme Test Company", null));
 
         supplier.setRestrictFulfillmentLocationsByBusinessUnit(JaggaerBuilder.buildJaggaerBasicValue("restrict", T_TRUE));
@@ -280,7 +293,7 @@ public class SupplierSyncMessageTest {
 
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setErpNumber(JaggaerBuilder.buildERPNumber("parent erp number", F_FALSE));
+        parent.setErpNumber(JaggaerBuilder.buildErpNumber("parent erp number", F_FALSE));
         parent.setIsChanged(F_FALSE);
         parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("parent integration number"));
         return parent;
@@ -371,7 +384,7 @@ public class SupplierSyncMessageTest {
         ap.setIsChanged(T_TRUE);
         ap.setType("accounts payable type");
         ap.setOldERPNumber("old erp number");
-        ap.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", F_FALSE));
+        ap.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", F_FALSE));
         ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
         ap.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         ap.setName(JaggaerBuilder.buildName("accounts payable name", T_TRUE));
@@ -487,7 +500,7 @@ public class SupplierSyncMessageTest {
         location.setIsChanged(T_TRUE);
         location.setSupportsOrderFulfillment("Order Fulfillment(");
         location.setOldERPNumber("old erp number");
-        location.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sqIntegrationNumber"));
         location.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         location.setName(JaggaerBuilder.buildName("silly location name", T_TRUE));
@@ -763,7 +776,7 @@ public class SupplierSyncMessageTest {
         contact.setType("contact type");
 
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ number"));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         contact.setContactRef(ref);
@@ -777,7 +790,7 @@ public class SupplierSyncMessageTest {
         Contact contact = new Contact();
         contact.setIsChanged(T_TRUE);
         contact.setType("contact type");
-        contact.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        contact.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         contact.setOldERPNumber("old erp number");
         contact.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sq integration number"));
         contact.setThirdPartyRefNumber(buildThirdPartyRefNumber());
@@ -819,7 +832,7 @@ public class SupplierSyncMessageTest {
     private PrimaryAddressList buildPrimaryAddressList() {
         PrimaryAddressList addressList = new PrimaryAddressList();
         addressList.setIsChanged(T_TRUE);
-        addressList.getAssociatedAddresses().add(buildAssociatedAddress("adddress type", "erp number", "sq integration number"));        
+        addressList.getAssociatedAddresses().add(buildAssociatedAddress("address type", "erp number", "sq integration number"));        
         return addressList;
     }
 
@@ -829,7 +842,7 @@ public class SupplierSyncMessageTest {
         address.setType(addressType);
 
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber, T_TRUE));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber, T_TRUE));
         ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(sqiNumber));
         ref.setThirdPartyRefNumber(buildThirdPartyRefNumber());
         address.setAddressRef(ref);
@@ -843,7 +856,7 @@ public class SupplierSyncMessageTest {
         Address address = new Address();
         address.setIsChanged(T_TRUE);
         address.setType("home address");
-        address.setErpNumber(JaggaerBuilder.buildERPNumber("erp number", T_TRUE));
+        address.setErpNumber(JaggaerBuilder.buildErpNumber("erp number", T_TRUE));
         address.setOldERPNumber("old erp number");
         address.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("sq integration number"));
         address.setThirdPartyRefNumber(buildThirdPartyRefNumber());
@@ -900,13 +913,6 @@ public class SupplierSyncMessageTest {
         businessList.setIsChanged(T_TRUE);
         businessList.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
         return businessList;
-    }
-
-    private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
-        if (true) {
-            String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
-            LOG.info("logActualXmlIfNeeded, actualResults: " + actualResults);
-        }
     }
 
 }

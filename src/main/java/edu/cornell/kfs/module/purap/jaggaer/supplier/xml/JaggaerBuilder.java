@@ -2,12 +2,12 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 public class JaggaerBuilder {
     
-    public static ERPNumber buildERPNumber(String value) {
-        return buildERPNumber(value, null);
+    public static ErpNumber buildErpNumber(String value) {
+        return buildErpNumber(value, null);
     }
     
-    public static ERPNumber buildERPNumber(String value, String isChanged) {
-        ERPNumber erp = new ERPNumber();
+    public static ErpNumber buildErpNumber(String value, String isChanged) {
+        ErpNumber erp = new ErpNumber();
         erp.setValue(value);
         erp.setIsChanged(isChanged);
         return erp;

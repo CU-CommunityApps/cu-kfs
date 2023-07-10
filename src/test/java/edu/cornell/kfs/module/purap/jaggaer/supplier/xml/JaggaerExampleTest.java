@@ -5,23 +5,25 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
 public class JaggaerExampleTest {
-    
-    private static final Logger LOG = LogManager.getLogger();
-
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
     private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "jaggaertemp/";
     private static final String BASIC_FILE_EXAMPLE = "JaggaerExample.xml";
@@ -32,6 +34,7 @@ public class JaggaerExampleTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
         outputFileDirectory.mkdir();
@@ -48,14 +51,23 @@ public class JaggaerExampleTest {
         File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
 
         SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
+        supplierSyncMessage.setParameterService(buildMockParameterService());
         supplierSyncMessage.setVersion(JaggaerConstants.SUPPLIER_SYNCH_MESSAGE_XML_VERSION);
         supplierSyncMessage.setHeader(buildHeader());
         supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
 
 
-        logActualXmlIfNeeded(supplierSyncMessage);
-        File actualXmlFile = marshalService.marshalObjectToXML(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
         CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+    }
+    
+    private ParameterService buildMockParameterService() {
+        ParameterService service = Mockito.mock(ParameterService.class);
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_VERSION_NUMBER_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG);
+        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
+                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
+        return service;
     }
     
     private Header buildHeader() {
@@ -77,7 +89,7 @@ public class JaggaerExampleTest {
     
     private Supplier buildSupplier() {
         Supplier supplier = new Supplier();
-        supplier.setErpNumber(JaggaerBuilder.buildERPNumber("als12345"));
+        supplier.setErpNumber(JaggaerBuilder.buildErpNumber("als12345"));
         supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511507"));
         supplier.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("ALS0001"));
         supplier.setName(JaggaerBuilder.buildName("Affordable Lab Supplies"));
@@ -129,7 +141,7 @@ public class JaggaerExampleTest {
     
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setErpNumber(JaggaerBuilder.buildERPNumber("als12343"));
+        parent.setErpNumber(JaggaerBuilder.buildErpNumber("als12343"));
         parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511504"));
         return parent;
     }
@@ -214,7 +226,7 @@ public class JaggaerExampleTest {
     private Address buildRemitToAddress() {
         Address remit = new Address();
         remit.setType("remitto");
-        remit.setErpNumber(JaggaerBuilder.buildERPNumber("add123"));
+        remit.setErpNumber(JaggaerBuilder.buildErpNumber("add123"));
         remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u15174772"));
         remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         remit.setName(JaggaerBuilder.buildName("California Regional Office"));
@@ -271,7 +283,7 @@ public class JaggaerExampleTest {
     private Address buildFulfillmentAddress() {
         Address fulfill = new Address();
         fulfill.setType("fulfillment");
-        fulfill.setErpNumber(JaggaerBuilder.buildERPNumber("add123"));
+        fulfill.setErpNumber(JaggaerBuilder.buildErpNumber("add123"));
         fulfill.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
         fulfill.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         fulfill.setName(JaggaerBuilder.buildName("West Coast Distribution Center"));
@@ -304,7 +316,7 @@ public class JaggaerExampleTest {
         address.setType(addressType);
         
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber));
         address.setAddressRef(ref);
         
         return address;
@@ -321,7 +333,7 @@ public class JaggaerExampleTest {
     private Contact buildRemitContact() {
         Contact remit = new Contact();
         remit.setType("remitto");
-        remit.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT1"));
+        remit.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT1"));
         remit.setOldERPNumber("CONTACT1");
         remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1237"));
         remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
@@ -349,7 +361,7 @@ public class JaggaerExampleTest {
     private Contact buildFulfillmentContact() {
         Contact fulfillment = new Contact();
         fulfillment.setType("fulfillment");
-        fulfillment.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT1"));
+        fulfillment.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT1"));
         fulfillment.setOldERPNumber("CONTACT1");
         fulfillment.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1236"));
         fulfillment.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
@@ -371,7 +383,7 @@ public class JaggaerExampleTest {
     private Contact buildTechnicalContact() {
         Contact tech = new Contact();
         tech.setType("technical");
-        tech.setErpNumber(JaggaerBuilder.buildERPNumber("CONTACT2"));
+        tech.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT2"));
         tech.setOldERPNumber("CONTACT2");
         tech.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1240"));
         tech.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID2"));
@@ -402,7 +414,7 @@ public class JaggaerExampleTest {
         contact.setType(contactType);
         
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(JaggaerBuilder.buildERPNumber(erpNumber));
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber));
         contact.setContactRef(ref);
         
         return contact;
@@ -479,7 +491,7 @@ public class JaggaerExampleTest {
     private Location buildFulfillLocation1() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.YES);
-        location.setErpNumber(JaggaerBuilder.buildERPNumber("loc123"));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber("loc123"));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511493"));
         location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         location.setName(JaggaerBuilder.buildName("Fulfillment Center 1"));
@@ -667,7 +679,7 @@ public class JaggaerExampleTest {
     private Location buildFulfillLocation2() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.YES);
-        location.setErpNumber(JaggaerBuilder.buildERPNumber(null));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber(null));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1514101"));
         location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         location.setName(JaggaerBuilder.buildName("Fulfillment Center 2"));
@@ -687,7 +699,7 @@ public class JaggaerExampleTest {
     private Location buildLocation2() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.NO);
-        location.setErpNumber(JaggaerBuilder.buildERPNumber(null));
+        location.setErpNumber(JaggaerBuilder.buildErpNumber(null));
         location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511564"));
         location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         location.setName(JaggaerBuilder.buildName("Location 2"));
@@ -710,7 +722,7 @@ public class JaggaerExampleTest {
         AccountsPayableList apList = new AccountsPayableList();
         AccountsPayable ap = new AccountsPayable();
         ap.setType("Check");
-        ap.setErpNumber(JaggaerBuilder.buildERPNumber("ap123"));;
+        ap.setErpNumber(JaggaerBuilder.buildErpNumber("ap123"));;
         ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511565"));
         ap.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
         ap.setName(JaggaerBuilder.buildName("ap 1"));
@@ -773,13 +785,6 @@ public class JaggaerExampleTest {
         
         taxList.getTaxInformationDetails().add(info);
         return taxList;
-    }
-    
-    private void logActualXmlIfNeeded(SupplierSyncMessage supplierSyncMessage) throws JAXBException, IOException {
-        if (true) {
-            String actualResults = marshalService.marshalObjectToXmlString(supplierSyncMessage);
-            LOG.info("logActualXmlIfNeeded, actualResults: " + actualResults);
-        }
     }
 
 }
