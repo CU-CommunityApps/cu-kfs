@@ -23,9 +23,9 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
     
     @Override
     public String save(
-            Person user, BatchInputFileType batchInputFileType, String fileUserIdentifier, 
-            InputStream fileContents, Object parsedObject) throws FileStorageException {
-        if (user == null || batchInputFileType == null || fileContents == null) {
+            final Person user, final BatchInputFileType inputType, final String fileUserIdentifier, 
+            final InputStream fileContents, final Object parsedObject) throws FileStorageException {
+        if (user == null || inputType == null || fileContents == null) {
             LOG.error(INVALID_ARGUEMENT);
             throw new IllegalArgumentException(INVALID_ARGUEMENT);
         }
@@ -36,21 +36,21 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
         }
 
         // defer to batch input type to add any security or other needed information to the file name
-        String saveFileName = batchInputFileType.getDirectoryPath() + "/" 
-                + batchInputFileType.getFileName(user.getPrincipalName(), parsedObject, fileUserIdentifier);
-        if (!StringUtils.isBlank(batchInputFileType.getFileExtension())) {
-            saveFileName += "." + batchInputFileType.getFileExtension();
+        String saveFileName = inputType.getDirectoryPath() + "/" 
+                + inputType.getFileName(user.getPrincipalName(), parsedObject, fileUserIdentifier);
+        if (!StringUtils.isBlank(inputType.getFileExtension())) {
+            saveFileName += "." + inputType.getFileExtension();
         }
 
         // construct the file object and check for existence
-        File fileToSave = new File(saveFileName);
+        final File fileToSave = new File(saveFileName);
         if (fileToSave.exists()) {
             LOG.error("cannot store file, name already exists {}", saveFileName);
             throw new FileStorageException("Cannot store file because the name " + saveFileName + " already exists on the file system.");
         }
 
         try {
-            FileOutputStream fos = new FileOutputStream(fileToSave);
+            final FileOutputStream fos = new FileOutputStream(fileToSave);
             while (fileContents.available() > 0) {
                 fos.write(fileContents.read());
             }
@@ -60,15 +60,16 @@ public class CuBatchInputFileServiceImpl extends BatchInputFileServiceImpl {
             //CU Mod  If the input file type is not CuBatchInputFileType then we create the
             //done file.  If it is of type CuBatchInputFileType then we also must call the
             //isDoneFileRequired function.
-            if (!(batchInputFileType instanceof CuBatchInputFileType) 
-                    || ((CuBatchInputFileType) batchInputFileType).isDoneFileRequired()) {
-                createDoneFile(fileToSave, batchInputFileType);
+            if (!(inputType instanceof CuBatchInputFileType) 
+                    || ((CuBatchInputFileType) inputType).isDoneFileRequired()) {
+                createDoneFile(fileToSave, inputType);
             }
             //CU Mod
             
-            batchInputFileType.process(saveFileName, parsedObject);
-            
-        } catch (IOException e) {
+            LOG.info("process() - Begin processing");
+            inputType.process(saveFileName, parsedObject);
+            LOG.info("process() - End processing");
+        } catch (final IOException e) {
             LOG.error("unable to save contents to file {}", saveFileName, e);
             throw new RuntimeException("errors encountered while writing file " + saveFileName, e);
         }

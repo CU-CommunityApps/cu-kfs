@@ -619,15 +619,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         // default doc location
         if (StringUtils.isBlank(getDisbursementVoucherDocumentationLocationCode())) {
-            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, FPParameterConstants.DEFAULT_DOC_LOCATION));
+            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, FPParameterConstants.DOCUMENTATION_LOCATION));
         }
 
-        // default bank code
-        final Bank defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(this.getClass());
-        if (defaultBank != null) {
-            disbVchrBankCode = defaultBank.getBankCode();
-            bank = defaultBank;
-        }
+        updateBankBasedOnPaymentMethodCode();
     }
 
     @Override
@@ -696,7 +691,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return isTravelReviewRequired();
         }
         if (nodeName.equals(DOCUMENT_REQUIRES_SEPARATION_OF_DUTIES)) {
-            return isSeparationOfDutiesReviewRequired();
+            return false;
         }
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
     }

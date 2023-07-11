@@ -443,7 +443,7 @@ function placeFocus() {
                     focusSet = true;
                 }
             }
-            else if ((field.elements[i].type == "text") || (field.elements[i].type == "textarea")) {
+            else if (((field.elements[i].type == "text") || (field.elements[i].type == "textarea")) && field.elements[i].onblur === undefined) {
                 document.forms[0].elements[i].focus();
                 focusSet = true;
             }

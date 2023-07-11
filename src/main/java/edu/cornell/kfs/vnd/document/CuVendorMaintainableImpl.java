@@ -104,7 +104,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
 
     @Override 
     public List<MaintenanceLock> generateMaintenanceLocks() {
-        if (ObjectUtils.isNull(((VendorDetail) getBusinessObject()).getVendorDetailAssignedIdentifier())) {
+        final VendorDetail vendor = (VendorDetail) getBusinessObject();
+        if (ObjectUtils.isNull(vendor.getVendorDetailAssignedIdentifier())) {
             return new ArrayList<>();
         }
 
@@ -142,6 +143,15 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         maintenanceLock.setDocumentNumber(this.getDocumentNumber());
         maintenanceLock.setLockingRepresentation(lockRepresentation.toString());
         maintenanceLocks.add(maintenanceLock);
+        
+        final VendorDetail parent = vendor.getVendorParent();
+        if (ObjectUtils.isNotNull(parent)) {
+            final MaintenanceLock parentLock = getMaintenanceLockService().createMaintenanceLock(
+                    getDocumentNumber(),
+                    parent
+            );
+            maintenanceLocks.add(parentLock);
+        }
 
         return maintenanceLocks;
     

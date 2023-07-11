@@ -22,7 +22,7 @@ public class CuDocumentRefreshQueueImpl extends DocumentRefreshQueueImpl impleme
      * to include the preserve-notes feature.
      */
     @Override
-    public void refreshDocument(String documentId) {
+    public void refreshDocument(final String documentId) {
         Validate.isTrue(StringUtils.isNotBlank(documentId), "documentId must be supplied");
         
         List<ActionItemNoteDetailDto> actionNotes = getDocumentMaintenanceService()

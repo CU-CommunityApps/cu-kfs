@@ -38,8 +38,10 @@
 		</property>
 		<property name="dependencies">
 			<map>
-                <entry key="laborEnterpriseFeedJob" value="hardDependency" />
-				<entry key="laborNightlyOutJob" value="hardDependency"/>
+                <entry key="laborEnterpriseFeedJob" 
+                       value="hardDependency" />
+				<entry key="laborNightlyOutJob" 
+                       value="hardDependency"/>
 			</map>
 		</property>
 	</bean>	
@@ -73,7 +75,6 @@
            <ref bean="dateTimeService" />
        </property>
    </bean>
-   
    <bean id="laborOriginEntryEnterpriseFeederHelperService" parent="laborOriginEntryEnterpriseFeederHelperService-parentBean" class="edu.cornell.kfs.module.ld.batch.service.impl.CuFileEnterpriseFeederHelperServiceImpl" />
    <bean id="laborOriginEntryEnterpriseFeederService" parent="laborOriginEntryEnterpriseFeederService-parentBean" class="edu.cornell.kfs.module.ld.batch.service.impl.CuFileEnterpriseFeederServiceImpl"/>
    

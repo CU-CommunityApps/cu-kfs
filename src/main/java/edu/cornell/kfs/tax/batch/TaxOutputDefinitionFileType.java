@@ -2,15 +2,14 @@ package edu.cornell.kfs.tax.batch;
 
 import java.io.File;
 
-import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
-
+import edu.cornell.kfs.sys.batch.service.DigesterXmlBatchInputFileType;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
 
 /**
  * A batch input file type for creating TaxOutputDefinition instances from XML.
  */
-public class TaxOutputDefinitionFileType extends XmlBatchInputFileTypeBase {
+public class TaxOutputDefinitionFileType extends DigesterXmlBatchInputFileType {
 
     @Override
     public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
