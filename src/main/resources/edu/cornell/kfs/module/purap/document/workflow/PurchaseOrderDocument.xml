@@ -19,6 +19,7 @@
                     <status>Disapproved Budget</status>
                     <status>Disapproved C and G</status>
                     <status>Disapproved Change</status>
+                    <status>Disapproved Object Code</status>
                     <status>Disapproved Commodity Code</status>
                     <status>Disapproved Purchasing</status>
                     <status>Disapproved Tax</status>
@@ -40,6 +41,7 @@
                     <status>Awaiting New Unordered Item Review</status>
                     <status>Disapproved New Unordered Item Review</status>
                     <status>Awaiting Purchasing Approval</status>
+                    <status>Awaiting Object Code Approval</status>
                     <status>Awaiting Commodity Code Approval</status>
                     <status>Awaiting C and G Approval</status>
                     <status>Awaiting Budget Approval</status>
@@ -85,15 +87,17 @@
             <routePaths>
                 <routePath>
                     <start name="AdHoc" nextNode="RequiresContractManagementReview" nextAppDocStatus="Awaiting Purchasing Approval"/>
-                    <split name="RequiresContractManagementReview" nextNode="RequiresBudgetReview">
+                    <split name="RequiresContractManagementReview" nextNode="ObjectCode">
                         <branch name="True">
-                            <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Budget Approval"/>
+                            <role name="ContractManagement" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Object Code Approval"/>
                         </branch>
                         <branch name="False">
-                            <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Budget Approval"/>
+                            <simple name="NoOpRequiresContractManagementReview" nextNode="JoinRequiresContractManagementReview" nextAppDocStatus="Awaiting Object Code Approval"/>
                         </branch>
                         <join name="JoinRequiresContractManagementReview"/>
                     </split>
+                    <role name="ObjectCode" nextNode="RequiresBudgetReview"
+                          nextAppDocStatus="Awaiting Budget Approval"/>
                     <split name="RequiresBudgetReview" nextNode="AccountingOrganizationHierarchy">
                         <branch name="True">
                             <role name="Budget" nextNode="JoinRequiresBudgetReview" nextAppDocStatus="Awaiting Base Org Review"/>
@@ -120,6 +124,10 @@
                 <simple name="NoOpRequiresContractManagementReview">
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
+                <role name="ObjectCode">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
                 <split name="RequiresBudgetReview">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>

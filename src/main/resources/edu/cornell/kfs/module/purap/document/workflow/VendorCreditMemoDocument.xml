@@ -40,7 +40,8 @@
                         </branch>
                         <join name="JoinRequiresImageAttachment"/>
                     </split>
-                    <role name="Account" nextNode="TreasuryManager" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                    <role name="Account" nextNode="ObjectCode"/>
+                    <role name="ObjectCode" nextNode="TreasuryManager" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
                     <split name="TreasuryManager">
                         <branch name="True">
                             <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
@@ -66,6 +67,10 @@
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
                 <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>

@@ -16,7 +16,8 @@
                     <start name="AdHoc" nextNode="AccountFullEdit"/>
                     <role name="AccountFullEdit" nextNode="Account"/>
                     <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
-                    <role name="AccountingOrganizationHierarchy" nextNode="SubFund"/>
+                    <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode"/>
+                    <role name="ObjectCode" nextNode="SubFund"/>
                     <role name="SubFund" nextNode="RequiresAutoApprovalNotification"/>
                     <split name="RequiresAutoApprovalNotification">
                         <branch name="True">
@@ -39,6 +40,10 @@
                     <activationType>P</activationType>
                 </role>
                 <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
