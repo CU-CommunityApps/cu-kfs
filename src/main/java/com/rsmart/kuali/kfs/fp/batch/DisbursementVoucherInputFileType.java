@@ -22,7 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 
@@ -33,11 +32,12 @@ import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchFeed;
 import com.rsmart.kuali.kfs.fp.businessobject.DisbursementVoucherBatchStatus;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.batch.service.DigesterXmlBatchInputFileType;
 
 /**
  * Batch input type for the disbursement voucher files
  */
-public class DisbursementVoucherInputFileType extends XmlBatchInputFileTypeBase {
+public class DisbursementVoucherInputFileType extends DigesterXmlBatchInputFileType {
     private DateTimeService dateTimeService;
     private DisbursementVoucherDocumentBatchService disbursementVoucherDocumentBatchService;
 

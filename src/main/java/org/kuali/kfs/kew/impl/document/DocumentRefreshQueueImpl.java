@@ -28,9 +28,8 @@ import org.kuali.kfs.kew.actionrequest.service.ActionRequestService;
 import org.kuali.kfs.kew.actionrequest.service.impl.NotificationSuppression;
 import org.kuali.kfs.kew.api.WorkflowRuntimeException;
 import org.kuali.kfs.kew.api.action.WorkflowDocumentActionsService;
+import org.kuali.kfs.kew.api.document.DocumentProcessingQueue;
 import org.kuali.kfs.kew.api.document.DocumentRefreshQueue;
-import org.kuali.kfs.kew.engine.OrchestrationConfig;
-import org.kuali.kfs.kew.engine.OrchestrationConfig.EngineCapability;
 import org.kuali.kfs.kew.engine.RouteHelper;
 import org.kuali.kfs.kew.engine.node.RouteNodeInstance;
 import org.kuali.kfs.kew.engine.node.service.RouteNodeService;
@@ -59,6 +58,10 @@ public class DocumentRefreshQueueImpl implements DocumentRefreshQueue {
 
     private static final Logger LOG = LogManager.getLogger();
 
+    private ActionRequestService actionRequestService;
+    private DocumentProcessingQueue documentProcessingQueue;
+    private RouteNodeService routeNodeService;
+
     private final RouteHelper helper = new RouteHelper();
 
     private PersonService personService;
@@ -70,23 +73,23 @@ public class DocumentRefreshQueueImpl implements DocumentRefreshQueue {
      * @see org.kuali.kfs.kew.api.document.DocumentRefreshQueue#refreshDocument(java.lang.String)
      */
     @Override
-    public void refreshDocument(String documentId) {
+    public void refreshDocument(final String documentId) {
         Validate.isTrue(StringUtils.isNotBlank(documentId), "documentId must be supplied");
 
         KEWServiceLocator.getRouteHeaderService().lockRouteHeader(documentId, true);
-        Collection<RouteNodeInstance> activeNodes = getRouteNodeService().getActiveNodeInstances(documentId);
-        List<ActionRequest> requestsToDelete = new ArrayList<>();
+        final Collection<RouteNodeInstance> activeNodes = routeNodeService.getActiveNodeInstances(documentId);
+        final List<ActionRequest> requestsToDelete = new ArrayList<>();
 
-        NotificationSuppression notificationSuppression = new NotificationSuppression();
+        final NotificationSuppression notificationSuppression = new NotificationSuppression();
 
-        for (RouteNodeInstance nodeInstance : activeNodes) {
+        for (final RouteNodeInstance nodeInstance : activeNodes) {
             // only "requeue" if we're dealing with a request activation node
             if (helper.isRequestActivationNode(nodeInstance.getRouteNode())) {
-                List<ActionRequest> deletesForThisNode =
-                        getActionRequestService().findPendingRootRequestsByDocIdAtRouteNode(documentId,
+                final List<ActionRequest> deletesForThisNode =
+                        actionRequestService.findPendingRootRequestsByDocIdAtRouteNode(documentId,
                                 nodeInstance.getRouteNodeInstanceId());
 
-                for (ActionRequest deleteForThisNode : deletesForThisNode) {
+                for (final ActionRequest deleteForThisNode : deletesForThisNode) {
                     // check either the request or its first present child request to see if it is system generated
                     boolean containsRoleOrRuleRequests = deleteForThisNode.isRouteModuleRequest();
                     if (!containsRoleOrRuleRequests) {
@@ -107,16 +110,15 @@ public class DocumentRefreshQueueImpl implements DocumentRefreshQueue {
 
                 // this will trigger a regeneration of requests
                 nodeInstance.setInitial(true);
-                getRouteNodeService().save(nodeInstance);
+                routeNodeService.save(nodeInstance);
             }
         }
-        for (ActionRequest requestToDelete : requestsToDelete) {
-            getActionRequestService().deleteActionRequestGraph(requestToDelete);
+        for (final ActionRequest requestToDelete : requestsToDelete) {
+            actionRequestService.deleteActionRequestGraph(requestToDelete);
         }
         try {
-            OrchestrationConfig config = new OrchestrationConfig(EngineCapability.STANDARD);
-            KEWServiceLocator.getWorkflowEngineFactory().newEngine(config).process(documentId, null);
-        } catch (Exception e) {
+            documentProcessingQueue.process(documentId);
+        } catch (final Exception e) {
             throw new WorkflowRuntimeException(e);
         }
         LOG.info("refreshDocument(...) - Ran DocumentRequeuer : documentId={}", documentId);
@@ -135,12 +137,16 @@ public class DocumentRefreshQueueImpl implements DocumentRefreshQueue {
         refreshDocument(documentId);
     }
 
-    private ActionRequestService getActionRequestService() {
-        return KEWServiceLocator.getActionRequestService();
+    public void setActionRequestService(final ActionRequestService actionRequestService) {
+        this.actionRequestService = actionRequestService;
     }
 
-    private RouteNodeService getRouteNodeService() {
-        return KEWServiceLocator.getRouteNodeService();
+    public void setDocumentProcessingQueue(final DocumentProcessingQueue documentProcessingQueue) {
+        this.documentProcessingQueue = documentProcessingQueue;
+    }
+
+    public void setRouteNodeService(final RouteNodeService routeNodeService) {
+        this.routeNodeService = routeNodeService;
     }
 
     public void setPersonService(final PersonService personService) {

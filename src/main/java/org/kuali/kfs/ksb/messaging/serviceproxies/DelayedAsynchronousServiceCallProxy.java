@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.core.api.util.ClassLoaderUtils;
 import org.kuali.kfs.core.api.util.reflect.BaseInvocationHandler;
 import org.kuali.kfs.core.api.util.reflect.TargetedInvocationHandler;
@@ -74,7 +75,7 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
         }
         try {
             return Proxy.newProxyInstance(ClassLoaderUtils.getDefaultClassLoader(),
-                    ClassLoaderUtils.getInterfacesToProxy(SpringContext.getService(serviceName), null, null),
+                    ClassLoaderUtils.getInterfacesToProxy(GlobalResourceLoader.getService(serviceName), null, null),
                     new DelayedAsynchronousServiceCallProxy(serviceName, value1, delayMilliseconds));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -134,7 +135,7 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
 
     @Override
     public Object getTarget() {
-        return SpringContext.getService(serviceName);
+        return GlobalResourceLoader.getService(serviceName);
     }
     
     private CuSchedulerService getCuSchedulerService() {

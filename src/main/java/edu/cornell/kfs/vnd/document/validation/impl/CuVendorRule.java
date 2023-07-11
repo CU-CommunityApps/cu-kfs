@@ -21,6 +21,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 import org.kuali.kfs.vnd.businessobject.VendorSupplierDiversity;
 import org.kuali.kfs.vnd.service.CommodityCodeService;
+import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -36,7 +37,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorSupplierDiversityExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuVendorRule extends CuVendorRuleBase {
-    private CommodityCodeService commodityCodeService = (CommodityCodeService) SpringContext.getService("commodityCodeService");
+    private CommodityCodeService commodityCodeService = (CommodityCodeService)  GlobalResourceLoader.getService("commodityCodeService");
 
     protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
         boolean valid = super.processCustomRouteDocumentBusinessRules(document);

@@ -74,7 +74,8 @@
 
     <bean id="procurementCardCreateDocumentService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl" parent="procurementCardCreateDocumentService-parentBean"/>
     
-    <bean id="procurementCardDocumentJob" parent="scheduledJobDescriptor">
+    <bean id="procurementCardDocumentJob" 
+          parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
                 <ref bean="procurementCardLoadStep" />
@@ -225,7 +226,7 @@
         <property name="bankFileType" value="PCDO"/>
     </bean>
     
-     <bean id="procurementCardInputFileType"  parent="procurementCardInputFileType-parentBean"/>
+    <bean id="procurementCardInputFileType"  parent="procurementCardInputFileType-parentBean"/>
     
     <bean id="procurementCardErrorEmailService" class="edu.cornell.kfs.fp.batch.service.impl.ProcurementCardErrorEmailServiceImpl">
         <property name="parameterService">
@@ -247,12 +248,10 @@
     
     <bean id="disbursementVoucherPayeeService" parent="disbursementVoucherPayeeService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl" />
      	
- 	<bean id="disbursementVoucherPaymentReasonService" parent="disbursementVoucherPaymentReasonService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPaymentReasonServiceImpl" >
- 	
-		<property name="disbursementVoucherPayeeService">
-			<ref bean="disbursementVoucherPayeeService" />
-		</property>
-	</bean>
+ 	<bean id="disbursementVoucherPaymentReasonService" parent="disbursementVoucherPaymentReasonService-parentBean" 
+          class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPaymentReasonServiceImpl" 
+          p:disbursementVoucherPayeeService-ref="disbursementVoucherPayeeService"
+    />
 	
 	<bean id="disbursementPayeeLookupable"  parent="disbursementPayeeLookupable-parentBean" scope="prototype">
 		<property name="lookupableHelperService">
@@ -270,10 +269,11 @@
 		</property>
 	</bean> 
 
-	<bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl">
-	    <property name="vendorService" ref="vendorService" />
-        <property name="parameterEvaluatorService" ref="parameterEvaluatorService" />
-	</bean>
+    <bean id="disbursementVoucherTaxService"  parent="disbursementVoucherTaxService-parentBean" 
+        class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherTaxServiceImpl" 
+        p:vendorService-ref="vendorService"
+        p:parameterEvaluatorService-ref="parameterEvaluatorService"
+    />
 	
 	<bean id="disbursementVoucherDao" 
 	      class="edu.cornell.kfs.fp.dataaccess.impl.CuDisbursementVoucherDaoOjb" 
@@ -332,9 +332,10 @@
     </bean>
 
     <!-- KFSUPGRADE-973 -->
-	<bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl">
-        <property name="paymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
-    </bean>
+    <bean id="disbursementVoucherExtractionHelperService" parent="disbursementVoucherExtractionHelperService-parentBean" 
+        class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherExtractionHelperServiceImpl"
+        p:paymentMethodGeneralLedgerPendingEntryService-ref="cUPaymentMethodGeneralLedgerPendingEntryService"
+    />
     
     <bean id="yearEndGeneralLedgerPendingEntriesService" parent="yearEndGeneralLedgerPendingEntriesService-parentBean"/>
 

@@ -18,14 +18,12 @@
  */
 package org.kuali.kfs.pdp.batch;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -42,16 +40,14 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.sql.Timestamp;
 
 /**
  * Batch input type for the PDP payment file.
  */
-public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
+public class PaymentInputFileType extends XmlBatchInputFileTypeBase<PaymentFileLoad> {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -61,8 +57,10 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
     protected PdpEmailService paymentFileEmailService;
 
     @Override
-    public String getFileName(String principalName, Object parsedFileContents, String fileUserIdentifier) {
-        Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
+    public String getFileName(
+            final String principalName, final Object parsedFileContents, final String fileUserIdentifier
+    ) {
+        final Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
 
         String fileName = PdpConstants.PDP_FILE_UPLOAD_FILE_PREFIX + "_" + principalName;
         if (StringUtils.isNotBlank(fileUserIdentifier)) {
@@ -77,8 +75,8 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
     }
 
     @Override
-    public String getAuthorPrincipalName(File file) {
-        String[] fileNameParts = StringUtils.split(file.getName(), "_");
+    public String getAuthorPrincipalName(final File file) {
+        final String[] fileNameParts = StringUtils.split(file.getName(), "_");
         if (fileNameParts.length > 3) {
             return fileNameParts[2];
         }
@@ -91,39 +89,44 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
     }
 
     @Override
-    public boolean validate(Object parsedFileContents) {
-        PaymentFileLoad paymentFile = (PaymentFileLoad) parsedFileContents;
+    public boolean validate(final Object parsedFileContents) {
+        final PaymentFileLoad paymentFile = (PaymentFileLoad) parsedFileContents;
 
-        // add validation for chartCode-accountNumber, as chartCode is not required in xsd due to accounts-cant-cross-charts option
+        // add validation for chartCode-accountNumber, as chartCode is not required in xsd due to
+        // accounts-cant-cross-charts option
         boolean validAccounts = true;
         if (paymentFile.getPaymentGroups() != null) {
-            for (PaymentGroup payGroup : paymentFile.getPaymentGroups()) {
+            for (final PaymentGroup payGroup : paymentFile.getPaymentGroups()) {
                 if (payGroup.getPaymentDetails() == null) {
                     continue;
                 }
-                for (PaymentDetail payDetail : payGroup.getPaymentDetails()) {
+                for (final PaymentDetail payDetail : payGroup.getPaymentDetails()) {
                     if (payDetail.getAccountDetail() == null) {
                         continue;
                     }
-                    for (PaymentAccountDetail acctDetail : payDetail.getAccountDetail()) {
+                    for (final PaymentAccountDetail acctDetail : payDetail.getAccountDetail()) {
                         // if chart code is empty while accounts cannot cross charts, then derive chart code from
                         //account number
                         if (StringUtils.isEmpty(acctDetail.getFinChartCode())) {
                             if (accountService.accountsCanCrossCharts()) {
-                                GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
+                                GlobalVariables.getMessageMap().putError(
+                                        KFSConstants.GLOBAL_ERRORS,
                                         KFSKeyConstants.ERROR_BATCH_UPLOAD_FILE_EMPTY_CHART,
-                                        acctDetail.getAccountNbr());
+                                        acctDetail.getAccountNbr()
+                                );
                                 validAccounts = false;
                             } else {
                                 // accountNumber shall not be empty, otherwise won't pass schema validation
-                                Account account = accountService.getUniqueAccountForAccountNumber(
-                                        acctDetail.getAccountNbr());
+                                final Account account =
+                                        accountService.getUniqueAccountForAccountNumber(acctDetail.getAccountNbr());
                                 if (account != null) {
                                     acctDetail.setFinChartCode(account.getChartOfAccountsCode());
                                 } else {
-                                    GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS,
+                                    GlobalVariables.getMessageMap().putError(
+                                            KFSConstants.GLOBAL_ERRORS,
                                             KFSKeyConstants.ERROR_BATCH_UPLOAD_FILE_INVALID_ACCOUNT,
-                                            acctDetail.getAccountNbr());
+                                            acctDetail.getAccountNbr()
+                                    );
                                     validAccounts = false;
                                 }
                             }
@@ -143,11 +146,11 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
     }
 
     @Override
-    public void process(String fileName, Object parsedFileContents) {
-        PaymentFileLoad paymentFile = (PaymentFileLoad) parsedFileContents;
+    public void process(final String fileName, final Object parsedFileContents) {
+        final PaymentFileLoad paymentFile = (PaymentFileLoad) parsedFileContents;
         if (paymentFile.isPassedValidation()) {
             // collect various information for status of load
-            LoadPaymentStatus status = new LoadPaymentStatus();
+            final LoadPaymentStatus status = new LoadPaymentStatus();
             status.setMessageMap(new MessageMap());
 
             paymentFileService.loadPayments(paymentFile, status, fileName);
@@ -156,34 +159,15 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
     }
 
     /**
-     * Overridden so we can send the error email here. (keep it consistent between the batch processing and the
-     * online file upload web processing)
+     * Overridden so we can send the error email here. (keep it consistent between the batch processing and the online
+     * file upload web processing)
      */
     @Override
-    public Object parse(final byte[] fileByteContent) throws ParseException {
+    public PaymentFileLoad parse(final byte[] fileByteContent) throws ParseException {
         PaymentFileLoad paymentFile = null;
 
-        if (fileByteContent == null) {
-            LOG.error("an invalid(null) argument was given");
-            throw new IllegalArgumentException("an invalid(null) argument was given");
-        }
-
-        // handle zero byte contents, xml parsers don't deal with them well
-        if (fileByteContent.length == 0) {
-            LOG.error("an invalid argument was given, empty input stream");
-            throw new IllegalArgumentException("an invalid argument was given, empty input stream");
-        }
-
-        // validate contents against schema
-        final ByteArrayInputStream validateFileContents = new ByteArrayInputStream(fileByteContent);
-        validateContentsAgainstSchema(getSchemaLocation(), validateFileContents);
-
         try {
-            final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileByteContent);
-            final JAXBContext jaxbContext = JAXBContext.newInstance(PaymentFileLoad.class);
-            final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-            paymentFile = (PaymentFileLoad) jaxbUnmarshaller.unmarshal(byteArrayInputStream);
+            paymentFile = super.parse(fileByteContent);
 
             // set the payment group payeeId and payeeIdTypeCd from the payeeIdObj that was set from the XML
             for (final PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
@@ -198,11 +182,14 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
                 }
             }
 
-        } catch (final JAXBException e1) {
+        } catch (final ParseException e1) {
             LOG.error("Error parsing xml contents: {}", e1::getMessage);
             final MessageMap errorMap = new MessageMap();
-            errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
-                    "Error parsing xml contents: " + e1.getMessage());
+            errorMap.putError(
+                    KFSConstants.GLOBAL_ERRORS,
+                    KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
+                    "Error parsing xml contents: " + e1.getMessage()
+            );
 
             // Send error email
             paymentFileEmailService.sendErrorEmail(paymentFile, errorMap);
@@ -212,19 +199,19 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase {
         return paymentFile;
     }
 
-    public void setAccountService(AccountService accountService) {
+    public void setAccountService(final AccountService accountService) {
         this.accountService = accountService;
     }
 
-    public void setPaymentFileService(PaymentFileService paymentFileService) {
+    public void setPaymentFileService(final PaymentFileService paymentFileService) {
         this.paymentFileService = paymentFileService;
     }
 
-    public void setDateTimeService(DateTimeService dateTimeService) {
+    public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setPaymentFileEmailService(PdpEmailService paymentFileEmailService) {
+    public void setPaymentFileEmailService(final PdpEmailService paymentFileEmailService) {
         this.paymentFileEmailService = paymentFileEmailService;
     }
 }

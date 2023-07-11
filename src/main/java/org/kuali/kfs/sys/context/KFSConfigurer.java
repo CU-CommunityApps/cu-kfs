@@ -41,6 +41,9 @@ import org.kuali.kfs.ksb.messaging.threadpool.KSBThreadPool;
 import org.kuali.kfs.ksb.service.KSBServiceLocator;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.batch.BatchFile;
+import org.kuali.kfs.sys.batch.service.BatchFileDirectoryService;
+import org.kuali.kfs.sys.batch.service.CacheService;
 import org.kuali.kfs.sys.batch.service.SchedulerService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -69,6 +72,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 //CU customization: this is still needed for our local customization of CuSchedulerServiceImpl to allow certain processes to run without Quartz
 public class KFSConfigurer implements DisposableBean, InitializingBean, ServletContextAware, SmartApplicationListener {
@@ -197,6 +201,8 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
             initDirectories(mainApplicationContext);
             updateWorkflow(mainApplicationContext);
             initScheduler(mainApplicationContext);
+            clearCache(mainApplicationContext);
+            createBatchDirectories(mainApplicationContext);
         }
 
         if (applicationEvent instanceof ContextClosedEvent) {
@@ -353,6 +359,17 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
             // Base code skips this initialize() call if Quartz is disabled, so we add it again in this block.
             SpringContext.getBean(SchedulerService.class).initialize();
         }
+    }
+
+    private static void clearCache(final ApplicationContext applicationContext) {
+        final CacheService cacheService = applicationContext.getBean("cacheService", CacheService.class);
+        cacheService.clearNamedCache(BatchFile.CACHE_NAME);
+    }
+
+    private static void createBatchDirectories(final ApplicationContext applicationContext) {
+        final BatchFileDirectoryService batchFileDirectoryService =
+                applicationContext.getBean("batchFileDirectoryService", BatchFileDirectoryService.class);
+        CompletableFuture.supplyAsync(batchFileDirectoryService::buildBatchFileLookupDirectoriesHierarchy);
     }
 
     @Override

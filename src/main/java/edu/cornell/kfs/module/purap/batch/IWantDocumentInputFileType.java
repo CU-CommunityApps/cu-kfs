@@ -7,15 +7,15 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 
 import com.rsmart.kuali.kfs.fp.FPKeyConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.batch.service.DigesterXmlBatchInputFileType;
 
-public class IWantDocumentInputFileType extends XmlBatchInputFileTypeBase {
+public class IWantDocumentInputFileType extends DigesterXmlBatchInputFileType {
     private DateTimeService dateTimeService;
 
     /**
