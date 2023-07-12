@@ -2,25 +2,19 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.io.File;
 import java.io.IOException;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
+import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.parallel.Execution;
 import org.xml.sax.SAXException;
 
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
-import edu.cornell.kfs.module.purap.CuPurapTestConstants;
-import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
-import edu.cornell.kfs.sys.service.CUMarshalService;
-import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     private static final String US_DOLLAR_CURRENCY_CODE = "usd";
 
@@ -29,6 +23,7 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     private static final String T_TRUE = "T";
 
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-CornellTestData.xml";
+    private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData.xml";
 
     @BeforeEach
     protected void setUpBeforeClass() throws Exception {
@@ -45,23 +40,35 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     }
 
     @Test
-    void testSupplierSyncMessage() throws JAXBException, IOException, SAXException  {
-        File expectedXmlFile = new File(INPUT_FILE_PATH + REQUEST_FILE_EXAMPLE);
+    void testSupplierSyncMessageRequest() throws JAXBException, IOException, SAXException  {
+        File expectedRequestXmlFile = new File(INPUT_FILE_PATH + REQUEST_FILE_EXAMPLE);
 
-        SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
-        supplierSyncMessage.setParameterService(buildMockParameterService());
-        supplierSyncMessage.setVersion("1.0");
-        supplierSyncMessage.setHeader(buildHeader());
+        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
+        supplierSyncMessage.setHeader(buildRequestHeader());
 
         SupplierRequestMessage srm = new SupplierRequestMessage();
         srm.getSuppliers().add(buildSupplier());
         supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
 
         File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
-        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+        CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
+        validateFileContainsExpectedHeader(actualXmlFile);
+    }
+    
+    @Test
+    void testSupplierSyncMessageResponse() throws JAXBException, IOException, SAXException  {
+        File expectedResponseXmlFile = new File(INPUT_FILE_PATH + RESPONSE_FILE_EXAMPLE);
+        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
+        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage());
+        supplierSyncMessage.setHeader(buildResponseHeader());
+        
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
+        CuXMLUnitTestUtils.compareXML(expectedResponseXmlFile, actualXmlFile);
+        validateFileContainsExpectedHeader(actualXmlFile);
+        
     }
 
-    private Header buildHeader() {
+    private Header buildRequestHeader() {
         Header header = new Header();
 
         Authentication auth = new Authentication();
@@ -72,6 +79,14 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
         header.setMessageId("message id");
         header.setRelatedMessageId("related id");
         header.setTimestamp("20210218");
+        return header;
+    }
+    
+    private Header buildResponseHeader() {
+        Header header = new Header();
+
+        header.setMessageId("d51b43ac-30cf-4991-8166-018944c99b27");
+        header.setTimestamp("2023-07-11T07:50:10.471-04:00");
         return header;
     }
 
@@ -898,6 +913,19 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
         businessList.setIsChanged(T_TRUE);
         businessList.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
         return businessList;
+    }
+    
+    private SupplierResponseMessage buildSupplierResponseMessage() {
+        SupplierResponseMessage response = new SupplierResponseMessage();
+        response.setStatus(buildResponseStatus());
+        return response;
+    }
+    
+    private Status buildResponseStatus() {
+        Status status = new Status();
+        status.setStatusCode("200");
+        status.setStatusText("Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)");
+        return status;
     }
 
 }

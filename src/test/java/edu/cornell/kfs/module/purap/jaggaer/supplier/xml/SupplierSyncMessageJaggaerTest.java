@@ -3,23 +3,13 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
-import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
-import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
-import edu.cornell.kfs.sys.service.CUMarshalService;
-import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
@@ -44,9 +34,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     void testBuildingJaggaerExample() throws JAXBException, IOException, SAXException {
         File expectedXmlFile = new File(INPUT_FILE_PATH + REQUEST_FILE_EXAMPLE);
 
-        SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
-        supplierSyncMessage.setParameterService(buildMockParameterService());
-        supplierSyncMessage.setVersion(JaggaerConstants.SUPPLIER_SYNCH_MESSAGE_XML_VERSION);
+        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
         supplierSyncMessage.setHeader(buildHeader());
         supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
 

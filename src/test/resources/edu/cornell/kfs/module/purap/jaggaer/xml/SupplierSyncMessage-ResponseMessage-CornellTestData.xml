@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE SupplierSyncMessage SYSTEM "https://usertest-messages.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd">
+<SupplierSyncMessage version="1.0">
+    <Header>
+        <MessageId>
+            d51b43ac-30cf-4991-8166-018944c99b27
+        </MessageId>
+        <Timestamp>
+            2023-07-11T07:50:10.471-04:00
+        </Timestamp>
+    </Header>
+    <SupplierResponseMessage>
+        <Status>
+            <StatusCode>
+                200
+            </StatusCode>
+            <StatusText>
+                Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)
+            </StatusText>
+        </Status>
+
+    </SupplierResponseMessage>
+</SupplierSyncMessage>

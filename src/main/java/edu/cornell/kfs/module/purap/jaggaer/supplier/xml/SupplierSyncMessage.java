@@ -42,7 +42,8 @@ public class SupplierSyncMessage implements XmlFragmentable {
      * 
      * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd TSMSupplierXML.dtd
      */
-    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
+    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class),
+        @XmlElement(name = "SupplierResponseMessage", required = true, type = SupplierResponseMessage.class)})
     private List<SupplierRequestMessageItem> supplierRequestMessageItems;
 
     public String getVersion() {
