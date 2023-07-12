@@ -96,8 +96,7 @@
                         </branch>
                         <join name="JoinRequiresContractManagementReview"/>
                     </split>
-                    <role name="ObjectCode" nextNode="RequiresBudgetReview"
-                          nextAppDocStatus="Awaiting Budget Approval"/>
+                    <role name="ObjectCode" nextNode="RequiresBudgetReview" nextAppDocStatus="Awaiting Budget Approval"/>
                     <split name="RequiresBudgetReview" nextNode="AccountingOrganizationHierarchy">
                         <branch name="True">
                             <role name="Budget" nextNode="JoinRequiresBudgetReview" nextAppDocStatus="Awaiting Base Org Review"/>
