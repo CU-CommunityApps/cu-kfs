@@ -35,8 +35,8 @@ public class SupplierSyncMessage implements XmlFragmentable {
     private transient ParameterService parameterService;
     
     /*
-     * XJC produced this XML annotation.  We only need SupplierRequestMessage for the upload suppliers functionality.
-     * THe following classes can be passed into this collection: SupplierResponseMessage, LookupRequestMessage, and LookupResponseMessage.
+     * XJC produced this XML annotation.  We only need SupplierRequestMessage and SupplierResponseMessage for the upload suppliers functionality.
+     * THe following classes can be passed into this collection: LookupRequestMessage and LookupResponseMessage.
      * Those classes have been removed as they aren't required at this time.
      * If they are needed, this object can be updated to include them.  To regenerate the classes and child objects, run the following command
      * 
