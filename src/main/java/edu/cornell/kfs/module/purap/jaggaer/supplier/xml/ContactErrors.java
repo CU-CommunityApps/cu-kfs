@@ -26,10 +26,10 @@ public class ContactErrors {
         this.contactRef = contactRef;
     }
 
-    public void setErrorMessage(List<ErrorMessage> errorMessage) {
+    public List<ErrorMessage> getErrorMessage() {
         if (errorMessage == null) {
             errorMessage = new ArrayList<ErrorMessage>();
         }
-        this.errorMessage = errorMessage;
+        return errorMessage;
     }
 }

@@ -57,8 +57,7 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
         return Stream.of(
                 Arguments.of(REQUEST_FILE_EXAMPLE, true, false),
                 Arguments.of(RESPONSE_GOOD_FILE_EXAMPLE, false, true),
-                Arguments.of(RESPONSE_BAD_FILE_EXAMPLE, false, false)
-                );
+                Arguments.of(RESPONSE_BAD_FILE_EXAMPLE, false, false));
     }
 
     private Header buildRequestHeader() {

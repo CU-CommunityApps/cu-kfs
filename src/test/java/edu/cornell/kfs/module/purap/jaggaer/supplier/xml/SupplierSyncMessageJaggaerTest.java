@@ -2,34 +2,55 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.module.purap.JaggaerConstants;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase {
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-JaggaerTestData.xml";
+    private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-JaggaerTestData.xml";
     
     @Override
     protected  String buildOutputFilePath() {
         return INPUT_FILE_PATH + "jaggaertemp/";
     }
-
-    @Test
-    void testBuildingJaggaerExample() throws JAXBException, IOException, SAXException {
-        File expectedXmlFile = new File(INPUT_FILE_PATH + REQUEST_FILE_EXAMPLE);
+    
+    @ParameterizedTest
+    @MethodSource("testSupplierSyncMessageArguments")
+    void testSupplierSyncMessage(String fileName, boolean requestTest) throws JAXBException, IOException, SAXException  {
+        File expectedRequestXmlFile = new File(INPUT_FILE_PATH + fileName);
 
         SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
         supplierSyncMessage.setHeader(buildHeader());
-        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
+        
+        if (requestTest) {
+            SupplierRequestMessage srm = new SupplierRequestMessage();
+            srm.getSuppliers().add(buildSupplier());
+            supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
+        } else {
+            supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage());
+        }
 
-
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "testJaggaerExample.xml");
-        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
+        CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
+        validateFileContainsExpectedHeader(actualXmlFile);
+    }
+    
+    static Stream<Arguments> testSupplierSyncMessageArguments() {
+        return Stream.of(Arguments.of(REQUEST_FILE_EXAMPLE, true), 
+                Arguments.of(RESPONSE_FILE_EXAMPLE, false));
     }
     
     private Header buildHeader() {
@@ -747,6 +768,115 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         
         taxList.getTaxInformationDetails().add(info);
         return taxList;
+    }
+    
+    private SupplierResponseMessage buildSupplierResponseMessage() {
+        SupplierResponseMessage srm = new SupplierResponseMessage();
+        srm.setStatus(buildStatus());
+        srm.getSupplierErrors().add(buildsupplierErrors());
+        return srm;
+    }
+    
+    private Status buildStatus() {
+        Status status = new Status();
+        status.setStatusCode("406");
+        status.setStatusText("Text of status message");
+        
+        Errors errors = new Errors();
+        errors.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        status.setErrors(errors);
+        
+        return status;
+    }
+    
+    private ErrorMessage buildErrorMessage(String Message) {
+        ErrorMessage em = new ErrorMessage();
+        em.setValue(Message);
+        em.setType("Error");
+        return em;
+    }
+    
+    private SupplierErrors buildsupplierErrors() {
+        SupplierErrors se = new SupplierErrors();
+        se.setSupplierRef(buildSupplierRef());
+        se.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        se.getAddressErrors().add(buildAddressErrors());
+        se.getContactErrors().add(buildContactErrors());
+        se.getLocationErrors().add(buildLocationErrors());
+        se.getAccountsPayableErrors().add(buildAccountsPayableErrors());
+        se.getCustomElementErrors().add(buildCustomElementErrors());
+        return se;
+    }
+    
+    private SupplierRef buildSupplierRef() {
+        SupplierRef ref = new SupplierRef();
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        return ref;
+    }
+    
+    private AddressErrors buildAddressErrors() {
+        AddressErrors ae = new AddressErrors();
+        
+        AddressRef ref = new AddressRef();
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        ae.setAddressRef(ref);
+        
+        ae.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        
+        return ae;
+    }
+    
+    private ContactErrors buildContactErrors() {
+        ContactErrors ce = new ContactErrors();
+        
+        ContactRef ref = new ContactRef();
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        ce.setContactRef(ref);
+        
+        ce.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        
+        return ce;
+    }
+    
+    private LocationErrors buildLocationErrors() {
+        LocationErrors le = new LocationErrors();
+        
+        AddressRef ref = new AddressRef();
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        le.setAddressRef(ref);
+        
+        le.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        
+        return le;
+    }
+    
+    private AccountsPayableErrors buildAccountsPayableErrors() {
+        AccountsPayableErrors ape = new AccountsPayableErrors();
+        
+        AccountsPayableRef ref = new AccountsPayableRef();
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        ape.setAccountsPayableRef(ref);
+        
+        ape.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        
+        return ape;
+    }
+    
+    private CustomElementErrors buildCustomElementErrors() {
+        CustomElementErrors cee = new CustomElementErrors();
+        cee.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("CustomElementID1"));
+        cee.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        return cee;
     }
 
 }

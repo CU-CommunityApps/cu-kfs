@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE SupplierSyncMessage SYSTEM "https://integrations.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd">
+<!DOCTYPE SupplierSyncMessage SYSTEM "https://usertest-messages.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd">
 <SupplierSyncMessage version="1.0">
 	<Header>
 		<MessageId>f54311e2-364b-4cf4-8942-016e5ad308d9</MessageId>
