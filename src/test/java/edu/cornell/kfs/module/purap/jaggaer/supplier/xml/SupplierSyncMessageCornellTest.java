@@ -2,17 +2,17 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.io.File;
 import java.io.IOException;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import java.util.stream.Stream;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.api.parallel.Execution;
 import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
-import oracle.net.ns.Message11;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
@@ -25,61 +25,40 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-CornellTestData.xml";
     private static final String RESPONSE_GOOD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-good.xml";
     private static final String RESPONSE_BAD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-bad.xml";
-
-    @BeforeEach
-    protected void setUpBeforeClass() throws Exception {
-        super.setUpBeforeClass();
-    }
     
+    @Override
     protected  String buildOutputFilePath() {
         return INPUT_FILE_PATH + "outputtemp/";
     }
-
-    @AfterEach
-    protected void tearDownAfterClass() throws Exception {
-        super.tearDownAfterClass();
-    }
-
-    @Test
-    void testSupplierSyncMessageRequest() throws JAXBException, IOException, SAXException  {
-        File expectedRequestXmlFile = new File(INPUT_FILE_PATH + REQUEST_FILE_EXAMPLE);
+    
+    @ParameterizedTest
+    @MethodSource("testSupplierSyncMessageArguments")
+    void testSupplierSyncMessage(String fileName, boolean requestTest, boolean goodResponseStatus) throws JAXBException, IOException, SAXException  {
+        File expectedRequestXmlFile = new File(INPUT_FILE_PATH + fileName);
 
         SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
-        supplierSyncMessage.setHeader(buildRequestHeader());
-
-        SupplierRequestMessage srm = new SupplierRequestMessage();
-        srm.getSuppliers().add(buildSupplier());
-        supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
+        
+        if (requestTest) {
+            supplierSyncMessage.setHeader(buildRequestHeader());
+            SupplierRequestMessage srm = new SupplierRequestMessage();
+            srm.getSuppliers().add(buildSupplier());
+            supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
+        } else {
+            supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage(goodResponseStatus));
+            supplierSyncMessage.setHeader(buildResponseHeader());
+        }
 
         File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
         validateFileContainsExpectedHeader(actualXmlFile);
     }
     
-    @Test
-    void testSupplierSyncMessageResponseGood() throws JAXBException, IOException, SAXException  {
-        File expectedResponseXmlFile = new File(INPUT_FILE_PATH + RESPONSE_GOOD_FILE_EXAMPLE);
-        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
-        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage(true));
-        supplierSyncMessage.setHeader(buildResponseHeader());
-        
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
-        CuXMLUnitTestUtils.compareXML(expectedResponseXmlFile, actualXmlFile);
-        validateFileContainsExpectedHeader(actualXmlFile);
-        
-    }
-    
-    @Test
-    void testSupplierSyncMessageResponseBad() throws JAXBException, IOException, SAXException  {
-        File expectedResponseXmlFile = new File(INPUT_FILE_PATH + RESPONSE_BAD_FILE_EXAMPLE);
-        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
-        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage(false));
-        supplierSyncMessage.setHeader(buildResponseHeader());
-        
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
-        CuXMLUnitTestUtils.compareXML(expectedResponseXmlFile, actualXmlFile);
-        validateFileContainsExpectedHeader(actualXmlFile);
-        
+    static Stream<Arguments> testSupplierSyncMessageArguments() {
+        return Stream.of(
+                Arguments.of(REQUEST_FILE_EXAMPLE, true, false),
+                Arguments.of(RESPONSE_GOOD_FILE_EXAMPLE, false, true),
+                Arguments.of(RESPONSE_BAD_FILE_EXAMPLE, false, false)
+                );
     }
 
     private Header buildRequestHeader() {

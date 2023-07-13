@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -15,19 +13,10 @@ import jakarta.xml.bind.JAXBException;
 
 public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase {
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-JaggaerTestData.xml";
-
-    @BeforeEach
-    protected void setUpBeforeClass() throws Exception {
-        super.setUpBeforeClass();
-    }
     
+    @Override
     protected  String buildOutputFilePath() {
         return INPUT_FILE_PATH + "jaggaertemp/";
-    }
-
-    @AfterEach
-    protected void tearDownAfterClass() throws Exception {
-        super.tearDownAfterClass();
     }
 
     @Test

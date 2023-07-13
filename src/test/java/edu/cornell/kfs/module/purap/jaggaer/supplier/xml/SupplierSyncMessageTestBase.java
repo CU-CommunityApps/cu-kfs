@@ -10,6 +10,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
@@ -26,6 +28,7 @@ public abstract class SupplierSyncMessageTestBase {
     protected File outputFileDirectory;
     protected CUMarshalService marshalService;
     
+    @BeforeEach
     protected void setUpBeforeClass() throws Exception {
         Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
@@ -35,6 +38,7 @@ public abstract class SupplierSyncMessageTestBase {
     
     protected abstract String buildOutputFilePath();
     
+    @AfterEach
     protected void tearDownAfterClass() throws Exception {
         marshalService = null;
         FileUtils.deleteDirectory(outputFileDirectory);
