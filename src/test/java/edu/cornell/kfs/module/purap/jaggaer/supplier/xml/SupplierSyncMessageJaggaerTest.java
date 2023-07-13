@@ -790,16 +790,9 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         return status;
     }
     
-    private ErrorMessage buildErrorMessage(String Message) {
-        ErrorMessage em = new ErrorMessage();
-        em.setValue(Message);
-        em.setType("Error");
-        return em;
-    }
-    
     private SupplierError buildsupplierErrors() {
         SupplierError se = new SupplierError();
-        se.setSupplierRef(buildSupplierRef());
+        se.setSupplierRef(buildReferenceObject(SupplierRef.class));
         se.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         se.getAddressErrors().add(buildAddressErrors());
         se.getContactErrors().add(buildContactErrors());
@@ -809,63 +802,45 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         return se;
     }
     
-    private SupplierRef buildSupplierRef() {
-        SupplierRef ref = new SupplierRef();
-        configureJaggaerRef(ref);
-        return ref;
-    }
-    
-    private void configureJaggaerRef(JaggaerRef ref) {
+    public <T extends JaggaerRef> T buildReferenceObject(Class<T> clazz) {
+        T ref = null;
+        try {
+            ref = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
         ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
         ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        return ref;
     }
+
     
     private AddressError buildAddressErrors() {
         AddressError ae = new AddressError();
-        
-        AddressRef ref = new AddressRef();
-        configureJaggaerRef(ref);
-        ae.setAddressRef(ref);
-        
+        ae.setAddressRef(buildReferenceObject(AddressRef.class));
         ae.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
-        
         return ae;
     }
     
     private ContactError buildContactErrors() {
         ContactError ce = new ContactError();
-        
-        ContactRef ref = new ContactRef();
-        configureJaggaerRef(ref);
-        ce.setContactRef(ref);
-        
+        ce.setContactRef(buildReferenceObject(ContactRef.class));
         ce.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
-        
         return ce;
     }
     
     private LocationError buildLocationErrors() {
         LocationError le = new LocationError();
-        
-        AddressRef ref = new AddressRef();
-        configureJaggaerRef(ref);
-        le.setAddressRef(ref);
-        
+        le.setAddressRef(buildReferenceObject(AddressRef.class));
         le.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
-        
         return le;
     }
     
     private AccountsPayableError buildAccountsPayableErrors() {
         AccountsPayableError ape = new AccountsPayableError();
-        
-        AccountsPayableRef ref = new AccountsPayableRef();
-        configureJaggaerRef(ref);
-        ape.setAccountsPayableRef(ref);
-        
+        ape.setAccountsPayableRef(buildReferenceObject(AccountsPayableRef.class));
         ape.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
-        
         return ape;
     }
     

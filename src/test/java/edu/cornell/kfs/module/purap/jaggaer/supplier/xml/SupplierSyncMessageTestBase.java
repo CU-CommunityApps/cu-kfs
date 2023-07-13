@@ -65,4 +65,11 @@ public abstract class SupplierSyncMessageTestBase {
                 CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
     }
+    
+    protected ErrorMessage buildErrorMessage(String message) {
+        ErrorMessage em = new ErrorMessage();
+        em.setType("Error");
+        em.setValue(message);
+        return em;
+    }
 }

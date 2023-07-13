@@ -21,7 +21,7 @@ public class AccountsPayableRef implements JaggaerRef {
     public ErpNumber getErpNumber() {
         return erpNumber;
     }
-    
+
     @Override
     public void setErpNumber(ErpNumber erpNumber) {
         this.erpNumber = erpNumber;
@@ -39,7 +39,7 @@ public class AccountsPayableRef implements JaggaerRef {
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
-    
+
     @Override
     public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
         this.thirdPartyRefNumber = thirdPartyRefNumber;

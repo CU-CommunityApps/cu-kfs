@@ -21,7 +21,7 @@ public class AddressRef implements JaggaerRef {
     public ErpNumber getErpNumber() {
         return erpNumber;
     }
-    
+
     @Override
     public void setErpNumber(ErpNumber erpNumber) {
         this.erpNumber = erpNumber;
@@ -30,7 +30,7 @@ public class AddressRef implements JaggaerRef {
     public SQIntegrationNumber getSqIntegrationNumber() {
         return sqIntegrationNumber;
     }
-    
+
     @Override
     public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
         this.sqIntegrationNumber = sqIntegrationNumber;
@@ -39,7 +39,7 @@ public class AddressRef implements JaggaerRef {
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
-    
+
     @Override
     public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
         this.thirdPartyRefNumber = thirdPartyRefNumber;

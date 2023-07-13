@@ -937,11 +937,4 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
         return status;
     }
     
-    private ErrorMessage buildErrorMessage(String message) {
-        ErrorMessage em = new ErrorMessage();
-        em.setType("Error");
-        em.setValue(message);
-        return em;
-    }
-
 }
