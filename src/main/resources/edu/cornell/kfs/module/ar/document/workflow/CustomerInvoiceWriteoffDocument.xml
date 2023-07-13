@@ -16,7 +16,8 @@
                     <start name="AdHoc" nextNode="RequiresApproval"/>
                     <split name="RequiresApproval">
                         <branch name="True">
-                            <role name="Account" nextNode="Join"/>
+                            <role name="Account" nextNode="ObjectCode"/>
+                            <role name="ObjectCode" nextNode="Join"/>
                         </branch>
                         <branch name="False">
                             <simple name="NoOp" nextNode="Join"/>
@@ -31,6 +32,10 @@
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
                 <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
