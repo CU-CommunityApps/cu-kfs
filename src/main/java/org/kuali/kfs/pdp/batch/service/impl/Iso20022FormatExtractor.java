@@ -443,7 +443,7 @@ public class Iso20022FormatExtractor {
                                     bankCode
                             );
                 } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)) {
-                    final boolean processImmediate = getExpectedProcessImmediateFlag(extractTypeContext);
+                    final boolean processImmediate = getProcessImmediateFlagForCheckExtraction(extractTypeContext);
                     paymentDetailIterator =
                             ((CuPaymentDetailService) paymentDetailService).getByDisbursementNumber(
                                     disbursementNumber,
@@ -510,7 +510,7 @@ public class Iso20022FormatExtractor {
     /*
      * CU Customization: Added helper method for determining expected Immediate Payment flag based on payment urgency.
      */
-    private boolean getExpectedProcessImmediateFlag(
+    private boolean getProcessImmediateFlagForCheckExtraction(
             final ExtractTypeContext extractTypeContext
     ) {
         if (extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.REGULAR)) {
@@ -1642,7 +1642,7 @@ public class Iso20022FormatExtractor {
         if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
             return PdpKeyConstants.ExtractPayment.ACH_FILENAME;
         } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)) {
-            final boolean processImmediate = getExpectedProcessImmediateFlag(extractTypeContext);
+            final boolean processImmediate = getProcessImmediateFlagForCheckExtraction(extractTypeContext);
             return processImmediate
                     ? CUPdpKeyConstants.ExtractPayment.CHECK_IMMEDIATE_FILENAME
                     : PdpKeyConstants.ExtractPayment.CHECK_FILENAME;

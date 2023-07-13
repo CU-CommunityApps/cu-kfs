@@ -29,7 +29,8 @@ import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
 /**
  * ====
  * CU Customization: Added field for configuring whether the context
- * should process regular payments or immediate payments.
+ * should process regular payments or immediate payments. Also added
+ * a constructor that accepts input for the new field.
  * ====
  * 
  * Implementation specific to {@link ExtractionType#CHECK}.
@@ -37,6 +38,15 @@ import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
 public class CheckExtractTypeContext extends AbstractExtractTypeContext {
 
     private final PaymentUrgency urgency;
+
+    public CheckExtractTypeContext(
+            final Date extractBeginDate,
+            final PaymentStatus extractedStatus,
+            final PaymentProcess paymentProcess
+    ) {
+        super(extractBeginDate, extractedStatus, paymentProcess);
+        this.urgency = PaymentUrgency.REGULAR;
+    }
 
     public CheckExtractTypeContext(
             final Date extractBeginDate,

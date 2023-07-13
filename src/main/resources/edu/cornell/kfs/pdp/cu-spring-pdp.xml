@@ -217,7 +217,6 @@
 
     <bean id="pdpPaymentDetailService"
           parent="pdpPaymentDetailService-parentBean"
-          class="edu.cornell.kfs.pdp.service.impl.CuPaymentDetailServiceImpl"
-          p:criteriaLookupService-ref="criteriaLookupService"/>
+          class="edu.cornell.kfs.pdp.service.impl.CuPaymentDetailServiceImpl"/>
 
 </beans>
