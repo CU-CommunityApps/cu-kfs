@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "erpNumber", "sqIntegrationNumber", "thirdPartyRefNumber" })
 @XmlRootElement(name = "AccountsPayableRef")
-public class AccountsPayableRef {
+public class AccountsPayableRef implements JaggaerRef {
 
     @XmlElement(name = "ERPNumber")
     private ErpNumber erpNumber;
@@ -21,7 +21,8 @@ public class AccountsPayableRef {
     public ErpNumber getErpNumber() {
         return erpNumber;
     }
-
+    
+    @Override
     public void setErpNumber(ErpNumber erpNumber) {
         this.erpNumber = erpNumber;
     }
@@ -30,6 +31,7 @@ public class AccountsPayableRef {
         return sqIntegrationNumber;
     }
 
+    @Override
     public void setSqIntegrationNumber(SQIntegrationNumber sqIntegrationNumber) {
         this.sqIntegrationNumber = sqIntegrationNumber;
     }
@@ -37,7 +39,8 @@ public class AccountsPayableRef {
     public ThirdPartyRefNumber getThirdPartyRefNumber() {
         return thirdPartyRefNumber;
     }
-
+    
+    @Override
     public void setThirdPartyRefNumber(ThirdPartyRefNumber thirdPartyRefNumber) {
         this.thirdPartyRefNumber = thirdPartyRefNumber;
     }

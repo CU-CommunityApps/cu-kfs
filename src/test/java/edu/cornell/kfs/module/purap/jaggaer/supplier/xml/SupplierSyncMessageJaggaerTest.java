@@ -19,6 +19,7 @@ import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase {
+    private static final String TEXT_OF_ERROR_MESSAGE = "Text of error message";
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-JaggaerTestData.xml";
     private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-JaggaerTestData.xml";
     
@@ -783,7 +784,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         status.setStatusText("Text of status message");
         
         Errors errors = new Errors();
-        errors.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        errors.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         status.setErrors(errors);
         
         return status;
@@ -799,7 +800,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private SupplierErrors buildsupplierErrors() {
         SupplierErrors se = new SupplierErrors();
         se.setSupplierRef(buildSupplierRef());
-        se.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        se.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         se.getAddressErrors().add(buildAddressErrors());
         se.getContactErrors().add(buildContactErrors());
         se.getLocationErrors().add(buildLocationErrors());
@@ -810,22 +811,24 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private SupplierRef buildSupplierRef() {
         SupplierRef ref = new SupplierRef();
+        configureJaggaerRef(ref);
+        return ref;
+    }
+    
+    private void configureJaggaerRef(JaggaerRef ref) {
         ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
         ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
         ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
-        return ref;
     }
     
     private AddressErrors buildAddressErrors() {
         AddressErrors ae = new AddressErrors();
         
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
-        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
-        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        configureJaggaerRef(ref);
         ae.setAddressRef(ref);
         
-        ae.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        ae.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return ae;
     }
@@ -834,12 +837,10 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         ContactErrors ce = new ContactErrors();
         
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
-        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
-        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        configureJaggaerRef(ref);
         ce.setContactRef(ref);
         
-        ce.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        ce.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return ce;
     }
@@ -848,12 +849,10 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         LocationErrors le = new LocationErrors();
         
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
-        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
-        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        configureJaggaerRef(ref);
         le.setAddressRef(ref);
         
-        le.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        le.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return le;
     }
@@ -862,12 +861,10 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         AccountsPayableErrors ape = new AccountsPayableErrors();
         
         AccountsPayableRef ref = new AccountsPayableRef();
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
-        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
-        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        configureJaggaerRef(ref);
         ape.setAccountsPayableRef(ref);
         
-        ape.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        ape.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return ape;
     }
@@ -875,7 +872,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private CustomElementErrors buildCustomElementErrors() {
         CustomElementErrors cee = new CustomElementErrors();
         cee.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("CustomElementID1"));
-        cee.getErrorMessage().add(buildErrorMessage("Text of error message"));
+        cee.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         return cee;
     }
 
