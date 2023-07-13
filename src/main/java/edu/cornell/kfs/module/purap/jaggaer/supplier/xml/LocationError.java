@@ -10,13 +10,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "addressRef", "errorMessage" })
+@XmlType(name = "", propOrder = { "addressRef", "errorMessages" })
 @XmlRootElement(name = "LocationErrors")
-public class LocationErrors {
+public class LocationError {
     @XmlElement(name = "AddressRef", required = true)
     private AddressRef addressRef;
     @XmlElement(name = "ErrorMessage")
-    private List<ErrorMessage> errorMessage;
+    private List<ErrorMessage> errorMessages;
 
     public AddressRef getAddressRef() {
         return addressRef;
@@ -26,10 +26,10 @@ public class LocationErrors {
         this.addressRef = addressRef;
     }
 
-    public List<ErrorMessage> getErrorMessage() {
-        if (errorMessage == null) {
-            errorMessage = new ArrayList<ErrorMessage>();
+    public List<ErrorMessage> getErrorMessages() {
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<ErrorMessage>();
         }
-        return errorMessage;
+        return errorMessages;
     }
 }

@@ -797,8 +797,8 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         return em;
     }
     
-    private SupplierErrors buildsupplierErrors() {
-        SupplierErrors se = new SupplierErrors();
+    private SupplierError buildsupplierErrors() {
+        SupplierError se = new SupplierError();
         se.setSupplierRef(buildSupplierRef());
         se.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         se.getAddressErrors().add(buildAddressErrors());
@@ -821,58 +821,58 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
     }
     
-    private AddressErrors buildAddressErrors() {
-        AddressErrors ae = new AddressErrors();
+    private AddressError buildAddressErrors() {
+        AddressError ae = new AddressError();
         
         AddressRef ref = new AddressRef();
         configureJaggaerRef(ref);
         ae.setAddressRef(ref);
         
-        ae.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        ae.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return ae;
     }
     
-    private ContactErrors buildContactErrors() {
-        ContactErrors ce = new ContactErrors();
+    private ContactError buildContactErrors() {
+        ContactError ce = new ContactError();
         
         ContactRef ref = new ContactRef();
         configureJaggaerRef(ref);
         ce.setContactRef(ref);
         
-        ce.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        ce.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return ce;
     }
     
-    private LocationErrors buildLocationErrors() {
-        LocationErrors le = new LocationErrors();
+    private LocationError buildLocationErrors() {
+        LocationError le = new LocationError();
         
         AddressRef ref = new AddressRef();
         configureJaggaerRef(ref);
         le.setAddressRef(ref);
         
-        le.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        le.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return le;
     }
     
-    private AccountsPayableErrors buildAccountsPayableErrors() {
-        AccountsPayableErrors ape = new AccountsPayableErrors();
+    private AccountsPayableError buildAccountsPayableErrors() {
+        AccountsPayableError ape = new AccountsPayableError();
         
         AccountsPayableRef ref = new AccountsPayableRef();
         configureJaggaerRef(ref);
         ape.setAccountsPayableRef(ref);
         
-        ape.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        ape.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         
         return ape;
     }
     
-    private CustomElementErrors buildCustomElementErrors() {
-        CustomElementErrors cee = new CustomElementErrors();
+    private CustomElementError buildCustomElementErrors() {
+        CustomElementError cee = new CustomElementError();
         cee.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("CustomElementID1"));
-        cee.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        cee.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         return cee;
     }
 

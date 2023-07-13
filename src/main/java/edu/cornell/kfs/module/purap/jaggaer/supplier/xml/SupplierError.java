@@ -14,22 +14,22 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = { "supplierRef", "errorMessage", "addressErrors", "contactErrors", "locationErrors",
         "accountsPayableErrors", "customElementErrors" })
 @XmlRootElement(name = "SupplierErrors")
-public class SupplierErrors {
+public class SupplierError {
 
     @XmlElement(name = "SupplierRef", required = true)
     private SupplierRef supplierRef;
     @XmlElement(name = "ErrorMessage")
     private List<ErrorMessage> errorMessage;
     @XmlElement(name = "AddressErrors")
-    private List<AddressErrors> addressErrors;
+    private List<AddressError> addressErrors;
     @XmlElement(name = "ContactErrors")
-    private List<ContactErrors> contactErrors;
+    private List<ContactError> contactErrors;
     @XmlElement(name = "LocationErrors")
-    private List<LocationErrors> locationErrors;
+    private List<LocationError> locationErrors;
     @XmlElement(name = "AccountsPayableErrors")
-    private List<AccountsPayableErrors> accountsPayableErrors;
+    private List<AccountsPayableError> accountsPayableErrors;
     @XmlElement(name = "CustomElementErrors")
-    private List<CustomElementErrors> customElementErrors;
+    private List<CustomElementError> customElementErrors;
 
     public SupplierRef getSupplierRef() {
         return supplierRef;
@@ -46,37 +46,37 @@ public class SupplierErrors {
         return errorMessage;
     }
 
-    public List<AddressErrors> getAddressErrors() {
+    public List<AddressError> getAddressErrors() {
         if (addressErrors == null) {
-            addressErrors = new ArrayList<AddressErrors>();
+            addressErrors = new ArrayList<AddressError>();
         }
         return addressErrors;
     }
 
-    public List<ContactErrors> getContactErrors() {
+    public List<ContactError> getContactErrors() {
         if (contactErrors == null) {
-            contactErrors = new ArrayList<ContactErrors>();
+            contactErrors = new ArrayList<ContactError>();
         }
         return contactErrors;
     }
 
-    public List<LocationErrors> getLocationErrors() {
+    public List<LocationError> getLocationErrors() {
         if (locationErrors == null) {
-            locationErrors = new ArrayList<LocationErrors>();
+            locationErrors = new ArrayList<LocationError>();
         }
         return locationErrors;
     }
 
-    public List<AccountsPayableErrors> getAccountsPayableErrors() {
+    public List<AccountsPayableError> getAccountsPayableErrors() {
         if (accountsPayableErrors == null) {
-            accountsPayableErrors = new ArrayList<AccountsPayableErrors>();
+            accountsPayableErrors = new ArrayList<AccountsPayableError>();
         }
         return accountsPayableErrors;
     }
 
-    public List<CustomElementErrors> getCustomElementErrors() {
+    public List<CustomElementError> getCustomElementErrors() {
         if (customElementErrors == null) {
-            customElementErrors = new ArrayList<CustomElementErrors>();
+            customElementErrors = new ArrayList<CustomElementError>();
         }
         return customElementErrors;
     }

@@ -10,13 +10,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "contactRef", "errorMessage" })
+@XmlType(name = "", propOrder = { "contactRef", "errorMessages" })
 @XmlRootElement(name = "ContactErrors")
-public class ContactErrors {
+public class ContactError {
     @XmlElement(name = "ContactRef", required = true)
     private ContactRef contactRef;
     @XmlElement(name = "ErrorMessage")
-    private List<ErrorMessage> errorMessage;
+    private List<ErrorMessage> errorMessages;
 
     public ContactRef getContactRef() {
         return contactRef;
@@ -26,10 +26,10 @@ public class ContactErrors {
         this.contactRef = contactRef;
     }
 
-    public List<ErrorMessage> getErrorMessage() {
-        if (errorMessage == null) {
-            errorMessage = new ArrayList<ErrorMessage>();
+    public List<ErrorMessage> getErrorMessages() {
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<ErrorMessage>();
         }
-        return errorMessage;
+        return errorMessages;
     }
 }

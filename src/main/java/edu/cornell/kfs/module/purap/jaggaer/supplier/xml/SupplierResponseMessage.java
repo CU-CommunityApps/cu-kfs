@@ -17,7 +17,7 @@ public class SupplierResponseMessage implements SupplierRequestMessageItem {
     @XmlElement(name = "Status", required = true)
     private Status status;
     @XmlElement(name = "SupplierErrors")
-    private List<SupplierErrors> supplierErrors;
+    private List<SupplierError> supplierErrors;
 
     public Status getStatus() {
         return status;
@@ -27,9 +27,9 @@ public class SupplierResponseMessage implements SupplierRequestMessageItem {
         this.status = status;
     }
 
-    public List<SupplierErrors> getSupplierErrors() {
+    public List<SupplierError> getSupplierErrors() {
         if (supplierErrors == null) {
-            supplierErrors = new ArrayList<SupplierErrors>();
+            supplierErrors = new ArrayList<SupplierError>();
         }
         return supplierErrors;
     }
