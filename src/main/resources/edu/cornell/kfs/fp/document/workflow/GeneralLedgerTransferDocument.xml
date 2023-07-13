@@ -17,12 +17,14 @@
                     <split name="DoFullRoutingSplit">
                         <branch name="True">
                             <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
-                            <role name="AccountingOrganizationHierarchy" nextNode="SubFund"/>
+                            <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode"/>
+                            <role name="ObjectCode" nextNode="SubFund"/>
                             <role name="SubFund" nextNode="Award"/>
                             <role name="Award" nextNode="JoinRequireFullRoutingReview"/>
                         </branch>
                         <branch name="False">
-                            <role name="Account" nextNode="JoinRequireFullRoutingReview"/>
+                            <role name="Account" nextNode="ObjectCode"/>
+                            <role name="ObjectCode" nextNode="JoinRequireFullRoutingReview"/>
                         </branch>
                         <join name="JoinRequireFullRoutingReview"/>
                     </split>
@@ -38,6 +40,10 @@
                     <activationType>P</activationType>
                 </role>
                 <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>

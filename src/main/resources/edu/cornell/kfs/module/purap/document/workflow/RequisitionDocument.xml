@@ -19,6 +19,8 @@
                 <status>Awaiting Commodity Review</status>
                 <status>Disapproved Base Org Review</status>
                 <status>Awaiting Base Org Review</status>
+                <status>Awaiting Object Code Review</status>
+                <status>Disapproved Object Code Review</status>
                 <status>Awaiting Content Approval</status>
                 <status>Closed</status>
                 <status>Disapproved Award</status>
@@ -60,7 +62,8 @@
                         <branch name="False">
                             <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer"/>
                             <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Base Org Review"/>
-                            <role name="AccountingOrganizationHierarchy" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval"/>
+                            <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode" nextAppDocStatus="Awaiting Object Code Review"/>
+                            <role name="ObjectCode" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval"/>
                             <split name="RequiresAwardReview" nextNode="Commodity">
                                 <branch name="True">
                                     <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Review"/>
@@ -129,6 +132,10 @@
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
                 <role name="AccountingOrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
