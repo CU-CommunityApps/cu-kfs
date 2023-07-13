@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
+import oracle.net.ns.Message11;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
@@ -23,7 +23,8 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     private static final String T_TRUE = "T";
 
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-CornellTestData.xml";
-    private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData.xml";
+    private static final String RESPONSE_GOOD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-good.xml";
+    private static final String RESPONSE_BAD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-bad.xml";
 
     @BeforeEach
     protected void setUpBeforeClass() throws Exception {
@@ -56,10 +57,23 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     }
     
     @Test
-    void testSupplierSyncMessageResponse() throws JAXBException, IOException, SAXException  {
-        File expectedResponseXmlFile = new File(INPUT_FILE_PATH + RESPONSE_FILE_EXAMPLE);
+    void testSupplierSyncMessageResponseGood() throws JAXBException, IOException, SAXException  {
+        File expectedResponseXmlFile = new File(INPUT_FILE_PATH + RESPONSE_GOOD_FILE_EXAMPLE);
         SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
-        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage());
+        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage(true));
+        supplierSyncMessage.setHeader(buildResponseHeader());
+        
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
+        CuXMLUnitTestUtils.compareXML(expectedResponseXmlFile, actualXmlFile);
+        validateFileContainsExpectedHeader(actualXmlFile);
+        
+    }
+    
+    @Test
+    void testSupplierSyncMessageResponseBad() throws JAXBException, IOException, SAXException  {
+        File expectedResponseXmlFile = new File(INPUT_FILE_PATH + RESPONSE_BAD_FILE_EXAMPLE);
+        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
+        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage(false));
         supplierSyncMessage.setHeader(buildResponseHeader());
         
         File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
@@ -915,17 +929,41 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
         return businessList;
     }
     
-    private SupplierResponseMessage buildSupplierResponseMessage() {
+    private SupplierResponseMessage buildSupplierResponseMessage(boolean createGoodStatus) {
         SupplierResponseMessage response = new SupplierResponseMessage();
-        response.setStatus(buildResponseStatus());
+        if (createGoodStatus) {
+            response.setStatus(buildResponseStatusGood());
+        } else {
+            response.setStatus(buildResponseStatusBad());
+        }
         return response;
     }
     
-    private Status buildResponseStatus() {
+    private Status buildResponseStatusGood() {
         Status status = new Status();
         status.setStatusCode("200");
         status.setStatusText("Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)");
         return status;
+    }
+    
+    private Status buildResponseStatusBad() {
+        Status status = new Status();
+        status.setStatusCode("500");
+        status.setStatusText("Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)");
+        
+        Errors errors = new Errors();
+        errors.getErrorMessage().add(buildErrorMessage("XML Error : Element type \"foo\" must be declared. at line 65"));
+        errors.getErrorMessage().add(buildErrorMessage("XML Error : The content of element type \"Address\" must match \"(ERPNumber?,OldERPNumber?,SQIntegrationNumber?,ThirdPartyRefNumber?,Name?,Active?,PrefPurchaseOrderDeliveryMethod?,AddressLine1?,AddressLine2?,AddressLine3?,City?,State?,PostalCode?,IsoCountryCode?,Phone?,TollFreePhone?,Fax?,Notes?,AssignedBusinessUnitsList?)\". at line 75"));
+        status.setErrors(errors);       
+
+        return status;
+    }
+    
+    private ErrorMessage buildErrorMessage(String message) {
+        ErrorMessage em = new ErrorMessage();
+        em.setType("Error");
+        em.setValue(message);
+        return em;
     }
 
 }
