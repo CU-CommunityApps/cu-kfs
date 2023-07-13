@@ -41,6 +41,7 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
@@ -64,6 +65,7 @@ import org.kuali.kfs.pdp.businessobject.CustomerProfile;
 import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.businessobject.ProcessSummary;
@@ -94,6 +96,7 @@ import com.prowidesoftware.swift.model.mx.dic.CreditorReferenceInformation2;
 import com.prowidesoftware.swift.model.mx.dic.CreditorReferenceType1Choice;
 import com.prowidesoftware.swift.model.mx.dic.CreditorReferenceType2;
 import com.prowidesoftware.swift.model.mx.dic.CustomerCreditTransferInitiationV03;
+import com.prowidesoftware.swift.model.mx.dic.DocumentAdjustment1;
 import com.prowidesoftware.swift.model.mx.dic.DocumentType5Code;
 import com.prowidesoftware.swift.model.mx.dic.FinancialInstitutionIdentification7;
 import com.prowidesoftware.swift.model.mx.dic.GenericAccountIdentification1;
@@ -117,6 +120,10 @@ import com.prowidesoftware.swift.model.mx.dic.RemittanceInformation5;
 import com.prowidesoftware.swift.model.mx.dic.ServiceLevel8Choice;
 import com.prowidesoftware.swift.model.mx.dic.StructuredRemittanceInformation7;
 
+import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants;
+import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
+import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.exception.ManyFIPSCountriesForNameException;
 import edu.cornell.kfs.sys.exception.ManyFIPStoISOMappingException;
@@ -184,6 +191,7 @@ public class Iso20022FormatExtractor {
 
     /*
      * CU Customization: Added setup for ISO FIPS conversion service.
+     * Also added checking of paymentDetailService parameter to require it to implement CuPaymentDetailService.
      */
     public Iso20022FormatExtractor(
             final AchService achService,
@@ -213,6 +221,9 @@ public class Iso20022FormatExtractor {
         this.processDao = processDao;
         this.xmlUtilService = xmlUtilService;
         this.isoFipsConversionService = isoFipsConversionService;
+        if (!(paymentDetailService instanceof CuPaymentDetailService)) {
+            throw new IllegalArgumentException("paymentDetailService should have implemented CuPaymentDetailService");
+        }
     }
 
     /*
@@ -305,21 +316,35 @@ public class Iso20022FormatExtractor {
         for (final PaymentProcess paymentProcess : paymentProcessList) {
             LOG.debug("extractChecks(...) - : paymentProcess={}", paymentProcess);
 
-            final CheckExtractTypeContext extractTypeContext =
-                    new CheckExtractTypeContext(disbursementDate, extractedStatus, paymentProcess);
+            /*
+             * =========
+             * CU Customization: Updated the Check extraction and wrapped it in a nested loop so that it runs twice:
+             * Once for regular payments and once for immediate payments.
+             * =========
+             */
+            PaymentUrgency[] paymentUrgencies = { PaymentUrgency.REGULAR, PaymentUrgency.IMMEDIATE };
+            for (PaymentUrgency urgency : paymentUrgencies) {
+                final CheckExtractTypeContext extractTypeContext =
+                        new CheckExtractTypeContext(disbursementDate, extractedStatus, paymentProcess, urgency);
 
-            final CustomerCreditTransferInitiationV03 customerCreditTransferInitiation =
-                    constructCustomerCreditTransferInitiation(extractTypeContext);
+                final CustomerCreditTransferInitiationV03 customerCreditTransferInitiation =
+                        constructCustomerCreditTransferInitiation(extractTypeContext);
 
-            if (checksWereExtracted(customerCreditTransferInitiation)) {
-                final MxPain00100103 message = new MxPain00100103();
-                message.setCstmrCdtTrfInitn(customerCreditTransferInitiation);
+                if (checksWereExtracted(customerCreditTransferInitiation)) {
+                    final MxPain00100103 message = new MxPain00100103();
+                    message.setCstmrCdtTrfInitn(customerCreditTransferInitiation);
 
-                final String filename = determineFilename(directoryName, extractTypeContext);
-                writeMessageToFile(message, filename);
+                    final String filename = determineFilename(directoryName, extractTypeContext);
+                    writeMessageToFile(message, filename);
 
-                createDoneFile(filename);
+                    createDoneFile(filename);
+                }
             }
+            /*
+             * =========
+             * End CU Customization Block
+             * =========
+             */
 
             paymentProcess.setExtractedInd(true);
             businessObjectService.save(paymentProcess);
@@ -401,15 +426,46 @@ public class Iso20022FormatExtractor {
                         disbursementNumber
                 );
 
-                final Iterator<PaymentDetail> paymentDetailIterator =
-                        paymentDetailService.getByDisbursementNumber(
-                                disbursementNumber,
-                                processId,
-                                disbursementType,
-                                bankCode
-                        );
+                /*
+                 * ==========
+                 * CU Customization: Added call to a custom helper method to retrieve and filter Check payments
+                 *         based on payment urgency. Also added ability to skip the current inner loop iteration
+                 *         if the check/disbursement had no matching payments at the given urgency level.
+                 * ==========
+                 */
+                final Iterator<PaymentDetail> paymentDetailIterator;
+                if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
+                    paymentDetailIterator =
+                            paymentDetailService.getByDisbursementNumber(
+                                    disbursementNumber,
+                                    processId,
+                                    disbursementType,
+                                    bankCode
+                            );
+                } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)) {
+                    final boolean processImmediate = getProcessImmediateFlagForCheckExtraction(extractTypeContext);
+                    paymentDetailIterator =
+                            ((CuPaymentDetailService) paymentDetailService).getByDisbursementNumber(
+                                    disbursementNumber,
+                                    processId,
+                                    disbursementType,
+                                    bankCode,
+                                    processImmediate
+                            );
+                } else {
+                    throw new IllegalStateException("Context of type " + extractTypeContext.getClass().getName()
+                            + " was for neither Check nor ACH; this should NEVER happen");
+                }
                 final Collection<PaymentDetail> paymentDetails = IteratorUtils.toList(paymentDetailIterator);
+                if (paymentDetails.isEmpty()) {
+                    continue;
+                }
                 disbursementPaymentDetails.putAll(disbursementNumber, paymentDetails);
+                /*
+                 * ==========
+                 * End CU Customization Block
+                 * ==========
+                 */
 
                 paymentDetails.forEach(paymentDetail -> {
                     LOG.debug("constructPaymentInstructionInformationSet(...) - : paymentDetail={}", paymentDetail);
@@ -449,6 +505,22 @@ public class Iso20022FormatExtractor {
                 paymentInstructionInformationSet
         );
         return paymentInstructionInformationSet;
+    }
+
+    /*
+     * CU Customization: Added helper method for determining expected Immediate Payment flag based on payment urgency.
+     */
+    private boolean getProcessImmediateFlagForCheckExtraction(
+            final ExtractTypeContext extractTypeContext
+    ) {
+        if (extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.REGULAR)) {
+            return false;
+        } else if (extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.IMMEDIATE)) {
+            return true;
+        } else {
+            throw new IllegalArgumentException("Context of type " + extractTypeContext.getClass().getName()
+                    + " does not filter payments based on urgency");
+        }
     }
 
     private static void updateAchCountersForNotificationEmail(
@@ -586,9 +658,17 @@ public class Iso20022FormatExtractor {
         final BranchAndFinancialInstitutionIdentification4 debtorAgent = constructDebtorAgent(processTemplatePaymentGroup);
         paymentInstructionInformation.setDbtrAgt(debtorAgent);
 
+        /*
+         * CU Customization: Updated to also add payment type info when processing immediate Checks.
+         */
         if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
             final PaymentTypeInformation19 paymentTypeInformation =
                     constructPaymentTypeInformationWithServiceLevel(processTemplatePaymentGroup);
+            paymentInstructionInformation.setPmtTpInf(paymentTypeInformation);
+        } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)
+                && extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.IMMEDIATE)) {
+            final PaymentTypeInformation19 paymentTypeInformation =
+                    constructPaymentTypeInformationForChecksWithImmediateProcessing();
             paymentInstructionInformation.setPmtTpInf(paymentTypeInformation);
         }
 
@@ -623,6 +703,19 @@ public class Iso20022FormatExtractor {
 
         final ServiceLevel8Choice serviceLevel = determineServiceLevelCode(templatePaymentGroup);
         paymentTypeInformation.setSvcLvl(serviceLevel);
+
+        return paymentTypeInformation;
+    }
+
+    /*
+     * CU Customization: Added method to create payment type info for immediate Checks.
+     */
+    private PaymentTypeInformation19 constructPaymentTypeInformationForChecksWithImmediateProcessing() {
+        final PaymentTypeInformation19 paymentTypeInformation = new PaymentTypeInformation19();
+
+        final LocalInstrument2Choice localInstrument = new LocalInstrument2Choice();
+        localInstrument.setPrtry(Iso20022Constants.LOCAL_INSTRUMENT_ISSUE_ONLY);
+        paymentTypeInformation.setLclInstrm(localInstrument);
 
         return paymentTypeInformation;
     }
@@ -1274,8 +1367,11 @@ public class Iso20022FormatExtractor {
         final StructuredRemittanceInformation7 structuredRemittanceInformation =
                 new StructuredRemittanceInformation7();
 
+        /*
+         * CU Customization: Also pass the extraction context to the Referred Document Information method.
+         */
         final ReferredDocumentInformation3 referredDocumentInformation =
-                constructReferredDocumentInformation(paymentDetail);
+                constructReferredDocumentInformation(paymentDetail, extractTypeContext);
         structuredRemittanceInformation.addRfrdDocInf(referredDocumentInformation);
 
         final RemittanceAmount1 referredDocumentAmount =
@@ -1312,12 +1408,18 @@ public class Iso20022FormatExtractor {
         structuredRemittanceInformation.addAddtlRmtInf(addtlRmtInf);
     }
 
+    /*
+     * CU Customization: Added extraction context both as a method arg and as an extra arg on the Referred
+     * Document Type setup.
+     */
     private static ReferredDocumentInformation3 constructReferredDocumentInformation(
-            final PaymentDetail paymentDetail
+            final PaymentDetail paymentDetail,
+            final ExtractTypeContext extractTypeContext
     ) {
         final ReferredDocumentInformation3 referredDocumentInformation = new ReferredDocumentInformation3();
 
-        final ReferredDocumentType2 referredDocumentType = constructReferredDocumentType(paymentDetail);
+        final ReferredDocumentType2 referredDocumentType = constructReferredDocumentType(paymentDetail,
+                extractTypeContext);
         referredDocumentInformation.setTp(referredDocumentType);
 
         final String documentNumber = paymentDetail.getInvoiceNbr();
@@ -1330,8 +1432,13 @@ public class Iso20022FormatExtractor {
         return referredDocumentInformation;
     }
 
+    /*
+     * CU Customization: Added extraction context as a method arg and added setup of doc number
+     * in the "Issr" property/element.
+     */
     private static ReferredDocumentType2 constructReferredDocumentType(
-            final PaymentDetail paymentDetail
+            final PaymentDetail paymentDetail,
+            final ExtractTypeContext extractTypeContext
     ) {
         final DocumentType5Code documentTypeCode = determineDocumentTypeCode(paymentDetail);
         final ReferredDocumentType1Choice referredDocumentTypeType = new ReferredDocumentType1Choice();
@@ -1339,6 +1446,12 @@ public class Iso20022FormatExtractor {
 
         final ReferredDocumentType2 referredDocumentType = new ReferredDocumentType2();
         referredDocumentType.setCdOrPrtry(referredDocumentTypeType);
+
+        if (extractTypeContext.isExtractionType(ExtractionType.CHECK)
+                && extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.IMMEDIATE)
+                && StringUtils.isNotBlank(paymentDetail.getCustPaymentDocNbr())) {
+            referredDocumentType.setIssr(paymentDetail.getCustPaymentDocNbr());
+        }
 
         return referredDocumentType;
     }
@@ -1421,7 +1534,36 @@ public class Iso20022FormatExtractor {
             referredDocumentAmount.setTaxAmt(taxAmount);
         }
 
+        /*
+         * CU Customization: On immediate Check payments, add PDP payment notes as zero-amount adjustments.
+         */
+        if (extractTypeContext.isExtractionType(ExtractionType.CHECK)
+                && extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.IMMEDIATE)
+                && CollectionUtils.isNotEmpty(paymentDetail.getNotes())) {
+            for (final PaymentNoteText paymentNote : paymentDetail.getNotes()) {
+                DocumentAdjustment1 adjustmentAmount = constructAdjustmentAmountForStoringPaymentNote(paymentNote);
+                referredDocumentAmount.addAdjstmntAmtAndRsn(adjustmentAmount);
+            }
+        }
+
         return referredDocumentAmount;
+    }
+
+    /*
+     * CU Customization: Added method that creates zero-amount adjustments for holding PDP payment notes.
+     */
+    private static DocumentAdjustment1 constructAdjustmentAmountForStoringPaymentNote(
+            final PaymentNoteText paymentNote
+    ) {
+        DocumentAdjustment1 adjustmentAmount = new DocumentAdjustment1();
+        adjustmentAmount.setRsn(Iso20022Constants.ADJUSTMENT_REASON_NOTE_ONLY);
+        adjustmentAmount.setAddtlInf(paymentNote.getCustomerNoteText());
+
+        ActiveOrHistoricCurrencyAndAmount zeroDollarAmount =
+                constructActiveOrHistoricCurrencyAndAmount(BigDecimal.ZERO);
+        adjustmentAmount.setAmt(zeroDollarAmount);
+
+        return adjustmentAmount;
     }
 
     private static CreditorReferenceInformation2 constructCreditorReferenceInformation(
@@ -1457,9 +1599,10 @@ public class Iso20022FormatExtractor {
                 extractTypeContext
         );
 
-        final String propertyName = extractTypeContext.isExtractionType(ExtractionType.ACH)
-                ? PdpKeyConstants.ExtractPayment.ACH_FILENAME
-                : PdpKeyConstants.ExtractPayment.CHECK_FILENAME;
+        /*
+         * CU Customization: Moved the filename property derivation to its own method.
+         */
+        final String propertyName = determinePropertyContainingExtractFilenamePrefix(extractTypeContext);
         final String rawCheckFilePrefix =
                 configurationService.getPropertyValueAsString(propertyName);
         final String formattedCheckFilePrefix = MessageFormat.format(rawCheckFilePrefix, new Object[]{null});
@@ -1488,6 +1631,25 @@ public class Iso20022FormatExtractor {
 
         LOG.debug("determineFilename(...) - : filename={}", filename);
         return filename;
+    }
+
+    /*
+     * CU Customization: Added method for deriving which property to use for the extract filename.
+     */
+    private String determinePropertyContainingExtractFilenamePrefix(
+            final ExtractTypeContext extractTypeContext
+    ) {
+        if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
+            return PdpKeyConstants.ExtractPayment.ACH_FILENAME;
+        } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)) {
+            final boolean processImmediate = getProcessImmediateFlagForCheckExtraction(extractTypeContext);
+            return processImmediate
+                    ? CUPdpKeyConstants.ExtractPayment.CHECK_IMMEDIATE_FILENAME
+                    : PdpKeyConstants.ExtractPayment.CHECK_FILENAME;
+        } else {
+            throw new IllegalStateException("Context of type " + extractTypeContext.getClass().getName()
+                    + " was for neither Check nor ACH; this should NEVER happen");
+        }
     }
 
     private boolean isResearchParticipantExtractFile(

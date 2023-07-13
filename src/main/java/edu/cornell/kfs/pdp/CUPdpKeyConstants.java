@@ -33,4 +33,8 @@ public class CUPdpKeyConstants {
 	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_TITLE = "pdp.send.ach.notification.error.report.title";
 	public static final String PDP_SEND_ACH_NOTIFICATION_ERROR_REPORT_FORMAT = "pdp.send.ach.notification.error.report.line.format";
 
+    public static class ExtractPayment {
+        public static final String CHECK_IMMEDIATE_FILENAME = "pdp.extract.checkImmediateFilename";
+    }
+
 }
