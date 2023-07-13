@@ -59,4 +59,9 @@ public class CUPdpConstants {
         public static final String CANCELED = "Canceled";
         public static final String PROCESSED = "Processed";
     }
+
+    public static class Iso20022Constants {
+        public static final String LOCAL_INSTRUMENT_ISSUE_ONLY = "CII";
+        public static final String ADJUSTMENT_REASON_NOTE_ONLY = "NOTE";
+    }
 }

@@ -215,4 +215,8 @@
        </property>
     </bean>
 
+    <bean id="pdpPaymentDetailService"
+          parent="pdpPaymentDetailService-parentBean"
+          class="edu.cornell.kfs.pdp.service.impl.CuPaymentDetailServiceImpl"/>
+
 </beans>
