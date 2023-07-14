@@ -47,6 +47,7 @@ import org.kuali.kfs.module.ar.document.CustomerInvoiceDocument;
 import org.kuali.kfs.module.ar.document.PaymentApplicationDocument;
 import org.kuali.kfs.module.ar.document.service.CustomerInvoiceDocumentService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 
@@ -144,8 +145,19 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         return canAdjust;
     }
 
+    /**
+     * CU Customization: Backport FINP-8894 from 2023-06-07 KualiCo patch release, KFSPTS-28661
+     * This comment should be removed when we reach financials patch release 2023-06-07.
+     */
     protected boolean appHasNoPreviousOrPendingAdjustments() {
-        return getPaymentApplicationDocument().getAdjusterDocumentNumber() == null;
+        final String adjusterDocumentNumber = getPaymentApplicationDocument().getAdjusterDocumentNumber();
+        if (adjusterDocumentNumber == null) {
+            return true;
+        }
+        final DocumentHeader documentHeader =
+                getPaymentApplicationDocument().getDocumentHeaderService().getDocumentHeaderById(adjusterDocumentNumber);
+        final WorkflowDocument workflowDocument = documentHeader.getWorkflowDocument();
+        return workflowDocument.isDisapproved();
     }
 
     private boolean appHasInvoiceAppliedsOrNonApplieds() {
