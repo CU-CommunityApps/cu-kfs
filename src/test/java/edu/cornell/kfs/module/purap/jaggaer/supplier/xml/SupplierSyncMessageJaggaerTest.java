@@ -782,11 +782,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         Status status = new Status();
         status.setStatusCode("406");
         status.setStatusText("Text of status message");
-        
-        Errors errors = new Errors();
-        errors.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
-        status.setErrors(errors);
-        
+        status.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         return status;
     }
     

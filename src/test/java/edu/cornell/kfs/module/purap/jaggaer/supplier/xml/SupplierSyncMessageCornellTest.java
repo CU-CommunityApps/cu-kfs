@@ -928,12 +928,8 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
         Status status = new Status();
         status.setStatusCode("500");
         status.setStatusText("Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)");
-        
-        Errors errors = new Errors();
-        errors.getErrorMessage().add(buildErrorMessage("XML Error : Element type \"foo\" must be declared. at line 65"));
-        errors.getErrorMessage().add(buildErrorMessage("XML Error : The content of element type \"Address\" must match \"(ERPNumber?,OldERPNumber?,SQIntegrationNumber?,ThirdPartyRefNumber?,Name?,Active?,PrefPurchaseOrderDeliveryMethod?,AddressLine1?,AddressLine2?,AddressLine3?,City?,State?,PostalCode?,IsoCountryCode?,Phone?,TollFreePhone?,Fax?,Notes?,AssignedBusinessUnitsList?)\". at line 75"));
-        status.setErrors(errors);       
-
+        status.getErrorMessages().add(buildErrorMessage("XML Error : Element type \"foo\" must be declared. at line 65"));
+        status.getErrorMessages().add(buildErrorMessage("XML Error : The content of element type \"Address\" must match \"(ERPNumber?,OldERPNumber?,SQIntegrationNumber?,ThirdPartyRefNumber?,Name?,Active?,PrefPurchaseOrderDeliveryMethod?,AddressLine1?,AddressLine2?,AddressLine3?,City?,State?,PostalCode?,IsoCountryCode?,Phone?,TollFreePhone?,Fax?,Notes?,AssignedBusinessUnitsList?)\". at line 75"));
         return status;
     }
     
