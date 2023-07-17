@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "header",
-        "supplierRequestMessageItems" })
+        "supplierSyncMessageItems" })
 @XmlRootElement(name = "SupplierSyncMessage")
 public class SupplierSyncMessage implements XmlFragmentable {
 
@@ -44,7 +44,7 @@ public class SupplierSyncMessage implements XmlFragmentable {
      */
     @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class),
         @XmlElement(name = "SupplierResponseMessage", required = true, type = SupplierResponseMessage.class)})
-    private List<SupplierRequestMessageItem> supplierRequestMessageItems;
+    private List<SupplierSyncMessageItem> supplierSyncMessageItems;
 
     public String getVersion() {
         return version;
@@ -62,11 +62,11 @@ public class SupplierSyncMessage implements XmlFragmentable {
         this.header = header;
     }
 
-    public List<SupplierRequestMessageItem> getSupplierRequestMessageItems() {
-        if (supplierRequestMessageItems == null) {
-            supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItem>();
+    public List<SupplierSyncMessageItem> getSupplierSyncMessageItems() {
+        if (supplierSyncMessageItems == null) {
+            supplierSyncMessageItems = new ArrayList<SupplierSyncMessageItem>();
         }
-        return supplierRequestMessageItems;
+        return supplierSyncMessageItems;
     }
 
     @Override

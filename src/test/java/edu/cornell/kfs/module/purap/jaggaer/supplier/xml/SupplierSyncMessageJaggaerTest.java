@@ -39,9 +39,9 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         if (requestTest) {
             SupplierRequestMessage srm = new SupplierRequestMessage();
             srm.getSuppliers().add(buildSupplier());
-            supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
+            supplierSyncMessage.getSupplierSyncMessageItems().add(srm);
         } else {
-            supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage());
+            supplierSyncMessage.getSupplierSyncMessageItems().add(buildSupplierResponseMessage());
         }
 
         File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");

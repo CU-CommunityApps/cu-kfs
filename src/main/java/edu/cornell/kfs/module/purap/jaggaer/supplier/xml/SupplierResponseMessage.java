@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "status", "supplierErrors" })
 @XmlRootElement(name = "SupplierResponseMessage")
-public class SupplierResponseMessage implements SupplierRequestMessageItem {
+public class SupplierResponseMessage implements SupplierSyncMessageItem {
 
     @XmlElement(name = "Status", required = true)
     private Status status;

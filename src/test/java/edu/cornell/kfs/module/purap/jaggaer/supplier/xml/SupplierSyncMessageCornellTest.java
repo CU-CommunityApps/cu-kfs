@@ -42,9 +42,9 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
             supplierSyncMessage.setHeader(buildRequestHeader());
             SupplierRequestMessage srm = new SupplierRequestMessage();
             srm.getSuppliers().add(buildSupplier());
-            supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
+            supplierSyncMessage.getSupplierSyncMessageItems().add(srm);
         } else {
-            supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierResponseMessage(goodResponseStatus));
+            supplierSyncMessage.getSupplierSyncMessageItems().add(buildSupplierResponseMessage(goodResponseStatus));
             supplierSyncMessage.setHeader(buildResponseHeader());
         }
 

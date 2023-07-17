@@ -203,7 +203,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 SupplierRequestMessage supplierRequest = new SupplierRequestMessage();
                 supplierRequest.getSuppliers().addAll(supplierChunk);
 
-                message.getSupplierRequestMessageItems().add(supplierRequest);
+                message.getSupplierSyncMessageItems().add(supplierRequest);
                 messages.add(message);
             }
         }
