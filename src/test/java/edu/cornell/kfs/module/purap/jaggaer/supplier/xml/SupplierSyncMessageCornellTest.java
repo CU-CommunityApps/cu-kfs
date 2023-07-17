@@ -26,11 +26,6 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase 
     private static final String RESPONSE_GOOD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-good.xml";
     private static final String RESPONSE_BAD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-bad.xml";
     
-    @Override
-    protected String buildOutputFilePath() {
-        return INPUT_FILE_PATH + "outputtemp/";
-    }
-    
     @ParameterizedTest
     @MethodSource("testSupplierSyncMessageArguments")
     void testSupplierSyncMessage(String fileName, boolean requestTest, boolean goodResponseStatus) throws JAXBException, IOException, SAXException  {
@@ -48,7 +43,7 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase 
             supplierSyncMessage.setHeader(buildResponseHeader());
         }
 
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
         validateFileContainsExpectedHeader(actualXmlFile);
     }

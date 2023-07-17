@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,11 +22,6 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-JaggaerTestData.xml";
     private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-JaggaerTestData.xml";
     
-    @Override
-    protected String buildOutputFilePath() {
-        return INPUT_FILE_PATH + "jaggaertemp/";
-    }
-    
     @ParameterizedTest
     @MethodSource("testSupplierSyncMessageArguments")
     void testSupplierSyncMessage(String fileName, boolean requestTest) throws JAXBException, IOException, SAXException {
@@ -44,7 +38,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
             supplierSyncMessage.getSupplierSyncMessageItems().add(buildSupplierResponseMessage());
         }
 
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, buildOutputFilePath() + "test.xml");
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
         CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
         validateFileContainsExpectedHeader(actualXmlFile);
     }

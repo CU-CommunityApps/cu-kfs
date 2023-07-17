@@ -25,23 +25,23 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public abstract class SupplierSyncMessageTestBase {
     protected static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
-    protected File outputFileDirectory;
+    protected static final String OUTPUT_FILE_PATH = "test/jaggaer/supplierSynchMessageTest/";;
     protected CUMarshalService marshalService;
+    
+    private File outputFileDirectory;
     
     @BeforeEach
     protected void setUpBeforeClass() throws Exception {
         Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
-        outputFileDirectory = new File(buildOutputFilePath());
-        outputFileDirectory.mkdir();
+        outputFileDirectory = new File(OUTPUT_FILE_PATH);
+        FileUtils.forceMkdir(outputFileDirectory);
     }
-    
-    protected abstract String buildOutputFilePath();
     
     @AfterEach
     protected void tearDownAfterClass() throws Exception {
         marshalService = null;
-        FileUtils.deleteDirectory(outputFileDirectory);
+        FileUtils.forceDelete(outputFileDirectory.getAbsoluteFile());
     }
     
     protected void validateFileContainsExpectedHeader(File xmlFile) throws IOException {
