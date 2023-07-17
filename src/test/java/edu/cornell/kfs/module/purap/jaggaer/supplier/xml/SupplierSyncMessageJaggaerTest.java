@@ -24,13 +24,13 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-JaggaerTestData.xml";
     
     @Override
-    protected  String buildOutputFilePath() {
+    protected String buildOutputFilePath() {
         return INPUT_FILE_PATH + "jaggaertemp/";
     }
     
     @ParameterizedTest
     @MethodSource("testSupplierSyncMessageArguments")
-    void testSupplierSyncMessage(String fileName, boolean requestTest) throws JAXBException, IOException, SAXException  {
+    void testSupplierSyncMessage(String fileName, boolean requestTest) throws JAXBException, IOException, SAXException {
         File expectedRequestXmlFile = new File(INPUT_FILE_PATH + fileName);
 
         SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
@@ -774,7 +774,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private SupplierResponseMessage buildSupplierResponseMessage() {
         SupplierResponseMessage srm = new SupplierResponseMessage();
         srm.setStatus(buildStatus());
-        srm.getSupplierErrors().add(buildsupplierErrors());
+        srm.getSupplierErrors().add(buildSupplierErrors());
         return srm;
     }
     
@@ -786,7 +786,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         return status;
     }
     
-    private SupplierError buildsupplierErrors() {
+    private SupplierError buildSupplierErrors() {
         SupplierError se = new SupplierError();
         se.setSupplierRef(buildReferenceObject(SupplierRef.class));
         se.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));

@@ -15,7 +15,7 @@ import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
-public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
+public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase {
     private static final String US_DOLLAR_CURRENCY_CODE = "usd";
 
     private static final String F_FALSE = "F";
@@ -27,7 +27,7 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase{
     private static final String RESPONSE_BAD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-bad.xml";
     
     @Override
-    protected  String buildOutputFilePath() {
+    protected String buildOutputFilePath() {
         return INPUT_FILE_PATH + "outputtemp/";
     }
     
