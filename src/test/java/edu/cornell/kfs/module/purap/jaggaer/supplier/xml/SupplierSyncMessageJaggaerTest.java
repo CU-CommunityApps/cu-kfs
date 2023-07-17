@@ -789,7 +789,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private SupplierError buildsupplierErrors() {
         SupplierError se = new SupplierError();
         se.setSupplierRef(buildReferenceObject(SupplierRef.class));
-        se.getErrorMessage().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        se.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         se.getAddressErrors().add(buildAddressErrors());
         se.getContactErrors().add(buildContactErrors());
         se.getLocationErrors().add(buildLocationErrors());

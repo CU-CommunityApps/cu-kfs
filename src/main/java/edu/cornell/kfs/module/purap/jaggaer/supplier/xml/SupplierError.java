@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "supplierRef", "errorMessage", "addressErrors", "contactErrors", "locationErrors",
+@XmlType(name = "", propOrder = { "supplierRef", "errorMessages", "addressErrors", "contactErrors", "locationErrors",
         "accountsPayableErrors", "customElementErrors" })
 @XmlRootElement(name = "SupplierErrors")
 public class SupplierError {
@@ -19,7 +19,7 @@ public class SupplierError {
     @XmlElement(name = "SupplierRef", required = true)
     private SupplierRef supplierRef;
     @XmlElement(name = "ErrorMessage")
-    private List<ErrorMessage> errorMessage;
+    private List<ErrorMessage> errorMessages;
     @XmlElement(name = "AddressErrors")
     private List<AddressError> addressErrors;
     @XmlElement(name = "ContactErrors")
@@ -39,11 +39,11 @@ public class SupplierError {
         this.supplierRef = supplierRef;
     }
 
-    public List<ErrorMessage> getErrorMessage() {
-        if (errorMessage == null) {
-            errorMessage = new ArrayList<ErrorMessage>();
+    public List<ErrorMessage> getErrorMessages() {
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<ErrorMessage>();
         }
-        return errorMessage;
+        return errorMessages;
     }
 
     public List<AddressError> getAddressErrors() {
