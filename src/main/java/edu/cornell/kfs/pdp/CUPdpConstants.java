@@ -65,9 +65,9 @@ public class CUPdpConstants {
         public static final String ADJUSTMENT_REASON_NOTE_ONLY = "NOTE";
 
         public static class MessageIdSuffixes {
-            public static final String ACH = "_A";
-            public static final String CHECK = "_C";
-            public static final String IMMEDIATE_CHECK = "_I";
+            public static final String ACH = "ACH";
+            public static final String CHECK = "CHK";
+            public static final String IMMEDIATE_CHECK = "IMD";
         }
     }
 }
