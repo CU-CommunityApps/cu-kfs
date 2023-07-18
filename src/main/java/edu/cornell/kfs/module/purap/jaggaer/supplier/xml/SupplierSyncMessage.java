@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "header",
-        "supplierRequestMessageItems" })
+        "supplierSyncMessageItems" })
 @XmlRootElement(name = "SupplierSyncMessage")
 public class SupplierSyncMessage implements XmlFragmentable {
 
@@ -35,15 +35,16 @@ public class SupplierSyncMessage implements XmlFragmentable {
     private transient ParameterService parameterService;
     
     /*
-     * XJC produced this XML annotation.  We only need SupplierRequestMessage for the upload suppliers functionality.
-     * THe following classes can be passed into this collection: SupplierResponseMessage, LookupRequestMessage, and LookupResponseMessage.
+     * XJC produced this XML annotation.  We only need SupplierRequestMessage and SupplierResponseMessage for the upload suppliers functionality.
+     * THe following classes can be passed into this collection: LookupRequestMessage and LookupResponseMessage.
      * Those classes have been removed as they aren't required at this time.
      * If they are needed, this object can be updated to include them.  To regenerate the classes and child objects, run the following command
      * 
      * xjc -p edu.cornell.kfs.module.purap.jaggaer.supplier.xml -no-header -dtd TSMSupplierXML.dtd
      */
-    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class)})
-    private List<SupplierRequestMessageItem> supplierRequestMessageItems;
+    @XmlElements({ @XmlElement(name = "SupplierRequestMessage", required = true, type = SupplierRequestMessage.class),
+        @XmlElement(name = "SupplierResponseMessage", required = true, type = SupplierResponseMessage.class)})
+    private List<SupplierSyncMessageItem> supplierSyncMessageItems;
 
     public String getVersion() {
         return version;
@@ -61,11 +62,11 @@ public class SupplierSyncMessage implements XmlFragmentable {
         this.header = header;
     }
 
-    public List<SupplierRequestMessageItem> getSupplierRequestMessageItems() {
-        if (supplierRequestMessageItems == null) {
-            supplierRequestMessageItems = new ArrayList<SupplierRequestMessageItem>();
+    public List<SupplierSyncMessageItem> getSupplierSyncMessageItems() {
+        if (supplierSyncMessageItems == null) {
+            supplierSyncMessageItems = new ArrayList<SupplierSyncMessageItem>();
         }
-        return supplierRequestMessageItems;
+        return supplierSyncMessageItems;
     }
 
     @Override

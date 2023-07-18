@@ -2,81 +2,60 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.parallel.Execution;
 import org.xml.sax.SAXException;
 
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
-import edu.cornell.kfs.module.purap.CuPurapTestConstants;
-import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
-import edu.cornell.kfs.sys.service.CUMarshalService;
-import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
-public class SupplierSyncMessageTest {
+@Execution(ExecutionMode.SAME_THREAD)
+public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase {
     private static final String US_DOLLAR_CURRENCY_CODE = "usd";
 
     private static final String F_FALSE = "F";
 
     private static final String T_TRUE = "T";
 
-    private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
-    private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "outputtemp/";
-    private static final String BASIC_FILE_EXAMPLE = "SupplierSyncMessageBasic.xml";
+    private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-CornellTestData.xml";
+    private static final String RESPONSE_GOOD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-good.xml";
+    private static final String RESPONSE_BAD_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-CornellTestData-response-bad.xml";
+    
+    @ParameterizedTest
+    @MethodSource("testSupplierSyncMessageArguments")
+    void testSupplierSyncMessage(String fileName, boolean requestTest, boolean goodResponseStatus) throws JAXBException, IOException, SAXException  {
+        File expectedRequestXmlFile = new File(INPUT_FILE_PATH + fileName);
 
-    private File outputFileDirectory;
-
-    private CUMarshalService marshalService;
-
-    @BeforeEach
-    void setUpBeforeClass() throws Exception {
-        Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
-        marshalService = new CUMarshalServiceImpl();
-        outputFileDirectory = new File(OUTPUT_FILE_PATH);
-        outputFileDirectory.mkdir();
-    }
-
-    @AfterEach
-    void tearDownAfterClass() throws Exception {
-        marshalService = null;
-        FileUtils.deleteDirectory(outputFileDirectory);
-    }
-
-    @Test
-    void testSupplierSyncMessage() throws JAXBException, IOException, SAXException  {
-        File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
-
-        SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
-        supplierSyncMessage.setParameterService(buildMockParameterService());
-        supplierSyncMessage.setVersion("1.0");
-        supplierSyncMessage.setHeader(buildHeader());
-
-        SupplierRequestMessage srm = new SupplierRequestMessage();
-        srm.getSuppliers().add(buildSupplier());
-        supplierSyncMessage.getSupplierRequestMessageItems().add(srm);
+        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
+        
+        if (requestTest) {
+            supplierSyncMessage.setHeader(buildRequestHeader());
+            SupplierRequestMessage srm = new SupplierRequestMessage();
+            srm.getSuppliers().add(buildSupplier());
+            supplierSyncMessage.getSupplierSyncMessageItems().add(srm);
+        } else {
+            supplierSyncMessage.getSupplierSyncMessageItems().add(buildSupplierResponseMessage(goodResponseStatus));
+            supplierSyncMessage.setHeader(buildResponseHeader());
+        }
 
         File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
-        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+        CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
+        validateFileContainsExpectedHeader(actualXmlFile);
     }
     
-    private ParameterService buildMockParameterService() {
-        ParameterService service = Mockito.mock(ParameterService.class);
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_VERSION_NUMBER_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG);
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
-        return service;
+    static Stream<Arguments> testSupplierSyncMessageArguments() {
+        return Stream.of(
+                Arguments.of(REQUEST_FILE_EXAMPLE, true, false),
+                Arguments.of(RESPONSE_GOOD_FILE_EXAMPLE, false, true),
+                Arguments.of(RESPONSE_BAD_FILE_EXAMPLE, false, false));
     }
 
-    private Header buildHeader() {
+    private Header buildRequestHeader() {
         Header header = new Header();
 
         Authentication auth = new Authentication();
@@ -87,6 +66,14 @@ public class SupplierSyncMessageTest {
         header.setMessageId("message id");
         header.setRelatedMessageId("related id");
         header.setTimestamp("20210218");
+        return header;
+    }
+    
+    private Header buildResponseHeader() {
+        Header header = new Header();
+
+        header.setMessageId("d51b43ac-30cf-4991-8166-018944c99b27");
+        header.setTimestamp("2023-07-11T07:50:10.471-04:00");
         return header;
     }
 
@@ -914,5 +901,31 @@ public class SupplierSyncMessageTest {
         businessList.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, preferredForThisBusinessUnit, T_TRUE));
         return businessList;
     }
-
+    
+    private SupplierResponseMessage buildSupplierResponseMessage(boolean createGoodStatus) {
+        SupplierResponseMessage response = new SupplierResponseMessage();
+        if (createGoodStatus) {
+            response.setStatus(buildResponseStatusGood());
+        } else {
+            response.setStatus(buildResponseStatusBad());
+        }
+        return response;
+    }
+    
+    private Status buildResponseStatusGood() {
+        Status status = new Status();
+        status.setStatusCode("200");
+        status.setStatusText("Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)");
+        return status;
+    }
+    
+    private Status buildResponseStatusBad() {
+        Status status = new Status();
+        status.setStatusCode("500");
+        status.setStatusText("Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)");
+        status.getErrorMessages().add(buildErrorMessage("XML Error : Element type \"foo\" must be declared. at line 65"));
+        status.getErrorMessages().add(buildErrorMessage("XML Error : The content of element type \"Address\" must match \"(ERPNumber?,OldERPNumber?,SQIntegrationNumber?,ThirdPartyRefNumber?,Name?,Active?,PrefPurchaseOrderDeliveryMethod?,AddressLine1?,AddressLine2?,AddressLine3?,City?,State?,PostalCode?,IsoCountryCode?,Phone?,TollFreePhone?,Fax?,Notes?,AssignedBusinessUnitsList?)\". at line 75"));
+        return status;
+    }
+    
 }
