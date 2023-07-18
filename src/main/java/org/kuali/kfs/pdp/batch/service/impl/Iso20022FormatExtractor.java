@@ -121,6 +121,7 @@ import com.prowidesoftware.swift.model.mx.dic.ServiceLevel8Choice;
 import com.prowidesoftware.swift.model.mx.dic.StructuredRemittanceInformation7;
 
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants;
+import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants.MessageIdSuffixes;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
 import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
@@ -544,8 +545,12 @@ public class Iso20022FormatExtractor {
     ) {
         final GroupHeader32 groupHeader = new GroupHeader32();
 
+        /*
+         * CU Customization: Append an extra suffix to the Message ID based on extraction type,
+         *         to satisfy the bank's uniqueness requirements for Message IDs.
+         */
         final int processId = extractTypeContext.getPaymentProcess().getId().intValue();
-        final String messageId = Integer.toString(processId);
+        final String messageId = Integer.toString(processId) + determineMessageIdSuffix(extractTypeContext);
         groupHeader.setMsgId(messageId);
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();
@@ -571,6 +576,23 @@ public class Iso20022FormatExtractor {
         groupHeader.setInitgPty(initiatingPartyIdentification);
 
         return groupHeader;
+    }
+
+    /*
+     * CU Customization: Added method for deriving the suffix to append to the file's Message ID.
+     */
+    private String determineMessageIdSuffix(
+            final ExtractTypeContext extractTypeContext
+    ) {
+        if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
+            return MessageIdSuffixes.ACH;
+        } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)) {
+            boolean processImmediate = getProcessImmediateFlagForCheckExtraction(extractTypeContext);
+            return processImmediate ? MessageIdSuffixes.IMMEDIATE_CHECK : MessageIdSuffixes.CHECK;
+        } else {
+            throw new IllegalStateException("Context of type " + extractTypeContext.getClass().getName()
+                    + " was for neither Check nor ACH; this should NEVER happen");
+        }
     }
 
     private boolean checksWereExtracted(final CustomerCreditTransferInitiationV03 customerCreditTransferInitiation) {
@@ -1378,9 +1400,14 @@ public class Iso20022FormatExtractor {
                 constructReferredDocumentAmount(paymentDetail, referredDocumentInformation, extractTypeContext);
         structuredRemittanceInformation.setRfrdDocAmt(referredDocumentAmount);
 
-        final CreditorReferenceInformation2 creditorReferenceInformation =
-                constructCreditorReferenceInformation(paymentDetail, extractTypeContext);
-        structuredRemittanceInformation.setCdtrRefInf(creditorReferenceInformation);
+        /*
+         * CU Customization: Only add the Creditor Reference Information when the payment specifies a PO number.
+         */
+        if (StringUtils.isNotBlank(paymentDetail.getPurchaseOrderNbr())) {
+            final CreditorReferenceInformation2 creditorReferenceInformation =
+                    constructCreditorReferenceInformation(paymentDetail, extractTypeContext);
+            structuredRemittanceInformation.setCdtrRefInf(creditorReferenceInformation);
+        }
 
         addCheckStubText(paymentDetail, structuredRemittanceInformation);
 
