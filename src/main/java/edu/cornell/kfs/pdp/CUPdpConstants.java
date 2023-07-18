@@ -63,5 +63,11 @@ public class CUPdpConstants {
     public static class Iso20022Constants {
         public static final String LOCAL_INSTRUMENT_ISSUE_ONLY = "CII";
         public static final String ADJUSTMENT_REASON_NOTE_ONLY = "NOTE";
+
+        public static class MessageIdSuffixes {
+            public static final String ACH = "ACH";
+            public static final String CHECK = "CHK";
+            public static final String IMMEDIATE_CHECK = "IMD";
+        }
     }
 }
