@@ -44,15 +44,5 @@ public class Status {
         }
         return errorMessages;
     }
-    
-    /*
-    public Errors getErrors() {
-        return errors;
-    }
-
-    public void setErrors(Errors errors) {
-        this.errors = errors;
-    }
-    */
 
 }

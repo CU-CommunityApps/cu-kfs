@@ -31,7 +31,7 @@ public abstract class SupplierSyncMessageTestBase {
     private File outputFileDirectory;
     
     @BeforeEach
-    protected void setUpBeforeClass() throws Exception {
+    protected void setUp() throws Exception {
         Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
         marshalService = new CUMarshalServiceImpl();
         outputFileDirectory = new File(OUTPUT_FILE_PATH);
@@ -39,15 +39,15 @@ public abstract class SupplierSyncMessageTestBase {
     }
     
     @AfterEach
-    protected void tearDownAfterClass() throws Exception {
+    protected void tearDown() throws Exception {
         marshalService = null;
         FileUtils.forceDelete(outputFileDirectory.getAbsoluteFile());
     }
     
     protected void validateFileContainsExpectedHeader(File xmlFile) throws IOException {
-        String expeectedHeaderString = CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG + KFSConstants.NEWLINE + CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG;
+        String expectedHeaderString = CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG + KFSConstants.NEWLINE + CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG;
         String actualXmlContents = FileUtils.readFileToString(xmlFile, Charset.defaultCharset());
-        assertTrue(StringUtils.contains(actualXmlContents, expeectedHeaderString));
+        assertTrue(StringUtils.contains(actualXmlContents, expectedHeaderString));
     }
     
     protected SupplierSyncMessage buildSupplierSyncMessageBase() {
