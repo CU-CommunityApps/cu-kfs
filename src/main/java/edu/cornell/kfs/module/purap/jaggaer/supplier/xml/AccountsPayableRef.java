@@ -7,8 +7,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "erpNumber", "sqIntegrationNumber", "thirdPartyRefNumber" })
-@XmlRootElement(name = "AddressRef")
-public class AddressRef extends JaggaerRef {
-
+@XmlRootElement(name = "AccountsPayableRef")
+public class AccountsPayableRef extends JaggaerRef {
 
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE SupplierSyncMessage SYSTEM "https://usertest-messages.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd">
+<SupplierSyncMessage version="1.0">
+    <Header>
+        <MessageId>f54311e2-364b-4cf4-8942-016e5ad308d9</MessageId>
+        <Timestamp>2023-10-30T09:06:42.209-04:00</Timestamp>
+        <Authentication>
+            <Identity>OrgID</Identity>
+            <SharedSecret>password</SharedSecret>
+        </Authentication>
+    </Header>
+    <SupplierResponseMessage>
+        <Status>
+            <StatusCode>406</StatusCode>
+            <StatusText>Text of status message</StatusText>
+            <Errors>
+                <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            </Errors>
+        </Status>
+        <SupplierErrors>
+            <SupplierRef>
+                <ERPNumber>1111111</ERPNumber>
+                <SQIntegrationNumber>2222222</SQIntegrationNumber>
+                <ThirdPartyRefNumber>3333333</ThirdPartyRefNumber>
+            </SupplierRef>
+            <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            <AddressErrors>
+                <AddressRef>
+                    <ERPNumber>1111111</ERPNumber>
+                    <SQIntegrationNumber>2222222</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3333333</ThirdPartyRefNumber>
+                </AddressRef>
+                <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            </AddressErrors>
+            <ContactErrors>
+                <ContactRef>
+                    <ERPNumber>1111111</ERPNumber>
+                    <SQIntegrationNumber>2222222</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3333333</ThirdPartyRefNumber>
+                </ContactRef>
+                <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            </ContactErrors>
+            <LocationErrors>
+                <AddressRef>
+                    <ERPNumber>1111111</ERPNumber>
+                    <SQIntegrationNumber>2222222</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3333333</ThirdPartyRefNumber>
+                </AddressRef>
+                <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            </LocationErrors>
+            <AccountsPayableErrors>
+                <AccountsPayableRef>
+                    <ERPNumber>1111111</ERPNumber>
+                    <SQIntegrationNumber>2222222</SQIntegrationNumber>
+                    <ThirdPartyRefNumber>3333333</ThirdPartyRefNumber>
+                </AccountsPayableRef>
+                <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            </AccountsPayableErrors>
+            <CustomElementErrors>
+                <CustomElementIdentifier>CustomElementID1</CustomElementIdentifier>
+                <ErrorMessage type="Error">Text of error message</ErrorMessage>
+            </CustomElementErrors>
+        </SupplierErrors>
+    </SupplierResponseMessage>
+</SupplierSyncMessage>

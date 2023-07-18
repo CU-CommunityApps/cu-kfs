@@ -155,8 +155,8 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     private void validateSupplierSynchMessage(List<SupplierSyncMessage> supplierSyncMessages, JaggaerVendorDetailFixture vendorDetailFixture) {
         assertEquals(1, supplierSyncMessages.size());
         SupplierSyncMessage supplierSyncMessage = supplierSyncMessages.get(0);
-        assertEquals(1, supplierSyncMessage.getSupplierRequestMessageItems().size());
-        SupplierRequestMessage requestMessage = (SupplierRequestMessage) supplierSyncMessage.getSupplierRequestMessageItems().get(0);
+        assertEquals(1, supplierSyncMessage.getSupplierSyncMessageItems().size());
+        SupplierRequestMessage requestMessage = (SupplierRequestMessage) supplierSyncMessage.getSupplierSyncMessageItems().get(0);
         assertEquals(1, requestMessage.getSuppliers().size());
         Supplier supplier = requestMessage.getSuppliers().get(0);
         

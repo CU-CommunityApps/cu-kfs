@@ -2,72 +2,50 @@ package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.xml.sax.SAXException;
 
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
-import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
-import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
-import edu.cornell.kfs.sys.service.CUMarshalService;
-import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
-public class JaggaerExampleTest {
-    private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
-    private static final String OUTPUT_FILE_PATH = INPUT_FILE_PATH + "jaggaertemp/";
-    private static final String BASIC_FILE_EXAMPLE = "JaggaerExample.xml";
+@Execution(ExecutionMode.SAME_THREAD)
+public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase {
+    private static final String TEXT_OF_ERROR_MESSAGE = "Text of error message";
+    private static final String REQUEST_FILE_EXAMPLE = "SupplierSyncMessage-RequestMessage-JaggaerTestData.xml";
+    private static final String RESPONSE_FILE_EXAMPLE = "SupplierSyncMessage-ResponseMessage-JaggaerTestData.xml";
+    
+    @ParameterizedTest
+    @MethodSource("testSupplierSyncMessageArguments")
+    void testSupplierSyncMessage(String fileName, boolean requestTest) throws JAXBException, IOException, SAXException {
+        File expectedRequestXmlFile = new File(INPUT_FILE_PATH + fileName);
 
-    private File outputFileDirectory;
-
-    private CUMarshalService marshalService;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        Configurator.setLevel(CUMarshalServiceImpl.class, Level.DEBUG);
-        marshalService = new CUMarshalServiceImpl();
-        outputFileDirectory = new File(OUTPUT_FILE_PATH);
-        outputFileDirectory.mkdir();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        marshalService = null;
-        FileUtils.deleteDirectory(outputFileDirectory);
-    }
-
-    @Test
-    void testBuildingJaggaerExample() throws JAXBException, IOException, SAXException {
-        File expectedXmlFile = new File(INPUT_FILE_PATH + BASIC_FILE_EXAMPLE);
-
-        SupplierSyncMessage supplierSyncMessage = new SupplierSyncMessage();
-        supplierSyncMessage.setParameterService(buildMockParameterService());
-        supplierSyncMessage.setVersion(JaggaerConstants.SUPPLIER_SYNCH_MESSAGE_XML_VERSION);
+        SupplierSyncMessage supplierSyncMessage = buildSupplierSyncMessageBase();
         supplierSyncMessage.setHeader(buildHeader());
-        supplierSyncMessage.getSupplierRequestMessageItems().add(buildSupplierRequestMessage());
+        
+        if (requestTest) {
+            SupplierRequestMessage srm = new SupplierRequestMessage();
+            srm.getSuppliers().add(buildSupplier());
+            supplierSyncMessage.getSupplierSyncMessageItems().add(srm);
+        } else {
+            supplierSyncMessage.getSupplierSyncMessageItems().add(buildSupplierResponseMessage());
+        }
 
-
-        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "testJaggaerExample.xml");
-        CuXMLUnitTestUtils.compareXML(expectedXmlFile, actualXmlFile);
+        File actualXmlFile = marshalService.marshalObjectToXMLFragment(supplierSyncMessage, OUTPUT_FILE_PATH + "test.xml");
+        CuXMLUnitTestUtils.compareXML(expectedRequestXmlFile, actualXmlFile);
+        validateFileContainsExpectedHeader(actualXmlFile);
     }
     
-    private ParameterService buildMockParameterService() {
-        ParameterService service = Mockito.mock(ParameterService.class);
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_VERSION_NUMBER_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_VERSION_TAG);
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
-        return service;
+    static Stream<Arguments> testSupplierSyncMessageArguments() {
+        return Stream.of(Arguments.of(REQUEST_FILE_EXAMPLE, true), 
+                Arguments.of(RESPONSE_FILE_EXAMPLE, false));
     }
     
     private Header buildHeader() {
@@ -785,6 +763,82 @@ public class JaggaerExampleTest {
         
         taxList.getTaxInformationDetails().add(info);
         return taxList;
+    }
+    
+    private SupplierResponseMessage buildSupplierResponseMessage() {
+        SupplierResponseMessage srm = new SupplierResponseMessage();
+        srm.setStatus(buildStatus());
+        srm.getSupplierErrors().add(buildSupplierErrors());
+        return srm;
+    }
+    
+    private Status buildStatus() {
+        Status status = new Status();
+        status.setStatusCode("406");
+        status.setStatusText("Text of status message");
+        status.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        return status;
+    }
+    
+    private SupplierError buildSupplierErrors() {
+        SupplierError se = new SupplierError();
+        se.setSupplierRef(buildReferenceObject(SupplierRef.class));
+        se.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        se.getAddressErrors().add(buildAddressErrors());
+        se.getContactErrors().add(buildContactErrors());
+        se.getLocationErrors().add(buildLocationErrors());
+        se.getAccountsPayableErrors().add(buildAccountsPayableErrors());
+        se.getCustomElementErrors().add(buildCustomElementErrors());
+        return se;
+    }
+    
+    public <T extends JaggaerRef> T buildReferenceObject(Class<T> clazz) {
+        T ref = null;
+        try {
+            ref = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        return ref;
+    }
+
+    
+    private AddressError buildAddressErrors() {
+        AddressError ae = new AddressError();
+        ae.setAddressRef(buildReferenceObject(AddressRef.class));
+        ae.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        return ae;
+    }
+    
+    private ContactError buildContactErrors() {
+        ContactError ce = new ContactError();
+        ce.setContactRef(buildReferenceObject(ContactRef.class));
+        ce.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        return ce;
+    }
+    
+    private LocationError buildLocationErrors() {
+        LocationError le = new LocationError();
+        le.setAddressRef(buildReferenceObject(AddressRef.class));
+        le.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        return le;
+    }
+    
+    private AccountsPayableError buildAccountsPayableErrors() {
+        AccountsPayableError ape = new AccountsPayableError();
+        ape.setAccountsPayableRef(buildReferenceObject(AccountsPayableRef.class));
+        ape.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        return ape;
+    }
+    
+    private CustomElementError buildCustomElementErrors() {
+        CustomElementError cee = new CustomElementError();
+        cee.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("CustomElementID1"));
+        cee.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
+        return cee;
     }
 
 }

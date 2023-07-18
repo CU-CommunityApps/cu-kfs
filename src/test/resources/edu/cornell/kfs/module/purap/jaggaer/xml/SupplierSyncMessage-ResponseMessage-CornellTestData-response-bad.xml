@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE SupplierSyncMessage SYSTEM "https://usertest-messages.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd">
+<SupplierSyncMessage version="1.0">
+    <Header>
+        <MessageId>
+            d51b43ac-30cf-4991-8166-018944c99b27
+        </MessageId>
+        <Timestamp>
+            2023-07-11T07:50:10.471-04:00
+        </Timestamp>
+    </Header>
+    <SupplierResponseMessage>
+        <Status>
+            <StatusCode>
+                500
+            </StatusCode>
+            <StatusText>
+                Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)
+            </StatusText>
+            <Errors>
+                <ErrorMessage type="Error">
+                    XML Error : Element type &quot;foo&quot; must be declared. at line 65
+                </ErrorMessage>
+                <ErrorMessage type="Error">
+                    XML Error : The content of element type &quot;Address&quot; must match &quot;(ERPNumber?,OldERPNumber?,SQIntegrationNumber?,ThirdPartyRefNumber?,Name?,Active?,PrefPurchaseOrderDeliveryMethod?,AddressLine1?,AddressLine2?,AddressLine3?,City?,State?,PostalCode?,IsoCountryCode?,Phone?,TollFreePhone?,Fax?,Notes?,AssignedBusinessUnitsList?)&quot;. at line 75
+                </ErrorMessage>
+            </Errors>
+        </Status>
+
+    </SupplierResponseMessage>
+</SupplierSyncMessage>
