@@ -220,7 +220,8 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
     @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
     private Boolean nonresidentPayment = false;
 
-    @XmlElement(name = "nonresident_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    // CU customization to fix configuration for immediate processing flag to read from the correct tag
+    @XmlElement(name = "immediate_ind", namespace = XmlConstants.PAYMENT_NAMESPACE)
     @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
     private Boolean processImmediate = false;
 
