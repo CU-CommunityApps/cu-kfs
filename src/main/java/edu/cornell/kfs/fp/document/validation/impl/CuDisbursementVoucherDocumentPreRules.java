@@ -1,18 +1,23 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
+import java.text.MessageFormat;
+
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherDocumentPreRules;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.sys.KFSKeyConstants;
 
+import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
+import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherCheckStubService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
@@ -30,8 +35,13 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     @Override
     public boolean doPrompts(Document document) {
         boolean preRulesOK = super.doPrompts(document);
+        
+        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) document;
+        preRulesOK &= validateCheckStubLength(dvDocument);
 
-        setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(document);
+        if (!(dvDocument instanceof RecurringDisbursementVoucherDocument)) {
+            setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(dvDocument);
+        }
 
         return preRulesOK;
     }
@@ -87,6 +97,27 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         }
 
         return tabStatesOK;
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean validateCheckStubLength(DisbursementVoucherDocument dvDocument) {
+        boolean result = true;
+        CuDisbursementVoucherCheckStubService dvCheckStubService = SpringContext.getBean(
+                CuDisbursementVoucherCheckStubService.class);
+        if (dvCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
+            int iso20022MaxStubLength = dvCheckStubService.getCheckStubMaxLengthForIso20022();
+            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
+            String questionText = configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.QUESTION_DV_CONFIRM_CHECK_STUB_LENGTH);
+            String formattedQuestionText = MessageFormat.format(questionText, iso20022MaxStubLength);
+            result = askOrAnalyzeYesNoQuestion(
+                    CUKFSConstants.DisbursementVoucherDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
+                    formattedQuestionText);
+            if (!result) {
+                abortRulesCheck();
+            }
+        }
+        return result;
     }
 
 }

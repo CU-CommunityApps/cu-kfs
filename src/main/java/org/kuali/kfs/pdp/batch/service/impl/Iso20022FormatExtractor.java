@@ -144,7 +144,12 @@ import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 public class Iso20022FormatExtractor {
 
     private static final Logger LOG = LogManager.getLogger();
-    private static final int ADDTL_RMT_INF_MAX_LENGTH = 140;
+
+    /*
+     * CU Customization: Removed the private ADDTL_RMT_INF_MAX_LENGTH constant because our customized code
+     * no longer uses it.
+     */
+
     private static final String CURRENCY_USD = "USD";
     private static final int REF_MAX_LENGTH = 30;
 
@@ -166,8 +171,12 @@ public class Iso20022FormatExtractor {
     private final PdpEmailService pdpEmailService;
     private final ProcessDao processDao;
     private final XmlUtilService xmlUtilService;
-    // CU Customization: Added service for converting country codes/names into ISO country code format.
+    /*
+     * CU Customization: Added service for converting country codes/names into ISO country code format.
+     *     Also added field for storing the max length to use for Check Stubs (aka Additional Remittance Info).
+     */
     private final ISOFIPSConversionService isoFipsConversionService;
+    private final int additionalRemittanceInfoMaxLength;
 
     private enum CheckDeliveryPriority {
         // 00000: Mail via Post to creditor's address. (Default if 'prtry' is omitted.)
@@ -193,6 +202,7 @@ public class Iso20022FormatExtractor {
     /*
      * CU Customization: Added setup for ISO FIPS conversion service.
      * Also added checking of paymentDetailService parameter to require it to implement CuPaymentDetailService.
+     * Also added setup for field that holds the Check Stub/Additional Remittance Info max length.
      */
     public Iso20022FormatExtractor(
             final AchService achService,
@@ -207,7 +217,8 @@ public class Iso20022FormatExtractor {
             final PdpEmailService pdpEmailService,
             final ProcessDao processDao,
             final XmlUtilService xmlUtilService,
-            final ISOFIPSConversionService isoFipsConversionService
+            final ISOFIPSConversionService isoFipsConversionService,
+            final int additionalRemittanceInfoMaxLength
     ) {
         this.achService = achService;
         this.achBankService = achBankService;
@@ -222,6 +233,7 @@ public class Iso20022FormatExtractor {
         this.processDao = processDao;
         this.xmlUtilService = xmlUtilService;
         this.isoFipsConversionService = isoFipsConversionService;
+        this.additionalRemittanceInfoMaxLength = additionalRemittanceInfoMaxLength;
         if (!(paymentDetailService instanceof CuPaymentDetailService)) {
             throw new IllegalArgumentException("paymentDetailService should have implemented CuPaymentDetailService");
         }
@@ -1431,7 +1443,10 @@ public class Iso20022FormatExtractor {
             return;
         }
 
-        final String addtlRmtInf = StringUtils.truncate(checkStubText, ADDTL_RMT_INF_MAX_LENGTH);
+        /*
+         * CU Customization: Use a field instead of a constant to determine the stub's max length.
+         */
+        final String addtlRmtInf = StringUtils.truncate(checkStubText, additionalRemittanceInfoMaxLength);
         structuredRemittanceInformation.addAddtlRmtInf(addtlRmtInf);
     }
 
