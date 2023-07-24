@@ -57,6 +57,7 @@
     
     <bean id="b2bPunchOutOrderFileType" 
           class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType"
+          p:outputClass="org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart"
           p:schemaLocation="classpath:org/kuali/kfs/module/purap/util/cxml/b2bPunchOutOrder.xsd"
     />
 	
