@@ -14,7 +14,12 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.logging.log4j.LogManager;
@@ -121,6 +126,12 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         StringReader reader = new StringReader(xmlString);
         return (T) unmarshaller.unmarshal(reader);
     }
+    
+    @Override
+    public <T> T unmarshalStringIgnoreDtd(String xmlString, Class<T> clazz) throws JAXBException, XMLStreamException, IOException {
+        InputStream axmlStream = IOUtils.toInputStream(xmlString);
+        return unmarshalStreamIgnoreDtd(axmlStream, clazz);
+    }
 
     @Override
     public <T> T unmarshalFile(File xmlFile, Class<T> clazz, Object listener) throws JAXBException {
@@ -140,6 +151,19 @@ public class CUMarshalServiceImpl implements CUMarshalService {
             throws JAXBException, IOException {
         Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.empty());
         return unmarshalStream(inputStream, unmarshaller);
+    }
+    
+    @Override
+    public <T> T unmarshalStreamIgnoreDtd(InputStream inputStream, Class<T> clazz)
+            throws JAXBException, IOException, XMLStreamException {
+        JAXBContext jc = JAXBContext.newInstance(clazz);
+
+        XMLInputFactory xif = XMLInputFactory.newFactory();
+        xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        XMLStreamReader xsr = xif.createXMLStreamReader(inputStream);
+
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        return (T) unmarshaller.unmarshal(xsr);
     }
 
     @Override

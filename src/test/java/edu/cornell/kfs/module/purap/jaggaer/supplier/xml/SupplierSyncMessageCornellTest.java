@@ -1,21 +1,34 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.api.parallel.Execution;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase {
+    private static final String STATUS_TEXT = "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)";
+
+    private static final String STATUS_CODE_200 = "200";
+
     private static final String US_DOLLAR_CURRENCY_CODE = "usd";
 
     private static final String F_FALSE = "F";
@@ -53,6 +66,40 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase 
                 Arguments.of(REQUEST_FILE_EXAMPLE, true, false),
                 Arguments.of(RESPONSE_GOOD_FILE_EXAMPLE, false, true),
                 Arguments.of(RESPONSE_BAD_FILE_EXAMPLE, false, false));
+    }
+    
+    @Test
+    void TestResponseMessageString() throws JAXBException, SAXNotRecognizedException, SAXNotSupportedException, ParserConfigurationException, XMLStreamException, IOException {
+        String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<!DOCTYPE SupplierSyncMessage SYSTEM \"https://usertest-messages.sciquest.com/app_docs/dtd/supplier/TSMSupplier.dtd\">\n"
+                + "<SupplierSyncMessage version=\"1.0\">\n"
+                + "    <Header>\n"
+                + "        <MessageId>\n"
+                + "            fb95040f-ee74-43ae-b38d-01898cd28033\n"
+                + "        </MessageId>\n"
+                + "        <Timestamp>\n"
+                + "            2023-07-25T07:32:32.947-04:00\n"
+                + "        </Timestamp>\n"
+                + "    </Header>\n"
+                + "    <SupplierResponseMessage>\n"
+                + "        <Status>\n"
+                + "            <StatusCode>\n" 
+                + "                " + STATUS_CODE_200 + "\n"
+                + "            </StatusCode>\n"
+                + "            <StatusText>\n"
+                + "                " + STATUS_TEXT + "\n"
+                + "            </StatusText>\n"
+                + "        </Status>\n"
+                + "\n"
+                + "    </SupplierResponseMessage>\n"
+                + "</SupplierSyncMessage>";
+        
+        SupplierSyncMessage synchMessage = marshalService.unmarshalStringIgnoreDtd(xmlString, SupplierSyncMessage.class);
+        SupplierResponseMessage responseMessage = (SupplierResponseMessage) synchMessage.getSupplierSyncMessageItems().get(0);
+        String actualCode = StringUtils.trim(responseMessage.getStatus().getStatusCode());
+        assertEquals(STATUS_CODE_200, actualCode);
+        String actualStatusText = StringUtils.trim(responseMessage.getStatus().getStatusText());
+        assertEquals(STATUS_TEXT, actualStatusText);
     }
 
     private Header buildRequestHeader() {
@@ -914,8 +961,8 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase 
     
     private Status buildResponseStatusGood() {
         Status status = new Status();
-        status.setStatusCode("200");
-        status.setStatusText("Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)");
+        status.setStatusCode(STATUS_CODE_200);
+        status.setStatusText(STATUS_TEXT);
         return status;
     }
     
