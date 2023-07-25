@@ -32,6 +32,7 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 import jakarta.xml.bind.JAXBException;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBase implements JaggaerUploadFileService, Serializable {
     private static final long serialVersionUID = 8561874934736620072L;
@@ -133,12 +134,13 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
 
     private void processSuccessfulResponse(JaggaerUploadFileResultsDTO results, String responseString) {
-        LOG.info("processSuccessfulResponse, responseString {}", responseString);
+        LOG.debug("processSuccessfulResponse, responseString {}", responseString);
         SupplierResponseMessage responseMessage = buildSupplierResponseMessage(responseString);
         
         results.setResponseCode(responseMessage.getStatus().getStatusCode());
         results.setMessage(responseMessage.getStatus().getStatusText());
         results.setFileProcessedByJaggaer(true);
+        results.setErrorMessage(StringUtils.EMPTY);
     }
     
     private SupplierResponseMessage buildSupplierResponseMessage(String responseString) {
