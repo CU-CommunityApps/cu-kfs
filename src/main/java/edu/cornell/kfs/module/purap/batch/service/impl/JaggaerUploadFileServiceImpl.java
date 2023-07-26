@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,11 +22,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
 
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerUploadFileService;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.ErrorMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.service.CUMarshalService;
@@ -140,7 +144,19 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         results.setResponseCode(responseMessage.getStatus().getStatusCode());
         results.setMessage(responseMessage.getStatus().getStatusText());
         results.setFileProcessedByJaggaer(true);
-        results.setErrorMessage(StringUtils.EMPTY);
+        
+        if (responseMessage.getStatus().getErrorMessages().isEmpty()) {
+            results.setErrorMessage(StringUtils.EMPTY);
+        } else {
+            StringBuilder combinedErrorMessage = new StringBuilder();
+            for (ErrorMessage errorMessage : responseMessage.getStatus().getErrorMessages()) {
+                if (combinedErrorMessage.length() != 0) {
+                    combinedErrorMessage.append(KFSConstants.NEWLINE);
+                }
+                combinedErrorMessage.append(buildErrorMessageStringForReport(errorMessage));
+            }
+            results.setErrorMessage(combinedErrorMessage.toString());
+        }
     }
     
     private SupplierResponseMessage buildSupplierResponseMessage(String responseString) {
@@ -155,13 +171,19 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         return responseMessage;
     }
     
+    private String buildErrorMessageStringForReport(ErrorMessage errorMessage) {
+        String type = StringUtils.trim(errorMessage.getType());
+        String message = StringUtils.trim(errorMessage.getValue());
+        return MessageFormat.format(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_XML_ERROR_MESSAGE), type, message);
+    }
+    
     private void processUnsuccessfulResponse(JaggaerUploadFileResultsDTO results, int numberOfAttempts,
             Response response) {
         LOG.error("processUnsuccessfulResponse, attempt number {}, had an unsuccessful webservice call.  Response status was {}", 
                 numberOfAttempts, response.getStatus());
         results.setFileProcessedByJaggaer(false);
         results.setResponseCode(String.valueOf(response.getStatus()));
-        results.setErrorMessage(getDefaultErrorMessageWhenThereIsWebServiceError());
+        results.setErrorMessage(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_WEBSERVICE_ERROR));
     }
 
     private URI buildSupplierUploadURI() {
@@ -175,13 +197,6 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
             LOG.error("buildSupplierUploadURI(): URL: " + url, e);
             throw new RuntimeException(e);
         }
-    }
-    
-    private String getDefaultErrorMessageWhenThereIsWebServiceError() {
-        /*
-         * @todo pull this from application resources
-         */
-        return "There was an error calling the Jaggaer upload service";
     }
     
     private void waitBetweenTries() {
