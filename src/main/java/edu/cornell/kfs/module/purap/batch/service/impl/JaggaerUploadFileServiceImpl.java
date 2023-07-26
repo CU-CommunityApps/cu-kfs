@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
@@ -95,12 +97,14 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         
         while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
             Client client = getClient();
+            WebTarget target = client.target(buildSupplierUploadURI());
+            Invocation.Builder requestBuilder = target.request();
             
-            Response response = client
-                    .target(buildSupplierUploadURI())
-                    .request()
-                    .accept(MediaType.APPLICATION_XML)
+            disableRequestChunkingIfNecessary(client, requestBuilder);
+            
+            Response response = requestBuilder.accept(MediaType.APPLICATION_XML)
                     .post(Entity.text(buildPostingStringFromJaggaerFile(jaggaerXmlFileName)));
+            
             
             String responseString = response.readEntity(String.class);
             
