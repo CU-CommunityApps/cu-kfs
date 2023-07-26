@@ -28,6 +28,8 @@ import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerUploadFileService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.ErrorMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
@@ -81,10 +83,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
 
     protected boolean shouldUploadFilesToJaggaer() {
-        /*
-         * @todo this should be pulled from a parameter
-         */
-        return true;
+        return getParameterValueBoolean(CUPurapParameterConstants.JAGGAER_ENABLE_UPLOAD_FILES);
     }
     
     private JaggaerUploadFileResultsDTO uploadJaggaerXmlFile(String jaggaerXmlFileName) {
@@ -109,7 +108,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
                 processSuccessfulResponse(results, responseString);
                 successfulCall = true;
             } else {
-                processUnsuccessfulResponse(results, numberOfAttempts, response);
+                processUnsuccessfulResponse(results, numberOfAttempts, responseString, response.getStatus());
                 numberOfAttempts++;
                 waitBetweenTries();
             }
@@ -118,10 +117,8 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
     
     private int getMaximumNumberOfRetries() {
-        /*
-         * @todo full this parameter.  Use WEBSERVICE_MAX_RETRIES with purap namespace
-         */
-        return 3;
+        String countString = getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_RETRY_COUNT);
+        return Integer.valueOf(countString);
     }
     
     private String buildPostingStringFromJaggaerFile(String jaggaerXmlFileName) {
@@ -138,7 +135,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
 
     private void processSuccessfulResponse(JaggaerUploadFileResultsDTO results, String responseString) {
-        LOG.debug("processSuccessfulResponse, responseString {}", responseString);
+        LOG.info("processSuccessfulResponse, responseString {}", responseString);
         SupplierResponseMessage responseMessage = buildSupplierResponseMessage(responseString);
         
         results.setResponseCode(responseMessage.getStatus().getStatusCode());
@@ -178,19 +175,16 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
     
     private void processUnsuccessfulResponse(JaggaerUploadFileResultsDTO results, int numberOfAttempts,
-            Response response) {
+            String responseString, int responseStatusCode) {
         LOG.error("processUnsuccessfulResponse, attempt number {}, had an unsuccessful webservice call.  Response status was {}", 
-                numberOfAttempts, response.getStatus());
+                numberOfAttempts, responseString);
         results.setFileProcessedByJaggaer(false);
-        results.setResponseCode(String.valueOf(response.getStatus()));
+        results.setResponseCode(String.valueOf(responseStatusCode));
         results.setErrorMessage(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_WEBSERVICE_ERROR));
     }
 
     private URI buildSupplierUploadURI() {
-        /*
-         * @todo pull this URL from a parameter
-         */
-        String url = "https://usertest-messages.sciquest.com/apps/Router/TSMSupplierXMLImport";
+        String url = getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_ENDPOINT);
         try {
             return new URI(url);
         } catch (URISyntaxException e) {
@@ -208,9 +202,20 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
     
     private void generateResultsReport(List<JaggaerUploadFileResultsDTO> resultsList) {
+        /*
+         * this will be implemented as a report on Jira 
+         */
         for (JaggaerUploadFileResultsDTO result : resultsList) {
             LOG.info("generateResultsReport, results: {}", result.toString());
         }
+    }
+    
+    protected String getParameterValueString(String parameterName) {
+        return parameterService.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, parameterName);
+    }
+
+    protected boolean getParameterValueBoolean(String parameterName) {
+        return parameterService.getParameterValueAsBoolean(JaggaerUploadSupplierXmlStep.class, parameterName);
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
