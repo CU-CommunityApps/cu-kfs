@@ -57,6 +57,7 @@ import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.service.impl.GeneratePdpGlpeState;
 import org.kuali.kfs.pdp.service.impl.PendingTransactionServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -93,15 +94,16 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
     @Override
-    public void generateCRCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
+    public void generateCRCancellationGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
 
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, 
-                PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true);
+        populatePaymentGeneralLedgerPendingEntry(
+                                 paymentGroup,
+                                 GeneratePdpGlpeState.forCancel());
     }
 
     /**
@@ -138,7 +140,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param checkFdocTypeCod doc type for check disbursements
      * @param reversal boolean indicating if this is a reversal
      */
-    protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode, String checkFdocTypeCod, boolean reversal) {
+     private void populatePaymentGeneralLedgerPendingEntry(
+             final PaymentGroup paymentGroup,
+             final GeneratePdpGlpeState state
+     ) {
         List<PaymentAccountDetail> accountListings = new ArrayList<PaymentAccountDetail>();
         GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         
@@ -172,12 +177,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             glPendingTransaction.setSubAccountNumber(paymentAccountDetail.getSubAccountNbr());
             glPendingTransaction.setChartOfAccountsCode(paymentAccountDetail.getFinChartCode());
 
-            if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.ACH)) {
-                glPendingTransaction.setFinancialDocumentTypeCode(achFdocTypeCode);
-            }
-            else if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
-                glPendingTransaction.setFinancialDocumentTypeCode(checkFdocTypeCod);
-            }
+            glPendingTransaction.setFinancialDocumentTypeCode(paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode());
 
             glPendingTransaction.setFsOriginCd(PdpConstants.PDP_FDOC_ORIGIN_CODE);
             glPendingTransaction.setFdocNbr(paymentGroup.getDisbursementNbr().toString());

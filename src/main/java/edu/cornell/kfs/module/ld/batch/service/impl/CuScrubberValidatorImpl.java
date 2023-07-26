@@ -18,7 +18,7 @@ import org.kuali.kfs.module.ld.businessobject.LaborObject;
 import org.kuali.kfs.module.ld.businessobject.LaborOriginEntry;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.Message;
-import org.kuali.kfs.sys.MessageBuilder;
+import org.kuali.kfs.sys.service.MessageBuilderService;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 
 import edu.cornell.kfs.module.ld.CuLaborKeyConstants;
@@ -26,6 +26,7 @@ import edu.cornell.kfs.module.ld.CuLaborKeyConstants;
 public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
 
     protected boolean removedSubAccountFromFringeEntry;
+    protected MessageBuilderService messageBuilderService;
 
     /**
      * Overridden to also reset a flag for tracking whether the sub-account was removed
@@ -87,7 +88,7 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
                 laborWorkingEntry.setChartOfAccountsCode(altAccount.getChartOfAccountsCode());
                 Message err = handleExpiredClosedAccount(altAccount, laborOriginEntry, laborWorkingEntry, universityRunDate);
                 if (err == null) {
-                    err = MessageBuilder.buildMessageWithPlaceHolder(
+                    err = messageBuilderService.buildMessageWithPlaceHolder(
                             LaborKeyConstants.MESSAGE_FRINGES_MOVED_TO, Message.TYPE_WARNING, new Object[]{altAccount.getAccountNumber()});
                 }
                 clearSubAccountOnModifiedFringeTransaction(
@@ -102,7 +103,7 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
                 return useSuspenseAccount(laborWorkingEntry);
             }
 
-            return MessageBuilder.buildMessage(LaborKeyConstants.ERROR_NON_FRINGE_ACCOUNT_ALTERNATIVE_NOT_FOUND, Message.TYPE_FATAL);
+            return messageBuilderService.buildMessage(LaborKeyConstants.ERROR_NON_FRINGE_ACCOUNT_ALTERNATIVE_NOT_FOUND, Message.TYPE_FATAL);
         }
 
         return handleExpiredClosedAccount(account, laborOriginEntry, laborWorkingEntry, universityRunDate);
@@ -131,6 +132,11 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
         String subAccountMessage = MessageFormat.format(unresolvedMessage, subAccountNumber);
         String combinedMessage = existingMessage.getMessage() + KFSConstants.BLANK_SPACE + subAccountMessage;
         existingMessage.setMessage(combinedMessage);
+    }
+    
+    public void setMessageBuilderService(final MessageBuilderService messageBuilderService) {
+        super.setMessageBuilderService(messageBuilderService);
+        this.messageBuilderService = messageBuilderService;
     }
 
 }

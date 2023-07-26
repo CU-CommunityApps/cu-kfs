@@ -42,7 +42,6 @@ import org.kuali.kfs.sys.util.DateRangeUtil;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotAllowedException;
-import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +51,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.springframework.util.MultiValueMap;
+
 public class BatchFileSearchService extends SearchService {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -60,14 +61,14 @@ public class BatchFileSearchService extends SearchService {
 
     @Override
     public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(
-            Class<? extends BusinessObjectBase> businessObjectClass,
-            MultivaluedMap<String, String> fieldValues, int skip, int limit, String sortField, boolean sortAscending) {
+            final Class<? extends BusinessObjectBase> businessObjectClass,
+            final MultiValueMap<String, String> fieldValues, final int skip, final int limit, final String sortField, final boolean sortAscending) {
 
-        List<BatchFile> allFiles = getFiles(fieldValues);
-        Stream<BatchFile> stream = allFiles.parallelStream();
+        final List<BatchFile> allFiles = getFiles(fieldValues);
+        final Stream<BatchFile> stream = allFiles.parallelStream();
 
-        BusinessObjectSorter boSorter = new BusinessObjectSorter();
-        List<BusinessObjectBase> sortedAndSliced = boSorter.sort(businessObjectClass, skip, limit, sortField,
+        final BusinessObjectSorter boSorter = new BusinessObjectSorter();
+        final List<BusinessObjectBase> sortedAndSliced = boSorter.sort(businessObjectClass, skip, limit, sortField,
                 sortAscending, stream);
 
         return Pair.of(sortedAndSliced, allFiles.size());
@@ -97,7 +98,7 @@ public class BatchFileSearchService extends SearchService {
         }
     }
 
-    private List<BatchFile> getFiles(MultivaluedMap<String, String> fieldValues) {
+    private List<BatchFile> getFiles(final MultiValueMap<String, String> fieldValues) {
         List<BatchFile> results = new ArrayList<>();
 
         IOFileFilter filter = FileFilterUtils.fileFileFilter();

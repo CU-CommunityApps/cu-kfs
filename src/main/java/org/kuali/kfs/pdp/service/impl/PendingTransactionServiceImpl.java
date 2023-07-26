@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -87,43 +87,47 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     }
 
     @Override
-    public void generatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_PROCESS_ACH,
-                PdpConstants.FDOC_TYP_CD_PROCESS_CHECK, false, false);
+    public void generatePaymentGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forProcess());
     }
 
     @Override
-    public void generateCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH,
-                PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true, false);
+    public void generateCancellationGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forCancel());
     }
 
     @Override
-    public void generateCancelReissueGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_REISSUE_ACH,
-                PdpConstants.FDOC_TYP_CD_CANCEL_REISSUE_CHECK, true, false);
+    public void generateCancelReissueGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forCancelReissue());
     }
 
     @Override
-    public void generateReissueGeneralLedgerPendingEntries(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, null, null, false, true);
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, null, null, true, true);
+    public void generateReissueGeneralLedgerPendingEntries(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forReissue());
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forReissueReverse());
     }
 
     /**
      * Populates and stores a new GLPE for each account detail in the payment group.
      *
      * @param paymentGroup     payment group to generate entries for
-     * @param achFdocTypeCode  doc type for ach disbursements
-     * @param checkFdocTypeCod doc type for check disbursements
-     * @param reversal         boolean indicating if this is a reversal
-     * @param expenseOrLiability boolean indicating if these should be expense (reversal=false) or liability
-     *                           (reversal=true) entries
      */
-    protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode,
-            String checkFdocTypeCod, boolean reversal, boolean expenseOrLiability) {
-        List<PaymentAccountDetail> accountListings = new ArrayList<>();
-        for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+    private void populatePaymentGeneralLedgerPendingEntry(
+            final PaymentGroup paymentGroup,
+            final GeneratePdpGlpeState state
+    ) {
+        final List<PaymentAccountDetail> accountListings = new ArrayList<>();
+        for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
             accountListings.addAll(paymentDetail.getAccountDetail());
         }
 
@@ -145,7 +149,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
             glPendingTransaction.setChartOfAccountsCode(paymentAccountDetail.getFinChartCode());
 
             glPendingTransaction.setProjectCd(paymentAccountDetail.getProjectCode());
-            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ?
+            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, state.isReversal()) ?
                     KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
             glPendingTransaction.setAmount(paymentAccountDetail.getAccountNetAmount().abs());
 
@@ -169,8 +173,8 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                     trnDesc = payeeName.length() > 40 ? payeeName.substring(0, 40) : StringUtils.rightPad(payeeName, 40);
                 }
 
-                if (reversal) {
-                    String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
+                if (state.isReversal()) {
+                    final String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
                     if (StringUtils.isNotBlank(poNbr)) {
                         trnDesc += " " + (poNbr.length() > 9 ? poNbr.substring(0, 9) : StringUtils.rightPad(poNbr, 9));
                     }
@@ -194,13 +198,16 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                     glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(),
                     paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(),
                     glPendingTransaction.getFinancialBalanceTypeCode());
-            if (expenseOrLiability && relieveLiabilities) {
-                updateGeneralLedgerPendingEntryAsExpenseOrLiability(reversal, paymentAccountDetail, trnDesc,
+            if (state.isExpenseOrLiability() && state.isRelieveLiabilities()) {
+                updateGeneralLedgerPendingEntryAsExpenseOrLiability(state.isReversal(), paymentAccountDetail, trnDesc,
                     offsetDefinition, glPendingTransaction);
             } else {
-                updateGeneralLedgerPendingEntryAsCheck(relieveLiabilities, paymentGroup.getDisbursementType().getCode(),
-                    paymentGroup.getDisbursementNbr(), achFdocTypeCode, checkFdocTypeCod, paymentAccountDetail, trnDesc,
-                    offsetDefinition, glPendingTransaction);
+                updateGeneralLedgerPendingEntryAsPayment(
+                        paymentGroup.getDisbursementType().getCode(),
+                        paymentGroup.getDisbursementNbr(),
+                        state,
+                        paymentAccountDetail,
+                        glPendingTransaction);
             }
 
             // update the offset account if necessary
@@ -210,7 +217,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
             sequenceHelper.increment();
 
-            if (bankService.isBankSpecificationEnabled() && !expenseOrLiability) {
+            if (bankService.isBankSpecificationEnabled() && !state.isExpenseOrLiability()) {
                 populateBankOffsetEntry(paymentGroup, glPendingTransaction, sequenceHelper);
             }
         }
@@ -257,38 +264,34 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     }
 
     /**
-     * Helper to update the GLPE as a check entry.
+     * Helper to update the GLPE as a payment entry.
      *
-     * @param relieveLiabilities indicator from CustomerProfile. Determines how object code and sub object code are set
      * @param disbursementType payment group's disbursement type used to update the GLPE
      * @param disbursementNbr payment group's disbursement number used to update the GLPE
-     * @param achFdocTypeCode doc type for ach disbursements used to update the GLPE
-     * @param checkFdocTypeCod doc type for check disbursements used to update the GLPE
      * @param paymentAccountDetail current payment detail used to update the GLPE
-     * @param trnDesc transaction description used to update the GLPE
-     * @param offsetDefinition offset definition used to update the GLPE
      * @param glPendingTransaction to be updated
      */
-    private void updateGeneralLedgerPendingEntryAsCheck(boolean relieveLiabilities, String disbursementType,
-            KualiInteger disbursementNbr, String achFdocTypeCode, String checkFdocTypeCod,
-            PaymentAccountDetail paymentAccountDetail, String trnDesc, OffsetDefinition offsetDefinition,
-            GlPendingTransaction glPendingTransaction) {
-        if (relieveLiabilities && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
-            glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ?
-                    offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
+    private void updateGeneralLedgerPendingEntryAsPayment(
+            final String disbursementType,
+            final KualiInteger disbursementNbr,
+            final GeneratePdpGlpeState state,
+            final PaymentAccountDetail paymentAccountDetail,
+            final GlPendingTransaction glPendingTransaction
+    ) {
+        if (state.isRelieveLiabilities()
+                && isAchCheckDisbursementType(disbursementType)
+                && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
+            glPendingTransaction.setFinancialObjectCode(state.getOffsetDefinitionObjectCode());
             glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
         } else {
             glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());
             glPendingTransaction.setFinancialSubObjectCode(paymentAccountDetail.getFinSubObjectCode());
         }
 
-        glPendingTransaction.setDescription(trnDesc);
+        glPendingTransaction.setDescription(state.getTransactionDescription());
 
-        if (disbursementType.equals(PdpConstants.DisbursementTypeCodes.ACH)) {
-            glPendingTransaction.setFinancialDocumentTypeCode(achFdocTypeCode);
-        } else if (disbursementType.equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
-            glPendingTransaction.setFinancialDocumentTypeCode(checkFdocTypeCod);
-        }
+        glPendingTransaction.setFinancialDocumentTypeCode(
+                state.documentTypeForDisbursementType(disbursementType));
 
         glPendingTransaction.setFdocNbr(disbursementNbr.toString());
         glPendingTransaction.setFsOriginCd(PdpConstants.PDP_FDOC_ORIGIN_CODE);
@@ -302,6 +305,11 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         }
 
         glPendingTransaction.setFdocRefNbr(paymentAccountDetail.getPaymentDetail().getCustPaymentDocNbr());
+    }
+
+    private static boolean isAchCheckDisbursementType(final String disbursementType) {
+        return PdpConstants.DisbursementTypeCodes.ACH.equals(disbursementType)
+                || PdpConstants.DisbursementTypeCodes.CHECK.equals(disbursementType);
     }
 
     /**

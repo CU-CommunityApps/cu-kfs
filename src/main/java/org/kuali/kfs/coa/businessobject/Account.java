@@ -47,6 +47,7 @@ import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.kim.impl.identity.Person;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -316,7 +317,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
             return false;
         }
 
-        return isExpired(KfsDateUtils.getCurrentCalendar());
+        return isExpired(getDateTimeService().getLocalDateNow());
     }
 
     /**
@@ -330,25 +331,19 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      * @return true or false based on the logic outlined above
      */
     @Override
-    public boolean isExpired(Calendar testDate) {
+    public boolean isExpired(final LocalDate testDate) {
         LOG.debug("entering isExpired({})", testDate);
 
-        // dont even bother trying to test if the accountExpirationDate is null
+        // don't even bother trying to test if the accountExpirationDate is null
         if (accountExpirationDate == null) {
             return false;
         }
 
-        // remove any time-components from the testDate
-        testDate = DateUtils.truncate(testDate, Calendar.DAY_OF_MONTH);
-
-        // get a calendar reference to the Account Expiration
-        // date, and remove any time components
-        Calendar acctDate = Calendar.getInstance();
-        acctDate.setTime(this.accountExpirationDate);
-        acctDate = DateUtils.truncate(acctDate, Calendar.DAY_OF_MONTH);
+        // get a reference to the Account Expiration
+        final LocalDate acctDate = getDateTimeService().getLocalDate(accountExpirationDate);
 
         // if the Account Expiration Date is before the testDate
-        return acctDate.before(testDate);
+        return acctDate.isBefore(testDate);
     }
 
     /**
@@ -362,14 +357,13 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      * @return true or false based on the logic outlined above
      */
     @Override
-    public boolean isExpired(Date testDate) {
-        // dont even bother trying to test if the accountExpirationDate is null
+    public boolean isExpired(final Date testDate) {
+        // don't even bother trying to test if the accountExpirationDate is null
         if (accountExpirationDate == null) {
             return false;
         }
 
-        Calendar acctDate = Calendar.getInstance();
-        acctDate.setTime(testDate);
+        final LocalDate acctDate = getDateTimeService().getLocalDate(testDate);
         return isExpired(acctDate);
     }
 

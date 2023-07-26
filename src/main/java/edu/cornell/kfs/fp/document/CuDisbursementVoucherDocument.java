@@ -226,9 +226,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                    FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
+                    FPParameterConstants.RESEARCH_PAYMENT_LIMIT)) {
                 final String researchPayLimit = getParameterService().getParameterValueAsString(
-                        DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
+                        DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_LIMIT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -282,9 +282,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS);
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                    FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
+                    FPParameterConstants.RESEARCH_PAYMENT_LIMIT)) {
                 final String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
-                        FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
+                        FPParameterConstants.RESEARCH_PAYMENT_LIMIT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -338,9 +338,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 getDvPayeeDetail().getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                    FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
+                    FPParameterConstants.RESEARCH_PAYMENT_LIMIT)) {
                 final String researchPayLimit = getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class,
-                        FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
+                        FPParameterConstants.RESEARCH_PAYMENT_LIMIT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
@@ -508,10 +508,10 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                     payeeDetail.getDisbVchrPaymentReasonCode());
             if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()
                     && getParameterService().parameterExists(DisbursementVoucherDocument.class,
-                            FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT)) {
+                            FPParameterConstants.RESEARCH_PAYMENT_LIMIT)) {
                 final String researchPayLimit = getParameterService()
                         .getParameterValueAsString(DisbursementVoucherDocument.class,
-                                FPParameterConstants.RESEARCH_NON_VENDOR_PAY_LIMIT_AMOUNT);
+                                FPParameterConstants.RESEARCH_PAYMENT_LIMIT);
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
