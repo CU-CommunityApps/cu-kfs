@@ -207,7 +207,8 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     
     private void generateResultsReport(List<JaggaerUploadFileResultsDTO> resultsList) {
         /*
-         * this will be implemented as a report on Jira 
+         * A full report will be implemented on Jira KFSPTS-29084
+         * Until then, this will produce a nice summary at the bottom of the log file
          */
         for (JaggaerUploadFileResultsDTO result : resultsList) {
             LOG.info("generateResultsReport, results: {}", result.toString());
