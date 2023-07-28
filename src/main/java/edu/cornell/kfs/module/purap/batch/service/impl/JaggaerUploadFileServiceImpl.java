@@ -2,24 +2,17 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -28,6 +21,8 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -37,13 +32,9 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.ErrorMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.service.CUMarshalService;
-import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
-import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 import jakarta.xml.bind.JAXBException;
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
-public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBase implements JaggaerUploadFileService, Serializable {
-    private static final long serialVersionUID = 8561874934736620072L;
+public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
     private static final Logger LOG = LogManager.getLogger();
 
     protected BatchInputFileService batchInputFileService;
@@ -52,11 +43,6 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
     protected ConfigurationService configurationService;
-    
-    @Override
-    protected Client getClient() {
-        return super.getClient(CuMultiPartWriter.class);
-    }
     
     @Override
     public void uploadSupplierXMLFiles() {
@@ -96,26 +82,32 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         int numberOfAttempts = 1;
         
         while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
-            Client client = getClient();
-            WebTarget target = client.target(buildSupplierUploadURI());
-            Invocation.Builder requestBuilder = target.request();
-            
-            disableRequestChunkingIfNecessary(client, requestBuilder);
-            
-            Response response = requestBuilder.accept(MediaType.APPLICATION_XML)
-                    .post(Entity.text(buildPostingStringFromJaggaerFile(jaggaerXmlFileName)));
-            
-            
-            String responseString = response.readEntity(String.class);
-            
-            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                processSuccessfulResponse(results, responseString);
-                successfulCall = true;
-            } else {
-                processUnsuccessfulResponse(results, numberOfAttempts, responseString, response.getStatus());
+            try {
+                WebClient webClient = WebClient.create();
+                String responseString = webClient.post()
+                        .uri(buildSupplierUploadURI())
+                        .accept(MediaType.APPLICATION_XML)
+                        .contentType(MediaType.APPLICATION_XML)
+                        .body(buildPostingStringFromJaggaerFile(jaggaerXmlFileName), String.class)
+                        .exchange()
+                        .block()
+                        .bodyToMono(String.class)
+                        .block();
+                
+                if (StringUtils.isNotBlank(responseString)) {
+                    processSuccessfulResponse(results, responseString);
+                    successfulCall = true; 
+                } else {
+                    processUnsuccessfulResponse(results, numberOfAttempts);
+                    numberOfAttempts++;
+                }
+            } catch (Throwable e) {
+                LOG.error("JaggaerUploadFileResultsDTO, got an exception calling the Jaggaer Web Service", e);
+                processUnsuccessfulResponse(results, numberOfAttempts);
                 numberOfAttempts++;
-                waitBetweenTries();
             }
+            
+
         }
         return results;
     }
@@ -178,12 +170,9 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         return MessageFormat.format(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_XML_ERROR_MESSAGE), type, message);
     }
     
-    private void processUnsuccessfulResponse(JaggaerUploadFileResultsDTO results, int numberOfAttempts,
-            String responseString, int responseStatusCode) {
-        LOG.error("processUnsuccessfulResponse, attempt number {}, had an unsuccessful webservice call.  Response status was {}", 
-                numberOfAttempts, responseString);
+    private void processUnsuccessfulResponse(JaggaerUploadFileResultsDTO results, int numberOfAttempts) {
+        LOG.error("processUnsuccessfulResponse, attempt number {}, had an unsuccessful webservice POST call", numberOfAttempts);
         results.setFileProcessedByJaggaer(false);
-        results.setResponseCode(String.valueOf(responseStatusCode));
         results.setErrorMessage(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_WEBSERVICE_ERROR));
     }
 
@@ -194,14 +183,6 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         } catch (URISyntaxException e) {
             LOG.error("buildSupplierUploadURI(): URL: " + url, e);
             throw new RuntimeException(e);
-        }
-    }
-    
-    private void waitBetweenTries() {
-        try {
-            TimeUnit.SECONDS.sleep(5);
-        } catch (InterruptedException e) {
-            LOG.error("waitBetweenTries, had an error waiting", e);
         }
     }
     
