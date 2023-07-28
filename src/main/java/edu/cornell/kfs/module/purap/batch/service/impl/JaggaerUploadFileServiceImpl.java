@@ -153,14 +153,14 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
     }
     
     private SupplierResponseMessage buildSupplierResponseMessage(String responseString) {
-        SupplierSyncMessage synchMessage;
+        SupplierSyncMessage syncMessage;
         try {
-            synchMessage = cuMarshalService.unmarshalStringIgnoreDtd(responseString, SupplierSyncMessage.class);
+            syncMessage = cuMarshalService.unmarshalStringIgnoreDtd(responseString, SupplierSyncMessage.class);
         } catch (JAXBException | XMLStreamException | IOException e) {
             LOG.error("buildSupplierResponseMessage, got an error creating SupplierSyncMessage from the response string", e);
             throw new RuntimeException(e);
         }
-        SupplierResponseMessage responseMessage = (SupplierResponseMessage) synchMessage.getSupplierSyncMessageItems().get(0);
+        SupplierResponseMessage responseMessage = (SupplierResponseMessage) syncMessage.getSupplierSyncMessageItems().get(0);
         return responseMessage;
     }
     

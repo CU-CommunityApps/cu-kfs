@@ -28,6 +28,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import edu.cornell.kfs.sys.service.CUMarshalService;
+import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -128,9 +129,12 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     }
     
     @Override
-    public <T> T unmarshalStringIgnoreDtd(String xmlString, Class<T> clazz) throws JAXBException, XMLStreamException, IOException {
-        InputStream axmlStream = IOUtils.toInputStream(xmlString);
-        return unmarshalStreamIgnoreDtd(axmlStream, clazz);
+    public <T> T unmarshalStringIgnoreDtd(String xmlString, Class<T> clazz)
+            throws JAXBException, XMLStreamException, IOException {
+        InputStream xmlStream = IOUtils.toInputStream(xmlString, StandardCharsets.UTF_8);
+        try (CloseShieldInputStream wrappedStream = new CloseShieldInputStream(xmlStream);) {
+            return unmarshalStreamIgnoreDtd(xmlStream, clazz);
+        }
     }
 
     @Override
@@ -163,7 +167,10 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         XMLStreamReader xsr = xif.createXMLStreamReader(inputStream);
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        return (T) unmarshaller.unmarshal(xsr);
+        T response = (T) unmarshaller.unmarshal(xsr);
+        CuXMLStreamUtils.closeQuietly(xsr);
+        
+        return response;
     }
 
     @Override
