@@ -41,30 +41,29 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
-import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherCheckStubService;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     private static final Logger LOG = LogManager.getLogger();
 
-    private CuDisbursementVoucherCheckStubService cuDisbursementVoucherCheckStubService;
+    private CuCheckStubService cuCheckStubService;
 
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
 
-        CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) kualiDocumentFormBase;
-        CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) dvForm.getDocument();
+        CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) kualiDocumentFormBase.getDocument();
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
 
         if (workflowDocument.isInitiated() || workflowDocument.isSaved() || workflowDocument.isEnroute()
                 || workflowDocument.isException()) {
-            if (getCuDisbursementVoucherCheckStubService().doesCheckStubNeedTruncatingForIso20022(document)) {
-                String warningMessage = getCuDisbursementVoucherCheckStubService()
-                        .createWarningMessageForCheckStubIso20022MaxLength();
+            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(document)) {
+                String warningMessage = getCuCheckStubService()
+                        .createWarningMessageForCheckStubIso20022MaxLength(document);
                 GlobalVariables.getMessageMap().putWarning(
                         KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, warningMessage);
             }
@@ -362,11 +361,11 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         return forward;
     }
 
-    private CuDisbursementVoucherCheckStubService getCuDisbursementVoucherCheckStubService() {
-        if (cuDisbursementVoucherCheckStubService == null) {
-            cuDisbursementVoucherCheckStubService = SpringContext.getBean(CuDisbursementVoucherCheckStubService.class);
+    private CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
-        return cuDisbursementVoucherCheckStubService;
+        return cuCheckStubService;
     }
 
 }

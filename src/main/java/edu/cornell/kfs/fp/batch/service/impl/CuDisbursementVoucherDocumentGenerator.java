@@ -41,10 +41,10 @@ import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPreConferenceRegistrantXm
 import edu.cornell.kfs.fp.batch.xml.DisbursementVoucherPrePaidTravelOverviewXml;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
-import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherCheckStubService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGeneratorBase<CuDisbursementVoucherDocument> {
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDocumentGenerator.class);
@@ -54,7 +54,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected BusinessObjectService businessObjectService;
     protected CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
     protected CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService;
-    protected CuDisbursementVoucherCheckStubService cuDisbursementVoucherCheckStubService;
+    protected CuCheckStubService cuCheckStubService;
     
     public CuDisbursementVoucherDocumentGenerator() {
         super();
@@ -139,9 +139,9 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     }
 
     protected void addWarningMessageIfCheckStubNeedsTruncatingForIso20022(CuDisbursementVoucherDocument dvDocument) {
-        if (cuDisbursementVoucherCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
-            String warningMessage = cuDisbursementVoucherCheckStubService
-                    .createWarningMessageForCheckStubIso20022MaxLength();
+        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
+            String warningMessage = cuCheckStubService
+                    .createWarningMessageForCheckStubIso20022MaxLength(dvDocument);
             LOG.warn("addWarningMessageIfCheckStubNeedsTruncatingForIso20022, {}", warningMessage);
             GlobalVariables.getMessageMap().putWarning(KFSPropertyConstants.DISB_VCHR_CHECK_STUB_TEXT,
                     KFSKeyConstants.ERROR_CUSTOM, warningMessage);
@@ -333,8 +333,8 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
         this.cuDisbursementVoucherPayeeService = cuDisbursementVoucherPayeeService;
     }
 
-    public void setCuDisbursementVoucherCheckStubService(CuDisbursementVoucherCheckStubService cuDisbursementVoucherCheckStubService) {
-        this.cuDisbursementVoucherCheckStubService = cuDisbursementVoucherCheckStubService;
+    public void setCuCheckStubService(CuCheckStubService cuCheckStubService) {
+        this.cuCheckStubService = cuCheckStubService;
     }
 
 }

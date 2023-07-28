@@ -20,6 +20,9 @@ import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
+import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 
@@ -33,11 +36,13 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         // KFSUPGRADE-779
         preRulesOK &= checkWireTransferTabState((VendorCreditMemoDocument) document);
 
+        preRulesOK &= validateCheckStubLength((VendorCreditMemoDocument) document);
+
         AccountsPayableDocument accountsPayableDocument = (AccountsPayableDocument) document;
 
         // Check if the total does not match the submitted credit if the document hasn't been completed.
         if (!SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(accountsPayableDocument)) {
-            preRulesOK = confirmInvoiceNoMatchOverride(accountsPayableDocument);
+            preRulesOK &= confirmInvoiceNoMatchOverride(accountsPayableDocument);
         }
         else if (SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(accountsPayableDocument)) {
             // if past full document entry complete, then set override to true to skip validation
@@ -127,5 +132,26 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
     }
     
    // end KFSUPGRADE-779
-    
-  }
+
+    @SuppressWarnings("deprecation")
+    protected boolean validateCheckStubLength(VendorCreditMemoDocument document) {
+        boolean result = true;
+        CuCheckStubService cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(document)) {
+            int iso20022MaxStubLength = cuCheckStubService.getCheckStubMaxLengthForIso20022();
+            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
+            String questionText = configurationService.getPropertyValueAsString(
+                    CUPdpKeyConstants.QUESTION_CONFIRM_CHECK_STUB_LENGTH);
+            String formattedQuestionText = MessageFormat.format(
+                    questionText, CUPurapConstants.AP_CHECK_STUB_FIELD_LABEL, iso20022MaxStubLength);
+            result = askOrAnalyzeYesNoQuestion(
+                    CUKFSConstants.AccountsPayableDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
+                    formattedQuestionText);
+            if (!result) {
+                abortRulesCheck();
+            }
+        }
+        return result;
+    }
+
+}

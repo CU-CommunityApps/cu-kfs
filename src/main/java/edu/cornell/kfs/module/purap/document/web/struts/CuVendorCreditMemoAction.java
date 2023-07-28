@@ -9,24 +9,43 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kns.service.DocumentHelperService;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
+import org.kuali.kfs.krad.document.DocumentAuthorizer;
+import org.kuali.kfs.krad.util.GlobalVariables;
 //import org.kuali.kfs.fp.businessobject.WireCharge;
 import org.kuali.kfs.module.purap.document.web.struts.VendorCreditMemoAction;
 import org.kuali.kfs.module.purap.document.web.struts.VendorCreditMemoForm;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.UniversityDateService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.kns.service.DocumentHelperService;
-import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.krad.document.DocumentAuthorizer;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
-	
+
+    private CuCheckStubService cuCheckStubService;
+
+    @Override
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+        super.loadDocument(kualiDocumentFormBase);
+        
+        CuVendorCreditMemoDocument document = (CuVendorCreditMemoDocument) kualiDocumentFormBase.getDocument();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        
+        if (workflowDocument.isInitiated() || workflowDocument.isSaved() || workflowDocument.isEnroute()
+                || workflowDocument.isException()) {
+            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(document)) {
+                String warningMessage = getCuCheckStubService()
+                        .createWarningMessageForCheckStubIso20022MaxLength(document);
+                GlobalVariables.getMessageMap().putWarning(
+                        KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, warningMessage);
+            }
+        }
+    }
+
 	@Override
 	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
@@ -69,4 +88,11 @@ public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
         }        
 		return super.calculate(mapping, form, request, response);
 	}
+
+    private  CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
 }

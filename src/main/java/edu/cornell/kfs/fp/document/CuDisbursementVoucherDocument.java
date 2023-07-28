@@ -54,10 +54,10 @@ import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
-import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherCheckStubService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 
@@ -93,7 +93,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     private static DisbursementVoucherTaxService disbursementVoucherTaxService;
     private static DocumentHelperService documentHelperService;
     private static CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
-    private static CuDisbursementVoucherCheckStubService cuDisbursementVoucherCheckStubService;
+    private static CuCheckStubService cuCheckStubService;
 
     public CuDisbursementVoucherDocument() {
         super();
@@ -832,13 +832,12 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
-        super.doRouteStatusChange(statusChangeEvent);
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
-            if (getCuDisbursementVoucherCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
-                getCuDisbursementVoucherCheckStubService()
-                        .addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
+            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
+                getCuCheckStubService().addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
             }
         }
+        super.doRouteStatusChange(statusChangeEvent);
     }
 
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
@@ -891,16 +890,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         CuDisbursementVoucherDocument.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
     }
 
-    public static CuDisbursementVoucherCheckStubService getCuDisbursementVoucherCheckStubService() {
-        if (cuDisbursementVoucherCheckStubService == null) {
-            cuDisbursementVoucherCheckStubService = SpringContext.getBean(CuDisbursementVoucherCheckStubService.class);
+    public static CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
-        return cuDisbursementVoucherCheckStubService;
-    }
-
-    public static void setCuDisbursementVoucherCheckStubService(
-            CuDisbursementVoucherCheckStubService cuDisbursementVoucherCheckStubService) {
-        CuDisbursementVoucherDocument.cuDisbursementVoucherCheckStubService = cuDisbursementVoucherCheckStubService;
+        return cuCheckStubService;
     }
 
 }

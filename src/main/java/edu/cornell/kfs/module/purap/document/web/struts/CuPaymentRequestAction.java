@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -29,11 +30,15 @@ import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestAction;
 import org.kuali.kfs.module.purap.document.web.struts.PaymentRequestForm;
 import org.kuali.kfs.module.purap.service.PurapAccountRevisionService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuPaymentRequestAction extends PaymentRequestAction {
+
+    private CuCheckStubService cuCheckStubService;
 
 	@Override
 	public ActionForward docHandler(ActionMapping mapping, ActionForm form,
@@ -69,7 +74,25 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
 	    }
         return forward;
     }
-	
+
+    @Override
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+        super.loadDocument(kualiDocumentFormBase);
+        
+        PaymentRequestDocument document = (PaymentRequestDocument) kualiDocumentFormBase.getDocument();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        
+        if (workflowDocument.isInitiated() || workflowDocument.isSaved() || workflowDocument.isEnroute()
+                || workflowDocument.isException()) {
+            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(document)) {
+                String warningMessage = getCuCheckStubService()
+                        .createWarningMessageForCheckStubIso20022MaxLength(document);
+                GlobalVariables.getMessageMap().putWarning(
+                        KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, warningMessage);
+            }
+        }
+    }
+
 	@Override
 	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
@@ -148,4 +171,11 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
+    private CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
+
 }

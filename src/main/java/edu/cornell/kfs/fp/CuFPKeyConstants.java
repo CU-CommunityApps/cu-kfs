@@ -61,7 +61,4 @@ public class CuFPKeyConstants {
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR = "error.create.accounting.document.generic.error";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR = "error.create.accounting.document.generic.numeric.error";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR = "error.create.accounting.document.xml.adapter.error";
-
-    public static final String QUESTION_DV_CONFIRM_CHECK_STUB_LENGTH = "question.dv.confirm.check.stub.length";
-    public static final String WARNING_DV_CHECK_STUB_ISO_20022_LENGTH = "warning.dv.check.stub.iso.20022.length";
 }

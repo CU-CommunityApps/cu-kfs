@@ -103,7 +103,7 @@
     <bean id="iso20022FormatExtractor"
           parent="iso20022FormatExtractor-parentBean"
           c:isoFipsConversionService-ref="isoFipsConversionService"
-          c:additionalRemittanceInfoMaxLength="${iso.20022.check.stub.max.length}"/>
+          c:cuCheckStubService-ref="cuCheckStubService"/>
     
     <bean id="cuPayeeAddressService" parent="cuPayeeAddressService-parentBean" />
 	<bean id="cuPayeeAddressService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuPayeeAddressServiceImpl" abstract="true">
@@ -219,5 +219,14 @@
     <bean id="pdpPaymentDetailService"
           parent="pdpPaymentDetailService-parentBean"
           class="edu.cornell.kfs.pdp.service.impl.CuPaymentDetailServiceImpl"/>
+
+    <bean id="cuCheckStubService" parent="cuCheckStubService-parentBean"/>
+    <bean id="cuCheckStubService-parentBean"
+          class="edu.cornell.kfs.pdp.service.impl.CuCheckStubServiceImpl"
+          abstract="true"
+          p:checkStubMaxLengthForIso20022="${iso.20022.check.stub.max.length}"
+          p:configurationService-ref="configurationService"
+          p:noteService-ref="noteService"
+          p:personService-ref="personService"/>
 
 </beans>

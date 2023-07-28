@@ -13,10 +13,11 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.kfs.fp.CuFPKeyConstants;
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
-import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherCheckStubService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
+import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
@@ -102,14 +103,14 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     @SuppressWarnings("deprecation")
     private boolean validateCheckStubLength(DisbursementVoucherDocument dvDocument) {
         boolean result = true;
-        CuDisbursementVoucherCheckStubService dvCheckStubService = SpringContext.getBean(
-                CuDisbursementVoucherCheckStubService.class);
-        if (dvCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
-            int iso20022MaxStubLength = dvCheckStubService.getCheckStubMaxLengthForIso20022();
+        CuCheckStubService cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
+            int iso20022MaxStubLength = cuCheckStubService.getCheckStubMaxLengthForIso20022();
             ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
             String questionText = configurationService.getPropertyValueAsString(
-                    CuFPKeyConstants.QUESTION_DV_CONFIRM_CHECK_STUB_LENGTH);
-            String formattedQuestionText = MessageFormat.format(questionText, iso20022MaxStubLength);
+                    CUPdpKeyConstants.QUESTION_CONFIRM_CHECK_STUB_LENGTH);
+            String formattedQuestionText = MessageFormat.format(
+                    questionText, CuFPConstants.DV_CHECK_STUB_FIELD_LABEL, iso20022MaxStubLength);
             result = askOrAnalyzeYesNoQuestion(
                     CUKFSConstants.DisbursementVoucherDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
                     formattedQuestionText);

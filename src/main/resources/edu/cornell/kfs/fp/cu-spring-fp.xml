@@ -585,7 +585,7 @@
         <property name="businessObjectService" ref="businessObjectService"/>
         <property name="cuDisbursementVoucherDefaultDueDateService" ref="cuDisbursementVoucherDefaultDueDateService"/>
         <property name="cuDisbursementVoucherPayeeService" ref="disbursementVoucherPayeeService"/>
-        <property name="cuDisbursementVoucherCheckStubService" ref="cuDisbursementVoucherCheckStubService"/>
+        <property name="cuCheckStubService" ref="cuCheckStubService"/>
     </bean>
 
     <bean id="AccountingDocumentGenerator_AV" class="edu.cornell.kfs.fp.batch.service.impl.AuxiliaryVoucherDocumentGenerator">
@@ -601,14 +601,5 @@
     	<property name="parameterService" ref="parameterService"/>
     	<property name="dateTimeService" ref="dateTimeService"/>
     </bean>
-
-    <bean id="cuDisbursementVoucherCheckStubService" parent="cuDisbursementVoucherCheckStubService-parentBean"/>
-    <bean id="cuDisbursementVoucherCheckStubService-parentBean"
-          class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherCheckStubServiceImpl"
-          abstract="true"
-          p:checkStubMaxLengthForIso20022="${iso.20022.check.stub.max.length}"
-          p:configurationService-ref="configurationService"
-          p:noteService-ref="noteService"
-          p:personService-ref="personService"/>
 
 </beans>

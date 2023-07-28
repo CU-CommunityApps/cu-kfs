@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.purap.document;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.krad.document.DocumentAuthorizer;
 import org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent;
@@ -19,6 +20,7 @@ import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
 	private static final Logger LOG = LogManager.getLogger();
@@ -26,6 +28,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     public static String DOCUMENT_TYPE_NON_CHECK = "CMNC";
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private static CuCheckStubService cuCheckStubService;
     protected CreditMemoWireTransfer cmWireTransfer;
     
     public CuVendorCreditMemoDocument() {
@@ -105,6 +108,14 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
         }
     }
 
+    @Override
+    public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
+        if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
+            getCuCheckStubService().addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
+        }
+        super.doRouteStatusChange(statusChangeEvent);
+    }
+
     protected CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
         if ( paymentMethodGeneralLedgerPendingEntryService == null ) {
             paymentMethodGeneralLedgerPendingEntryService = SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class);
@@ -124,5 +135,11 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
 		this.cmWireTransfer = cmWireTransfer;
 	}
 
+    protected static CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
 
 }

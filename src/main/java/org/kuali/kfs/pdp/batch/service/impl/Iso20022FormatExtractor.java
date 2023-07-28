@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -120,10 +121,12 @@ import com.prowidesoftware.swift.model.mx.dic.RemittanceInformation5;
 import com.prowidesoftware.swift.model.mx.dic.ServiceLevel8Choice;
 import com.prowidesoftware.swift.model.mx.dic.StructuredRemittanceInformation7;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants.MessageIdSuffixes;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.exception.ManyFIPSCountriesForNameException;
@@ -173,10 +176,10 @@ public class Iso20022FormatExtractor {
     private final XmlUtilService xmlUtilService;
     /*
      * CU Customization: Added service for converting country codes/names into ISO country code format.
-     *     Also added field for storing the max length to use for Check Stubs (aka Additional Remittance Info).
+     *     Also added service to assist with handling Check Stubs (aka Additional Remittance Info).
      */
     private final ISOFIPSConversionService isoFipsConversionService;
-    private final int additionalRemittanceInfoMaxLength;
+    private final CuCheckStubService cuCheckStubService;
 
     private enum CheckDeliveryPriority {
         // 00000: Mail via Post to creditor's address. (Default if 'prtry' is omitted.)
@@ -202,7 +205,7 @@ public class Iso20022FormatExtractor {
     /*
      * CU Customization: Added setup for ISO FIPS conversion service.
      * Also added checking of paymentDetailService parameter to require it to implement CuPaymentDetailService.
-     * Also added setup for field that holds the Check Stub/Additional Remittance Info max length.
+     * Also added setup for Check Stub helper service.
      */
     public Iso20022FormatExtractor(
             final AchService achService,
@@ -218,7 +221,7 @@ public class Iso20022FormatExtractor {
             final ProcessDao processDao,
             final XmlUtilService xmlUtilService,
             final ISOFIPSConversionService isoFipsConversionService,
-            final int additionalRemittanceInfoMaxLength
+            final CuCheckStubService cuCheckStubService
     ) {
         this.achService = achService;
         this.achBankService = achBankService;
@@ -233,7 +236,7 @@ public class Iso20022FormatExtractor {
         this.processDao = processDao;
         this.xmlUtilService = xmlUtilService;
         this.isoFipsConversionService = isoFipsConversionService;
-        this.additionalRemittanceInfoMaxLength = additionalRemittanceInfoMaxLength;
+        this.cuCheckStubService = cuCheckStubService;
         if (!(paymentDetailService instanceof CuPaymentDetailService)) {
             throw new IllegalArgumentException("paymentDetailService should have implemented CuPaymentDetailService");
         }
@@ -1123,7 +1126,10 @@ public class Iso20022FormatExtractor {
                     constructPaymentTypeInformationWithLocalInstrument(templatePaymentGroup);
             creditTransferTransactionInformation.setPmtTpInf(paymentTypeInformation);
         } else if (extractTypeContext.isExtractionType(ExtractionType.CHECK)) {
-            final Cheque6 check = constructCheck(disbursementNumber, templatePaymentGroup);
+            /*
+             * CU Customization: Adjusted method call to also pass in the extraction context.
+             */
+            final Cheque6 check = constructCheck(disbursementNumber, templatePaymentGroup, extractTypeContext);
             creditTransferTransactionInformation.setChqInstr(check);
         }
 
@@ -1273,20 +1279,27 @@ public class Iso20022FormatExtractor {
         return amount;
     }
 
+    /*
+     * CU Customization: Added extraction context as a method argument, and added the ability
+     * to suppress the Delivery Method and Forms Code when building the Immediate Checks file.
+     */
     private static Cheque6 constructCheck(
             final int disbursementNumber,
-            final PaymentGroup templatePaymentGroup
+            final PaymentGroup templatePaymentGroup,
+            final ExtractTypeContext extractTypeContext
     ) {
         final Cheque6 check = new Cheque6();
 
         final String checkNumber = Integer.toString(disbursementNumber);
         check.setChqNb(checkNumber);
 
-        final ChequeDeliveryMethod1Choice checkDeliveryMethod = constructCheckDeliveryMethod(templatePaymentGroup);
-        check.setDlvryMtd(checkDeliveryMethod);
+        if (extractTypeContext.isLimitedToPaymentsWithUrgency(PaymentUrgency.REGULAR)) {
+            final ChequeDeliveryMethod1Choice checkDeliveryMethod = constructCheckDeliveryMethod(templatePaymentGroup);
+            check.setDlvryMtd(checkDeliveryMethod);
 
-        final String formsCode = determineFormsCode();
-        check.setFrmsCd(formsCode);
+            final String formsCode = determineFormsCode();
+            check.setFrmsCd(formsCode);
+        }
 
         return check;
     }
@@ -1426,27 +1439,34 @@ public class Iso20022FormatExtractor {
         return structuredRemittanceInformation;
     }
 
+    /*
+     * CU Customization: Updated this method to allow for deriving the check stub text from PDP notes,
+     * if the PaymentDetail does not refer to a Disbursement Voucher.
+     * 
+     * Also updated the method to derive the max check stub length from a helper service instead of a constant.
+     */
     private void addCheckStubText(
             final PaymentDetail paymentDetail,
             final StructuredRemittanceInformation7 structuredRemittanceInformation
     ) {
         final DisbursementVoucherDocument disbursementVoucherDocument =
                 disbursementVoucherDao.getDocument(paymentDetail.getCustPaymentDocNbr());
+        final String checkStubText;
         if (disbursementVoucherDocument == null) {
-            return;
+            checkStubText = cuCheckStubService.getFullCheckStub(paymentDetail);
+        } else {
+            checkStubText = disbursementVoucherDocument.getDisbVchrCheckStubText();
         }
 
         // DVs created in the UI will have checkStubText; DVs imported via Payment File Upload will not
-        final String checkStubText =
-                xmlUtilService.filterOutIllegalXmlCharacters(disbursementVoucherDocument.getDisbVchrCheckStubText());
-        if (StringUtils.isBlank(checkStubText)) {
+        final String cleanedCheckStubText =
+                xmlUtilService.filterOutIllegalXmlCharacters(checkStubText);
+        if (StringUtils.isBlank(cleanedCheckStubText)) {
             return;
         }
 
-        /*
-         * CU Customization: Use a field instead of a constant to determine the stub's max length.
-         */
-        final String addtlRmtInf = StringUtils.truncate(checkStubText, additionalRemittanceInfoMaxLength);
+        final String addtlRmtInf = StringUtils.truncate(cleanedCheckStubText,
+                cuCheckStubService.getCheckStubMaxLengthForIso20022());
         structuredRemittanceInformation.addAddtlRmtInf(addtlRmtInf);
     }
 

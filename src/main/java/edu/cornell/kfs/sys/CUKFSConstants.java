@@ -140,6 +140,10 @@ public class CUKFSConstants {
         public static final String CHECK_STUB_TEXT_LENGTH_QUESTION_ID = "CheckStubTextLengthQuestion";
     }
 
+    public static class AccountsPayableDocumentConstants {
+        public static final String CHECK_STUB_TEXT_LENGTH_QUESTION_ID = "CheckStubTextLengthQuestion";
+    }
+
     public static class BasicAccountingCategory {
         public static final String ASSET = "AS";
         public static final String EXPENSE = "EX";
