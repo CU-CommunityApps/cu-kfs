@@ -110,8 +110,10 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
 
     @Override
     public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
-        if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
-            getCuCheckStubService().addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
+        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
+                getCuCheckStubService().addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
+            }
         }
         super.doRouteStatusChange(statusChangeEvent);
     }
