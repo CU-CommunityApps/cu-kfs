@@ -21,6 +21,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
+import org.kuali.kfs.sys.web.WebClientFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -83,12 +84,12 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
         
         while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
             try {
-                WebClient webClient = WebClient.create();
+                WebClient webClient = WebClientFactory.create();
                 String responseString = webClient.post()
                         .uri(buildSupplierUploadURI())
                         .accept(MediaType.APPLICATION_XML)
                         .contentType(MediaType.APPLICATION_XML)
-                        .body(buildPostingStringFromJaggaerFile(jaggaerXmlFileName), String.class)
+                        .bodyValue(buildPostingStringFromJaggaerFile(jaggaerXmlFileName))
                         .exchange()
                         .block()
                         .bodyToMono(String.class)
