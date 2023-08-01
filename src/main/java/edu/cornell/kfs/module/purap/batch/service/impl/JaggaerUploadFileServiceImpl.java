@@ -37,6 +37,7 @@ import jakarta.xml.bind.JAXBException;
 
 public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
     private static final Logger LOG = LogManager.getLogger();
+    private static final WebClient WEB_CLIENT = WebClientFactory.create();
 
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType jaggaerUploadFileType;
@@ -84,8 +85,8 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
         
         while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
             try {
-                WebClient webClient = WebClientFactory.create();
-                String responseString = webClient.post()
+                /*
+                String responseString = WEB_CLIENT.post()
                         .uri(buildSupplierUploadURI())
                         .accept(MediaType.APPLICATION_XML)
                         .contentType(MediaType.APPLICATION_XML)
@@ -93,6 +94,27 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
                         .exchange()
                         .block()
                         .bodyToMono(String.class)
+                        .block();
+                        */
+                
+                String responseString = WEB_CLIENT.post()
+                        .uri(buildSupplierUploadURI())
+                        .accept(MediaType.APPLICATION_XML)
+                        .contentType(MediaType.APPLICATION_XML)
+                        .bodyValue(buildPostingStringFromJaggaerFile(jaggaerXmlFileName))
+                        .exchange()
+                        .flatMap(clientResponse -> {
+                            if (clientResponse.statusCode().is5xxServerError()) {
+                                LOG.info("uploadJaggaerXmlFile, got a 500 level response code");
+                                clientResponse.body((clientHttpResponse, context) -> {
+                                    return clientHttpResponse.getBody();
+                                });
+                                return clientResponse.bodyToMono(String.class);
+                            } else {
+                                LOG.info("uploadJaggaerXmlFile, got a NON 500 level response code");
+                                return clientResponse.bodyToMono(String.class);
+                            }
+                        })
                         .block();
                 
                 if (StringUtils.isNotBlank(responseString)) {
