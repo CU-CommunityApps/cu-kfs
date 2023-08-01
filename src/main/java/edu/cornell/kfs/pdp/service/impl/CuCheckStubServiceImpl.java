@@ -23,7 +23,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.PaymentSourceConstants;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
+import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
@@ -42,6 +44,11 @@ public class CuCheckStubServiceImpl implements CuCheckStubService {
             throw new IllegalArgumentException("document cannot be null");
         } else if (document instanceof DisbursementVoucherDocument) {
             paymentMethodCode = ((DisbursementVoucherDocument) document).getPaymentMethodCode();
+            if (document instanceof RecurringDisbursementVoucherDocument
+                    && doAnyRecurringCheckStubsNeedTruncatingForIso20022(
+                            (RecurringDisbursementVoucherDocument) document)) {
+                return true;
+            }
         } else if (document instanceof PaymentRequestDocument) {
             paymentMethodCode = ((PaymentRequestDocument) document).getPaymentMethodCode();
         } else if (document instanceof VendorCreditMemoDocument) {
@@ -52,6 +59,17 @@ public class CuCheckStubServiceImpl implements CuCheckStubService {
         }
         return StringUtils.equalsIgnoreCase(paymentMethodCode, PaymentSourceConstants.PAYMENT_METHOD_CHECK)
                 && StringUtils.length(getFullCheckStub(document)) > checkStubMaxLengthForIso20022;
+    }
+
+    private boolean doAnyRecurringCheckStubsNeedTruncatingForIso20022(RecurringDisbursementVoucherDocument document) {
+        if (CollectionUtils.isEmpty(document.getRecurringDisbursementVoucherDetails())
+                || !StringUtils.equalsIgnoreCase(document.getPaymentMethodCode(),
+                        PaymentSourceConstants.PAYMENT_METHOD_CHECK)) {
+            return false;
+        }
+        return document.getRecurringDisbursementVoucherDetails().stream()
+                .map(RecurringDisbursementVoucherDetail::getDvCheckStub)
+                .anyMatch(checkStub -> StringUtils.length(checkStub) > checkStubMaxLengthForIso20022);
     }
 
     @Override

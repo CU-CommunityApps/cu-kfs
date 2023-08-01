@@ -15,6 +15,7 @@
 		<property name="documentTypeName" value="RCDV" />
 		<property name="documentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
 		<property name="baseDocumentClass" value="edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument" />
+        <property name="promptBeforeValidationClass" value="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherDocumentPreRules"/>
 		<property name="validationMap" ref="RecurringDisbursementVoucherDocument-validations"/>
 		<property name="accountingLineGroups">
 			<map>
