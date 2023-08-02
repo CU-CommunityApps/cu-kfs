@@ -2,7 +2,14 @@ package edu.cornell.kfs.sys.service.impl;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
 
+import org.apache.cxf.jaxrs.client.ClientConfiguration;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -10,7 +17,7 @@ import edu.cornell.kfs.sys.util.CURestClientUtils;
 import edu.cornell.kfs.sys.web.CuJaxbProvider;
 
 public abstract class DisposableClientServiceImplBase implements DisposableBean {
-    
+    private static final Logger LOG = LogManager.getLogger();
     private volatile Client client;
     
     @Override
@@ -54,6 +61,20 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
         }
         
         CURestClientUtils.closeQuietly(jerseyClient);
+    }
+    
+    protected void disableRequestChunkingIfNecessary(Client client, Invocation.Builder requestBuilder) {
+        if (client instanceof org.apache.cxf.jaxrs.client.spec.ClientImpl) {
+            LOG.info("disableRequestChunkingIfNecessary: Explicitly disabling chunking because KFS is using a JAX-RS client of CXF type "
+                    + client.getClass().getName());
+            ClientConfiguration cxfConfig = WebClient.getConfig(requestBuilder);
+            HTTPConduit conduit = cxfConfig.getHttpConduit();
+            HTTPClientPolicy clientPolicy = conduit.getClient();
+            clientPolicy.setAllowChunking(false);
+        } else {
+            LOG.info("disableRequestChunkingIfNecessary: There is no need to explicitly disable chunking for a JAX-RS client of type "
+                    + client.getClass().getName());
+        }
     }
 
 }

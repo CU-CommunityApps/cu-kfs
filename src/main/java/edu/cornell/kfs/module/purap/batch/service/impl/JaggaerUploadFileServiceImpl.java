@@ -8,11 +8,17 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -21,9 +27,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
-import org.kuali.kfs.sys.web.WebClientFactory;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
@@ -33,11 +36,13 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.ErrorMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
 import edu.cornell.kfs.sys.service.CUMarshalService;
+import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
+import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 import jakarta.xml.bind.JAXBException;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
-public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
+public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBase implements JaggaerUploadFileService {
     private static final Logger LOG = LogManager.getLogger();
-    private static final WebClient WEB_CLIENT = WebClientFactory.create();
 
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType jaggaerUploadFileType;
@@ -45,13 +50,18 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
     protected ConfigurationService configurationService;
-    
+
+    @Override
+    protected Client getClient() {
+        return super.getClient(CuMultiPartWriter.class);
+    }
+
     @Override
     public void uploadSupplierXMLFiles() {
         List<String> jaggaerUploadXmlFileNames = batchInputFileService
                 .listInputFileNamesWithDoneFile(jaggaerUploadFileType);
         LOG.info("uploadSupplierXMLFiles, found {} files to upload", jaggaerUploadXmlFileNames.size());
-        
+
         List<JaggaerUploadFileResultsDTO> resultsList = new ArrayList<JaggaerUploadFileResultsDTO>();
 
         for (String jaggaerXmlFileName : jaggaerUploadXmlFileNames) {
@@ -64,82 +74,54 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
                         jaggaerXmlFileName);
             }
         }
-        
+
         if (shouldUploadFilesToJaggaer()) {
             generateResultsReport(resultsList);
         }
-        
+
         fileStorageService.removeDoneFiles(jaggaerUploadXmlFileNames);
     }
 
     protected boolean shouldUploadFilesToJaggaer() {
         return getParameterValueBoolean(CUPurapParameterConstants.JAGGAER_ENABLE_UPLOAD_FILES);
     }
-    
+
     private JaggaerUploadFileResultsDTO uploadJaggaerXmlFile(String jaggaerXmlFileName) {
         JaggaerUploadFileResultsDTO results = new JaggaerUploadFileResultsDTO();
         results.setFileName(jaggaerXmlFileName);
-        
+
         boolean successfulCall = false;
         int numberOfAttempts = 1;
-        
-        while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
-            try {
-                /*
-                String responseString = WEB_CLIENT.post()
-                        .uri(buildSupplierUploadURI())
-                        .accept(MediaType.APPLICATION_XML)
-                        .contentType(MediaType.APPLICATION_XML)
-                        .bodyValue(buildPostingStringFromJaggaerFile(jaggaerXmlFileName))
-                        .exchange()
-                        .block()
-                        .bodyToMono(String.class)
-                        .block();
-                        */
-                
-                String responseString = WEB_CLIENT.post()
-                        .uri(buildSupplierUploadURI())
-                        .accept(MediaType.APPLICATION_XML)
-                        .contentType(MediaType.APPLICATION_XML)
-                        .bodyValue(buildPostingStringFromJaggaerFile(jaggaerXmlFileName))
-                        .exchange()
-                        .flatMap(clientResponse -> {
-                            if (clientResponse.statusCode().is5xxServerError()) {
-                                LOG.info("uploadJaggaerXmlFile, got a 500 level response code");
-                                clientResponse.body((clientHttpResponse, context) -> {
-                                    return clientHttpResponse.getBody();
-                                });
-                                return clientResponse.bodyToMono(String.class);
-                            } else {
-                                LOG.info("uploadJaggaerXmlFile, got a NON 500 level response code");
-                                return clientResponse.bodyToMono(String.class);
-                            }
-                        })
-                        .block();
-                
-                if (StringUtils.isNotBlank(responseString)) {
-                    processSuccessfulResponse(results, responseString);
-                    successfulCall = true; 
-                } else {
-                    processUnsuccessfulResponse(results, numberOfAttempts);
-                    numberOfAttempts++;
-                }
-            } catch (Throwable e) {
-                LOG.error("JaggaerUploadFileResultsDTO, got an exception calling the Jaggaer Web Service", e);
-                processUnsuccessfulResponse(results, numberOfAttempts);
-                numberOfAttempts++;
-            }
-            
 
+        while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
+            Client client = getClient();
+            WebTarget target = client.target(buildSupplierUploadURI());
+            Invocation.Builder requestBuilder = target.request();
+
+            disableRequestChunkingIfNecessary(client, requestBuilder);
+
+            Response response = requestBuilder.accept(MediaType.APPLICATION_XML)
+                    .post(Entity.text(buildPostingStringFromJaggaerFile(jaggaerXmlFileName)));
+
+            String responseString = response.readEntity(String.class);
+
+            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+                processSuccessfulResponse(results, responseString);
+                successfulCall = true;
+            } else {
+                processUnsuccessfulResponse(results, numberOfAttempts, responseString, response.getStatus());
+                numberOfAttempts++;
+                waitBetweenTries();
+            }
         }
         return results;
     }
-    
+
     private int getMaximumNumberOfRetries() {
         String countString = getParameterValueString(CUPurapParameterConstants.JAGGAER_UPLOAD_RETRY_COUNT);
         return Integer.valueOf(countString);
     }
-    
+
     private String buildPostingStringFromJaggaerFile(String jaggaerXmlFileName) {
         File jaggaerFile = new File(jaggaerXmlFileName);
         String contentToPost;
@@ -156,11 +138,11 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
     private void processSuccessfulResponse(JaggaerUploadFileResultsDTO results, String responseString) {
         LOG.info("processSuccessfulResponse, responseString {}", responseString);
         SupplierResponseMessage responseMessage = buildSupplierResponseMessage(responseString);
-        
+
         results.setResponseCode(responseMessage.getStatus().getStatusCode());
         results.setMessage(responseMessage.getStatus().getStatusText());
         results.setFileProcessedByJaggaer(true);
-        
+
         if (responseMessage.getStatus().getErrorMessages().isEmpty()) {
             results.setErrorMessage(StringUtils.EMPTY);
         } else {
@@ -174,29 +156,39 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
             results.setErrorMessage(combinedErrorMessage.toString());
         }
     }
-    
+
     private SupplierResponseMessage buildSupplierResponseMessage(String responseString) {
-        SupplierSyncMessage syncMessage;
+        SupplierSyncMessage synchMessage;
         try {
-            syncMessage = cuMarshalService.unmarshalStringIgnoreDtd(responseString, SupplierSyncMessage.class);
+            synchMessage = cuMarshalService.unmarshalStringIgnoreDtd(responseString, SupplierSyncMessage.class);
         } catch (JAXBException | XMLStreamException | IOException e) {
-            LOG.error("buildSupplierResponseMessage, got an error creating SupplierSyncMessage from the response string", e);
+            LOG.error(
+                    "buildSupplierResponseMessage, got an error creating SupplierSyncMessage from the response string",
+                    e);
             throw new RuntimeException(e);
         }
-        SupplierResponseMessage responseMessage = (SupplierResponseMessage) syncMessage.getSupplierSyncMessageItems().get(0);
+        SupplierResponseMessage responseMessage = (SupplierResponseMessage) synchMessage.getSupplierSyncMessageItems()
+                .get(0);
         return responseMessage;
     }
-    
+
     private String buildErrorMessageStringForReport(ErrorMessage errorMessage) {
         String type = StringUtils.trim(errorMessage.getType());
         String message = StringUtils.trim(errorMessage.getValue());
-        return MessageFormat.format(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_XML_ERROR_MESSAGE), type, message);
+        return MessageFormat.format(
+                configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_XML_ERROR_MESSAGE),
+                type, message);
     }
-    
-    private void processUnsuccessfulResponse(JaggaerUploadFileResultsDTO results, int numberOfAttempts) {
-        LOG.error("processUnsuccessfulResponse, attempt number {}, had an unsuccessful webservice POST call", numberOfAttempts);
+
+    private void processUnsuccessfulResponse(JaggaerUploadFileResultsDTO results, int numberOfAttempts,
+            String responseString, int responseStatusCode) {
+        LOG.error(
+                "processUnsuccessfulResponse, attempt number {}, had an unsuccessful webservice call.  Response status was {}",
+                numberOfAttempts, responseString);
         results.setFileProcessedByJaggaer(false);
-        results.setErrorMessage(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_WEBSERVICE_ERROR));
+        results.setResponseCode(String.valueOf(responseStatusCode));
+        results.setErrorMessage(
+                configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_WEBSERVICE_ERROR));
     }
 
     private URI buildSupplierUploadURI() {
@@ -208,17 +200,25 @@ public class JaggaerUploadFileServiceImpl implements JaggaerUploadFileService {
             throw new RuntimeException(e);
         }
     }
-    
+
+    private void waitBetweenTries() {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            LOG.error("waitBetweenTries, had an error waiting", e);
+        }
+    }
+
     private void generateResultsReport(List<JaggaerUploadFileResultsDTO> resultsList) {
         /*
-         * A full report will be implemented on Jira KFSPTS-29084
-         * Until then, this will produce a nice summary at the bottom of the log file
+         * A full report will be implemented on Jira KFSPTS-29084 + * Until then, this
+         * will produce a nice summary at the bottom of the log file
          */
         for (JaggaerUploadFileResultsDTO result : resultsList) {
             LOG.info("generateResultsReport, results: {}", result.toString());
         }
     }
-    
+
     protected String getParameterValueString(String parameterName) {
         return parameterService.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, parameterName);
     }
