@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -174,18 +174,18 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     public List<PersistableBusinessObject> generateDeactivationsToPersist() {
         // Retrieve all the existing sub accounts for this
-        List<SubAccount> bosToDeactivate = new ArrayList<>();
+        final List<SubAccount> bosToDeactivate = new ArrayList<>();
         if (!isActive()) {
-            Map<String, Object> fieldValues = new HashMap<>();
+            final Map<String, Object> fieldValues = new HashMap<>();
             fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, getChartOfAccountsCode());
             fieldValues.put(KFSPropertyConstants.ACCOUNT_NUMBER, getAccountNumber());
             fieldValues.put(KFSPropertyConstants.ACTIVE, true);
-            Collection<SubAccount> existingSubAccounts = SpringContext.getBean(BusinessObjectService.class)
+            final Collection<SubAccount> existingSubAccounts = SpringContext.getBean(BusinessObjectService.class)
                     .findMatching(SubAccount.class, fieldValues);
             bosToDeactivate.addAll(existingSubAccounts);
         }
         // mark all the sub accounts as inactive
-        for (SubAccount subAccount : bosToDeactivate) {
+        for (final SubAccount subAccount : bosToDeactivate) {
             subAccount.setActive(false);
         }
         return new ArrayList<>(bosToDeactivate);
@@ -197,7 +197,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountNumber(String accountNumber) {
+    public void setAccountNumber(final String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -207,7 +207,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountName(String accountName) {
+    public void setAccountName(final String accountName) {
         this.accountName = accountName;
     }
 
@@ -217,8 +217,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountsFringesBnftIndicator(boolean _AccountsFringesBnftIndicator_) {
-        this.accountsFringesBnftIndicator = _AccountsFringesBnftIndicator_;
+    public void setAccountsFringesBnftIndicator(final boolean _AccountsFringesBnftIndicator_) {
+        accountsFringesBnftIndicator = _AccountsFringesBnftIndicator_;
     }
 
     @Override
@@ -227,7 +227,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountRestrictedStatusDate(Date accountRestrictedStatusDate) {
+    public void setAccountRestrictedStatusDate(final Date accountRestrictedStatusDate) {
         this.accountRestrictedStatusDate = accountRestrictedStatusDate;
     }
 
@@ -237,7 +237,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountCityName(String accountCityName) {
+    public void setAccountCityName(final String accountCityName) {
         this.accountCityName = accountCityName;
     }
 
@@ -247,7 +247,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountStateCode(String accountStateCode) {
+    public void setAccountStateCode(final String accountStateCode) {
         this.accountStateCode = accountStateCode;
     }
 
@@ -257,7 +257,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountStreetAddress(String accountStreetAddress) {
+    public void setAccountStreetAddress(final String accountStreetAddress) {
         this.accountStreetAddress = accountStreetAddress;
     }
 
@@ -267,7 +267,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountZipCode(String accountZipCode) {
+    public void setAccountZipCode(final String accountZipCode) {
         this.accountZipCode = accountZipCode;
     }
 
@@ -277,7 +277,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountCreateDate(Date accountCreateDate) {
+    public void setAccountCreateDate(final Date accountCreateDate) {
         this.accountCreateDate = accountCreateDate;
     }
 
@@ -287,7 +287,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountEffectiveDate(Date accountEffectiveDate) {
+    public void setAccountEffectiveDate(final Date accountEffectiveDate) {
         this.accountEffectiveDate = accountEffectiveDate;
     }
 
@@ -297,7 +297,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountExpirationDate(Date accountExpirationDate) {
+    public void setAccountExpirationDate(final Date accountExpirationDate) {
         this.accountExpirationDate = accountExpirationDate;
     }
 
@@ -312,7 +312,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     @Override
     public boolean isExpired() {
         LOG.debug("entering isExpired()");
-        // dont even bother trying to test if the accountExpirationDate is null
+        // don't even bother trying to test if the accountExpirationDate is null
         if (accountExpirationDate == null) {
             return false;
         }
@@ -373,7 +373,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAcctIndirectCostRcvyTypeCd(String acctIndirectCostRcvyTypeCd) {
+    public void setAcctIndirectCostRcvyTypeCd(final String acctIndirectCostRcvyTypeCd) {
         this.acctIndirectCostRcvyTypeCd = acctIndirectCostRcvyTypeCd;
     }
 
@@ -383,7 +383,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAcctCustomIndCstRcvyExclCd(String acctCustomIndCstRcvyExclCd) {
+    public void setAcctCustomIndCstRcvyExclCd(final String acctCustomIndCstRcvyExclCd) {
         this.acctCustomIndCstRcvyExclCd = acctCustomIndCstRcvyExclCd;
     }
 
@@ -393,7 +393,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setFinancialIcrSeriesIdentifier(String financialIcrSeriesIdentifier) {
+    public void setFinancialIcrSeriesIdentifier(final String financialIcrSeriesIdentifier) {
         this.financialIcrSeriesIdentifier = financialIcrSeriesIdentifier;
     }
 
@@ -403,7 +403,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountInFinancialProcessingIndicator(boolean accountInFinancialProcessingIndicator) {
+    public void setAccountInFinancialProcessingIndicator(final boolean accountInFinancialProcessingIndicator) {
         this.accountInFinancialProcessingIndicator = accountInFinancialProcessingIndicator;
     }
 
@@ -413,7 +413,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setBudgetRecordingLevelCode(String budgetRecordingLevelCode) {
+    public void setBudgetRecordingLevelCode(final String budgetRecordingLevelCode) {
         this.budgetRecordingLevelCode = budgetRecordingLevelCode;
     }
 
@@ -423,7 +423,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountSufficientFundsCode(String accountSufficientFundsCode) {
+    public void setAccountSufficientFundsCode(final String accountSufficientFundsCode) {
         this.accountSufficientFundsCode = accountSufficientFundsCode;
     }
 
@@ -433,7 +433,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setPendingAcctSufficientFundsIndicator(boolean pendingAcctSufficientFundsIndicator) {
+    public void setPendingAcctSufficientFundsIndicator(final boolean pendingAcctSufficientFundsIndicator) {
         this.pendingAcctSufficientFundsIndicator = pendingAcctSufficientFundsIndicator;
     }
 
@@ -443,8 +443,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setFinancialObjectivePrsctrlIndicator(boolean _FinancialObjectivePrsctrlIndicator_) {
-        this.financialObjectivePrsctrlIndicator = _FinancialObjectivePrsctrlIndicator_;
+    public void setFinancialObjectivePrsctrlIndicator(final boolean _FinancialObjectivePrsctrlIndicator_) {
+        financialObjectivePrsctrlIndicator = _FinancialObjectivePrsctrlIndicator_;
     }
 
     @Override
@@ -453,7 +453,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountCfdaNumber(String accountCfdaNumber) {
+    public void setAccountCfdaNumber(final String accountCfdaNumber) {
         this.accountCfdaNumber = accountCfdaNumber;
     }
 
@@ -472,18 +472,18 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return awards;
     }
 
-    public void setAwards(List awards) {
+    public void setAwards(final List awards) {
         this.awards = awards;
     }
 
     @Override
     public List<IndirectCostRecoveryAccount> getIndirectCostRecoveryAccounts() {
-        return this.indirectCostRecoveryAccounts;
+        return indirectCostRecoveryAccounts;
     }
 
     public List<IndirectCostRecoveryAccount> getActiveIndirectCostRecoveryAccounts() {
-        List<IndirectCostRecoveryAccount> activeList = new ArrayList<>();
-        for (IndirectCostRecoveryAccount icr : getIndirectCostRecoveryAccounts()) {
+        final List<IndirectCostRecoveryAccount> activeList = new ArrayList<>();
+        for (final IndirectCostRecoveryAccount icr : getIndirectCostRecoveryAccounts()) {
             if (icr.isActive()) {
                 activeList.add(IndirectCostRecoveryAccount.copyICRAccount(icr));
             }
@@ -493,8 +493,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public void setIndirectCostRecoveryAccounts(
-            List<? extends IndirectCostRecoveryAccount> indirectCostRecoveryAccounts) {
-        List<IndirectCostRecoveryAccount> accountIcrList = new ArrayList<>(indirectCostRecoveryAccounts);
+            final List<? extends IndirectCostRecoveryAccount> indirectCostRecoveryAccounts) {
+        final List<IndirectCostRecoveryAccount> accountIcrList = new ArrayList<>(indirectCostRecoveryAccounts);
         this.indirectCostRecoveryAccounts = accountIcrList;
     }
 
@@ -504,7 +504,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountOffCampusIndicator(boolean accountOffCampusIndicator) {
+    public void setAccountOffCampusIndicator(final boolean accountOffCampusIndicator) {
         this.accountOffCampusIndicator = accountOffCampusIndicator;
     }
 
@@ -514,7 +514,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -523,8 +523,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return !active;
     }
 
-    public void setClosed(boolean closed) {
-        this.active = !closed;
+    public void setClosed(final boolean closed) {
+        active = !closed;
     }
 
     @Override
@@ -534,7 +534,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setChartOfAccounts(Chart chartOfAccounts) {
+    public void setChartOfAccounts(final Chart chartOfAccounts) {
         this.chartOfAccounts = chartOfAccounts;
     }
 
@@ -545,7 +545,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setOrganization(Organization organization) {
+    public void setOrganization(final Organization organization) {
         this.organization = organization;
     }
 
@@ -556,7 +556,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountType(AccountType accountType) {
+    public void setAccountType(final AccountType accountType) {
         this.accountType = accountType;
     }
 
@@ -567,7 +567,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountPhysicalCampus(Campus accountPhysicalCampus) {
+    public void setAccountPhysicalCampus(final Campus accountPhysicalCampus) {
         this.accountPhysicalCampus = accountPhysicalCampus;
     }
 
@@ -578,8 +578,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountState(State state) {
-        this.accountState = state;
+    public void setAccountState(final State state) {
+        accountState = state;
     }
 
     @Override
@@ -589,7 +589,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setSubFundGroup(SubFundGroup subFundGroup) {
+    public void setSubFundGroup(final SubFundGroup subFundGroup) {
         this.subFundGroup = subFundGroup;
     }
 
@@ -600,7 +600,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setFinancialHigherEdFunction(HigherEducationFunction financialHigherEdFunction) {
+    public void setFinancialHigherEdFunction(final HigherEducationFunction financialHigherEdFunction) {
         this.financialHigherEdFunction = financialHigherEdFunction;
     }
 
@@ -611,7 +611,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountRestrictedStatus(RestrictedStatus accountRestrictedStatus) {
+    public void setAccountRestrictedStatus(final RestrictedStatus accountRestrictedStatus) {
         this.accountRestrictedStatus = accountRestrictedStatus;
     }
 
@@ -623,7 +623,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setReportsToAccount(Account reportsToAccount) {
+    public void setReportsToAccount(final Account reportsToAccount) {
         this.reportsToAccount = reportsToAccount;
     }
 
@@ -635,7 +635,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setEndowmentIncomeAccount(Account endowmentIncomeAccount) {
+    public void setEndowmentIncomeAccount(final Account endowmentIncomeAccount) {
         this.endowmentIncomeAccount = endowmentIncomeAccount;
     }
 
@@ -647,7 +647,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setContractControlAccount(Account contractControlAccount) {
+    public void setContractControlAccount(final Account contractControlAccount) {
         this.contractControlAccount = contractControlAccount;
     }
 
@@ -659,7 +659,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setIncomeStreamAccount(Account incomeStreamAccount) {
+    public void setIncomeStreamAccount(final Account incomeStreamAccount) {
         this.incomeStreamAccount = incomeStreamAccount;
     }
 
@@ -674,7 +674,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      * This fix is temporary until Jonathan's fix is reflected to Rice
      */
     @Override
-    public void refreshReferenceObject(String referenceObjectName) {
+    public void refreshReferenceObject(final String referenceObjectName) {
         if (!"accountFiscalOfficerUser".equals(referenceObjectName)
                 && !"accountSupervisoryUser".equals(referenceObjectName)
                 && !"accountManagerUser".equals(referenceObjectName)) {
@@ -684,7 +684,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountFiscalOfficerUser(Person accountFiscalOfficerUser) {
+    public void setAccountFiscalOfficerUser(final Person accountFiscalOfficerUser) {
         this.accountFiscalOfficerUser = accountFiscalOfficerUser;
     }
 
@@ -697,7 +697,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountManagerUser(Person accountManagerUser) {
+    public void setAccountManagerUser(final Person accountManagerUser) {
         this.accountManagerUser = accountManagerUser;
     }
 
@@ -710,7 +710,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setAccountSupervisoryUser(Person accountSupervisoryUser) {
+    public void setAccountSupervisoryUser(final Person accountSupervisoryUser) {
         this.accountSupervisoryUser = accountSupervisoryUser;
     }
 
@@ -721,7 +721,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Deprecated
     @Override
-    public void setContinuationAccount(Account continuationAccount) {
+    public void setContinuationAccount(final Account continuationAccount) {
         this.continuationAccount = continuationAccount;
     }
 
@@ -731,7 +731,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountGuideline(AccountGuideline accountGuideline) {
+    public void setAccountGuideline(final AccountGuideline accountGuideline) {
         this.accountGuideline = accountGuideline;
     }
 
@@ -741,7 +741,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountDescription(AccountDescription accountDescription) {
+    public void setAccountDescription(final AccountDescription accountDescription) {
         this.accountDescription = accountDescription;
     }
 
@@ -751,7 +751,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setSubAccounts(List subAccounts) {
+    public void setSubAccounts(final List subAccounts) {
         this.subAccounts = subAccounts;
     }
 
@@ -761,7 +761,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setChartOfAccountsCode(String chartOfAccountsCode) {
+    public void setChartOfAccountsCode(final String chartOfAccountsCode) {
         this.chartOfAccountsCode = chartOfAccountsCode;
     }
 
@@ -775,7 +775,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountFiscalOfficerSystemIdentifier(String accountFiscalOfficerSystemIdentifier) {
+    public void setAccountFiscalOfficerSystemIdentifier(final String accountFiscalOfficerSystemIdentifier) {
         this.accountFiscalOfficerSystemIdentifier = accountFiscalOfficerSystemIdentifier;
     }
 
@@ -789,7 +789,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountManagerSystemIdentifier(String accountManagerSystemIdentifier) {
+    public void setAccountManagerSystemIdentifier(final String accountManagerSystemIdentifier) {
         this.accountManagerSystemIdentifier = accountManagerSystemIdentifier;
     }
 
@@ -799,7 +799,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountPhysicalCampusCode(String accountPhysicalCampusCode) {
+    public void setAccountPhysicalCampusCode(final String accountPhysicalCampusCode) {
         this.accountPhysicalCampusCode = accountPhysicalCampusCode;
     }
 
@@ -809,7 +809,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountRestrictedStatusCode(String accountRestrictedStatusCode) {
+    public void setAccountRestrictedStatusCode(final String accountRestrictedStatusCode) {
         this.accountRestrictedStatusCode = accountRestrictedStatusCode;
     }
 
@@ -823,7 +823,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountsSupervisorySystemsIdentifier(String accountsSupervisorySystemsIdentifier) {
+    public void setAccountsSupervisorySystemsIdentifier(final String accountsSupervisorySystemsIdentifier) {
         this.accountsSupervisorySystemsIdentifier = accountsSupervisorySystemsIdentifier;
     }
 
@@ -833,7 +833,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountTypeCode(String accountTypeCode) {
+    public void setAccountTypeCode(final String accountTypeCode) {
         this.accountTypeCode = accountTypeCode;
     }
 
@@ -843,7 +843,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setContinuationAccountNumber(String continuationAccountNumber) {
+    public void setContinuationAccountNumber(final String continuationAccountNumber) {
         this.continuationAccountNumber = continuationAccountNumber;
     }
 
@@ -853,7 +853,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setContinuationFinChrtOfAcctCd(String continuationFinChrtOfAcctCd) {
+    public void setContinuationFinChrtOfAcctCd(final String continuationFinChrtOfAcctCd) {
         this.continuationFinChrtOfAcctCd = continuationFinChrtOfAcctCd;
     }
 
@@ -863,7 +863,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setContractControlAccountNumber(String contractControlAccountNumber) {
+    public void setContractControlAccountNumber(final String contractControlAccountNumber) {
         this.contractControlAccountNumber = contractControlAccountNumber;
     }
 
@@ -873,7 +873,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setContractControlFinCoaCode(String contractControlFinCoaCode) {
+    public void setContractControlFinCoaCode(final String contractControlFinCoaCode) {
         this.contractControlFinCoaCode = contractControlFinCoaCode;
     }
 
@@ -883,7 +883,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setEndowmentIncomeAccountNumber(String endowmentIncomeAccountNumber) {
+    public void setEndowmentIncomeAccountNumber(final String endowmentIncomeAccountNumber) {
         this.endowmentIncomeAccountNumber = endowmentIncomeAccountNumber;
     }
 
@@ -893,7 +893,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setEndowmentIncomeAcctFinCoaCd(String endowmentIncomeAcctFinCoaCd) {
+    public void setEndowmentIncomeAcctFinCoaCd(final String endowmentIncomeAcctFinCoaCd) {
         this.endowmentIncomeAcctFinCoaCd = endowmentIncomeAcctFinCoaCd;
     }
 
@@ -903,7 +903,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setFinancialHigherEdFunctionCd(String financialHigherEdFunctionCd) {
+    public void setFinancialHigherEdFunctionCd(final String financialHigherEdFunctionCd) {
         this.financialHigherEdFunctionCd = financialHigherEdFunctionCd;
     }
 
@@ -913,7 +913,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setIncomeStreamAccountNumber(String incomeStreamAccountNumber) {
+    public void setIncomeStreamAccountNumber(final String incomeStreamAccountNumber) {
         this.incomeStreamAccountNumber = incomeStreamAccountNumber;
     }
 
@@ -923,7 +923,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setIncomeStreamFinancialCoaCode(String incomeStreamFinancialCoaCode) {
+    public void setIncomeStreamFinancialCoaCode(final String incomeStreamFinancialCoaCode) {
         this.incomeStreamFinancialCoaCode = incomeStreamFinancialCoaCode;
     }
 
@@ -933,7 +933,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setOrganizationCode(String organizationCode) {
+    public void setOrganizationCode(final String organizationCode) {
         this.organizationCode = organizationCode;
     }
 
@@ -943,7 +943,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setReportsToAccountNumber(String reportsToAccountNumber) {
+    public void setReportsToAccountNumber(final String reportsToAccountNumber) {
         this.reportsToAccountNumber = reportsToAccountNumber;
     }
 
@@ -953,7 +953,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setReportsToChartOfAccountsCode(String reportsToChartOfAccountsCode) {
+    public void setReportsToChartOfAccountsCode(final String reportsToChartOfAccountsCode) {
         this.reportsToChartOfAccountsCode = reportsToChartOfAccountsCode;
     }
 
@@ -963,7 +963,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setSubFundGroupCode(String subFundGroupCode) {
+    public void setSubFundGroupCode(final String subFundGroupCode) {
         this.subFundGroupCode = subFundGroupCode;
         forContractsAndGrants = null;
     }
@@ -974,7 +974,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setPostalZipCode(PostalCode postalZipCode) {
+    public void setPostalZipCode(final PostalCode postalZipCode) {
         this.postalZipCode = postalZipCode;
     }
 
@@ -984,7 +984,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setBudgetRecordingLevel(BudgetRecordingLevel budgetRecordingLevel) {
+    public void setBudgetRecordingLevel(final BudgetRecordingLevel budgetRecordingLevel) {
         this.budgetRecordingLevel = budgetRecordingLevel;
     }
 
@@ -994,7 +994,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setSufficientFundsCode(SufficientFundsCode sufficientFundsCode) {
+    public void setSufficientFundsCode(final SufficientFundsCode sufficientFundsCode) {
         this.sufficientFundsCode = sufficientFundsCode;
     }
 
@@ -1002,7 +1002,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return acctIndirectCostRcvyType;
     }
 
-    public void setAcctIndirectCostRcvyType(IndirectCostRecoveryType acctIndirectCostRcvyType) {
+    public void setAcctIndirectCostRcvyType(final IndirectCostRecoveryType acctIndirectCostRcvyType) {
         this.acctIndirectCostRcvyType = acctIndirectCostRcvyType;
     }
 
@@ -1010,15 +1010,15 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      * Implementing equals since I need contains to behave reasonably in a hashed data structure.
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         boolean equal = false;
 
         if (obj != null) {
-            if (this.getClass().equals(obj.getClass())) {
-                Account other = (Account) obj;
+            if (getClass().equals(obj.getClass())) {
+                final Account other = (Account) obj;
 
-                if (StringUtils.equals(this.getChartOfAccountsCode(), other.getChartOfAccountsCode())) {
-                    if (StringUtils.equals(this.getAccountNumber(), other.getAccountNumber())) {
+                if (StringUtils.equals(getChartOfAccountsCode(), other.getChartOfAccountsCode())) {
+                    if (StringUtils.equals(getAccountNumber(), other.getAccountNumber())) {
                         equal = true;
                     }
                 }
@@ -1035,7 +1035,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      */
     @Override
     public int hashCode() {
-        String hashString = getChartOfAccountsCode() + "|" + getAccountNumber();
+        final String hashString = getChartOfAccountsCode() + "|" + getAccountNumber();
 
         return hashString.hashCode();
     }
@@ -1057,7 +1057,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountResponsibilitySection(String accountResponsibilitySection) {
+    public void setAccountResponsibilitySection(final String accountResponsibilitySection) {
         this.accountResponsibilitySection = accountResponsibilitySection;
     }
 
@@ -1067,7 +1067,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setContractsAndGrantsSection(String contractsAndGrantsSection) {
+    public void setContractsAndGrantsSection(final String contractsAndGrantsSection) {
         this.contractsAndGrantsSection = contractsAndGrantsSection;
     }
 
@@ -1077,7 +1077,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setAccountDescriptionSection(String accountDescriptionSection) {
+    public void setAccountDescriptionSection(final String accountDescriptionSection) {
         this.accountDescriptionSection = accountDescriptionSection;
     }
 
@@ -1087,7 +1087,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     }
 
     @Override
-    public void setGuidelinesAndPurposeSection(String guidelinesAndPurposeSection) {
+    public void setGuidelinesAndPurposeSection(final String guidelinesAndPurposeSection) {
         this.guidelinesAndPurposeSection = guidelinesAndPurposeSection;
     }
 
@@ -1115,7 +1115,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return endowmentIncomeChartOfAccounts;
     }
 
-    public void setEndowmentIncomeChartOfAccounts(Chart endowmentIncomeChartOfAccounts) {
+    public void setEndowmentIncomeChartOfAccounts(final Chart endowmentIncomeChartOfAccounts) {
         this.endowmentIncomeChartOfAccounts = endowmentIncomeChartOfAccounts;
     }
 
@@ -1124,13 +1124,13 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         super.beforeUpdate();
         try {
             // KULCOA-549: update the sufficient funds table get the current data from the database
-            BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
-            Account originalAcct = (Account) boService.retrieve(this);
+            final BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
+            final Account originalAcct = (Account) boService.retrieve(this);
 
             if (originalAcct != null) {
                 if (!originalAcct.getSufficientFundsCode().equals(getSufficientFundsCode())
                         || originalAcct.isPendingAcctSufficientFundsIndicator() != isPendingAcctSufficientFundsIndicator()) {
-                    SufficientFundRebuild sfr = new SufficientFundRebuild();
+                    final SufficientFundRebuild sfr = new SufficientFundRebuild();
                     sfr.setAccountFinancialObjectTypeCode(SufficientFundRebuild.REBUILD_ACCOUNT);
                     sfr.setChartOfAccountsCode(getChartOfAccountsCode());
                     sfr.setAccountNumberFinancialObjectCode(getAccountNumber());
@@ -1139,7 +1139,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             LOG.error("Problem updating sufficient funds rebuild table: ", ex);
         }
     }
@@ -1159,7 +1159,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
      * @return true if the given account is funded by a federal agency or associated with federal pass through indicator;
      *         otherwise false
      */
-    public boolean isAwardedByFederalAgency(Collection<String> federalAgencyTypeCodes) {
+    public boolean isAwardedByFederalAgency(final Collection<String> federalAgencyTypeCodes) {
         return SpringContext.getBean(ContractsAndGrantsModuleService.class).isAwardedByFederalAgency(
                 getChartOfAccountsCode(), getAccountNumber(), federalAgencyTypeCodes);
     }
@@ -1168,7 +1168,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return contractsAndGrantsAccountResponsibilityId;
     }
 
-    public void setContractsAndGrantsAccountResponsibilityId(Integer contractsAndGrantsAccountResponsibilityId) {
+    public void setContractsAndGrantsAccountResponsibilityId(final Integer contractsAndGrantsAccountResponsibilityId) {
         this.contractsAndGrantsAccountResponsibilityId = contractsAndGrantsAccountResponsibilityId;
     }
 
@@ -1176,7 +1176,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return laborBenefitRateCategoryCode;
     }
 
-    public void setLaborBenefitRateCategoryCode(String laborBenefitRateCategoryCode) {
+    public void setLaborBenefitRateCategoryCode(final String laborBenefitRateCategoryCode) {
         this.laborBenefitRateCategoryCode = laborBenefitRateCategoryCode;
     }
 
@@ -1187,7 +1187,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return laborBenefitRateCategory;
     }
 
-    public void setLaborBenefitRateCategory(LaborBenefitRateCategory laborBenefitRateCategory) {
+    public void setLaborBenefitRateCategory(final LaborBenefitRateCategory laborBenefitRateCategory) {
         this.laborBenefitRateCategory = laborBenefitRateCategory;
     }
 
@@ -1195,7 +1195,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return fringeBenefitsChartOfAccount;
     }
 
-    public void setFringeBenefitsChartOfAccount(Chart fringeBenefitsChartOfAccount) {
+    public void setFringeBenefitsChartOfAccount(final Chart fringeBenefitsChartOfAccount) {
         this.fringeBenefitsChartOfAccount = fringeBenefitsChartOfAccount;
     }
 
@@ -1203,7 +1203,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return continuationChartOfAccount;
     }
 
-    public void setContinuationChartOfAccount(Chart continuationChartOfAccount) {
+    public void setContinuationChartOfAccount(final Chart continuationChartOfAccount) {
         this.continuationChartOfAccount = continuationChartOfAccount;
     }
 
@@ -1211,7 +1211,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return incomeStreamChartOfAccounts;
     }
 
-    public void setIncomeStreamChartOfAccounts(Chart incomeStreamChartOfAccounts) {
+    public void setIncomeStreamChartOfAccounts(final Chart incomeStreamChartOfAccounts) {
         this.incomeStreamChartOfAccounts = incomeStreamChartOfAccounts;
     }
 
@@ -1219,13 +1219,13 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return contractControlChartOfAccounts;
     }
 
-    public void setContractControlChartOfAccounts(Chart contractControlChartOfAccounts) {
+    public void setContractControlChartOfAccounts(final Chart contractControlChartOfAccounts) {
         this.contractControlChartOfAccounts = contractControlChartOfAccounts;
     }
 
     @Override
     public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
-        List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
+        final List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
         managedLists.add(new ArrayList<>(getIndirectCostRecoveryAccounts()));
         return managedLists;
     }
@@ -1234,7 +1234,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return accountCountryCode;
     }
 
-    public void setAccountCountryCode(String accountCountryCode) {
+    public void setAccountCountryCode(final String accountCountryCode) {
         this.accountCountryCode = accountCountryCode;
     }
 
@@ -1242,7 +1242,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return sourceOfFundsTypeCode;
     }
 
-    public void setSourceOfFundsTypeCode(String sourceOfFundsTypeCode) {
+    public void setSourceOfFundsTypeCode(final String sourceOfFundsTypeCode) {
         this.sourceOfFundsTypeCode = sourceOfFundsTypeCode;
     }
 
@@ -1250,7 +1250,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         return sourceOfFunds;
     }
 
-    public void setSourceOfFunds(SourceOfFunds sourceOfFunds) {
+    public void setSourceOfFunds(final SourceOfFunds sourceOfFunds) {
         this.sourceOfFunds = sourceOfFunds;
     }
     
