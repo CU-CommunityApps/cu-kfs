@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -19,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -39,7 +39,6 @@ import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 import edu.cornell.kfs.sys.web.CuMultiPartWriter;
 import jakarta.xml.bind.JAXBException;
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBase implements JaggaerUploadFileService {
     private static final Logger LOG = LogManager.getLogger();
@@ -99,19 +98,18 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
             Invocation.Builder requestBuilder = target.request();
 
             disableRequestChunkingIfNecessary(client, requestBuilder);
+            
+            try (Response response = requestBuilder.accept(MediaType.APPLICATION_XML)
+                    .post(Entity.text(buildPostingStringFromJaggaerFile(jaggaerXmlFileName)));) {
+                String responseString = response.readEntity(String.class);
 
-            Response response = requestBuilder.accept(MediaType.APPLICATION_XML)
-                    .post(Entity.text(buildPostingStringFromJaggaerFile(jaggaerXmlFileName)));
-
-            String responseString = response.readEntity(String.class);
-
-            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-                processSuccessfulResponse(results, responseString);
-                successfulCall = true;
-            } else {
-                processUnsuccessfulResponse(results, numberOfAttempts, responseString, response.getStatus());
-                numberOfAttempts++;
-                waitBetweenTries();
+                if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+                    processSuccessfulResponse(results, responseString);
+                    successfulCall = true;
+                } else {
+                    processUnsuccessfulResponse(results, numberOfAttempts, responseString, response.getStatus());
+                    numberOfAttempts++;
+                }
             }
         }
         return results;
@@ -158,16 +156,16 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     }
 
     private SupplierResponseMessage buildSupplierResponseMessage(String responseString) {
-        SupplierSyncMessage synchMessage;
+        SupplierSyncMessage syncMessage;
         try {
-            synchMessage = cuMarshalService.unmarshalStringIgnoreDtd(responseString, SupplierSyncMessage.class);
+            syncMessage = cuMarshalService.unmarshalStringIgnoreDtd(responseString, SupplierSyncMessage.class);
         } catch (JAXBException | XMLStreamException | IOException e) {
             LOG.error(
                     "buildSupplierResponseMessage, got an error creating SupplierSyncMessage from the response string",
                     e);
             throw new RuntimeException(e);
         }
-        SupplierResponseMessage responseMessage = (SupplierResponseMessage) synchMessage.getSupplierSyncMessageItems()
+        SupplierResponseMessage responseMessage = (SupplierResponseMessage) syncMessage.getSupplierSyncMessageItems()
                 .get(0);
         return responseMessage;
     }
@@ -198,14 +196,6 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         } catch (URISyntaxException e) {
             LOG.error("buildSupplierUploadURI(): URL: " + url, e);
             throw new RuntimeException(e);
-        }
-    }
-
-    private void waitBetweenTries() {
-        try {
-            TimeUnit.SECONDS.sleep(5);
-        } catch (InterruptedException e) {
-            LOG.error("waitBetweenTries, had an error waiting", e);
         }
     }
 

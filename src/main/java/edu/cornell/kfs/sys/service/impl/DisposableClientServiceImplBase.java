@@ -63,17 +63,17 @@ public abstract class DisposableClientServiceImplBase implements DisposableBean 
         CURestClientUtils.closeQuietly(jerseyClient);
     }
     
-    protected void disableRequestChunkingIfNecessary(Client client, Invocation.Builder requestBuilder) {
-        if (client instanceof org.apache.cxf.jaxrs.client.spec.ClientImpl) {
+    protected void disableRequestChunkingIfNecessary(Client cxfClient, Invocation.Builder requestBuilder) {
+        if (cxfClient instanceof org.apache.cxf.jaxrs.client.spec.ClientImpl) {
             LOG.info("disableRequestChunkingIfNecessary: Explicitly disabling chunking because KFS is using a JAX-RS client of CXF type "
-                    + client.getClass().getName());
+                    + cxfClient.getClass().getName());
             ClientConfiguration cxfConfig = WebClient.getConfig(requestBuilder);
             HTTPConduit conduit = cxfConfig.getHttpConduit();
             HTTPClientPolicy clientPolicy = conduit.getClient();
             clientPolicy.setAllowChunking(false);
         } else {
             LOG.info("disableRequestChunkingIfNecessary: There is no need to explicitly disable chunking for a JAX-RS client of type "
-                    + client.getClass().getName());
+                    + cxfClient.getClass().getName());
         }
     }
 

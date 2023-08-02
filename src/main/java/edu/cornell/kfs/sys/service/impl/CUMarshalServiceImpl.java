@@ -162,13 +162,13 @@ public class CUMarshalServiceImpl implements CUMarshalService {
             throws JAXBException, IOException, XMLStreamException {
         JAXBContext jc = JAXBContext.newInstance(clazz);
 
-        XMLInputFactory xif = XMLInputFactory.newFactory();
-        xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        XMLStreamReader xsr = xif.createXMLStreamReader(inputStream);
+        XMLInputFactory inputFactory = XMLInputFactory.newFactory();
+        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        XMLStreamReader streamReader = inputFactory.createXMLStreamReader(inputStream);
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        T response = (T) unmarshaller.unmarshal(xsr);
-        CuXMLStreamUtils.closeQuietly(xsr);
+        T response = (T) unmarshaller.unmarshal(streamReader);
+        CuXMLStreamUtils.closeQuietly(streamReader);
         
         return response;
     }
