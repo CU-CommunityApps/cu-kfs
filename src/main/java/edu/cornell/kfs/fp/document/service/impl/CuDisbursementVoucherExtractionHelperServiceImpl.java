@@ -317,7 +317,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                 }
             }
         } else if (/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
-                FPParameterConstants.PREPAID_TRAVEL_PAYMENT_REASONS, paymentReasonCode).evaluationSucceeds()) {
+                FPParameterConstants.PREPAID_TRAVEL_PAYMENT_REASON, paymentReasonCode).evaluationSucceeds()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Payment is for the following individuals/charges:");

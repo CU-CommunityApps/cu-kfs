@@ -448,16 +448,6 @@ public class CuDisbursementVoucherDocumentTest {
         }
 
         @Override
-        public boolean isPayeeIndividualVendor(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
-            return false;
-        }
-
-        @Override
-        public boolean isPayeeIndividualVendor(DisbursementPayee disbursementPayee) {
-            return false;
-        }
-
-        @Override
         public void checkPayeeAddressForChanges(DisbursementVoucherDocument disbursementVoucherDocument) {
 
         }

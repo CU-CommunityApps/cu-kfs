@@ -21,6 +21,8 @@ package org.kuali.kfs.pdp.service.impl;
 
 import org.kuali.kfs.pdp.PdpConstants;
 
+import edu.cornell.kfs.pdp.CUPdpConstants;
+
 import java.util.Map;
 
 /**
@@ -52,12 +54,15 @@ public class GeneratePdpGlpeState {
             PdpConstants.DisbursementTypeCodes.CHECK, PdpConstants.FinancialDocumentTypeCodes.CANCEL_REISSUE_CHECK
     );
     
-    /** Mapping of disbursement type codes to document type codes when cancelling a payment. */
+    /** Mapping of disbursement type codes to document type codes when a check is stale. */
     private static final Map<String, String> TYPE_MAP_STALE = Map.of(
+            PdpConstants.DisbursementTypeCodes.CHECK, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK
+    );
+    
+    /** Mapping of disbursement type codes to document type codes when cancelling a payment. */
+    private static final Map<String, String> TYPE_MAP_STOP = Map.of(
             PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.FinancialDocumentTypeCodes.CANCEL_ACH,
-            PdpConstants.DisbursementTypeCodes.CHECK, PdpConstants.FinancialDocumentTypeCodes.CANCEL_CHECK,
-            PdpConstants.DisbursementTypeCodes.DRAFT, PdpConstants.FinancialDocumentTypeCodes.CANCEL_DRAFT,
-            PdpConstants.DisbursementTypeCodes.WIRE, PdpConstants.FinancialDocumentTypeCodes.CANCEL_WIRE
+            PdpConstants.DisbursementTypeCodes.CHECK, CUPdpConstants.FDOC_TYP_CD_STOP_CHECK
     );
 
     /** Create entries to reverse the payment? */
@@ -94,6 +99,22 @@ public class GeneratePdpGlpeState {
     public static GeneratePdpGlpeState forCancel() {
         return new GeneratePdpGlpeState(true, false, TYPE_MAP_CANCEL);
     }
+    
+    /**
+     * @return a state object with the correct options defined for stale check.
+     */
+    // CU customization for stale checks
+    public static GeneratePdpGlpeState forStale() {
+        return new GeneratePdpGlpeState(true, false, TYPE_MAP_STALE);
+    }
+    
+    /**
+     * @return a state object with the correct options defined for a stopped payment.
+     */
+    // CU customization for stale checks
+    public static GeneratePdpGlpeState forStop() {
+        return new GeneratePdpGlpeState(true, false, TYPE_MAP_STOP);
+    }
 
     /**
      * @return a state object with the correct options defined for cancelling and reissuing a payment in one operation.
@@ -119,11 +140,12 @@ public class GeneratePdpGlpeState {
     /**
      * @return the document type for GLPEs to use with the given disbursement type code
      */
-    String documentTypeForDisbursementType(final String disbursementTypeCode) {
+    // CU customization changed to public
+    public String documentTypeForDisbursementType(final String disbursementTypeCode) {
         return documentTypeMap.get(disbursementTypeCode);
     }
 
-    boolean isReversal() {
+    public boolean isReversal() {
         return reversal;
     }
 

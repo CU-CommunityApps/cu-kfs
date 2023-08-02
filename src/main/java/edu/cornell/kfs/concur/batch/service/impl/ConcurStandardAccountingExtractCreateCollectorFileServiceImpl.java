@@ -21,6 +21,8 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.UniversityDateService;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 
@@ -130,7 +132,7 @@ public class ConcurStandardAccountingExtractCreateCollectorFileServiceImpl
                 + KFSConstants.WILDCARD_CHARACTER + GeneralLedgerConstants.BatchFileSystem.EXTENSION;
         String rangeForCurrentDate = buildDateRangeStringForCurrentDate();
         
-        MultivaluedMap<String,String> criteria = new MultivaluedHashMap<>();
+        MultiValueMap<String,String> criteria = new LinkedMultiValueMap<>();
         criteria.add(CUKFSPropertyConstants.PATH, buildRelativeCollectorDirectoryPath());
         criteria.add(KFSPropertyConstants.FILE_NAME, wildcardFileName);
         criteria.add(CUKFSPropertyConstants.LAST_MODIFIED_DATE, rangeForCurrentDate);

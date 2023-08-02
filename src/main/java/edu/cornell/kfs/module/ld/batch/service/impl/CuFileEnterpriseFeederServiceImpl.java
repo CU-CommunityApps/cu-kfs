@@ -12,6 +12,7 @@ import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.service.impl.RequiredFilesMissingStatus;
 import org.kuali.kfs.gl.report.LedgerSummaryReport;
 import org.kuali.kfs.gl.service.impl.EnterpriseFeederStatusAndErrorMessagesWrapper;
@@ -31,7 +32,7 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
             if (StringUtils.isBlank(directoryName)) {
                 throw new IllegalArgumentException("directoryName not set for FileEnterpriseFeederServiceImpl.");
             }
-            FileFilter doneFileFilter = new SuffixFileFilter(DONE_FILE_SUFFIX);
+            FileFilter doneFileFilter = new SuffixFileFilter(GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
 
             File enterpriseFeedFile = null;
             String enterpriseFeedFileName = LaborConstants.BatchFileSystem.LABOR_ENTERPRISE_FEED + LaborConstants.BatchFileSystem.EXTENSION;

@@ -117,8 +117,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, 
-                CUPdpConstants.FDOC_TYP_CD_STOP_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, GeneratePdpGlpeState.forStop());
     }
     
     
@@ -128,8 +127,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      */
     @Override
     public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, 
-                CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, true);
+        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, GeneratePdpGlpeState.forStale());
     }
     
     /**
@@ -140,6 +138,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param checkFdocTypeCod doc type for check disbursements
      * @param reversal boolean indicating if this is a reversal
      */
+     //protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode, String checkFdocTypeCod, boolean reversal) {
      private void populatePaymentGeneralLedgerPendingEntry(
              final PaymentGroup paymentGroup,
              final GeneratePdpGlpeState state
@@ -183,7 +182,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             glPendingTransaction.setFdocNbr(paymentGroup.getDisbursementNbr().toString());
             
             // if stale
-            if (StringUtils.equals(CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, checkFdocTypeCod)) {
+            if (StringUtils.equals(CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, state.documentTypeForDisbursementType(PdpConstants.DisbursementTypeCodes.CHECK))) {
                 ParameterService parameterService = SpringContext.getBean(ParameterService.class);
 
                 String clAcct = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_ACCOUNT);
@@ -213,7 +212,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             }
 
 
-            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
+            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, state.isReversal()) ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
             
             glPendingTransaction.setAmount(paymentAccountDetail.getAccountNetAmount().abs());
 
@@ -238,7 +237,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     trnDesc = payeeName.length() > 40 ? payeeName.substring(0, 40) : StringUtils.rightPad(payeeName, 40);
                 }
 
-                if (reversal) {
+                if (state.isReversal()) {
                     String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
                     if (StringUtils.isNotBlank(poNbr)) {
                         trnDesc += " " + (poNbr.length() > 9 ? poNbr.substring(0, 9) : StringUtils.rightPad(poNbr, 9));
