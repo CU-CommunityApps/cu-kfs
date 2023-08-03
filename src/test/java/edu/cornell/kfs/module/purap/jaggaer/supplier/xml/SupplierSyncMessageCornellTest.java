@@ -94,8 +94,8 @@ public class SupplierSyncMessageCornellTest extends SupplierSyncMessageTestBase 
                 + "    </SupplierResponseMessage>\n"
                 + "</SupplierSyncMessage>";
         
-        SupplierSyncMessage synchMessage = marshalService.unmarshalStringIgnoreDtd(xmlString, SupplierSyncMessage.class);
-        SupplierResponseMessage responseMessage = (SupplierResponseMessage) synchMessage.getSupplierSyncMessageItems().get(0);
+        SupplierSyncMessage syncMessage = marshalService.unmarshalStringIgnoreDtd(xmlString, SupplierSyncMessage.class);
+        SupplierResponseMessage responseMessage = (SupplierResponseMessage) syncMessage.getSupplierSyncMessageItems().get(0);
         String actualCode = StringUtils.trim(responseMessage.getStatus().getStatusCode());
         assertEquals(STATUS_CODE_200, actualCode);
         String actualStatusText = StringUtils.trim(responseMessage.getStatus().getStatusText());

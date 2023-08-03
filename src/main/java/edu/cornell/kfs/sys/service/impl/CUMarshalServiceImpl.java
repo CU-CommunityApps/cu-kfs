@@ -131,8 +131,7 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     @Override
     public <T> T unmarshalStringIgnoreDtd(String xmlString, Class<T> clazz)
             throws JAXBException, XMLStreamException, IOException {
-        InputStream xmlStream = IOUtils.toInputStream(xmlString, StandardCharsets.UTF_8);
-        try (CloseShieldInputStream wrappedStream = new CloseShieldInputStream(xmlStream);) {
+        try (InputStream xmlStream = IOUtils.toInputStream(xmlString, StandardCharsets.UTF_8);) {
             return unmarshalStreamIgnoreDtd(xmlStream, clazz);
         }
     }
@@ -161,16 +160,17 @@ public class CUMarshalServiceImpl implements CUMarshalService {
     public <T> T unmarshalStreamIgnoreDtd(InputStream inputStream, Class<T> clazz)
             throws JAXBException, IOException, XMLStreamException {
         JAXBContext jc = JAXBContext.newInstance(clazz);
-
         XMLInputFactory inputFactory = XMLInputFactory.newFactory();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        XMLStreamReader streamReader = inputFactory.createXMLStreamReader(inputStream);
-
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        T response = (T) unmarshaller.unmarshal(streamReader);
-        CuXMLStreamUtils.closeQuietly(streamReader);
+        XMLStreamReader streamReader = null;
         
-        return response;
+        try (CloseShieldInputStream wrappedStream = new CloseShieldInputStream(inputStream);) {
+            streamReader = inputFactory.createXMLStreamReader(wrappedStream, StandardCharsets.UTF_8.name());
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            return (T) unmarshaller.unmarshal(streamReader);
+        } finally {
+            CuXMLStreamUtils.closeQuietly(streamReader);
+        }
     }
 
     @Override

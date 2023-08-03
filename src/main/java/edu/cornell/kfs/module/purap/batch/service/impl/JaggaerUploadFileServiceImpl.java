@@ -92,7 +92,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         boolean successfulCall = false;
         int numberOfAttempts = 1;
 
-        while (!successfulCall && numberOfAttempts < getMaximumNumberOfRetries()) {
+        while (!successfulCall && numberOfAttempts <= getMaximumNumberOfRetries()) {
             Client client = getClient();
             WebTarget target = client.target(buildSupplierUploadURI());
             Invocation.Builder requestBuilder = target.request();
@@ -201,7 +201,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
 
     private void generateResultsReport(List<JaggaerUploadFileResultsDTO> resultsList) {
         /*
-         * A full report will be implemented on Jira KFSPTS-29084 + * Until then, this
+         * A full report will be implemented on Jira KFSPTS-29084. Until then, this
          * will produce a nice summary at the bottom of the log file
          */
         for (JaggaerUploadFileResultsDTO result : resultsList) {
