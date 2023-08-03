@@ -50,17 +50,17 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
     }
 
     @Override
-    public StuckDocumentIncident findIncident(String stuckDocumentIncidentId) {
+    public StuckDocumentIncident findIncident(final String stuckDocumentIncidentId) {
         Assert.notNull(stuckDocumentIncidentId, "'stuckDocumentIncidentId' should not be null.");
         return businessObjectService.findBySinglePrimaryKey(StuckDocumentIncident.class, stuckDocumentIncidentId);
     }
 
     @Override
-    public List<StuckDocumentIncident> findIncidents(List<String> stuckDocumentIncidentIds) {
+    public List<StuckDocumentIncident> findIncidents(final List<String> stuckDocumentIncidentIds) {
         Assert.notNull(stuckDocumentIncidentIds, "'stuckDocumentIncidentId' should not be null.");
-        List<StuckDocumentIncident> incidents = new ArrayList<>(stuckDocumentIncidentIds.size());
-        for (String stuckDocumentIncidentId : stuckDocumentIncidentIds) {
-            StuckDocumentIncident incident = findIncident(stuckDocumentIncidentId);
+        final List<StuckDocumentIncident> incidents = new ArrayList<>(stuckDocumentIncidentIds.size());
+        for (final String stuckDocumentIncidentId : stuckDocumentIncidentIds) {
+            final StuckDocumentIncident incident = findIncident(stuckDocumentIncidentId);
             if (incident != null) {
                 incidents.add(incident);
             }
@@ -74,8 +74,8 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
     }
 
     @Override
-    public List<StuckDocumentIncident> findIncidentsByStatus(StuckDocumentIncident.Status status) {
-        Map<String, Object> fieldValues = new HashMap<>();
+    public List<StuckDocumentIncident> findIncidentsByStatus(final StuckDocumentIncident.Status status) {
+        final Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put("status", status.name());
         return new ArrayList<>(businessObjectService.findMatchingOrderBy(StuckDocumentIncident.class, fieldValues,
                 "startDate", false));
@@ -83,57 +83,57 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
 
     @Override
     public List<StuckDocumentIncident> recordNewStuckDocumentIncidents() {
-        List<String> newStuckDocuments = getStuckDocumentDao().identifyNewStuckDocuments();
+        final List<String> newStuckDocuments = getStuckDocumentDao().identifyNewStuckDocuments();
         return newStuckDocuments.stream()
                 .map(documentId -> businessObjectService.save(StuckDocumentIncident.startNewIncident(documentId)))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public StuckDocumentFixAttempt recordNewIncidentFixAttempt(StuckDocumentIncident stuckDocumentIncident) {
+    public StuckDocumentFixAttempt recordNewIncidentFixAttempt(final StuckDocumentIncident stuckDocumentIncident) {
         Assert.notNull(stuckDocumentIncident, "'stuckDocumentIncident' should not be null.");
-        StuckDocumentFixAttempt auditEntry = new StuckDocumentFixAttempt();
+        final StuckDocumentFixAttempt auditEntry = new StuckDocumentFixAttempt();
         auditEntry.setStuckDocumentIncidentId(stuckDocumentIncident.getStuckDocumentIncidentId());
         auditEntry.setTimestamp(new Timestamp(System.currentTimeMillis()));
         return businessObjectService.save(auditEntry);
     }
 
     @Override
-    public List<StuckDocumentFixAttempt> findAllFixAttempts(String stuckDocumentIncidentId) {
-        Map<String, Object> fieldValues = new HashMap<>();
+    public List<StuckDocumentFixAttempt> findAllFixAttempts(final String stuckDocumentIncidentId) {
+        final Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put("stuckDocumentIncidentId", stuckDocumentIncidentId);
         return new ArrayList<>(businessObjectService.findMatching(StuckDocumentFixAttempt.class, fieldValues));
     }
 
     @Override
-    public int fixAttemptCount(String stuckDocumentIncidentId) {
+    public int fixAttemptCount(final String stuckDocumentIncidentId) {
         return findAllFixAttempts(stuckDocumentIncidentId).size();
     }
 
     @Override
-    public List<StuckDocumentIncident> resolveIncidentsIfPossible(List<String> stuckDocumentIncidentIds) {
+    public List<StuckDocumentIncident> resolveIncidentsIfPossible(final List<String> stuckDocumentIncidentIds) {
         Assert.notNull(stuckDocumentIncidentIds, "'stuckDocumentIncidentId' should not be null.");
-        List<StuckDocumentIncident> stuckIncidents = identifyStillStuckDocuments(stuckDocumentIncidentIds);
-        List<String> stuckIncidentIds =
+        final List<StuckDocumentIncident> stuckIncidents = identifyStillStuckDocuments(stuckDocumentIncidentIds);
+        final List<String> stuckIncidentIds =
                 stuckIncidents.stream().map(StuckDocumentIncident::getStuckDocumentIncidentId).collect(
                         Collectors.toList());
         // let's find the ones that aren't stuck so that we can resolve them
-        List<String> notStuckIncidentIds = new ArrayList<>(stuckDocumentIncidentIds);
+        final List<String> notStuckIncidentIds = new ArrayList<>(stuckDocumentIncidentIds);
         notStuckIncidentIds.removeAll(stuckIncidentIds);
         if (!notStuckIncidentIds.isEmpty()) {
-            List<StuckDocumentIncident> notStuckIncidents = findIncidents(notStuckIncidentIds);
+            final List<StuckDocumentIncident> notStuckIncidents = findIncidents(notStuckIncidentIds);
             notStuckIncidents.forEach(this::resolve);
         }
         return stuckIncidents;
     }
 
-    private List<StuckDocumentIncident> identifyStillStuckDocuments(List<String> incidentIds) {
+    private List<StuckDocumentIncident> identifyStillStuckDocuments(final List<String> incidentIds) {
         return incidentIds.stream().map(this::findIncident)
                 .filter(incident -> stuckDocumentDao.isStuck(incident.getDocumentId()))
                 .collect(Collectors.toList());
     }
 
-    protected StuckDocumentIncident resolve(StuckDocumentIncident stuckDocumentIncident) {
+    protected StuckDocumentIncident resolve(final StuckDocumentIncident stuckDocumentIncident) {
         Assert.notNull(stuckDocumentIncident, "'stuckDocumentIncident' should not be null.");
         if (stuckDocumentIncident.getStatus().equals(StuckDocumentIncident.Status.PENDING.name())) {
             // if it was pending, the document unstuck itself, let's get rid of it's incident since it's just noise
@@ -147,7 +147,7 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
     }
 
     @Override
-    public StuckDocumentIncident startFixingIncident(StuckDocumentIncident stuckDocumentIncident) {
+    public StuckDocumentIncident startFixingIncident(final StuckDocumentIncident stuckDocumentIncident) {
         Assert.notNull(stuckDocumentIncident, "'stuckDocumentIncident' should not be null.");
         stuckDocumentIncident.setStatus(StuckDocumentIncident.Status.FIXING.name());
         return businessObjectService.save(stuckDocumentIncident);
@@ -163,19 +163,19 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
         return stuckDocumentIncident;
     }
 
-    protected void notifyIncidentFailure(StuckDocumentIncident stuckDocumentIncident) {
+    protected void notifyIncidentFailure(final StuckDocumentIncident stuckDocumentIncident) {
         if (failureNotificationEnabled()) {
-            List<StuckDocumentFixAttempt> attempts =
+            final List<StuckDocumentFixAttempt> attempts =
                     findAllFixAttempts(stuckDocumentIncident.getStuckDocumentIncidentId());
             notifier.notifyIncidentFailure(stuckDocumentIncident, attempts);
         }
     }
 
     @Override
-    public void tryToFix(StuckDocumentIncident incident) {
+    public void tryToFix(final StuckDocumentIncident incident) {
         recordNewIncidentFixAttempt(incident);
-        String docId = incident.getDocumentId();
-        DocumentRefreshQueue drq = KewApiServiceLocator.getDocumentRequeuerService(docId, 0);
+        final String docId = incident.getDocumentId();
+        final DocumentRefreshQueue drq = KewApiServiceLocator.getDocumentRequeuerService(docId, 0);
         drq.refreshDocument(docId, "Document was requeued from the Stuck Document Service.");
     }
 
@@ -184,7 +184,7 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
     }
 
     @Required
-    public void setStuckDocumentDao(StuckDocumentDao stuckDocumentDao) {
+    public void setStuckDocumentDao(final StuckDocumentDao stuckDocumentDao) {
         this.stuckDocumentDao = stuckDocumentDao;
     }
 
@@ -193,7 +193,7 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
     }
 
     @Required
-    public void setNotifier(StuckDocumentNotifier notifier) {
+    public void setNotifier(final StuckDocumentNotifier notifier) {
         this.notifier = notifier;
     }
 
@@ -203,12 +203,12 @@ public class StuckDocumentServiceImpl implements StuckDocumentService {
     }
 
     @Required
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
     @Required
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 }

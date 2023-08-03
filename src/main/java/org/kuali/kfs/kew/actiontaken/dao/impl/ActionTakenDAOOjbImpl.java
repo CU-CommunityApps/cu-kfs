@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,59 +55,59 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
             "select max(ACTN_DT) from KREW_ACTN_TKN_T where DOC_HDR_ID=? and ACTN_CD=?";
 
     @Override
-    public void deleteActionTaken(ActionTaken actionTaken) {
+    public void deleteActionTaken(final ActionTaken actionTaken) {
         LOG.debug("deleting ActionTaken {}", actionTaken::getActionTakenId);
-        this.getPersistenceBrokerTemplate().delete(actionTaken);
+        getPersistenceBrokerTemplate().delete(actionTaken);
     }
 
     @Override
-    public ActionTaken findByActionTakenId(String actionTakenId) {
+    public ActionTaken findByActionTakenId(final String actionTakenId) {
         LOG.debug("finding Action Taken by actionTakenId {}", actionTakenId);
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("actionTakenId", actionTakenId);
         criteria.addEqualTo("currentIndicator", Boolean.TRUE);
-        return (ActionTaken) this.getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(
+        return (ActionTaken) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(
                 ActionTaken.class, criteria));
     }
 
     @Override
-    public Collection<ActionTaken> findByDocumentId(String documentId) {
+    public Collection<ActionTaken> findByDocumentId(final String documentId) {
         LOG.debug("finding Action Takens by documentId {}", documentId);
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         criteria.addEqualTo("currentIndicator", Boolean.TRUE);
 
-        QueryByCriteria qByCrit = new QueryByCriteria(ActionTaken.class, criteria);
+        final QueryByCriteria qByCrit = new QueryByCriteria(ActionTaken.class, criteria);
 
         qByCrit.addOrderByAscending("actionDate");
 
-        return (Collection<ActionTaken>) this.getPersistenceBrokerTemplate().getCollectionByQuery(qByCrit);
+        return (Collection<ActionTaken>) getPersistenceBrokerTemplate().getCollectionByQuery(qByCrit);
     }
 
     @Override
-    public List<ActionTaken> findByDocumentIdWorkflowId(String documentId, String principalId) {
+    public List<ActionTaken> findByDocumentIdWorkflowId(final String documentId, final String principalId) {
         LOG.debug("finding Action Takens by documentId {} and principalId{}", documentId, principalId);
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         criteria.addEqualTo("principalId", principalId);
         criteria.addEqualTo("currentIndicator", Boolean.TRUE);
-        return (List<ActionTaken>) this.getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(
+        return (List<ActionTaken>) getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(
                 ActionTaken.class, criteria));
     }
 
     @Override
-    public List findByDocumentIdIgnoreCurrentInd(String documentId) {
+    public List findByDocumentIdIgnoreCurrentInd(final String documentId) {
         LOG.debug("finding ActionsTaken ignoring currentInd by documentId:{}", documentId);
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
-        QueryByCriteria qByCrit = new QueryByCriteria(ActionTaken.class, criteria);
+        final QueryByCriteria qByCrit = new QueryByCriteria(ActionTaken.class, criteria);
 
         qByCrit.addOrderByAscending("actionDate");
-        return (List) this.getPersistenceBrokerTemplate().getCollectionByQuery(qByCrit);
+        return (List) getPersistenceBrokerTemplate().getCollectionByQuery(qByCrit);
     }
 
     @Override
-    public void saveActionTaken(ActionTaken actionTaken) {
+    public void saveActionTaken(final ActionTaken actionTaken) {
         LOG.debug("saving ActionTaken");
         checkNull(actionTaken.getDocumentId(), "Document ID");
         checkNull(actionTaken.getActionTaken(), "action taken code");
@@ -126,23 +126,23 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
                 actionTaken::getActionTaken,
                 actionTaken::getPrincipalId
         );
-        this.getPersistenceBrokerTemplate().store(actionTaken);
+        getPersistenceBrokerTemplate().store(actionTaken);
     }
 
     //TODO perhaps runtime isn't the best here, maybe a dao runtime exception
-    private void checkNull(Object value, String valueName) throws RuntimeException {
+    private void checkNull(final Object value, final String valueName) throws RuntimeException {
         if (value == null) {
             throw new RuntimeException("Null value for " + valueName);
         }
     }
 
     @Override
-    public boolean hasUserTakenAction(String principalId, String documentId) {
-        Criteria criteria = new Criteria();
+    public boolean hasUserTakenAction(final String principalId, final String documentId) {
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         criteria.addEqualTo("principalId", principalId);
         criteria.addEqualTo("currentIndicator", Boolean.TRUE);
-        int count = getPersistenceBrokerTemplate().getCount(new QueryByCriteria(ActionTaken.class, criteria));
+        final int count = getPersistenceBrokerTemplate().getCount(new QueryByCriteria(ActionTaken.class, criteria));
         return count > 0;
     }
 
@@ -150,11 +150,11 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
     public Timestamp getLastActionTakenDate(final String documentId, final WorkflowAction workflowAction) {
         return (Timestamp) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
             @Override
-            public Object doInPersistenceBroker(PersistenceBroker broker) {
+            public Object doInPersistenceBroker(final PersistenceBroker broker) {
                 PreparedStatement statement = null;
                 ResultSet resultSet = null;
                 try {
-                    Connection connection = broker.serviceConnectionManager().getConnection();
+                    final Connection connection = broker.serviceConnectionManager().getConnection();
                     statement = connection.prepareStatement(LAST_ACTION_TAKEN_DATE_QUERY);
                     statement.setString(1, documentId);
                     statement.setString(2, workflowAction.getCode());
@@ -164,20 +164,20 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
                     } else {
                         return resultSet.getTimestamp(1);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new WorkflowRuntimeException("Error determining Last Action Taken Date.", e);
                 } finally {
                     if (statement != null) {
                         try {
                             statement.close();
-                        } catch (SQLException e) {
+                        } catch (final SQLException e) {
                             // should we be logging something?
                         }
                     }
                     if (resultSet != null) {
                         try {
                             resultSet.close();
-                        } catch (SQLException e) {
+                        } catch (final SQLException e) {
                             // should we be logging something?
                         }
                     }

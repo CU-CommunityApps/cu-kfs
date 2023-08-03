@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -54,9 +54,10 @@ public class DocumentQueueOperationAction extends KewKualiAction {
 
     private BusinessObjectService businessObjectService;
 
-    public ActionForward getDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
-        DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
+    public ActionForward getDocument(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ServletException {
+        final DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
         String docId = null;
 
         // check if we have a plausible docId first
@@ -65,13 +66,13 @@ public class DocumentQueueOperationAction extends KewKualiAction {
         } else {
             try {
                 docId = docForm.getDocumentId().trim();
-            } catch (NumberFormatException nfe) {
+            } catch (final NumberFormatException nfe) {
                 GlobalVariables.getMessageMap().putError("documentId", KFSKeyConstants.ERROR_NUMERIC, "Document ID");
             }
         }
 
         if (docId != null) {
-            DocumentRouteHeaderValue routeHeader = getRouteHeaderService().getRouteHeader(docId);
+            final DocumentRouteHeaderValue routeHeader = getRouteHeaderService().getRouteHeader(docId);
             if (routeHeader == null) {
                 GlobalVariables.getMessageMap().putError("documentId", KFSKeyConstants.ERROR_EXISTENCE, "document");
             } else {
@@ -83,26 +84,28 @@ public class DocumentQueueOperationAction extends KewKualiAction {
         return mapping.findForward("basic");
     }
 
-    public ActionForward clear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
-        DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
+    public ActionForward clear(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ServletException {
+        final DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
         docForm.setRouteHeader(new DocumentRouteHeaderValue());
         docForm.setDocumentId(null);
         return mapping.findForward("basic");
     }
 
-    public ActionForward queueDocument(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
+    public ActionForward queueDocument(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ServletException {
         try {
-            DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
+            final DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
             final DocumentRouteHeaderValue routeHeader = docForm.getRouteHeader();
             if (routeHeader != null) {
                 final String documentId = routeHeader.getDocumentId();
                 if (StringUtils.isNotBlank(documentId)) {
-                    DocumentProcessingQueue documentProcessingQueue =
+                    final DocumentProcessingQueue documentProcessingQueue =
                             KewApiServiceLocator.getDocumentProcessingQueue(documentId);
                     documentProcessingQueue.process(docForm.getDocumentId());
-                    ActionMessages messages = new ActionMessages();
+                    final ActionMessages messages = new ActionMessages();
                     messages.add(ActionMessages.GLOBAL_MESSAGE,
                             new ActionMessage("general.message", "Document was successfully queued"));
                     saveMessages(request, messages);
@@ -112,21 +115,22 @@ public class DocumentQueueOperationAction extends KewKualiAction {
                 }
             }
             return mapping.findForward("basic");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new WorkflowRuntimeException(e);
         }
     }
 
-    public ActionForward indexSearchableAttributes(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
-        DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
+    public ActionForward indexSearchableAttributes(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ServletException {
+        final DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
         final DocumentRouteHeaderValue routeHeader = docForm.getRouteHeader();
         if (routeHeader != null) {
             final String documentId = routeHeader.getDocumentId();
             if (StringUtils.isNotBlank(documentId)) {
-                DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
+                final DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
                 queue.indexDocument(documentId);
-                ActionMessages messages = new ActionMessages();
+                final ActionMessages messages = new ActionMessages();
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("general.message",
                                 "Searchable Attribute Indexing was successfully scheduled"));
@@ -138,17 +142,18 @@ public class DocumentQueueOperationAction extends KewKualiAction {
         return mapping.findForward("basic");
     }
 
-    public ActionForward queueDocumentRefresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException {
-        DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
+    public ActionForward queueDocumentRefresh(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException, ServletException {
+        final DocumentQueueOperationForm docForm = (DocumentQueueOperationForm) form;
         final DocumentRouteHeaderValue routeHeader = docForm.getRouteHeader();
         if (routeHeader != null) {
             final String documentId = routeHeader.getDocumentId();
             if (StringUtils.isNotBlank(documentId)) {
-                DocumentRefreshQueue docRequeue = KewApiServiceLocator
+                final DocumentRefreshQueue docRequeue = KewApiServiceLocator
                         .getDocumentRequeuerService(documentId, 0L);
                 docRequeue.refreshDocument(documentId, "Document was requeued from Document Queue Operation.");
-                ActionMessages messages = new ActionMessages();
+                final ActionMessages messages = new ActionMessages();
                 messages.add(ActionMessages.GLOBAL_MESSAGE,
                         new ActionMessage("general.message", "Document Requeuer was successfully scheduled"));
                 saveMessages(request, messages);
