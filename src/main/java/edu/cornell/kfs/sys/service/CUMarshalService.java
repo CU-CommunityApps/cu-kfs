@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.stream.XMLStreamException;
+
 import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import jakarta.xml.bind.JAXBException;
 
@@ -23,12 +25,16 @@ public interface CUMarshalService {
     <T> T unmarshalFile(File xmlFile, Class<T> clazz) throws JAXBException;
     
     <T> T unmarshalString(String xmlString, Class<T> clazz) throws JAXBException;
+    
+    <T> T unmarshalStringIgnoreDtd(String xmlString, Class<T> clazz) throws JAXBException, IOException, XMLStreamException;
 
     <T> T unmarshalFile(File xmlFile, Class<T> clazz, Object listener) throws JAXBException;
 
     <T> T unmarshalString(String xmlString, Class<T> clazz, Object listener) throws JAXBException;
 
     <T> T unmarshalStream(InputStream inputStream, Class<T> clazz) throws JAXBException, IOException;
+    
+    <T> T unmarshalStreamIgnoreDtd(InputStream inputStream, Class<T> clazz) throws JAXBException, IOException, XMLStreamException;
 
     <T> T unmarshalStream(InputStream inputStream, Class<T> clazz, Object listener) throws JAXBException, IOException;
 

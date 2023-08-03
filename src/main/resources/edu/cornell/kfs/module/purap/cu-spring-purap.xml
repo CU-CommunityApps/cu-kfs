@@ -356,12 +356,15 @@
         p:jaggaerUploadDao-ref="jaggaerUploadDao"
         p:webServiceCredentialService-ref="webServiceCredentialService" />
 
-	<bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
-	<bean id="jaggaerUploadFileService-parentBean" abstract="true"
-		class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerUploadFileServiceImpl"
-		p:batchInputFileService-ref="batchInputFileService"
-		p:fileStorageService-ref="fileStorageService"
-		p:jaggaerUploadFileType-ref="jaggaerUploadFileType" />
+    <bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
+    <bean id="jaggaerUploadFileService-parentBean" abstract="true"
+        class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerUploadFileServiceImpl"
+        p:batchInputFileService-ref="batchInputFileService"
+        p:fileStorageService-ref="fileStorageService"
+        p:cuMarshalService-ref="cuMarshalService"
+        p:parameterService-ref="parameterService"
+        p:configurationService-ref="configurationService"
+        p:jaggaerUploadFileType-ref="jaggaerUploadFileType" />
 
 	<bean id="jaggaerUploadFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"
 		p:directoryPath="${staging.directory}/purap/jaggaer/xml"
