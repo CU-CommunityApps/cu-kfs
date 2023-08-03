@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,10 +58,10 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
     private boolean suppressName;
 
     public EntityNameType getNameType() {
-        return this.nameType;
+        return nameType;
     }
 
-    public void setNameType(EntityNameType nameType) {
+    public void setNameType(final EntityNameType nameType) {
         this.nameType = nameType;
     }
 
@@ -70,7 +70,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -79,10 +79,10 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
             return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
-        return this.firstName;
+        return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
@@ -91,10 +91,10 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
             return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
-        return this.middleName;
+        return middleName;
     }
 
-    public void setMiddleName(String middleName) {
+    public void setMiddleName(final String middleName) {
         this.middleName = middleName;
     }
 
@@ -103,10 +103,10 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
             return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
-        return this.lastName;
+        return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
 
@@ -115,10 +115,10 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
             return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
-        return this.namePrefix;
+        return namePrefix;
     }
 
-    public void setNamePrefix(String namePrefix) {
+    public void setNamePrefix(final String namePrefix) {
         this.namePrefix = namePrefix;
     }
 
@@ -127,35 +127,35 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
             return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
         }
 
-        return this.nameTitle;
+        return nameTitle;
     }
 
-    public void setNameTitle(String nameTitle) {
+    public void setNameTitle(final String nameTitle) {
         this.nameTitle = nameTitle;
     }
 
     public String getFirstNameUnmasked() {
-        return this.firstName;
+        return firstName;
     }
 
     public String getMiddleNameUnmasked() {
-        return this.middleName;
+        return middleName;
     }
 
     public String getLastNameUnmasked() {
-        return this.lastName;
+        return lastName;
     }
 
     public String getNamePrefixUnmasked() {
-        return this.namePrefix;
+        return namePrefix;
     }
 
     public String getNameTitleUnmasked() {
-        return this.nameTitle;
+        return nameTitle;
     }
 
     public String getNameSuffixUnmasked() {
-        return this.nameSuffix;
+        return nameSuffix;
     }
 
     public String getCompositeName() {
@@ -175,7 +175,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return nameChangedDate != null ? new DateTime(nameChangedDate.getTime()) : null;
     }
 
-    public void setNameChangedDate(DateTime nameChangedDate) {
+    public void setNameChangedDate(final DateTime nameChangedDate) {
         if (nameChangedDate != null) {
             this.nameChangedDate = new Timestamp(nameChangedDate.getMillis());
         } else {
@@ -187,31 +187,31 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return nameChangedDate;
     }
 
-    public void setNameChangedTimestamp(Timestamp nameChangedDate) {
+    public void setNameChangedTimestamp(final Timestamp nameChangedDate) {
         this.nameChangedDate = nameChangedDate;
     }
 
     public boolean isSuppressName() {
         try {
-            EntityPrivacyPreferences privacy = KimApiServiceLocator.getIdentityService().getEntityPrivacyPreferences(
+            final EntityPrivacyPreferences privacy = KimApiServiceLocator.getIdentityService().getEntityPrivacyPreferences(
                     getEntityId());
             if (privacy != null) {
-                this.suppressName = privacy.isSuppressName();
+                suppressName = privacy.isSuppressName();
             } else {
-                this.suppressName = false;
+                suppressName = false;
             }
         } catch (NullPointerException | ClassCastException e) {
             return false;
         }
 
-        return this.suppressName;
+        return suppressName;
     }
 
     public String getEntityId() {
         return entityId;
     }
 
-    public void setEntityId(String entityId) {
+    public void setEntityId(final String entityId) {
         this.entityId = entityId;
     }
 
@@ -219,7 +219,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return nameCode;
     }
 
-    public void setNameCode(String nameCode) {
+    public void setNameCode(final String nameCode) {
         this.nameCode = nameCode;
     }
 
@@ -227,7 +227,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return nameSuffix;
     }
 
-    public void setNameSuffix(String nameSuffix) {
+    public void setNameSuffix(final String nameSuffix) {
         this.nameSuffix = nameSuffix;
     }
 
@@ -240,7 +240,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -253,7 +253,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return defaultValue;
     }
 
-    public void setDefaultValue(boolean defaultValue) {
+    public void setDefaultValue(final boolean defaultValue) {
         this.defaultValue = defaultValue;
     }
 
@@ -261,7 +261,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return noteMessage;
     }
 
-    public void setNoteMessage(String noteMessage) {
+    public void setNoteMessage(final String noteMessage) {
         this.noteMessage = noteMessage;
     }
 
@@ -269,7 +269,7 @@ public class EntityName extends PersistableBusinessObjectBase implements Default
         return suppressName;
     }
 
-    public void setSuppressName(boolean suppressName) {
+    public void setSuppressName(final boolean suppressName) {
         this.suppressName = suppressName;
     }
 }
