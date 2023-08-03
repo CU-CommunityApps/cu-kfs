@@ -14,7 +14,12 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.io.output.CloseShieldOutputStream;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +28,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import edu.cornell.kfs.sys.service.CUMarshalService;
+import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -121,6 +127,14 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         StringReader reader = new StringReader(xmlString);
         return (T) unmarshaller.unmarshal(reader);
     }
+    
+    @Override
+    public <T> T unmarshalStringIgnoreDtd(String xmlString, Class<T> clazz)
+            throws JAXBException, XMLStreamException, IOException {
+        try (InputStream xmlStream = IOUtils.toInputStream(xmlString, StandardCharsets.UTF_8);) {
+            return unmarshalStreamIgnoreDtd(xmlStream, clazz);
+        }
+    }
 
     @Override
     public <T> T unmarshalFile(File xmlFile, Class<T> clazz, Object listener) throws JAXBException {
@@ -140,6 +154,23 @@ public class CUMarshalServiceImpl implements CUMarshalService {
             throws JAXBException, IOException {
         Unmarshaller unmarshaller = createUnmarshaller(clazz, Optional.empty());
         return unmarshalStream(inputStream, unmarshaller);
+    }
+    
+    @Override
+    public <T> T unmarshalStreamIgnoreDtd(InputStream inputStream, Class<T> clazz)
+            throws JAXBException, IOException, XMLStreamException {
+        JAXBContext jc = JAXBContext.newInstance(clazz);
+        XMLInputFactory inputFactory = XMLInputFactory.newFactory();
+        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        XMLStreamReader streamReader = null;
+        
+        try (CloseShieldInputStream wrappedStream = new CloseShieldInputStream(inputStream);) {
+            streamReader = inputFactory.createXMLStreamReader(wrappedStream, StandardCharsets.UTF_8.name());
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            return (T) unmarshaller.unmarshal(streamReader);
+        } finally {
+            CuXMLStreamUtils.closeQuietly(streamReader);
+        }
     }
 
     @Override
