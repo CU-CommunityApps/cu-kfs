@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,6 +25,7 @@ import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.kew.actionitem.ActionItemActionListExtension;
 import org.kuali.kfs.kew.actionitem.OutboxItemActionListExtension;
@@ -74,27 +75,28 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                     + "       ) T";
 
     private GroupService groupService;
+    private DateTimeService dateTimeService;
 
     @Override
-    public Collection<ActionItemActionListExtension> getActionList(String principalId, ActionListFilter filter) {
+    public Collection<ActionItemActionListExtension> getActionList(final String principalId, final ActionListFilter filter) {
         return getActionItemsInActionList(ActionItemActionListExtension.class, principalId, filter);
     }
 
     @Override
-    public Collection<ActionItemActionListExtension> getActionListForSingleDocument(String documentId) {
+    public Collection<ActionItemActionListExtension> getActionListForSingleDocument(final String documentId) {
         LOG.debug("getting action list for document id {}", documentId);
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
-        Collection<ActionItemActionListExtension> collection =
-                this.getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(
+        final Collection<ActionItemActionListExtension> collection =
+                getPersistenceBrokerTemplate().getCollectionByQuery(new QueryByCriteria(
                         ActionItemActionListExtension.class, criteria));
         LOG.debug("found {} action items for document id {}", collection::size, () -> documentId);
         return createActionListForRouteHeader(collection);
     }
 
-    private Criteria setUpActionListCriteria(String principalId, ActionListFilter filter) {
+    private Criteria setUpActionListCriteria(final String principalId, final ActionListFilter filter) {
         LOG.debug("setting up Action List criteria");
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         boolean filterOn = false;
         String filteredByItems = "";
 
@@ -113,26 +115,26 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeCreateDate()) {
                 if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() != null) {
                     criteria.addNotBetween("routeHeader.createDate",
-                            new Timestamp(beginningOfDay(filter.getCreateDateFrom()).getTime()),
-                            new Timestamp(endOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 } else if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() == null) {
                     criteria.addLessOrEqualThan("routeHeader.createDate",
-                            new Timestamp(beginningOfDay(filter.getCreateDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
                 } else if (filter.getCreateDateFrom() == null && filter.getCreateDateTo() != null) {
                     criteria.addGreaterOrEqualThan("routeHeader.createDate",
-                            new Timestamp(endOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 }
             } else {
                 if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() != null) {
                     criteria.addBetween("routeHeader.createDate",
-                            new Timestamp(beginningOfDay(filter.getCreateDateFrom()).getTime()),
-                            new Timestamp(endOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 } else if (filter.getCreateDateFrom() != null && filter.getCreateDateTo() == null) {
                     criteria.addGreaterOrEqualThan("routeHeader.createDate",
-                            new Timestamp(beginningOfDay(filter.getCreateDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
                 } else if (filter.getCreateDateFrom() == null && filter.getCreateDateTo() != null) {
                     criteria.addLessOrEqualThan("routeHeader.createDate",
-                            new Timestamp(endOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 }
             }
             filteredByItems += filteredByItems.length() > 0 ? ", " : "";
@@ -169,13 +171,13 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeDocumentType()) {
                 criteria.addNotLike("docName", "%" + filter.getDocumentType() + "%");
             } else {
-                String documentTypeName = filter.getDocumentType();
-                DocumentType documentType = KEWServiceLocator.getDocumentTypeService().findByName(documentTypeName);
+                final String documentTypeName = filter.getDocumentType();
+                final DocumentType documentType = KEWServiceLocator.getDocumentTypeService().findByName(documentTypeName);
                 if (documentType == null) {
                     criteria.addLike("docName", "%" + filter.getDocumentType() + "%");
                 } else {
                     // search this document type plus it's children
-                    Criteria docTypeCrit = new Criteria();
+                    final Criteria docTypeCrit = new Criteria();
                     constructDocumentTypeCriteria(docTypeCrit, documentType);
                     criteria.addAndCriteria(docTypeCrit);
                 }
@@ -188,26 +190,26 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeLastAssignedDate()) {
                 if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() != null) {
                     criteria.addNotBetween("dateAssigned",
-                            new Timestamp(beginningOfDay(filter.getLastAssignedDateFrom()).getTime()),
-                            new Timestamp(endOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
                 } else if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() == null) {
                     criteria.addLessOrEqualThan("dateAssigned",
-                            new Timestamp(beginningOfDay(filter.getLastAssignedDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()));
                 } else if (filter.getLastAssignedDateFrom() == null && filter.getLastAssignedDateTo() != null) {
                     criteria.addGreaterOrEqualThan("dateAssigned",
-                            new Timestamp(endOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
                 }
             } else {
                 if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() != null) {
                     criteria.addBetween("dateAssigned",
-                            new Timestamp(beginningOfDay(filter.getLastAssignedDateFrom()).getTime()),
-                            new Timestamp(endOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
                 } else if (filter.getLastAssignedDateFrom() != null && filter.getLastAssignedDateTo() == null) {
                     criteria.addGreaterOrEqualThan("dateAssigned",
-                            new Timestamp(beginningOfDay(filter.getLastAssignedDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastAssignedDateFrom()).getTime()));
                 } else if (filter.getLastAssignedDateFrom() == null && filter.getLastAssignedDateTo() != null) {
                     criteria.addLessOrEqualThan("dateAssigned",
-                            new Timestamp(endOfDay(filter.getLastAssignedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastAssignedDateTo()).getTime()));
                 }
             }
             filteredByItems += filteredByItems.length() > 0 ? ", " : "";
@@ -251,9 +253,9 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             filter.setGroupId(filter.getGroupIdString().trim());
 
             if (filter.isExcludeGroupId()) {
-                Criteria critNotEqual = new Criteria();
+                final Criteria critNotEqual = new Criteria();
                 critNotEqual.addNotEqualTo("groupId", filter.getGroupId());
-                Criteria critNull = new Criteria();
+                final Criteria critNull = new Criteria();
                 critNull.addIsNull("groupId");
                 critNotEqual.addOrCriteria(critNull);
                 criteria.addAndCriteria(critNotEqual);
@@ -280,11 +282,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (StringUtils.isBlank(filter.getPrimaryDelegateId())
                 || filter.getPrimaryDelegateId().trim().equals(KewApiConstants.ALL_CODE)) {
                 // user wishes to see all primary delegations
-                Criteria userCrit = new Criteria();
-                Criteria groupCrit = new Criteria();
-                Criteria orCrit = new Criteria();
+                final Criteria userCrit = new Criteria();
+                final Criteria groupCrit = new Criteria();
+                final Criteria orCrit = new Criteria();
                 userCrit.addEqualTo("delegatorPrincipalId", principalId);
-                List<String> delegatorGroupIds = groupService.getGroupIdsByPrincipalId(
+                final List<String> delegatorGroupIds = groupService.getGroupIdsByPrincipalId(
                         principalId);
                 if (delegatorGroupIds != null && !delegatorGroupIds.isEmpty()) {
                     groupCrit.addIn("delegatorGroupId", delegatorGroupIds);
@@ -301,11 +303,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             } else if (!filter.getPrimaryDelegateId().trim().equals(KewApiConstants.PRIMARY_DELEGATION_DEFAULT)) {
                 // user wishes to see primary delegation for a single user
                 criteria.addEqualTo("principalId", filter.getPrimaryDelegateId());
-                Criteria userCrit = new Criteria();
-                Criteria groupCrit = new Criteria();
-                Criteria orCrit = new Criteria();
+                final Criteria userCrit = new Criteria();
+                final Criteria groupCrit = new Criteria();
+                final Criteria orCrit = new Criteria();
                 userCrit.addEqualTo("delegatorPrincipalId", principalId);
-                List<String> delegatorGroupIds = groupService.getGroupIdsByPrincipalId(
+                final List<String> delegatorGroupIds = groupService.getGroupIdsByPrincipalId(
                         principalId);
                 if (delegatorGroupIds != null && !delegatorGroupIds.isEmpty()) {
                     groupCrit.addIn("delegatorGroupId", delegatorGroupIds);
@@ -350,21 +352,21 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                 // user has specified an id to see for secondary delegation
                 filter.setDelegationType(DelegationType.SECONDARY.getCode());
                 filter.setExcludeDelegationType(false);
-                Criteria userCrit = new Criteria();
-                Criteria groupCrit = new Criteria();
+                final Criteria userCrit = new Criteria();
+                final Criteria groupCrit = new Criteria();
                 if (filter.isExcludeDelegatorId()) {
-                    Criteria userNull = new Criteria();
+                    final Criteria userNull = new Criteria();
                     userCrit.addNotEqualTo("delegatorPrincipalId", filter.getDelegatorId());
                     userNull.addIsNull("delegatorPrincipalId");
                     userCrit.addOrCriteria(userNull);
-                    Criteria groupNull = new Criteria();
+                    final Criteria groupNull = new Criteria();
                     groupCrit.addNotEqualTo("delegatorGroupId", filter.getDelegatorId());
                     groupNull.addIsNull("delegatorGroupId");
                     groupCrit.addOrCriteria(groupNull);
                     criteria.addAndCriteria(userCrit);
                     criteria.addAndCriteria(groupCrit);
                 } else {
-                    Criteria orCrit = new Criteria();
+                    final Criteria orCrit = new Criteria();
                     userCrit.addEqualTo("delegatorPrincipalId", filter.getDelegatorId());
                     groupCrit.addEqualTo("delegatorGroupId", filter.getDelegatorId());
                     orCrit.addOrCriteria(userCrit);
@@ -382,8 +384,8 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             criteria.addEqualTo("principalId", principalId);
             filter.setDelegationType(DelegationType.SECONDARY.getCode());
             filter.setExcludeDelegationType(true);
-            Criteria critNotEqual = new Criteria();
-            Criteria critNull = new Criteria();
+            final Criteria critNotEqual = new Criteria();
+            final Criteria critNull = new Criteria();
             critNotEqual.addNotEqualTo("delegationType", DelegationType.SECONDARY.getCode());
             critNull.addIsNull("delegationType");
             critNotEqual.addOrCriteria(critNull);
@@ -400,21 +402,21 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         return criteria;
     }
 
-    private void constructDocumentTypeCriteria(Criteria criteria, DocumentType documentType) {
+    private void constructDocumentTypeCriteria(final Criteria criteria, final DocumentType documentType) {
         // search this document type plus it's children
-        Criteria docTypeBaseCrit = new Criteria();
+        final Criteria docTypeBaseCrit = new Criteria();
         docTypeBaseCrit.addEqualTo("docName", documentType.getName());
         criteria.addOrCriteria(docTypeBaseCrit);
-        Collection children = documentType.getChildrenDocTypes();
+        final Collection children = documentType.getChildrenDocTypes();
         if (children != null) {
-            for (Iterator iterator = children.iterator(); iterator.hasNext(); ) {
-                DocumentType childDocumentType = (DocumentType) iterator.next();
+            for (final Iterator iterator = children.iterator(); iterator.hasNext(); ) {
+                final DocumentType childDocumentType = (DocumentType) iterator.next();
                 constructDocumentTypeCriteria(criteria, childDocumentType);
             }
         }
     }
 
-    private void addToFilterDescription(String filterDescription, String labelToAdd) {
+    private void addToFilterDescription(String filterDescription, final String labelToAdd) {
         filterDescription += filterDescription.length() > 0 ? ", " : "";
         filterDescription += labelToAdd;
     }
@@ -423,11 +425,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     public int getCount(final String workflowId) {
         return (Integer) getPersistenceBrokerTemplate().execute(new PersistenceBrokerCallback() {
             @Override
-            public Object doInPersistenceBroker(PersistenceBroker broker) {
+            public Object doInPersistenceBroker(final PersistenceBroker broker) {
                 PreparedStatement statement = null;
                 ResultSet resultSet = null;
                 try {
-                    Connection connection = broker.serviceConnectionManager().getConnection();
+                    final Connection connection = broker.serviceConnectionManager().getConnection();
                     statement = connection.prepareStatement(ACTION_LIST_COUNT_QUERY);
                     statement.setString(1, workflowId);
                     resultSet = statement.executeQuery();
@@ -441,14 +443,14 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
                     if (statement != null) {
                         try {
                             statement.close();
-                        } catch (SQLException e) {
+                        } catch (final SQLException e) {
                             // should we be logging something?
                         }
                     }
                     if (resultSet != null) {
                         try {
                             resultSet.close();
-                        } catch (SQLException e) {
+                        } catch (final SQLException e) {
                             // should we be logging something?
                         }
                     }
@@ -465,11 +467,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      * @return the Action List as a Collection of ActionItems
      */
     private <T extends ActionItemActionListExtension> Collection<T> createActionListForUser(
-            Collection<T> actionItems) {
-        Map<String, T> actionItemMap = new HashMap<>();
-        ActionListPriorityComparator comparator = new ActionListPriorityComparator();
-        for (T potentialActionItem : actionItems) {
-            T existingActionItem = actionItemMap.get(potentialActionItem.getDocumentId());
+            final Collection<T> actionItems) {
+        final Map<String, T> actionItemMap = new HashMap<>();
+        final ActionListPriorityComparator comparator = new ActionListPriorityComparator();
+        for (final T potentialActionItem : actionItems) {
+            final T existingActionItem = actionItemMap.get(potentialActionItem.getDocumentId());
             if (existingActionItem == null || comparator.compare(potentialActionItem, existingActionItem) > 0) {
                 actionItemMap.put(potentialActionItem.getDocumentId(), potentialActionItem);
             }
@@ -484,11 +486,11 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      * @return the Action List as a Collection of ActionItems
      */
     private Collection<ActionItemActionListExtension> createActionListForRouteHeader(
-            Collection<ActionItemActionListExtension> actionItems) {
-        Map<String, ActionItemActionListExtension> actionItemMap = new HashMap<>();
-        ActionListPriorityComparator comparator = new ActionListPriorityComparator();
-        for (ActionItemActionListExtension potentialActionItem : actionItems) {
-            ActionItemActionListExtension existingActionItem =
+            final Collection<ActionItemActionListExtension> actionItems) {
+        final Map<String, ActionItemActionListExtension> actionItemMap = new HashMap<>();
+        final ActionListPriorityComparator comparator = new ActionListPriorityComparator();
+        for (final ActionItemActionListExtension potentialActionItem : actionItems) {
+            final ActionItemActionListExtension existingActionItem =
                     actionItemMap.get(potentialActionItem.getPrincipalId());
             if (existingActionItem == null || comparator.compare(potentialActionItem, existingActionItem) > 0) {
                 actionItemMap.put(potentialActionItem.getPrincipalId(), potentialActionItem);
@@ -498,9 +500,9 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
     }
 
     private <T extends ActionItemActionListExtension> Collection<T> getActionItemsInActionList(
-            Class<T> objectsToRetrieve, String principalId, ActionListFilter filter) {
+            final Class<T> objectsToRetrieve, final String principalId, final ActionListFilter filter) {
         LOG.debug("getting action list for user {}", principalId);
-        Criteria crit;
+        final Criteria crit;
         if (filter == null) {
             crit = new Criteria();
             crit.addEqualTo("principalId", principalId);
@@ -508,14 +510,14 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             crit = setUpActionListCriteria(principalId, filter);
         }
         LOG.debug("running query to get action list for criteria {}", crit);
-        Collection<T> collection = this.getPersistenceBrokerTemplate()
+        final Collection<T> collection = getPersistenceBrokerTemplate()
                 .getCollectionByQuery(new QueryByCriteria(objectsToRetrieve, crit));
         LOG.debug("found {} action items for user {}", collection::size, () -> principalId);
         return createActionListForUser(collection);
     }
 
     @Override
-    public Collection<OutboxItemActionListExtension> getOutbox(String principalId, ActionListFilter filter) {
+    public Collection<OutboxItemActionListExtension> getOutbox(final String principalId, final ActionListFilter filter) {
         return getActionItemsInActionList(OutboxItemActionListExtension.class, principalId, filter);
     }
 
@@ -523,8 +525,8 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      * Deletes all outbox items specified by the list of ids
      */
     @Override
-    public void removeOutboxItems(String principalId, List<String> outboxItems) {
-        Criteria criteria = new Criteria();
+    public void removeOutboxItems(final String principalId, final List<String> outboxItems) {
+        final Criteria criteria = new Criteria();
         criteria.addIn("id", outboxItems);
         getPersistenceBrokerTemplate().deleteByQuery(new QueryByCriteria(OutboxItemActionListExtension.class, criteria));
     }
@@ -533,13 +535,13 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
      * Saves an outbox item
      */
     @Override
-    public void saveOutboxItem(OutboxItemActionListExtension outboxItem) {
-        this.getPersistenceBrokerTemplate().store(outboxItem);
+    public void saveOutboxItem(final OutboxItemActionListExtension outboxItem) {
+        getPersistenceBrokerTemplate().store(outboxItem);
     }
 
     @Override
-    public OutboxItemActionListExtension getOutboxByDocumentIdUserId(String documentId, String userId) {
-        Criteria criteria = new Criteria();
+    public OutboxItemActionListExtension getOutboxByDocumentIdUserId(final String documentId, final String userId) {
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("documentId", documentId);
         criteria.addEqualTo("principalId", userId);
         return (OutboxItemActionListExtension) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(
@@ -566,5 +568,9 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
 
     public void setGroupService(final GroupService groupService) {
         this.groupService = groupService;
+    }
+
+    public void setDateTimeService(final DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 }

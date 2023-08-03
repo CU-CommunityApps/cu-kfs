@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -68,7 +68,7 @@ public class ActionListFilter implements Serializable {
         return actionRequestCd;
     }
 
-    public void setActionRequestCd(String actionRequestCd) {
+    public void setActionRequestCd(final String actionRequestCd) {
         this.actionRequestCd = actionRequestCd;
     }
 
@@ -76,15 +76,15 @@ public class ActionListFilter implements Serializable {
         return createDateFrom;
     }
 
-    public void setCreateDateFrom(Date createDate) {
-        this.createDateFrom = createDate;
+    public void setCreateDateFrom(final Date createDate) {
+        createDateFrom = createDate;
     }
 
     public String getDocRouteStatus() {
         return docRouteStatus;
     }
 
-    public void setDocRouteStatus(String docRouteStatus) {
+    public void setDocRouteStatus(final String docRouteStatus) {
         this.docRouteStatus = docRouteStatus;
     }
 
@@ -92,7 +92,7 @@ public class ActionListFilter implements Serializable {
         return documentTitle;
     }
 
-    public void setDocumentTitle(String documentTitle) {
+    public void setDocumentTitle(final String documentTitle) {
         this.documentTitle = documentTitle;
     }
 
@@ -100,7 +100,7 @@ public class ActionListFilter implements Serializable {
         return documentType;
     }
 
-    public void setDocumentType(String documentType) {
+    public void setDocumentType(final String documentType) {
         this.documentType = documentType;
     }
 
@@ -108,7 +108,7 @@ public class ActionListFilter implements Serializable {
         return excludeCreateDate;
     }
 
-    public void setExcludeCreateDate(boolean excludeCreateDate) {
+    public void setExcludeCreateDate(final boolean excludeCreateDate) {
         this.excludeCreateDate = excludeCreateDate;
     }
 
@@ -116,15 +116,15 @@ public class ActionListFilter implements Serializable {
         return excludeDocumentType;
     }
 
-    public void setExcludeDocumentType(boolean excludeDocument) {
-        this.excludeDocumentType = excludeDocument;
+    public void setExcludeDocumentType(final boolean excludeDocument) {
+        excludeDocumentType = excludeDocument;
     }
 
     public boolean isExcludeDocumentTitle() {
         return excludeDocumentTitle;
     }
 
-    public void setExcludeDocumentTitle(boolean excludeDocumentTitle) {
+    public void setExcludeDocumentTitle(final boolean excludeDocumentTitle) {
         this.excludeDocumentTitle = excludeDocumentTitle;
     }
 
@@ -132,7 +132,7 @@ public class ActionListFilter implements Serializable {
         return excludeLastAssignedDate;
     }
 
-    public void setExcludeLastAssignedDate(boolean excludeLastAssignedDate) {
+    public void setExcludeLastAssignedDate(final boolean excludeLastAssignedDate) {
         this.excludeLastAssignedDate = excludeLastAssignedDate;
     }
 
@@ -140,15 +140,15 @@ public class ActionListFilter implements Serializable {
         return excludeActionRequestCd;
     }
 
-    public void setExcludeActionRequestCd(boolean excludeRequestCd) {
-        this.excludeActionRequestCd = excludeRequestCd;
+    public void setExcludeActionRequestCd(final boolean excludeRequestCd) {
+        excludeActionRequestCd = excludeRequestCd;
     }
 
     public boolean isExcludeRouteStatus() {
         return excludeRouteStatus;
     }
 
-    public void setExcludeRouteStatus(boolean excludeRouteStatus) {
+    public void setExcludeRouteStatus(final boolean excludeRouteStatus) {
         this.excludeRouteStatus = excludeRouteStatus;
     }
 
@@ -156,7 +156,7 @@ public class ActionListFilter implements Serializable {
         return excludeGroupId;
     }
 
-    public void setExcludeGroupId(boolean excludeGroupId) {
+    public void setExcludeGroupId(final boolean excludeGroupId) {
         this.excludeGroupId = excludeGroupId;
     }
 
@@ -164,15 +164,15 @@ public class ActionListFilter implements Serializable {
         return lastAssignedDateTo;
     }
 
-    public void setLastAssignedDateTo(Date lastAssignedDate) {
-        this.lastAssignedDateTo = lastAssignedDate;
+    public void setLastAssignedDateTo(final Date lastAssignedDate) {
+        lastAssignedDateTo = lastAssignedDate;
     }
 
     public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public void setGroupId(final String groupId) {
         this.groupId = groupId;
     }
 
@@ -180,7 +180,7 @@ public class ActionListFilter implements Serializable {
         return createDateTo;
     }
 
-    public void setCreateDateTo(Date createDateTo) {
+    public void setCreateDateTo(final Date createDateTo) {
         this.createDateTo = createDateTo;
     }
 
@@ -188,7 +188,7 @@ public class ActionListFilter implements Serializable {
         return lastAssignedDateFrom;
     }
 
-    public void setLastAssignedDateFrom(Date lastAssignedDateFrom) {
+    public void setLastAssignedDateFrom(final Date lastAssignedDateFrom) {
         this.lastAssignedDateFrom = lastAssignedDateFrom;
     }
 
@@ -196,15 +196,15 @@ public class ActionListFilter implements Serializable {
         return delegatorId;
     }
 
-    public void setDelegatorId(String delegatorId) {
+    public void setDelegatorId(final String delegatorId) {
         this.delegatorId = delegatorId;
     }
 
     public String getPrimaryDelegateId() {
-        return this.primaryDelegateId;
+        return primaryDelegateId;
     }
 
-    public void setPrimaryDelegateId(String primaryDelegateId) {
+    public void setPrimaryDelegateId(final String primaryDelegateId) {
         this.primaryDelegateId = primaryDelegateId;
     }
 
@@ -212,7 +212,7 @@ public class ActionListFilter implements Serializable {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
+    public void setGroupName(final String groupName) {
         this.groupName = groupName;
     }
 
@@ -220,7 +220,7 @@ public class ActionListFilter implements Serializable {
         return filterLegend;
     }
 
-    public void setFilterLegend(String filterLegend) {
+    public void setFilterLegend(final String filterLegend) {
         this.filterLegend = filterLegend;
     }
 
@@ -228,7 +228,7 @@ public class ActionListFilter implements Serializable {
         return groupIdString;
     }
 
-    public void setGroupIdString(String groupIdString) {
+    public void setGroupIdString(final String groupIdString) {
         this.groupIdString = groupIdString;
     }
 
@@ -236,7 +236,7 @@ public class ActionListFilter implements Serializable {
         return excludeDelegatorId;
     }
 
-    public void setExcludeDelegatorId(boolean excludeDelegatorId) {
+    public void setExcludeDelegatorId(final boolean excludeDelegatorId) {
         this.excludeDelegatorId = excludeDelegatorId;
     }
 
@@ -244,7 +244,7 @@ public class ActionListFilter implements Serializable {
         return delegationType;
     }
 
-    public void setDelegationType(String delegationType) {
+    public void setDelegationType(final String delegationType) {
         this.delegationType = delegationType;
     }
 
@@ -252,7 +252,7 @@ public class ActionListFilter implements Serializable {
         return excludeDelegationType;
     }
 
-    public void setExcludeDelegationType(boolean excludeDelegationType) {
+    public void setExcludeDelegationType(final boolean excludeDelegationType) {
         this.excludeDelegationType = excludeDelegationType;
     }
 
@@ -260,7 +260,7 @@ public class ActionListFilter implements Serializable {
         return filterOn;
     }
 
-    public void setFilterOn(boolean filterOn) {
+    public void setFilterOn(final boolean filterOn) {
         this.filterOn = filterOn;
     }
     
