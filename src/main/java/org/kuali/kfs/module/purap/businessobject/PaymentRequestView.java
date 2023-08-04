@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,7 +62,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return invoiceNumber;
     }
 
-    public void setInvoiceNumber(String invoiceNumber) {
+    public void setInvoiceNumber(final String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
     }
 
@@ -70,7 +70,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return paymentExtractedTimestamp;
     }
 
-    public void setPaymentExtractedTimestamp(Timestamp paymentExtractedTimestamp) {
+    public void setPaymentExtractedTimestamp(final Timestamp paymentExtractedTimestamp) {
         this.paymentExtractedTimestamp = paymentExtractedTimestamp;
     }
 
@@ -78,7 +78,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return paymentHoldIndicator;
     }
 
-    public void setPaymentHoldIndicator(boolean paymentHoldIndicator) {
+    public void setPaymentHoldIndicator(final boolean paymentHoldIndicator) {
         this.paymentHoldIndicator = paymentHoldIndicator;
     }
 
@@ -86,7 +86,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return paymentPaidTimestamp;
     }
 
-    public void setPaymentPaidTimestamp(Timestamp paymentPaidTimestamp) {
+    public void setPaymentPaidTimestamp(final Timestamp paymentPaidTimestamp) {
         this.paymentPaidTimestamp = paymentPaidTimestamp;
     }
 
@@ -94,7 +94,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return paymentRequestedCancelIndicator;
     }
 
-    public void setPaymentRequestedCancelIndicator(boolean paymentRequestedCancelIndicator) {
+    public void setPaymentRequestedCancelIndicator(final boolean paymentRequestedCancelIndicator) {
         this.paymentRequestedCancelIndicator = paymentRequestedCancelIndicator;
     }
 
@@ -102,7 +102,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return new DateFormatter().format(paymentRequestPayDate);
     }
 
-    public void setPaymentRequestPayDate(Date paymentRequestPayDate) {
+    public void setPaymentRequestPayDate(final Date paymentRequestPayDate) {
         this.paymentRequestPayDate = paymentRequestPayDate;
     }
 
@@ -110,7 +110,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return purchaseOrderIdentifier;
     }
 
-    public void setPurchaseOrderIdentifier(Integer purchaseOrderIdentifier) {
+    public void setPurchaseOrderIdentifier(final Integer purchaseOrderIdentifier) {
         this.purchaseOrderIdentifier = purchaseOrderIdentifier;
     }
 
@@ -118,7 +118,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return vendorCustomerNumber;
     }
 
-    public void setVendorCustomerNumber(String vendorCustomerNumber) {
+    public void setVendorCustomerNumber(final String vendorCustomerNumber) {
         this.vendorCustomerNumber = vendorCustomerNumber;
     }
 
@@ -126,7 +126,7 @@ public class PaymentRequestView extends AbstractRelatedView {
         return vendorName;
     }
 
-    public void setVendorName(String vendorName) {
+    public void setVendorName(final String vendorName) {
         this.vendorName = vendorName;
     }
 
@@ -157,16 +157,16 @@ public class PaymentRequestView extends AbstractRelatedView {
      */
     @Override
     public List<Note> getNotes() {
-        List<Note> notes = new ArrayList<>();
+        final List<Note> notes = new ArrayList<>();
         //reverse the order of notes only when anything exists in it..
-        NoteService noteService = SpringContext.getBean(NoteService.class);
+        final NoteService noteService = SpringContext.getBean(NoteService.class);
         // ==== CU Customization: Use a CU-specific PREQ service method to get the note target object ID, instead of always using the doc header one. ====
-        CuPaymentRequestService cuPaymentRequestService = SpringContext.getBean(CuPaymentRequestService.class);
-        List<Note> tmpNotes = noteService.getByRemoteObjectId(cuPaymentRequestService.getPaymentRequestNoteTargetObjectId(getDocumentNumber()));
+        final CuPaymentRequestService cuPaymentRequestService = SpringContext.getBean(CuPaymentRequestService.class);
+        final List<Note> tmpNotes = noteService.getByRemoteObjectId(cuPaymentRequestService.getPaymentRequestNoteTargetObjectId(getDocumentNumber()));
         notes.clear();
         // reverse the order of notes retrieved so that newest note is in the front
         for (int i = tmpNotes.size()-1; i>=0; i--) {
-            Note note = tmpNotes.get(i);
+            final Note note = tmpNotes.get(i);
             notes.add(note);
         }
         return notes;

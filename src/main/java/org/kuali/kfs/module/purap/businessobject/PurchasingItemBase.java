@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -29,11 +29,11 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 public abstract class PurchasingItemBase extends PurApItemBase implements PurchasingItem {
-    
+
     private String purchasingCommodityCode;
-    
+
     private CommodityCode commodityCode;
-    
+
     private UnitOfMeasure itemUnitOfMeasure;
     // KFSPTS-985
     private Integer favoriteAccountLineIdentifier;
@@ -55,7 +55,7 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
     public boolean isConsideredEntered() {
         if (this instanceof PurchaseOrderItem) {
             // if item is PO item... only validate active items
-            PurchaseOrderItem poi = (PurchaseOrderItem) this;
+            final PurchaseOrderItem poi = (PurchaseOrderItem) this;
             if (!poi.isItemActiveIndicator()) {
                 return false;
             }
@@ -80,7 +80,7 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
                 || ObjectUtils.isNotNull(getItemQuantity())
                 || ObjectUtils.isNotNull(getItemUnitPrice())
                 && getItemUnitPrice().compareTo(BigDecimal.ZERO) != 0
-                || !this.isAccountListEmpty());
+                || !isAccountListEmpty());
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
         return commodityCode;
     }
 
-    public void setCommodityCode(CommodityCode commodityCode) {
+    public void setCommodityCode(final CommodityCode commodityCode) {
         this.commodityCode = commodityCode;
     }
 
@@ -114,18 +114,17 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
         return purchasingCommodityCode;
     }
 
-    public void setPurchasingCommodityCode(String purchasingCommodityCode) {
+    public void setPurchasingCommodityCode(final String purchasingCommodityCode) {
         this.purchasingCommodityCode = StringUtils.isNotBlank(purchasingCommodityCode) ?
                 purchasingCommodityCode.toUpperCase(Locale.US) : purchasingCommodityCode;
     }
 
     @Override
     public PurchasingCapitalAssetItem getPurchasingCapitalAssetItem() {
-        PurchasingDocument pd = this.getPurapDocument();
-        if (this.getItemIdentifier() != null) {
-            return pd.getPurchasingCapitalAssetItem(this.getItemIdentifier());
-        }
-        else {
+        final PurchasingDocument pd = getPurapDocument();
+        if (getItemIdentifier() != null) {
+            return pd.getPurchasingCapitalAssetItem(getItemIdentifier());
+        } else {
             return null;
         }
     }
@@ -139,7 +138,7 @@ public abstract class PurchasingItemBase extends PurApItemBase implements Purcha
         return itemUnitOfMeasure;
     }
 
-    public void setItemUnitOfMeasure(UnitOfMeasure itemUnitOfMeasure) {
+    public void setItemUnitOfMeasure(final UnitOfMeasure itemUnitOfMeasure) {
         this.itemUnitOfMeasure = itemUnitOfMeasure;
     }
 
