@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -45,10 +45,10 @@ public final class LaborAccountingLineOverride {
      *
      * @param line
      */
-    public static void populateFromInput(AccountingLine line) {
+    public static void populateFromInput(final AccountingLine line) {
         // todo: this logic won't work if a single account checkbox might also stands for NON_FRINGE_ACCOUNT_USED
 
-        Set<Integer> overrideInputComponents = new HashSet<>();
+        final Set<Integer> overrideInputComponents = new HashSet<>();
         if (line.getAccountExpiredOverride()) {
             overrideInputComponents.add(COMPONENT.EXPIRED_ACCOUNT);
         }
@@ -59,7 +59,7 @@ public final class LaborAccountingLineOverride {
             overrideInputComponents.add(COMPONENT.NON_FRINGE_ACCOUNT_USED);
         }
 
-        Integer[] inputComponentArray = overrideInputComponents.toArray(new Integer[overrideInputComponents.size()]);
+        final Integer[] inputComponentArray = overrideInputComponents.toArray(new Integer[overrideInputComponents.size()]);
         line.setOverrideCode(AccountingLineOverride.valueOf(inputComponentArray).getCode());
     }
 
@@ -70,9 +70,9 @@ public final class LaborAccountingLineOverride {
      *
      * @param line
      */
-    public static void processForOutput(AccountingDocument document, AccountingLine line) {
-        AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
-        AccountingLineOverride needed = determineNeededOverrides(document, line);
+    public static void processForOutput(final AccountingDocument document, final AccountingLine line) {
+        final AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
+        final AccountingLineOverride needed = determineNeededOverrides(document, line);
         // KFSMI-9133 : updating system to automatically check expired account boxes on the source side of the
         // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
         line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
@@ -89,9 +89,9 @@ public final class LaborAccountingLineOverride {
      * @deprecated use {@link #processForOutput(AccountingDocument, AccountingLine)} instead.
      */
     @Deprecated
-    public static void processForOutput(AccountingLine line) {
-        AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
-        AccountingLineOverride needed = determineNeededOverrides(line);
+    public static void processForOutput(final AccountingLine line) {
+        final AccountingLineOverride fromCurrentCode = AccountingLineOverride.valueOf(line.getOverrideCode());
+        final AccountingLineOverride needed = determineNeededOverrides(line);
         // KFSMI-9133 : updating system to automatically check expired account boxes on the source side of the
         // transaction, since those are read only.  Otherwise, amounts in expired accounts could never be transferred
         line.setAccountExpiredOverrideNeeded(needed.hasComponent(COMPONENT.EXPIRED_ACCOUNT));
@@ -110,8 +110,8 @@ public final class LaborAccountingLineOverride {
      * @param line
      * @return what overrides the given line needs.
      */
-    public static AccountingLineOverride determineNeededOverrides(AccountingDocument document, AccountingLine line) {
-        LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
+    public static AccountingLineOverride determineNeededOverrides(final AccountingDocument document, final AccountingLine line) {
+        final LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
         return laborModuleService.determineNeededOverrides(document, line);
     }
 
@@ -119,8 +119,8 @@ public final class LaborAccountingLineOverride {
      * @deprecated use {@link #determineNeededOverrides(AccountingDocument document, AccountingLine line)} instead.
      */
     @Deprecated
-    public static AccountingLineOverride determineNeededOverrides(AccountingLine line) {
-        LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
+    public static AccountingLineOverride determineNeededOverrides(final AccountingLine line) {
+        final LaborModuleService laborModuleService = SpringContext.getBean(LaborModuleService.class);
         return laborModuleService.determineNeededOverrides(line);
     }
 

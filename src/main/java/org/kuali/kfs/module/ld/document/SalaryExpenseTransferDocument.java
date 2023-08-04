@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -69,7 +69,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         return approvalObjectCodeBalances;
     }
 
-    public void setApprovalObjectCodeBalances(Map<String, KualiDecimal> approvalObjectCodeBalances) {
+    public void setApprovalObjectCodeBalances(final Map<String, KualiDecimal> approvalObjectCodeBalances) {
         this.approvalObjectCodeBalances = approvalObjectCodeBalances;
     }
 
@@ -79,28 +79,29 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     }
 
     @Override
-    public void setLateAdjustment(LateAdjustment lateAdjustment) {
+    public void setLateAdjustment(final LateAdjustment lateAdjustment) {
         this.lateAdjustment = lateAdjustment;
     }
 
     @Override
-    public boolean generateLaborLedgerPendingEntries(AccountingLine accountingLine,
-            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateLaborLedgerPendingEntries(
+            final AccountingLine accountingLine,
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerPendingEntries()");
 
         boolean isSuccessful = true;
-        ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
+        final ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
+        final List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
                 .generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
-            isSuccessful = this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
+            isSuccessful = getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }
 
-        List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator
+        final List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator
                 .generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (benefitPendingEntries != null && !benefitPendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
+            isSuccessful &= getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
         }
 
         return isSuccessful;
@@ -108,10 +109,10 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 
     @Override
     public boolean generateLaborLedgerBenefitClearingPendingEntries(
-            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerBenefitClearingPendingEntries()");
 
-        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+        final String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
                 LaborParameterConstants.BENEFIT_CLEARING_CHART);
         String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
