@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -96,7 +96,7 @@ public final class PurchaseOrderStatuses {
     }
 
     public static Map<String, String> getAllAppDocStatuses() {
-        Map<String, String> appDocStatusMap = new HashMap<>();
+        final Map<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(APPDOC_DAPRVD_UNORDERED_ITEM, APPDOC_DAPRVD_UNORDERED_ITEM);
         appDocStatusMap.put(APPDOC_DAPRVD_PURCHASING, APPDOC_DAPRVD_PURCHASING);
@@ -143,7 +143,7 @@ public final class PurchaseOrderStatuses {
     }
 
     public static Map<String, String> getPurchaseOrderAppDocDisapproveStatuses() {
-        Map<String, String> poAppDocStatusMap = new HashMap<>();
+        final Map<String, String> poAppDocStatusMap = new HashMap<>();
 
         poAppDocStatusMap.put(NODE_ADHOC_REVIEW, PurchaseOrderStatuses.APPDOC_CANCELLED);
         poAppDocStatusMap

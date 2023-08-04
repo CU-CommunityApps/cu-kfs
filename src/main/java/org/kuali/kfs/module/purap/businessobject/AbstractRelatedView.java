@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,9 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.module.purap.businessobject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +36,9 @@ import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for Related View Business Objects.
@@ -61,7 +61,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     public void setAccountsPayablePurchasingDocumentLinkIdentifier(
-            Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+            final Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         return purapDocumentIdentifier;
     }
 
-    public void setPurapDocumentIdentifier(Integer purapDocumentIdentifier) {
+    public void setPurapDocumentIdentifier(final Integer purapDocumentIdentifier) {
         this.purapDocumentIdentifier = purapDocumentIdentifier;
     }
 
@@ -77,32 +77,32 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         return documentNumber;
     }
 
-    public void setDocumentNumber(String documentNumber) {
+    public void setDocumentNumber(final String documentNumber) {
         this.documentNumber = documentNumber;
     }
 
     public List<Note> getNotes() {
-        List<Note> notes = new ArrayList<>();
+        final List<Note> notes = new ArrayList<>();
         //reverse the order of notes only when anything exists in it..
-        NoteService noteService = SpringContext.getBean(NoteService.class);
+        final NoteService noteService = SpringContext.getBean(NoteService.class);
         // ==== CU Customization: Use the note target property, rather than always assuming that the doc header is the target. ====
-        List<Note> tmpNotes = noteService.getByRemoteObjectId(findDocument(this.documentNumber).getNoteTarget().getObjectId());
+        final List<Note> tmpNotes = noteService.getByRemoteObjectId(findDocument(this.documentNumber).getNoteTarget().getObjectId());
         notes.clear();
         // reverse the order of notes retrieved so that newest note is in the front
         for (int i = tmpNotes.size()-1; i>=0; i--) {
-            Note note = tmpNotes.get(i);
+            final Note note = tmpNotes.get(i);
             notes.add(note);
         }
         return notes;
     }
 
     public String getUrl() {
-        String documentTypeName = this.getDocumentTypeName();
-        DocumentType docType = KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName);
-        String docHandlerUrl = docType.getResolvedDocumentHandlerUrl();
-        int endSubString = docHandlerUrl.lastIndexOf("/");
-        String serverName = docHandlerUrl.substring(0, endSubString);
-        String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf("?"));
+        final String documentTypeName = getDocumentTypeName();
+        final DocumentType docType = KEWServiceLocator.getDocumentTypeService().getDocumentTypeByName(documentTypeName);
+        final String docHandlerUrl = docType.getResolvedDocumentHandlerUrl();
+        final int endSubString = docHandlerUrl.lastIndexOf("/");
+        final String serverName = docHandlerUrl.substring(0, endSubString);
+        final String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf("?"));
         return serverName + "/" + handler + "?channelTitle=" + docType.getName() + "&" +
                 KRADConstants.DISPATCH_REQUEST_PARAMETER + "=" + KRADConstants.DOC_HANDLER_METHOD + "&" +
                 KRADConstants.PARAMETER_DOC_ID + "=" + this.getDocumentNumber() + "&" +
@@ -132,7 +132,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         return poNumberMasked;
     }
 
-    public void setPoNumberMasked(String poNumberMasked) {
+    public void setPoNumberMasked(final String poNumberMasked) {
         this.poNumberMasked = poNumberMasked;
     }
 
@@ -145,7 +145,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         return documentHeader.getApplicationDocumentStatus();
     }
 
-    public DocumentRouteHeaderValue findWorkflowDocument(String documentId){
+    public DocumentRouteHeaderValue findWorkflowDocument(final String documentId){
         return KewApiServiceLocator.getWorkflowDocumentService().getDocument(documentId);
     }
 
@@ -153,7 +153,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
      * @param documentHeaderId
      * @return document The document in the workflow that matches the document header id.
      */
-    protected Document findDocument(String documentHeaderId) {
+    protected Document findDocument(final String documentHeaderId) {
         Document document = null;
 
         try {
@@ -166,7 +166,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     public DateTime getCreateDate() {
-        DocumentRouteHeaderValue document = findWorkflowDocument(this.getDocumentNumber());
+        DocumentRouteHeaderValue document = findWorkflowDocument(getDocumentNumber());
         return document.getDateCreated();
 
     }

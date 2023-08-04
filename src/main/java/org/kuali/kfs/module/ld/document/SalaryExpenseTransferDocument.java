@@ -115,23 +115,23 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         final String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
                 LaborParameterConstants.BENEFIT_CLEARING_CHART);
-        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+        final String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
                 LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
-        List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
+        final List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
                 LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,
                         chartOfAccountsCode);
 
         if (benefitClearingPendingEntries != null && !benefitClearingPendingEntries.isEmpty()) {
-            return this.getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
+            return getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
         }
 
         return true;
     }
 
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
         // KFSMI-4606 added routeNode condition
         if (nodeName.equals(KFSConstants.REQUIRES_WORK_STUDY_REVIEW)) {
             return checkOjbectCodeForWorkstudy();
@@ -146,21 +146,21 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
      * @return boolean
      */
     protected boolean checkOjbectCodeForWorkstudy() {
-        Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
+        final Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
                 .getParameterValuesAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
                         KFSConstants.WORK_STUDY_ROUTE_OBJECT_CODES_PARAM_NM);
 
-        List<SourceAccountingLine> sourceAccountingLines = getSourceAccountingLines();
-        List<TargetAccountingLine> targetAccountingLines = getTargetAccountingLines();
+        final List<SourceAccountingLine> sourceAccountingLines = getSourceAccountingLines();
+        final List<TargetAccountingLine> targetAccountingLines = getTargetAccountingLines();
 
         // check object code in source and target accounting lines
-        for (SourceAccountingLine sourceLine : sourceAccountingLines) {
+        for (final SourceAccountingLine sourceLine : sourceAccountingLines) {
             if (workstudyRouteObjectcodes.contains(sourceLine.getFinancialObjectCode())) {
                 return true;
             }
         }
 
-        for (TargetAccountingLine targetLine : targetAccountingLines) {
+        for (final TargetAccountingLine targetLine : targetAccountingLines) {
             if (workstudyRouteObjectcodes.contains(targetLine.getFinancialObjectCode())) {
                 return true;
             }
@@ -174,7 +174,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
      * generateLaborLedgerBenefitClearingPendingEntries.
      */
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
         super.prepareForSave(event);
 
 //        for (Iterator<LaborLedgerPendingEntry> iterator = this.getLaborLedgerPendingEntries().iterator(); iterator.hasNext();) {
@@ -193,7 +193,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 //        }
 
         if (lateAdjustment != null) {
-            lateAdjustment.setDocumentNumber(this.documentNumber);
+            lateAdjustment.setDocumentNumber(documentNumber);
         }
     }
 
