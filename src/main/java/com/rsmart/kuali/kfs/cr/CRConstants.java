@@ -15,6 +15,8 @@
  */
 package com.rsmart.kuali.kfs.cr;
 
+import java.util.regex.Pattern;
+
 /**
  * Check Reconciliation Constants
  * 
@@ -70,6 +72,12 @@ public class CRConstants {
     
     public static final String ACCOUNT_NUM_COL = "CR_ACCT_NUM_COL";
     
+    public static final String ISSUE_DATE_COL = "CR_ISSUE_DATE_COL";
+    
+    public static final String PAYEE_ID_COL = "CR_PAYEE_ID_COL";
+    
+    public static final String PAYEE_NAME_COL = "CR_PAYEE_NAME_COL";
+    
     public static final String AMOUNT_DECIMAL_IND = "CR_AMOUNT_DECIMAL_IND";
     
     public static final String ACCOUNT_NUM_HEADER_IND = "CR_ACCT_NUM_COL_HEADER_IND";
@@ -90,6 +98,8 @@ public class CRConstants {
     
     public static final String CHECK_DATE_FORMAT = "CR_CHECK_DATE_FORMAT";
     
+    public static final Pattern CHECK_DATE_FORMAT_PATTERN = Pattern.compile("^[yMd/- ]+$");
+    
     public static final String DELIMITED = "DELIMITED";
     
     public static final String FIXED = "FIXED";
@@ -100,6 +110,8 @@ public class CRConstants {
     
     public static final String CLEARING_OBJECT_CODE = "CR_CLEARING_OBJECT_CODE";
     
+    public static final String PARAMETER_PREFIX = "CR_PARAMETER_PREFIX";
+    
     public static final String CR_FDOC_ORIGIN_CODE = "CR";
     
     public static final String PDP_SRC = "P";
@@ -108,4 +120,7 @@ public class CRConstants {
     public static final String BNK_CD_NOT_FOUND = "CR_NOT_FOUND_BANK_CD";
 
     public static final String STALE_CHECK_EXTRACT_FILE_TYPE_ID = "staleCheckExtractCsvInputFileType";
+    
+    public static final String LEGACY_DATE_FORMAT_yyMMdd = "yyMMdd";
+
 }
