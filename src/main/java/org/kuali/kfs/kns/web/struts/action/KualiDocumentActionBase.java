@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -176,7 +176,7 @@ public class KualiDocumentActionBase extends KualiAction {
     private WorkflowDocumentService workflowDocumentService;
 
     @Override
-    protected void checkAuthorization(ActionForm form, String methodToCall) throws AuthorizationException {
+    protected void checkAuthorization(final ActionForm form, final String methodToCall) throws AuthorizationException {
         if (!(form instanceof KualiDocumentFormBase)) {
             super.checkAuthorization(form, methodToCall);
         }
@@ -186,13 +186,14 @@ public class KualiDocumentActionBase extends KualiAction {
      * Entry point to all actions.
      */
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward execute(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         ActionForward returnForward = mapping.findForward(KFSConstants.MAPPING_BASIC);
 
         if (form instanceof KualiDocumentFormBase) {
             ((KualiDocumentFormBase) form).setLastActionTaken(null);
-            String methodToCall = findMethodToCall(form, request);
+            final String methodToCall = findMethodToCall(form, request);
             if (StringUtils.isNotBlank(methodToCall)) {
                 ((KualiDocumentFormBase) form).setLastActionTaken(methodToCall);
             }
@@ -201,10 +202,10 @@ public class KualiDocumentActionBase extends KualiAction {
         // if found methodToCall, pass control to that method
         try {
             returnForward = super.execute(mapping, form, request, response);
-        } catch (OjbOperationException e) {
-            Throwable cause = e.getCause();
+        } catch (final OjbOperationException e) {
+            final Throwable cause = e.getCause();
             if (cause instanceof OptimisticLockException) {
-                OptimisticLockException ole = (OptimisticLockException) cause;
+                final OptimisticLockException ole = (OptimisticLockException) cause;
                 GlobalVariables.getMessageMap().putError(KRADConstants.DOCUMENT_ERRORS,
                         KFSKeyConstants.ERROR_OPTIMISTIC_LOCK);
                 LOG.info("{}", () -> createOjbOptimisticLockExceptionLogMsg(ole));
@@ -220,10 +221,10 @@ public class KualiDocumentActionBase extends KualiAction {
 
         if (form instanceof KualiDocumentFormBase
             && ((KualiDocumentFormBase) form).isHasWorkflowDocument()) {
-            KualiDocumentFormBase formBase = (KualiDocumentFormBase) form;
-            Document document = formBase.getDocument();
+            final KualiDocumentFormBase formBase = (KualiDocumentFormBase) form;
+            final Document document = formBase.getDocument();
 
-            WorkflowDocument workflowDocument = formBase.getDocument().getDocumentHeader().getWorkflowDocument();
+            final WorkflowDocument workflowDocument = formBase.getDocument().getDocumentHeader().getWorkflowDocument();
             formBase.populateHeaderFields(workflowDocument);
             formBase.setDocId(document.getDocumentNumber());
 
@@ -233,13 +234,13 @@ public class KualiDocumentActionBase extends KualiAction {
             populateAdHocActionRequestCodes(formBase);
 
             //set the formBase into userSession if the document is a session document
-            UserSession userSession = (UserSession) request.getSession().getAttribute(KRADConstants.USER_SESSION_KEY);
+            final UserSession userSession = (UserSession) request.getSession().getAttribute(KRADConstants.USER_SESSION_KEY);
 
             if (WebUtils.isDocumentSession(document, formBase)) {
                 if (StringUtils.isBlank(formBase.getFormKey())
                         || userSession.retrieveObject(formBase.getFormKey()) == null) {
                     // generate doc form key here if it does not exist
-                    String formKey = GlobalVariables.getUserSession().addObjectWithGeneratedKey(form);
+                    final String formKey = GlobalVariables.getUserSession().addObjectWithGeneratedKey(form);
                     formBase.setFormKey(formKey);
                 }
             }
@@ -251,13 +252,13 @@ public class KualiDocumentActionBase extends KualiAction {
                 formBase.setReturnToActionList(true);
             }
 
-            String attachmentEnabled =
+            final String attachmentEnabled =
                 getKualiConfigurationService().getPropertyValueAsString(KRADConstants.NOTE_ATTACHMENT_ENABLED);
             // Override the document entry
             if (attachmentEnabled != null) {
                 // This is a hack for KULRICE-1602 since the document entry is modified by a global configuration that
                 // overrides the document templates without some sort of rules or control
-                DocumentEntry entry = getDocumentDictionaryService().getDocumentEntry(document.getClass().getName());
+                final DocumentEntry entry = getDocumentDictionaryService().getDocumentEntry(document.getClass().getName());
                 entry.setAllowsNoteAttachments(Boolean.parseBoolean(attachmentEnabled));
             }
             // the request attribute will be used in KualiRequestProcess#processActionPerform
@@ -266,12 +267,12 @@ public class KualiDocumentActionBase extends KualiAction {
             }
 
             // Pull in the pending action requests for the document and attach them to the form
-            List<ActionRequest> actionRequests = KewApiServiceLocator.getWorkflowDocumentService()
+            final List<ActionRequest> actionRequests = KewApiServiceLocator.getWorkflowDocumentService()
                     .getPendingActionRequests(formBase.getDocId());
             formBase.setActionRequests(actionRequests);
 
             if (LOG.isDebugEnabled()) {
-                StringBuilder message = new StringBuilder();
+                final StringBuilder message = new StringBuilder();
 
                 message.append("Running action ");
                 message.append(((KualiDocumentFormBase) form).getMethodToCall());
@@ -297,7 +298,7 @@ public class KualiDocumentActionBase extends KualiAction {
                 throw new WorkflowRuntimeException("No paramater provided to fetch document");
             }
 
-            DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(documentId);
+            final DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService().getRouteHeader(documentId);
 
             fixActionRequestsPositions(routeHeader);
             populateRouteLogFormActionRequests(formBase, routeHeader);
@@ -307,8 +308,8 @@ public class KualiDocumentActionBase extends KualiAction {
             if (formBase.isShowFuture()) {
                 try {
                     populateRouteLogFutureRequests(formBase, routeHeader);
-                } catch (Exception e) {
-                    String errorMsg = "Unable to determine Future Action Requests";
+                } catch (final Exception e) {
+                    final String errorMsg = "Unable to determine Future Action Requests";
                     LOG.info(errorMsg, e);
                     formBase.setShowFutureError(errorMsg);
                 }
@@ -333,10 +334,11 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward docHandler(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        String command = kualiDocumentFormBase.getCommand();
+    public ActionForward docHandler(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final String command = kualiDocumentFormBase.getCommand();
 
         if (kualiDocumentFormBase.getDocId() != null
                 && getDocumentService().getByDocumentHeaderId(kualiDocumentFormBase.getDocId()) == null) {
@@ -358,7 +360,7 @@ public class KualiDocumentActionBase extends KualiAction {
                 kualiDocumentFormBase::getAdditionalScriptFiles
         );
         if (kualiDocumentFormBase.getAdditionalScriptFiles().isEmpty()) {
-            DocumentEntry docEntry = getDocumentDictionaryService().getDocumentEntry(
+            final DocumentEntry docEntry = getDocumentDictionaryService().getDocumentEntry(
                     kualiDocumentFormBase.getDocument().getDocumentHeader().getWorkflowDocument()
                             .getDocumentTypeName());
             kualiDocumentFormBase.getAdditionalScriptFiles().addAll(docEntry.getWebScriptFiles());
@@ -375,15 +377,15 @@ public class KualiDocumentActionBase extends KualiAction {
      *
      * @param kualiDocumentFormBase
      */
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
-        String docId = kualiDocumentFormBase.getDocId();
-        Document doc;
+    protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
+        final String docId = kualiDocumentFormBase.getDocId();
+        final Document doc;
         doc = getDocumentService().getByDocumentHeaderId(docId);
         if (doc == null) {
             throw new UnknownDocumentIdException("Document no longer exists.  It may have been cancelled before " +
                     "being saved.");
         }
-        WorkflowDocument workflowDocument = doc.getDocumentHeader().getWorkflowDocument();
+        final WorkflowDocument workflowDocument = doc.getDocumentHeader().getWorkflowDocument();
         if (!getDocumentHelperService().getDocumentAuthorizer(doc).canOpen(doc,
                 GlobalVariables.getUserSession().getPerson())) {
             throw buildAuthorizationException("open", doc);
@@ -395,7 +397,7 @@ public class KualiDocumentActionBase extends KualiAction {
             doc.getDocumentHeader().setWorkflowDocument(workflowDocument);
         }
         kualiDocumentFormBase.setDocument(doc);
-        WorkflowDocument workflowDoc = doc.getDocumentHeader().getWorkflowDocument();
+        final WorkflowDocument workflowDoc = doc.getDocumentHeader().getWorkflowDocument();
         kualiDocumentFormBase.setDocTypeName(workflowDoc.getDocumentTypeName());
 
         // KualiDocumentFormBase.populate() needs this updated in the session
@@ -408,8 +410,8 @@ public class KualiDocumentActionBase extends KualiAction {
      *
      * @param kualiDocumentFormBase
      */
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
-        Document doc = getDocumentService().getNewDocument(kualiDocumentFormBase.getDocTypeName());
+    protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
+        final Document doc = getDocumentService().getNewDocument(kualiDocumentFormBase.getDocTypeName());
         UserSessionUtils.addWorkflowDocument(GlobalVariables.getUserSession(),
             doc.getDocumentHeader().getWorkflowDocument());
 
@@ -428,12 +430,13 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward insertAdHocRoutePerson(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
+    public ActionForward insertAdHocRoutePerson(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
         // check authorization for adding ad hoc route person
-        DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
+        final DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
         if (!documentAuthorizer.canSendAdHocRequests(document,
                 kualiDocumentFormBase.getNewAdHocRoutePerson().getActionRequested(),
                 GlobalVariables.getUserSession().getPerson())) {
@@ -441,14 +444,14 @@ public class KualiDocumentActionBase extends KualiAction {
         }
 
         // check business rules
-        boolean rulePassed = getKualiRuleService().applyRules(new AddAdHocRoutePersonEvent(document,
+        final boolean rulePassed = getKualiRuleService().applyRules(new AddAdHocRoutePersonEvent(document,
                 kualiDocumentFormBase.getNewAdHocRoutePerson()));
 
         // if the rule evaluation passed, let's add the ad hoc route person
         if (rulePassed) {
             kualiDocumentFormBase.getNewAdHocRoutePerson().setId(kualiDocumentFormBase.getNewAdHocRoutePerson().getId());
             kualiDocumentFormBase.getAdHocRoutePersons().add(kualiDocumentFormBase.getNewAdHocRoutePerson());
-            AdHocRoutePerson person = new AdHocRoutePerson();
+            final AdHocRoutePerson person = new AdHocRoutePerson();
             kualiDocumentFormBase.setNewAdHocRoutePerson(person);
         }
 
@@ -466,10 +469,11 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward deleteAdHocRoutePerson(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        kualiDocumentFormBase.getAdHocRoutePersons().remove(this.getLineToDelete(request));
+    public ActionForward deleteAdHocRoutePerson(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        kualiDocumentFormBase.getAdHocRoutePersons().remove(getLineToDelete(request));
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
@@ -484,10 +488,11 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward insertAdHocRouteWorkgroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
+    public ActionForward insertAdHocRouteWorkgroup(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
 
         final var currentUser = GlobalVariables.getUserSession().getPerson();
         final var newWorkgroup = kualiDocumentFormBase.getNewAdHocRouteWorkgroup();
@@ -515,20 +520,22 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward deleteAdHocRouteWorkgroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward deleteAdHocRouteWorkgroup(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
-        kualiDocumentFormBase.getAdHocRouteWorkgroups().remove(this.getLineToDelete(request));
+        kualiDocumentFormBase.getAdHocRouteWorkgroups().remove(getLineToDelete(request));
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward sendAdHocRequests(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
+    public ActionForward sendAdHocRequests(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        boolean rulePassed = getKualiRuleService().applyRules(new SendAdHocRequestsEvent(document));
+        final boolean rulePassed = getKualiRuleService().applyRules(new SendAdHocRequestsEvent(document));
 
         if (rulePassed) {
             getDocumentService().sendAdHocRequests(document, kualiDocumentFormBase.getAnnotation(),
@@ -549,17 +556,18 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward reload(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
+    public ActionForward reload(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
 
         // prepare for the reload action - set doc id and command
         kualiDocumentFormBase.setDocId(document.getDocumentNumber());
         kualiDocumentFormBase.setCommand(DOCUMENT_LOAD_COMMANDS[1]);
 
         // forward off to the doc handler
-        ActionForward actionForward = docHandler(mapping, form, request, response);
+        final ActionForward actionForward = docHandler(mapping, form, request, response);
         KNSGlobalVariables.getMessageList().add(MESSAGE_RELOADED);
 
         return actionForward;
@@ -576,15 +584,16 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward save(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
         //get any possible changes to to adHocWorkgroups
         refreshAdHocRoutingWorkgroupLookups(request, kualiDocumentFormBase);
-        Document document = kualiDocumentFormBase.getDocument();
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
                 KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "save", "");
         if (forward != null) {
             return forward;
@@ -615,42 +624,43 @@ public class KualiDocumentActionBase extends KualiAction {
      *         otherwise will return null to indicate processing should continue
      * @throws Exception
      */
-    protected ActionForward checkAndWarnAboutSensitiveData(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response, String fieldName, String fieldValue,
-            String caller, String context)
+    protected ActionForward checkAndWarnAboutSensitiveData(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response, final String fieldName, final String fieldValue,
+            final String caller, final String context)
         throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        boolean containsSensitiveData = KRADUtils.containsSensitiveDataPatternMatch(fieldValue);
+        final boolean containsSensitiveData = KRADUtils.containsSensitiveDataPatternMatch(fieldValue);
 
         // check if warning is configured in which case we will prompt, or if not business rules will thrown an error
-        boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
+        final boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
             KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.ALL_COMPONENT,
             KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_PATTERNS_WARNING_IND);
 
         // determine if the question has been asked yet
-        Map<String, String> ticketContext = new HashMap<>();
+        final Map<String, String> ticketContext = new HashMap<>();
         ticketContext.put(KRADPropertyConstants.DOCUMENT_NUMBER, document.getDocumentNumber());
         ticketContext.put(KRADConstants.CALLING_METHOD, caller);
         ticketContext.put(KRADPropertyConstants.NAME, fieldName);
 
-        boolean questionAsked = GlobalVariables.getUserSession().hasMatchingSessionTicket(
+        final boolean questionAsked = GlobalVariables.getUserSession().hasMatchingSessionTicket(
             KRADConstants.SENSITIVE_DATA_QUESTION_SESSION_TICKET, ticketContext);
 
         // start in logic for confirming the sensitive data
         if (containsSensitiveData && warnForSensitiveData && !questionAsked) {
-            Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
+            final Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
             if (!KRADConstants.DOCUMENT_SENSITIVE_DATA_QUESTION.equals(question)) {
 
                 // question hasn't been asked, prompt to continue
-                return this.performQuestionWithoutInput(mapping, form, request, response,
+                return performQuestionWithoutInput(mapping, form, request, response,
                     KRADConstants.DOCUMENT_SENSITIVE_DATA_QUESTION, getKualiConfigurationService()
                         .getPropertyValueAsString(QUESTION_SENSITIVE_DATA_DOCUMENT),
                     KRADConstants.CONFIRMATION_QUESTION, caller, context);
             }
 
-            Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+            final Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
             if (KRADConstants.DOCUMENT_SENSITIVE_DATA_QUESTION.equals(question)) {
                 // if no button clicked just reload the doc
                 if (ConfirmationQuestion.NO.equals(buttonClicked)) {
@@ -660,7 +670,7 @@ public class KualiDocumentActionBase extends KualiAction {
 
                 // answered yes, create session ticket so we not to ask question again if there are further question
                 // requests
-                SessionTicket ticket = new SessionTicket(KRADConstants.SENSITIVE_DATA_QUESTION_SESSION_TICKET);
+                final SessionTicket ticket = new SessionTicket(KRADConstants.SENSITIVE_DATA_QUESTION_SESSION_TICKET);
                 ticket.setTicketContext(ticketContext);
                 GlobalVariables.getUserSession().putSessionTicket(ticket);
             }
@@ -680,20 +690,21 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward route(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
 
         kualiDocumentFormBase.setDerivedValuesOnForm(request);
-        ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
+        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
         if (preRulesForward != null) {
             return preRulesForward;
         }
 
-        Document document = kualiDocumentFormBase.getDocument();
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
                 KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "route", "");
         if (forward != null) {
             return forward;
@@ -717,13 +728,14 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward blanketApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward blanketApprove(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
 
         // KULRICE-7864: blanket approve should not be allowed when adhoc route for completion request is newly added
-        boolean hasPendingAdhocForCompletion = this.hasPendingAdhocForCompletion(kualiDocumentFormBase);
+        final boolean hasPendingAdhocForCompletion = hasPendingAdhocForCompletion(kualiDocumentFormBase);
         if (hasPendingAdhocForCompletion) {
             GlobalVariables.getMessageMap().putError(KRADConstants.NEW_AD_HOC_ROUTE_WORKGROUP_PROPERTY_NAME,
                     ERROR_ADHOC_COMPLETE_BLANKET_APPROVE_NOT_ALLOWED);
@@ -731,14 +743,14 @@ public class KualiDocumentActionBase extends KualiAction {
         }
 
         kualiDocumentFormBase.setDerivedValuesOnForm(request);
-        ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
+        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
         if (preRulesForward != null) {
             return preRulesForward;
         }
 
-        Document document = kualiDocumentFormBase.getDocument();
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
                 KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "blanketApprove", "");
         if (forward != null) {
             return forward;
@@ -761,20 +773,21 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward approve(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
 
         kualiDocumentFormBase.setDerivedValuesOnForm(request);
-        ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
+        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
         if (preRulesForward != null) {
             return preRulesForward;
         }
 
-        Document document = kualiDocumentFormBase.getDocument();
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
                 KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "approve", "");
         if (forward != null) {
             return forward;
@@ -797,19 +810,20 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward disapprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ReasonPrompt prompt = new ReasonPrompt(KRADConstants.DOCUMENT_DISAPPROVE_QUESTION,
+    public ActionForward disapprove(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ReasonPrompt prompt = new ReasonPrompt(KRADConstants.DOCUMENT_DISAPPROVE_QUESTION,
                 QUESTION_DISAPPROVE_DOCUMENT, KRADConstants.CONFIRMATION_QUESTION,
                 KFSKeyConstants.ERROR_DOCUMENT_DISAPPROVE_REASON_REQUIRED, KRADConstants.MAPPING_DISAPPROVE,
                 ConfirmationQuestion.NO, MESSAGE_DISAPPROVAL_NOTE_TEXT_INTRO);
-        ReasonPrompt.Response resp = prompt.ask(mapping, form, request, response);
+        final ReasonPrompt.Response resp = prompt.ask(mapping, form, request, response);
 
         if (resp.forward != null) {
             return resp.forward;
         }
 
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doDisapprove(kualiDocumentFormBase, request, resp.reason);
         return returnToSender(request, mapping, kualiDocumentFormBase);
     }
@@ -822,7 +836,7 @@ public class KualiDocumentActionBase extends KualiAction {
      *
      * @throws Exception
      */
-    protected void doDisapprove(KualiDocumentFormBase form, HttpServletRequest request, String reason) throws Exception {
+    protected void doDisapprove(final KualiDocumentFormBase form, final HttpServletRequest request, final String reason) throws Exception {
         doProcessingAfterPost(form, request);
         getDocumentService().disapproveDocument(form.getDocument(), reason);
         KNSGlobalVariables.getMessageList().add(MESSAGE_ROUTE_DISAPPROVED);
@@ -839,18 +853,19 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
+    public ActionForward cancel(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final Object question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
         // this should probably be moved into a private instance variable logic for cancel question
         if (question == null) {
             // ask question if not already asked
-            return this.performQuestionWithoutInput(mapping, form, request, response,
+            return performQuestionWithoutInput(mapping, form, request, response,
                     KRADConstants.DOCUMENT_CANCEL_QUESTION, getKualiConfigurationService().getPropertyValueAsString(
                 "document.question.cancel.text"), KRADConstants.CONFIRMATION_QUESTION,
                     KRADConstants.MAPPING_CANCEL, "");
         } else {
-            Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+            final Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
             if (KRADConstants.DOCUMENT_CANCEL_QUESTION.equals(question)
                 && ConfirmationQuestion.NO.equals(buttonClicked)) {
                 // if no button clicked just reload the doc
@@ -859,7 +874,7 @@ public class KualiDocumentActionBase extends KualiAction {
             // else go to cancel logic below
         }
 
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
         // KULRICE-4447 Call cancelDocument() only if the document exists
         if (getDocumentService().documentExists(kualiDocumentFormBase.getDocId())) {
@@ -880,22 +895,23 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward recall(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ReasonPrompt prompt = new ReasonPrompt(KRADConstants.DOCUMENT_RECALL_QUESTION,
+    public ActionForward recall(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ReasonPrompt prompt = new ReasonPrompt(KRADConstants.DOCUMENT_RECALL_QUESTION,
                 QUESTION_RECALL_DOCUMENT, KRADConstants.RECALL_QUESTION,
                 ERROR_DOCUMENT_RECALL_REASON_REQUIRED, KRADConstants.MAPPING_RECALL, null,
                 MESSAGE_RECALL_NOTE_TEXT_INTRO);
-        ReasonPrompt.Response resp = prompt.ask(mapping, form, request, response);
+        final ReasonPrompt.Response resp = prompt.ask(mapping, form, request, response);
 
         if (resp.forward != null) {
             return resp.forward;
         }
 
-        boolean cancel = !(KRADConstants.DOCUMENT_RECALL_QUESTION.equals(resp.question)
-                           && RecallQuestion.RECALL_TO_ACTIONLIST.equals(resp.button));
+        final boolean cancel = !(KRADConstants.DOCUMENT_RECALL_QUESTION.equals(resp.question)
+                                 && RecallQuestion.RECALL_TO_ACTIONLIST.equals(resp.button));
 
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
         getDocumentService().recallDocument(kualiDocumentFormBase.getDocument(), resp.reason, cancel);
 
@@ -917,15 +933,16 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward close(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase docForm = (KualiDocumentFormBase) form;
+    public ActionForward close(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase docForm = (KualiDocumentFormBase) form;
         doProcessingAfterPost(docForm, request);
-        Document document = docForm.getDocument();
+        final Document document = docForm.getDocument();
         // only want to prompt them to save if they already can save
         if (canSave(docForm)) {
 
-            Object question = getQuestion(request);
+            final Object question = getQuestion(request);
             // logic for close question
             if (question == null) {
                 // KULRICE-7306: Unconverted Values not carried through during a saveOnClose action.
@@ -933,17 +950,17 @@ public class KualiDocumentActionBase extends KualiAction {
                 saveUnconvertedValuesToSession(request, docForm);
 
                 // ask question if not already asked
-                return this.performQuestionWithoutInput(mapping, form, request, response,
+                return performQuestionWithoutInput(mapping, form, request, response,
                         KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION,
                         getKualiConfigurationService().getPropertyValueAsString(
                     KFSKeyConstants.QUESTION_SAVE_BEFORE_CLOSE), KRADConstants.CONFIRMATION_QUESTION,
                         KRADConstants.MAPPING_CLOSE, "");
             } else {
-                Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+                final Object buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
 
                 // KULRICE-7306: Unconverted Values not carried through during a saveOnClose action.
                 // Side effecting in that it clears the session attribute that holds the unconverted values.
-                Map<String, Object> unconvertedValues = restoreUnconvertedValuesFromSession(request, docForm);
+                final Map<String, Object> unconvertedValues = restoreUnconvertedValuesFromSession(request, docForm);
 
                 if (KRADConstants.DOCUMENT_SAVE_BEFORE_CLOSE_QUESTION.equals(question)
                     && ConfirmationQuestion.YES.equals(buttonClicked)) {
@@ -953,12 +970,12 @@ public class KualiDocumentActionBase extends KualiAction {
                     // If there were values that couldn't be converted, we attempt to populate them so that the
                     // the appropriate errors get set on those fields
                     if (MapUtils.isNotEmpty(unconvertedValues)) {
-                        for (Map.Entry<String, Object> entry : unconvertedValues.entrySet()) {
+                        for (final Map.Entry<String, Object> entry : unconvertedValues.entrySet()) {
                             docForm.populateForProperty(entry.getKey(), entry.getValue(), unconvertedValues);
                         }
                     }
 
-                    ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+                    final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
                             KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(),
                             "save", "");
                     if (forward != null) {
@@ -975,7 +992,7 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     // stash unconvertedValues in the session
-    private void saveUnconvertedValuesToSession(HttpServletRequest request, KualiDocumentFormBase docForm) {
+    private void saveUnconvertedValuesToSession(final HttpServletRequest request, final KualiDocumentFormBase docForm) {
         if (MapUtils.isNotEmpty(docForm.getUnconvertedValues())) {
             request.getSession().setAttribute(getUnconvertedValuesSessionAttributeKey(docForm),
                     new HashMap(docForm.getUnconvertedValues()));
@@ -983,10 +1000,11 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     // SIDE EFFECTING: clears out unconverted values from the Session and restores them to the form
-    private Map<String, Object> restoreUnconvertedValuesFromSession(HttpServletRequest request,
-            KualiDocumentFormBase docForm) {
+    private Map<String, Object> restoreUnconvertedValuesFromSession(
+            final HttpServletRequest request,
+            final KualiDocumentFormBase docForm) {
         // first restore unconvertedValues and clear out of session
-        Map<String, Object> unconvertedValues =
+        final Map<String, Object> unconvertedValues =
             (Map<String, Object>) request.getSession().getAttribute(getUnconvertedValuesSessionAttributeKey(docForm));
         if (MapUtils.isNotEmpty(unconvertedValues)) {
             request.getSession().removeAttribute(getUnconvertedValuesSessionAttributeKey(docForm));
@@ -997,16 +1015,16 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     // create the key based on docId for stashing/retrieving unconvertedValues in the session
-    private String getUnconvertedValuesSessionAttributeKey(KualiDocumentFormBase docForm) {
+    private String getUnconvertedValuesSessionAttributeKey(final KualiDocumentFormBase docForm) {
         return "preCloseUnconvertedValues." + docForm.getDocId();
     }
 
-    protected boolean canSave(ActionForm form) {
-        KualiDocumentFormBase docForm = (KualiDocumentFormBase) form;
+    protected boolean canSave(final ActionForm form) {
+        final KualiDocumentFormBase docForm = (KualiDocumentFormBase) form;
         return docForm.getDocumentActions().containsKey(KRADConstants.KUALI_ACTION_CAN_SAVE);
     }
 
-    protected Object getQuestion(HttpServletRequest request) {
+    protected Object getQuestion(final HttpServletRequest request) {
         return request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
     }
 
@@ -1020,9 +1038,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward fyi(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward fyi(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
         getDocumentService().clearDocumentFyi(kualiDocumentFormBase.getDocument(), combineAdHocRecipients(kualiDocumentFormBase));
         KNSGlobalVariables.getMessageList().add(MESSAGE_ROUTE_FYIED);
@@ -1040,9 +1059,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward acknowledge(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward acknowledge(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
         getDocumentService().acknowledgeDocument(kualiDocumentFormBase.getDocument(),
                 kualiDocumentFormBase.getAnnotation(), combineAdHocRecipients(kualiDocumentFormBase));
@@ -1061,12 +1081,13 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward supervisorFunctions(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        String workflowSuperUserUrl = getKualiConfigurationService().getPropertyValueAsString(
+    public ActionForward supervisorFunctions(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final String workflowSuperUserUrl = getKualiConfigurationService().getPropertyValueAsString(
             KFSConstants.APPLICATION_URL_KEY) + "/SuperUser.do?methodToCall=displaySuperUserDocument&documentId=" +
-                kualiDocumentFormBase.getDocument().getDocumentHeader().getDocumentNumber();
+                                            kualiDocumentFormBase.getDocument().getDocumentHeader().getDocumentNumber();
         response.sendRedirect(workflowSuperUserUrl);
 
         return null;
@@ -1079,8 +1100,8 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param kualiDocumentFormBase
      * @return List
      */
-    protected List<AdHocRouteRecipient> combineAdHocRecipients(KualiDocumentFormBase kualiDocumentFormBase) {
-        List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
+    protected List<AdHocRouteRecipient> combineAdHocRecipients(final KualiDocumentFormBase kualiDocumentFormBase) {
+        final List<AdHocRouteRecipient> adHocRecipients = new ArrayList<>();
         adHocRecipients.addAll(kualiDocumentFormBase.getAdHocRoutePersons());
         adHocRecipients.addAll(kualiDocumentFormBase.getAdHocRouteWorkgroups());
         return adHocRecipients;
@@ -1091,9 +1112,10 @@ public class KualiDocumentActionBase extends KualiAction {
      * after returning from a lookup.
      */
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiForm = (KualiDocumentFormBase) form;
+    public ActionForward refresh(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiForm = (KualiDocumentFormBase) form;
         kualiForm.setDerivedValuesOnForm(request);
 
         super.refresh(mapping, form, request, response);
@@ -1109,18 +1131,17 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param kualiForm
      */
     @SuppressWarnings("unchecked")
-    protected void refreshAdHocRoutingWorkgroupLookups(HttpServletRequest request, KualiDocumentFormBase kualiForm) {
-        for (Enumeration<String> i = request.getParameterNames(); i.hasMoreElements(); ) {
-            String parameterName = i.nextElement();
+    protected void refreshAdHocRoutingWorkgroupLookups(final HttpServletRequest request, final KualiDocumentFormBase kualiForm) {
+        for (final Enumeration<String> i = request.getParameterNames(); i.hasMoreElements(); ) {
+            final String parameterName = i.nextElement();
             if ("newAdHocRouteWorkgroup.recipientName".equals(parameterName)
                     && StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 //check for namespace
                 String namespace = KFSConstants.CoreModuleNamespaces.KFS;
-                // CU customization: use StringUtils.isNotBlank instead of StringUtils.isNotEmpty and trim which is not null safe
-                if (StringUtils.isNotBlank(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode"))) {
+                if (StringUtils.isNotEmpty(request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim())) {
                     namespace = request.getParameter("newAdHocRouteWorkgroup.recipientNamespaceCode").trim();
                 }
-                Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
+                final Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
                     parameterName));
                 if (group != null) {
                     kualiForm.getNewAdHocRouteWorkgroup().setId(group.getId());
@@ -1134,7 +1155,7 @@ public class KualiDocumentActionBase extends KualiAction {
             }
             if (parameterName.startsWith("adHocRouteWorkgroup[") && StringUtils.isNotEmpty(request.getParameter(parameterName))) {
                 if (parameterName.endsWith(".recipientName")) {
-                    int lineNumber = Integer.parseInt(StringUtils.substringBetween(parameterName, "[", "]"));
+                    final int lineNumber = Integer.parseInt(StringUtils.substringBetween(parameterName, "[", "]"));
                     //check for namespace
                     String namespaceParam = "adHocRouteWorkgroup[" + lineNumber + "].recipientNamespaceCode";
                     String namespace = KFSConstants.CoreModuleNamespaces.KFS;
@@ -1142,7 +1163,7 @@ public class KualiDocumentActionBase extends KualiAction {
                     if (StringUtils.isNotBlank(request.getParameter(namespaceParam))) {
                         namespace = request.getParameter(namespaceParam).trim();
                     }
-                    Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
+                    final Group group = getGroupService().getGroupByNamespaceCodeAndName(namespace, request.getParameter(
                         parameterName));
                     if (group != null) {
                         kualiForm.getAdHocRouteWorkgroup(lineNumber).setId(group.getId());
@@ -1168,15 +1189,16 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward cancelBOAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
+    public ActionForward cancelBOAttachment(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
 
         // blank current attachmentFile
         documentForm.setAttachmentFile(new BlankFormFile());
 
         // remove current attachment, if any
-        Note note = documentForm.getNewNote();
+        final Note note = documentForm.getNewNote();
         note.removeAttachment();
         documentForm.setNewNote(note);
 
@@ -1193,14 +1215,15 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward downloadBOAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
+    public ActionForward downloadBOAttachment(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
 
-        int attachmentIndex = selectedAttachmentIndex(request);
+        final int attachmentIndex = selectedAttachmentIndex(request);
         if (attachmentIndex >= 0) {
-            Note note = documentForm.getDocument().getNote(attachmentIndex);
-            Attachment attachment = note.getAttachment();
+            final Note note = documentForm.getDocument().getNote(attachmentIndex);
+            final Attachment attachment = note.getAttachment();
             // make sure attachment is setup with backwards reference to note (rather then doing this we could also
             // just call the attachment service (with a new method that took in the note)
             attachment.setNote(note);
@@ -1227,10 +1250,11 @@ public class KualiDocumentActionBase extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void logAttachmentDownload(KualiDocumentFormBase form, HttpServletRequest request, Note note,
-            Attachment attachment) {
-        String buf = "DownloadAttachment,docNum=" + form.getDocument().getDocumentNumber() + ",noteId=" +
-                attachment.getNoteIdentifier() + ",attId=" + attachment.getAttachmentIdentifier();
+    protected void logAttachmentDownload(
+            final KualiDocumentFormBase form, final HttpServletRequest request, final Note note,
+            final Attachment attachment) {
+        final String buf = "DownloadAttachment,docNum=" + form.getDocument().getDocumentNumber() + ",noteId=" +
+                           attachment.getNoteIdentifier() + ",attId=" + attachment.getAttachmentIdentifier();
         KNSServiceLocator.getSecurityLoggingService().logCustomString(buf);
     }
 
@@ -1238,16 +1262,16 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param request
      * @return index of the attachment whose download button was just pressed
      */
-    protected int selectedAttachmentIndex(HttpServletRequest request) {
+    protected int selectedAttachmentIndex(final HttpServletRequest request) {
         int attachmentIndex = -1;
 
-        String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
+        final String parameterName = (String) request.getAttribute(KRADConstants.METHOD_TO_CALL_ATTRIBUTE);
         if (StringUtils.isNotBlank(parameterName)) {
-            String attachmentIndexParam = StringUtils.substringBetween(parameterName, ".attachment[", "].");
+            final String attachmentIndexParam = StringUtils.substringBetween(parameterName, ".attachment[", "].");
 
             try {
                 attachmentIndex = Integer.parseInt(attachmentIndexParam);
-            } catch (NumberFormatException ignored) {
+            } catch (final NumberFormatException ignored) {
                 // ignore
             }
         }
@@ -1265,16 +1289,17 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
-        Note newNote = kualiDocumentFormBase.getNewNote();
+    public ActionForward insertBONote(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
+        final Note newNote = kualiDocumentFormBase.getNewNote();
         newNote.setNotePostedTimestampToCurrent();
 
         String attachmentTypeCode = null;
 
-        FormFile attachmentFile = kualiDocumentFormBase.getAttachmentFile();
+        final FormFile attachmentFile = kualiDocumentFormBase.getAttachmentFile();
         if (attachmentFile == null) {
             GlobalVariables.getMessageMap().putError(
                 String.format("%s.%s",
@@ -1288,7 +1313,7 @@ public class KualiDocumentActionBase extends KualiAction {
         }
 
         // check authorization for adding notes
-        DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
+        final DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
         if (!documentAuthorizer.canAddNoteAttachment(document, attachmentTypeCode,
                 GlobalVariables.getUserSession().getPerson())) {
             throw buildAuthorizationException("annotate", document);
@@ -1306,7 +1331,7 @@ public class KualiDocumentActionBase extends KualiAction {
                     attachmentFile.getFileName());
             } else {
                 String attachmentType = null;
-                Attachment newAttachment = kualiDocumentFormBase.getNewNote().getAttachment();
+                final Attachment newAttachment = kualiDocumentFormBase.getNewNote().getAttachment();
                 if (newAttachment != null) {
                     attachmentType = newAttachment.getAttachmentTypeCode();
                 }
@@ -1316,10 +1341,10 @@ public class KualiDocumentActionBase extends KualiAction {
             }
         }
 
-        DocumentEntry entry = getDocumentDictionaryService().getDocumentEntry(document.getClass().getName());
+        final DocumentEntry entry = getDocumentDictionaryService().getDocumentEntry(document.getClass().getName());
 
         if (entry.getDisplayTopicFieldInNotes()) {
-            String topicText = kualiDocumentFormBase.getNewNote().getNoteTopicText();
+            final String topicText = kualiDocumentFormBase.getNewNote().getNoteTopicText();
             if (StringUtils.isBlank(topicText)) {
                 GlobalVariables.getMessageMap().putError(String.format("%s.%s",
                         KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
@@ -1330,26 +1355,26 @@ public class KualiDocumentActionBase extends KualiAction {
 
         // create a new note from the data passed in
         // TODO gah! this is awful
-        Person kualiUser = GlobalVariables.getUserSession().getPerson();
+        final Person kualiUser = GlobalVariables.getUserSession().getPerson();
         if (kualiUser == null) {
             throw new IllegalStateException("Current UserSession has a null Person.");
         }
-        Note tmpNote = getNoteService().createNote(newNote, document.getNoteTarget(), kualiUser.getPrincipalId());
+        final Note tmpNote = getNoteService().createNote(newNote, document.getNoteTarget(), kualiUser.getPrincipalId());
 
-        ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
                 KRADPropertyConstants.NOTE, tmpNote.getNoteText(), "insertBONote", "");
         if (forward != null) {
             return forward;
         }
 
         // validate the note
-        boolean rulePassed = getKualiRuleService().applyRules(new AddNoteEvent(document, tmpNote));
+        final boolean rulePassed = getKualiRuleService().applyRules(new AddNoteEvent(document, tmpNote));
 
         // if the rule evaluation passed, let's add the note
         if (rulePassed) {
             tmpNote.refresh();
 
-            DocumentHeader documentHeader = document.getDocumentHeader();
+            final DocumentHeader documentHeader = document.getDocumentHeader();
 
             // associate note with object now
             document.addNote(tmpNote);
@@ -1404,26 +1429,27 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward deleteBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
-        int noteIndex = getLineToDelete(request);
-        Note note = document.getNote(noteIndex);
+    public ActionForward deleteBONote(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
+        final int noteIndex = getLineToDelete(request);
+        final Note note = document.getNote(noteIndex);
 
         deleteNoteFromDocument(document, note);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void deleteNoteFromDocument(Document document, Note note) {
+    protected void deleteNoteFromDocument(final Document document, final Note note) {
         Validate.isTrue(note != null, "Invalid Note ID");
         // ok to delete the note/attachment
-        Attachment attachment = note.getAttachment();
+        final Attachment attachment = note.getAttachment();
         String attachmentTypeCode = null;
         if (attachment != null) {
             attachmentTypeCode = attachment.getAttachmentTypeCode();
         }
-        String authorUniversalIdentifier = note.getAuthorUniversalIdentifier();
+        final String authorUniversalIdentifier = note.getAuthorUniversalIdentifier();
         if (!WebUtils.canDeleteNoteAttachment(document, attachmentTypeCode, authorUniversalIdentifier)) {
             throw buildAuthorizationException("annotate", document);
         }
@@ -1454,19 +1480,21 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param note
      * @return a value from {@link KewApiConstants}
      */
-    public String determineNoteWorkflowNotificationAction(HttpServletRequest request,
-                                                          KualiDocumentFormBase kualiDocumentFormBase, Note note) {
+    public String determineNoteWorkflowNotificationAction(
+            final HttpServletRequest request,
+                                                          final KualiDocumentFormBase kualiDocumentFormBase, final Note note) {
         return getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.KFS,
                 KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
                 KRADConstants.SEND_NOTE_WORKFLOW_NOTIFICATION_ACTIONS_PARM_NM);
     }
 
-    public ActionForward sendNoteWorkflowNotification(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Document document = kualiDocumentFormBase.getDocument();
+    public ActionForward sendNoteWorkflowNotification(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Document document = kualiDocumentFormBase.getDocument();
 
-        Note note = document.getNote(getSelectedLine(request));
+        final Note note = document.getNote(getSelectedLine(request));
 
         // verify recipient was specified
         if (StringUtils.isBlank(note.getAdHocRouteRecipient().getId())) {
@@ -1478,7 +1506,7 @@ public class KualiDocumentActionBase extends KualiAction {
             note.getAdHocRouteRecipient().setActionRequested(determineNoteWorkflowNotificationAction(request,
                     kualiDocumentFormBase, note));
 
-            boolean rulePassed = getKualiRuleService().applyRules(new AddAdHocRoutePersonEvent(
+            final boolean rulePassed = getKualiRuleService().applyRules(new AddAdHocRoutePersonEvent(
                     KRADPropertyConstants.NEW_DOCUMENT_NOTE, document,
                     (AdHocRoutePerson) note.getAdHocRouteRecipient()));
             if (!rulePassed) {
@@ -1506,20 +1534,20 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param e
      */
     private String createOjbOptimisticLockExceptionLogMsg(final OptimisticLockException e) {
-        StringBuffer message = new StringBuffer("caught OptimisticLockException, caused by ");
-        Object sourceObject = e.getSourceObject();
+        final StringBuffer message = new StringBuffer("caught OptimisticLockException, caused by ");
+        final Object sourceObject = e.getSourceObject();
         String infix;
         try {
             // try to add instance details
             infix = sourceObject.toString();
-        } catch (Exception e2) {
+        } catch (final Exception e2) {
             // just use the class name
             infix = sourceObject.getClass().getName();
         }
         message.append(infix);
 
         if (sourceObject instanceof PersistableBusinessObject) {
-            PersistableBusinessObject persistableObject = (PersistableBusinessObject) sourceObject;
+            final PersistableBusinessObject persistableObject = (PersistableBusinessObject) sourceObject;
             message.append(" [versionNumber = ").append(persistableObject.getVersionNumber()).append("]");
         }
 
@@ -1537,8 +1565,9 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward promptBeforeValidation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward promptBeforeValidation(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         return promptBeforeValidation(mapping, form, request, response, "route");
     }
 
@@ -1554,19 +1583,20 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward promptBeforeValidation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response, String methodToCall) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward promptBeforeValidation(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response, final String methodToCall) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
 
         /* callback to any pre rules check class */
-        Class<? extends PromptBeforeValidation> promptBeforeValidationClass =
+        final Class<? extends PromptBeforeValidation> promptBeforeValidationClass =
                 getDataDictionaryService().getPromptBeforeValidationClass(kualiDocumentFormBase.getDocTypeName());
         LOG.debug("PromptBeforeValidationClass: {}", promptBeforeValidationClass);
         if (promptBeforeValidationClass != null) {
-            PromptBeforeValidation promptBeforeValidation = promptBeforeValidationClass.newInstance();
-            PromptBeforeValidationEvent event = new PromptBeforeValidationEvent("Pre Maint route Check",
+            final PromptBeforeValidation promptBeforeValidation = promptBeforeValidationClass.newInstance();
+            final PromptBeforeValidationEvent event = new PromptBeforeValidationEvent("Pre Maint route Check",
                     "", kualiDocumentFormBase.getDocument());
-            boolean continueRoute = promptBeforeValidation.processPrompts(form, request, event);
+            final boolean continueRoute = promptBeforeValidation.processPrompts(form, request, event);
             if (!continueRoute) {
                 if (event.isPerformQuestion()) {
                     return super.performQuestionWithoutInput(mapping, kualiDocumentFormBase, request, response,
@@ -1580,7 +1610,7 @@ public class KualiDocumentActionBase extends KualiAction {
                     //
                     // If the processPreRuleCheck() returns a false, an ActionForwardName needs to be set before hand
                     // by the PreRule class.
-                    ActionForward actionForward = mapping.findForward(event.getActionForwardName());
+                    final ActionForward actionForward = mapping.findForward(event.getActionForwardName());
                     if (actionForward == null) {
                         throw new RuntimeException("No ActionForwardName defined on this Event, no further actions " +
                                 "will be processed.");
@@ -1599,22 +1629,22 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param action
      * @param document
      */
-    protected DocumentAuthorizationException buildAuthorizationException(String action, Document document) {
+    protected DocumentAuthorizationException buildAuthorizationException(final String action, final Document document) {
         return new DocumentAuthorizationException(GlobalVariables.getUserSession().getPerson().getPrincipalName(),
                 action, document.getDocumentNumber());
     }
 
     protected boolean exitingDocument() {
-        String methodCalledViaDispatch = (String) GlobalVariables.getUserSession()
+        final String methodCalledViaDispatch = (String) GlobalVariables.getUserSession()
                 .retrieveObject(DocumentAuthorizerBase.USER_SESSION_METHOD_TO_CALL_OBJECT_KEY);
-        String methodCompleted = (String) GlobalVariables.getUserSession()
+        final String methodCompleted = (String) GlobalVariables.getUserSession()
                 .retrieveObject(DocumentAuthorizerBase.USER_SESSION_METHOD_TO_CALL_COMPLETE_OBJECT_KEY);
         return StringUtils.isNotEmpty(methodCompleted) && StringUtils.isNotEmpty(methodCalledViaDispatch)
                 && methodCompleted.startsWith(methodCalledViaDispatch);
     }
 
     protected void setupDocumentExit() {
-        String methodCalledViaDispatch = (String) GlobalVariables.getUserSession()
+        final String methodCalledViaDispatch = (String) GlobalVariables.getUserSession()
                 .retrieveObject(DocumentAuthorizerBase.USER_SESSION_METHOD_TO_CALL_OBJECT_KEY);
         if (StringUtils.isNotEmpty(methodCalledViaDispatch)) {
             GlobalVariables.getUserSession().addObject(
@@ -1630,13 +1660,14 @@ public class KualiDocumentActionBase extends KualiAction {
      * @param form
      * @return
      */
-    protected ActionForward returnToSender(HttpServletRequest request, ActionMapping mapping,
-            KualiDocumentFormBase form) {
+    protected ActionForward returnToSender(
+            final HttpServletRequest request, final ActionMapping mapping,
+            final KualiDocumentFormBase form) {
         final ActionForward dest;
         if (form.isReturnToActionList()) {
-            String applicationUrl = getKualiConfigurationService().getPropertyValueAsString(
+            final String applicationUrl = getKualiConfigurationService().getPropertyValueAsString(
                     KFSConstants.APPLICATION_URL_KEY);
-            String actionListUrl = applicationUrl + "/ActionList.do?title=Action%20List";
+            final String actionListUrl = applicationUrl + "/ActionList.do?title=Action%20List";
 
             dest = new ActionForward(actionListUrl, true);
         } else if (StringUtils.isNotBlank(form.getBackLocation())) {
@@ -1649,30 +1680,30 @@ public class KualiDocumentActionBase extends KualiAction {
         return dest;
     }
 
-    protected void populateAuthorizationFields(KualiDocumentFormBase formBase) {
+    protected void populateAuthorizationFields(final KualiDocumentFormBase formBase) {
         if (formBase.isFormDocumentInitialized()) {
-            Document document = formBase.getDocument();
-            Person user = GlobalVariables.getUserSession().getPerson();
-            DocumentPresentationController documentPresentationController = KNSServiceLocator
+            final Document document = formBase.getDocument();
+            final Person user = GlobalVariables.getUserSession().getPerson();
+            final DocumentPresentationController documentPresentationController = KNSServiceLocator
                 .getDocumentHelperService().getDocumentPresentationController(document);
-            DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
+            final DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
             Set<String> documentActions = documentPresentationController.getDocumentActions(document);
             documentActions = documentAuthorizer.getDocumentActions(document, user, documentActions);
             formBase.setDocumentActions(convertSetToMap(documentActions));
         }
     }
 
-    protected void populateAdHocActionRequestCodes(KualiDocumentFormBase formBase) {
-        Document document = formBase.getDocument();
-        DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
-        Map<String, String> adHocActionRequestCodes = new HashMap<>();
+    protected void populateAdHocActionRequestCodes(final KualiDocumentFormBase formBase) {
+        final Document document = formBase.getDocument();
+        final DocumentAuthorizer documentAuthorizer = getDocumentHelperService().getDocumentAuthorizer(document);
+        final Map<String, String> adHocActionRequestCodes = new HashMap<>();
 
-        Person user = GlobalVariables.getUserSession().getPerson();
+        final Person user = GlobalVariables.getUserSession().getPerson();
         if (documentAuthorizer.canSendAdHocRequests(document, KewApiConstants.ACTION_REQUEST_FYI_REQ, user)) {
             adHocActionRequestCodes.put(KewApiConstants.ACTION_REQUEST_FYI_REQ,
                     KewApiConstants.ACTION_REQUEST_FYI_REQ_LABEL);
         }
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         if (!workflowDocument.isFinal()
                 && documentAuthorizer.canSendAdHocRequests(document, KewApiConstants.ACTION_REQUEST_ACKNOWLEDGE_REQ,
                 user)) {
@@ -1697,9 +1728,9 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map convertSetToMap(Set s) {
-        Map map = new HashMap();
-        for (Object key : s) {
+    protected Map convertSetToMap(final Set s) {
+        final Map map = new HashMap();
+        for (final Object key : s) {
             map.put(key, KRADConstants.KUALI_DEFAULT_TRUE_VALUE);
         }
         return map;
@@ -1723,56 +1754,56 @@ public class KualiDocumentActionBase extends KualiAction {
         if (documentHelperService == null) {
             documentHelperService = KNSServiceLocator.getDocumentHelperService();
         }
-        return this.documentHelperService;
+        return documentHelperService;
     }
 
     public DocumentService getDocumentService() {
         if (documentService == null) {
             documentService = KRADServiceLocatorWeb.getDocumentService();
         }
-        return this.documentService;
+        return documentService;
     }
 
     protected ConfigurationService getKualiConfigurationService() {
         if (kualiConfigurationService == null) {
             kualiConfigurationService = KRADServiceLocator.getKualiConfigurationService();
         }
-        return this.kualiConfigurationService;
+        return kualiConfigurationService;
     }
 
     protected ParameterService getParameterService() {
         if (parameterService == null) {
             parameterService = CoreFrameworkServiceLocator.getParameterService();
         }
-        return this.parameterService;
+        return parameterService;
     }
 
     public KualiRuleService getKualiRuleService() {
         if (kualiRuleService == null) {
             kualiRuleService = KRADServiceLocatorWeb.getKualiRuleService();
         }
-        return this.kualiRuleService;
+        return kualiRuleService;
     }
 
     protected GroupService getGroupService() {
         if (groupService == null) {
             groupService = KimApiServiceLocator.getGroupService();
         }
-        return this.groupService;
+        return groupService;
     }
 
     protected AttachmentService getAttachmentService() {
         if (attachmentService == null) {
             attachmentService = KRADServiceLocator.getAttachmentService();
         }
-        return this.attachmentService;
+        return attachmentService;
     }
 
     protected NoteService getNoteService() {
         if (noteService == null) {
             noteService = KRADServiceLocator.getNoteService();
         }
-        return this.noteService;
+        return noteService;
     }
 
     // public for testing purposes
@@ -1788,7 +1819,7 @@ public class KualiDocumentActionBase extends KualiAction {
         if (businessObjectService == null) {
             businessObjectService = SpringContext.getBean(BusinessObjectService.class);
         }
-        return this.businessObjectService;
+        return businessObjectService;
     }
 
     // public for testing purposes
@@ -1811,7 +1842,7 @@ public class KualiDocumentActionBase extends KualiAction {
         if (businessObjectMetaDataService == null) {
             businessObjectMetaDataService = KNSServiceLocator.getBusinessObjectMetaDataService();
         }
-        return this.businessObjectMetaDataService;
+        return businessObjectMetaDataService;
     }
 
     // public for testing purposes
@@ -1830,8 +1861,9 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     @Override
-    public ActionForward hideAllTabs(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response)
+    public ActionForward hideAllTabs(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response)
         throws Exception {
         if (form instanceof KualiDocumentFormBase) {
             WebUtils.reuseErrorMapFromPreviousRequest((KualiDocumentFormBase) form);
@@ -1840,8 +1872,9 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     @Override
-    public ActionForward showAllTabs(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response)
+    public ActionForward showAllTabs(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response)
         throws Exception {
         if (form instanceof KualiDocumentFormBase) {
             WebUtils.reuseErrorMapFromPreviousRequest((KualiDocumentFormBase) form);
@@ -1850,8 +1883,9 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     @Override
-    public ActionForward toggleTab(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response)
+    public ActionForward toggleTab(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response)
         throws Exception {
         if (form instanceof KualiDocumentFormBase) {
             WebUtils.reuseErrorMapFromPreviousRequest((KualiDocumentFormBase) form);
@@ -1860,18 +1894,19 @@ public class KualiDocumentActionBase extends KualiAction {
     }
 
     @Override
-    public void doProcessingAfterPost(KualiForm form, HttpServletRequest request) {
+    public void doProcessingAfterPost(final KualiForm form, final HttpServletRequest request) {
         super.doProcessingAfterPost(form, request);
         if (form instanceof KualiDocumentFormBase) {
-            Document document = ((KualiDocumentFormBase) form).getDocument();
+            final Document document = ((KualiDocumentFormBase) form).getDocument();
 
             getBusinessObjectService().linkUserFields(document);
         }
     }
 
-    public ActionForward takeSuperUserActions(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) {
-        KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
+    public ActionForward takeSuperUserActions(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
+        final KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
         if (StringUtils.isBlank(documentForm.getSuperUserAnnotation())) {
             GlobalVariables.getMessageMap().putErrorForSectionId("superuser.errors",
                     "superuser.takeactions.annotation.missing", "");
@@ -1886,9 +1921,9 @@ public class KualiDocumentActionBase extends KualiAction {
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
-        for (String actionRequestId : documentForm.getSelectedActionRequests()) {
+        for (final String actionRequestId : documentForm.getSelectedActionRequests()) {
             ActionRequest actionRequest = null;
-            for (ActionRequest pendingActionRequest : documentForm.getActionRequests()) {
+            for (final ActionRequest pendingActionRequest : documentForm.getActionRequests()) {
                 if (StringUtils.equals(pendingActionRequest.getActionRequestId(), actionRequestId)) {
                     actionRequest = pendingActionRequest;
                     break;
@@ -1910,7 +1945,7 @@ public class KualiDocumentActionBase extends KualiAction {
                     documentForm.getSuperUserAnnotation()
             );
 
-            String messageString;
+            final String messageString;
             if (actionRequest.isAcknowledgeRequest()) {
                 messageString = "general.routing.superuser.actionRequestAcknowledged";
             } else if (actionRequest.isFYIRequest()) {
@@ -1929,9 +1964,10 @@ public class KualiDocumentActionBase extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward superUserDisapprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) {
-        KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
+    public ActionForward superUserDisapprove(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
+        final KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
         if (StringUtils.isBlank(documentForm.getSuperUserAnnotation())) {
             GlobalVariables.getMessageMap().putErrorForSectionId("superuser.errors",
                     "superuser.disapprove.annotation.missing", "");
@@ -1958,9 +1994,10 @@ public class KualiDocumentActionBase extends KualiAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward superUserApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) {
-        KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
+    public ActionForward superUserApprove(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) {
+        final KualiDocumentFormBase documentForm = (KualiDocumentFormBase) form;
         if (StringUtils.isBlank(documentForm.getSuperUserAnnotation())) {
             GlobalVariables.getMessageMap().putErrorForSectionId("superuser.errors",
                     "superuser.approve.annotation.missing", "");
@@ -2001,18 +2038,19 @@ public class KualiDocumentActionBase extends KualiAction {
      * @return
      * @throws Exception
      */
-    public ActionForward complete(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+    public ActionForward complete(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
 
         kualiDocumentFormBase.setDerivedValuesOnForm(request);
-        ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
+        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
         if (preRulesForward != null) {
             return preRulesForward;
         }
 
-        Document document = kualiDocumentFormBase.getDocument();
+        final Document document = kualiDocumentFormBase.getDocument();
 
         getDocumentService().completeDocument(document, kualiDocumentFormBase.getAnnotation(),
                 combineAdHocRecipients(kualiDocumentFormBase));
@@ -2027,11 +2065,11 @@ public class KualiDocumentActionBase extends KualiAction {
      * <p>
      * determine whether any adhoc recipient in the given document has been just added for completion action
      */
-    protected boolean hasPendingAdhocForCompletion(KualiDocumentFormBase kualiDocumentFormBase) {
-        List<AdHocRouteRecipient> adHocRecipients = this.combineAdHocRecipients(kualiDocumentFormBase);
+    protected boolean hasPendingAdhocForCompletion(final KualiDocumentFormBase kualiDocumentFormBase) {
+        final List<AdHocRouteRecipient> adHocRecipients = combineAdHocRecipients(kualiDocumentFormBase);
 
-        for (AdHocRouteRecipient receipients : adHocRecipients) {
-            String actionRequestedCode = receipients.getActionRequested();
+        for (final AdHocRouteRecipient receipients : adHocRecipients) {
+            final String actionRequestedCode = receipients.getActionRequested();
 
             if (KewApiConstants.ACTION_REQUEST_COMPLETE_REQ.equals(actionRequestedCode)) {
                 return true;
@@ -2061,8 +2099,9 @@ public class KualiDocumentActionBase extends KualiAction {
          * @param abortButton           button value considered to abort the prompt and return (optional, may be null)
          * @param noteIntroKey          application resources key for question text prefix (optional, may be null)
          */
-        private ReasonPrompt(String questionId, String questionTextKey, String questionType, String missingReasonKey,
-                String questionCallerMapping, String abortButton, String noteIntroKey) {
+        private ReasonPrompt(
+                final String questionId, final String questionTextKey, final String questionType, final String missingReasonKey,
+                final String questionCallerMapping, final String abortButton, final String noteIntroKey) {
             this.questionId = questionId;
             this.questionTextKey = questionTextKey;
             this.questionType = questionType;
@@ -2084,32 +2123,33 @@ public class KualiDocumentActionBase extends KualiAction {
          *         button clicked
          * @throws Exception
          */
-        public Response ask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                HttpServletResponse response) throws Exception {
-            String question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        public Response ask(
+                final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                final HttpServletResponse response) throws Exception {
+            final String question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
             String reason = request.getParameter(KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME);
 
             if (StringUtils.isBlank(reason)) {
-                String context = request.getParameter(KRADConstants.QUESTION_CONTEXT);
+                final String context = request.getParameter(KRADConstants.QUESTION_CONTEXT);
                 if (context != null
                         && StringUtils.contains(context, KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME + "=")) {
                     reason = StringUtils.substringAfter(context, KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME + "=");
                 }
             }
 
-            String disapprovalNoteText;
+            final String disapprovalNoteText;
 
             // start in logic for confirming the disapproval
             if (question == null) {
                 // ask question if not already asked
                 return new Response(question, performQuestionWithInput(mapping, form, request, response,
-                        this.questionId,
-                        getKualiConfigurationService().getPropertyValueAsString(this.questionTextKey),
-                        this.questionType, this.questionCallerMapping, ""));
+                        questionId,
+                        getKualiConfigurationService().getPropertyValueAsString(questionTextKey),
+                        questionType, questionCallerMapping, ""));
             }
 
-            String buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
-            if (this.questionId.equals(question) && abortButton != null && abortButton.equals(buttonClicked)) {
+            final String buttonClicked = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+            if (questionId.equals(question) && abortButton != null && abortButton.equals(buttonClicked)) {
                 // if no button clicked just reload the doc
                 return new Response(question, mapping.findForward(KFSConstants.MAPPING_BASIC));
             }
@@ -2117,21 +2157,21 @@ public class KualiDocumentActionBase extends KualiAction {
             // have to check length on value entered
             String introNoteMessage = "";
             if (noteIntroKey != null) {
-                introNoteMessage = getKualiConfigurationService().getPropertyValueAsString(this.noteIntroKey) +
-                        KRADConstants.BLANK_SPACE;
+                introNoteMessage = getKualiConfigurationService().getPropertyValueAsString(noteIntroKey) +
+                                   KRADConstants.BLANK_SPACE;
             }
 
             // build out full message
             disapprovalNoteText = introNoteMessage + reason;
 
             // check for sensitive data in note
-            boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
+            final boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
                     KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.ALL_COMPONENT,
                     KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_PATTERNS_WARNING_IND);
             if (warnForSensitiveData) {
-                String context = KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME + "=" + reason;
-                ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
-                        KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME, disapprovalNoteText, this.questionCallerMapping,
+                final String context = KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME + "=" + reason;
+                final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+                        KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME, disapprovalNoteText, questionCallerMapping,
                         context);
                 if (forward != null) {
                     return new Response(question, forward);
@@ -2139,18 +2179,18 @@ public class KualiDocumentActionBase extends KualiAction {
             } else {
                 if (KRADUtils.containsSensitiveDataPatternMatch(disapprovalNoteText)) {
                     return new Response(question, performQuestionWithInputAgainBecauseOfErrors(mapping, form, request,
-                            response, this.questionId,
-                            getKualiConfigurationService().getPropertyValueAsString(this.questionTextKey),
-                            this.questionType, this.questionCallerMapping, "", reason,
+                            response, questionId,
+                            getKualiConfigurationService().getPropertyValueAsString(questionTextKey),
+                            questionType, questionCallerMapping, "", reason,
                             KFSKeyConstants.ERROR_DOCUMENT_FIELD_CONTAINS_POSSIBLE_SENSITIVE_DATA,
                             KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME, "reason"));
                 }
             }
 
-            int disapprovalNoteTextLength = disapprovalNoteText.length();
+            final int disapprovalNoteTextLength = disapprovalNoteText.length();
 
             // get note text max length from DD
-            int noteTextMaxLength = getDataDictionaryService().getAttributeMaxLength(Note.class,
+            final int noteTextMaxLength = getDataDictionaryService().getAttributeMaxLength(Note.class,
                     KRADConstants.NOTE_TEXT_PROPERTY_NAME);
 
             if (StringUtils.isBlank(reason) || disapprovalNoteTextLength > noteTextMaxLength) {
@@ -2160,10 +2200,10 @@ public class KualiDocumentActionBase extends KualiAction {
                     reason = "";
                 }
                 return new Response(question, performQuestionWithInputAgainBecauseOfErrors(mapping, form, request,
-                        response, this.questionId,
-                        getKualiConfigurationService().getPropertyValueAsString(this.questionTextKey),
-                        this.questionType, this.questionCallerMapping, "", reason,
-                        this.missingReasonKey, KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME,
+                        response, questionId,
+                        getKualiConfigurationService().getPropertyValueAsString(questionTextKey),
+                        questionType, questionCallerMapping, "", reason,
+                        missingReasonKey, KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME,
                         Integer.toString(noteTextMaxLength)));
             }
 
@@ -2176,15 +2216,15 @@ public class KualiDocumentActionBase extends KualiAction {
             final String reason;
             final String button;
 
-            Response(String question, ActionForward forward) {
+            Response(final String question, final ActionForward forward) {
                 this(question, forward, null, null);
             }
 
-            Response(String question, String reason, String button) {
+            Response(final String question, final String reason, final String button) {
                 this(question, null, reason, button);
             }
 
-            private Response(String question, ActionForward forward, String reason, String button) {
+            private Response(final String question, final ActionForward forward, final String reason, final String button) {
                 this.question = question;
                 this.forward = forward;
                 this.reason = reason;

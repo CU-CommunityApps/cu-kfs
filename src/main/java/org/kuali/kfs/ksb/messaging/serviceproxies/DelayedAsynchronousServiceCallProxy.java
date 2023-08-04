@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,7 @@ package org.kuali.kfs.ksb.messaging.serviceproxies;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.resourceloader.GlobalResourceLoader;
 import org.kuali.kfs.core.api.util.ClassLoaderUtils;
@@ -48,7 +49,9 @@ import edu.cornell.kfs.sys.batch.service.CuSchedulerService;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Timestamp;
-import java.util.Calendar;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * A proxy which schedules a service to be executed asynchronously after some delay period.
@@ -62,14 +65,15 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
     private final String serviceName;
     private final String value1;
     private final long delayMilliseconds;
+    private DateTimeService dateTimeService;
 
-    private DelayedAsynchronousServiceCallProxy(String serviceName, String value1, long delayMilliseconds) {
+    private DelayedAsynchronousServiceCallProxy(final String serviceName, final String value1, final long delayMilliseconds) {
         this.serviceName = serviceName;
         this.value1 = value1;
         this.delayMilliseconds = delayMilliseconds;
     }
 
-    public static Object createInstance(String serviceName, String value1, long delayMilliseconds) {
+    public static Object createInstance(final String serviceName, final String value1, final long delayMilliseconds) {
         if (StringUtils.isBlank(serviceName)) {
             throw new RuntimeException("Cannot create service proxy, no service name passed in.");
         }
@@ -77,43 +81,46 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
             return Proxy.newProxyInstance(ClassLoaderUtils.getDefaultClassLoader(),
                     ClassLoaderUtils.getInterfacesToProxy(GlobalResourceLoader.getService(serviceName), null, null),
                     new DelayedAsynchronousServiceCallProxy(serviceName, value1, delayMilliseconds));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    protected Object invokeInternal(Object proxy, Method method, Object[] arguments) throws Throwable {
+    protected Object invokeInternal(final Object proxy, final Method method, final Object[] arguments) throws Throwable {
         synchronized (this) {
-            AsynchronousCall methodCall = new AsynchronousCall(method.getParameterTypes(), arguments, serviceName,
+            final AsynchronousCall methodCall = new AsynchronousCall(method.getParameterTypes(), arguments, serviceName,
                     method.getName());
-            PersistedMessage message = PersistedMessage.buildMessage(serviceName, methodCall);
+            final PersistedMessage message = PersistedMessage.buildMessage(serviceName, methodCall);
             message.setValue1(value1);
-            Calendar now = Calendar.getInstance();
-            now.add(Calendar.MILLISECOND, (int) delayMilliseconds);
-            message.setQueueDate(new Timestamp(now.getTimeInMillis()));
+
+            final ZonedDateTime zonedDateTime = getDateTimeService().getLocalDateTimeNow()
+                    .atZone(ZoneId.systemDefault())
+                    .plus(delayMilliseconds, ChronoUnit.MILLIS);
+
+            message.setQueueDate(new Timestamp(zonedDateTime.toInstant().toEpochMilli()));
             scheduleMessage(message);
         }
         return null;
     }
 
     // Cornell Customization to fix issue where quartz is being called to schedule doc routing when quartz is not available
-    private void scheduleMessage(PersistedMessage message) throws SchedulerException {
+    private void scheduleMessage(final PersistedMessage message) throws SchedulerException {
         LOG.debug("Scheduling execution of a delayed asynchronous message.");
         
-        String description = "Delayed_Asynchronous_Call";
-        boolean useQuartzScheduling = Boolean.valueOf(ConfigContext.getCurrentContextConfig().getProperty(KFSPropertyConstants.USE_QUARTZ_SCHEDULING_KEY));
+        final String description = "Delayed_Asynchronous_Call";
+        final boolean useQuartzScheduling = Boolean.valueOf(ConfigContext.getCurrentContextConfig().getProperty(KFSPropertyConstants.USE_QUARTZ_SCHEDULING_KEY));
         
         if (!useQuartzScheduling) {
             getCuSchedulerService().scheduleDelayedAsyncCallJob(message, description);
             return;
         }
         
-        Scheduler scheduler = KSBServiceLocator.getScheduler();
-        JobDataMap jobData = new JobDataMap();
+        final Scheduler scheduler = KSBServiceLocator.getScheduler();
+        final JobDataMap jobData = new JobDataMap();
         jobData.put(MessageServiceExecutorJob.MESSAGE_KEY, message);
 
-        JobDetail jobDetail = JobBuilder.newJob()
+        final JobDetail jobDetail = JobBuilder.newJob()
                 .ofType(MessageServiceExecutorJob.class)
                 .usingJobData(jobData)
                 .withIdentity("Delayed_Asynchronous_Call-" + Math.random(), "Delayed_Asynchronous_Call")
@@ -121,7 +128,7 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
 
         scheduler.getListenerManager().addJobListener(new MessageServiceExecutorJobListener());
 
-        Trigger trigger = TriggerBuilder.newTrigger()
+        final Trigger trigger = TriggerBuilder.newTrigger()
                 .startAt(message.getQueueDate())
                 .usingJobData(jobData)
                 .withIdentity(
@@ -137,7 +144,14 @@ public final class DelayedAsynchronousServiceCallProxy extends BaseInvocationHan
     public Object getTarget() {
         return GlobalResourceLoader.getService(serviceName);
     }
-    
+
+    public DateTimeService getDateTimeService() {
+        if (dateTimeService == null) {
+            dateTimeService = SpringContext.getBean(DateTimeService.class);
+        }
+        return dateTimeService;
+    }
+
     private CuSchedulerService getCuSchedulerService() {
         return (CuSchedulerService) SpringContext.getBean(SchedulerService.class);
     }

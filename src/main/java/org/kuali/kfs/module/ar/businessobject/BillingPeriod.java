@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,6 @@
  */
 package org.kuali.kfs.module.ar.businessobject;
 
-import java.sql.Date;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +29,8 @@ import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.module.ar.ArConstants;
 import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCreationProcessType;
 
+import java.sql.Date;
+
 public class BillingPeriod {
 
     // CU Customization: Added logging
@@ -39,7 +40,7 @@ public class BillingPeriod {
     private final ArConstants.BillingFrequencyValues billingFrequency;
     private final Date awardStartDate;
     private final Date currentDate;
-    private final Date lastBilledDate;
+    protected final Date lastBilledDate;
     private Date startDate;
     private Date endDate;
     private boolean billable;
@@ -57,8 +58,8 @@ public class BillingPeriod {
         this.billingFrequency = billingFrequency;
         this.currentDate = currentDate;
     }
-    
-    public static BillingPeriod determineBillingPeriodPriorTo(            
+
+    public static BillingPeriod determineBillingPeriodPriorTo(
             final Date awardStartDate,
             final Date currentDate,
             final Date lastBilledDate,
@@ -217,7 +218,7 @@ public class BillingPeriod {
         }
         return previousAccountingPeriodCode;
     }
-    
+
     public Date getStartDate() {
         return startDate;
     }
@@ -225,7 +226,7 @@ public class BillingPeriod {
     public Date getEndDate() {
         return endDate;
     }
-    
+
     private AccountingPeriod findAccountingPeriodBy(final Date date) {
         return accountingPeriodService.getByDate(date);
     }
@@ -245,5 +246,4 @@ public class BillingPeriod {
     public boolean isBillable() {
         return billable;
     }
-
 }

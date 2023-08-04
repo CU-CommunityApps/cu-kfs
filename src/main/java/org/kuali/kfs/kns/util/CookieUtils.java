@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,8 +31,8 @@ public class CookieUtils {
     public static final String AUTH_TOKEN_COOKIE_NAME = "authToken";
     public static final String FIN_AUTH_TOKEN_COOKIE_NAME = "financialsAuthToken";
 
-    public Cookie createCookie(HttpServletRequest request, String name, String value, String path) {
-        Cookie cookie = new Cookie(name, value);
+    public Cookie createCookie(final HttpServletRequest request, final String name, final String value, final String path) {
+        final Cookie cookie = new Cookie(name, value);
         /*
          * KFSPTS-22552
          * Original base code was cookie.setSecure(request.isSecure()); 
@@ -42,39 +42,39 @@ public class CookieUtils {
         return cookie;
     }
 
-    public Cookie createFinancialsAuthCookie(HttpServletRequest request, String tokenValue, String path) {
-        Cookie financialsAuthCookie = createCookie(request, FIN_AUTH_TOKEN_COOKIE_NAME, tokenValue, path);
+    public Cookie createFinancialsAuthCookie(final HttpServletRequest request, final String tokenValue, final String path) {
+        final Cookie financialsAuthCookie = createCookie(request, FIN_AUTH_TOKEN_COOKIE_NAME, tokenValue, path);
         return financialsAuthCookie;
     }
 
-    public Cookie createExpiringCookie(HttpServletRequest request, String name, String path) {
-        Cookie emptyCookie = createCookie(request, name, "", path);
+    public Cookie createExpiringCookie(final HttpServletRequest request, final String name, final String path) {
+        final Cookie emptyCookie = createCookie(request, name, "", path);
         emptyCookie.setMaxAge(0);
         return emptyCookie;
     }
 
-    public Cookie createExpiringFinanicialsAuthCookie(HttpServletRequest httpRequest) {
-        Cookie financialsAuthCookie =
+    public Cookie createExpiringFinanicialsAuthCookie(final HttpServletRequest httpRequest) {
+        final Cookie financialsAuthCookie =
                 createExpiringCookie(httpRequest, FIN_AUTH_TOKEN_COOKIE_NAME, httpRequest.getContextPath());
         return financialsAuthCookie;
     }
 
-    public Cookie createExpiringAuthCookie(HttpServletRequest httpRequest) {
-        Cookie cookie = createExpiringCookie(httpRequest, AUTH_TOKEN_COOKIE_NAME, "/");
+    public Cookie createExpiringAuthCookie(final HttpServletRequest httpRequest) {
+        final Cookie cookie = createExpiringCookie(httpRequest, AUTH_TOKEN_COOKIE_NAME, "/");
         cookie.setDomain("kuali.co");
         return cookie;
     }
 
-    public Optional<String> getFinancialsAuthToken(HttpServletRequest httpRequest) {
+    public Optional<String> getFinancialsAuthToken(final HttpServletRequest httpRequest) {
         return getCookieValue(httpRequest, FIN_AUTH_TOKEN_COOKIE_NAME);
     }
 
-    public Optional<String> getCoreAuthToken(HttpServletRequest httpRequest) {
+    public Optional<String> getCoreAuthToken(final HttpServletRequest httpRequest) {
         return getCookieValue(httpRequest, AUTH_TOKEN_COOKIE_NAME);
     }
 
-    public Optional<String> getCookieValue(HttpServletRequest httpRequest, String name) {
-        Cookie[] cookies = httpRequest.getCookies();
+    public Optional<String> getCookieValue(final HttpServletRequest httpRequest, final String name) {
+        final Cookie[] cookies = httpRequest.getCookies();
         return cookies != null ? Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(name))
                 .findFirst()

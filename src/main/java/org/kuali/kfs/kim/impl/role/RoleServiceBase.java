@@ -566,7 +566,7 @@ abstract class RoleServiceBase {
     protected String getAttributeIdByName(final String attributeName) {
         Map<String, Object> critieria = new HashMap<>(1);
         critieria.put("attributeName", attributeName);
-       final  Collection<KimAttribute> defs = getBusinessObjectService().findMatching(KimAttribute.class, critieria);
+        final Collection<KimAttribute> defs = getBusinessObjectService().findMatching(KimAttribute.class, critieria);
         String result = null;
         if (CollectionUtils.isNotEmpty(defs)) {
             result = defs.iterator().next().getId();

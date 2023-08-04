@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -122,9 +122,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, ServletRequest request,
-            ServletResponse response) throws Exception {
-        PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
+    public ActionForward execute(
+            final ActionMapping mapping, final ActionForm form, final ServletRequest request,
+            final ServletResponse response) throws Exception {
+        final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
             doApplicationOfFunds(payAppForm);
         }
@@ -135,8 +136,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * This is overridden in order to recalculate the invoice totals before doing the submit.
      */
     @Override
-    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward route(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         doApplicationOfFunds((PaymentApplicationForm) form);
         // CU Customization: Part of invoice-paid-applied deletion enhancement.
         manuallyAddressInvoicePaidAppliedDeletions((PaymentApplicationForm) form);
@@ -144,24 +146,26 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward save(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         doApplicationOfFunds((PaymentApplicationForm) form);
         // CU Customization: Part of invoice-paid-applied deletion enhancement.
         manuallyAddressInvoicePaidAppliedDeletions((PaymentApplicationForm) form);
         return super.save(mapping, form, request, response);
     }
 
-    public ActionForward deleteNonArLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm paymentApplicationForm = (PaymentApplicationForm) form;
-        PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
+    public ActionForward deleteNonArLine(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm paymentApplicationForm = (PaymentApplicationForm) form;
+        final PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
-        int deleteIndex = getLineToDelete(request);
+        final int deleteIndex = getLineToDelete(request);
         paymentApplicationDocument.getNonInvoiceds().remove(deleteIndex);
 
         int nonInvoicedItemNumber = 1;
-        for (NonInvoiced n : paymentApplicationDocument.getNonInvoiceds()) {
+        for (final NonInvoiced n : paymentApplicationDocument.getNonInvoiceds()) {
             n.setFinancialDocumentLineNumber(nonInvoicedItemNumber++);
             n.refreshReferenceObject("chartOfAccounts");
             n.refreshReferenceObject("account");
@@ -184,10 +188,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @return
      */
     protected InvoicePaidApplied generateAndValidateNewPaidApplied(
-            PaymentApplicationInvoiceDetailApply detailApplication, String fieldName,
-            PaymentApplicationDocument document) {
+            final PaymentApplicationInvoiceDetailApply detailApplication, final String fieldName,
+            final PaymentApplicationDocument document) {
         // generate the paidApplied
-        InvoicePaidApplied paidApplied = detailApplication.generatePaidApplied();
+        final InvoicePaidApplied paidApplied = detailApplication.generatePaidApplied();
 
         // validate the paidApplied, but ignore any failures (other than the error message)
         LOG.debug("Validating the generated paidApplied {}", paidApplied::getDocumentNumber);
@@ -197,17 +201,19 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return paidApplied;
     }
 
-    public ActionForward applyAllAmounts(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward applyAllAmounts(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         doApplicationOfFunds((PaymentApplicationForm) form);
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward clearUnapplied(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
-        PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
-        NonAppliedHolding nonAppliedHolding = payAppDoc.getNonAppliedHolding();
+    public ActionForward clearUnapplied(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
+        final PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
+        final NonAppliedHolding nonAppliedHolding = payAppDoc.getNonAppliedHolding();
         if (ObjectUtils.isNotNull(nonAppliedHolding)) {
             if (getBusinessObjectService().retrieve(nonAppliedHolding) != null) {
                 getBusinessObjectService().delete(nonAppliedHolding);
@@ -219,10 +225,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void doApplicationOfFunds(PaymentApplicationForm paymentApplicationForm) {
-        PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
+    protected void doApplicationOfFunds(final PaymentApplicationForm paymentApplicationForm) {
+        final PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
-        List<InvoicePaidApplied> invoicePaidApplieds = new ArrayList<>();
+        final List<InvoicePaidApplied> invoicePaidApplieds = new ArrayList<>();
 
         // apply invoice detail entries
         invoicePaidApplieds.addAll(applyToIndividualCustomerInvoiceDetails(paymentApplicationForm));
@@ -232,19 +238,19 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
         // re-number the paidApplieds internal sequence numbers
         int paidAppliedItemNumber = 1;
-        for (InvoicePaidApplied i : invoicePaidApplieds) {
+        for (final InvoicePaidApplied i : invoicePaidApplieds) {
             i.setPaidAppliedItemNumber(paidAppliedItemNumber++);
         }
 
         // apply non-Invoiced
-        NonInvoiced nonInvoiced = applyNonInvoiced(paymentApplicationForm);
+        final NonInvoiced nonInvoiced = applyNonInvoiced(paymentApplicationForm);
 
         // apply non-applied holdings
-        NonAppliedHolding nonAppliedHolding = applyUnapplied(paymentApplicationForm);
+        final NonAppliedHolding nonAppliedHolding = applyUnapplied(paymentApplicationForm);
 
         // sum up the paid applieds
         KualiDecimal sumOfInvoicePaidApplieds = KualiDecimal.ZERO;
-        for (InvoicePaidApplied invoicePaidApplied : invoicePaidApplieds) {
+        for (final InvoicePaidApplied invoicePaidApplied : invoicePaidApplieds) {
             KualiDecimal amount = invoicePaidApplied.getInvoiceItemAppliedAmount();
             if (null == amount) {
                 amount = KualiDecimal.ZERO;
@@ -266,7 +272,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         }
 
         // check that we haven't applied more than our control total
-        KualiDecimal controlTotalAmount = paymentApplicationForm.getTotalFromControl();
+        final KualiDecimal controlTotalAmount = paymentApplicationForm.getTotalFromControl();
 
         // if the person over-applies, we dont stop them, we just complain
         if (appliedAmount.isGreaterThan(controlTotalAmount)) {
@@ -283,7 +289,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
             // re-number the non-invoiced
             int nonInvoicedItemNumber = 1;
-            for (NonInvoiced n : paymentApplicationDocument.getNonInvoiceds()) {
+            for (final NonInvoiced n : paymentApplicationDocument.getNonInvoiceds()) {
                 n.setFinancialDocumentLineNumber(nonInvoicedItemNumber++);
                 n.refreshReferenceObject("chartOfAccounts");
                 n.refreshReferenceObject("account");
@@ -307,20 +313,20 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     protected List<InvoicePaidApplied> applyToIndividualCustomerInvoiceDetails(
-            PaymentApplicationForm paymentApplicationForm) {
-        PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
+            final PaymentApplicationForm paymentApplicationForm) {
+        final PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
         // Handle amounts applied at the invoice detail level
         int simpleInvoiceDetailApplicationCounter = 0;
 
         // calculate paid applieds for all invoices
-        List<InvoicePaidApplied> invoicePaidApplieds = this.filterTempInvoicePaidApplieds(paymentApplicationForm);
-        for (PaymentApplicationInvoiceApply invoiceApplication : paymentApplicationForm.getInvoiceApplications()) {
-            for (PaymentApplicationInvoiceDetailApply detailApplication : invoiceApplication.getDetailApplications()) {
+        final List<InvoicePaidApplied> invoicePaidApplieds = filterTempInvoicePaidApplieds(paymentApplicationForm);
+        for (final PaymentApplicationInvoiceApply invoiceApplication : paymentApplicationForm.getInvoiceApplications()) {
+            for (final PaymentApplicationInvoiceDetailApply detailApplication : invoiceApplication.getDetailApplications()) {
 
                 // selectedInvoiceDetailApplications[${ctr}].amountApplied
-                String fieldName = "selectedInvoiceDetailApplications[" + simpleInvoiceDetailApplicationCounter +
-                        "].amountApplied";
+                final String fieldName = "selectedInvoiceDetailApplications[" + simpleInvoiceDetailApplicationCounter +
+                                         "].amountApplied";
                 // needs to be incremented even if we skip this line
                 simpleInvoiceDetailApplicationCounter++;
 
@@ -351,7 +357,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                         "Generating paid applied for detail application {}",
                         detailApplication::getInvoiceDocumentNumber
                 );
-                InvoicePaidApplied invoicePaidApplied = generateAndValidateNewPaidApplied(detailApplication,
+                final InvoicePaidApplied invoicePaidApplied = generateAndValidateNewPaidApplied(detailApplication,
                         fieldName, paymentApplicationDocument);
                 GlobalVariables.getMessageMap().addToErrorPath(
                         KFSConstants.PaymentApplicationTabErrorCodes.APPLY_TO_INVOICE_DETAIL_TAB);
@@ -364,10 +370,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return invoicePaidApplieds;
     }
 
-    protected List<InvoicePaidApplied> filterTempInvoicePaidApplieds(PaymentApplicationForm paymentApplicationForm) {
-        PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
+    protected List<InvoicePaidApplied> filterTempInvoicePaidApplieds(final PaymentApplicationForm paymentApplicationForm) {
+        final PaymentApplicationDocument paymentApplicationDocument = paymentApplicationForm.getPaymentApplicationDocument();
 
-        List<InvoicePaidApplied> invoicePaidApplieds = paymentApplicationDocument.getInvoicePaidApplieds();
+        final List<InvoicePaidApplied> invoicePaidApplieds = paymentApplicationDocument.getInvoicePaidApplieds();
         return new ArrayList<>(invoicePaidApplieds);
     }
 
@@ -377,13 +383,13 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param paymentApplicationForm
      * @return
      */
-    protected String findCustomerNumber(PaymentApplicationForm paymentApplicationForm) {
-        boolean validInvoice = this.isValidInvoice(paymentApplicationForm);
+    protected String findCustomerNumber(final PaymentApplicationForm paymentApplicationForm) {
+        final boolean validInvoice = isValidInvoice(paymentApplicationForm);
         String customerNumber = paymentApplicationForm.getSelectedCustomerNumber();
-        String currentInvoiceNumber = paymentApplicationForm.getEnteredInvoiceDocumentNumber();
+        final String currentInvoiceNumber = paymentApplicationForm.getEnteredInvoiceDocumentNumber();
         // Invoice number entered, but no customer number entered
         if (StringUtils.isBlank(customerNumber) && StringUtils.isNotBlank(currentInvoiceNumber) && validInvoice) {
-            Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
+            final Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
             customerNumber = customer.getCustomerNumber();
         }
         return customerNumber;
@@ -395,7 +401,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param paymentApplicationForm
      * @return
      */
-    protected boolean isValidInvoice(PaymentApplicationForm paymentApplicationForm) {
+    protected boolean isValidInvoice(final PaymentApplicationForm paymentApplicationForm) {
         boolean validInvoice = true;
         if (StringUtils.isNotBlank(paymentApplicationForm.getEnteredInvoiceDocumentNumber())) {
             if (!getCustomerInvoiceDocumentService()
@@ -406,16 +412,17 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return validInvoice;
     }
 
-    protected boolean containsIdentical(CustomerInvoiceDetail customerInvoiceDetail, KualiDecimal amountApplied,
-            List<InvoicePaidApplied> invoicePaidApplieds) {
+    protected boolean containsIdentical(
+            final CustomerInvoiceDetail customerInvoiceDetail, final KualiDecimal amountApplied,
+            final List<InvoicePaidApplied> invoicePaidApplieds) {
         boolean identicalFlag = false;
-        String custRefInvoiceDocNumber = customerInvoiceDetail.getDocumentNumber();
-        Integer custInvoiceSequenceNumber = customerInvoiceDetail.getInvoiceItemNumber();
+        final String custRefInvoiceDocNumber = customerInvoiceDetail.getDocumentNumber();
+        final Integer custInvoiceSequenceNumber = customerInvoiceDetail.getInvoiceItemNumber();
 
-        for (InvoicePaidApplied invoicePaidApplied : invoicePaidApplieds) {
-            String refInvoiceDocNumber = invoicePaidApplied.getFinancialDocumentReferenceInvoiceNumber();
-            Integer invoiceSequenceNumber = invoicePaidApplied.getInvoiceItemNumber();
-            KualiDecimal appliedAmount = invoicePaidApplied.getInvoiceItemAppliedAmount();
+        for (final InvoicePaidApplied invoicePaidApplied : invoicePaidApplieds) {
+            final String refInvoiceDocNumber = invoicePaidApplied.getFinancialDocumentReferenceInvoiceNumber();
+            final Integer invoiceSequenceNumber = invoicePaidApplied.getInvoiceItemNumber();
+            final KualiDecimal appliedAmount = invoicePaidApplied.getInvoiceItemAppliedAmount();
             if (custRefInvoiceDocNumber.equals(refInvoiceDocNumber)
                     && custInvoiceSequenceNumber.equals(invoiceSequenceNumber)
                     && amountApplied.equals(appliedAmount)) {
@@ -426,20 +433,21 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return identicalFlag;
     }
 
-    protected List<InvoicePaidApplied> quickApplyToInvoices(PaymentApplicationForm paymentApplicationForm,
-            List<InvoicePaidApplied> appliedToIndividualDetails) {
-        PaymentApplicationDocument applicationDocument = (PaymentApplicationDocument) paymentApplicationForm.getDocument();
-        List<InvoicePaidApplied> invoicePaidApplieds = new ArrayList<>();
+    protected List<InvoicePaidApplied> quickApplyToInvoices(
+            final PaymentApplicationForm paymentApplicationForm,
+            final List<InvoicePaidApplied> appliedToIndividualDetails) {
+        final PaymentApplicationDocument applicationDocument = (PaymentApplicationDocument) paymentApplicationForm.getDocument();
+        final List<InvoicePaidApplied> invoicePaidApplieds = new ArrayList<>();
 
         // go over the selected invoices and apply full amount to each of their details
-        for (PaymentApplicationInvoiceApply invoiceApplication : paymentApplicationForm.getInvoiceApplications()) {
-            String invoiceDocNumber = invoiceApplication.getDocumentNumber();
+        for (final PaymentApplicationInvoiceApply invoiceApplication : paymentApplicationForm.getInvoiceApplications()) {
+            final String invoiceDocNumber = invoiceApplication.getDocumentNumber();
 
             // skip the line if its not set to quick apply
             if (!invoiceApplication.isQuickApply()) {
                 // if it was just flipped from True to False
                 if (invoiceApplication.isQuickApplyChanged()) {
-                    for (PaymentApplicationInvoiceDetailApply detailApplication :
+                    for (final PaymentApplicationInvoiceDetailApply detailApplication :
                             invoiceApplication.getDetailApplications()) {
                         // zero out all the details
                         detailApplication.setAmountApplied(KualiDecimal.ZERO);
@@ -447,7 +455,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
                         // remove any existing paidApplieds for this invoice
                         for (int i = appliedToIndividualDetails.size() - 1; i >= 0; i--) {
-                            InvoicePaidApplied applied = appliedToIndividualDetails.get(i);
+                            final InvoicePaidApplied applied = appliedToIndividualDetails.get(i);
                             if (applied.getFinancialDocumentReferenceInvoiceNumber().equals(
                                     invoiceApplication.getDocumentNumber())) {
                                 appliedToIndividualDetails.remove(i);
@@ -467,18 +475,18 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
             // remove any existing paidApplieds for this invoice
             for (int i = appliedToIndividualDetails.size() - 1; i >= 0; i--) {
-                InvoicePaidApplied applied = appliedToIndividualDetails.get(i);
+                final InvoicePaidApplied applied = appliedToIndividualDetails.get(i);
                 if (applied.getFinancialDocumentReferenceInvoiceNumber().equals(invoiceApplication.getDocumentNumber())) {
                     appliedToIndividualDetails.remove(i);
                 }
             }
 
             // create and validate the paid applieds for each invoice detail
-            String fieldName = "invoiceApplications[" + invoiceDocNumber + "].quickApply";
-            for (PaymentApplicationInvoiceDetailApply detailApplication : invoiceApplication.getDetailApplications()) {
+            final String fieldName = "invoiceApplications[" + invoiceDocNumber + "].quickApply";
+            for (final PaymentApplicationInvoiceDetailApply detailApplication : invoiceApplication.getDetailApplications()) {
                 detailApplication.setAmountApplied(detailApplication.getAmountOpen());
                 detailApplication.setFullApply(true);
-                InvoicePaidApplied paidApplied = generateAndValidateNewPaidApplied(detailApplication, fieldName,
+                final InvoicePaidApplied paidApplied = generateAndValidateNewPaidApplied(detailApplication, fieldName,
                         applicationDocument);
                 if (paidApplied != null) {
                     invoicePaidApplieds.add(paidApplied);
@@ -494,10 +502,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return invoicePaidApplieds;
     }
 
-    protected NonInvoiced applyNonInvoiced(PaymentApplicationForm payAppForm) {
-        PaymentApplicationDocument applicationDocument = (PaymentApplicationDocument) payAppForm.getDocument();
+    protected NonInvoiced applyNonInvoiced(final PaymentApplicationForm payAppForm) {
+        final PaymentApplicationDocument applicationDocument = (PaymentApplicationDocument) payAppForm.getDocument();
 
-        NonInvoiced nonInvoiced = payAppForm.getNonInvoicedAddLine();
+        final NonInvoiced nonInvoiced = payAppForm.getNonInvoicedAddLine();
 
         // if the line or line amount is null or zero, don't add the line. Additional validation is performed for the
         // amount within the rules class, so no validation is needed here.
@@ -525,7 +533,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         }
 
         // run the validations
-        boolean isValid = PaymentApplicationDocumentRuleUtil.validateNonInvoiced(nonInvoiced, applicationDocument,
+        final boolean isValid = PaymentApplicationDocumentRuleUtil.validateNonInvoiced(nonInvoiced, applicationDocument,
                 payAppForm.getTotalFromControl());
 
         // check the validation results and return null if there were any errors
@@ -536,16 +544,16 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         return nonInvoiced;
     }
 
-    protected NonAppliedHolding applyUnapplied(PaymentApplicationForm payAppForm) {
-        PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
-        KualiDecimal amount = payAppForm.getNonAppliedHoldingAmount();
+    protected NonAppliedHolding applyUnapplied(final PaymentApplicationForm payAppForm) {
+        final PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
+        final KualiDecimal amount = payAppForm.getNonAppliedHoldingAmount();
 
         // validate the customer number in the unapplied
         if (StringUtils.isNotBlank(payAppForm.getNonAppliedHoldingCustomerNumber())) {
-            Map<String, String> pkMap = new HashMap<>();
+            final Map<String, String> pkMap = new HashMap<>();
             pkMap.put(ArPropertyConstants.CustomerFields.CUSTOMER_NUMBER,
                     payAppForm.getNonAppliedHoldingCustomerNumber().toUpperCase(Locale.US));
-            int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
+            final int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
             if (found == 0) {
                 addFieldError(KFSConstants.PaymentApplicationTabErrorCodes.UNAPPLIED_TAB,
                         ArPropertyConstants.PaymentApplicationDocumentFields.UNAPPLIED_CUSTOMER_NUMBER,
@@ -582,7 +590,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         }
         nonAppliedHolding.setFinancialDocumentLineAmount(amount);
 
-        boolean isValid = PaymentApplicationDocumentRuleUtil.validateNonAppliedHolding(payAppDoc,
+        final boolean isValid = PaymentApplicationDocumentRuleUtil.validateNonAppliedHolding(payAppDoc,
                 payAppForm.getTotalFromControl());
 
         // check the validation results and return null if there were any errors
@@ -603,9 +611,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @return
      * @throws Exception
      */
-    public ActionForward loadInvoices(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm pform = (PaymentApplicationForm) form;
+    public ActionForward loadInvoices(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm pform = (PaymentApplicationForm) form;
         loadInvoices(pform, pform.getEnteredInvoiceDocumentNumber());
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
@@ -616,24 +625,24 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param payAppForm
      * @param selectedInvoiceNumber
      */
-    protected void loadInvoices(PaymentApplicationForm payAppForm, String selectedInvoiceNumber) {
-        PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
-        AccountsReceivableDocumentHeader arDocHeader = payAppDoc.getAccountsReceivableDocumentHeader();
+    protected void loadInvoices(final PaymentApplicationForm payAppForm, final String selectedInvoiceNumber) {
+        final PaymentApplicationDocument payAppDoc = payAppForm.getPaymentApplicationDocument();
+        final AccountsReceivableDocumentHeader arDocHeader = payAppDoc.getAccountsReceivableDocumentHeader();
         String currentInvoiceNumber = selectedInvoiceNumber;
 
         // before we do anything, validate the validity of any customerNumber or invoiceNumber
         // entered against the db, and complain to the user if either is not right.
         if (StringUtils.isNotBlank(payAppForm.getSelectedCustomerNumber())) {
-            Map<String, String> pkMap = new HashMap<>();
+            final Map<String, String> pkMap = new HashMap<>();
             pkMap.put(ArPropertyConstants.CustomerFields.CUSTOMER_NUMBER, payAppForm.getSelectedCustomerNumber());
-            int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
+            final int found = getBusinessObjectService().countMatching(Customer.class, pkMap);
             if (found == 0) {
                 addFieldError(KFSConstants.PaymentApplicationTabErrorCodes.APPLY_TO_INVOICE_DETAIL_TAB,
                         ArPropertyConstants.PaymentApplicationDocumentFields.ENTERED_INVOICE_CUSTOMER_NUMBER,
                         ArKeyConstants.PaymentApplicationDocumentErrors.ENTERED_INVOICE_CUSTOMER_NUMBER_INVALID);
             }
         }
-        boolean validInvoice = this.isValidInvoice(payAppForm);
+        final boolean validInvoice = isValidInvoice(payAppForm);
         if (!validInvoice) {
             addFieldError(KFSConstants.PaymentApplicationTabErrorCodes.APPLY_TO_INVOICE_DETAIL_TAB,
                     ArPropertyConstants.PaymentApplicationDocumentFields.ENTERED_INVOICE_NUMBER,
@@ -660,7 +669,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
         // Invoice number entered, but no customer number entered
         if (StringUtils.isBlank(customerNumber) && StringUtils.isNotBlank(currentInvoiceNumber) && validInvoice) {
-            Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
+            final Customer customer = getCustomerInvoiceDocumentService().getCustomerByInvoiceDocumentNumber(currentInvoiceNumber);
             customerNumber = customer.getCustomerNumber();
             payAppDoc.getAccountsReceivableDocumentHeader().setCustomerNumber(customerNumber);
         }
@@ -668,8 +677,8 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         // load up the control docs and non-applied holdings for non-cash-control payapps
         if (StringUtils.isNotBlank(customerNumber)) {
             if (!payAppDoc.hasCashControlDocument()) {
-                List<PaymentApplicationDocument> nonAppliedControlDocs = new ArrayList<>();
-                List<NonAppliedHolding> nonAppliedControlHoldings = new ArrayList<>();
+                final List<PaymentApplicationDocument> nonAppliedControlDocs = new ArrayList<>();
+                final List<NonAppliedHolding> nonAppliedControlHoldings = new ArrayList<>();
 
                 // if the doc is already final/approved, then we only pull the relevant control
                 // documents and nonapplied holdings that this doc paid against.
@@ -683,8 +692,8 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     nonAppliedControlHoldings.addAll(getNonAppliedHoldingService().getNonAppliedHoldingsForCustomer(customerNumber));
 
                     // get the parent list of payapp documents that they come from
-                    List<String> controlDocNumbers = new ArrayList<>();
-                    for (NonAppliedHolding nonAppliedHolding : nonAppliedControlHoldings) {
+                    final List<String> controlDocNumbers = new ArrayList<>();
+                    for (final NonAppliedHolding nonAppliedHolding : nonAppliedControlHoldings) {
                         if (nonAppliedHolding.getAvailableUnappliedAmount().isPositive()
                                 && !controlDocNumbers.contains(nonAppliedHolding.getReferenceFinancialDocumentNumber())) {
                             controlDocNumbers.add(nonAppliedHolding.getReferenceFinancialDocumentNumber());
@@ -692,9 +701,9 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
                     }
                     // only try to retrieve docs if we have any to retrieve
                     if (!controlDocNumbers.isEmpty()) {
-                        List<Document> docs = getDocumentService().getDocumentsByListOfDocumentHeaderIds(
+                        final List<Document> docs = getDocumentService().getDocumentsByListOfDocumentHeaderIds(
                                 PaymentApplicationDocument.class, controlDocNumbers);
-                        for (Document doc : docs) {
+                        for (final Document doc : docs) {
                             nonAppliedControlDocs.add((PaymentApplicationDocument) doc);
                         }
                     }
@@ -710,7 +719,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
 
         // reload invoices for the selected customer number
         if (StringUtils.isNotBlank(customerNumber)) {
-            Collection<CustomerInvoiceDocument> openInvoicesForCustomer;
+            final Collection<CustomerInvoiceDocument> openInvoicesForCustomer;
 
             // we have to special case the invoices once the document is finished, because
             // at this point, we want to show the invoices it paid against, NOT the set of open invoices
@@ -740,7 +749,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         }
 
         // Make sure the invoice applies state are up to date
-        for (PaymentApplicationInvoiceApply invoiceApplication : payAppForm.getInvoiceApplications()) {
+        for (final PaymentApplicationInvoiceApply invoiceApplication : payAppForm.getInvoiceApplications()) {
             updateInvoiceApplication(payAppDoc, invoiceApplication);
         }
 
@@ -761,16 +770,17 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         payAppForm.setInvoiceApplications(sortInvoiceApplications(payAppForm.getInvoiceApplications()));
     }
 
-    protected void updateInvoiceApplication(PaymentApplicationDocument payAppDoc,
-                                            PaymentApplicationInvoiceApply invoiceApplication) {
+    protected void updateInvoiceApplication(
+            final PaymentApplicationDocument payAppDoc,
+            final PaymentApplicationInvoiceApply invoiceApplication) {
         // make sure all paidApplieds are synched with the PaymentApplicationInvoiceApply and
         // PaymentApplicationInvoiceDetailApply objects, so that the form reflects how it was left pre-save.
         // This is only necessary when the doc is saved, and then re-opened, as the invoice-detail wrappers
         // will no longer hold the state info. This could be done much better.
-        for (InvoicePaidApplied paidApplied : payAppDoc.getInvoicePaidApplieds()) {
+        for (final InvoicePaidApplied paidApplied : payAppDoc.getInvoicePaidApplieds()) {
             if (paidApplied.getFinancialDocumentReferenceInvoiceNumber().equalsIgnoreCase(
                     invoiceApplication.getDocumentNumber())) {
-                for (PaymentApplicationInvoiceDetailApply detailApplication :
+                for (final PaymentApplicationInvoiceDetailApply detailApplication :
                         invoiceApplication.getDetailApplications()) {
                     if (paidApplied.getInvoiceItemNumber().equals(detailApplication.getSequenceNumber())) {
                         // if the amount applieds dont match, then have the paidApplied fill in the applied
@@ -790,18 +800,18 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     protected List<PaymentApplicationInvoiceApply> sortInvoiceApplications(
-            List<PaymentApplicationInvoiceApply> invoiceApplications) {
-        EntryHolderComparator entryHolderComparator = new EntryHolderComparator();
-        List<EntryHolder> entryHoldings = new ArrayList<>();
-        for (PaymentApplicationInvoiceApply paymentApplicationInvoiceApply : invoiceApplications) {
+            final List<PaymentApplicationInvoiceApply> invoiceApplications) {
+        final EntryHolderComparator entryHolderComparator = new EntryHolderComparator();
+        final List<EntryHolder> entryHoldings = new ArrayList<>();
+        for (final PaymentApplicationInvoiceApply paymentApplicationInvoiceApply : invoiceApplications) {
             entryHoldings.add(new EntryHolder(paymentApplicationInvoiceApply.getInvoice().getDocumentHeader()
                     .getWorkflowDocument().getDateCreated().toDate(), paymentApplicationInvoiceApply));
         }
         if (entryHoldings.size() > 0) {
             entryHoldings.sort(entryHolderComparator);
         }
-        List<PaymentApplicationInvoiceApply> results = new ArrayList<>();
-        for (EntryHolder entryHolder : entryHoldings) {
+        final List<PaymentApplicationInvoiceApply> results = new ArrayList<>();
+        for (final EntryHolder entryHolder : entryHoldings) {
             results.add((PaymentApplicationInvoiceApply) entryHolder.getHolder());
         }
         return results;
@@ -817,9 +827,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @return
      * @throws Exception
      */
-    public ActionForward goToInvoice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
+    public ActionForward goToInvoice(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         loadInvoices(payAppForm, payAppForm.getSelectedInvoiceDocumentNumber());
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
             doApplicationOfFunds(payAppForm);
@@ -837,9 +848,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @return
      * @throws Exception
      */
-    public ActionForward goToNextInvoice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
+    public ActionForward goToNextInvoice(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         loadInvoices(payAppForm, payAppForm.getNextInvoiceDocumentNumber());
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
             doApplicationOfFunds(payAppForm);
@@ -857,9 +869,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @return
      * @throws Exception
      */
-    public ActionForward goToPreviousInvoice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
+    public ActionForward goToPreviousInvoice(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm payAppForm = (PaymentApplicationForm) form;
         loadInvoices(payAppForm, payAppForm.getPreviousInvoiceDocumentNumber());
         if (!payAppForm.getPaymentApplicationDocument().isFinal()) {
             doApplicationOfFunds(payAppForm);
@@ -868,9 +881,10 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     @Override
-    public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PaymentApplicationForm newForm = (PaymentApplicationForm) form;
+    public ActionForward cancel(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PaymentApplicationForm newForm = (PaymentApplicationForm) form;
         if (null == newForm.getCashControlDocument()) {
             return super.cancel(mapping, form, request, response);
         }
@@ -878,24 +892,24 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
     }
 
     @Override
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.createDocument(kualiDocumentFormBase);
-        PaymentApplicationForm form = (PaymentApplicationForm) kualiDocumentFormBase;
-        PaymentApplicationDocument document = form.getPaymentApplicationDocument();
+        final PaymentApplicationForm form = (PaymentApplicationForm) kualiDocumentFormBase;
+        final PaymentApplicationDocument document = form.getPaymentApplicationDocument();
 
         // create new accounts receivable header and set it to the payment application document
-        AccountsReceivableDocumentHeaderService accountsReceivableDocumentHeaderService =
+        final AccountsReceivableDocumentHeaderService accountsReceivableDocumentHeaderService =
                 SpringContext.getBean(AccountsReceivableDocumentHeaderService.class);
-        AccountsReceivableDocumentHeader accountsReceivableDocumentHeader = accountsReceivableDocumentHeaderService
+        final AccountsReceivableDocumentHeader accountsReceivableDocumentHeader = accountsReceivableDocumentHeaderService
                 .getNewAccountsReceivableDocumentHeaderForCurrentUser();
         accountsReceivableDocumentHeader.setDocumentNumber(document.getDocumentNumber());
         document.setAccountsReceivableDocumentHeader(accountsReceivableDocumentHeader);
     }
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
-        PaymentApplicationForm pform = (PaymentApplicationForm) kualiDocumentFormBase;
+        final PaymentApplicationForm pform = (PaymentApplicationForm) kualiDocumentFormBase;
         loadInvoices(pform, pform.getEnteredInvoiceDocumentNumber());
     }
 
@@ -905,7 +919,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * @param propertyName
      * @param errorKey
      */
-    protected void addFieldError(String errorPathToAdd, String propertyName, String errorKey) {
+    protected void addFieldError(final String errorPathToAdd, final String propertyName, final String errorKey) {
         GlobalVariables.getMessageMap().addToErrorPath(errorPathToAdd);
         GlobalVariables.getMessageMap().putError(propertyName, errorKey);
         GlobalVariables.getMessageMap().removeFromErrorPath(errorPathToAdd);
@@ -916,7 +930,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      *
      * @param errorKey
      */
-    protected void addGlobalError(String errorKey) {
+    protected void addGlobalError(final String errorKey) {
         GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(KRADConstants.DOCUMENT_ERRORS, errorKey,
                 "document.hiddenFieldForErrors");
     }
@@ -1051,24 +1065,24 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
      * An inner class to point to a specific entry in a group
      */
     protected class EntryHolder {
-        private Date date;
-        private Object holder;
+        private final Date date;
+        private final Object holder;
 
         /**
          * @param date   of doc
          * @param holder the entry to point to
          */
-        public EntryHolder(Date date, Object holder) {
+        public EntryHolder(final Date date, final Object holder) {
             this.date = date;
             this.holder = holder;
         }
 
         public Date getDate() {
-            return this.date;
+            return date;
         }
 
         public Object getHolder() {
-            return this.holder;
+            return holder;
         }
     }
 
@@ -1081,7 +1095,7 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
          * Compares two Objects based on their creation date
          */
         @Override
-        public int compare(EntryHolder rosencrantz, EntryHolder guildenstern) {
+        public int compare(final EntryHolder rosencrantz, final EntryHolder guildenstern) {
             return rosencrantz.getDate().compareTo(guildenstern.getDate());
         }
     }

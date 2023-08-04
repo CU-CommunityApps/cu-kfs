@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,7 +53,7 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
     private boolean useQuartzScheduling;
 
     @Override
-    public void placeInExceptionRouting(Throwable throwable, PersistedMessage message) throws Exception {
+    public void placeInExceptionRouting(final Throwable throwable, final PersistedMessage message) throws Exception {
         LOG.error(
                 "Exception caught processing message {} {}: {}",
                 message::getRouteQueueId,
@@ -61,19 +61,19 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
                 () -> throwable
         );
 
-        AsynchronousCall methodCall;
+        final AsynchronousCall methodCall;
         if (message.getMethodCall() != null) {
             methodCall = message.getMethodCall();
         } else {
             methodCall = message.getPayload().getMethodCall();
         }
         message.setMethodCall(methodCall);
-        MessageExceptionHandler exceptionHandler = new MessageExceptionHandler();
+        final MessageExceptionHandler exceptionHandler = new MessageExceptionHandler();
         exceptionHandler.handleException(throwable, message);
     }
 
     @Override
-    public void placeInExceptionRoutingLastDitchEffort(Throwable throwable, PersistedMessage message) throws Exception {
+    public void placeInExceptionRoutingLastDitchEffort(final Throwable throwable, final PersistedMessage message) throws Exception {
         LOG.error(
                 "Exception caught processing message {} {}: {}",
                 message::getRouteQueueId,
@@ -81,30 +81,30 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
                 () -> throwable
         );
 
-        AsynchronousCall methodCall;
+        final AsynchronousCall methodCall;
         if (message.getMethodCall() != null) {
             methodCall = message.getMethodCall();
         } else {
             methodCall = message.getPayload().getMethodCall();
         }
         message.setMethodCall(methodCall);
-        MessageExceptionHandler exceptionHandler = new MessageExceptionHandler();
+        final MessageExceptionHandler exceptionHandler = new MessageExceptionHandler();
         exceptionHandler.handleExceptionLastDitchEffort(throwable, message);
     }
 
     @Override
  // CU Customization: Allow for processing exception messages without using Quartz.
-    public void scheduleExecution(Throwable throwable, PersistedMessage message, String description) throws Exception {
+    public void scheduleExecution(final Throwable throwable, final PersistedMessage message, final String description) throws Exception {
         KSBServiceLocator.getMessageQueueService().delete(message);
-        PersistedMessage messageCopy = message.copy();
+        final PersistedMessage messageCopy = message.copy();
         if (!useQuartzScheduling) {
             getCuSchedulerService().scheduleExceptionMessageJob(messageCopy, description);
             return;
         }
         
-        JobDataMap jobData = new JobDataMap();
+        final JobDataMap jobData = new JobDataMap();
         jobData.put(MessageServiceExecutorJob.MESSAGE_KEY, messageCopy);
-        JobDetail jobDetail = JobBuilder.newJob()
+        final JobDetail jobDetail = JobBuilder.newJob()
                 .ofType(MessageServiceExecutorJob.class)
                 .usingJobData(jobData)
                 .withDescription(description)
@@ -113,7 +113,7 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
 
         scheduler.getListenerManager().addJobListener(new MessageServiceExecutorJobListener());
 
-        Trigger trigger = TriggerBuilder.newTrigger()
+        final Trigger trigger = TriggerBuilder.newTrigger()
                 .startAt(messageCopy.getQueueDate())
                 .usingJobData(jobData)
                 .withIdentity(
@@ -133,16 +133,16 @@ public class DefaultExceptionServiceImpl implements ExceptionRoutingService {
         return (CuSchedulerService) schedulerService;
     }
 
-    public void setScheduler(Scheduler scheduler) {
+    public void setScheduler(final Scheduler scheduler) {
         this.scheduler = scheduler;
     }
     
     // CU Customization: Added setters for custom properties.
-    public void setSchedulerService(SchedulerService schedulerService) {
+    public void setSchedulerService(final SchedulerService schedulerService) {
         this.schedulerService = schedulerService;
     }
     
-    public void setUseQuartzScheduling(boolean useQuartzScheduling) {
+    public void setUseQuartzScheduling(final boolean useQuartzScheduling) {
         this.useQuartzScheduling = useQuartzScheduling;
     }
 }
