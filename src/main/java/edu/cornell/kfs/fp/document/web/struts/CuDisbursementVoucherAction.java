@@ -20,7 +20,6 @@ import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
-import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
@@ -33,7 +32,6 @@ import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
@@ -55,19 +53,8 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
-
-        CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) kualiDocumentFormBase.getDocument();
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-
-        if (workflowDocument.isInitiated() || workflowDocument.isSaved() || workflowDocument.isEnroute()
-                || workflowDocument.isException()) {
-            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(document)) {
-                String warningMessage = getCuCheckStubService()
-                        .createWarningMessageForCheckStubIso20022MaxLength(document);
-                GlobalVariables.getMessageMap().putWarning(
-                        KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, warningMessage);
-            }
-        }
+        getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
+                kualiDocumentFormBase.getDocument());
     }
 
     @Override

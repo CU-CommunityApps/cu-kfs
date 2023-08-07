@@ -3,6 +3,9 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
@@ -12,21 +15,17 @@ import org.kuali.kfs.module.purap.document.validation.impl.CreditMemoDocumentPre
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
-import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 
 public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
+    
+    private CuCheckStubService cuCheckStubService;
     
     @Override
     public boolean doPrompts(Document document){
@@ -36,7 +35,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         // KFSUPGRADE-779
         preRulesOK &= checkWireTransferTabState((VendorCreditMemoDocument) document);
 
-        preRulesOK &= validateCheckStubLength((VendorCreditMemoDocument) document);
+        preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 
         AccountsPayableDocument accountsPayableDocument = (AccountsPayableDocument) document;
 
@@ -133,25 +132,11 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
     
    // end KFSUPGRADE-779
 
-    @SuppressWarnings("deprecation")
-    protected boolean validateCheckStubLength(VendorCreditMemoDocument document) {
-        boolean result = true;
-        CuCheckStubService cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
-        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(document)) {
-            int iso20022MaxStubLength = cuCheckStubService.getCheckStubMaxLengthForIso20022();
-            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
-            String questionText = configurationService.getPropertyValueAsString(
-                    CUPdpKeyConstants.QUESTION_CONFIRM_CHECK_STUB_LENGTH);
-            String formattedQuestionText = MessageFormat.format(
-                    questionText, CUPurapConstants.AP_CHECK_STUB_FIELD_LABEL, iso20022MaxStubLength);
-            result = askOrAnalyzeYesNoQuestion(
-                    CUKFSConstants.AccountsPayableDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
-                    formattedQuestionText);
-            if (!result) {
-                abortRulesCheck();
-            }
+    public CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
-        return result;
+        return cuCheckStubService;
     }
 
 }

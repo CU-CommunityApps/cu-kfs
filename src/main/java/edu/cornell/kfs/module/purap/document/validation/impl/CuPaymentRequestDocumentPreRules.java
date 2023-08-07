@@ -10,23 +10,22 @@ import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestDocumen
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
-import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreRules {
-	
+
+    private CuCheckStubService cuCheckStubService;
+
 	@Override
 	public boolean doPrompts(Document document) {
 		boolean preRulesOK = true;
 		PaymentRequestDocument preq = (PaymentRequestDocument) document;
 		
 		preRulesOK &= checkWireTransferTabState(preq);
-		preRulesOK &= validateCheckStubLength(preq);
+		preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 		preRulesOK &= super.doPrompts(document);
 		return preRulesOK;
 	}
@@ -90,25 +89,11 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 	        preqWireTransfer.setPreqPayeeAccountName(null);
 	    }
 
-    @SuppressWarnings("deprecation")
-    protected boolean validateCheckStubLength(PaymentRequestDocument document) {
-        boolean result = true;
-        CuCheckStubService cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
-        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(document)) {
-            int iso20022MaxStubLength = cuCheckStubService.getCheckStubMaxLengthForIso20022();
-            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
-            String questionText = configurationService.getPropertyValueAsString(
-                    CUPdpKeyConstants.QUESTION_CONFIRM_CHECK_STUB_LENGTH);
-            String formattedQuestionText = MessageFormat.format(
-                    questionText, CUPurapConstants.AP_CHECK_STUB_FIELD_LABEL, iso20022MaxStubLength);
-            result = askOrAnalyzeYesNoQuestion(
-                    CUKFSConstants.AccountsPayableDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
-                    formattedQuestionText);
-            if (!result) {
-                abortRulesCheck();
-            }
+    public CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
-        return result;
+        return cuCheckStubService;
     }
 
 }

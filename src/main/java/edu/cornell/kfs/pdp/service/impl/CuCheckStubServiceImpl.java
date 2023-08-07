@@ -8,11 +8,16 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kew.api.document.DocumentStatusCategory;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kns.rules.PromptBeforeValidationBase;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.NoteService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocumentBase;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
@@ -21,6 +26,7 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.PaymentSourceConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherDetail;
@@ -29,6 +35,7 @@ import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuCheckStubServiceImpl implements CuCheckStubService {
 
@@ -62,11 +69,13 @@ public class CuCheckStubServiceImpl implements CuCheckStubService {
     }
 
     private boolean doAnyRecurringCheckStubsNeedTruncatingForIso20022(RecurringDisbursementVoucherDocument document) {
-        if (CollectionUtils.isEmpty(document.getRecurringDisbursementVoucherDetails())
-                || !StringUtils.equalsIgnoreCase(document.getPaymentMethodCode(),
-                        PaymentSourceConstants.PAYMENT_METHOD_CHECK)) {
-            return false;
-        }
+        return CollectionUtils.isNotEmpty(document.getRecurringDisbursementVoucherDetails())
+                && StringUtils.equalsIgnoreCase(document.getPaymentMethodCode(),
+                        PaymentSourceConstants.PAYMENT_METHOD_CHECK)
+                && doAnyRecurringCheckStubsExceedIso20022MaxLength(document);
+    }
+
+    private boolean doAnyRecurringCheckStubsExceedIso20022MaxLength(RecurringDisbursementVoucherDocument document) {
         return document.getRecurringDisbursementVoucherDetails().stream()
                 .map(RecurringDisbursementVoucherDetail::getDvCheckStub)
                 .anyMatch(checkStub -> StringUtils.length(checkStub) > checkStubMaxLengthForIso20022);
@@ -90,21 +99,58 @@ public class CuCheckStubServiceImpl implements CuCheckStubService {
     }
 
     @Override
+    public void addIso20022CheckStubLengthWarningToDocumentIfNecessary(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        DocumentStatus documentStatus = workflowDocument.getStatus();
+        if (documentStatus.getCategory() == DocumentStatusCategory.PENDING
+                && doesCheckStubNeedTruncatingForIso20022(document)) {
+            String warningMessage = createWarningMessageForCheckStubIso20022MaxLength(document);
+            GlobalVariables.getMessageMap().putWarning(
+                    KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, warningMessage);
+        }
+    }
+
+    @Override
     public String createWarningMessageForCheckStubIso20022MaxLength(Document document) {
-        String fieldLabel;
+        String fieldLabel = getFieldLabelForCheckStubLengthMessage(document);
+        String baseMessage = configurationService.getPropertyValueAsString(
+                CUPdpKeyConstants.WARNING_CHECK_STUB_ISO_20022_LENGTH);
+        return MessageFormat.format(baseMessage, fieldLabel, checkStubMaxLengthForIso20022);
+    }
+
+    private String getFieldLabelForCheckStubLengthMessage(Document document) {
         if (ObjectUtils.isNull(document)) {
             throw new IllegalArgumentException("document cannot be null");
         } else if (document instanceof DisbursementVoucherDocument) {
-            fieldLabel = CuFPConstants.DV_CHECK_STUB_FIELD_LABEL;
+            return CuFPConstants.DV_CHECK_STUB_FIELD_LABEL;
         } else if (document instanceof AccountsPayableDocumentBase) {
-            fieldLabel = CUPurapConstants.AP_CHECK_STUB_FIELD_LABEL;
+            return CUPurapConstants.AP_CHECK_STUB_FIELD_LABEL;
         } else {
             throw new IllegalArgumentException("document of type " + document.getClass().getSimpleName()
                     + " does not support check stubs");
         }
-        String baseMessage = configurationService.getPropertyValueAsString(
-                CUPdpKeyConstants.WARNING_CHECK_STUB_ISO_20022_LENGTH);
-        return MessageFormat.format(baseMessage, fieldLabel, checkStubMaxLengthForIso20022);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean performPreRulesValidationOfIso20022CheckStubLength(Document document,
+            PromptBeforeValidationBase documentPreRules) {
+        boolean result = true;
+        if (doesCheckStubNeedTruncatingForIso20022(document)) {
+            int iso20022MaxStubLength = getCheckStubMaxLengthForIso20022();
+            String fieldLabel = getFieldLabelForCheckStubLengthMessage(document);
+            String questionText = configurationService.getPropertyValueAsString(
+                    CUPdpKeyConstants.QUESTION_CONFIRM_CHECK_STUB_LENGTH);
+            String formattedQuestionText = MessageFormat.format(
+                    questionText, fieldLabel, iso20022MaxStubLength);
+            result = documentPreRules.askOrAnalyzeYesNoQuestion(
+                    CUKFSConstants.CommonDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
+                    formattedQuestionText);
+            if (!result) {
+                documentPreRules.abortRulesCheck();
+            }
+        }
+        return true;
     }
 
     @Override

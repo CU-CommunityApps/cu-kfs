@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kns.service.DocumentHelperService;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.document.DocumentAuthorizer;
@@ -18,7 +17,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.document.web.struts.VendorCreditMemoAction;
 import org.kuali.kfs.module.purap.document.web.struts.VendorCreditMemoForm;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
@@ -31,19 +29,8 @@ public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
     @Override
     protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
-        
-        CuVendorCreditMemoDocument document = (CuVendorCreditMemoDocument) kualiDocumentFormBase.getDocument();
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        
-        if (workflowDocument.isInitiated() || workflowDocument.isSaved() || workflowDocument.isEnroute()
-                || workflowDocument.isException()) {
-            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(document)) {
-                String warningMessage = getCuCheckStubService()
-                        .createWarningMessageForCheckStubIso20022MaxLength(document);
-                GlobalVariables.getMessageMap().putWarning(
-                        KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, warningMessage);
-            }
-        }
+        getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
+                kualiDocumentFormBase.getDocument());
     }
 
 	@Override

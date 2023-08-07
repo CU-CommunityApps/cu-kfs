@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
-import java.text.MessageFormat;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
@@ -13,18 +11,16 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
-import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
-import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  * Checks warnings and prompt conditions for dv document.
  */
 public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDocumentPreRules {
+
+    private CuCheckStubService cuCheckStubService;
 
     /**
      * Executes pre-rules for Disbursement Voucher Document
@@ -37,12 +33,9 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     public boolean doPrompts(Document document) {
         boolean preRulesOK = super.doPrompts(document);
         
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) document;
-        preRulesOK &= validateCheckStubLength(dvDocument);
+        preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 
-        if (!(dvDocument instanceof RecurringDisbursementVoucherDocument)) {
-            setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(dvDocument);
-        }
+        setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(document);
 
         return preRulesOK;
     }
@@ -100,25 +93,11 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         return tabStatesOK;
     }
 
-    @SuppressWarnings("deprecation")
-    private boolean validateCheckStubLength(DisbursementVoucherDocument dvDocument) {
-        boolean result = true;
-        CuCheckStubService cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
-        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
-            int iso20022MaxStubLength = cuCheckStubService.getCheckStubMaxLengthForIso20022();
-            ConfigurationService configurationService = SpringContext.getBean(ConfigurationService.class);
-            String questionText = configurationService.getPropertyValueAsString(
-                    CUPdpKeyConstants.QUESTION_CONFIRM_CHECK_STUB_LENGTH);
-            String formattedQuestionText = MessageFormat.format(
-                    questionText, CuFPConstants.DV_CHECK_STUB_FIELD_LABEL, iso20022MaxStubLength);
-            result = askOrAnalyzeYesNoQuestion(
-                    CUKFSConstants.DisbursementVoucherDocumentConstants.CHECK_STUB_TEXT_LENGTH_QUESTION_ID,
-                    formattedQuestionText);
-            if (!result) {
-                abortRulesCheck();
-            }
+    public CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
         }
-        return result;
+        return cuCheckStubService;
     }
 
 }
