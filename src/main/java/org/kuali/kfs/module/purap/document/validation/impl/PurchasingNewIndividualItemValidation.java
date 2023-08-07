@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -18,14 +18,9 @@
  */
 package org.kuali.kfs.module.purap.document.validation.impl;
 
-import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
+import org.kuali.kfs.integration.cam.CapitalAssetManagementModuleService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.module.purap.PurapConstants;
-import org.kuali.kfs.module.purap.PurapKeyConstants;
-import org.kuali.kfs.module.purap.businessobject.PurApItem;
-import org.kuali.kfs.module.purap.businessobject.PurchasingItemBase;
 import org.kuali.kfs.module.purap.document.PurchasingDocument;
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 
@@ -44,9 +39,9 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
     
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = super.validate(event);
-        String recurringPaymentTypeCode = ((PurchasingDocument) event.getDocument()).getRecurringPaymentTypeCode();
+        final String recurringPaymentTypeCode = ((PurchasingDocument) event.getDocument()).getRecurringPaymentTypeCode();
         //Capital asset validations are only done on line items (not additional charge items).
         if (!getItemForValidation().getItemType().isAdditionalChargeIndicator()) {
             valid &= capitalAssetManagementModuleService.validateItemCapitalAssetWithErrors(recurringPaymentTypeCode,
@@ -71,7 +66,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         else {
             // No accounts can be entered on below-the-line items that have no unit cost.
             belowTheLineItemNoUnitCostValidation.setItemForValidation(getItemForValidation());
-            valid &= belowTheLineItemNoUnitCostValidation.validate(event);                        
+            valid &= belowTheLineItemNoUnitCostValidation.validate(event);
         }
         return valid;
     }
@@ -87,7 +82,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
      */
     
     public void setBusinessObjectDictionaryService(
-            BusinessObjectDictionaryService businessObjectDictionaryService) {
+            final BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
@@ -96,7 +91,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return businessObjectService;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
@@ -106,7 +101,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     }
 
     public void setCapitalAssetManagementModuleService(
-            CapitalAssetManagementModuleService capitalAssetManagementModuleService) {
+            final CapitalAssetManagementModuleService capitalAssetManagementModuleService) {
         this.capitalAssetManagementModuleService = capitalAssetManagementModuleService;
     }
 
@@ -115,7 +110,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return unitOfMeasureValidation;
     }
 
-    public void setUnitOfMeasureValidation(PurchasingUnitOfMeasureValidation unitOfMeasureValidation) {
+    public void setUnitOfMeasureValidation(final PurchasingUnitOfMeasureValidation unitOfMeasureValidation) {
         this.unitOfMeasureValidation = unitOfMeasureValidation;
     }
 
@@ -124,7 +119,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return itemUnitPriceValidation;
     }
 
-    public void setItemUnitPriceValidation(PurchasingItemUnitPriceValidation itemUnitPriceValidation) {
+    public void setItemUnitPriceValidation(final PurchasingItemUnitPriceValidation itemUnitPriceValidation) {
         this.itemUnitPriceValidation = itemUnitPriceValidation;
     }
 
@@ -133,7 +128,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return itemDescriptionValidation;
     }
 
-    public void setItemDescriptionValidation(PurchasingItemDescriptionValidation itemDescriptionValidation) {
+    public void setItemDescriptionValidation(final PurchasingItemDescriptionValidation itemDescriptionValidation) {
         this.itemDescriptionValidation = itemDescriptionValidation;
     }
 
@@ -142,7 +137,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
         return itemQuantityValidation;
     }
 
-    public void setItemQuantityValidation(PurchasingItemQuantityValidation itemQuantityValidation) {
+    public void setItemQuantityValidation(final PurchasingItemQuantityValidation itemQuantityValidation) {
         this.itemQuantityValidation = itemQuantityValidation;
     }
 
@@ -152,7 +147,7 @@ public class PurchasingNewIndividualItemValidation extends PurchasingAccountsPay
     }
 
     public void setBelowTheLineItemNoUnitCostValidation(
-            PurchasingBelowTheLineItemNoUnitCostValidation belowTheLineItemNoUnitCostValidation) {
+            final PurchasingBelowTheLineItemNoUnitCostValidation belowTheLineItemNoUnitCostValidation) {
         this.belowTheLineItemNoUnitCostValidation = belowTheLineItemNoUnitCostValidation;
     }
     

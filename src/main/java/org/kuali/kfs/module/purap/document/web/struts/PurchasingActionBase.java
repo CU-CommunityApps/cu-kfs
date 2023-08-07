@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -136,14 +136,14 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
     private static final String DEFAULT_FILE_SIZE_15M = "15M";
 
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        PurchasingAccountsPayableFormBase baseForm = (PurchasingAccountsPayableFormBase) form;
+    public ActionForward refresh(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final PurchasingAccountsPayableFormBase baseForm = (PurchasingAccountsPayableFormBase) form;
 
-        PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();
-        String refreshCaller = baseForm.getRefreshCaller();
-        BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
-        PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
+        final PurchasingDocument document = (PurchasingDocument) baseForm.getDocument();
+        final String refreshCaller = baseForm.getRefreshCaller();
+        final BusinessObjectService businessObjectService = SpringContext.getBean(BusinessObjectService.class);
+        final PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
 
         // Format phone numbers
         document.setInstitutionContactPhoneNumber(phoneNumberService.formatNumberIfPossible(
@@ -245,7 +245,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 document.templateVendorContract(refreshVendorContract);
 
                 // populate default address from selected vendor
-                VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
+                final VendorAddress defaultAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(
                         document.getVendorDetail().getVendorAddresses(),
                         document.getVendorDetail().getVendorHeader().getVendorType().getAddressType()
                                 .getVendorAddressTypeCode(), "");
@@ -257,8 +257,8 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
 
                 // update internal dollar limit for PO since the contract might affect this value
                 if (document instanceof PurchaseOrderDocument) {
-                    PurchaseOrderDocument poDoc = (PurchaseOrderDocument) document;
-                    KualiDecimal limit = SpringContext.getBean(PurchaseOrderService.class)
+                    final PurchaseOrderDocument poDoc = (PurchaseOrderDocument) document;
+                    final KualiDecimal limit = SpringContext.getBean(PurchaseOrderService.class)
                             .getInternalPurchasingDollarLimit(poDoc);
                     poDoc.setInternalPurchasingLimit(limit);
                 }
@@ -283,7 +283,7 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 // returning from a building or campus lookup on the delivery tab (update billing address)
                 BillingAddress billingAddress = new BillingAddress();
                 billingAddress.setBillingCampusCode(document.getDeliveryCampusCode());
-                Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(billingAddress);
+                final Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(billingAddress);
                 billingAddress = SpringContext.getBean(BusinessObjectService.class)
                         .findByPrimaryKey(BillingAddress.class, keys);
                 document.templateBillingAddress(billingAddress);
@@ -305,9 +305,9 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
             }
             else {
                 // returning from a building lookup in a capital asset tab location (update location address)
-                String buildingCodeParam = findBuildingCodeFromCapitalAssetBuildingLookup(request);
+                final String buildingCodeParam = findBuildingCodeFromCapitalAssetBuildingLookup(request);
                 if (StringUtils.isNotEmpty(buildingCodeParam)) {
-                    PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
+                    final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
                     updateCapitalAssetLocation(request, purchasingForm, document, buildingCodeParam);
                 }
             }
@@ -323,20 +323,21 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
     }
 
-    protected void updateCapitalAssetLocation(HttpServletRequest request, PurchasingFormBase purchasingForm,
-            PurchasingDocument document, String buildingCodeParam) {
-        String buildingCode = request.getParameterValues(buildingCodeParam)[0];
-        String campusCodeParam = buildingCodeParam.replace("buildingCode", "campusCode");
-        String campusCode = request.getParameterValues(campusCodeParam)[0];
+    protected void updateCapitalAssetLocation(
+            final HttpServletRequest request, final PurchasingFormBase purchasingForm,
+            final PurchasingDocument document, final String buildingCodeParam) {
+        final String buildingCode = request.getParameterValues(buildingCodeParam)[0];
+        final String campusCodeParam = buildingCodeParam.replace("buildingCode", "campusCode");
+        final String campusCode = request.getParameterValues(campusCodeParam)[0];
 
-        Building locationBuilding = findBuilding(buildingCode, campusCode);
+        final Building locationBuilding = findBuilding(buildingCode, campusCode);
 
         CapitalAssetLocation location = null;
-        boolean isNewLine = StringUtils.containsIgnoreCase(buildingCodeParam, "newPurchasingCapitalAssetLocationLine");
+        final boolean isNewLine = StringUtils.containsIgnoreCase(buildingCodeParam, "newPurchasingCapitalAssetLocationLine");
         if (isNewLine) {
             if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode()
                     .equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
+                final String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
                 PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
                         .get(Integer.parseInt(locationCapitalAssetItemNumber));
                 location = capitalAssetItem.getPurchasingCapitalAssetSystem()
@@ -345,26 +346,26 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
                 location = purchasingForm.getNewPurchasingCapitalAssetLocationLine();
             }
         } else if (StringUtils.containsIgnoreCase(buildingCodeParam, "purchasingCapitalAssetLocationLine")) {
-            String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
+            final String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
             if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode()
                     .equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
-                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
+                final String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
+                final PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
                         .get(Integer.parseInt(locationCapitalAssetItemNumber));
                 location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations()
                         .get(Integer.parseInt(locationCapitalAssetLocationNumber));
             }
         } else if (StringUtils.containsIgnoreCase(buildingCodeParam, "purchasingCapitalAssetSystem")) {
-            String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
+            final String locationCapitalAssetLocationNumber = getCaptialAssetLocationNumberFromParameter(buildingCodeParam);
             if (document.getCapitalAssetSystemType().getCapitalAssetSystemTypeCode()
                     .equals(PurapConstants.CapitalAssetSystemTypes.INDIVIDUAL)) {
-                String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
-                PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
+                final String locationCapitalAssetItemNumber = getCaptialAssetItemNumberFromParameter(buildingCodeParam);
+                final PurchasingCapitalAssetItem capitalAssetItem = document.getPurchasingCapitalAssetItems()
                         .get(Integer.parseInt(locationCapitalAssetItemNumber));
                 location = capitalAssetItem.getPurchasingCapitalAssetSystem().getCapitalAssetLocations()
                         .get(Integer.parseInt(locationCapitalAssetLocationNumber));
             } else {
-                CapitalAssetSystem capitalAssetSystem = document.getPurchasingCapitalAssetSystems().get(0);
+                final CapitalAssetSystem capitalAssetSystem = document.getPurchasingCapitalAssetSystems().get(0);
                 location = capitalAssetSystem.getCapitalAssetLocations()
                         .get(Integer.parseInt(locationCapitalAssetLocationNumber));
             }
@@ -381,23 +382,23 @@ public class PurchasingActionBase extends PurchasingAccountsPayableActionBase {
         }
     }
 
-    protected String getCaptialAssetLocationNumberFromParameter(String parameterKey) {
-        int beginIndex = parameterKey.lastIndexOf("[") + 1;
-        int endIndex = parameterKey.lastIndexOf("]");
+    protected String getCaptialAssetLocationNumberFromParameter(final String parameterKey) {
+        final int beginIndex = parameterKey.lastIndexOf("[") + 1;
+        final int endIndex = parameterKey.lastIndexOf("]");
         return parameterKey.substring(beginIndex, endIndex);
     }
 
-    protected String getCaptialAssetItemNumberFromParameter(String parameterKey) {
-        int beginIndex = parameterKey.indexOf("[") + 1;
-        int endIndex = parameterKey.indexOf("]");
+    protected String getCaptialAssetItemNumberFromParameter(final String parameterKey) {
+        final int beginIndex = parameterKey.indexOf("[") + 1;
+        final int endIndex = parameterKey.indexOf("]");
         return parameterKey.substring(beginIndex, endIndex);
     }
 
-    protected void updateDeliveryBuilding(HttpServletRequest request, PurchasingDocument document) {
-        String buildingCode = request.getParameter("document.deliveryBuildingCode");
-        String campusCode = request.getParameter("document.deliveryCampusCode");
+    protected void updateDeliveryBuilding(final HttpServletRequest request, final PurchasingDocument document) {
+        final String buildingCode = request.getParameter("document.deliveryBuildingCode");
+        final String campusCode = request.getParameter("document.deliveryCampusCode");
 
-        Building deliveryBuilding = findBuilding(buildingCode, campusCode);
+        final Building deliveryBuilding = findBuilding(buildingCode, campusCode);
         if (deliveryBuilding != null) {
             document.setDeliveryBuildingName(deliveryBuilding.getBuildingName());
             document.setDeliveryBuildingLine1Address(deliveryBuilding.getBuildingStreetAddress());
