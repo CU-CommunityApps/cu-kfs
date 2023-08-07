@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -108,7 +108,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     // NOT PERSISTED IN DB
     protected String vendorNumber;
     protected Integer vendorAddressGeneratedIdentifier;
-    protected Boolean overrideWorkflowButtons = null;
+    protected Boolean overrideWorkflowButtons;
     protected transient PurApRelatedViews relatedViews;
     protected boolean sensitive;
 
@@ -147,7 +147,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     public Integer getPostingYearFromPendingGLEntries() {
-        GeneralLedgerPendingEntry glpe = getFirstPendingGLEntry();
+        final GeneralLedgerPendingEntry glpe = getFirstPendingGLEntry();
         if (ObjectUtils.isNotNull(glpe)) {
             return glpe.getUniversityFiscalYear();
         }
@@ -155,7 +155,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     public String getPostingPeriodCodeFromPendingGLEntries() {
-        GeneralLedgerPendingEntry glpe = getFirstPendingGLEntry();
+        final GeneralLedgerPendingEntry glpe = getFirstPendingGLEntry();
         if (ObjectUtils.isNotNull(glpe)) {
             return glpe.getUniversityFiscalPeriodCode();
         }
@@ -169,7 +169,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return accountsForRouting;
     }
 
-    public void setAccountsForRouting(List<SourceAccountingLine> accountsForRouting) {
+    public void setAccountsForRouting(final List<SourceAccountingLine> accountsForRouting) {
         this.accountsForRouting = accountsForRouting;
     }
 
@@ -182,13 +182,13 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         // need to refresh to get the references for the searchable attributes (ie status) and for invoking route
         // levels (ie account objects) -hjs
         refreshNonUpdateableReferences();
-        for (SourceAccountingLine sourceLine : getAccountsForRouting()) {
+        for (final SourceAccountingLine sourceLine : getAccountsForRouting()) {
             sourceLine.refreshNonUpdateableReferences();
         }
     }
 
     public boolean isSensitive() {
-        List<SensitiveData> sensitiveData = SpringContext.getBean(SensitiveDataService.class)
+        final List<SensitiveData> sensitiveData = SpringContext.getBean(SensitiveDataService.class)
                 .getSensitiveDatasAssignedByRelatedDocId(getAccountsPayablePurchasingDocumentLinkIdentifier());
         return ObjectUtils.isNotNull(sensitiveData) && !sensitiveData.isEmpty();
     }
@@ -200,13 +200,13 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     @Override
     public boolean isPostingYearNext() {
-        Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
+        final Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
         return getPostingYear().compareTo(currentFY) > 0;
     }
 
     @Override
     public boolean isPostingYearPrior() {
-        Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
+        final Integer currentFY = SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear();
         return getPostingYear().compareTo(currentFY) < 0;
     }
 
@@ -234,7 +234,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     public abstract String getPurApSourceDocumentLabelIfPossible();
 
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
         customPrepareForSave(event);
         super.prepareForSave(event);
         fixItemReferences();
@@ -252,13 +252,13 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     // for app doc status
     @Override
-    public boolean isDocumentStoppedInRouteNode(String nodeName) {
-        WorkflowDocument workflowDocument = this.getDocumentHeader().getWorkflowDocument();
+    public boolean isDocumentStoppedInRouteNode(final String nodeName) {
+        final WorkflowDocument workflowDocument = getDocumentHeader().getWorkflowDocument();
 
-        Set<String> names = workflowDocument.getCurrentNodeNames();
+        final Set<String> names = workflowDocument.getCurrentNodeNames();
         if (CollectionUtils.isNotEmpty(names)) {
-            List<String> currentRouteLevels = new ArrayList<String>(names);                    
-            for (String routeLevel  : currentRouteLevels) {    
+            final List<String> currentRouteLevels = new ArrayList<String>(names);                    
+            for (final String routeLevel  : currentRouteLevels) {    
                 if (routeLevel.contains(nodeName) && workflowDocument.isApprovalRequested()) {
                     return true;
                 }
@@ -272,8 +272,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      *
      * @param errorMessage the error message to be logged.
      */
-    protected void logAndThrowRuntimeException(String errorMessage) {
-        this.logAndThrowRuntimeException(errorMessage, null);
+    protected void logAndThrowRuntimeException(final String errorMessage) {
+        logAndThrowRuntimeException(errorMessage, null);
     }
 
     /**
@@ -282,7 +282,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param errorMessage the specified error message.
      * @param e            the specified runtime exception.
      */
-    protected void logAndThrowRuntimeException(String errorMessage, Exception e) {
+    protected void logAndThrowRuntimeException(final String errorMessage, final Exception e) {
         if (ObjectUtils.isNotNull(e)) {
             LOG.error(errorMessage, e);
             throw new RuntimeException(errorMessage, e);
@@ -299,7 +299,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      *
      * @param event the event involved in this action.
      */
-    public void customPrepareForSave(KualiDocumentEvent event) {
+    public void customPrepareForSave(final KualiDocumentEvent event) {
         // Need this here so that it happens before the GL work is done
         SpringContext.getBean(PurapAccountingService.class).updateAccountAmounts(this);
 
@@ -314,14 +314,14 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @SuppressWarnings("rawtypes")
     @Override
     public List buildListOfDeletionAwareLists() {
-        List managedLists = new ArrayList<List>();
+        final List managedLists = new ArrayList<List>();
         managedLists.add(getDeletionAwareAccountingLines());
         if (allowDeleteAwareCollection) {
             //From now on, the list of accounting lines would have been added when the
             //super.buildListOfDeletionAwareLists() is executed when it calls getSourceAccountingLines().
             //So we can remove the old codes that used to exist here to add the accounts to the
             //managedLists and just use the one from the super.buildListOfDeletionAwareLists()
-            managedLists.add(this.getItems());
+            managedLists.add(getItems());
             managedLists.add(getDeletionAwareUseTaxItems());
         }
         return managedLists;
@@ -334,8 +334,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @SuppressWarnings("rawtypes")
     protected List getDeletionAwareAccountingLines() {
-        List<PurApAccountingLine> deletionAwareAccountingLines = new ArrayList<>();
-        for (Object itemAsObject : this.getItems()) {
+        final List<PurApAccountingLine> deletionAwareAccountingLines = new ArrayList<>();
+        for (final Object itemAsObject : getItems()) {
             final PurApItem item = (PurApItem) itemAsObject;
             deletionAwareAccountingLines.addAll(item.getSourceAccountingLines());
         }
@@ -349,10 +349,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @SuppressWarnings("rawtypes")
     protected List getDeletionAwareUseTaxItems() {
-        List<PurApItemUseTax> deletionAwareUseTaxItems = new ArrayList<>();
+        final List<PurApItemUseTax> deletionAwareUseTaxItems = new ArrayList<>();
 
-        List<PurApItemBase> subManageList = this.getItems();
-        for (PurApItemBase subManage : subManageList) {
+        final List<PurApItemBase> subManageList = getItems();
+        for (final PurApItemBase subManage : subManageList) {
             deletionAwareUseTaxItems.addAll(subManage.getUseTaxItems());
         }
 
@@ -382,14 +382,14 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void addItem(PurApItem item) {
+    public void addItem(final PurApItem item) {
         int itemLinePosition = getItemLinePosition();
         if (ObjectUtils.isNotNull(item.getItemLineNumber()) && item.getItemLineNumber() > 0
                 && item.getItemLineNumber() <= itemLinePosition) {
             itemLinePosition = item.getItemLineNumber() - 1;
         }
 
-        item.setPurapDocumentIdentifier(this.purapDocumentIdentifier);
+        item.setPurapDocumentIdentifier(purapDocumentIdentifier);
         item.setPurapDocument(this);
 
         items.add(itemLinePosition, item);
@@ -397,15 +397,15 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void deleteItem(int lineNum) {
+    public void deleteItem(final int lineNum) {
         items.remove(lineNum);
         renumberItems(lineNum);
     }
 
     @Override
-    public void renumberItems(int start) {
+    public void renumberItems(final int start) {
         for (int i = start; i < items.size(); i++) {
-            PurApItem item = items.get(i);
+            final PurApItem item = items.get(i);
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
 
             // only set the item line number for above the line items
@@ -419,14 +419,14 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void itemSwap(int positionFrom, int positionTo) {
+    public void itemSwap(final int positionFrom, final int positionTo) {
         // if out of range do nothing
         if (positionTo < 0 || positionTo >= getItemLinePosition()) {
             return;
         }
-        PurApItem item1 = this.getItem(positionFrom);
-        PurApItem item2 = this.getItem(positionTo);
-        Integer oldFirstPos = item1.getItemLineNumber();
+        final PurApItem item1 = getItem(positionFrom);
+        final PurApItem item2 = getItem(positionTo);
+        final Integer oldFirstPos = item1.getItemLineNumber();
         // swap line numbers
         item1.setItemLineNumber(item2.getItemLineNumber());
         item2.setItemLineNumber(oldFirstPos);
@@ -438,7 +438,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @Override
     public int getItemLinePosition() {
         int belowTheLineCount = 0;
-        for (PurApItem item : items) {
+        for (final PurApItem item : items) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
             if (item.getItemType().isAdditionalChargeIndicator()) {
                 belowTheLineCount++;
@@ -448,7 +448,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public PurApItem getItem(int pos) {
+    public PurApItem getItem(final int pos) {
         return items.get(pos);
     }
 
@@ -460,8 +460,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @return the PurchasingAp Item if a match is found, else null.
      */
     @SuppressWarnings("rawtypes")
-    public PurApItem getItemByLineNumber(int lineNumber) {
-        for (PurApItem item : items) {
+    public PurApItem getItemByLineNumber(final int lineNumber) {
+        for (final PurApItem item : items) {
             if (item.getItemLineNumber() != null && item.getItemLineNumber() == lineNumber) {
                 return item;
             }
@@ -476,8 +476,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @return the item being searched for
      */
     @SuppressWarnings("rawtypes")
-    public PurApItem getItemByStringIdentifier(String itemStrID) {
-        for (PurApItem item : items) {
+    public PurApItem getItemByStringIdentifier(final String itemStrID) {
+        for (final PurApItem item : items) {
             if (StringUtils.equalsIgnoreCase(item.getItemIdentifierString(), itemStrID)) {
                 return item;
             }
@@ -492,8 +492,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @return the item being searched for
      */
     @SuppressWarnings("rawtypes")
-    public PurApItem getItemByItemIdentifier(Integer itemID) {
-        for (PurApItem item : items) {
+    public PurApItem getItemByItemIdentifier(final Integer itemID) {
+        for (final PurApItem item : items) {
             if (item.getItemIdentifier() == itemID) {
                 return item;
             }
@@ -506,7 +506,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * does to the accounting period. We only store the posting year on the doc and don't want the other stuff.
      */
     @Override
-    public void setPostingYear(Integer postingYear) {
+    public void setPostingYear(final Integer postingYear) {
         this.postingYear = postingYear;
     }
 
@@ -516,12 +516,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setTotalDollarAmount(KualiDecimal amount) {
+    public void setTotalDollarAmount(final KualiDecimal amount) {
         // do nothing, this is so that the jsp won't complain about totalDollarAmount have no setter method.
     }
 
     @Override
-    public KualiDecimal getTotalDollarAmountAllItems(String[] excludedTypes) {
+    public KualiDecimal getTotalDollarAmountAllItems(final String[] excludedTypes) {
         return getTotalDollarAmountWithExclusions(excludedTypes, true);
     }
 
@@ -537,7 +537,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param excludedTypes the types of items to be excluded.
      * @return the total dollar amount of all above the line items with the specified item types excluded..
      */
-    public KualiDecimal getTotalDollarAmountAboveLineItems(String[] excludedTypes) {
+    public KualiDecimal getTotalDollarAmountAboveLineItems(final String[] excludedTypes) {
         return getTotalDollarAmountWithExclusions(excludedTypes, false);
     }
 
@@ -546,8 +546,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param includeBelowTheLine indicates whether below the line items shall be included.
      * @return the total dollar amount with the specified item types excluded.
      */
-    public KualiDecimal getTotalDollarAmountWithExclusions(String[] excludedTypes, boolean includeBelowTheLine) {
-        List<PurApItem> itemsForTotal = getItems();
+    public KualiDecimal getTotalDollarAmountWithExclusions(final String[] excludedTypes, final boolean includeBelowTheLine) {
+        final List<PurApItem> itemsForTotal = getItems();
 
         return getTotalDollarAmountWithExclusionsSubsetItems(excludedTypes, includeBelowTheLine, itemsForTotal);
     }
@@ -559,19 +559,19 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @return
      */
     protected KualiDecimal getTotalDollarAmountWithExclusionsSubsetItems(String[] excludedTypes,
-            boolean includeBelowTheLine, List<PurApItem> itemsForTotal) {
+            final boolean includeBelowTheLine, final List<PurApItem> itemsForTotal) {
         if (excludedTypes == null) {
             excludedTypes = new String[]{};
         }
 
         KualiDecimal total = new KualiDecimal(BigDecimal.ZERO);
-        for (PurApItem item : itemsForTotal) {
+        for (final PurApItem item : itemsForTotal) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
-            ItemType it = item.getItemType();
+            final ItemType it = item.getItemType();
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
-                KualiDecimal totalAmount = item.getTotalAmount();
-                KualiDecimal itemTotal = totalAmount != null ? totalAmount : KualiDecimal.ZERO;
+                final KualiDecimal totalAmount = item.getTotalAmount();
+                final KualiDecimal itemTotal = totalAmount != null ? totalAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -580,14 +580,14 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     @Override
     public KualiDecimal getTotalDollarAmountForTradeIn() {
-        List<PurApItem> tradeInItems = getTradeInItems();
+        final List<PurApItem> tradeInItems = getTradeInItems();
         return getTotalDollarAmountWithExclusionsSubsetItems(null, false, tradeInItems);
     }
 
     @Override
     public List<PurApItem> getTradeInItems() {
-        List<PurApItem> tradeInItems = new ArrayList<>();
-        for (PurApItem purApItem : (List<PurApItem>) getItems()) {
+        final List<PurApItem> tradeInItems = new ArrayList<>();
+        for (final PurApItem purApItem : (List<PurApItem>) getItems()) {
             if (purApItem.getItemAssignedToTradeInIndicator()) {
                 tradeInItems.add(purApItem);
             }
@@ -601,12 +601,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setTotalPreTaxDollarAmount(KualiDecimal amount) {
+    public void setTotalPreTaxDollarAmount(final KualiDecimal amount) {
         // do nothing, this is so that the jsp won't complain about totalDollarAmount have no setter method.
     }
 
     @Override
-    public KualiDecimal getTotalPreTaxDollarAmountAllItems(String[] excludedTypes) {
+    public KualiDecimal getTotalPreTaxDollarAmountAllItems(final String[] excludedTypes) {
         return getTotalPreTaxDollarAmountWithExclusions(excludedTypes, true);
     }
 
@@ -623,7 +623,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param excludedTypes the types of items to be excluded.
      * @return the total dollar amount of all above the line items with the specified item types excluded..
      */
-    public KualiDecimal getTotalPreTaxDollarAmountAboveLineItems(String[] excludedTypes) {
+    public KualiDecimal getTotalPreTaxDollarAmountAboveLineItems(final String[] excludedTypes) {
         return getTotalPreTaxDollarAmountWithExclusions(excludedTypes, false);
     }
 
@@ -634,19 +634,19 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param includeBelowTheLine indicates whether below the line items shall be included.
      * @return the total dollar amount with the specified item types excluded.
      */
-    public KualiDecimal getTotalPreTaxDollarAmountWithExclusions(String[] excludedTypes, boolean includeBelowTheLine) {
+    public KualiDecimal getTotalPreTaxDollarAmountWithExclusions(String[] excludedTypes, final boolean includeBelowTheLine) {
         if (excludedTypes == null) {
             excludedTypes = new String[]{};
         }
 
         KualiDecimal total = new KualiDecimal(BigDecimal.ZERO);
-        for (PurApItem item : (List<PurApItem>) getItems()) {
+        for (final PurApItem item : (List<PurApItem>) getItems()) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
-            ItemType it = item.getItemType();
+            final ItemType it = item.getItemType();
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
-                KualiDecimal extendedPrice = item.getExtendedPrice();
-                KualiDecimal itemTotal = extendedPrice != null ? extendedPrice : KualiDecimal.ZERO;
+                final KualiDecimal extendedPrice = item.getExtendedPrice();
+                final KualiDecimal itemTotal = extendedPrice != null ? extendedPrice : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -659,12 +659,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setTotalTaxAmount(KualiDecimal amount) {
+    public void setTotalTaxAmount(final KualiDecimal amount) {
         // do nothing, this is so that the jsp won't complain about totalTaxAmount have no setter method.
     }
 
     @Override
-    public KualiDecimal getTotalTaxAmountAllItems(String[] excludedTypes) {
+    public KualiDecimal getTotalTaxAmountAllItems(final String[] excludedTypes) {
         return getTotalTaxAmountWithExclusions(excludedTypes, true);
     }
 
@@ -674,24 +674,24 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public KualiDecimal getTotalTaxAmountAboveLineItems(String[] excludedTypes) {
+    public KualiDecimal getTotalTaxAmountAboveLineItems(final String[] excludedTypes) {
         return getTotalTaxAmountWithExclusions(excludedTypes, false);
     }
 
     @Override
-    public KualiDecimal getTotalTaxAmountWithExclusions(String[] excludedTypes, boolean includeBelowTheLine) {
+    public KualiDecimal getTotalTaxAmountWithExclusions(String[] excludedTypes, final boolean includeBelowTheLine) {
         if (excludedTypes == null) {
             excludedTypes = new String[]{};
         }
 
         KualiDecimal total = new KualiDecimal(BigDecimal.ZERO);
-        for (PurApItem item : (List<PurApItem>) getItems()) {
+        for (final PurApItem item : (List<PurApItem>) getItems()) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
-            ItemType it = item.getItemType();
+            final ItemType it = item.getItemType();
             if ((includeBelowTheLine || it.isLineItemIndicator())
                     && !ArrayUtils.contains(excludedTypes, it.getItemTypeCode())) {
-                KualiDecimal taxAmount = item.getItemTaxAmount();
-                KualiDecimal itemTotal = taxAmount != null ? taxAmount : KualiDecimal.ZERO;
+                final KualiDecimal taxAmount = item.getItemTaxAmount();
+                final KualiDecimal itemTotal = taxAmount != null ? taxAmount : KualiDecimal.ZERO;
                 total = total.add(itemTotal);
             }
         }
@@ -704,23 +704,23 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setUseTaxIndicator(boolean useTaxIndicator) {
+    public void setUseTaxIndicator(final boolean useTaxIndicator) {
         this.useTaxIndicator = useTaxIndicator;
     }
 
     @Override
-    public void templateVendorAddress(VendorAddress vendorAddress) {
+    public void templateVendorAddress(final VendorAddress vendorAddress) {
         if (vendorAddress == null) {
             return;
         }
-        this.setVendorLine1Address(vendorAddress.getVendorLine1Address());
-        this.setVendorLine2Address(vendorAddress.getVendorLine2Address());
-        this.setVendorCityName(vendorAddress.getVendorCityName());
-        this.setVendorStateCode(vendorAddress.getVendorStateCode());
-        this.setVendorPostalCode(vendorAddress.getVendorZipCode());
-        this.setVendorCountryCode(vendorAddress.getVendorCountryCode());
+        setVendorLine1Address(vendorAddress.getVendorLine1Address());
+        setVendorLine2Address(vendorAddress.getVendorLine2Address());
+        setVendorCityName(vendorAddress.getVendorCityName());
+        setVendorStateCode(vendorAddress.getVendorStateCode());
+        setVendorPostalCode(vendorAddress.getVendorZipCode());
+        setVendorCountryCode(vendorAddress.getVendorCountryCode());
         //KFSPTS-1639
-        this.setVendorEmailAddress(vendorAddress.getVendorAddressEmailAddress());
+        setVendorEmailAddress(vendorAddress.getVendorAddressEmailAddress());
   }
 
     /**
@@ -738,7 +738,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorNumber(String vendorNumber) {
+    public void setVendorNumber(final String vendorNumber) {
         this.vendorNumber = vendorNumber;
     }
 
@@ -746,7 +746,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return overrideWorkflowButtons;
     }
 
-    public void setOverrideWorkflowButtons(Boolean overrideWorkflowButtons) {
+    public void setOverrideWorkflowButtons(final Boolean overrideWorkflowButtons) {
         this.overrideWorkflowButtons = overrideWorkflowButtons;
     }
 
@@ -756,7 +756,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier) {
+    public void setVendorHeaderGeneratedIdentifier(final Integer vendorHeaderGeneratedIdentifier) {
         this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
     }
 
@@ -766,7 +766,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier) {
+    public void setVendorDetailAssignedIdentifier(final Integer vendorDetailAssignedIdentifier) {
         this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
     }
 
@@ -776,7 +776,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorCustomerNumber(String vendorCustomerNumber) {
+    public void setVendorCustomerNumber(final String vendorCustomerNumber) {
         this.vendorCustomerNumber = vendorCustomerNumber;
     }
 
@@ -786,8 +786,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setPurapDocumentIdentifier(Integer identifier) {
-        this.purapDocumentIdentifier = identifier;
+    public void setPurapDocumentIdentifier(final Integer identifier) {
+        purapDocumentIdentifier = identifier;
     }
 
     @Override
@@ -795,7 +795,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return vendorDetail;
     }
 
-    public void setVendorDetail(VendorDetail vendorDetail) {
+    public void setVendorDetail(final VendorDetail vendorDetail) {
         this.vendorDetail = vendorDetail;
     }
 
@@ -807,7 +807,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     @Override
     @SuppressWarnings("rawtypes")
-    public void setItems(List items) {
+    public void setItems(final List items) {
         this.items = items;
     }
 
@@ -817,7 +817,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorCityName(String vendorCityName) {
+    public void setVendorCityName(final String vendorCityName) {
         this.vendorCityName = vendorCityName;
     }
 
@@ -827,7 +827,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorCountryCode(String vendorCountryCode) {
+    public void setVendorCountryCode(final String vendorCountryCode) {
         this.vendorCountryCode = vendorCountryCode;
     }
 
@@ -837,7 +837,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorLine1Address(String vendorLine1Address) {
+    public void setVendorLine1Address(final String vendorLine1Address) {
         this.vendorLine1Address = vendorLine1Address;
     }
 
@@ -847,7 +847,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorLine2Address(String vendorLine2Address) {
+    public void setVendorLine2Address(final String vendorLine2Address) {
         this.vendorLine2Address = vendorLine2Address;
     }
 
@@ -857,7 +857,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorName(String vendorName) {
+    public void setVendorName(final String vendorName) {
         this.vendorName = vendorName;
     }
 
@@ -867,7 +867,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorPostalCode(String vendorPostalCode) {
+    public void setVendorPostalCode(final String vendorPostalCode) {
         this.vendorPostalCode = vendorPostalCode;
     }
 
@@ -877,7 +877,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorStateCode(String vendorStateCode) {
+    public void setVendorStateCode(final String vendorStateCode) {
         this.vendorStateCode = vendorStateCode;
     }
 
@@ -887,7 +887,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorAddressInternationalProvinceName(String vendorAddressInternationalProvinceName) {
+    public void setVendorAddressInternationalProvinceName(final String vendorAddressInternationalProvinceName) {
         this.vendorAddressInternationalProvinceName = vendorAddressInternationalProvinceName;
     }
 
@@ -897,7 +897,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setVendorAddressGeneratedIdentifier(Integer vendorAddressGeneratedIdentifier) {
+    public void setVendorAddressGeneratedIdentifier(final Integer vendorAddressGeneratedIdentifier) {
         this.vendorAddressGeneratedIdentifier = vendorAddressGeneratedIdentifier;
     }
 
@@ -908,14 +908,14 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
     @Override
     public void setAccountsPayablePurchasingDocumentLinkIdentifier(
-            Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+            final Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
     }
 
     @Override
     public String[] getBelowTheLineTypes() {
-        if (this.belowTheLineTypes == null) {
-            this.belowTheLineTypes = SpringContext.getBean(PurapService.class).getBelowTheLineForDocument(this);
+        if (belowTheLineTypes == null) {
+            belowTheLineTypes = SpringContext.getBean(PurapService.class).getBelowTheLineForDocument(this);
         }
         return belowTheLineTypes;
     }
@@ -929,7 +929,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * Added only to allow for {@link org.kuali.kfs.module.purap.util.PurApObjectUtils} class to work correctly.
      */
     @Deprecated
-    public void setVendorCountry(Country vendorCountry) {
+    public void setVendorCountry(final Country vendorCountry) {
         this.vendorCountry = vendorCountry;
     }
 
@@ -937,7 +937,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return vendorAttentionName;
     }
 
-    public void setVendorAttentionName(String vendorAttentionName) {
+    public void setVendorAttentionName(final String vendorAttentionName) {
         this.vendorAttentionName = vendorAttentionName;
     }
 
@@ -945,7 +945,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         return accountDistributionMethod;
     }
 
-    public void setAccountDistributionMethod(String accountDistributionMethod) {
+    public void setAccountDistributionMethod(final String accountDistributionMethod) {
         this.accountDistributionMethod = accountDistributionMethod;
     }
 
@@ -956,19 +956,20 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @return boolean false.
      */
     @Override
-    public boolean isDebit(GeneralLedgerPendingEntrySourceDetail postable) {
+    public boolean isDebit(final GeneralLedgerPendingEntrySourceDetail postable) {
         return false;
     }
 
     public PurApRelatedViews getRelatedViews() {
         if (relatedViews == null) {
-            relatedViews = new PurApRelatedViews(this.documentNumber,
-                    this.accountsPayablePurchasingDocumentLinkIdentifier);
+            relatedViews = new PurApRelatedViews(
+                    documentNumber,
+                    accountsPayablePurchasingDocumentLinkIdentifier);
         }
         return relatedViews;
     }
 
-    public void setRelatedViews(PurApRelatedViews relatedViews) {
+    public void setRelatedViews(final PurApRelatedViews relatedViews) {
         this.relatedViews = relatedViews;
     }
 
@@ -976,9 +977,9 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     public void refreshNonUpdateableReferences() {
         super.refreshNonUpdateableReferences();
 
-        for (PurApItem item : (List<PurApItem>) this.getItems()) {
+        for (final PurApItem item : (List<PurApItem>) getItems()) {
             //refresh the accounts if they do exist...
-            for (PurApAccountingLine account : item.getSourceAccountingLines()) {
+            for (final PurApAccountingLine account : item.getSourceAccountingLines()) {
                 account.refreshNonUpdateableReferences();
             }
         }
@@ -992,8 +993,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     @Override
     public void fixItemReferences() {
         //fix item and account references in case this is a new doc (since they will be lost)
-        if (ObjectUtils.isNull(this.purapDocumentIdentifier)) {
-            for (PurApItem item : (List<PurApItem>) this.getItems()) {
+        if (ObjectUtils.isNull(purapDocumentIdentifier)) {
+            for (final PurApItem item : (List<PurApItem>) getItems()) {
                 item.setPurapDocument(this);
                 item.fixAccountReferences();
             }
@@ -1005,7 +1006,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      */
     @Override
     public PurApItem getTradeInItem() {
-        for (PurApItem item : (List<PurApItem>) getItems()) {
+        for (final PurApItem item : (List<PurApItem>) getItems()) {
             if (item.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)) {
                 return item;
             }
@@ -1052,25 +1053,25 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param title the default document title
      * @return the combine information of the given title and additional payment indicators
      */
-    protected String buildDocumentTitle(String title) {
-        if (this.getVendorDetail() == null) {
+    protected String buildDocumentTitle(final String title) {
+        if (getVendorDetail() == null) {
             return title;
         }
 
-        Integer vendorHeaderGeneratedIdentifier = this.getVendorDetail().getVendorHeaderGeneratedIdentifier();
-        VendorService vendorService = SpringContext.getBean(VendorService.class);
+        final Integer vendorHeaderGeneratedIdentifier = getVendorDetail().getVendorHeaderGeneratedIdentifier();
+        final VendorService vendorService = SpringContext.getBean(VendorService.class);
 
-        Object[] indicators = new String[2];
+        final Object[] indicators = new String[2];
 
-        boolean isEmployeeVendor = vendorService.isVendorInstitutionEmployee(vendorHeaderGeneratedIdentifier);
+        final boolean isEmployeeVendor = vendorService.isVendorInstitutionEmployee(vendorHeaderGeneratedIdentifier);
         indicators[0] = isEmployeeVendor ? AdHocPaymentIndicator.EMPLOYEE_VENDOR : AdHocPaymentIndicator.OTHER;
 
-        boolean isVendorForeign = vendorService.isVendorForeign(vendorHeaderGeneratedIdentifier);
+        final boolean isVendorForeign = vendorService.isVendorForeign(vendorHeaderGeneratedIdentifier);
         indicators[1] = isVendorForeign ? AdHocPaymentIndicator.NONRESIDENT_VENDOR : AdHocPaymentIndicator.OTHER;
 
-        for (Object indicator : indicators) {
+        for (final Object indicator : indicators) {
             if (!AdHocPaymentIndicator.OTHER.equals(indicator)) {
-                String titlePattern = title + " [{0}:{1}]";
+                final String titlePattern = title + " [{0}:{1}]";
                 return MessageFormat.format(titlePattern, indicators);
             }
         }
@@ -1088,10 +1089,10 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
             // do nothing because acct lines have already been set
             return sourceAccountingLines;
         } else {
-            List<AccountingLine> sourceAccountingLines = new ArrayList<>();
-            for (Object itemAsObject : this.getItems()) {
+            final List<AccountingLine> sourceAccountingLines = new ArrayList<>();
+            for (final Object itemAsObject : getItems()) {
                 final PurApItem item = (PurApItem) itemAsObject;
-                for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+                for (final PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
                     //KFSMI-9053: check if the accounting line does not already exist in the list
                     //and if so then add to the list.  Preventing duplicates
                     if (!isDuplicateAccountingLine(sourceAccountingLines, accountingLine)) {
@@ -1110,10 +1111,11 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param accountingLine
      * @return true if it is a duplicate else return false.
      */
-    protected boolean isDuplicateAccountingLine(List<AccountingLine> sourceAccountingLines,
-            PurApAccountingLine accountingLine) {
-        for (AccountingLine sourceLine : sourceAccountingLines) {
-            PurApAccountingLine purapAccountLine = (PurApAccountingLine) sourceLine;
+    protected boolean isDuplicateAccountingLine(
+            final List<AccountingLine> sourceAccountingLines,
+            final PurApAccountingLine accountingLine) {
+        for (final AccountingLine sourceLine : sourceAccountingLines) {
+            final PurApAccountingLine purapAccountLine = (PurApAccountingLine) sourceLine;
 
             if (purapAccountLine.accountStringsAreEqual(accountingLine)) {
                 return true;
@@ -1129,12 +1131,12 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @param matchingAccountingLine
      * @return accountTotalGLEntryAmount
      */
-    protected KualiDecimal getAccountTotalGLEntryAmount(AccountingLine matchingAccountingLine) {
+    protected KualiDecimal getAccountTotalGLEntryAmount(final AccountingLine matchingAccountingLine) {
         KualiDecimal accountTotalGLEntryAmount = KualiDecimal.ZERO;
 
-        for (Object itemAsObject : this.getItems()) {
+        for (final Object itemAsObject : getItems()) {
             final PurApItem item = (PurApItem) itemAsObject;
-            for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+            for (final PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
                 //KFSMI-9053: check if the accounting line is a duplicate then add the total
                 if (accountingLine.accountStringsAreEqual((SourceAccountingLine) matchingAccountingLine)) {
                     accountTotalGLEntryAmount = accountTotalGLEntryAmount.add(accountingLine.getAmount());
@@ -1152,8 +1154,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
      * @return true if at least one related purchase order needs a warning; false otherwise
      */
     public boolean getNeedWarningRelatedPOs() {
-        List<PurchaseOrderView> poViews = getRelatedViews().getRelatedPurchaseOrderViews();
-        for (PurchaseOrderView poView : poViews) {
+        final List<PurchaseOrderView> poViews = getRelatedViews().getRelatedPurchaseOrderViews();
+        for (final PurchaseOrderView poView : poViews) {
             if (poView.getNeedWarning()) {
                 return true;
             }
@@ -1171,16 +1173,17 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         List<String> restrictedItemTypesList = new ArrayList<>();
         try {
             restrictedItemTypesList = new ArrayList<>(SpringContext.getBean(ParameterService.class)
-                    .getParameterValuesAsString(this.getClass(),
+                    .getParameterValuesAsString(
+                            getClass(),
                             PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             // do nothing, not a problem if no restricted types are defined
         }
 
-        PurapAccountingService purApAccountingService = SpringContext.getBean(PurapAccountingService.class);
-        List persistedSourceLines = new ArrayList();
+        final PurapAccountingService purApAccountingService = SpringContext.getBean(PurapAccountingService.class);
+        final List persistedSourceLines = new ArrayList();
 
-        for (PurApItem item : (List<PurApItem>) this.getItems()) {
+        for (final PurApItem item : (List<PurApItem>) getItems()) {
             // only check items that already have been persisted since last save
             if (ObjectUtils.isNotNull(item.getItemIdentifier())) {
                 // Disable validation if the item is read-only
@@ -1204,13 +1207,14 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
         List<String> restrictedItemTypesList = new ArrayList<>();
         try {
             restrictedItemTypesList = new ArrayList<>(SpringContext.getBean(ParameterService.class)
-                    .getParameterValuesAsString(this.getClass(),
+                    .getParameterValuesAsString(
+                            getClass(),
                             PurapParameterConstants.PURAP_ITEM_TYPES_RESTRICTING_ACCOUNT_EDIT));
-        } catch (IllegalArgumentException iae) {
+        } catch (final IllegalArgumentException iae) {
             // do nothing, not a problem if no restricted types are defined
         }
-        List currentSourceLines = new ArrayList();
-        for (PurApItem item : (List<PurApItem>) this.getItems()) {
+        final List currentSourceLines = new ArrayList();
+        for (final PurApItem item : (List<PurApItem>) getItems()) {
             // Disable validation if the item is read-only
             final boolean isNotReadOnly = !(restrictedItemTypesList != null
                     && restrictedItemTypesList.contains(item.getItemTypeCode()));
@@ -1227,7 +1231,7 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
     }
 
     @Override
-    public void setCalculated(boolean calculated) {
+    public void setCalculated(final boolean calculated) {
         this.calculated = calculated;
     }
     

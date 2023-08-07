@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,9 +41,9 @@ public class PurchasingAccountsPayableDocumentPresentationController extends
      * None of the PURAP documents allowing editing by adhoc requests
      */
     @Override
-    public boolean canEdit(Document document) {
-        Person currentUser = GlobalVariables.getUserSession().getPerson();
-        WorkflowDocument kwf = document.getDocumentHeader().getWorkflowDocument();
+    public boolean canEdit(final Document document) {
+        final Person currentUser = GlobalVariables.getUserSession().getPerson();
+        final WorkflowDocument kwf = document.getDocumentHeader().getWorkflowDocument();
         //Adding this check so that the initiator will always be able to edit the document (before initial submission)
         if (kwf.getInitiatorPrincipalId().equals(currentUser.getPrincipalId()) && (kwf.isInitiated() || kwf.isSaved()) ) {
             return true;
@@ -58,16 +58,16 @@ public class PurchasingAccountsPayableDocumentPresentationController extends
     }
 
     @Override
-    public boolean canEditDocumentOverview(Document document) {
+    public boolean canEditDocumentOverview(final Document document) {
         // Change logic to allow editing document overview based on if user can edit the document
         return canEdit(document);
     }
  
     // KFSPTS-985
-    public boolean hasEmptyAcctline(PurchasingDocumentBase document) {
+    public boolean hasEmptyAcctline(final PurchasingDocumentBase document) {
         boolean hasEmptyAcct = false;
         if (CollectionUtils.isNotEmpty(document.getItems())) {
-            for (PurchasingItemBase item : (List<PurchasingItemBase>)document.getItems()) {
+            for (final PurchasingItemBase item : (List<PurchasingItemBase>)document.getItems()) {
                 if ((StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_ITEM_CODE) || StringUtils.equals(item.getItemTypeCode(),ItemTypeCodes.ITEM_TYPE_SERVICE_CODE) ) && CollectionUtils.isEmpty(item.getSourceAccountingLines())) {
                     hasEmptyAcct = true;
                     break;
