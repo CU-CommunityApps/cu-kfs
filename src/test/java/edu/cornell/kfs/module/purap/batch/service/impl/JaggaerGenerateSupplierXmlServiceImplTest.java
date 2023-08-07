@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -38,11 +40,12 @@ import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerGenerateSupplierXmlServiceImplTest {
     
     private JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
     
-    private static final String OUTPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/batch/service/impl/JaggaerGenerateSupplierXmlServiceImplTest/";
+    private static final String OUTPUT_FILE_PATH = "test/jaggaer/JaggaerGenerateSupplierXmlServiceImplTest/";
     private File outputFileDirectory;
     private TestDateTimeServiceImpl dateTimeService;
     
@@ -187,5 +190,30 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
                 assertEquals(expectedState, supplierAddress.getState().getValue());
             }
         }
+    }
+    
+    @ParameterizedTest
+    @MethodSource("provideForTestIsValidUrl")
+    void testIsValidUrl(String url,  String vendorNumber, boolean expectedResults) {
+        boolean actualResults = jaggaerGenerateSupplierXmlServiceImpl.isValidUrl(url, vendorNumber);
+        assertEquals(expectedResults, actualResults);
+    }
+    
+    private static Stream<Arguments> provideForTestIsValidUrl() {
+        return Stream.of(
+          Arguments.of(StringUtils.EMPTY, "emptuUrlVendor", false),
+          Arguments.of(StringUtils.SPACE, "spaceUrlVendor", false),
+          Arguments.of(null, "nullUrlVendor", false),
+          Arguments.of("http://www.google.com", "httpUrlVendor", true),
+          Arguments.of("https://www.google.com", "httpsUrlVendor", true),
+          Arguments.of("https://www.cornell.edu/subFolder", "httppSubFolderUrlVendor", true),
+          Arguments.of("https://www.cornell.edu/index.jsp", "httppSubPageUrlVendor", true),
+          Arguments.of("https://www.cornell.edu/index.jsp?foo=bar", "httppSubPageQueryParamUrlVendor", true),
+          Arguments.of("https://www.cornell.edu/index.jsp#section1", "httppSubPageFragmentUrlVendor", true),
+          Arguments.of("http:443//www.google.com", "httpPortNumberUrlVendor", true),
+          Arguments.of("www.google.com", "noHttpUrlVendor", false),
+          Arguments.of("cornell.edu", "domainVendor", true),
+          Arguments.of("128.253.173.243", "ipAddress", true)
+        );
     }
 }

@@ -1,6 +1,9 @@
 package edu.cornell.kfs.module.purap.batch.service.impl;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,6 +142,16 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         JaggaerLegalStructure legalStructure = JaggaerLegalStructure
                 .findJaggaerLegalStructureByKfsOwnershipCode(kfsOwnerShipCode);
         return JaggaerBuilder.buildJaggaerBasicValue(legalStructure.jaggaerLegalStructureName);
+    }
+    
+    protected boolean isValidUrl(String url,  String vendorNumber) {
+        try {
+            new URL(url).toURI();
+            return true;
+        } catch (MalformedURLException | URISyntaxException e) {
+            LOG.error("isValidUrl, vendor number '{}' has an invalid URL value of '{}'", vendorNumber, url);
+            return false;
+        }
     }
 
     private AddressList buildAddressList(VendorDetail detail) {
