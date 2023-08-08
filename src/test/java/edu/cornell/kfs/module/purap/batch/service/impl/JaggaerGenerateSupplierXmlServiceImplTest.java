@@ -201,19 +201,24 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     
     private static Stream<Arguments> provideForTestIsValidUrl() {
         return Stream.of(
-          Arguments.of(StringUtils.EMPTY, "emptuUrlVendor", false),
-          Arguments.of(StringUtils.SPACE, "spaceUrlVendor", false),
-          Arguments.of(null, "nullUrlVendor", false),
-          Arguments.of("http://www.google.com", "httpUrlVendor", true),
-          Arguments.of("https://www.google.com", "httpsUrlVendor", true),
-          Arguments.of("https://www.cornell.edu/subFolder", "httppSubFolderUrlVendor", true),
-          Arguments.of("https://www.cornell.edu/index.jsp", "httppSubPageUrlVendor", true),
-          Arguments.of("https://www.cornell.edu/index.jsp?foo=bar", "httppSubPageQueryParamUrlVendor", true),
-          Arguments.of("https://www.cornell.edu/index.jsp#section1", "httppSubPageFragmentUrlVendor", true),
-          Arguments.of("http:443//www.google.com", "httpPortNumberUrlVendor", true),
-          Arguments.of("www.google.com", "noHttpUrlVendor", false),
-          Arguments.of("cornell.edu", "domainVendor", true),
-          Arguments.of("128.253.173.243", "ipAddress", true)
+          Arguments.of(StringUtils.EMPTY, "empty", false),
+          Arguments.of(StringUtils.SPACE, "space", false),
+          Arguments.of(null, "null", false),
+          Arguments.of("cornell.edu", "domain", false),
+          Arguments.of("www.google.com", "wwwDomain", false),
+          Arguments.of("128.253.173.243", "IP", false),
+          Arguments.of("128253173243", "numbers", false),
+          Arguments.of("foobar", "words", false),
+          Arguments.of("http://www.google.com", "httpDomain", true),
+          Arguments.of("https://www.google.com", "httpsDomain", true),
+          Arguments.of("https://www.cornell.edu/subFolder", "httpsDomainSub", true),
+          Arguments.of("https://www.cornell.edu/index.jsp", "httpsDomainPage", true),
+          Arguments.of("https://www.cornell.edu/index.jsp?foo=bar", "httpsDomainPageParam", true),
+          Arguments.of("https://www.cornell.edu/index.jsp#section1", "httpsDomainPageFragment", true),
+          Arguments.of("http:443//www.google.com", "httpPortDomain", true),
+          Arguments.of("http://128.253.173.243", "httpIp", true),
+          Arguments.of("https://128.253.173.243", "httpsIp", true),
+          Arguments.of("https://128.253.173.243/index.aspx", "httpsIpPage", true)
         );
     }
 }

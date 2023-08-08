@@ -94,9 +94,16 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
                 supplier.setActive(JaggaerBuilder.buildActive(getDefaultSupplierActiveValue()));
                 supplier.setLegalStructure(buildJaggerLegalStructure(detail));
-                supplier.setWebSiteURL(JaggaerBuilder.buildJaggaerBasicValue(detail.getVendorUrlAddress()));
                 supplier.setAddressList(buildAddressList(detail));
-    
+                
+                if (StringUtils.isNotBlank(detail.getVendorUrlAddress())) {
+                    if (isValidUrl(detail.getVendorUrlAddress(), detail.getVendorNumber())) {
+                        supplier.setWebSiteURL(JaggaerBuilder.buildJaggaerBasicValue(detail.getVendorUrlAddress()));
+                    } else {
+                        
+                    }
+                }
+                
                 suppliers.add(supplier);
             }
         }
