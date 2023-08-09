@@ -32,8 +32,11 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuPaymentRequestAction extends PaymentRequestAction {
+
+    private CuCheckStubService cuCheckStubService;
 
 	@Override
 	public ActionForward docHandler(ActionMapping mapping, ActionForm form,
@@ -69,7 +72,14 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
 	    }
         return forward;
     }
-	
+
+    @Override
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+        super.loadDocument(kualiDocumentFormBase);
+        getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
+                kualiDocumentFormBase.getDocument());
+    }
+
 	@Override
 	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
@@ -148,4 +158,11 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
+    private CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
+
 }

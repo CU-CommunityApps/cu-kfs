@@ -234,6 +234,8 @@ public class CUPurapConstants {
     public static final String I_WANT_DOC_FEED_FILE_PREFIX = "purap_iwantdoc_";
     public static final String I_WANT_DOC_FEED_FILE_TYPE_INDENTIFIER = "iWantDocumentInputFileType";
 
+    public static final String AP_CHECK_STUB_FIELD_LABEL = "Check Stub Notes";
+
     public static final class Einvoice {
         public static final String OBJECT_NOT_FOUND = "Object not found";
         public static final String ERROR = "error";

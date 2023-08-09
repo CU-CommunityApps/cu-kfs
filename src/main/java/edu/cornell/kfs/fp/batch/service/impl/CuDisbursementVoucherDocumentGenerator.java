@@ -21,6 +21,7 @@ import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.service.UniversityDateService;
@@ -43,6 +44,7 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.pdp.CUPdpConstants;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGeneratorBase<CuDisbursementVoucherDocument> {
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDocumentGenerator.class);
@@ -52,6 +54,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     protected BusinessObjectService businessObjectService;
     protected CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
     protected CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService;
+    protected CuCheckStubService cuCheckStubService;
     
     public CuDisbursementVoucherDocumentGenerator() {
         super();
@@ -128,8 +131,20 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
             dvDocument.setDisbVchrSpecialHandlingCode(convertStringToBoolean(paymentInfo.getSpecialHandlingCode()));
             dvDocument.setDisbVchrPayeeW9CompleteCode(convertStringToBoolean(paymentInfo.getW9CompleteCode()));
             dvDocument.setDisbExcptAttachedIndicator(convertStringToBoolean(paymentInfo.getExceptionAttachedCode()));
+            
+            addWarningMessageIfCheckStubNeedsTruncatingForIso20022(dvDocument);
         } else {
             LOG.error("populatePaymentInformation, did NOT find payment info");
+        }
+    }
+
+    protected void addWarningMessageIfCheckStubNeedsTruncatingForIso20022(CuDisbursementVoucherDocument dvDocument) {
+        if (cuCheckStubService.doesCheckStubNeedTruncatingForIso20022(dvDocument)) {
+            String warningMessage = cuCheckStubService
+                    .createWarningMessageForCheckStubIso20022MaxLength(dvDocument);
+            LOG.warn("addWarningMessageIfCheckStubNeedsTruncatingForIso20022, {}", warningMessage);
+            GlobalVariables.getMessageMap().putWarning(KFSPropertyConstants.DISB_VCHR_CHECK_STUB_TEXT,
+                    KFSKeyConstants.ERROR_CUSTOM, warningMessage);
         }
     }
 
@@ -288,7 +303,9 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     }
     
     protected void processWarning(Entry<String, AutoPopulatingList<ErrorMessage>> message, CreateAccountingDocumentReportItemDetail reportDetail) {
-        if (StringUtils.equalsIgnoreCase(CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME, message.getKey())) {
+        if (StringUtils.equalsAnyIgnoreCase(message.getKey(),
+                CuFPConstants.CreateAccountingDocumentValidatedDataElements.PAYEE_NAME,
+                KFSPropertyConstants.DISB_VCHR_CHECK_STUB_TEXT)) {
             message.getValue().stream().forEach(em -> reportDetail.appendWarningMessageToExistingWarningMessage(em.getMessageParameters()[0]));
         } else {
             LOG.warn("processWarning, unexpected warning message with a key of " + message.getKey());
@@ -314,6 +331,10 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
 
     public void setCuDisbursementVoucherPayeeService(CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService) {
         this.cuDisbursementVoucherPayeeService = cuDisbursementVoucherPayeeService;
+    }
+
+    public void setCuCheckStubService(CuCheckStubService cuCheckStubService) {
+        this.cuCheckStubService = cuCheckStubService;
     }
 
 }

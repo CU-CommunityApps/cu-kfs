@@ -136,6 +136,10 @@ public class CUKFSConstants {
         public static final String OFF_CAMPUS_INDICATOR_QUESTION_ID = "OffCampusIndicatorQuestion";
     }
 
+    public static class CommonDocumentConstants {
+        public static final String CHECK_STUB_TEXT_LENGTH_QUESTION_ID = "CheckStubTextLengthQuestion";
+    }
+
     public static class BasicAccountingCategory {
         public static final String ASSET = "AS";
         public static final String EXPENSE = "EX";

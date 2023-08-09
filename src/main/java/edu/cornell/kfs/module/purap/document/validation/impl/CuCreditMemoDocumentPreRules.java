@@ -3,6 +3,9 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.module.purap.PurapKeyConstants;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
@@ -12,18 +15,17 @@ import org.kuali.kfs.module.purap.document.validation.impl.CreditMemoDocumentPre
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 
 public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
+    
+    private CuCheckStubService cuCheckStubService;
     
     @Override
     public boolean doPrompts(Document document){
@@ -33,11 +35,13 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         // KFSUPGRADE-779
         preRulesOK &= checkWireTransferTabState((VendorCreditMemoDocument) document);
 
+        preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
+
         AccountsPayableDocument accountsPayableDocument = (AccountsPayableDocument) document;
 
         // Check if the total does not match the submitted credit if the document hasn't been completed.
         if (!SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(accountsPayableDocument)) {
-            preRulesOK = confirmInvoiceNoMatchOverride(accountsPayableDocument);
+            preRulesOK &= confirmInvoiceNoMatchOverride(accountsPayableDocument);
         }
         else if (SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(accountsPayableDocument)) {
             // if past full document entry complete, then set override to true to skip validation
@@ -127,5 +131,12 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
     }
     
    // end KFSUPGRADE-779
-    
-  }
+
+    public CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
+
+}
