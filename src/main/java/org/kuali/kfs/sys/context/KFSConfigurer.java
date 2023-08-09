@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -214,7 +214,7 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
                         mainApplicationContext.getBean(Scheduler.class).shutdown();
                     }
                 }
-            } catch (SchedulerException ex) {
+            } catch (final SchedulerException ex) {
                 LOG.error("Exception while shutting down the scheduler", ex);
             }
         }
@@ -343,9 +343,9 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
                 applicationContext.getBean(SchedulerService.class).initialize();
                 LOG.info("Starting the Quartz scheduler");
                 applicationContext.getBean(Scheduler.class).start();
-            } catch (NoSuchBeanDefinitionException e) {
+            } catch (final NoSuchBeanDefinitionException e) {
                 LOG.warn("Not initializing the scheduler because there is no scheduler bean");
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 LOG.error("Caught Exception while starting the scheduler", ex);
             }
         }

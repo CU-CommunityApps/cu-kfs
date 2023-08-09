@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,6 +49,7 @@ import org.kuali.kfs.datadictionary.LookupDictionary;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
@@ -90,10 +91,10 @@ public class LookupResource {
     private PermissionService permissionService;
     private PersistenceStructureService persistenceStructureService;
 
-    private HttpServletRequest servletRequest;
-    private BusinessObjectEntry businessObjectEntry;
+    private final HttpServletRequest servletRequest;
+    private final BusinessObjectEntry businessObjectEntry;
 
-    LookupResource(HttpServletRequest servletRequest, BusinessObjectEntry businessObjectEntry) {
+    LookupResource(final HttpServletRequest servletRequest, final BusinessObjectEntry businessObjectEntry) {
         this.servletRequest = servletRequest;
 
         if (businessObjectEntry == null) {
@@ -105,18 +106,18 @@ public class LookupResource {
 
     @GET
     public Response getLookup() {
-        Class classForType = businessObjectEntry.getBusinessObjectClass();
+        final Class classForType = businessObjectEntry.getBusinessObjectClass();
         if (!isAuthorizedForLookup(classForType)) {
-            Person user = getUserSessionFromRequest(this.servletRequest).getPerson();
-            AuthorizationException authorizationException = new AuthorizationException(user.getPrincipalName(),
+            final Person user = getUserSessionFromRequest(servletRequest).getPerson();
+            final AuthorizationException authorizationException = new AuthorizationException(user.getPrincipalName(),
                     "lookup", classForType.getName());
-            Response.ResponseBuilder responseBuilder = Response.status(Response.Status.FORBIDDEN);
+            final Response.ResponseBuilder responseBuilder = Response.status(Response.Status.FORBIDDEN);
             responseBuilder.entity(authorizationException);
             throw new ForbiddenException(responseBuilder.build());
         }
 
-        List<FormAttribute> lookupAttributes = getLookupAttributeForClass(classForType);
-        for (FormAttribute lookupAttribute : lookupAttributes) {
+        final List<FormAttribute> lookupAttributes = getLookupAttributeForClass(classForType);
+        for (final FormAttribute lookupAttribute : lookupAttributes) {
             setNestedLookupFields(lookupAttribute, classForType);
         }
 
@@ -124,7 +125,7 @@ public class LookupResource {
         if (StringUtils.isEmpty(title)) {
             title = businessObjectEntry.getObjectLabel() + " Lookup";
         }
-        SearchService searchService = getLookupDictionary().getSearchService(classForType);
+        final SearchService searchService = getLookupDictionary().getSearchService(classForType);
         if (searchService == null) {
             LOG.error(
                     "{} seems to be missing a SearchService! A lookup cannot be queried without a SearchService.",
@@ -138,24 +139,24 @@ public class LookupResource {
             create = getCreateBlock(classForType);
         }
 
-        LookupResponse.Results results = new LookupResponse.Results(
+        final LookupResponse.Results results = new LookupResponse.Results(
                 searchService.getSearchResultsAttributes(classForType),
                 getBusinessObjectDictionaryService().getLookupDefaultSortFieldNames(classForType));
-        LookupResponse lookupResponse = new LookupResponse(title, lookupAttributes, create, results);
+        final LookupResponse lookupResponse = new LookupResponse(title, lookupAttributes, create, results);
         return Response.ok(lookupResponse).build();
     }
 
     @GET
     @Path("values")
     public Response getLookupControlValues() {
-        Map<String, Object> controlValuesMap = buildLookupControlValuesMap(businessObjectEntry);
+        final Map<String, Object> controlValuesMap = buildLookupControlValuesMap(businessObjectEntry);
         return Response.ok(controlValuesMap).build();
     }
 
     @GET
     @Path("values/{attrDefnName}")
-    public Response getLookupControlValues(@PathParam("attrDefnName") String attrDefnName) {
-        Map<String, Object> controlValuesMap = buildLookupControlValuesMap(businessObjectEntry);
+    public Response getLookupControlValues(@PathParam("attrDefnName") final String attrDefnName) {
+        final Map<String, Object> controlValuesMap = buildLookupControlValuesMap(businessObjectEntry);
         Object value = controlValuesMap.get(attrDefnName);
         if (value == null) {
             if (attrDefnName != null && !doesAttrWithGivenNameExistForClass(businessObjectEntry, attrDefnName)) {
@@ -167,10 +168,10 @@ public class LookupResource {
         return Response.ok(value).build();
     }
 
-    protected void setNestedLookupFields(FormAttribute lookupAttribute, Class boClass) {
+    protected void setNestedLookupFields(final FormAttribute lookupAttribute, final Class boClass) {
         String attributeName = lookupAttribute.getName();
 
-        boolean disableLookup = lookupAttribute.getDisableLookup();
+        final boolean disableLookup = lookupAttribute.getDisableLookup();
 
         DataObjectRelationship relationship;
 
@@ -179,13 +180,13 @@ public class LookupResource {
                     attributeName, "", false);
 
             if (relationship == null) {
-                Class c = getPropertyType(businessObjectEntry, lookupAttribute.getName(), getPersistenceStructureService());
+                final Class c = getPropertyType(businessObjectEntry, lookupAttribute.getName(), getPersistenceStructureService());
                 if (c != null) {
                     if (lookupAttribute.getName().contains(".")) {
                         attributeName = StringUtils.substringBeforeLast(attributeName, ".");
                     }
 
-                    RelationshipDefinition ddReference = getBusinessObjectMetaDataService()
+                    final RelationshipDefinition ddReference = getBusinessObjectMetaDataService()
                             .getBusinessObjectRelationshipDefinition(boClass, attributeName);
                     relationship = getBusinessObjectMetaDataService().getBusinessObjectRelationship(ddReference,
                             null, boClass, attributeName, "", false);
@@ -194,17 +195,17 @@ public class LookupResource {
 
             if (relationship != null) {
                 lookupAttribute.setCanLookup(true);
-                String lookupClassName = relationship.getRelatedClass().getSimpleName();
+                final String lookupClassName = relationship.getRelatedClass().getSimpleName();
                 lookupAttribute.setLookupClassName(lookupClassName);
                 lookupAttribute.setLookupRelationshipMappings(relationship.getParentToChildReferences());
             }
         }
     }
 
-    private boolean doesAttrWithGivenNameExistForClass(BusinessObjectEntry businessObjectEntry, String attributeName) {
-        Class boClass = businessObjectEntry.getBusinessObjectClass();
-        List<FormAttribute> attributeDefinitions = getLookupAttributeForClass(boClass);
-        for (FormAttribute attributeDefn : attributeDefinitions) {
+    private boolean doesAttrWithGivenNameExistForClass(final BusinessObjectEntry businessObjectEntry, final String attributeName) {
+        final Class boClass = businessObjectEntry.getBusinessObjectClass();
+        final List<FormAttribute> attributeDefinitions = getLookupAttributeForClass(boClass);
+        for (final FormAttribute attributeDefn : attributeDefinitions) {
             if (attributeDefn.getName().equalsIgnoreCase(attributeName)) {
                 return true;
             }
@@ -212,27 +213,27 @@ public class LookupResource {
         return false;
     }
 
-    private Map<String, Object> buildLookupControlValuesMap(BusinessObjectEntry businessObjectEntry) {
-        Class classForType = businessObjectEntry.getBusinessObjectClass();
+    private Map<String, Object> buildLookupControlValuesMap(final BusinessObjectEntry businessObjectEntry) {
+        final Class classForType = businessObjectEntry.getBusinessObjectClass();
         if (!isAuthorizedForLookup(classForType)) {
             throw new ForbiddenException();
         }
 
-        Map<String, Object> valuesMap = new LinkedHashMap<>();
-        List<FormAttribute> attributes = getLookupAttributeForClass(classForType);
-        for (FormAttribute attribute: attributes) {
-            Control control = attribute.getControl();
+        final Map<String, Object> valuesMap = new LinkedHashMap<>();
+        final List<FormAttribute> attributes = getLookupAttributeForClass(classForType);
+        for (final FormAttribute attribute: attributes) {
+            final Control control = attribute.getControl();
             if (control == null) {
                 continue;
             }
 
-            String singleAttributeName = attribute.getName();
+            final String singleAttributeName = attribute.getName();
 
             if (control.getType() == Control.Type.TREE) {
                 // we have to do this bean resolution here b/c batch file (the only tree) is still a snowflake
                 // and the DDD doesn't do the bean lookup for us (mainly b/c of the typing); hope to get rid of the
                 // need for special VF type eventually
-                String valuesFinderName = control.getValuesFinderName();
+                final String valuesFinderName = control.getValuesFinderName();
                 if (StringUtils.isBlank(valuesFinderName)) {
                     LOG.warn(
                             "A tree control without ValuesFinder name is most likely a mistake. BOE: {} attribute: {}",
@@ -241,7 +242,7 @@ public class LookupResource {
                     );
                     continue;
                 }
-                HierarchicalControlValuesFinder valuesFinder = getDataDictionaryService()
+                final HierarchicalControlValuesFinder valuesFinder = getDataDictionaryService()
                         .getDDBean(HierarchicalControlValuesFinder.class, valuesFinderName);
                 if (valuesFinder == null) {
                     LOG.warn(
@@ -252,22 +253,22 @@ public class LookupResource {
                     );
                     continue;
                 }
-                List<HierarchicalData> values = valuesFinder.getHierarchicalControlValues();
+                final List<HierarchicalData> values = valuesFinder.getHierarchicalControlValues();
                 valuesMap.put(singleAttributeName, values);
             } else {
-                KeyValuesFinder valuesFinder = control.getValuesFinder();
+                final KeyValuesFinder valuesFinder = control.getValuesFinder();
                 if (valuesFinder == null) {
                     continue;
                 }
                 // CU Customization: keyValues list now comes from the helper method below.
-                List<KeyValue> keyValues = getKeyValuesForLookup(valuesFinder);
+                final List<KeyValue> keyValues = getKeyValuesForLookup(valuesFinder);
                 valuesMap.put(singleAttributeName, keyValues);
             }
         }
         return valuesMap;
     }
 
-    private LookupResponse.Create getCreateBlock(Class classForType) {
+    private LookupResponse.Create getCreateBlock(final Class classForType) {
         final var actionsProvider = businessObjectEntry.getActionsProvider();
         return new LookupResponse.Create(actionsProvider.getCreateUrl(classForType), "Create New");
     }
@@ -276,41 +277,41 @@ public class LookupResource {
      * CU Customization: Added this method and the one right below it,
      * to forcibly add a blank key-value entry if the values finder does not return one.
      */
-    private List<KeyValue> getKeyValuesForLookup(KeyValuesFinder valuesFinder) {
-        List<KeyValue> keyValues = valuesFinder.getKeyValues();
+    private List<KeyValue> getKeyValuesForLookup(final KeyValuesFinder valuesFinder) {
+        final List<KeyValue> keyValues = valuesFinder.getKeyValues();
         if (hasEntryForBlankKey(keyValues)) {
             return keyValues;
         } else {
-            KeyValue blankKeyValue = new ConcreteKeyValue(StringUtils.EMPTY, StringUtils.EMPTY);
+            final KeyValue blankKeyValue = new ConcreteKeyValue(StringUtils.EMPTY, StringUtils.EMPTY);
             return Stream.concat(Stream.of(blankKeyValue), keyValues.stream())
                     .collect(Collectors.toList());
         }
     }
 
-    private boolean hasEntryForBlankKey(List<KeyValue> keyValues) {
+    private boolean hasEntryForBlankKey(final List<KeyValue> keyValues) {
         return keyValues.stream()
                 .anyMatch(keyValue -> StringUtils.isBlank(keyValue.getKey()));
     }
 
-    private boolean shouldCreateNewUrlBeIncluded(Class<? extends BusinessObjectBase> classForType) {
-        BusinessObjectAdminService adminService = getBusinessObjectDictionaryService().getBusinessObjectAdminService(
+    private boolean shouldCreateNewUrlBeIncluded(final Class<? extends BusinessObjectBase> classForType) {
+        final BusinessObjectAdminService adminService = getBusinessObjectDictionaryService().getBusinessObjectAdminService(
                 classForType);
         if (adminService == null) {
             LOG.debug("{}doesn't have a BusinessObjectAdminService!", classForType::getSimpleName);
             return false;
         }
 
-        Person person = getUserSessionFromRequest(this.servletRequest).getPerson();
+        final Person person = getUserSessionFromRequest(servletRequest).getPerson();
         return adminService.allowsNew(classForType, person) && adminService.allowsCreate(classForType, person);
     }
 
     // todo move this to converter code
-    protected List<FormAttribute> getLookupAttributeForClass(Class classForType) {
-        List<FormAttribute> attributes = getLookupDictionary().getLookupAttributes(classForType);
+    protected List<FormAttribute> getLookupAttributeForClass(final Class classForType) {
+        final List<FormAttribute> attributes = getLookupDictionary().getLookupAttributes(classForType);
         attributes.forEach(attribute -> {
             final DefaultValueFinder defaultValueFinder = getDefaultValueFinderIfItExists(attribute);
             if (defaultValueFinder != null) {
-                String defaultValue = defaultValueFinder.getDefaultValue();
+                final String defaultValue = defaultValueFinder.getDefaultValue();
                 attribute.setDefaultValue(defaultValue);
             }
         });
@@ -322,7 +323,7 @@ public class LookupResource {
         return control == null ? null : control.getDefaultValueFinder();
     }
 
-    private boolean isAuthorizedForLookup(Class boClass) {
+    private boolean isAuthorizedForLookup(final Class boClass) {
         return getPermissionService().isAuthorizedByTemplate(getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.LOOK_UP_RECORDS,
                 getNamespaceAndComponentSimpleName(boClass), Collections.emptyMap());
@@ -340,7 +341,7 @@ public class LookupResource {
     }
 
     protected void setBusinessObjectDictionaryService(
-            BusinessObjectDictionaryService businessObjectDictionaryService) {
+            final BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
@@ -351,7 +352,7 @@ public class LookupResource {
         return businessObjectMetaDataService;
     }
 
-    protected void setBusinessObjectMetaDataService(BusinessObjectMetaDataService businessObjectMetaDataService) {
+    protected void setBusinessObjectMetaDataService(final BusinessObjectMetaDataService businessObjectMetaDataService) {
         this.businessObjectMetaDataService = businessObjectMetaDataService;
     }
 
@@ -362,7 +363,7 @@ public class LookupResource {
         return dataDictionaryService;
     }
 
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
     }
 
@@ -373,7 +374,7 @@ public class LookupResource {
         return lookupDictionary;
     }
 
-    protected void setLookupDictionary(LookupDictionary lookupDictionary) {
+    protected void setLookupDictionary(final LookupDictionary lookupDictionary) {
         this.lookupDictionary = lookupDictionary;
     }
 
@@ -384,7 +385,7 @@ public class LookupResource {
         return permissionService;
     }
 
-    protected void setPermissionService(PermissionService permissionService) {
+    protected void setPermissionService(final PermissionService permissionService) {
         this.permissionService = permissionService;
     }
 
@@ -395,7 +396,7 @@ public class LookupResource {
         return persistenceStructureService;
     }
 
-    protected void setPersistenceStructureService(PersistenceStructureService persistenceStructureService) {
+    protected void setPersistenceStructureService(final PersistenceStructureService persistenceStructureService) {
         this.persistenceStructureService = persistenceStructureService;
     }
 
