@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Date;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -27,6 +29,7 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForXml;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProcessingMode;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
@@ -67,6 +70,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected ISOFIPSConversionService isoFipsConversionService;
     protected ParameterService parameterService;
     protected WebServiceCredentialService webServiceCredentialService;
+    protected ConfigurationService configurationService;
 
     @Override
     public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
@@ -89,21 +93,16 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                     LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
                 }
                 Supplier supplier = new Supplier();
+                JaggaerVendorXmlCreateResultsDTO resultsDto = new JaggaerVendorXmlCreateResultsDTO(detail.getVendorNumber(), detail.isActiveIndicator());
+                supplier.setResultsDto(resultsDto);
+                
                 supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
                 supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
                 supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
                 supplier.setActive(JaggaerBuilder.buildActive(getDefaultSupplierActiveValue()));
                 supplier.setLegalStructure(buildJaggerLegalStructure(detail));
+                processWebsiteUrl(detail, supplier);
                 supplier.setAddressList(buildAddressList(detail));
-                
-                if (StringUtils.isNotBlank(detail.getVendorUrlAddress())) {
-                    if (isValidUrl(detail.getVendorUrlAddress(), detail.getVendorNumber())) {
-                        supplier.setWebSiteURL(JaggaerBuilder.buildJaggaerBasicValue(detail.getVendorUrlAddress()));
-                    } else {
-                        
-                    }
-                }
-                
                 suppliers.add(supplier);
             }
         }
@@ -149,6 +148,19 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         JaggaerLegalStructure legalStructure = JaggaerLegalStructure
                 .findJaggaerLegalStructureByKfsOwnershipCode(kfsOwnerShipCode);
         return JaggaerBuilder.buildJaggaerBasicValue(legalStructure.jaggaerLegalStructureName);
+    }
+    
+    protected void processWebsiteUrl(VendorDetail detail, Supplier supplier) {
+        if (StringUtils.isNotBlank(detail.getVendorUrlAddress())) {
+            if (isValidUrl(detail.getVendorUrlAddress(), detail.getVendorNumber())) {
+                supplier.setWebSiteURL(JaggaerBuilder.buildJaggaerBasicValue(detail.getVendorUrlAddress()));
+            } else {
+                String websiteErrorMessage  = MessageFormat.format(
+                        configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_WEBSITE_ERROR),
+                        detail.getVendorNumber(), detail.getVendorUrlAddress());
+                supplier.getResultsDto().getNotes().add(websiteErrorMessage);
+            }
+        }
     }
     
     protected boolean isValidUrl(String url,  String vendorNumber) {
@@ -305,6 +317,10 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     public void setWebServiceCredentialService(WebServiceCredentialService webServiceCredentialService) {
         this.webServiceCredentialService = webServiceCredentialService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
     }
 
 }

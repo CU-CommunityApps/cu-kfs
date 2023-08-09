@@ -44,5 +44,6 @@ public class CUPurapKeyConstants {
     
     public static final String JAGGAER_UPLOAD_XML_ERROR_MESSAGE = "jaggaer.upload.xml.error.message";
     public static final String JAGGAER_UPLOAD_WEBSERVICE_ERROR = "jaggaer.upload.webservice.error";
+    public static final String JAGGAER_XML_WEBSITE_ERROR = "jaggaer.xml.website.error";
 
 }
