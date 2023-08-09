@@ -32,6 +32,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProce
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
+import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerActiveType;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
@@ -87,24 +88,22 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         List<VendorDetail> vendorDetails = jaggaerUploadDao.findVendors(processingMode, processingDate);
         int supplierCount = 0;
         for (VendorDetail detail : vendorDetails) {
-            if (detail.isActiveIndicator()) {
-                supplierCount++;
-                if (supplierCount % 100 == 0) {
-                    LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
-                }
-                Supplier supplier = new Supplier();
-                JaggaerVendorXmlCreateResultsDTO resultsDto = new JaggaerVendorXmlCreateResultsDTO(detail.getVendorNumber(), detail.isActiveIndicator());
-                supplier.setResultsDto(resultsDto);
-                
-                supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
-                supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
-                supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
-                supplier.setActive(JaggaerBuilder.buildActive(getDefaultSupplierActiveValue()));
-                supplier.setLegalStructure(buildJaggerLegalStructure(detail));
-                processWebsiteUrl(detail, supplier);
-                supplier.setAddressList(buildAddressList(detail));
-                suppliers.add(supplier);
+            supplierCount++;
+            if (supplierCount % 100 == 0) {
+                LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
             }
+            Supplier supplier = new Supplier();
+            JaggaerVendorXmlCreateResultsDTO resultsDto = new JaggaerVendorXmlCreateResultsDTO(detail.getVendorNumber(), detail.isActiveIndicator());
+            supplier.setResultsDto(resultsDto);
+            
+            supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
+            supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
+            supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
+            supplier.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator(), JaggaerActiveType.SUPPLIER));
+            supplier.setLegalStructure(buildJaggerLegalStructure(detail));
+            processWebsiteUrl(detail, supplier);
+            supplier.setAddressList(buildAddressList(detail));
+            suppliers.add(supplier);
         }
 
         return suppliers;
@@ -137,10 +136,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                     + countryCode, runtimeException);
         }
         return isoCountry;
-    }
-
-    private String getDefaultSupplierActiveValue() {
-        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ACTIVE_VALUE);
     }
 
     private JaggaerBasicValue buildJaggerLegalStructure(VendorDetail detail) {
@@ -177,29 +172,23 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         AddressList addressList = new AddressList();
 
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
-            if (vendorAddress.isActive()) {
-                Address jaggaerAddress = new Address();
-                jaggaerAddress.setErpNumber(JaggaerBuilder
-                        .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
-                jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
-                        vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
-                jaggaerAddress.setActive(JaggaerBuilder.buildActive(getDefaultSupplierAddressActiveValue()));
-                jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
-                jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
-                jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));
-                jaggaerAddress.setCity(JaggaerBuilder.buildCity(vendorAddress.getVendorCityName()));
-                jaggaerAddress.setState(buildState(vendorAddress));
-                jaggaerAddress.setPostalCode(JaggaerBuilder.buildPostalCode(vendorAddress.getVendorZipCode()));
-                jaggaerAddress.setNotes(buildAddressNote(vendorAddress));
+            Address jaggaerAddress = new Address();
+            jaggaerAddress.setErpNumber(JaggaerBuilder
+                    .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
+            jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
+                    vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
+            jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerActiveType.ADDRESS));
+            jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
+            jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
+            jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));
+            jaggaerAddress.setCity(JaggaerBuilder.buildCity(vendorAddress.getVendorCityName()));
+            jaggaerAddress.setState(buildState(vendorAddress));
+            jaggaerAddress.setPostalCode(JaggaerBuilder.buildPostalCode(vendorAddress.getVendorZipCode()));
+            jaggaerAddress.setNotes(buildAddressNote(vendorAddress));
 
-                addressList.getAddresses().add(jaggaerAddress);
-            }
+            addressList.getAddresses().add(jaggaerAddress);
         }
         return addressList;
-    }
-
-    private String getDefaultSupplierAddressActiveValue() {
-        return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_ACTIVE_VALUE);
     }
 
     private IsoCountryCode buildIsoCountry(String fipsCountryCode) {

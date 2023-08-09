@@ -145,10 +145,6 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     private ParameterService buildMockParameterService() {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ACTIVE_VALUE)).thenReturn("Yes");
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_ACTIVE_VALUE)).thenReturn("Yes");
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_NOTE_TEXT)).thenReturn("The KFS vendor addres type is");
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);

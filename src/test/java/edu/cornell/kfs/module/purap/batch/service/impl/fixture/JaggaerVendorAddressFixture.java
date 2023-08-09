@@ -9,7 +9,7 @@ public enum JaggaerVendorAddressFixture {
     
     ITHACA(true, 101, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "US", "120 Maple Ave", "Room 666", "Ithaca", "NY", StringUtils.EMPTY, "14850"),
     PLAYACAR(true, 102, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "MX", "AV Xaman-Ha Mza 9 Y", "10 Lote 1 Fase II,", "Playacar", StringUtils.EMPTY, "QR", "77710"),
-    INACTIVE(false, 103, StringUtils.EMPTY, StringUtils.EMPTY,  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+    INACTIVE(false, 103, StringUtils.EMPTY, "US",  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     
     public final boolean active;
     public final Integer addressId;

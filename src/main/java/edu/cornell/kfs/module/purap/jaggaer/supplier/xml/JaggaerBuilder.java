@@ -1,5 +1,8 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
+import edu.cornell.kfs.module.purap.JaggaerConstants;
+import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerActiveType;
+
 public class JaggaerBuilder {
     
     public static ErpNumber buildErpNumber(String value) {
@@ -50,9 +53,20 @@ public class JaggaerBuilder {
         return buildActive(activeString, null);
     }
     
+    public static Active buildActive(boolean isActive, JaggaerActiveType activeType) {
+        return buildActive(isActive, null, activeType);
+    }
+    
     public static Active buildActive(String activeString, String isChanged) {
         Active active = new Active();
         active.setValue(activeString);
+        active.setIsChanged(isChanged);
+        return active;
+    }
+    
+    public static Active buildActive(boolean isActive, String isChanged, JaggaerActiveType activeType) {
+        Active active = new Active();
+        active.setValue(isActive ? activeType.true_string : activeType.false_string);
         active.setIsChanged(isChanged);
         return active;
     }

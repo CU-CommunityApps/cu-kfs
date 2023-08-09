@@ -11,7 +11,7 @@ import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 public enum JaggaerVendorDetailFixture {
     ACME_ITHACA (true, 1234, 0, "Acme primary", "US", JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "http://www.google.com",
             buildAddressList(JaggaerVendorAddressFixture.ITHACA, JaggaerVendorAddressFixture.INACTIVE),
-            buildStringArray(JaggaerVendorAddressFixture.ITHACA.addressId.toString())),
+            buildStringArray(JaggaerVendorAddressFixture.ITHACA.addressId.toString(), JaggaerVendorAddressFixture.INACTIVE.addressId.toString())),
     ACME_TRANSNATIONAL (true, 1234, 1, "Acme Secondary", "US", JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "https://www.yahoo.com",
             buildAddressList(JaggaerVendorAddressFixture.ITHACA, JaggaerVendorAddressFixture.PLAYACAR),
             buildStringArray(JaggaerVendorAddressFixture.ITHACA.addressId.toString(), JaggaerVendorAddressFixture.PLAYACAR.addressId.toString())),

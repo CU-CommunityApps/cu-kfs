@@ -18,4 +18,17 @@ public class JaggaerConstants {
     public static final String FALSE = "false";
     public static final String XML_VERSION = "1.0";
     
+    public enum JaggaerActiveType {
+        SUPPLIER(YES, NO),
+        ADDRESS(TRUE, FALSE);
+        
+        public final String true_string;
+        public final String false_string;
+        
+        private JaggaerActiveType(String true_string, String false_string) {
+            this.true_string = true_string;
+            this.false_string = false_string;
+        }
+    }
+    
 }
