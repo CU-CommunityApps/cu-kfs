@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -314,7 +314,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
      */
     public String getPaymentStatusCodeWithHistory() {
         if (paymentStatus == null) {
-            this.refreshReferenceObject(PdpPropertyConstants.PAYMENT_STATUS);
+            refreshReferenceObject(PdpPropertyConstants.PAYMENT_STATUS);
         }
 
         // check for canceled and reissued
