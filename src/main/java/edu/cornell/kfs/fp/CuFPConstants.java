@@ -125,4 +125,6 @@ public class CuFPConstants {
 
     public static final String IS_NOT_TRIP_DOC = "0";
     public static final String IS_TRIP_DOC = "1";
+
+    public static final String DV_CHECK_STUB_FIELD_LABEL = "Check Stub Text";
 }

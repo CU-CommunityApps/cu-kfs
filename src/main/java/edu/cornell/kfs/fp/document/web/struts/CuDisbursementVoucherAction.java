@@ -1,7 +1,5 @@
 package edu.cornell.kfs.fp.document.web.struts;
 
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +20,11 @@ import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherAction;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
+import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.rules.rule.event.SaveDocumentEvent;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -35,19 +36,27 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.util.ConfidentialAttachmentUtil;
 
 public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
-	private static final Logger LOG = LogManager.getLogger();
-	
+    private static final Logger LOG = LogManager.getLogger();
+
+    private CuCheckStubService cuCheckStubService;
+
+    @Override
+    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+        super.loadDocument(kualiDocumentFormBase);
+        getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
+                kualiDocumentFormBase.getDocument());
+    }
+
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -337,6 +346,13 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
         }
         
         return forward;
+    }
+
+    private CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
     }
 
 }

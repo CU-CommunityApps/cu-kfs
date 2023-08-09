@@ -37,11 +37,11 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -53,6 +53,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     protected PaymentRequestWireTransfer preqWireTransfer;
     
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private static CuCheckStubService cuCheckStubService;
     
     public CuPaymentRequestDocument() {
 		super();
@@ -172,6 +173,10 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         	// KFSPTS-1891
         	if (CollectionUtils.isEmpty(generalLedgerPendingEntries)) {
         		refreshReferenceObject("generalLedgerPendingEntries");
+        	}
+        	
+        	if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
+        		getCuCheckStubService().addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
         	}
         }
 
@@ -298,4 +303,11 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 	public void setPreqWireTransfer(PaymentRequestWireTransfer preqWireTransfer) {
 		this.preqWireTransfer = preqWireTransfer;
 	}
+
+    protected static CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
 }

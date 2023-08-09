@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import edu.cornell.kfs.fp.CuFPConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
-import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
+import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.FPParameterConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementPayee;
@@ -20,6 +19,11 @@ import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService;
 import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
+import org.kuali.kfs.kew.actiontaken.ActionTaken;
+import org.kuali.kfs.kew.engine.RouteContext;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
@@ -36,29 +40,24 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.COMPONENT;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants.NAMESPACE;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorType;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluator;
-import org.kuali.kfs.core.api.parameter.ParameterEvaluatorService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.actiontaken.ActionTaken;
-import org.kuali.kfs.kew.engine.RouteContext;
-import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
 
+import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 
@@ -94,6 +93,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     private static DisbursementVoucherTaxService disbursementVoucherTaxService;
     private static DocumentHelperService documentHelperService;
     private static CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService;
+    private static CuCheckStubService cuCheckStubService;
 
     public CuDisbursementVoucherDocument() {
         super();
@@ -830,6 +830,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         return StringUtils.equals(getTripAssociationStatusCode(), CuFPConstants.IS_TRIP_DOC);
     }
 
+    @Override
+    public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
+        if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+            if (getCuCheckStubService().doesCheckStubNeedTruncatingForIso20022(this)) {
+                getCuCheckStubService().addNoteToDocumentRegardingCheckStubIso20022MaxLength(this);
+            }
+        }
+        super.doRouteStatusChange(statusChangeEvent);
+    }
+
     protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService() {
         return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
     }
@@ -878,6 +888,13 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     public static void setCuDisbursementVoucherDefaultDueDateService(CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService) {
         CuDisbursementVoucherDocument.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
+    }
+
+    public static CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
     }
 
 }

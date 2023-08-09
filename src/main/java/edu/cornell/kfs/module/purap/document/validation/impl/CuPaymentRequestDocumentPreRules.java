@@ -3,26 +3,29 @@ package edu.cornell.kfs.module.purap.document.validation.impl;
 import java.text.MessageFormat;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.krad.document.Document;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreRules {
-	
+
+    private CuCheckStubService cuCheckStubService;
+
 	@Override
 	public boolean doPrompts(Document document) {
 		boolean preRulesOK = true;
 		PaymentRequestDocument preq = (PaymentRequestDocument) document;
 		
 		preRulesOK &= checkWireTransferTabState(preq);
+		preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 		preRulesOK &= super.doPrompts(document);
 		return preRulesOK;
 	}
@@ -85,5 +88,12 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 	        preqWireTransfer.setPreqAdditionalWireText(null);
 	        preqWireTransfer.setPreqPayeeAccountName(null);
 	    }
+
+    public CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
+    }
 
 }

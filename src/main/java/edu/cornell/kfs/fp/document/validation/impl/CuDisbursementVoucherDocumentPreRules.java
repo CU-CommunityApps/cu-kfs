@@ -1,24 +1,26 @@
 package edu.cornell.kfs.fp.document.validation.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherDocumentPreRules;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  * Checks warnings and prompt conditions for dv document.
  */
 public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDocumentPreRules {
+
+    private CuCheckStubService cuCheckStubService;
 
     /**
      * Executes pre-rules for Disbursement Voucher Document
@@ -30,6 +32,8 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     @Override
     public boolean doPrompts(Document document) {
         boolean preRulesOK = super.doPrompts(document);
+        
+        preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 
         setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(document);
 
@@ -87,6 +91,13 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         }
 
         return tabStatesOK;
+    }
+
+    public CuCheckStubService getCuCheckStubService() {
+        if (cuCheckStubService == null) {
+            cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);
+        }
+        return cuCheckStubService;
     }
 
 }
