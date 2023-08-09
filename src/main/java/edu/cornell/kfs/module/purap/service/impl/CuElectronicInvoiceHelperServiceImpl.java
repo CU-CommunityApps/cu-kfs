@@ -1173,7 +1173,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         documentService.saveDocument(eInvoiceRejectDocument);
 
         final String noteText = "Invoice file";
-        attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
+        attachInvoiceXmltoDocument(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
 
         eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
 
@@ -1260,8 +1260,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         final String noteText = "Invoice file";
 //        if (invoiceFile.length() > 0) {
-        	// empty file will casuse attachment creation exception.  Hence, job will be stopped
-        attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument,invoiceFile,noteText);
+        	// empty file will cause attachment creation exception.  Hence, job will be stopped
+        attachInvoiceXmltoDocument(eInvoiceRejectDocument,invoiceFile,noteText);
 //        }
 
         eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
@@ -1298,15 +1298,16 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected void attachInvoiceXMLWithRejectDoc(
-            final ElectronicInvoiceRejectDocument eInvoiceRejectDocument, 
-            final File attachmentFile, 
-            final String noteText) {
+    protected void attachInvoiceXmltoDocument(
+            final org.kuali.kfs.krad.document.Document document,
+            final File attachmentFile,
+            final String noteText
+       ) {
         final Note note;
         try {
-            note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
+            note = documentService.createNoteFromDocument(document, noteText);
             // KFSCNTRB-1369: Can't add note without remoteObjectIdentifier
-            note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getNoteTarget().getObjectId());
+            note.setRemoteObjectIdentifier(document.getNoteTarget().getObjectId());
         } catch (final Exception e1) {
             throw new RuntimeException("Unable to create note from document: ", e1);
         }
@@ -1314,7 +1315,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         Attachment attachment = null;
         try (BufferedInputStream fileStream = new BufferedInputStream(new FileInputStream(attachmentFile))) {
             final String attachmentType = null;
-            attachment = attachmentService.createAttachment(eInvoiceRejectDocument.getNoteTarget(),
+            attachment = attachmentService.createAttachment(document.getNoteTarget(),
                     attachmentFile.getName(), INVOICE_FILE_MIME_TYPE, (int) attachmentFile.length(), fileStream,
                     attachmentType);
         } catch (final FileNotFoundException e) {

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -132,8 +132,8 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
 
     private static final Logger LOG = LogManager.getLogger();
 
-    protected final String UNKNOWN_DUNS_IDENTIFIER = "Unknown";
-    protected final String INVOICE_FILE_MIME_TYPE = "text/xml";
+    protected static final String UNKNOWN_DUNS_IDENTIFIER = "Unknown";
+    protected static final String INVOICE_FILE_MIME_TYPE = "text/xml";
 
     private StringBuffer emailTextErrorList;
 
@@ -447,8 +447,10 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
      */
     @Transactional
     protected boolean processElectronicInvoice(
-            final ElectronicInvoiceLoad eInvoiceLoad, final File invoiceFile,
-            final byte[] xmlAsBytes) {
+            final ElectronicInvoiceLoad eInvoiceLoad,
+            final File invoiceFile,
+            final byte[] xmlAsBytes
+    ) {
         final ElectronicInvoice eInvoice;
         try {
             eInvoice = loadElectronicInvoice(xmlAsBytes);
@@ -473,7 +475,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         final Map itemTypeMappings = getItemTypeMappings(eInvoice.getVendorHeaderID(), eInvoice.getVendorDetailID());
         final Map kualiItemTypes = getKualiItemTypes();
 
-        if (itemTypeMappings != null && itemTypeMappings.size() > 0) {
+        if (itemTypeMappings != null && !itemTypeMappings.isEmpty()) {
             LOG.info("Item mappings found");
         }
 
@@ -484,7 +486,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
             PurchaseOrderDocument po = null;
 
             if (NumberUtils.isDigits(StringUtils.defaultString(poID))) {
-                po = purchaseOrderService.getCurrentPurchaseOrder(new Integer(poID));
+                po = purchaseOrderService.getCurrentPurchaseOrder(Integer.valueOf(poID));
                 if (po != null) {
                     order.setInvoicePurchaseOrderID(poID);
                     order.setPurchaseOrderID(po.getPurapDocumentIdentifier());
@@ -494,8 +496,13 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
                 }
             }
 
-            final ElectronicInvoiceOrderHolder orderHolder = new ElectronicInvoiceOrderHolder(eInvoice, order, po,
-                    itemTypeMappings, kualiItemTypes, validateHeader);
+            final ElectronicInvoiceOrderHolder orderHolder = new ElectronicInvoiceOrderHolder(
+                    eInvoice,
+                    order,
+                    po,
+                    itemTypeMappings,
+                    kualiItemTypes,
+                    validateHeader);
             matchingService.doMatchingProcess(orderHolder);
 
             if (orderHolder.isInvoiceRejected()) {
@@ -506,35 +513,36 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
                             orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
                 }
 
-                final String dunsNumber = StringUtils.isEmpty(eInvoice.getDunsNumber()) ? UNKNOWN_DUNS_IDENTIFIER :
-                    eInvoice.getDunsNumber();
+                final String dunsNumber = StringUtils.isEmpty(eInvoice.getDunsNumber())
+                        ? UNKNOWN_DUNS_IDENTIFIER
+                        : eInvoice.getDunsNumber();
 
                 final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, dunsNumber);
                 loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(), eInvoice);
                 eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
             } else {
-                final PaymentRequestDocument preqDoc = createPaymentRequest(orderHolder);
+                final PaymentRequestDocument preqDoc = createPaymentRequest(orderHolder, invoiceFile);
 
                 if (orderHolder.isInvoiceRejected()) {
                     // This is required. If there is anything in the error map, then it's not possible to route the
                     // doc since an error is being thrown if errorMap is not empty before routing the doc.
                     GlobalVariables.getMessageMap().clearErrorMessages();
 
-                    final ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order,
-                            eInvoiceLoad);
+                    final ElectronicInvoiceRejectDocument rejectDocument =
+                            createRejectDocument(eInvoice, order, eInvoiceLoad);
 
                     if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null) {
                         rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(
                                 orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
                     }
 
-                    final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad,
-                            eInvoice.getDunsNumber());
+                    final ElectronicInvoiceLoadSummary loadSummary =
+                            getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
                     loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(), eInvoice);
                     eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
                 } else {
-                    final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad,
-                            eInvoice.getDunsNumber());
+                    final ElectronicInvoiceLoadSummary loadSummary =
+                            getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
                     loadSummary.addSuccessfulInvoiceOrder(preqDoc.getTotalDollarAmount(), eInvoice);
                     eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
                 }
@@ -731,22 +739,23 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         documentService.saveDocument(eInvoiceRejectDocument);
 
         final String noteText = "Invoice file";
-        attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, invoiceFile, noteText);
+        attachInvoiceXmltoDocument(eInvoiceRejectDocument, invoiceFile, noteText);
 
         eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
 
         LOG.info("Complete failure document has been created (DocNo:{})", eInvoiceRejectDocument::getDocumentNumber);
     }
 
-    protected void attachInvoiceXMLWithRejectDoc(
-            final ElectronicInvoiceRejectDocument eInvoiceRejectDocument,
+    // CU customization to change method access from private to protected
+    protected void attachInvoiceXmltoDocument(
+            final org.kuali.kfs.krad.document.Document document,
             final File attachmentFile,
             final String noteText
     ) {
         final Note note;
         try {
-            note = documentService.createNoteFromDocument(eInvoiceRejectDocument, noteText);
-            note.setRemoteObjectIdentifier(eInvoiceRejectDocument.getDocumentHeader().getObjectId());
+            note = documentService.createNoteFromDocument(document, noteText);
+            note.setRemoteObjectIdentifier(document.getDocumentHeader().getObjectId());
         } catch (final Exception e1) {
             throw new RuntimeException("Unable to create note from document: ", e1);
         }
@@ -754,7 +763,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         Attachment attachment = null;
         try (BufferedInputStream fileStream = new BufferedInputStream(new FileInputStream(attachmentFile))) {
             final String attachmentType = null;
-            attachment = attachmentService.createAttachment(eInvoiceRejectDocument.getNoteTarget(),
+            attachment = attachmentService.createAttachment(document.getNoteTarget(),
                     attachmentFile.getName(), INVOICE_FILE_MIME_TYPE, (int) attachmentFile.length(), fileStream,
                     attachmentType);
         } catch (final FileNotFoundException e) {
@@ -793,7 +802,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         documentService.saveDocument(eInvoiceRejectDocument);
 
         final String noteText = "Invoice file";
-        attachInvoiceXMLWithRejectDoc(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
+        attachInvoiceXmltoDocument(eInvoiceRejectDocument, getInvoiceFile(eInvoice.getFileName()), noteText);
 
         eInvoiceLoad.addInvoiceReject(eInvoiceRejectDocument);
 
@@ -1068,7 +1077,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
 
     @Override
     public boolean createPaymentRequest(final ElectronicInvoiceRejectDocument rejectDocument) {
-        if (rejectDocument.getInvoiceRejectReasons().size() > 0) {
+        if (!rejectDocument.getInvoiceRejectReasons().isEmpty()) {
             throw new RuntimeException("Not possible to create payment request since the reject document contains " +
                     rejectDocument.getInvoiceRejectReasons().size() + " rejects");
         }
@@ -1098,9 +1107,32 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
      * condition is encountered
      */
     protected PaymentRequestDocument createPaymentRequest(final ElectronicInvoiceOrderHolder orderHolder) {
+        return createPaymentRequest(orderHolder, null);
+    }
+
+    /**
+     * Initializes a {@link PaymentRequestDocument} and then routes it.
+     *
+     * @param orderHolder  the source data for the new document
+     * @param invoiceFile  the XML file which generated the payment request
+     * @return the new payment request or null if the invoice is rejected or the routing fails or another error
+     * condition is encountered
+     */
+    protected PaymentRequestDocument createPaymentRequest(
+            final ElectronicInvoiceOrderHolder orderHolder,
+            final File invoiceFile
+    ) {
         final PaymentRequestDocument preqDoc = initializePaymentRequestDocument(orderHolder);
 
         if (preqDoc != null) {
+            documentService.saveDocument(preqDoc);
+
+            if (invoiceFile != null) {
+                LOG.debug("************************************  attaching doc without save");
+                attachInvoiceXmltoDocument(preqDoc, invoiceFile, "original eInvoice xml");
+                LOG.debug("************************************  done attaching doc without save");
+            }
+
             if (!routeCreatedPaymentRequest(orderHolder, preqDoc)) {
                 return null;
             }
@@ -1116,7 +1148,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
      * @return a populated {@link PaymentRequestDocument} or null if the invoice is rejected or other errors are
      * encountered when initializing the document
      */
-    protected PaymentRequestDocument initializePaymentRequestDocument(ElectronicInvoiceOrderHolder orderHolder) {
+    protected PaymentRequestDocument initializePaymentRequestDocument(final ElectronicInvoiceOrderHolder orderHolder) {
         LOG.info("Creating Payment Request document");
 
         KNSGlobalVariables.getMessageList().clear();
@@ -1743,7 +1775,7 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         for (final Object file : filesToMove.keySet()) {
             final File fileToMove = (File) file;
 
-            final boolean success = this.moveFile(fileToMove, (String) filesToMove.get(fileToMove));
+            final boolean success = moveFile(fileToMove, (String) filesToMove.get(fileToMove));
             if (!success) {
                 final String errorMessage = "File with name '" + fileToMove.getName() + "' could not be moved";
                 throw new PurError(errorMessage);
