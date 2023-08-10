@@ -1,15 +1,18 @@
 package edu.cornell.kfs.module.purap.batch.service.impl;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -61,6 +64,8 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
     protected static final DateTimeFormatter DATE_FORMATTER_FOR_FILE_NAME = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withLocale(Locale.US);
+    
+    private Pattern numberPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     private String jaggaerXmlDirectory;
 
@@ -159,13 +164,27 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     }
     
     protected boolean isValidUrl(String url,  String vendorNumber) {
-        try {
-            new URL(url).toURI();
-            return true;
-        } catch (MalformedURLException | URISyntaxException e) {
-            LOG.error("isValidUrl, vendor number '{}' has an invalid URL value of '{}'", vendorNumber, url);
-            return false;
+        LOG.debug("isValidUrl, entering with url '{}' and vendor number '{}'", url, vendorNumber);
+        if (StringUtils.isNotBlank(url) && !numberPattern.matcher(url).matches()) {
+            try {
+                new URL(url).toURI();
+                return true;
+            } catch (URISyntaxException | MalformedURLException e) {
+                LOG.debug("isValidUrl, failed validation by java.net.URI for vendor {} with URL of {}", vendorNumber, url);
+            }
+            
+            try {
+                InetAddress address = InetAddress.getByName(url);
+                LOG.debug("isValidUrl, for url {} the host address is {}", url, address.getHostAddress());
+                if (StringUtils.isNotBlank(address.getHostAddress())) {
+                    return true;
+                }
+            } catch (UnknownHostException e) {
+                LOG.debug("isValidUrl, failed validation by java.net.InetAddress for vendor {} with URL of {}", vendorNumber, url);
+            }
         }
+        LOG.error("isValidUrl, vendor number '{}' has an invalid URL of '{}'", vendorNumber, url);
+        return false;
     }
 
     private AddressList buildAddressList(VendorDetail detail) {
