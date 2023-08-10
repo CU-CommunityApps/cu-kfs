@@ -50,6 +50,7 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.State;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessageItem;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.exception.ManyFIPStoISOMappingException;
 import edu.cornell.kfs.sys.exception.NoFIPStoISOMappingException;
@@ -98,8 +99,8 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
             }
             Supplier supplier = new Supplier();
-            JaggaerVendorXmlCreateResultsDTO resultsDto = new JaggaerVendorXmlCreateResultsDTO(detail.getVendorNumber(), detail.isActiveIndicator());
-            supplier.setResultsDto(resultsDto);
+            JaggaerSupplierXmlCreationDTO supplierDto = new JaggaerSupplierXmlCreationDTO(detail.getVendorNumber(), detail.isActiveIndicator());
+            supplier.setSupplierCreationDto(supplierDto);
             
             supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
             supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
@@ -158,7 +159,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 String websiteErrorMessage  = MessageFormat.format(
                         configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_WEBSITE_ERROR),
                         detail.getVendorNumber(), detail.getVendorUrlAddress());
-                supplier.getResultsDto().getNotes().add(websiteErrorMessage);
+                supplier.getSupplierCreationDto().getNotes().add(websiteErrorMessage);
             }
         }
     }
@@ -272,10 +273,13 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     @Override
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages) {
+        List<JaggaerUploadSupplierXmlCreationDto> xmlFileDtos = new ArrayList<JaggaerUploadSupplierXmlCreationDto>();
         for (SupplierSyncMessage message : messages) {
             String outputFileName = jaggaerXmlDirectory + findOutputFileNameStarter()
                     + DATE_FORMATTER_FOR_FILE_NAME.print(dateTimeService.getCurrentDate().getTime())
                     + CUKFSConstants.XML_FILE_EXTENSION;
+            xmlFileDtos.add(buildJaggaerUploadSupplierXmlCreationDto(message,outputFileName));
+            
             try {
                 LOG.info("generateXMLForSyncMessages, created XML file {}", outputFileName);
                 cuMarshalService.marshalObjectToXMLFragment(message, outputFileName);
@@ -285,10 +289,39 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 throw new RuntimeException(e);
             }
         }
+        generateResultsReport(xmlFileDtos);
     }
-    
+
     private String findOutputFileNameStarter() {
         return getParameterValueString(CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_OUTPUT_FILE_NAME_STARTER);
+    }
+    
+    private JaggaerUploadSupplierXmlCreationDto buildJaggaerUploadSupplierXmlCreationDto(SupplierSyncMessage message, String outputFileName) {
+        JaggaerUploadSupplierXmlCreationDto xmlFileDto = new JaggaerUploadSupplierXmlCreationDto();
+        xmlFileDto.setXmlFileName(outputFileName);
+        
+        for (SupplierSyncMessageItem item : message.getSupplierSyncMessageItems()) {
+            SupplierRequestMessage requestMessage = (SupplierRequestMessage) item;
+            for (Supplier supplier : requestMessage.getSuppliers()) {
+                JaggaerSupplierXmlCreationDTO supplierDto = supplier.getSupplierCreationDto();
+                if (supplierDto.isActive()) {
+                    xmlFileDto.getActiveSuppliers().add(supplierDto);
+                } else {
+                    xmlFileDto.getInactiveSuppliers().add(supplierDto);
+                }
+            }
+        }
+        return xmlFileDto;
+    }
+    
+    private void generateResultsReport(List<JaggaerUploadSupplierXmlCreationDto> xmlFileDtos) {
+        /*
+         * A full report will be implemented on Jira KFSPTS-29084. Until then, this
+         * will produce a nice summary at the bottom of the log file
+         */
+        for (JaggaerUploadSupplierXmlCreationDto dto : xmlFileDtos) {
+            LOG.info("generateResultsReport, results: {}", dto.toString());
+        }
     }
     
     protected String getParameterValueString(String parameterName) {

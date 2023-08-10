@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import edu.cornell.kfs.module.purap.batch.service.impl.JaggaerVendorXmlCreateResultsDTO;
+import edu.cornell.kfs.module.purap.batch.service.impl.JaggaerSupplierXmlCreationDTO;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -146,7 +146,7 @@ public class Supplier {
     @XmlElement(name = "EnablePaymentProvisioning")
     private JaggaerBasicValue enablePaymentProvisioning;
     
-    private transient JaggaerVendorXmlCreateResultsDTO resultsDto;
+    private transient JaggaerSupplierXmlCreationDTO supplierCreationDto;
 
     public String getIsChanged() {
         return isChanged;
@@ -613,12 +613,12 @@ public class Supplier {
         this.enablePaymentProvisioning = enablePaymentProvisioning;
     }
 
-    public JaggaerVendorXmlCreateResultsDTO getResultsDto() {
-        return resultsDto;
+    public JaggaerSupplierXmlCreationDTO getSupplierCreationDto() {
+        return supplierCreationDto;
     }
 
-    public void setResultsDto(JaggaerVendorXmlCreateResultsDTO resultsDto) {
-        this.resultsDto = resultsDto;
+    public void setSupplierCreationDto(JaggaerSupplierXmlCreationDTO supplierCreationDto) {
+        this.supplierCreationDto = supplierCreationDto;
     }
 
 }

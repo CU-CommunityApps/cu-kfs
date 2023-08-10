@@ -6,13 +6,13 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class JaggaerVendorXmlCreateResultsDTO {
+public class JaggaerSupplierXmlCreationDTO {
     
     private String vendorNumber;
     private boolean isActive;
     private List<String> notes;
     
-    public JaggaerVendorXmlCreateResultsDTO(String vendorNumber, boolean isActive) {
+    public JaggaerSupplierXmlCreationDTO(String vendorNumber, boolean isActive) {
         this.vendorNumber = vendorNumber;
         this.isActive = isActive;
         notes = new ArrayList<String>();
