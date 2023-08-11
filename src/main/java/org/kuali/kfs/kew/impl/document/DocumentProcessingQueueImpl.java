@@ -27,6 +27,7 @@ import org.kuali.kfs.kew.engine.OrchestrationConfig;
 import org.kuali.kfs.kew.engine.WorkflowEngineFactory;
 import org.kuali.kfs.kew.engine.node.service.RouteNodeService;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
+import org.kuali.kfs.ksb.util.KSBConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,12 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
     private DocumentAttributeIndexingQueue documentAttributeIndexingQueue;
     private RouteHeaderService routeHeaderService;
     private RouteNodeService routeNodeService;
+    /*
+     * CU Customization: Added a placeholder for the KSB "message.delivery" config property.
+     * The DB transaction workaround should NOT be used when asynchronous services have been configured
+     * to run synchronously instead.
+     */
+    private String ksbMessageDeliveryMode;
 
     private final DocumentProcessingHelper helper;
 
@@ -73,11 +80,19 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
             options = DocumentProcessingOptions.createDefault();
         }
         /*
-         * CU Customization: Moved the handleNotYetRoutedDocument() document to a different method,
+         * CU Customization: Moved the handleNotYetRoutedDocument() check to a different method,
          * and added invocation of it via the bean version of this service for transactional reasons.
+         * (However, the new method will instead be invoked directly when async services are actually
+         * running in synchronous mode, since such a setup causes the document's action/operation and
+         * workflow engine processing to occur in the same transaction.)
          */
-        final boolean isRouted = getDocumentProcessingQueueAsBean()
-                .shouldProceedWithDocumentProcessing(documentId);
+        final boolean isRouted;
+        if (shouldUseSeparateTransactionToCheckIfDocumentProcessingShouldProceed()) {
+            isRouted = getDocumentProcessingQueueAsBean().shouldProceedWithDocumentProcessing(documentId);
+        } else {
+            isRouted = shouldProceedWithDocumentProcessing(documentId);
+        }
+
         if (isRouted) {
             final OrchestrationConfig config = helper.configFor(options);
             helper.processDocument(documentId, config, workflowEngineFactory);
@@ -86,8 +101,20 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
     }
 
     /*
-     * CU Customization: Moved the helper.handleNotYetRoutedDocument() invocation to this new method.
+     * ====
+     * CU Customization: Added several helper methods for implementing the ability to perform
+     * the handleNotYetRoutedDocument() logic in a separate transaction.
+     * ====
      */
+
+    private boolean shouldUseSeparateTransactionToCheckIfDocumentProcessingShouldProceed() {
+        return !StringUtils.equalsIgnoreCase(ksbMessageDeliveryMode, KSBConstants.MESSAGING_SYNCHRONOUS);
+    }
+
+    private DocumentProcessingQueue getDocumentProcessingQueueAsBean() {
+        return SpringContext.getBean(DocumentProcessingQueue.class);
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean shouldProceedWithDocumentProcessing(String documentId) {
@@ -98,13 +125,15 @@ public class DocumentProcessingQueueImpl implements DocumentProcessingQueue {
                 routeNodeService);
     }
 
-    /*
-     * CU Customization: Added helper method to have this service retrieve the bean version of itself,
-     * to allow for proper transaction handling when invoking the CU-specific service method.
-     */
-    private DocumentProcessingQueue getDocumentProcessingQueueAsBean() {
-        return SpringContext.getBean(DocumentProcessingQueue.class);
+    public void setKsbMessageDeliveryMode(String ksbMessageDeliveryMode) {
+        this.ksbMessageDeliveryMode = ksbMessageDeliveryMode;
     }
+
+    /*
+     * ====
+     * End CU Customization Block
+     * ====
+     */
 
     public void setWorkflowEngineFactory(final WorkflowEngineFactory workflowEngineFactory) {
         this.workflowEngineFactory = workflowEngineFactory;
