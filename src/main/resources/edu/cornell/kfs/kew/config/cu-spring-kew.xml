@@ -114,4 +114,17 @@
           p:workflowDocumentActionsService-ref="workflowDocumentActionsService"
     />
 
+    <!--
+        Override processing queue service to fix an issue that can cause the workflow engine
+        to process a stale copy of the route header and/or its downstream data.
+     -->
+    <bean id="documentProcessingQueue" class="org.kuali.kfs.kew.impl.document.DocumentProcessingQueueImpl"
+          p:workflowEngineFactory-ref="workflowEngineFactory"
+          p:actionRequestService-ref="actionRequestService"
+          p:documentAttributeIndexingQueue-ref="documentAttributeIndexingQueue"
+          p:routeHeaderService-ref="documentRouteHeaderService"
+          p:routeNodeService-ref="routeNodeService"
+          p:ksbMessageDeliveryMode="${message.delivery}"
+    />
+
 </beans>
