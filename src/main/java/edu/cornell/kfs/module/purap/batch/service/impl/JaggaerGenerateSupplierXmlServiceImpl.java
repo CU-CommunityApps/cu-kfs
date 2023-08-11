@@ -108,7 +108,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             supplier.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator(), JaggaerActiveType.SUPPLIER));
             supplier.setLegalStructure(buildJaggerLegalStructure(detail));
             processWebsiteUrl(detail, supplier);
-            supplier.setAddressList(buildAddressList(detail));
+            supplier.setAddressList(buildAddressList(detail, processingMode));
             suppliers.add(supplier);
         }
 
@@ -188,25 +188,26 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return false;
     }
 
-    private AddressList buildAddressList(VendorDetail detail) {
+    private AddressList buildAddressList(VendorDetail detail, JaggaerUploadSuppliersProcessingMode processingMode) {
         AddressList addressList = new AddressList();
 
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
-            Address jaggaerAddress = new Address();
-            jaggaerAddress.setErpNumber(JaggaerBuilder
-                    .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
-            jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
-                    vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
-            jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerActiveType.ADDRESS));
-            jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
-            jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
-            jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));
-            jaggaerAddress.setCity(JaggaerBuilder.buildCity(vendorAddress.getVendorCityName()));
-            jaggaerAddress.setState(buildState(vendorAddress));
-            jaggaerAddress.setPostalCode(JaggaerBuilder.buildPostalCode(vendorAddress.getVendorZipCode()));
-            jaggaerAddress.setNotes(buildAddressNote(vendorAddress));
-
-            addressList.getAddresses().add(jaggaerAddress);
+            if (StringUtils.equals(processingMode.modeCode, JaggaerUploadSuppliersProcessingMode.VENDOR.modeCode) || vendorAddress.isActive()) {
+                Address jaggaerAddress = new Address();
+                jaggaerAddress.setErpNumber(JaggaerBuilder
+                        .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
+                jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
+                        vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
+                jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerActiveType.ADDRESS));
+                jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
+                jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
+                jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));
+                jaggaerAddress.setCity(JaggaerBuilder.buildCity(vendorAddress.getVendorCityName()));
+                jaggaerAddress.setState(buildState(vendorAddress));
+                jaggaerAddress.setPostalCode(JaggaerBuilder.buildPostalCode(vendorAddress.getVendorZipCode()));
+                jaggaerAddress.setNotes(buildAddressNote(vendorAddress));
+                addressList.getAddresses().add(jaggaerAddress);
+            }
         }
         return addressList;
     }
