@@ -31,7 +31,6 @@ public interface DocumentProcessingQueue {
      * when subsequently invoking the workflow engine.
      */
     default boolean shouldProceedWithDocumentProcessing(String documentId) {
-        throw new IllegalStateException("Method has not been overridden yet; this default implementation "
-                + "is only present to avoid potentially breaking existing code");
+        return true;
     }
 }
