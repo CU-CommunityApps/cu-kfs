@@ -27,4 +27,16 @@
         </property>
     </bean>
 
+    <bean id="Customer-lookupDefinition" parent="Customer-lookupDefinition-parentBean">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>customerNumber</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
 </beans>
