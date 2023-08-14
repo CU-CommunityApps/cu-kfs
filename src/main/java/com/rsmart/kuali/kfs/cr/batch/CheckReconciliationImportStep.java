@@ -27,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.comparator.NameFileComparator;
 import org.apache.commons.lang3.StringUtils;
@@ -76,6 +76,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
 
     private static final Logger LOG = LogManager.getLogger(CheckReconciliationImportStep.class);
 
+    private static final Pattern ALL_ZEROS_PATTERN = Pattern.compile("^0+$");
     private static final String DATE_000000 = "000000";
     private static final String DATE_991231 = "991231";
     private static final int YEAR_2099 = 2099;
@@ -843,8 +844,8 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
 
     private Date getDateFromString(String dateString, DateTimeFormatter dateFormatter) {
         LocalDate localDate;
-        if (StringUtils.isBlank(dateString)) {
-            LOG.warn("getDateFromString, Row has a blank date; defaulting to 12/31/2099");
+        if (StringUtils.isBlank(dateString) || ALL_ZEROS_PATTERN.matcher(dateString).matches()) {
+            LOG.warn("getDateFromString, Row has a blank or all-zero date; defaulting to 12/31/2099");
             localDate = LocalDate.of(YEAR_2099, MONTH_12, DAY_31);
         } else {
             localDate = LocalDate.parse(dateString, dateFormatter);

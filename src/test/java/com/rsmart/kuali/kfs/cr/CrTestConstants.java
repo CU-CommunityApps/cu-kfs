@@ -4,9 +4,11 @@ public class CrTestConstants {
     public static final String MELLON_BANK_CODE = "DISB";
     public static final String JPMC_BANK_CODE = "NDWR";
     public static final String JPMC_PARAM_PREFIX = "JPMC_";
+    public static final String CR_IMPORT_JOB_NAME = "checkReconciliationJob";
 
     public static final class TestParamValues {
         public static final String ACCOUNT_111_2345 = "111-2345";
+        public static final String ACCOUNT_888_7777 = "888-7777";
         public static final String CLEARING_CHART_IT = "IT";
         public static final String CLEARING_ACCOUNT_G987654 = "G987654";
         public static final String CLEARING_OBJECT_5555 = "5555";
