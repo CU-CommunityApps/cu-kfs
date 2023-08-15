@@ -35,7 +35,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProce
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
-import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerActiveType;
+import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringTyoe;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
@@ -105,7 +105,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
             supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
             supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
-            supplier.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator(), JaggaerActiveType.SUPPLIER));
+            supplier.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator(), JaggaerBooleanToStringTyoe.SUPPLIER_ACTUVE));
             supplier.setLegalStructure(buildJaggerLegalStructure(detail));
             processWebsiteUrl(detail, supplier);
             supplier.setAddressList(buildAddressList(detail, processingMode));
@@ -198,7 +198,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                         .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
                 jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
                         vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
-                jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerActiveType.ADDRESS));
+                jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerBooleanToStringTyoe.ADDRESS_ACTIVE));
                 jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
                 jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
                 jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));

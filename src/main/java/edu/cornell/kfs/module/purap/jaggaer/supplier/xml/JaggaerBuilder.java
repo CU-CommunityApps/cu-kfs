@@ -1,7 +1,7 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
 import edu.cornell.kfs.module.purap.JaggaerConstants;
-import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerActiveType;
+import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringTyoe;
 
 public class JaggaerBuilder {
     
@@ -53,7 +53,7 @@ public class JaggaerBuilder {
         return buildActive(activeString, null);
     }
     
-    public static Active buildActive(boolean isActive, JaggaerActiveType activeType) {
+    public static Active buildActive(boolean isActive, JaggaerBooleanToStringTyoe activeType) {
         return buildActive(isActive, null, activeType);
     }
     
@@ -64,7 +64,7 @@ public class JaggaerBuilder {
         return active;
     }
     
-    public static Active buildActive(boolean isActive, String isChanged, JaggaerActiveType activeType) {
+    public static Active buildActive(boolean isActive, String isChanged, JaggaerBooleanToStringTyoe activeType) {
         Active active = new Active();
         active.setValue(isActive ? activeType.true_string : activeType.false_string);
         active.setIsChanged(isChanged);
