@@ -32,13 +32,17 @@ public enum CheckReconciliationFixture {
     CHECK_50012234_DISB_ISSD_22222("20230727", CrTestConstants.MELLON_BANK_CODE, CRConstants.ISSUED, 50012234, 222.22,
             CRConstants.CLEARED, "20230811"),
     CHECK_50012237_DISB_VOID_12500("20991231", CrTestConstants.MELLON_BANK_CODE, CRConstants.VOIDED, 50012237, 125),
+    CHECK_55555555_DISB_ISSD_22222("20230727", CrTestConstants.MELLON_BANK_CODE, CRConstants.ISSUED, 55555555, 222.22,
+            CRConstants.EXCP, "20230811"),
     CHECK_15566_NDWR_ISSD_76500("20230801", CrTestConstants.JPMC_BANK_CODE, CRConstants.ISSUED, 15566, 765,
             CRConstants.CLEARED, "20230810"),
     CHECK_15567_NDWR_ISSD_1995("20230801", CrTestConstants.JPMC_BANK_CODE, CRConstants.ISSUED, 15567, 19.95,
             CRConstants.CLEARED, "20230810"),
     CHECK_15568_NDWR_ISSD_2202455("20991231", CrTestConstants.JPMC_BANK_CODE, CRConstants.ISSUED, 15568, 22024.55,
             CRConstants.CLEARED, "20230810"),
-    CHECK_15569_NDWR_VOID_18875("20991231", CrTestConstants.JPMC_BANK_CODE, CRConstants.VOIDED, 15569, 188.75);
+    CHECK_15569_NDWR_VOID_18875("20991231", CrTestConstants.JPMC_BANK_CODE, CRConstants.VOIDED, 15569, 188.75),
+    CHECK_88888_NDWR_ISSD_1995("20230801", CrTestConstants.JPMC_BANK_CODE, CRConstants.ISSUED, 88888, 19.95,
+            CRConstants.EXCP, "20230810");
 
     static final DateTimeFormatter DATE_FORMATTER_yyyyMMdd = DateTimeFormatter.ofPattern(
             CUKFSConstants.DATE_FORMAT_yyyyMMdd, Locale.US);
@@ -87,16 +91,9 @@ public enum CheckReconciliationFixture {
         }
     }
 
-    public CheckReconciliation toCheckReconciliationBeforeUpdate() {
+    public CheckReconciliation toCheckReconciliationUsingCurrentStatus() {
         CheckReconciliation checkReconciliation = toCheckReconciliation();
         checkReconciliation.setStatusChangeDate(checkReconciliation.getCheckDate());
-        return checkReconciliation;
-    }
-
-    public CheckReconciliation toCheckReconciliationAfterUpdate() {
-        CheckReconciliation checkReconciliation = toCheckReconciliation();
-        checkReconciliation.setStatus(newCheckStatus);
-        checkReconciliation.setStatusChangeDate(getParsedStatusChangeDate());
         return checkReconciliation;
     }
 

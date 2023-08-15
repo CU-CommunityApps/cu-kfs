@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -74,7 +75,7 @@ import edu.cornell.kfs.sys.batch.CuAbstractStep;
  */
 public class CheckReconciliationImportStep extends CuAbstractStep {
 
-    private static final Logger LOG = LogManager.getLogger(CheckReconciliationImportStep.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final Pattern ALL_ZEROS_PATTERN = Pattern.compile("^0+$");
     private static final String DATE_000000 = "000000";
@@ -150,6 +151,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      */
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("Started CheckReconciliationImportStep @ " + (new Date()).toString());
+        LOG.info("execute, Using parameters with prefix: \"{}\"", getCrImportParameterPrefix());
         
         List<CheckReconError> records = new ArrayList<CheckReconError>();
         
@@ -244,6 +246,14 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             return false;
         } finally {
             dateParser = null;
+            columns.clear();
+            headerColumns.clear();
+            footerColumns.clear();
+            statusMap.clear();
+            headerMap = null;
+            footerMap = null;
+            headerLine = null;
+            footerLine = null;
         }
 
         LOG.info("Completed CheckReconciliationImportStep @ " + (new Date()).toString());
@@ -885,10 +895,16 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      */
     private void parseTextFile(String checkFile, List<CheckReconError> records) throws Exception {
         LOG.info("Parsing File : " + checkFile);
-
         File file = new File(checkFile);
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        try (
+            FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8);
+            BufferedReader br = new BufferedReader(fileReader);
+        ) {
+            parseTextFile(br, records);
+        }
+    }
 
+    private void parseTextFile(BufferedReader br, List<CheckReconError> records) throws Exception {
         String line = null;
         int    totalLinesProcessed = 0;
 

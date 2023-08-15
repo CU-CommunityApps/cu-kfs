@@ -1,11 +1,14 @@
 package com.rsmart.kuali.kfs.cr.batch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +23,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -39,16 +48,31 @@ import com.rsmart.kuali.kfs.cr.batch.fixture.CheckReconciliationFixture;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
 
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class CheckReconciliationImportStepTest {
 
+    private static final String TEST_CR_RESOURCES_DIRECTORY =
+            "classpath:com/rsmart/kuali/kfs/cr/batch/service/fixture/";
     private static final String TEST_CR_BATCH_DIRECTORY = "test/cr_import/";
     private static final String TEST_BASE_REPORTS_DIRECTORY = TEST_CR_BATCH_DIRECTORY + CUKFSConstants.REPORTS_DIR;
     private static final String TEST_BASE_STAGING_DIRECTORY = TEST_CR_BATCH_DIRECTORY + CUKFSConstants.STAGING_DIR;
     private static final String TEST_CR_REPORTS_DIRECTORY = TEST_BASE_REPORTS_DIRECTORY + "/cr/";
     private static final String TEST_CR_ARCHIVE_DIRECTORY = TEST_BASE_STAGING_DIRECTORY + "/cr/archive/";
     private static final String TEST_CR_UPLOAD_DIRECTORY = TEST_BASE_STAGING_DIRECTORY + "/cr/upload/";
+
+    private static final String MELLON_SUCCESS_FILE = "mellon_check_success.txt";
+    private static final String MELLON_BAD_FILE = "mellon_check_bad.txt";
+    private static final String JPMC_SUCCESS_FILE = "jpmc_check_success.txt";
+    private static final String JPMC_BAD_FILE = "jpmc_check_bad.txt";
+
+    private enum CrImportResult {
+        SUCCESS,
+        FAILURE,
+        EXCEPTION
+    }
 
     private CheckReconciliationImportStep crImportStep;
     private Map<String, String> parameters;
@@ -92,6 +116,14 @@ public class CheckReconciliationImportStepTest {
         for (String directoryPath : directoryPaths) {
             File testBatchDirectory = new File(directoryPath);
             FileUtils.forceMkdir(testBatchDirectory);
+        }
+    }
+
+    private void copyFileToCrUploadDirectory(String fileName) throws IOException {
+        String sourceFilePath = TEST_CR_RESOURCES_DIRECTORY + fileName;
+        File targetFilePath = new File(TEST_CR_UPLOAD_DIRECTORY + fileName);
+        try (InputStream fileStream = CuCoreUtilities.getResourceAsStream(sourceFilePath)) {
+            FileUtils.copyToFile(fileStream, targetFilePath);
         }
     }
 
@@ -175,6 +207,10 @@ public class CheckReconciliationImportStepTest {
         return CrTestConstants.JPMC_PARAM_PREFIX + baseParameterName;
     }
 
+    private void overridePrefixParameter(String value) {
+        parameters.put(CRConstants.PARAMETER_PREFIX, value);
+    }
+
     private ParameterService createMockParameterService() {
         ParameterService parameterService = Mockito.mock(ParameterService.class);
 
@@ -214,7 +250,7 @@ public class CheckReconciliationImportStepTest {
                 CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
                 CheckReconciliationFixture.CHECK_15569_NDWR_VOID_18875
         );
-        return fixtures.map(CheckReconciliationFixture::toCheckReconciliationBeforeUpdate)
+        return fixtures.map(CheckReconciliationFixture::toCheckReconciliationUsingCurrentStatus)
                 .collect(Collectors.toMap(
                         this::createCheckReconMapKey,
                         Function.identity(),
@@ -265,9 +301,10 @@ public class CheckReconciliationImportStepTest {
     }
 
     private List<CheckReconciliation> findMatchingCheckRecon(InvocationOnMock invocation) {
-        Map<String, String> criteria = invocation.getArgument(1);
-        String checkReconKey = createCheckReconMapKey(criteria.get(KFSPropertyConstants.BANK_ACCOUNT_NUMBER),
-                criteria.get(KFSPropertyConstants.CHECK_NUMBER));
+        Map<String, Object> criteria = invocation.getArgument(1);
+        String checkReconKey = createCheckReconMapKey(
+                (String) criteria.get(KFSPropertyConstants.BANK_ACCOUNT_NUMBER),
+                (KualiInteger) criteria.get(KFSPropertyConstants.CHECK_NUMBER));
         CheckReconciliation checkRecon = currentCheckReconRows.get(checkReconKey);
         return (checkRecon != null) ? List.of(checkRecon) : List.of();
     }
@@ -295,10 +332,116 @@ public class CheckReconciliationImportStepTest {
         return glTransactionService;
     }
 
-    private void assertCheckReconciliationImportRunsProperly(
+    static Stream<Arguments> successfulCheckReconImports() {
+        return Stream.of(
+                Arguments.of(KFSConstants.EMPTY_STRING, MELLON_SUCCESS_FILE, List.of(
+                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607,
+                        CheckReconciliationFixture.CHECK_50012234_DISB_ISSD_22222,
+                        CheckReconciliationFixture.CHECK_55555555_DISB_ISSD_22222
+                )),
+                Arguments.of(CrTestConstants.JPMC_PARAM_PREFIX, JPMC_SUCCESS_FILE, List.of(
+                        CheckReconciliationFixture.CHECK_15566_NDWR_ISSD_76500,
+                        CheckReconciliationFixture.CHECK_15567_NDWR_ISSD_1995,
+                        CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
+                        CheckReconciliationFixture.CHECK_88888_NDWR_ISSD_1995
+                ))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("successfulCheckReconImports")
+    void testNormalExecutionOfCheckReconciliationImport(String paramPrefix, String testFileName,
+            List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
+        overridePrefixParameter(paramPrefix);
+        copyFileToCrUploadDirectory(testFileName);
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.SUCCESS, expectedCheckReconUpdates);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            KFSConstants.EMPTY_STRING,
+            CrTestConstants.JPMC_PARAM_PREFIX
+    })
+    void testExecutionOfCheckReconImportWithoutAnyInputFiles(String paramPrefix) throws Exception {
+        overridePrefixParameter(paramPrefix);
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.SUCCESS, List.of());
+    }
+
+    static Stream<Arguments> invalidDataImports() {
+        return Stream.of(
+                Arguments.of(KFSConstants.EMPTY_STRING, MELLON_BAD_FILE, List.of(
+                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607
+                )),
+                Arguments.of(CrTestConstants.JPMC_PARAM_PREFIX, JPMC_BAD_FILE, List.of())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidDataImports")
+    void testCheckReconciliationImportWithInvalidDataFiles(String paramPrefix, String testFileName,
+            List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
+        overridePrefixParameter(paramPrefix);
+        copyFileToCrUploadDirectory(testFileName);
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, expectedCheckReconUpdates);
+    }
+
+    static Stream<Arguments> checkReconImportsWithMismatchedPrefixes() {
+        return Stream.of(
+                Arguments.of(CrTestConstants.JPMC_PARAM_PREFIX, MELLON_SUCCESS_FILE),
+                Arguments.of(KFSConstants.EMPTY_STRING, JPMC_SUCCESS_FILE)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("checkReconImportsWithMismatchedPrefixes")
+    void testExecutionFailsWhenParamPrefixIsMismatched(String paramPrefix, String testFileName) throws Exception {
+        overridePrefixParameter(paramPrefix);
+        copyFileToCrUploadDirectory(testFileName);
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, List.of());
+    }
+
+    static Stream<Arguments> checkReconImportsWithInvalidPrefixes() {
+        return Stream.of(
+                Arguments.of("a", MELLON_SUCCESS_FILE),
+                Arguments.of("a", JPMC_SUCCESS_FILE),
+                Arguments.of("Dummy", MELLON_SUCCESS_FILE),
+                Arguments.of("Dummy", JPMC_SUCCESS_FILE),
+                Arguments.of("BANK1_", MELLON_SUCCESS_FILE),
+                Arguments.of("BANK1_", JPMC_SUCCESS_FILE)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("checkReconImportsWithInvalidPrefixes")
+    void testExecutionFailsWhenParamPrefixIsInvalid(String paramPrefix, String testFileName) throws Exception {
+        overridePrefixParameter(paramPrefix);
+        copyFileToCrUploadDirectory(testFileName);
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.EXCEPTION, List.of());
+    }
+
+    private void assertCheckReconciliationImportHasExpectedResult(CrImportResult expectedResult,
             List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
         Date currentDate = new Date();
-        crImportStep.execute(CrTestConstants.CR_IMPORT_JOB_NAME, currentDate);
+        switch (expectedResult) {
+            case SUCCESS :
+                assertTrue(crImportStep.execute(CrTestConstants.CR_IMPORT_JOB_NAME, currentDate),
+                        "The Check Reconciliation Import Step should have succeeded");
+                break;
+
+            case FAILURE :
+                assertFalse(crImportStep.execute(CrTestConstants.CR_IMPORT_JOB_NAME, currentDate),
+                        "The Check Reconciliation Import Step should have failed due to a caught exception");
+                break;
+
+            case EXCEPTION :
+                assertThrows(RuntimeException.class,
+                        () -> crImportStep.execute(CrTestConstants.CR_IMPORT_JOB_NAME, currentDate),
+                        "The Check Reconciliation Import Step should have failed due to an uncaught exception");
+                break;
+
+            default :
+                throw new IllegalArgumentException("Invalid CR Import Result expectation: " + expectedResult);
+        }
         assertCheckReconciliationImportHadExpectedUpdates(expectedCheckReconUpdates);
     }
 
