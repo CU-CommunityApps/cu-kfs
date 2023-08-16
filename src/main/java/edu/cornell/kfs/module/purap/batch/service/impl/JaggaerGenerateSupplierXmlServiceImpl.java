@@ -41,11 +41,14 @@ import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Address;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.AddressList;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.AddressRef;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.AssociatedAddress;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Authentication;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Header;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.IsoCountryCode;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBasicValue;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilder;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.PrimaryAddressList;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.State;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
@@ -109,6 +112,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             supplier.setLegalStructure(buildJaggerLegalStructure(detail));
             processWebsiteUrl(detail, supplier);
             supplier.setAddressList(buildAddressList(detail, processingMode));
+            supplier.setPrimaryAddressList(buildPrimaryAddressList(detail));
             suppliers.add(supplier);
         }
 
@@ -194,10 +198,8 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
             if (StringUtils.equals(processingMode.modeCode, JaggaerUploadSuppliersProcessingMode.VENDOR.modeCode) || vendorAddress.isActive()) {
                 Address jaggaerAddress = new Address();
-                jaggaerAddress.setErpNumber(JaggaerBuilder
-                        .buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
-                jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(
-                        vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
+                jaggaerAddress.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
+                jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
                 jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerBooleanToStringTyoe.ADDRESS_ACTIVE));
                 jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
                 jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
@@ -207,6 +209,26 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 jaggaerAddress.setPostalCode(JaggaerBuilder.buildPostalCode(vendorAddress.getVendorZipCode()));
                 jaggaerAddress.setNotes(buildAddressNote(vendorAddress));
                 addressList.getAddresses().add(jaggaerAddress);
+            }
+        }
+        return addressList;
+    }
+    
+    private PrimaryAddressList buildPrimaryAddressList(VendorDetail detail) {
+        PrimaryAddressList addressList = new PrimaryAddressList();
+        if (detail.isActiveIndicator()) {
+            for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
+                JaggaerAddressTypeForXml addressType = JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(vendorAddress.getVendorAddressTypeCode());
+                if (vendorAddress.isVendorDefaultAddressIndicator() && addressType != JaggaerAddressTypeForXml.PHYSICAL) {
+                    AssociatedAddress associatedAddress = new AssociatedAddress();
+                    associatedAddress.setType(addressType.jaggaerAddressType);
+                    
+                    AddressRef ref = new AddressRef();
+                    ref.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
+                    associatedAddress.setAddressRef(ref);
+                    
+                    addressList.getAssociatedAddresses().add(associatedAddress);
+                }
             }
         }
         return addressList;
