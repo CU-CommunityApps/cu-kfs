@@ -15,8 +15,6 @@
  */
 package com.rsmart.kuali.kfs.cr;
 
-import java.util.regex.Pattern;
-
 /**
  * Check Reconciliation Constants
  * 
@@ -97,8 +95,6 @@ public class CRConstants {
     public static final String STOP_STATUS = "CR_STATUS_STOP_CODES";
     
     public static final String CHECK_DATE_FORMAT = "CR_CHECK_DATE_FORMAT";
-    
-    public static final Pattern CHECK_DATE_FORMAT_PATTERN = Pattern.compile("^[yMd/- ]+$");
     
     public static final String DELIMITED = "DELIMITED";
     
