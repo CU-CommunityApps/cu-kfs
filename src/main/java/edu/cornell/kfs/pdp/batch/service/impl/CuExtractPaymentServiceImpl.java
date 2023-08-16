@@ -113,7 +113,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
     /**
      * Overridden to call a CU-specific version of the parameter-checking method to determine
-     * whether or not to use the ISO 20022 format.
+     * whether or not to use the ISO 20022 format, as well as to allow for generating
+     * the proprietary XML when the ISO 20022 format is enabled.
      */
     @Override
     public void extractChecks() {
@@ -125,10 +126,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         PdpConstants.PaymentStatusCodes.EXTRACTED
                 );
 
+        if (shouldCreateLegacyCheckFiles()) {
+            extractChecksToProprietaryFormat(extractedStatus);
+        }
+
         if (shouldUseIso20022Format()) {
             iso20022FormatExtractor.extractChecks(extractedStatus, directoryName);
-        } else {
-            extractChecksToProprietaryFormat(extractedStatus);
         }
 
         LOG.debug("extractChecks() - Exit");
@@ -156,8 +159,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         List<PaymentProcess> extractsToRun = this.processDao.getAllExtractsToRun();
         for (PaymentProcess extractToRun : extractsToRun) {
             writeExtractCheckFile(extractedStatus, extractToRun, filename, extractToRun.getId().intValue());
-            extractToRun.setExtractedInd(true);
-            businessObjectService.save(extractToRun);
+            if (shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles()) {
+                extractToRun.setExtractedInd(true);
+                businessObjectService.save(extractToRun);
+            }
         }
 
         LOG.debug("extractChecksToProprietaryFormat(...) - Exit");
@@ -182,6 +187,18 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private boolean isIso20022FormatParameterEnabled(String parameterName) {
         return parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.PDP,
                 KFSConstants.Components.ISO_FORMAT, parameterName, Boolean.FALSE);
+    }
+
+    private boolean shouldCreateLegacyCheckFiles() {
+        return true;
+    }
+
+    private boolean shouldCreateFastTrackCheckFiles() {
+        return !shouldUseIso20022Format();
+    }
+
+    private boolean shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles() {
+        return !shouldUseIso20022Format();
     }
 
    /**
@@ -315,7 +332,9 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         try {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
             
-            writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId, notificationEmailAddresses);
+            if (shouldCreateFastTrackCheckFiles()) {
+                writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId, notificationEmailAddresses);
+            }
 
             for (String bankCode : bankCodes) {
                 List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
@@ -340,7 +359,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     while (paymentDetails.hasNext()) {
                         PaymentDetail detail = paymentDetails.next();
                         PaymentGroup group = detail.getPaymentGroup();
-                        if (!testMode) {
+                        if (!testMode && shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles()) {
                             if (!paymentGroupIdsSaved.contains(group.getId())) {
                                 group.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                                 group.setPaymentStatus(extractedStatus);
