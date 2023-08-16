@@ -221,7 +221,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
             chunk.append(StringUtils.SPACE);
             return chunk;
         } else {
-            return CuSqlChunk.of("");
+            return CuSqlChunk.of(StringUtils.SPACE);
         }
     }
     
