@@ -106,7 +106,7 @@ public class CRConstants {
     
     public static final String CLEARING_OBJECT_CODE = "CR_CLEARING_OBJECT_CODE";
     
-    public static final String PARAMETER_PREFIX = "CR_PARAMETER_PREFIX";
+    public static final String PARAMETER_PREFIX_MAPPINGS = "CR_PARAMETER_PREFIX_MAPPINGS";
     
     public static final String CR_FDOC_ORIGIN_CODE = "CR";
     

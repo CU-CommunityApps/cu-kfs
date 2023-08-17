@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,12 +24,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
@@ -68,6 +69,9 @@ public class CheckReconciliationImportStepTest {
     private static final String JPMC_SUCCESS_FILE = "jpmc_check_success.txt";
     private static final String JPMC_BAD_FILE = "jpmc_check_bad.txt";
 
+    private static final String MELLON_FILE_PREFIX = "mellon_";
+    private static final String JPMC_FILE_PREFIX = "jpmc_";
+
     private enum CrImportResult {
         SUCCESS,
         FAILURE,
@@ -79,6 +83,7 @@ public class CheckReconciliationImportStepTest {
     private Map<String, CheckReconciliation> currentCheckReconRows;
     private Map<String, CheckReconciliation> updatedCheckReconRows;
     private List<Bank> banks;
+    private List<String> prefixMappings;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -87,6 +92,9 @@ public class CheckReconciliationImportStepTest {
         currentCheckReconRows = createInitialCheckReconciliationMappings();
         updatedCheckReconRows = new HashMap<>();
         banks = createBanks();
+        prefixMappings = new ArrayList<>();
+        setPrefixMappings(Map.entry(MELLON_FILE_PREFIX, KFSConstants.EMPTY_STRING),
+                Map.entry(JPMC_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX));
         
         crImportStep = new CheckReconciliationImportStep();
         crImportStep.setParameterService(createMockParameterService());
@@ -99,6 +107,7 @@ public class CheckReconciliationImportStepTest {
     @AfterEach
     void tearDown() throws Exception {
         crImportStep = null;
+        prefixMappings = null;
         banks = null;
         updatedCheckReconRows = null;
         currentCheckReconRows = null;
@@ -119,11 +128,13 @@ public class CheckReconciliationImportStepTest {
         }
     }
 
-    private void copyFileToCrUploadDirectory(String fileName) throws IOException {
-        String sourceFilePath = TEST_CR_RESOURCES_DIRECTORY + fileName;
-        File targetFilePath = new File(TEST_CR_UPLOAD_DIRECTORY + fileName);
-        try (InputStream fileStream = CuCoreUtilities.getResourceAsStream(sourceFilePath)) {
-            FileUtils.copyToFile(fileStream, targetFilePath);
+    private void copyFilesToCrUploadDirectory(List<String> fileNames) throws IOException {
+        for (String fileName : fileNames) {
+            String sourceFilePath = TEST_CR_RESOURCES_DIRECTORY + fileName;
+            File targetFilePath = new File(TEST_CR_UPLOAD_DIRECTORY + fileName);
+            try (InputStream fileStream = CuCoreUtilities.getResourceAsStream(sourceFilePath)) {
+                FileUtils.copyToFile(fileStream, targetFilePath);
+            }
         }
     }
 
@@ -136,7 +147,6 @@ public class CheckReconciliationImportStepTest {
 
     private Map<String, String> createInitialTestParameterMappings() {
         Map<String, String> parms = new HashMap<>();
-        parms.put(CRConstants.PARAMETER_PREFIX, KFSConstants.EMPTY_STRING);
 
         parms.put(CRConstants.ACCOUNT_NUM, TestParamValues.ACCOUNT_111_2345);
         parms.put(CRConstants.ACCOUNT_NUM_COL, TestParamValues.UNUSED_COL_0);
@@ -203,12 +213,21 @@ public class CheckReconciliationImportStepTest {
         return parms;
     }
 
-    private String createJpmcParmName(String baseParameterName) {
-        return CrTestConstants.JPMC_PARAM_PREFIX + baseParameterName;
+    @SafeVarargs
+    private void setPrefixMappings(Map.Entry<String, String>... mappings) {
+        setPrefixMappings(List.of(mappings));
     }
 
-    private void overridePrefixParameter(String value) {
-        parameters.put(CRConstants.PARAMETER_PREFIX, value);
+    private void setPrefixMappings(List<Map.Entry<String, String>> mappings) {
+        prefixMappings.clear();
+        for (Map.Entry<String, String> mapping : mappings) {
+            String mappingString = mapping.getKey() + CUKFSConstants.EQUALS_SIGN + mapping.getValue();
+            prefixMappings.add(mappingString);
+        }
+    }
+
+    private String createJpmcParmName(String baseParameterName) {
+        return CrTestConstants.JPMC_PARAM_PREFIX + baseParameterName;
     }
 
     private ParameterService createMockParameterService() {
@@ -222,6 +241,10 @@ public class CheckReconciliationImportStepTest {
                         Mockito.eq(CheckReconciliationImportStep.class), Mockito.anyString()))
                 .then(invocation -> StringUtils.equalsIgnoreCase(
                         parameters.get(invocation.getArgument(1)), KRADConstants.YES_INDICATOR_VALUE));
+
+        Mockito.when(parameterService.getParameterValuesAsString(
+                        CheckReconciliationImportStep.class, CRConstants.PARAMETER_PREFIX_MAPPINGS))
+                .then(invocation -> List.copyOf(prefixMappings));
 
         return parameterService;
     }
@@ -334,12 +357,21 @@ public class CheckReconciliationImportStepTest {
 
     static Stream<Arguments> successfulCheckReconImports() {
         return Stream.of(
-                Arguments.of(KFSConstants.EMPTY_STRING, MELLON_SUCCESS_FILE, List.of(
+                Arguments.of(files(MELLON_SUCCESS_FILE), List.of(
                         CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607,
                         CheckReconciliationFixture.CHECK_50012234_DISB_ISSD_22222,
                         CheckReconciliationFixture.CHECK_55555555_DISB_ISSD_22222
                 )),
-                Arguments.of(CrTestConstants.JPMC_PARAM_PREFIX, JPMC_SUCCESS_FILE, List.of(
+                Arguments.of(files(JPMC_SUCCESS_FILE), List.of(
+                        CheckReconciliationFixture.CHECK_15566_NDWR_ISSD_76500,
+                        CheckReconciliationFixture.CHECK_15567_NDWR_ISSD_1995,
+                        CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
+                        CheckReconciliationFixture.CHECK_88888_NDWR_ISSD_1995
+                )),
+                Arguments.of(files(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE), List.of(
+                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607,
+                        CheckReconciliationFixture.CHECK_50012234_DISB_ISSD_22222,
+                        CheckReconciliationFixture.CHECK_55555555_DISB_ISSD_22222,
                         CheckReconciliationFixture.CHECK_15566_NDWR_ISSD_76500,
                         CheckReconciliationFixture.CHECK_15567_NDWR_ISSD_1995,
                         CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
@@ -350,73 +382,96 @@ public class CheckReconciliationImportStepTest {
 
     @ParameterizedTest
     @MethodSource("successfulCheckReconImports")
-    void testNormalExecutionOfCheckReconciliationImport(String paramPrefix, String testFileName,
+    void testNormalExecutionOfCheckReconciliationImport(List<String> testFileNames,
             List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
-        overridePrefixParameter(paramPrefix);
-        copyFileToCrUploadDirectory(testFileName);
+        copyFilesToCrUploadDirectory(testFileNames);
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.SUCCESS, expectedCheckReconUpdates);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            KFSConstants.EMPTY_STRING,
-            CrTestConstants.JPMC_PARAM_PREFIX
-    })
-    void testExecutionOfCheckReconImportWithoutAnyInputFiles(String paramPrefix) throws Exception {
-        overridePrefixParameter(paramPrefix);
+    @Test
+    void testExecutionOfCheckReconImportWithoutAnyInputFiles() throws Exception {
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.SUCCESS, List.of());
     }
 
     static Stream<Arguments> invalidDataImports() {
         return Stream.of(
-                Arguments.of(KFSConstants.EMPTY_STRING, MELLON_BAD_FILE, List.of(
+                Arguments.of(files(MELLON_BAD_FILE), List.of(
                         CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607
                 )),
-                Arguments.of(CrTestConstants.JPMC_PARAM_PREFIX, JPMC_BAD_FILE, List.of())
+                Arguments.of(files(JPMC_BAD_FILE), List.of()),
+                Arguments.of(files(MELLON_BAD_FILE, JPMC_BAD_FILE), List.of(
+                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607
+                ))
         );
     }
 
     @ParameterizedTest
     @MethodSource("invalidDataImports")
-    void testCheckReconciliationImportWithInvalidDataFiles(String paramPrefix, String testFileName,
+    void testCheckReconciliationImportWithInvalidDataFiles(List<String> testFileNames,
             List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
-        overridePrefixParameter(paramPrefix);
-        copyFileToCrUploadDirectory(testFileName);
+        copyFilesToCrUploadDirectory(testFileNames);
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, expectedCheckReconUpdates);
     }
 
     static Stream<Arguments> checkReconImportsWithMismatchedPrefixes() {
         return Stream.of(
-                Arguments.of(CrTestConstants.JPMC_PARAM_PREFIX, MELLON_SUCCESS_FILE),
-                Arguments.of(KFSConstants.EMPTY_STRING, JPMC_SUCCESS_FILE)
-        );
+                files(MELLON_SUCCESS_FILE),
+                files(JPMC_SUCCESS_FILE),
+                files(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE)
+        ).map(Arguments::of);
     }
 
     @ParameterizedTest
     @MethodSource("checkReconImportsWithMismatchedPrefixes")
-    void testExecutionFailsWhenParamPrefixIsMismatched(String paramPrefix, String testFileName) throws Exception {
-        overridePrefixParameter(paramPrefix);
-        copyFileToCrUploadDirectory(testFileName);
+    void testExecutionFailsWhenParamPrefixesAreMismatched(List<String> testFileNames) throws Exception {
+        setPrefixMappings(Map.entry(MELLON_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX),
+                Map.entry(JPMC_FILE_PREFIX, KFSConstants.EMPTY_STRING));
+        copyFilesToCrUploadDirectory(testFileNames);
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, List.of());
     }
 
-    static Stream<Arguments> checkReconImportsWithInvalidPrefixes() {
+    static Stream<Arguments> checkReconImportsWithInvalidParameterPrefixes() {
+        List<String> mellonFile = files(MELLON_SUCCESS_FILE);
+        List<String> jpmcFile = files(JPMC_SUCCESS_FILE);
+        List<String> mellonAndJpmcFiles = files(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE);
         return Stream.of(
-                Arguments.of("a", MELLON_SUCCESS_FILE),
-                Arguments.of("a", JPMC_SUCCESS_FILE),
-                Arguments.of("Dummy", MELLON_SUCCESS_FILE),
-                Arguments.of("Dummy", JPMC_SUCCESS_FILE),
-                Arguments.of("BANK1_", MELLON_SUCCESS_FILE),
-                Arguments.of("BANK1_", JPMC_SUCCESS_FILE)
+                Arguments.of("a", mellonFile),
+                Arguments.of("a", jpmcFile),
+                Arguments.of("a", mellonAndJpmcFiles),
+                Arguments.of("Dummy", mellonFile),
+                Arguments.of("Dummy", jpmcFile),
+                Arguments.of("Dummy", mellonAndJpmcFiles),
+                Arguments.of("BANK1_", mellonFile),
+                Arguments.of("BANK1_", jpmcFile),
+                Arguments.of("BANK1_", mellonAndJpmcFiles)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("checkReconImportsWithInvalidPrefixes")
-    void testExecutionFailsWhenParamPrefixIsInvalid(String paramPrefix, String testFileName) throws Exception {
-        overridePrefixParameter(paramPrefix);
-        copyFileToCrUploadDirectory(testFileName);
+    @MethodSource("checkReconImportsWithInvalidParameterPrefixes")
+    void testExecutionFailsWhenParamPrefixIsInvalid(String paramPrefix, List<String> testFileNames) throws Exception {
+        setPrefixMappings(Map.entry(MELLON_FILE_PREFIX, paramPrefix),
+                Map.entry(JPMC_FILE_PREFIX, paramPrefix));
+        copyFilesToCrUploadDirectory(testFileNames);
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.EXCEPTION, List.of());
+    }
+
+    static Stream<Arguments> unmatchableFilePrefixes() {
+        return Stream.of(
+                List.of(),
+                List.of(Map.entry("bny_", KFSConstants.EMPTY_STRING)),
+                List.of(Map.entry("chase_", CrTestConstants.JPMC_PARAM_PREFIX)),
+                List.of(Map.entry("bny_", KFSConstants.EMPTY_STRING),
+                        Map.entry("chase_", CrTestConstants.JPMC_PARAM_PREFIX))
+        ).map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("unmatchableFilePrefixes")
+    void testFilesAreIgnoredWhenNoFilePrefixMatchExists(List<Map.Entry<String, String>> mappings) throws Exception {
+        setPrefixMappings(mappings);
+        copyFilesToCrUploadDirectory(List.of(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE));
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, List.of());
     }
 
     private void assertCheckReconciliationImportHasExpectedResult(CrImportResult expectedResult,
@@ -468,6 +523,10 @@ public class CheckReconciliationImportStepTest {
             assertEquals(checkReconFixture.getParsedStatusChangeDate(), checkRecon.getStatusChangeDate(),
                     "Wrong status change date");
         }
+    }
+
+    private static List<String> files(String... fileNames) {
+        return List.of(fileNames);
     }
 
 }
