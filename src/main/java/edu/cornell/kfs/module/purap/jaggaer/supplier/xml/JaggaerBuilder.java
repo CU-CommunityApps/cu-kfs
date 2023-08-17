@@ -53,8 +53,8 @@ public class JaggaerBuilder {
         return buildActive(activeString, null);
     }
     
-    public static Active buildActive(boolean isActive, JaggaerBooleanToStringTyoe activeType) {
-        return buildActive(isActive, null, activeType);
+    public static Active buildActive(boolean isActive, JaggaerBooleanToStringTyoe jaggaerBooleanToStringTyoe) {
+        return buildActive(isActive, null, jaggaerBooleanToStringTyoe);
     }
     
     public static Active buildActive(String activeString, String isChanged) {
@@ -64,9 +64,9 @@ public class JaggaerBuilder {
         return active;
     }
     
-    public static Active buildActive(boolean isActive, String isChanged, JaggaerBooleanToStringTyoe activeType) {
+    public static Active buildActive(boolean isActive, String isChanged, JaggaerBooleanToStringTyoe jaggaerBooleanToStringTyoe) {
         Active active = new Active();
-        active.setValue(isActive ? activeType.true_string : activeType.false_string);
+        active.setValue(isActive ? jaggaerBooleanToStringTyoe.true_string : jaggaerBooleanToStringTyoe.false_string);
         active.setIsChanged(isChanged);
         return active;
     }
@@ -222,9 +222,20 @@ public class JaggaerBuilder {
         return buildJaggaerBasicValue(value, null);
     }
     
+    public static JaggaerBasicValue buildJaggaerBasicValue(boolean value, JaggaerBooleanToStringTyoe stringType) {
+        return buildJaggaerBasicValue(value, null, stringType);
+    }
+    
     public static JaggaerBasicValue buildJaggaerBasicValue(String value, String isChanged) {
         JaggaerBasicValue basic = new JaggaerBasicValue();
         basic.setValue(value);
+        basic.setIsChanged(isChanged);
+        return basic;
+    }
+    
+    public static JaggaerBasicValue buildJaggaerBasicValue(boolean value, String isChanged, JaggaerBooleanToStringTyoe stringType) {
+        JaggaerBasicValue basic = new JaggaerBasicValue();
+        basic.setValue(value ? stringType.true_string : stringType.false_string);
         basic.setIsChanged(isChanged);
         return basic;
     }

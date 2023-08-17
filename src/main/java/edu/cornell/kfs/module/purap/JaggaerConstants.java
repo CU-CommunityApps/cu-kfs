@@ -20,7 +20,9 @@ public class JaggaerConstants {
     
     public enum JaggaerBooleanToStringTyoe {
         SUPPLIER_ACTUVE(YES, NO),
-        ADDRESS_ACTIVE(TRUE, FALSE);
+        ADDRESS_ACTIVE(TRUE, FALSE),
+        LOCATION_ACTIVE(YES, NO),
+        LOCATION_PRIMARY(YES, NO);
         
         public final String true_string;
         public final String false_string;

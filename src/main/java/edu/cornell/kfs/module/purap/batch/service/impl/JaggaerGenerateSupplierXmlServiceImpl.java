@@ -48,6 +48,9 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Header;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.IsoCountryCode;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBasicValue;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilder;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Location;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.LocationList;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Name;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.PrimaryAddressList;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.State;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
@@ -113,6 +116,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             processWebsiteUrl(detail, supplier);
             supplier.setAddressList(buildAddressList(detail, processingMode));
             supplier.setPrimaryAddressList(buildPrimaryAddressList(detail));
+            supplier.setLocationList(buildLocationList(detail, processingMode));
             suppliers.add(supplier);
         }
 
@@ -196,8 +200,9 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         AddressList addressList = new AddressList();
 
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
-            if (StringUtils.equals(processingMode.modeCode, JaggaerUploadSuppliersProcessingMode.VENDOR.modeCode) || vendorAddress.isActive()) {
+            if (shouldProccessAddress(processingMode, vendorAddress)) {
                 Address jaggaerAddress = new Address();
+                jaggaerAddress.setName(JaggaerBuilder.buildName(buildNameStringFromAddress(vendorAddress)));
                 jaggaerAddress.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
                 jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
                 jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerBooleanToStringTyoe.ADDRESS_ACTIVE));
@@ -212,6 +217,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             }
         }
         return addressList;
+    }
+
+    private boolean shouldProccessAddress(JaggaerUploadSuppliersProcessingMode processingMode,
+            VendorAddress vendorAddress) {
+        return StringUtils.equals(processingMode.modeCode, JaggaerUploadSuppliersProcessingMode.VENDOR.modeCode) || vendorAddress.isActive();
     }
     
     private PrimaryAddressList buildPrimaryAddressList(VendorDetail detail) {
@@ -232,6 +242,33 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             }
         }
         return addressList;
+    }
+    
+    private LocationList buildLocationList(VendorDetail detail, JaggaerUploadSuppliersProcessingMode processingMode) {
+        LocationList locationList = new LocationList();
+        for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
+            if (shouldProccessAddress(processingMode, vendorAddress)) {
+                Location location = new Location();
+                location.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
+                location.setName(JaggaerBuilder.buildName(buildNameStringFromAddress(vendorAddress)));
+                
+                boolean locationActive = detail.isActiveIndicator() && vendorAddress.isActive();
+                location.setActive(JaggaerBuilder.buildActive(locationActive, JaggaerBooleanToStringTyoe.LOCATION_ACTIVE));
+                location.setLocationActive(JaggaerBuilder.buildJaggaerBasicValue(locationActive, JaggaerBooleanToStringTyoe.LOCATION_ACTIVE));
+                location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(locationActive && vendorAddress.isVendorDefaultAddressIndicator(), 
+                        JaggaerBooleanToStringTyoe.LOCATION_PRIMARY));
+                
+                locationList.getLocations().add(location);
+            }
+        }
+        return locationList;
+    }
+
+    private String buildNameStringFromAddress(VendorAddress vendorAddress) {
+        String locationName = MessageFormat.format(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_LOCATION_NAME_FORMAT), 
+                vendorAddress.getVendorAddressType().getVendorAddressTypeCode(),
+                vendorAddress.getVendorAddressType().getVendorAddressTypeDescription());
+        return locationName;
     }
 
     private IsoCountryCode buildIsoCountry(String fipsCountryCode) {
