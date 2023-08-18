@@ -35,9 +35,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -1248,11 +1250,21 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
     }
 
     private List<Pair<String, String>> getParameterPrefixMappings() {
-        Collection<String> mappings = getParameterService().getParameterValuesAsString(
+        Collection<String> mappingStrings = getParameterService().getParameterValuesAsString(
                 CheckReconciliationImportStep.class, CRConstants.PARAMETER_PREFIX_MAPPINGS);
-        return mappings.stream()
+        List<Pair<String, String>> mappings = mappingStrings.stream()
                 .map(this::parseParameterPrefixMapping)
                 .collect(Collectors.toUnmodifiableList());
+        Set<String> uniqueFilePrefixes = new HashSet<>();
+        for (Pair<String, String> mapping : mappings) {
+            String filePrefix = StringUtils.upperCase(mapping.getKey(), Locale.US);
+            if (conflictingPrefixExists(uniqueFilePrefixes, filePrefix) || !uniqueFilePrefixes.add(filePrefix)) {
+                throw new IllegalStateException("Cannot have multiple filePrefix-and-paramPrefix pairs with the "
+                        + "same filename prefix, or with one filename prefix being the truncated form of another. "
+                        + "Conflicting prefix: " + filePrefix);
+            }
+        }
+        return mappings;
     }
 
     private Pair<String, String> parseParameterPrefixMapping(String prefixMapping) {
@@ -1262,6 +1274,12 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                     + "\"filePrefix=paramPrefix\" or \"filePrefix=\" patterns");
         }
         return Pair.of(StringUtils.trimToEmpty(keyAndValue[0]), StringUtils.trimToEmpty(keyAndValue[1]));
+    }
+
+    private boolean conflictingPrefixExists(Set<String> currentPrefixes, String nextPrefix) {
+        return currentPrefixes.stream()
+                .anyMatch(currentPrefix -> StringUtils.startsWithIgnoreCase(currentPrefix, nextPrefix)
+                        || StringUtils.startsWithIgnoreCase(nextPrefix, currentPrefix));
     }
 
     /**

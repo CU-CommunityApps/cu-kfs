@@ -474,6 +474,35 @@ public class CheckReconciliationImportStepTest {
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, List.of());
     }
 
+    static Stream<Arguments> conflictingFilePrefixes() {
+        return Stream.of(
+                List.of(
+                        Map.entry(MELLON_FILE_PREFIX, KFSConstants.EMPTY_STRING),
+                        Map.entry(MELLON_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX)
+                ),
+                List.of(
+                        Map.entry(JPMC_FILE_PREFIX, KFSConstants.EMPTY_STRING),
+                        Map.entry(JPMC_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX)
+                ),
+                List.of(
+                        Map.entry(MELLON_FILE_PREFIX + "bny_", KFSConstants.EMPTY_STRING),
+                        Map.entry(MELLON_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX)
+                ),
+                List.of(
+                        Map.entry(JPMC_FILE_PREFIX, KFSConstants.EMPTY_STRING),
+                        Map.entry(JPMC_FILE_PREFIX + "chase_", CrTestConstants.JPMC_PARAM_PREFIX)
+                )
+        ).map(Arguments::of);
+    }
+
+    @ParameterizedTest
+    @MethodSource("conflictingFilePrefixes")
+    void testCannotHaveDuplicateFilePrefixes(List<Map.Entry<String, String>> mappings) throws Exception {
+        setPrefixMappings(mappings);
+        copyFilesToCrUploadDirectory(List.of(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE));
+        assertCheckReconciliationImportHasExpectedResult(CrImportResult.EXCEPTION, List.of());
+    }
+
     private void assertCheckReconciliationImportHasExpectedResult(CrImportResult expectedResult,
             List<CheckReconciliationFixture> expectedCheckReconUpdates) throws Exception {
         Date currentDate = new Date();
