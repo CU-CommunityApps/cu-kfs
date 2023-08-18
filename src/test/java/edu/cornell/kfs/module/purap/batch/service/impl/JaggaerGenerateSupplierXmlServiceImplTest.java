@@ -19,10 +19,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
@@ -122,6 +124,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         jaggaerGenerateSupplierXmlServiceImpl.setJaggaerUploadDao(buildBockJaggaerUploadDao(processingMode, processDate, vendorDetailFixture));
         jaggaerGenerateSupplierXmlServiceImpl.setIsoFipsConversionService(buildMockISOFIPSConversionService());
         jaggaerGenerateSupplierXmlServiceImpl.setParameterService(buildMockParameterService());
+        jaggaerGenerateSupplierXmlServiceImpl.setConfigurationService(buildMockConfigurationService());
         
         List<SupplierSyncMessage> supplierSyncMessages = jaggaerGenerateSupplierXmlServiceImpl.getSupplierSyncMessages(processingMode, processDate, 1);
         validateSupplierSynchMessage(supplierSyncMessages, vendorDetailFixture);
@@ -149,6 +152,12 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
+    }
+    
+    private ConfigurationService buildMockConfigurationService() {
+        ConfigurationService configService = Mockito.mock(ConfigurationService.class);
+        Mockito.when(configService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_LOCATION_NAME_FORMAT)).thenReturn("{0} - {1}");
+        return configService;
     }
     
     private void validateSupplierSynchMessage(List<SupplierSyncMessage> supplierSyncMessages, JaggaerVendorDetailFixture vendorDetailFixture) {
