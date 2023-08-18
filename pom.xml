@@ -46,7 +46,7 @@
         <plexus-utils.version>3.0.24</plexus-utils.version>
         <mockito.version>4.6.1</mockito.version>
         <powermock.version>2.0.7</powermock.version>
-        <pw-iso20022.version>SRU2021-9.2.7</pw-iso20022.version>
+        <pw-iso20022.version>SRU2022-9.3.7</pw-iso20022.version>
         <squiggly-filter-jackson.version>1.3.18</squiggly-filter-jackson.version>
         <spring.version>5.3.27</spring.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
