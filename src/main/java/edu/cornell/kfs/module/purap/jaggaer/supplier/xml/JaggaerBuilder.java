@@ -1,7 +1,6 @@
 package edu.cornell.kfs.module.purap.jaggaer.supplier.xml;
 
-import edu.cornell.kfs.module.purap.JaggaerConstants;
-import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringTyoe;
+import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringType;
 
 public class JaggaerBuilder {
     
@@ -53,8 +52,8 @@ public class JaggaerBuilder {
         return buildActive(activeString, null);
     }
     
-    public static Active buildActive(boolean isActive, JaggaerBooleanToStringTyoe jaggaerBooleanToStringTyoe) {
-        return buildActive(isActive, null, jaggaerBooleanToStringTyoe);
+    public static Active buildActive(boolean isActive, JaggaerBooleanToStringType jaggaerBooleanToStringType) {
+        return buildActive(isActive, null, jaggaerBooleanToStringType);
     }
     
     public static Active buildActive(String activeString, String isChanged) {
@@ -64,9 +63,9 @@ public class JaggaerBuilder {
         return active;
     }
     
-    public static Active buildActive(boolean isActive, String isChanged, JaggaerBooleanToStringTyoe jaggaerBooleanToStringTyoe) {
+    public static Active buildActive(boolean isActive, String isChanged, JaggaerBooleanToStringType jaggaerBooleanToStringType) {
         Active active = new Active();
-        active.setValue(isActive ? jaggaerBooleanToStringTyoe.true_string : jaggaerBooleanToStringTyoe.false_string);
+        active.setValue(isActive ? jaggaerBooleanToStringType.true_string : jaggaerBooleanToStringType.false_string);
         active.setIsChanged(isChanged);
         return active;
     }
@@ -222,7 +221,7 @@ public class JaggaerBuilder {
         return buildJaggaerBasicValue(value, null);
     }
     
-    public static JaggaerBasicValue buildJaggaerBasicValue(boolean value, JaggaerBooleanToStringTyoe stringType) {
+    public static JaggaerBasicValue buildJaggaerBasicValue(boolean value, JaggaerBooleanToStringType stringType) {
         return buildJaggaerBasicValue(value, null, stringType);
     }
     
@@ -233,7 +232,7 @@ public class JaggaerBuilder {
         return basic;
     }
     
-    public static JaggaerBasicValue buildJaggaerBasicValue(boolean value, String isChanged, JaggaerBooleanToStringTyoe stringType) {
+    public static JaggaerBasicValue buildJaggaerBasicValue(boolean value, String isChanged, JaggaerBooleanToStringType stringType) {
         JaggaerBasicValue basic = new JaggaerBasicValue();
         basic.setValue(value ? stringType.true_string : stringType.false_string);
         basic.setIsChanged(isChanged);

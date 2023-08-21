@@ -35,7 +35,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerUploadSuppliersProce
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
-import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringTyoe;
+import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringType;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
@@ -111,7 +111,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
             supplier.setName(JaggaerBuilder.buildName(detail.getVendorName()));
             supplier.setCountryOfOrigin(buildCountryOfOrigin(detail));
-            supplier.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator(), JaggaerBooleanToStringTyoe.SUPPLIER_ACTUVE));
+            supplier.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator(), JaggaerBooleanToStringType.SUPPLIER_ACTIVE));
             supplier.setLegalStructure(buildJaggerLegalStructure(detail));
             processWebsiteUrl(detail, supplier);
             supplier.setAddressList(buildAddressList(detail, processingMode));
@@ -200,12 +200,12 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         AddressList addressList = new AddressList();
 
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
-            if (shouldProccessAddress(processingMode, vendorAddress)) {
+            if (shouldProcessAddress(processingMode, vendorAddress)) {
                 Address jaggaerAddress = new Address();
                 jaggaerAddress.setName(JaggaerBuilder.buildName(buildNameStringFromAddress(vendorAddress)));
                 jaggaerAddress.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
                 jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
-                jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerBooleanToStringTyoe.ADDRESS_ACTIVE));
+                jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerBooleanToStringType.ADDRESS_ACTIVE));
                 jaggaerAddress.setIsoCountryCode(buildIsoCountry(vendorAddress.getVendorCountryCode()));
                 jaggaerAddress.setAddressLine1(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine1Address()));
                 jaggaerAddress.setAddressLine2(JaggaerBuilder.buildAddressLine(vendorAddress.getVendorLine2Address()));
@@ -219,7 +219,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return addressList;
     }
 
-    private boolean shouldProccessAddress(JaggaerUploadSuppliersProcessingMode processingMode,
+    private boolean shouldProcessAddress(JaggaerUploadSuppliersProcessingMode processingMode,
             VendorAddress vendorAddress) {
         return StringUtils.equals(processingMode.modeCode, JaggaerUploadSuppliersProcessingMode.VENDOR.modeCode) || vendorAddress.isActive();
     }
@@ -247,16 +247,16 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     private LocationList buildLocationList(VendorDetail detail, JaggaerUploadSuppliersProcessingMode processingMode) {
         LocationList locationList = new LocationList();
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
-            if (shouldProccessAddress(processingMode, vendorAddress)) {
+            if (shouldProcessAddress(processingMode, vendorAddress)) {
                 Location location = new Location();
                 location.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
                 location.setName(JaggaerBuilder.buildName(buildNameStringFromAddress(vendorAddress)));
                 
                 boolean locationActive = detail.isActiveIndicator() && vendorAddress.isActive();
-                location.setActive(JaggaerBuilder.buildActive(locationActive, JaggaerBooleanToStringTyoe.LOCATION_ACTIVE));
-                location.setLocationActive(JaggaerBuilder.buildJaggaerBasicValue(locationActive, JaggaerBooleanToStringTyoe.LOCATION_ACTIVE));
+                location.setActive(JaggaerBuilder.buildActive(locationActive, JaggaerBooleanToStringType.LOCATION_ACTIVE));
+                location.setLocationActive(JaggaerBuilder.buildJaggaerBasicValue(locationActive, JaggaerBooleanToStringType.LOCATION_ACTIVE));
                 location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(locationActive && vendorAddress.isVendorDefaultAddressIndicator(), 
-                        JaggaerBooleanToStringTyoe.LOCATION_PRIMARY));
+                        JaggaerBooleanToStringType.LOCATION_PRIMARY));
                 
                 locationList.getLocations().add(location);
             }

@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.batch.service.impl.fixture;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.AddressType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
@@ -10,7 +11,7 @@ public enum JaggaerVendorAddressFixture {
     
     ITHACA(true, 101, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "US", "120 Maple Ave", "Room 666", "Ithaca", "NY", StringUtils.EMPTY, "14850"),
     PLAYACAR(true, 102, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "MX", "AV Xaman-Ha Mza 9 Y", "10 Lote 1 Fase II,", "Playacar", StringUtils.EMPTY, "QR", "77710"),
-    INACTIVE(false, 103, StringUtils.EMPTY, "US",  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+    INACTIVE(false, 103, StringUtils.EMPTY, KFSConstants.COUNTRY_CODE_UNITED_STATES,  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     
     public final boolean active;
     public final Integer addressId;
