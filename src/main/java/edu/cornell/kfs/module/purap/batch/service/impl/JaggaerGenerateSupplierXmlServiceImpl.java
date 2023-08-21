@@ -202,7 +202,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         for (VendorAddress vendorAddress : detail.getVendorAddresses()) {
             if (shouldProcessAddress(processingMode, vendorAddress)) {
                 Address jaggaerAddress = new Address();
-                jaggaerAddress.setName(JaggaerBuilder.buildName(buildNameStringFromAddress(vendorAddress)));
+                jaggaerAddress.setName(JaggaerBuilder.buildName(buildAddressNameString(vendorAddress)));
                 jaggaerAddress.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
                 jaggaerAddress.setType(JaggaerAddressTypeForXml.findJaggaerAddressTypeForXmlByKfsAddressType(vendorAddress.getVendorAddressTypeCode()).jaggaerAddressType);
                 jaggaerAddress.setActive(JaggaerBuilder.buildActive(detail.isActiveIndicator() && vendorAddress.isActive(), JaggaerBooleanToStringType.ADDRESS_ACTIVE));
@@ -250,7 +250,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             if (shouldProcessAddress(processingMode, vendorAddress)) {
                 Location location = new Location();
                 location.setErpNumber(JaggaerBuilder.buildErpNumber(String.valueOf(vendorAddress.getVendorAddressGeneratedIdentifier())));
-                location.setName(JaggaerBuilder.buildName(buildNameStringFromAddress(vendorAddress)));
+                location.setName(JaggaerBuilder.buildName(buildAddressNameString(vendorAddress)));
                 
                 boolean locationActive = detail.isActiveIndicator() && vendorAddress.isActive();
                 location.setActive(JaggaerBuilder.buildActive(locationActive, JaggaerBooleanToStringType.LOCATION_ACTIVE));
@@ -264,11 +264,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return locationList;
     }
 
-    private String buildNameStringFromAddress(VendorAddress vendorAddress) {
-        String locationName = MessageFormat.format(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_LOCATION_NAME_FORMAT), 
+    private String buildAddressNameString(VendorAddress vendorAddress) {
+        String name = MessageFormat.format(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_LOCATION_NAME_FORMAT), 
                 vendorAddress.getVendorAddressType().getVendorAddressTypeCode(),
                 vendorAddress.getVendorAddressType().getVendorAddressTypeDescription());
-        return locationName;
+        return name;
     }
 
     private IsoCountryCode buildIsoCountry(String fipsCountryCode) {
