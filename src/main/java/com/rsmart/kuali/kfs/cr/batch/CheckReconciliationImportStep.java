@@ -21,34 +21,46 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.comparator.NameFileComparator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.krad.bo.KualiCode;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.pdp.PdpConstants.PaymentStatusCodes;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentStatus;
 import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.krad.bo.KualiCode;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconError;
@@ -67,7 +79,13 @@ import edu.cornell.kfs.sys.batch.CuAbstractStep;
  */
 public class CheckReconciliationImportStep extends CuAbstractStep {
 
-	private static final Logger LOG = LogManager.getLogger(CheckReconciliationImportStep.class);
+    private static final Logger LOG = LogManager.getLogger();
+
+    private static final Pattern ALL_ZEROS_PATTERN = Pattern.compile("^0+$");
+    private static final String DATE_000000 = "000000";
+    private static final int YEAR_2099 = 2099;
+    private static final int MONTH_12 = 12;
+    private static final int DAY_31 = 31;
 
     private String delimeter = null;
 
@@ -91,9 +109,19 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
     
     private int accountNumCol;
     
+    private int issueDateCol;
+    
+    private int payeeIdCol;
+    
+    private int payeeNameCol;
+    
     private boolean isAmountDecimalValue;
     
     private boolean isAccountNumHeaderValue;
+    
+    private String currentParameterPrefix;
+    
+    private Function<String, Date> dateParser;
     
     private BusinessObjectService businessObjectService;
     
@@ -128,8 +156,10 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      */
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         LOG.info("Started CheckReconciliationImportStep @ " + (new Date()).toString());
-        
+
+        List<Pair<String, String>> prefixMappings = getParameterPrefixMappings();
         List<CheckReconError> records = new ArrayList<CheckReconError>();
+        boolean result = true;
         
         // Update canceled check from PDP
         updateCanceledChecks();
@@ -137,28 +167,55 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         // Import missing PDP payments
         importPdpPayments();
         
-        // Get column numbers
-        checkNumCol   = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_NUM_COL));
-        checkDateCol  = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_DATE_COL));
-        statusCol     = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.STATUS_COL));
-        amountCol     = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.AMOUNT_COL));
-        accountNumCol = Integer.parseInt(getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM_COL));
+        for (Pair<String, String> prefixMapping : prefixMappings) {
+            String filePrefix = prefixMapping.getKey();
+            String paramPrefix = prefixMapping.getValue();
+            LOG.info("execute, Processing files with prefix \"{}\" using parameters with prefix \"{}\"",
+                    filePrefix, paramPrefix);
+            result &= processCheckReconFiles(records, filePrefix, paramPrefix);
+        }
         
-        isAmountDecimalValue    = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.AMOUNT_DECIMAL_IND);
-        isAccountNumHeaderValue = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM_HEADER_IND);
-        
-        // Get file info
-        fileType   = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_TYPE);
-        header     = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER);
-        footer     = getParameterService().getParameterValueAsBoolean(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER);
+        result &= verifyAllPendingFilesWereProcessed();
         
         try {
+            writeLog(records);
+        } catch (Exception e) {
+            LOG.error("execute, Could not write error log file", e);
+        }
+        
+        LOG.info("Completed CheckReconciliationImportStep @ " + (new Date()).toString());
+        return result;
+    }
+        
+    protected boolean processCheckReconFiles(List<CheckReconError> records, String filePrefix, String paramPrefix) {
+        currentParameterPrefix = paramPrefix;
+        
+        // Get column numbers
+        checkNumCol   = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.CHECK_NUM_COL));
+        checkDateCol  = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.CHECK_DATE_COL));
+        statusCol     = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.STATUS_COL));
+        amountCol     = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.AMOUNT_COL));
+        accountNumCol = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.ACCOUNT_NUM_COL));
+        issueDateCol  = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.ISSUE_DATE_COL));
+        payeeIdCol    = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.PAYEE_ID_COL));
+        payeeNameCol  = Integer.parseInt(getCrImportParameterValueAsString(CRConstants.PAYEE_NAME_COL));
+        
+        isAmountDecimalValue    = getCrImportParameterValueAsBoolean(CRConstants.AMOUNT_DECIMAL_IND);
+        isAccountNumHeaderValue = getCrImportParameterValueAsBoolean(CRConstants.ACCOUNT_NUM_HEADER_IND);
+        
+        // Get file info
+        fileType   = getCrImportParameterValueAsString(CRConstants.CHECK_FILE_TYPE);
+        header     = getCrImportParameterValueAsBoolean(CRConstants.CHECK_FILE_HEADER);
+        footer     = getCrImportParameterValueAsBoolean(CRConstants.CHECK_FILE_FOOTER);
+        
+        try {
+            dateParser = getDateParser();
             if( CRConstants.DELIMITED.equals(fileType) ) {
-                delimeter = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_DELIMETER);
+                delimeter = getCrImportParameterValueAsString(CRConstants.CHECK_FILE_DELIMETER);
                 setStatusMap();
             }
             else if( CRConstants.FIXED.equals(fileType) ) {
-                String checkFileCols = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_COLUMNS);
+                String checkFileCols = getCrImportParameterValueAsString(CRConstants.CHECK_FILE_COLUMNS);
             
                 StringTokenizer st = new StringTokenizer(checkFileCols, ";", false);
                 int min = 0;
@@ -171,7 +228,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                 }
             
                 if(header) {
-                    checkFileCols = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_HEADER_COLUMNS);
+                    checkFileCols = getCrImportParameterValueAsString(CRConstants.CHECK_FILE_HEADER_COLUMNS);
                 
                     st = new StringTokenizer(checkFileCols, ";", false);
                     min = 0;
@@ -185,7 +242,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                 }
             
                 if(footer) {
-                    checkFileCols = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CHECK_FILE_FOOTER_COLUMNS);
+                    checkFileCols = getCrImportParameterValueAsString(CRConstants.CHECK_FILE_FOOTER_COLUMNS);
                 
                     st = new StringTokenizer(checkFileCols, ";", false);
                     min = 0;
@@ -207,20 +264,65 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             List<String> list = getFileList();
 
             for (int i = 0; i < list.size(); i++) {
+                String fileNameWithoutPath = getFileNameWithoutPath(list.get(i));
+                if (!StringUtils.startsWithIgnoreCase(fileNameWithoutPath, filePrefix)) {
+                    continue;
+                }
                 parseTextFile(list.get(i), records);
                 archiveFile(list.get(i));
             }
             
-            writeLog(records);
+            
         }
         catch (Exception err) {
             LOG.error("CheckReconciliationImportStep ERROR", err);
             return false;
+        } finally {
+            currentParameterPrefix = null;
+            dateParser = null;
+            columns.clear();
+            headerColumns.clear();
+            footerColumns.clear();
+            statusMap.clear();
+            headerMap = null;
+            footerMap = null;
+            headerLine = null;
+            footerLine = null;
         }
 
-        LOG.info("Completed CheckReconciliationImportStep @ " + (new Date()).toString());
-
         return true;
+    }
+
+    private boolean verifyAllPendingFilesWereProcessed() {
+        List<String> files;
+        try {
+            files = getFileList();
+        } catch (Exception e) {
+            LOG.error("verifyAllPendingFilesWereProcessed, Could not query for pending files", e);
+            return false;
+        }
+
+        if (files.isEmpty()) {
+            return true;
+        } else {
+            List<String> filesWithoutPaths = files.stream()
+                    .map(this::getFileNameWithoutPath)
+                    .collect(Collectors.toUnmodifiableList());
+            LOG.error("verifyAllPendingFilesWereProcessed, The following pending files did not get processed: {}",
+                    filesWithoutPaths);
+            return false;
+        }
+    }
+
+    private String getFileNameWithoutPath(String fileName) {
+        String fileNameWithoutPath = fileName;
+        if (StringUtils.contains(fileNameWithoutPath, CUKFSConstants.BACKSLASH)) {
+            fileNameWithoutPath = StringUtils.substringAfterLast(fileNameWithoutPath, CUKFSConstants.BACKSLASH);
+        }
+        if (StringUtils.contains(fileNameWithoutPath, CUKFSConstants.SLASH)) {
+            fileNameWithoutPath = StringUtils.substringAfterLast(fileNameWithoutPath, CUKFSConstants.SLASH);
+        }
+        return fileNameWithoutPath;
     }
 
     /**
@@ -367,7 +469,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         String statusProps = null;
         
         // Setup status map
-        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CLRD_STATUS);
+        statusProps = getCrImportParameterValueAsString(CRConstants.CLRD_STATUS);
         
         if( statusProps == null ) {
             throw new Exception( CRConstants.CLRD_STATUS + " system parameter is null." );
@@ -380,7 +482,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.ISSD_STATUS);
+        statusProps = getCrImportParameterValueAsString(CRConstants.ISSD_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.ISSD_STATUS + " system parameter is null." );
@@ -393,7 +495,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.VOID_STATUS);
+        statusProps = getCrImportParameterValueAsString(CRConstants.VOID_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.VOID_STATUS + " system parameter is null." );
@@ -406,7 +508,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.CNCL_STATUS);
+        statusProps = getCrImportParameterValueAsString(CRConstants.CNCL_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.CNCL_STATUS + " system parameter is null." );
@@ -419,7 +521,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.STAL_STATUS);
+        statusProps = getCrImportParameterValueAsString(CRConstants.STAL_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.STAL_STATUS + " system parameter is null." );
@@ -432,7 +534,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             }
         }
         
-        statusProps = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.STOP_STATUS);
+        statusProps = getCrImportParameterValueAsString(CRConstants.STOP_STATUS);
         
         if( statusProps == null ) {
             LOG.warn( CRConstants.STOP_STATUS + " system parameter is null." );
@@ -770,35 +872,25 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         Date issueDate = null;
         String payeeName = "";
         String payeeID	= "";
-        //Cornell Columns
-        Integer payeeNameCol = Integer.parseInt("12");
-        Integer issueDateCol = Integer.parseInt("7");
-        Integer payeeIDCol	 = Integer.parseInt("6");
         
         checkNumber   = hash.get(checkNumCol);
         String rawCheckDate = hash.get(checkDateCol);
-        if(rawCheckDate==null||rawCheckDate.equals("") ||rawCheckDate.equals("000000"))
-        	rawCheckDate = "991231";
         
-        checkDate = getGregorianCalendar(rawCheckDate).getTime();
-       // checkDate     = dateformat.parse(rawCheckDate);  //Date Paid
+        checkDate = dateParser.apply(rawCheckDate);
+
         amount        = isAmountDecimalValue    ? new KualiDecimal(addDecimalPoint(hash.get(amountCol))) : new KualiDecimal(hash.get(amountCol));
         if(accountNumCol>0)
         	accountNumber = isAccountNumHeaderValue ? getHeaderValue(accountNumCol) : hash.get(accountNumCol);
         else
-        	accountNumber =   getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.ACCOUNT_NUM);
+        	accountNumber =   getCrImportParameterValueAsString(CRConstants.ACCOUNT_NUM);
         
         status        = hash.get(statusCol);
         
         String issueDateRawValue 	= hash.get(issueDateCol);
         payeeName 					= hash.get(payeeNameCol);
-        payeeID	  					= hash.get(payeeIDCol);
+        payeeID	  					= hash.get(payeeIdCol);
         
-        if(issueDateRawValue==null||issueDateRawValue.equals("")||issueDateRawValue.equals("000000"))
-        	issueDateRawValue = "991231";
-        
-        //issueDate = dateformat.parse(issueDateRawValue);
-        issueDate = getGregorianCalendar(issueDateRawValue).getTime();
+        issueDate = dateParser.apply(issueDateRawValue);
         
         CheckReconciliation cr = new CheckReconciliation();
         cr.setAmount(amount);
@@ -814,19 +906,54 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         return cr;
     }
     
-    
-   private GregorianCalendar getGregorianCalendar(String yyMMDD){
-	   String year  = "20"+yyMMDD.substring(0,2);
-	   String month = yyMMDD.substring(2,4);
-	   String day = yyMMDD.substring(4);
-	   
-	   month = ""+(Integer.parseInt(month) -1);
-	   
-	   GregorianCalendar gc = new GregorianCalendar(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
-	 
-	   return gc;
-	   
-   }
+    private Function<String, Date> getDateParser() {
+        String dateFormatString = getCrImportParameterValueAsString(CRConstants.CHECK_DATE_FORMAT);
+        if (StringUtils.equals(dateFormatString, CRConstants.LEGACY_DATE_FORMAT_yyMMdd)) {
+            return this::getDateFromStringWithTwoDigitYear;
+        } else {
+            final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatString, Locale.US);
+            return dateString -> getDateFromString(dateString, dateFormatter);
+        }
+    }
+
+    private Date getDateFromString(String dateString, DateTimeFormatter dateFormatter) {
+        if (StringUtils.isBlank(dateString) || ALL_ZEROS_PATTERN.matcher(dateString).matches()) {
+            return getDefaultDateValue();
+        } else {
+            LocalDate localDate = LocalDate.parse(dateString, dateFormatter);
+            Instant dateAsInstant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            return Date.from(dateAsInstant);
+        }
+    }
+
+    private Date getDateFromStringWithTwoDigitYear(String dateString) {
+        String revisedDateString = dateString;
+        if (StringUtils.isEmpty(dateString) || StringUtils.equals(dateString, DATE_000000)) {
+            return getDefaultDateValue();
+        } else {
+            return getGregorianCalendar(revisedDateString).getTime();
+        }
+    }
+
+    private GregorianCalendar getGregorianCalendar(String yyMMDD){
+        String year  = "20"+yyMMDD.substring(0,2);
+        String month = yyMMDD.substring(2,4);
+        String day = yyMMDD.substring(4);
+        
+        month = ""+(Integer.parseInt(month) -1);
+        
+        GregorianCalendar gc = new GregorianCalendar(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
+      
+        return gc;
+        
+    }
+
+    private Date getDefaultDateValue() {
+        LocalDate defaultDate = LocalDate.of(YEAR_2099, MONTH_12, DAY_31);
+        LOG.warn("getDefaultDateValue, Row has a blank or all-zero date; defaulting to {}", defaultDate);
+        Instant dateAsInstant = defaultDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        return Date.from(dateAsInstant);
+    }
 
     /**
      * Parse File
@@ -836,10 +963,16 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
      */
     private void parseTextFile(String checkFile, List<CheckReconError> records) throws Exception {
         LOG.info("Parsing File : " + checkFile);
-
         File file = new File(checkFile);
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        try (
+            FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8);
+            BufferedReader br = new BufferedReader(fileReader);
+        ) {
+            parseTextFile(br, records);
+        }
+    }
 
+    private void parseTextFile(BufferedReader br, List<CheckReconError> records) throws Exception {
         String line = null;
         int    totalLinesProcessed = 0;
 
@@ -876,8 +1009,8 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
                     cr.setStatus(CRConstants.EXCP);
                     // Set GL Trans False
                     cr.setGlTransIndicator(Boolean.FALSE);
-                    String notFoundSrc   	= getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.SRC_NOT_FOUND);
-                    String notFoundBankCd   = getParameterService().getParameterValueAsString(CheckReconciliationImportStep.class,CRConstants.BNK_CD_NOT_FOUND);
+                    String notFoundSrc   	= getCrImportParameterValueAsString(CRConstants.SRC_NOT_FOUND);
+                    String notFoundBankCd   = getCrImportParameterValueAsString(CRConstants.BNK_CD_NOT_FOUND);
                     
                     cr.setSourceCode(notFoundSrc);  
                     cr.setBankCode(notFoundBankCd);
@@ -1095,6 +1228,58 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         }
         
         return defaultStatus;
+    }
+
+    private String getCrImportParameterValueAsString(String parameterName) {
+        String fullParameterName = getCurrentParameterPrefix() + parameterName;
+        return getParameterService().getParameterValueAsString(
+                CheckReconciliationImportStep.class, fullParameterName);
+    }
+
+    private boolean getCrImportParameterValueAsBoolean(String parameterName) {
+        String fullParameterName = getCurrentParameterPrefix() + parameterName;
+        return getParameterService().getParameterValueAsBoolean(
+                CheckReconciliationImportStep.class, fullParameterName);
+    }
+
+    private String getCurrentParameterPrefix() {
+        if (currentParameterPrefix == null) {
+            throw new IllegalStateException("Parameter prefix has not been initialized; can be empty but not null");
+        }
+        return currentParameterPrefix;
+    }
+
+    private List<Pair<String, String>> getParameterPrefixMappings() {
+        Collection<String> mappingStrings = getParameterService().getParameterValuesAsString(
+                CheckReconciliationImportStep.class, CRConstants.PARAMETER_PREFIX_MAPPINGS);
+        List<Pair<String, String>> mappings = mappingStrings.stream()
+                .map(this::parseParameterPrefixMapping)
+                .collect(Collectors.toUnmodifiableList());
+        Set<String> uniqueFilePrefixes = new HashSet<>();
+        for (Pair<String, String> mapping : mappings) {
+            String filePrefix = StringUtils.upperCase(mapping.getKey(), Locale.US);
+            if (conflictingPrefixExists(uniqueFilePrefixes, filePrefix) || !uniqueFilePrefixes.add(filePrefix)) {
+                throw new IllegalStateException("Cannot have multiple filePrefix-and-paramPrefix pairs with the "
+                        + "same filename prefix, or with one filename prefix being the truncated form of another. "
+                        + "Conflicting prefix: " + filePrefix);
+            }
+        }
+        return mappings;
+    }
+
+    private Pair<String, String> parseParameterPrefixMapping(String prefixMapping) {
+        String[] keyAndValue = StringUtils.splitPreserveAllTokens(prefixMapping, CUKFSConstants.EQUALS_SIGN);
+        if (keyAndValue.length != 2) {
+            throw new IllegalStateException("Detected a prefix mapping that does not match the expected "
+                    + "\"filePrefix=paramPrefix\" or \"filePrefix=\" patterns");
+        }
+        return Pair.of(StringUtils.trimToEmpty(keyAndValue[0]), StringUtils.trimToEmpty(keyAndValue[1]));
+    }
+
+    private boolean conflictingPrefixExists(Set<String> currentPrefixes, String nextPrefix) {
+        return currentPrefixes.stream()
+                .anyMatch(currentPrefix -> StringUtils.startsWithIgnoreCase(currentPrefix, nextPrefix)
+                        || StringUtils.startsWithIgnoreCase(nextPrefix, currentPrefix));
     }
 
     /**
