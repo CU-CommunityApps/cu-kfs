@@ -8,7 +8,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CuEscapeHandler extends DefaultEscapeHandler {
 
-    private static final String ESCAPED_APOSTROPHE = "&apps;";
+    private static final String ESCAPED_APOSTROPHE = "&apos;";
     private static final String ESCAPED_QUOTE = "&quot;";
 
     @Override
