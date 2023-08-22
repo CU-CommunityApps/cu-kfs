@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        Configurator.setLevel(JaggaerGenerateSupplierXmlServiceImpl.class.getName(), Level.DEBUG);
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
         jaggaerGenerateSupplierXmlServiceImpl.setWebServiceCredentialService(buildMockWebServiceCredentialService());
         dateTimeService = new TestDateTimeServiceImpl();

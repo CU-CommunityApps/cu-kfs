@@ -175,24 +175,34 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected boolean isValidUrl(String url,  String vendorNumber) {
         LOG.debug("isValidUrl, entering with url '{}' and vendor number '{}'", url, vendorNumber);
         if (StringUtils.isNotBlank(url) && !numberPattern.matcher(url).matches()) {
-            try {
-                new URL(url).toURI();
+            if (isUrlPrpperlyFormatted(url, vendorNumber) || doesUrlHaveDNSEntry(url, vendorNumber)) {
                 return true;
-            } catch (URISyntaxException | MalformedURLException e) {
-                LOG.debug("isValidUrl, failed validation by java.net.URI for vendor {} with URL of {}", vendorNumber, url);
-            }
-            
-            try {
-                InetAddress address = InetAddress.getByName(url);
-                LOG.debug("isValidUrl, for url {} the host address is {}", url, address.getHostAddress());
-                if (StringUtils.isNotBlank(address.getHostAddress())) {
-                    return true;
-                }
-            } catch (UnknownHostException e) {
-                LOG.debug("isValidUrl, failed validation by java.net.InetAddress for vendor {} with URL of {}", vendorNumber, url);
             }
         }
         LOG.error("isValidUrl, vendor number '{}' has an invalid URL of '{}'", vendorNumber, url);
+        return false;
+    }
+    
+    private boolean isUrlPrpperlyFormatted(String url,  String vendorNumber) {
+        try {
+            new URL(url).toURI();
+            return true;
+        } catch (URISyntaxException | MalformedURLException e) {
+            LOG.debug("isUrlPrpperlyFormatted, vendor {} with URL of {} is not properly formatted", vendorNumber, url);
+            return false;
+        }
+    }
+    
+    private boolean doesUrlHaveDNSEntry(String url,  String vendorNumber) {
+        try {
+            InetAddress address = InetAddress.getByName(url);
+            LOG.debug("isValidUrl, for url {} the host address is {}", url, address.getHostAddress());
+            if (StringUtils.isNotBlank(address.getHostAddress())) {
+                return true;
+            }
+        } catch (UnknownHostException e) {
+            LOG.error("doesUrlHaveDNSEntry, vendor {} with URL of {} does not have a DNS entry", vendorNumber, url, e);
+        }
         return false;
     }
 
