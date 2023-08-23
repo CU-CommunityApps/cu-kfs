@@ -1527,11 +1527,12 @@ public class Iso20022FormatExtractor {
         } else if (isCreditNote(paymentDetail)) {
             documentTypeCode = DocumentType5Code.CREN;
         } else {
-            LOG.warn(
-                    "determineDocumentTypeCode(...) - PaymentDetail has unexpected DocumentTypeCode : "
-                    + "paymentDetailFinancialDocumentTypeCode={}",
-                    paymentDetail::getFinancialDocumentTypeCode
-            );
+            /*
+             * CU Customization: Allow payments from PDP feeds to be marked as Invoices or Credit Notes.
+             */
+            documentTypeCode = paymentDetail.getNetPaymentAmount().isGreaterEqual(KualiDecimal.ZERO)
+                    ? DocumentType5Code.CINV
+                    : DocumentType5Code.CREN;
         }
         return documentTypeCode;
     }
