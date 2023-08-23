@@ -9,7 +9,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForXml;
 
 public enum JaggaerVendorAddressFixture {
     
-    ITHACA(true, 101, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "US", "120 Maple Ave", "Room 666", "Ithaca", "NY", StringUtils.EMPTY, "14850"),
+    ITHACA(true, 101, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, KFSConstants.COUNTRY_CODE_UNITED_STATES, "120 Maple Ave", "Room 666", "Ithaca", "NY", StringUtils.EMPTY, "14850"),
     PLAYACAR(true, 102, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "MX", "AV Xaman-Ha Mza 9 Y", "10 Lote 1 Fase II,", "Playacar", StringUtils.EMPTY, "QR", "77710"),
     INACTIVE(false, 103, StringUtils.EMPTY, KFSConstants.COUNTRY_CODE_UNITED_STATES,  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     

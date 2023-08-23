@@ -50,7 +50,6 @@ import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBasicValue;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilder;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Location;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.LocationList;
-import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Name;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.PrimaryAddressList;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.State;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
@@ -175,7 +174,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected boolean isValidUrl(String url,  String vendorNumber) {
         LOG.debug("isValidUrl, entering with url '{}' and vendor number '{}'", url, vendorNumber);
         if (StringUtils.isNotBlank(url) && !numberPattern.matcher(url).matches()) {
-            if (isUrlPrpperlyFormatted(url, vendorNumber) || doesUrlHaveDNSEntry(url, vendorNumber)) {
+            if (isUrlProperlyFormatted(url, vendorNumber) || doesUrlHaveDnsEntry(url, vendorNumber)) {
                 return true;
             }
         }
@@ -183,17 +182,17 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         return false;
     }
     
-    private boolean isUrlPrpperlyFormatted(String url,  String vendorNumber) {
+    private boolean isUrlProperlyFormatted(String url,  String vendorNumber) {
         try {
             new URL(url).toURI();
             return true;
         } catch (URISyntaxException | MalformedURLException e) {
-            LOG.debug("isUrlPrpperlyFormatted, vendor {} with URL of {} is not properly formatted", vendorNumber, url);
+            LOG.debug("isUrlProperlyFormatted, vendor {} with URL of {} is not properly formatted", vendorNumber, url);
             return false;
         }
     }
     
-    private boolean doesUrlHaveDNSEntry(String url,  String vendorNumber) {
+    private boolean doesUrlHaveDnsEntry(String url,  String vendorNumber) {
         try {
             InetAddress address = InetAddress.getByName(url);
             LOG.debug("isValidUrl, for url {} the host address is {}", url, address.getHostAddress());
@@ -201,7 +200,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 return true;
             }
         } catch (UnknownHostException e) {
-            LOG.error("doesUrlHaveDNSEntry, vendor {} with URL of {} does not have a DNS entry", vendorNumber, url, e);
+            LOG.error("doesUrlHaveDnsEntry, vendor {} with URL of {} does not have a DNS entry", vendorNumber, url, e);
         }
         return false;
     }
