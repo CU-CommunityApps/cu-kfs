@@ -190,7 +190,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
 
     private boolean shouldCreateLegacyCheckFiles() {
-        return true;
+        return !shouldUseIso20022Format() || isIso20022FormatParameterEnabled(
+                CUPdpParameterConstants.CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES);
     }
 
     private boolean shouldCreateFastTrackCheckFiles() {
