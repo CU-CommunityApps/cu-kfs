@@ -25,7 +25,7 @@ import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 
 public abstract class SupplierSyncMessageTestBase {
     protected static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/jaggaer/xml/";
-    protected static final String OUTPUT_FILE_PATH = "test/jaggaer/supplierSynchMessageTest/";;
+    protected static final String OUTPUT_FILE_PATH = "test/jaggaer/supplierSynchMessageTest/";
     protected CUMarshalService marshalService;
     
     private File outputFileDirectory;

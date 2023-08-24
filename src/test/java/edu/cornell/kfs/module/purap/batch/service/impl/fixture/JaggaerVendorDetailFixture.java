@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.batch.service.impl.fixture;
 
 import java.util.List;
 
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.businessobject.VendorHeader;
 
@@ -9,13 +10,13 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 
 public enum JaggaerVendorDetailFixture {
-    ACME_ITHACA (true, 1234, 0, "Acme primary", "US", JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "www.google.com",
+    ACME_ITHACA (true, 1234, 0, "Acme primary", KFSConstants.COUNTRY_CODE_UNITED_STATES, JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "www.google.com",
             buildAddressList(JaggaerVendorAddressFixture.ITHACA, JaggaerVendorAddressFixture.INACTIVE),
-            buildStringArray(JaggaerVendorAddressFixture.ITHACA.addressId.toString())),
-    ACME_TRANSNATIONAL (true, 1234, 1, "Acme Secondary", "US", JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "www.yahoo.com",
+            buildStringArray(JaggaerVendorAddressFixture.ITHACA.addressId.toString(), JaggaerVendorAddressFixture.INACTIVE.addressId.toString())),
+    ACME_TRANSNATIONAL (true, 1234, 1, "Acme Secondary", KFSConstants.COUNTRY_CODE_UNITED_STATES, JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "www.yahoo.com",
             buildAddressList(JaggaerVendorAddressFixture.ITHACA, JaggaerVendorAddressFixture.PLAYACAR),
             buildStringArray(JaggaerVendorAddressFixture.ITHACA.addressId.toString(), JaggaerVendorAddressFixture.PLAYACAR.addressId.toString())),
-    ACME_NO_ADDRESS (true, 456, 0, "Acme no address", "US", JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "www.google.com",
+    ACME_NO_ADDRESS (true, 456, 0, "Acme no address", KFSConstants.COUNTRY_CODE_UNITED_STATES, JaggaerLegalStructure.C_CORPORATION.kfsOwnerShipTypeCode, "www.google.com",
             buildAddressList(),
             buildStringArray());
     

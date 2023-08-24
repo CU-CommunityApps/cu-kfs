@@ -18,4 +18,19 @@ public class JaggaerConstants {
     public static final String FALSE = "false";
     public static final String XML_VERSION = "1.0";
     
+    public enum JaggaerBooleanToStringType {
+        SUPPLIER_ACTIVE(YES, NO),
+        ADDRESS_ACTIVE(TRUE, FALSE),
+        LOCATION_ACTIVE(YES, NO),
+        LOCATION_PRIMARY(YES, NO);
+        
+        public final String true_string;
+        public final String false_string;
+        
+        private JaggaerBooleanToStringType(String true_string, String false_string) {
+            this.true_string = true_string;
+            this.false_string = false_string;
+        }
+    }
+    
 }
