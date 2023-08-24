@@ -354,7 +354,8 @@
         p:isoFipsConversionService-ref="isoFipsConversionService"
         p:parameterService-ref="parameterService"
         p:jaggaerUploadDao-ref="jaggaerUploadDao"
-        p:webServiceCredentialService-ref="webServiceCredentialService" />
+        p:webServiceCredentialService-ref="webServiceCredentialService" 
+        p:configurationService-ref="configurationService" />
 
     <bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
     <bean id="jaggaerUploadFileService-parentBean" abstract="true"

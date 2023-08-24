@@ -10,17 +10,23 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.CuPurapTestConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerLegalStructure;
@@ -30,7 +36,7 @@ import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.impl.fixture.JaggaerVendorAddressFixture;
 import edu.cornell.kfs.module.purap.batch.service.impl.fixture.JaggaerVendorDetailFixture;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Address;
-import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilder;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilderTest;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
@@ -38,17 +44,19 @@ import edu.cornell.kfs.sys.service.ISOFIPSConversionService;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
+@Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerGenerateSupplierXmlServiceImplTest {
     
     private JaggaerGenerateSupplierXmlServiceImpl jaggaerGenerateSupplierXmlServiceImpl;
     
-    private static final String OUTPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/batch/service/impl/JaggaerGenerateSupplierXmlServiceImplTest/";
+    private static final String OUTPUT_FILE_PATH = "test/jaggaer/JaggaerGenerateSupplierXmlServiceImplTest/";
     private File outputFileDirectory;
     private TestDateTimeServiceImpl dateTimeService;
     
 
     @BeforeEach
     void setUp() throws Exception {
+        Configurator.setLevel(JaggaerGenerateSupplierXmlServiceImpl.class.getName(), Level.DEBUG);
         jaggaerGenerateSupplierXmlServiceImpl = new JaggaerGenerateSupplierXmlServiceImpl();
         jaggaerGenerateSupplierXmlServiceImpl.setWebServiceCredentialService(buildMockWebServiceCredentialService());
         dateTimeService = new TestDateTimeServiceImpl();
@@ -96,7 +104,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         List<Supplier> suppliers = new ArrayList<>();
         for (int i = 0; i < numberOfSuppliers; i++) {
             Supplier supplier = new Supplier();
-            supplier.setName(JaggaerBuilder.buildName("Test supplier " + i));
+            supplier.setName(JaggaerBuilderTest.buildName("Test supplier " + i));
             suppliers.add(supplier);
         }
         return suppliers;
@@ -119,6 +127,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         jaggaerGenerateSupplierXmlServiceImpl.setJaggaerUploadDao(buildBockJaggaerUploadDao(processingMode, processDate, vendorDetailFixture));
         jaggaerGenerateSupplierXmlServiceImpl.setIsoFipsConversionService(buildMockISOFIPSConversionService());
         jaggaerGenerateSupplierXmlServiceImpl.setParameterService(buildMockParameterService());
+        jaggaerGenerateSupplierXmlServiceImpl.setConfigurationService(buildMockConfigurationService());
         
         List<SupplierSyncMessage> supplierSyncMessages = jaggaerGenerateSupplierXmlServiceImpl.getSupplierSyncMessages(processingMode, processDate, 1);
         validateSupplierSynchMessage(supplierSyncMessages, vendorDetailFixture);
@@ -142,14 +151,16 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
     private ParameterService buildMockParameterService() {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ACTIVE_VALUE)).thenReturn("Yes");
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
-                CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_ACTIVE_VALUE)).thenReturn("Yes");
-        Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_DEFAULT_SUPPLIER_ADDRESS_NOTE_TEXT)).thenReturn("The KFS vendor addres type is");
         Mockito.when(service.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class,
                 CUPurapParameterConstants.JAGGAER_UPLOAD_SUPPLIERS_DTD_DOCTYPE_TAG)).thenReturn(CuPurapTestConstants.JAGGAER_UPLOAD_SUPPLIERS_TEST_DTD_TAG);
         return service;
+    }
+    
+    private ConfigurationService buildMockConfigurationService() {
+        ConfigurationService configService = Mockito.mock(ConfigurationService.class);
+        Mockito.when(configService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_LOCATION_NAME_FORMAT)).thenReturn("{0} - {1}");
+        return configService;
     }
     
     private void validateSupplierSynchMessage(List<SupplierSyncMessage> supplierSyncMessages, JaggaerVendorDetailFixture vendorDetailFixture) {
@@ -187,5 +198,38 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
                 assertEquals(expectedState, supplierAddress.getState().getValue());
             }
         }
+    }
+    
+    @ParameterizedTest
+    @MethodSource("provideForTestIsValidUrl")
+    void testIsValidUrl(String url,  String vendorNumber, boolean expectedResults) {
+        boolean actualResults = jaggaerGenerateSupplierXmlServiceImpl.isValidUrl(url, vendorNumber);
+        assertEquals(expectedResults, actualResults);
+    }
+    
+    private static Stream<Arguments> provideForTestIsValidUrl() {
+        return Stream.of(
+          Arguments.of(StringUtils.EMPTY, "empty", false),
+          Arguments.of(StringUtils.SPACE, "space", false),
+          Arguments.of(null, "nullVendor", false),
+          Arguments.of("824910376", "numbers", false),
+          Arguments.of("foobar", "words", false),
+          Arguments.of("foo bar", "wordsAndSpace", false),
+          Arguments.of("www.somedumbwebsite101.com", "badDomain", false),
+          Arguments.of("somedumbwebsite101.com", "badDomain2", false),
+          Arguments.of("13.107.213.35", "CornellIP", true),
+          Arguments.of("cornell.edu", "domain", true),
+          Arguments.of("www.google.com", "wwwDomain", true),
+          Arguments.of("http://www.google.com", "httpDomain", true),
+          Arguments.of("https://www.google.com", "httpsDomain", true),
+          Arguments.of("https://www.cornell.edu/subFolder", "httpsDomainSub", true),
+          Arguments.of("https://www.cornell.edu/index.jsp", "httpsDomainPage", true),
+          Arguments.of("https://www.cornell.edu/index.jsp?foo=bar", "httpsDomainPageParam", true),
+          Arguments.of("https://www.cornell.edu/index.jsp#section1", "httpsDomainPageFragment", true),
+          Arguments.of("http:443//www.google.com", "httpPortDomain", true),
+          Arguments.of("http://128.253.173.243", "httpIp", true),
+          Arguments.of("https://128.253.173.243", "httpsIp", true),
+          Arguments.of("https://128.253.173.243/index.aspx", "httpsIpPage", true)
+        );
     }
 }

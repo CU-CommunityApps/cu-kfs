@@ -67,41 +67,41 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private Supplier buildSupplier() {
         Supplier supplier = new Supplier();
-        supplier.setErpNumber(JaggaerBuilder.buildErpNumber("als12345"));
-        supplier.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511507"));
-        supplier.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("ALS0001"));
-        supplier.setName(JaggaerBuilder.buildName("Affordable Lab Supplies"));
-        supplier.setDoingBusinessAs(JaggaerBuilder.buildJaggaerBasicValue("ALS"));
-        supplier.setOtherNames(JaggaerBuilder.buildJaggaerBasicValue("AffLabs"));
+        supplier.setErpNumber(JaggaerBuilderTest.buildErpNumber("als12345"));
+        supplier.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511507"));
+        supplier.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber("ALS0001"));
+        supplier.setName(JaggaerBuilderTest.buildName("Affordable Lab Supplies"));
+        supplier.setDoingBusinessAs(JaggaerBuilderTest.buildJaggaerBasicValue("ALS"));
+        supplier.setOtherNames(JaggaerBuilderTest.buildJaggaerBasicValue("AffLabs"));
         supplier.setJaSupplierId("9142");
-        supplier.setCountryOfOrigin(JaggaerBuilder.buildJaggaerBasicValue("US"));
+        supplier.setCountryOfOrigin(JaggaerBuilderTest.buildJaggaerBasicValue("US"));
         supplier.setParentSupplier(buildParentSupplier());
-        supplier.setActive(JaggaerBuilder.buildActive(JaggaerConstants.NO));
+        supplier.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.NO));
         supplier.setBusinessUnitVendorNumberList(buildBusinessUnitVendorNumberList());
-        supplier.setWebSiteURL(JaggaerBuilder.buildJaggaerBasicValue("www.affordablelabsupplies.com"));
-        supplier.setDuns(JaggaerBuilder.buildJaggaerBasicValue("123456789"));
-        supplier.setLegalStructure(JaggaerBuilder.buildJaggaerBasicValue("LimitedLiabilityCompany_Partnership"));
-        supplier.setTaxIdentificationNumber(JaggaerBuilder.buildJaggaerBasicValue("123456789"));
-        supplier.setVatIdentificationNumber(JaggaerBuilder.buildJaggaerBasicValue("123456789"));
-        supplier.setExemptFromBackupWithholding(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.YES));
-        supplier.setNumberOfEmployees(JaggaerBuilder.buildJaggaerBasicValue("400"));
-        supplier.setYearEstablished(JaggaerBuilder.buildJaggaerBasicValue("1983-06-04"));
+        supplier.setWebSiteURL(JaggaerBuilderTest.buildJaggaerBasicValue("www.affordablelabsupplies.com"));
+        supplier.setDuns(JaggaerBuilderTest.buildJaggaerBasicValue("123456789"));
+        supplier.setLegalStructure(JaggaerBuilderTest.buildJaggaerBasicValue("LimitedLiabilityCompany_Partnership"));
+        supplier.setTaxIdentificationNumber(JaggaerBuilderTest.buildJaggaerBasicValue("123456789"));
+        supplier.setVatIdentificationNumber(JaggaerBuilderTest.buildJaggaerBasicValue("123456789"));
+        supplier.setExemptFromBackupWithholding(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.YES));
+        supplier.setNumberOfEmployees(JaggaerBuilderTest.buildJaggaerBasicValue("400"));
+        supplier.setYearEstablished(JaggaerBuilderTest.buildJaggaerBasicValue("1983-06-04"));
         supplier.setAnnualSalesList(buildAnnualSalesList());
         supplier.setServiceAreaList(buildServiceAreaList());
-        supplier.setSupplierTaxRepresentativeId(JaggaerBuilder.buildJaggaerBasicValue(null, JaggaerConstants.NO));
-        supplier.setSupplierRegCourt(JaggaerBuilder.buildJaggaerBasicValue(null, JaggaerConstants.NO));
-        supplier.setSupplierRegNumber(JaggaerBuilder.buildJaggaerBasicValue(null, JaggaerConstants.NO));
-        supplier.setSupplierRegSeat(JaggaerBuilder.buildJaggaerBasicValue(null, JaggaerConstants.NO));
-        supplier.setSupplierShareholders(JaggaerBuilder.buildJaggaerBasicValue(null, JaggaerConstants.NO));
-        supplier.setVatExempt(JaggaerBuilder.buildJaggaerBasicValue("false", JaggaerConstants.NO));
+        supplier.setSupplierTaxRepresentativeId(JaggaerBuilderTest.buildJaggaerBasicValue(null, JaggaerConstants.NO));
+        supplier.setSupplierRegCourt(JaggaerBuilderTest.buildJaggaerBasicValue(null, JaggaerConstants.NO));
+        supplier.setSupplierRegNumber(JaggaerBuilderTest.buildJaggaerBasicValue(null, JaggaerConstants.NO));
+        supplier.setSupplierRegSeat(JaggaerBuilderTest.buildJaggaerBasicValue(null, JaggaerConstants.NO));
+        supplier.setSupplierShareholders(JaggaerBuilderTest.buildJaggaerBasicValue(null, JaggaerConstants.NO));
+        supplier.setVatExempt(JaggaerBuilderTest.buildJaggaerBasicValue("false", JaggaerConstants.NO));
         supplier.setCommodityCodeList(buildCommodityCodeList());
-        supplier.setShoppingCommodityCode(JaggaerBuilder.buildJaggaerBasicValue("SC01"));
-        supplier.setAustinTetra(JaggaerBuilder.buildJaggaerBasicValue("Austin-Tetra Code"));
-        supplier.setSic(JaggaerBuilder.buildJaggaerBasicValue("SIC Code"));
+        supplier.setShoppingCommodityCode(JaggaerBuilderTest.buildJaggaerBasicValue("SC01"));
+        supplier.setAustinTetra(JaggaerBuilderTest.buildJaggaerBasicValue("Austin-Tetra Code"));
+        supplier.setSic(JaggaerBuilderTest.buildJaggaerBasicValue("SIC Code"));
         supplier.setNaicsCodeList(buildNaicsCodes());
         supplier.setSupportedCurrencyList(buildCurrencyList("USD", "CAD", "GBP", "EUR", "CHF", "MXN"));
         supplier.setEnabledCurrencyList(buildCurrencyList("USD", "MXN"));
-        supplier.setSupplierKeywords(JaggaerBuilder.buildJaggaerBasicValue("Paper Products, Filters, Drinking Straws"));
+        supplier.setSupplierKeywords(JaggaerBuilderTest.buildJaggaerBasicValue("Paper Products, Filters, Drinking Straws"));
         supplier.setAddressList(buildAddressList());
         supplier.setPrimaryAddressList(buildPrimaryAddressList());
         supplier.setContactList(buildContactList());
@@ -110,7 +110,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         supplier.setDiversityClassificationList(buildDiversityClassificationList());
         supplier.setInsuranceInformationList(buildInsuranceInformationList());
         supplier.setLocationList(buildLocationList());
-        supplier.setRestrictFulfillmentLocationsByBusinessUnit(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        supplier.setRestrictFulfillmentLocationsByBusinessUnit(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
         supplier.setCustomElementList(buildSupplierCustomElementList());
         supplier.setAccountsPayableList(buildAccountsPayableList());
         supplier.setTaxInformationList(buildTaxInformationList());
@@ -119,19 +119,19 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private ParentSupplier buildParentSupplier() {
         ParentSupplier parent = new ParentSupplier();
-        parent.setErpNumber(JaggaerBuilder.buildErpNumber("als12343"));
-        parent.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511504"));
+        parent.setErpNumber(JaggaerBuilderTest.buildErpNumber("als12343"));
+        parent.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511504"));
         return parent;
     }
     
     private BusinessUnitVendorNumberList buildBusinessUnitVendorNumberList() {
         BusinessUnitVendorNumberList list = new BusinessUnitVendorNumberList();
-        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC1", "NCCBO0001"));
-        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA1", "VACBO0001"));
-        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC2", "NCCBO0002"));
-        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA2", "VACBO0002"));
-        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("NC3", "NCCBO0003"));
-        list.getBusinessUnitVendorNumbers().add(JaggaerBuilder.buildBusinessUnitVendorNumber("VA3", "VACBO0003"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilderTest.buildBusinessUnitVendorNumber("NC1", "NCCBO0001"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilderTest.buildBusinessUnitVendorNumber("VA1", "VACBO0001"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilderTest.buildBusinessUnitVendorNumber("NC2", "NCCBO0002"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilderTest.buildBusinessUnitVendorNumber("VA2", "VACBO0002"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilderTest.buildBusinessUnitVendorNumber("NC3", "NCCBO0003"));
+        list.getBusinessUnitVendorNumbers().add(JaggaerBuilderTest.buildBusinessUnitVendorNumber("VA3", "VACBO0003"));
         return list;
     }
     
@@ -145,20 +145,20 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private AnnualSalesItem buildAnnualSales(String amountString, String salesYear, String currencyCode) {
         AnnualSalesItem sale = new AnnualSalesItem();
-        sale.setAnnualSalesAmount(JaggaerBuilder.buildAmount(amountString));
-        sale.setAnnualSalesYear(JaggaerBuilder.buildJaggaerBasicValue(salesYear));
-        sale.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode(currencyCode));
+        sale.setAnnualSalesAmount(JaggaerBuilderTest.buildAmount(amountString));
+        sale.setAnnualSalesYear(JaggaerBuilderTest.buildJaggaerBasicValue(salesYear));
+        sale.setIsoCurrencyCode(JaggaerBuilderTest.buildIsoCurrencyCode(currencyCode));
         return sale;
     }
     
     private ServiceAreaList buildServiceAreaList() {
         ServiceAreaList serviceAreaList = new ServiceAreaList();
         ServiceArea serviceArea = new ServiceArea();
-        serviceArea.setServiceAreaInternalName(JaggaerBuilder.buildJaggaerBasicValue("US"));
+        serviceArea.setServiceAreaInternalName(JaggaerBuilderTest.buildJaggaerBasicValue("US"));
         
         StateServiceAreaList stateServiceAreaList = new StateServiceAreaList();
-        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-NC"));
-        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilder.buildStateServiceAreaInternalName("US-CA"));
+        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilderTest.buildStateServiceAreaInternalName("US-NC"));
+        stateServiceAreaList.getStateServiceAreaInternalNames().add(JaggaerBuilderTest.buildStateServiceAreaInternalName("US-CA"));
         
         serviceArea.getStateServiceAreaList().add(stateServiceAreaList);
         serviceAreaList.getServiceAreas().add(serviceArea);
@@ -167,19 +167,19 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private CommodityCodeList buildCommodityCodeList() {
         CommodityCodeList list = new CommodityCodeList();
-        list.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("OM01"));
-        list.getCommodityCodes().add(JaggaerBuilder.buildJaggaerBasicValue("OM02"));
+        list.getCommodityCodes().add(JaggaerBuilderTest.buildJaggaerBasicValue("OM01"));
+        list.getCommodityCodes().add(JaggaerBuilderTest.buildJaggaerBasicValue("OM02"));
         return list;
     }
     
     private NaicsCodeList buildNaicsCodes() {
         NaicsCodeList naicsCodes = new NaicsCodeList();
-        naicsCodes.getNaicsCodeListItems().add(JaggaerBuilder.buildPrimaryNaicsItem("424120"));
+        naicsCodes.getNaicsCodeListItems().add(JaggaerBuilderTest.buildPrimaryNaicsItem("424120"));
         
         SecondaryNaicsList secondaryList = new SecondaryNaicsList();
-        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("424121"));
-        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524120"));
-        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilder.buildSecondaryNaicsItem("524121"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilderTest.buildSecondaryNaicsItem("424121"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilderTest.buildSecondaryNaicsItem("524120"));
+        secondaryList.getSecondaryNaicsItems().add(JaggaerBuilderTest.buildSecondaryNaicsItem("524121"));
         naicsCodes.getNaicsCodeListItems().add(secondaryList);
         
         return naicsCodes;
@@ -189,7 +189,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         CurrencyList list = new CurrencyList();
         list.setIsChanged(JaggaerConstants.NO);
         for (String currency : currencies) {
-            list.getIsoCurrencyCodes().add(JaggaerBuilder.buildIsoCurrencyCode(currency, JaggaerConstants.NO));
+            list.getIsoCurrencyCodes().add(JaggaerBuilderTest.buildIsoCurrencyCode(currency, JaggaerConstants.NO));
         }
         return list;
     }
@@ -204,19 +204,19 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Address buildRemitToAddress() {
         Address remit = new Address();
         remit.setType("remitto");
-        remit.setErpNumber(JaggaerBuilder.buildErpNumber("add123"));
-        remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u15174772"));
-        remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        remit.setName(JaggaerBuilder.buildName("California Regional Office"));
-        remit.setActive(JaggaerBuilder.buildActive(JaggaerConstants.NO));
+        remit.setErpNumber(JaggaerBuilderTest.buildErpNumber("add123"));
+        remit.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u15174772"));
+        remit.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
+        remit.setName(JaggaerBuilderTest.buildName("California Regional Office"));
+        remit.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.NO));
         remit.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod("accountspayable@affordablelabsupplies.com"));  
-        remit.setAddressLine1(JaggaerBuilder.buildAddressLine("309 Pattern Ave."));
+        remit.setAddressLine1(JaggaerBuilderTest.buildAddressLine("309 Pattern Ave."));
         remit.setAddressLine2(new AddressLine());
         remit.setAddressLine3(new AddressLine());
-        remit.setCity(JaggaerBuilder.buildCity("San Diego"));
-        remit.setState(JaggaerBuilder.buildState("CA"));
-        remit.setPostalCode(JaggaerBuilder.buildPostalCode("92093"));
-        remit.setIsoCountryCode(JaggaerBuilder.buildIsoCountryCode("USA"));
+        remit.setCity(JaggaerBuilderTest.buildCity("San Diego"));
+        remit.setState(JaggaerBuilderTest.buildState("CA"));
+        remit.setPostalCode(JaggaerBuilderTest.buildPostalCode("92093"));
+        remit.setIsoCountryCode(JaggaerBuilderTest.buildIsoCountryCode("USA"));
         remit.setPhone(buildPhone("1", "619", "1234567", null));
         remit.setTollFreePhone(buildTollFreePhone("1", "800", "8901234", null));
         remit.setFax(buildFax("1", "619", "5678901", null));
@@ -228,32 +228,32 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private PrefPurchaseOrderDeliveryMethod buildPrefPurchaseOrderDeliveryMethod(String emailAddress) {
         PrefPurchaseOrderDeliveryMethod method = new PrefPurchaseOrderDeliveryMethod();
         method.setType("Email");
-        method.getDeliveryMethodTypes().add(JaggaerBuilder.buildEmail(emailAddress));
+        method.getDeliveryMethodTypes().add(JaggaerBuilderTest.buildEmail(emailAddress));
         return method;
     }
     
     private Phone buildPhone(String countryCode, String areaCode, String number, String extension) {
         Phone phone = new Phone();
-        phone.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber(countryCode, areaCode, number, extension));
+        phone.setTelephoneNumber(JaggaerBuilderTest.buildTelephoneNumber(countryCode, areaCode, number, extension));
         return phone;
     }
     
     private TollFreePhone buildTollFreePhone(String countryCode, String areaCode, String number, String extension) {
         TollFreePhone phone = new TollFreePhone();
-        phone.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber(countryCode, areaCode, number, extension));
+        phone.setTelephoneNumber(JaggaerBuilderTest.buildTelephoneNumber(countryCode, areaCode, number, extension));
         return phone;
     }
     
     private Fax buildFax(String countryCode, String areaCode, String number, String extension) {
         Fax fax = new Fax();
-        fax.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber(countryCode, areaCode, number, extension));
+        fax.setTelephoneNumber(JaggaerBuilderTest.buildTelephoneNumber(countryCode, areaCode, number, extension));
         return fax;
     }
     
     private AssignedBusinessUnitsList buildAssignedBusinessUnitsList(String... names) {
         AssignedBusinessUnitsList list = new AssignedBusinessUnitsList();
         for (String name : names) {
-            list.getBusinessUnitInternalNames().add(JaggaerBuilder.buildBusinessUnitInternalName(name, null));
+            list.getBusinessUnitInternalNames().add(JaggaerBuilderTest.buildBusinessUnitInternalName(name, null));
         }
         return list;
     }
@@ -261,19 +261,19 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Address buildFulfillmentAddress() {
         Address fulfill = new Address();
         fulfill.setType("fulfillment");
-        fulfill.setErpNumber(JaggaerBuilder.buildErpNumber("add123"));
-        fulfill.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
-        fulfill.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        fulfill.setName(JaggaerBuilder.buildName("West Coast Distribution Center"));
-        fulfill.setActive(JaggaerBuilder.buildActive(JaggaerConstants.YES));
+        fulfill.setErpNumber(JaggaerBuilderTest.buildErpNumber("add123"));
+        fulfill.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511560"));
+        fulfill.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
+        fulfill.setName(JaggaerBuilderTest.buildName("West Coast Distribution Center"));
+        fulfill.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.YES));
         fulfill.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod("fulfillment@affordablelabsupplies.com"));  
-        fulfill.setAddressLine1(JaggaerBuilder.buildAddressLine("123 Park Ave."));
+        fulfill.setAddressLine1(JaggaerBuilderTest.buildAddressLine("123 Park Ave."));
         fulfill.setAddressLine2(new AddressLine());
         fulfill.setAddressLine3(new AddressLine());
-        fulfill.setCity(JaggaerBuilder.buildCity("San Diego"));
-        fulfill.setState(JaggaerBuilder.buildState("CA"));
-        fulfill.setPostalCode(JaggaerBuilder.buildPostalCode("92093"));
-        fulfill.setIsoCountryCode(JaggaerBuilder.buildIsoCountryCode("USA"));
+        fulfill.setCity(JaggaerBuilderTest.buildCity("San Diego"));
+        fulfill.setState(JaggaerBuilderTest.buildState("CA"));
+        fulfill.setPostalCode(JaggaerBuilderTest.buildPostalCode("92093"));
+        fulfill.setIsoCountryCode(JaggaerBuilderTest.buildIsoCountryCode("USA"));
         fulfill.setPhone(buildPhone("1", "619", "2345678", null));
         fulfill.setTollFreePhone(buildTollFreePhone("1", "800", "9012345", null));
         fulfill.setFax(buildFax("1", "619", "6789012", null));
@@ -294,7 +294,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         address.setType(addressType);
         
         AddressRef ref = new AddressRef();
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber));
+        ref.setErpNumber(JaggaerBuilderTest.buildErpNumber(erpNumber));
         address.setAddressRef(ref);
         
         return address;
@@ -311,16 +311,16 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Contact buildRemitContact() {
         Contact remit = new Contact();
         remit.setType("remitto");
-        remit.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT1"));
+        remit.setErpNumber(JaggaerBuilderTest.buildErpNumber("CONTACT1"));
         remit.setOldERPNumber("CONTACT1");
-        remit.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1237"));
-        remit.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
-        remit.setName(JaggaerBuilder.buildName("Primary ALS RemitTo and Fulfillment Contact"));
-        remit.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
-        remit.setFirstName(JaggaerBuilder.buildJaggaerBasicValue("John"));
-        remit.setLastName(JaggaerBuilder.buildJaggaerBasicValue("Smith"));
-        remit.setTitle(JaggaerBuilder.buildJaggaerBasicValue("Procurement Manager"));
-        remit.setEmail(JaggaerBuilder.buildEmail("jsmith@affordablelabsupplies.com"));
+        remit.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("SQ_1237"));
+        remit.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber("3pID1"));
+        remit.setName(JaggaerBuilderTest.buildName("Primary ALS RemitTo and Fulfillment Contact"));
+        remit.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
+        remit.setFirstName(JaggaerBuilderTest.buildJaggaerBasicValue("John"));
+        remit.setLastName(JaggaerBuilderTest.buildJaggaerBasicValue("Smith"));
+        remit.setTitle(JaggaerBuilderTest.buildJaggaerBasicValue("Procurement Manager"));
+        remit.setEmail(JaggaerBuilderTest.buildEmail("jsmith@affordablelabsupplies.com"));
         remit.setPhone(buildPhone("1", "619", "3456789", "0123"));
         remit.setMobilePhone(buildMobilePhone("1", "619", "2468642", null));
         remit.setTollFreePhone(new TollFreePhone());
@@ -332,23 +332,23 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private MobilePhone buildMobilePhone(String countryCode, String areaCode, String number, String extension) {
         MobilePhone phone = new MobilePhone();
-        phone.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber(countryCode, areaCode, number, extension));
+        phone.setTelephoneNumber(JaggaerBuilderTest.buildTelephoneNumber(countryCode, areaCode, number, extension));
         return phone;
     }
     
     private Contact buildFulfillmentContact() {
         Contact fulfillment = new Contact();
         fulfillment.setType("fulfillment");
-        fulfillment.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT1"));
+        fulfillment.setErpNumber(JaggaerBuilderTest.buildErpNumber("CONTACT1"));
         fulfillment.setOldERPNumber("CONTACT1");
-        fulfillment.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1236"));
-        fulfillment.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID1"));
-        fulfillment.setName(JaggaerBuilder.buildName("Primary ALS RemitTo and Fulfillment Contact"));
-        fulfillment.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
-        fulfillment.setFirstName(JaggaerBuilder.buildJaggaerBasicValue("John"));
-        fulfillment.setLastName(JaggaerBuilder.buildJaggaerBasicValue("Smith"));
-        fulfillment.setTitle(JaggaerBuilder.buildJaggaerBasicValue("Procurement Manager"));
-        fulfillment.setEmail(JaggaerBuilder.buildEmail("jsmith@affordablelabsupplies.com"));
+        fulfillment.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("SQ_1236"));
+        fulfillment.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber("3pID1"));
+        fulfillment.setName(JaggaerBuilderTest.buildName("Primary ALS RemitTo and Fulfillment Contact"));
+        fulfillment.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
+        fulfillment.setFirstName(JaggaerBuilderTest.buildJaggaerBasicValue("John"));
+        fulfillment.setLastName(JaggaerBuilderTest.buildJaggaerBasicValue("Smith"));
+        fulfillment.setTitle(JaggaerBuilderTest.buildJaggaerBasicValue("Procurement Manager"));
+        fulfillment.setEmail(JaggaerBuilderTest.buildEmail("jsmith@affordablelabsupplies.com"));
         fulfillment.setPhone(buildPhone("1", "619", "3456789", "0123"));
         fulfillment.setMobilePhone(buildMobilePhone("1", "619", "2468642", null));
         fulfillment.setTollFreePhone(new TollFreePhone());
@@ -361,16 +361,16 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Contact buildTechnicalContact() {
         Contact tech = new Contact();
         tech.setType("technical");
-        tech.setErpNumber(JaggaerBuilder.buildErpNumber("CONTACT2"));
+        tech.setErpNumber(JaggaerBuilderTest.buildErpNumber("CONTACT2"));
         tech.setOldERPNumber("CONTACT2");
-        tech.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("SQ_1240"));
-        tech.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3pID2"));
-        tech.setName(JaggaerBuilder.buildName("Primary ALS Technical Contact"));
-        tech.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
-        tech.setFirstName(JaggaerBuilder.buildJaggaerBasicValue("Ann"));
-        tech.setLastName(JaggaerBuilder.buildJaggaerBasicValue("Jones"));
-        tech.setTitle(JaggaerBuilder.buildJaggaerBasicValue("Technical Consultant"));
-        tech.setEmail(JaggaerBuilder.buildEmail("ajones@affordablelabsupplies.com"));
+        tech.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("SQ_1240"));
+        tech.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber("3pID2"));
+        tech.setName(JaggaerBuilderTest.buildName("Primary ALS Technical Contact"));
+        tech.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
+        tech.setFirstName(JaggaerBuilderTest.buildJaggaerBasicValue("Ann"));
+        tech.setLastName(JaggaerBuilderTest.buildJaggaerBasicValue("Jones"));
+        tech.setTitle(JaggaerBuilderTest.buildJaggaerBasicValue("Technical Consultant"));
+        tech.setEmail(JaggaerBuilderTest.buildEmail("ajones@affordablelabsupplies.com"));
         tech.setPhone(buildPhone("1", "619", "3456789", "4567"));
         tech.setMobilePhone(buildMobilePhone("1", "619", "2268644", null));
         tech.setTollFreePhone(new TollFreePhone());
@@ -392,7 +392,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         contact.setType(contactType);
         
         ContactRef ref = new ContactRef();
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber(erpNumber));
+        ref.setErpNumber(JaggaerBuilderTest.buildErpNumber(erpNumber));
         contact.setContactRef(ref);
         
         return contact;
@@ -402,7 +402,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         ClassificationList classificationList = new ClassificationList();
         
         Classification classification = new Classification();
-        classification.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("SupplierClassMinorityDisabled"));
+        classification.setInternalName(JaggaerBuilderTest.buildJaggaerBasicValue("SupplierClassMinorityDisabled"));
         
         classificationList.getClassifications().add(classification);
         return classificationList;
@@ -412,7 +412,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         DiversityClassificationList classList = new DiversityClassificationList();
         
         DiversityClassification div = new DiversityClassification();
-        div.setInternalName(JaggaerBuilder.buildJaggaerBasicValue("DOBE"));
+        div.setInternalName(JaggaerBuilderTest.buildJaggaerBasicValue("DOBE"));
         div.setDd214Certificate(new DD214Certificate());
         div.setDiversityCertificate(new DiversityCertificate());
         
@@ -434,19 +434,19 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         InsuranceInformation info = new InsuranceInformation();
         
         info.setType("AutomobileLiability");
-        info.setPolicyNumber(JaggaerBuilder.buildJaggaerBasicValue("34576789"));
-        info.setInsuranceLimit(JaggaerBuilder.buildJaggaerBasicValue("INSURANCE_LIMIT_RANGE1"));
-        info.setExpirationDate(JaggaerBuilder.buildJaggaerBasicValue("2024-11-12"));
-        info.setInsuranceProvider(JaggaerBuilder.buildJaggaerBasicValue("ACME Insurance Co."));
-        info.setAgent(JaggaerBuilder.buildJaggaerBasicValue("Ned Ryerson"));
+        info.setPolicyNumber(JaggaerBuilderTest.buildJaggaerBasicValue("34576789"));
+        info.setInsuranceLimit(JaggaerBuilderTest.buildJaggaerBasicValue("INSURANCE_LIMIT_RANGE1"));
+        info.setExpirationDate(JaggaerBuilderTest.buildJaggaerBasicValue("2024-11-12"));
+        info.setInsuranceProvider(JaggaerBuilderTest.buildJaggaerBasicValue("ACME Insurance Co."));
+        info.setAgent(JaggaerBuilderTest.buildJaggaerBasicValue("Ned Ryerson"));
         
         InsuranceProviderPhone providerPhone = new InsuranceProviderPhone();
-        providerPhone.setTelephoneNumber(JaggaerBuilder.buildTelephoneNumber("1", "704", "1234567", null));
+        providerPhone.setTelephoneNumber(JaggaerBuilderTest.buildTelephoneNumber("1", "704", "1234567", null));
         info.setInsuranceProviderPhone(providerPhone);
         
         InsuranceCertificate certificate = new InsuranceCertificate();
         certificate.setAttachmentList(buildAttachmentList());
-        certificate.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42ins", "file", "Auto", "1180", null));
+        certificate.getAttachmentList().getAttachments().add(JaggaerBuilderTest.buildAttachment("42ins", "file", "Auto", "1180", null));
         info.setInsuranceCertificate(certificate);
         
         infoList.getInsuranceInformationDetails().add(info);
@@ -469,15 +469,15 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Location buildFulfillLocation1() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.YES);
-        location.setErpNumber(JaggaerBuilder.buildErpNumber("loc123"));
-        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511493"));
-        location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        location.setName(JaggaerBuilder.buildName("Fulfillment Center 1"));
-        location.setDescription(JaggaerBuilder.buildJaggaerBasicValue(null));
-        location.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
-        location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.YES));
+        location.setErpNumber(JaggaerBuilderTest.buildErpNumber("loc123"));
+        location.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511493"));
+        location.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
+        location.setName(JaggaerBuilderTest.buildName("Fulfillment Center 1"));
+        location.setDescription(JaggaerBuilderTest.buildJaggaerBasicValue(null));
+        location.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
+        location.setPrimary(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.YES));
         location.setPrefPurchaseOrderDeliveryMethod(buildPrefPurchaseOrderDeliveryMethod("orders@affordablelabsupplies.com"));
-        location.setLocationEffectiveDate(JaggaerBuilder.buildJaggaerBasicValue("2024-10-20"));
+        location.setLocationEffectiveDate(JaggaerBuilderTest.buildJaggaerBasicValue("2024-10-20"));
         location.setPaymentMethod(buildPaymentMethod());
         location.setShipping(buildShipping());
         location.setHandling(buildHandling());
@@ -504,17 +504,17 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private POPayment buildPOPayment() {
         POPayment poPayment = new POPayment();
-        poPayment.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        poPayment.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
         poPayment.setPoNumberSelection(new PONumberSelection());
-        poPayment.setAllowFreeForm(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        poPayment.setAllowFreeForm(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
         return poPayment;
     }
     
     private PCardPayment buildPCardPayment() {
         PCardPayment pcard = new PCardPayment();
-        pcard.setActive(JaggaerBuilder.buildActive(JaggaerConstants.FALSE));
+        pcard.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.FALSE));
         pcard.setPoNumberSelection(new PONumberSelection());
-        pcard.setRequireCardSecurityCode(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        pcard.setRequireCardSecurityCode(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
         return pcard;
     }
     
@@ -527,18 +527,18 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private SurchargeConfiguration buildSurchargeConfiguration() {
         SurchargeConfiguration config = new SurchargeConfiguration();
         config.setFee(buildFee());
-        config.setOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue("0"));
-        config.setUseOrderThreshold(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        config.setOrderThreshold(JaggaerBuilderTest.buildJaggaerBasicValue("0"));
+        config.setUseOrderThreshold(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
         
         return config;
     }
     
     private Fee buildFee() {
         Fee fee = new Fee();
-        fee.setFeeType(JaggaerBuilder.buildJaggaerBasicValue("FlatFee"));
-        fee.setPercentage(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
-        fee.setAmount(JaggaerBuilder.buildAmount("0.00"));
-        fee.setFeeScope(JaggaerBuilder.buildJaggaerBasicValue("ByOrder"));
+        fee.setFeeType(JaggaerBuilderTest.buildJaggaerBasicValue("FlatFee"));
+        fee.setPercentage(JaggaerBuilderTest.buildJaggaerBasicValue("0.000"));
+        fee.setAmount(JaggaerBuilderTest.buildAmount("0.00"));
+        fee.setFeeScope(JaggaerBuilderTest.buildJaggaerBasicValue("ByOrder"));
         return fee;
     }
     
@@ -550,13 +550,13 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private TaxInfo buildTaxInfo() {
         TaxInfo info = new TaxInfo();
-        info.setTaxableByDefault(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.TRUE));
-        info.setTax1(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
-        info.setTax1Active(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
-        info.setTax2(JaggaerBuilder.buildJaggaerBasicValue("0.000"));
-        info.setTax2Active(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
-        info.setTaxShipping(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
-        info.setTaxHandling(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTaxableByDefault(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.TRUE));
+        info.setTax1(JaggaerBuilderTest.buildJaggaerBasicValue("0.000"));
+        info.setTax1Active(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTax2(JaggaerBuilderTest.buildJaggaerBasicValue("0.000"));
+        info.setTax2Active(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTaxShipping(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
+        info.setTaxHandling(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
         return info;
     }
     
@@ -564,12 +564,12 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         TermsAndCondition terms = new TermsAndCondition();
         
         PaymentTerms paymentTerms = new PaymentTerms();
-        paymentTerms.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        paymentTerms.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
         paymentTerms.setDiscount(buildDiscount());
-        paymentTerms.setDays(JaggaerBuilder.buildJaggaerBasicValue("0"));
-        paymentTerms.setFob(JaggaerBuilder.buildJaggaerBasicValue("notApplicable"));
-        paymentTerms.setTermsType(JaggaerBuilder.buildJaggaerBasicValue("Net"));
-        paymentTerms.setDaysAfter(JaggaerBuilder.buildJaggaerBasicValue("30"));
+        paymentTerms.setDays(JaggaerBuilderTest.buildJaggaerBasicValue("0"));
+        paymentTerms.setFob(JaggaerBuilderTest.buildJaggaerBasicValue("notApplicable"));
+        paymentTerms.setTermsType(JaggaerBuilderTest.buildJaggaerBasicValue("Net"));
+        paymentTerms.setDaysAfter(JaggaerBuilderTest.buildJaggaerBasicValue("30"));
         
         terms.setPaymentTerms(paymentTerms);
         
@@ -603,9 +603,9 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private DistributionMethod buildDistributionMethod(String type, String active, String email) {
         DistributionMethod method = new DistributionMethod();
         method.setType(type);
-        method.setActive(JaggaerBuilder.buildActive(active));
+        method.setActive(JaggaerBuilderTest.buildActive(active));
         if (StringUtils.isNotBlank(email)) {
-            method.setEmail(JaggaerBuilder.buildEmail(email));
+            method.setEmail(JaggaerBuilderTest.buildEmail(email));
         }
         return method;
     }
@@ -614,8 +614,8 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         AssociatedAddressList addressList = new AssociatedAddressList();
         
         AssociatedAddress address = buildAssociatedAddress("fulfillment", "add123");
-        address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511560"));
-        address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        address.getAddressRef().setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511560"));
+        address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
         addressList.getAssociatedAddresses().add(address);
         
         return addressList;
@@ -637,10 +637,10 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
             element.setIsActive(active);
         }
         
-        element.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue(elementIdentifier));
+        element.setCustomElementIdentifier(JaggaerBuilderTest.buildJaggaerBasicValue(elementIdentifier));
         
         if (StringUtils.isNotBlank(displayName)) {
-            element.setDisplayName(JaggaerBuilder.buildDisplayName(displayName));
+            element.setDisplayName(JaggaerBuilderTest.buildDisplayName(displayName));
         }
         
         CustomElementValueList valueList = new CustomElementValueList();
@@ -657,12 +657,12 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Location buildFulfillLocation2() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.YES);
-        location.setErpNumber(JaggaerBuilder.buildErpNumber(null));
-        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1514101"));
-        location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        location.setName(JaggaerBuilder.buildName("Fulfillment Center 2"));
-        location.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
-        location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.NO));
+        location.setErpNumber(JaggaerBuilderTest.buildErpNumber(null));
+        location.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1514101"));
+        location.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
+        location.setName(JaggaerBuilderTest.buildName("Fulfillment Center 2"));
+        location.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
+        location.setPrimary(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.NO));
         location.setPaymentMethod(buildPaymentMethod());
         location.setShipping(buildShipping());
         location.setHandling(buildHandling());
@@ -677,13 +677,13 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private Location buildLocation2() {
         Location location = new Location();
         location.setSupportsOrderFulfillment(JaggaerConstants.NO);
-        location.setErpNumber(JaggaerBuilder.buildErpNumber(null));
-        location.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511564"));
-        location.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        location.setName(JaggaerBuilder.buildName("Location 2"));
-        location.setDescription(JaggaerBuilder.buildJaggaerBasicValue(null));
-        location.setPrimary(JaggaerBuilder.buildJaggaerBasicValue(JaggaerConstants.YES));
-        location.setLocationEffectiveDate(JaggaerBuilder.buildJaggaerBasicValue(null));
+        location.setErpNumber(JaggaerBuilderTest.buildErpNumber(null));
+        location.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511564"));
+        location.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
+        location.setName(JaggaerBuilderTest.buildName("Location 2"));
+        location.setDescription(JaggaerBuilderTest.buildJaggaerBasicValue(null));
+        location.setPrimary(JaggaerBuilderTest.buildJaggaerBasicValue(JaggaerConstants.YES));
+        location.setLocationEffectiveDate(JaggaerBuilderTest.buildJaggaerBasicValue(null));
         location.setAssociatedAddressList(new AssociatedAddressList());
         location.setAssociatedContactList(new AssociatedContactList());
         return location;
@@ -700,19 +700,19 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         AccountsPayableList apList = new AccountsPayableList();
         AccountsPayable ap = new AccountsPayable();
         ap.setType("Check");
-        ap.setErpNumber(JaggaerBuilder.buildErpNumber("ap123"));;
-        ap.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("u1511565"));
-        ap.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
-        ap.setName(JaggaerBuilder.buildName("ap 1"));
-        ap.setActive(JaggaerBuilder.buildActive(JaggaerConstants.TRUE));
+        ap.setErpNumber(JaggaerBuilderTest.buildErpNumber("ap123"));;
+        ap.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("u1511565"));
+        ap.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
+        ap.setName(JaggaerBuilderTest.buildName("ap 1"));
+        ap.setActive(JaggaerBuilderTest.buildActive(JaggaerConstants.TRUE));
         
         AssociatedAddress address = buildAssociatedAddress("remitto", "apremit123");
-        address.getAddressRef().setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber(null));
-        address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber(null));
+        address.getAddressRef().setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber(null));
+        address.getAddressRef().setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber(null));
         ap.getAssociatedAddresses().add(address);
         
         ap.setEmail(new Email());
-        ap.setIsoCurrencyCode(JaggaerBuilder.buildIsoCurrencyCode("USD"));
+        ap.setIsoCurrencyCode(JaggaerBuilderTest.buildIsoCurrencyCode("USD"));
         ap.setBankAccount(buildBankAccount());
         ap.setFlexFields(buildFlexFields());
         
@@ -723,27 +723,27 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     private BankAccount buildBankAccount() {
         BankAccount bank = new BankAccount();
         bank.setType("Checking");
-        bank.setBankName(JaggaerBuilder.buildJaggaerBasicValue("Third National Bank of Cary"));
-        bank.setAccountHoldersName(JaggaerBuilder.buildJaggaerBasicValue(null));
-        bank.setAccountNumberType(JaggaerBuilder.buildJaggaerBasicValue("Account Number"));
-        bank.setRoutingNumber(JaggaerBuilder.buildJaggaerBasicValue("234765198"));
-        bank.setBankAccountNumber(JaggaerBuilder.buildJaggaerBasicValue("093827541899"));
-        bank.setIsoCountryCode(JaggaerBuilder.buildIsoCountryCode("USA"));
-        bank.setAddressLine1(JaggaerBuilder.buildAddressLine("Austin Bldg, Suite 717"));
-        bank.setAddressLine2(JaggaerBuilder.buildAddressLine("3400 Main Street"));
-        bank.setCity(JaggaerBuilder.buildCity("Cary"));
-        bank.setState(JaggaerBuilder.buildState("NC"));
-        bank.setPostalCode(JaggaerBuilder.buildPostalCode("27511"));
+        bank.setBankName(JaggaerBuilderTest.buildJaggaerBasicValue("Third National Bank of Cary"));
+        bank.setAccountHoldersName(JaggaerBuilderTest.buildJaggaerBasicValue(null));
+        bank.setAccountNumberType(JaggaerBuilderTest.buildJaggaerBasicValue("Account Number"));
+        bank.setRoutingNumber(JaggaerBuilderTest.buildJaggaerBasicValue("234765198"));
+        bank.setBankAccountNumber(JaggaerBuilderTest.buildJaggaerBasicValue("093827541899"));
+        bank.setIsoCountryCode(JaggaerBuilderTest.buildIsoCountryCode("USA"));
+        bank.setAddressLine1(JaggaerBuilderTest.buildAddressLine("Austin Bldg, Suite 717"));
+        bank.setAddressLine2(JaggaerBuilderTest.buildAddressLine("3400 Main Street"));
+        bank.setCity(JaggaerBuilderTest.buildCity("Cary"));
+        bank.setState(JaggaerBuilderTest.buildState("NC"));
+        bank.setPostalCode(JaggaerBuilderTest.buildPostalCode("27511"));
         return bank;
     }
     
     private FlexFields buildFlexFields() {
         FlexFields fields = new FlexFields();
-        fields.setFlexField1(JaggaerBuilder.buildJaggaerBasicValue("NFS 12"));
-        fields.setFlexField2(JaggaerBuilder.buildJaggaerBasicValue("NFS 11"));
-        fields.setFlexField3(JaggaerBuilder.buildJaggaerBasicValue("NFS 34"));
-        fields.setFlexField4(JaggaerBuilder.buildJaggaerBasicValue("90"));
-        fields.setFlexField5(JaggaerBuilder.buildJaggaerBasicValue("-0"));
+        fields.setFlexField1(JaggaerBuilderTest.buildJaggaerBasicValue("NFS 12"));
+        fields.setFlexField2(JaggaerBuilderTest.buildJaggaerBasicValue("NFS 11"));
+        fields.setFlexField3(JaggaerBuilderTest.buildJaggaerBasicValue("NFS 34"));
+        fields.setFlexField4(JaggaerBuilderTest.buildJaggaerBasicValue("90"));
+        fields.setFlexField5(JaggaerBuilderTest.buildJaggaerBasicValue("-0"));
         return fields;
     }
     
@@ -752,12 +752,12 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         
         TaxInformation info = new TaxInformation();
         info.setType("TAX_TYPE_W9");
-        info.setTaxDocumentName(JaggaerBuilder.buildJaggaerBasicValue("W9"));
-        info.setTaxDocumentYear(JaggaerBuilder.buildJaggaerBasicValue("2022"));
+        info.setTaxDocumentName(JaggaerBuilderTest.buildJaggaerBasicValue("W9"));
+        info.setTaxDocumentYear(JaggaerBuilderTest.buildJaggaerBasicValue("2022"));
         
         TaxDocument doc = new TaxDocument();
         doc.setAttachmentList(buildAttachmentList());
-        doc.getAttachmentList().getAttachments().add(JaggaerBuilder.buildAttachment("42d", "file", "Tax", "883", null));
+        doc.getAttachmentList().getAttachments().add(JaggaerBuilderTest.buildAttachment("42d", "file", "Tax", "883", null));
         
         info.setTaxDocument(doc);
         
@@ -799,9 +799,9 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        ref.setErpNumber(JaggaerBuilder.buildErpNumber("1111111"));
-        ref.setSqIntegrationNumber(JaggaerBuilder.buildSQIntegrationNumber("2222222"));
-        ref.setThirdPartyRefNumber(JaggaerBuilder.buildThirdPartyRefNumber("3333333"));
+        ref.setErpNumber(JaggaerBuilderTest.buildErpNumber("1111111"));
+        ref.setSqIntegrationNumber(JaggaerBuilderTest.buildSQIntegrationNumber("2222222"));
+        ref.setThirdPartyRefNumber(JaggaerBuilderTest.buildThirdPartyRefNumber("3333333"));
         return ref;
     }
 
@@ -836,7 +836,7 @@ public class SupplierSyncMessageJaggaerTest extends SupplierSyncMessageTestBase 
     
     private CustomElementError buildCustomElementErrors() {
         CustomElementError cee = new CustomElementError();
-        cee.setCustomElementIdentifier(JaggaerBuilder.buildJaggaerBasicValue("CustomElementID1"));
+        cee.setCustomElementIdentifier(JaggaerBuilderTest.buildJaggaerBasicValue("CustomElementID1"));
         cee.getErrorMessages().add(buildErrorMessage(TEXT_OF_ERROR_MESSAGE));
         return cee;
     }

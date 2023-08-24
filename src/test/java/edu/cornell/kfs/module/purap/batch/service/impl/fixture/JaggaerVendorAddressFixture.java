@@ -1,15 +1,17 @@
 package edu.cornell.kfs.module.purap.batch.service.impl.fixture;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.vnd.businessobject.AddressType;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants.JaggaerAddressTypeForXml;
 
 public enum JaggaerVendorAddressFixture {
     
-    ITHACA(true, 101, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "US", "120 Maple Ave", "Room 666", "Ithaca", "NY", StringUtils.EMPTY, "14850"),
+    ITHACA(true, 101, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, KFSConstants.COUNTRY_CODE_UNITED_STATES, "120 Maple Ave", "Room 666", "Ithaca", "NY", StringUtils.EMPTY, "14850"),
     PLAYACAR(true, 102, JaggaerAddressTypeForXml.FULFILLMENT.kfsAddressType, "MX", "AV Xaman-Ha Mza 9 Y", "10 Lote 1 Fase II,", "Playacar", StringUtils.EMPTY, "QR", "77710"),
-    INACTIVE(false, 103, StringUtils.EMPTY, StringUtils.EMPTY,  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+    INACTIVE(false, 103, StringUtils.EMPTY, KFSConstants.COUNTRY_CODE_UNITED_STATES,  StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
     
     public final boolean active;
     public final Integer addressId;
@@ -42,6 +44,7 @@ public enum JaggaerVendorAddressFixture {
         address.setActive(active);
         address.setVendorAddressGeneratedIdentifier(addressId);
         address.setVendorAddressTypeCode(addressType);
+        address.setVendorAddressType(buildAddressType(addressType));
         address.setVendorCountryCode(countryCode);
         address.setVendorLine1Address(addressLine1);
         address.setVendorLine2Address(addressLine2);
@@ -50,6 +53,13 @@ public enum JaggaerVendorAddressFixture {
         address.setVendorAddressInternationalProvinceName(internationalState);
         address.setVendorZipCode(zip);
         return address;
+    }
+    
+    private AddressType buildAddressType(String addressTypeCode) {
+        AddressType at = new AddressType();
+        at.setVendorAddressTypeCode(addressTypeCode);
+        at.setVendorAddressTypeDescription(addressTypeCode);
+        return at;
     }
     
     

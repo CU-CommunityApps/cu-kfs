@@ -513,7 +513,7 @@ public class CUPurapConstants {
     public enum JaggaerAddressTypeForXml {
         FULFILLMENT("fulfillment", VendorConstants.AddressTypes.PURCHASE_ORDER),
         REMITTO("remitto", VendorConstants.AddressTypes.REMIT),
-        PHYSICAL("Physical", StringUtils.EMPTY);
+        PHYSICAL("physical", StringUtils.EMPTY);
         
         public final String jaggaerAddressType;
         public final String kfsAddressType;
