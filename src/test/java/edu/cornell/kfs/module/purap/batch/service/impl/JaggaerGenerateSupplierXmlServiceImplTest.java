@@ -36,7 +36,7 @@ import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
 import edu.cornell.kfs.module.purap.batch.service.impl.fixture.JaggaerVendorAddressFixture;
 import edu.cornell.kfs.module.purap.batch.service.impl.fixture.JaggaerVendorDetailFixture;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Address;
-import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilder;
+import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.JaggaerBuilderTest;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Supplier;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
@@ -104,7 +104,7 @@ public class JaggaerGenerateSupplierXmlServiceImplTest {
         List<Supplier> suppliers = new ArrayList<>();
         for (int i = 0; i < numberOfSuppliers; i++) {
             Supplier supplier = new Supplier();
-            supplier.setName(JaggaerBuilder.buildName("Test supplier " + i));
+            supplier.setName(JaggaerBuilderTest.buildName("Test supplier " + i));
             suppliers.add(supplier);
         }
         return suppliers;
