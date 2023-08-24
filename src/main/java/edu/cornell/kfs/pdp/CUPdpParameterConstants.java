@@ -17,7 +17,11 @@ public final class CUPdpParameterConstants {
 
     // TODO: Remove this parameter after we have fully migrated to the ISO 20022 formatting process.
     public static final String CU_USE_ISO20022_FORMAT_IND = "CU_USE_ISO20022_FORMAT_IND";
-    
+
+    // TODO: Remove this parameter after we have fully updated our local Check printing to use the ISO 20022 files.
+    public static final String CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES =
+            "CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES";
+
     public static final class CuPayeeAddressService {
         public static final String CU_PAYEE_ADDRESS_SERVICE_COMPONENT = "CuPayeeAddressService";
         public static final String PAYER_NAME_PARAMETER = "PAYER_NAME";
