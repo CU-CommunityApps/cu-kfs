@@ -1484,7 +1484,10 @@ public class Iso20022FormatExtractor {
                 extractTypeContext);
         referredDocumentInformation.setTp(referredDocumentType);
 
-        final String documentNumber = paymentDetail.getInvoiceNbr();
+        /*
+         * CU Customization: Externalized the Referred Document Number setup to a separate method.
+         */
+        final String documentNumber = determineReferredDocumentNumber(paymentDetail);
         referredDocumentInformation.setNb(documentNumber);
 
         final Date invoiceDate = new Date(paymentDetail.getInvoiceDate().getTime());
@@ -1527,11 +1530,12 @@ public class Iso20022FormatExtractor {
         } else if (isCreditNote(paymentDetail)) {
             documentTypeCode = DocumentType5Code.CREN;
         } else {
-            LOG.warn(
-                    "determineDocumentTypeCode(...) - PaymentDetail has unexpected DocumentTypeCode : "
-                    + "paymentDetailFinancialDocumentTypeCode={}",
-                    paymentDetail::getFinancialDocumentTypeCode
-            );
+            /*
+             * CU Customization: Allow payments from PDP feeds to be marked as Invoices or Credit Notes.
+             */
+            documentTypeCode = paymentDetail.getNetPaymentAmount().isGreaterEqual(KualiDecimal.ZERO)
+                    ? DocumentType5Code.CINV
+                    : DocumentType5Code.CREN;
         }
         return documentTypeCode;
     }
@@ -1555,6 +1559,26 @@ public class Iso20022FormatExtractor {
     ) {
         return KFSConstants.FinancialDocumentTypeCodes.VENDOR_CREDIT_MEMO
                 .equals(paymentDetail.getFinancialDocumentTypeCode());
+    }
+
+    /*
+     * CU Customization: Added new method for deriving the document/invoice number.
+     */
+    private static String determineReferredDocumentNumber(
+            final PaymentDetail paymentDetail
+    ) {
+        if (StringUtils.equalsAny(paymentDetail.getFinancialDocumentTypeCode(),
+                DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH,
+                DisbursementVoucherConstants.DOCUMENT_TYPE_CODE)) {
+            if (StringUtils.isNotBlank(paymentDetail.getInvoiceNbr()) && paymentDetail.getInvoiceDate() != null) {
+                return paymentDetail.getInvoiceNbr();
+            } else {
+                return CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER
+                        + StringUtils.defaultString(paymentDetail.getCustPaymentDocNbr());
+            }
+        } else {
+            return paymentDetail.getInvoiceNbr();
+        }
     }
 
     private static RemittanceAmount1 constructReferredDocumentAmount(
