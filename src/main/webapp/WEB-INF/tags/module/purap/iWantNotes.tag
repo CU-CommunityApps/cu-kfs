@@ -293,7 +293,7 @@
                                             lookupParameters="${propPrefix}note[${status.index}].adHocRouteRecipient.id:principalName"/>
                                 </c:if>
                                 <c:if test="${empty KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI]}">
-                                    &nbsp;
+                                    &nbsp; bla
                                 </c:if>
                             </td>
                         </c:if>
