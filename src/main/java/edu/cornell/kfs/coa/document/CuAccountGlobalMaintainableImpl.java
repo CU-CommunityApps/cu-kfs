@@ -39,10 +39,10 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
 
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
-        List<MaintenanceLock> accountLocks = super.generateMaintenanceLocks();
-        CuAccountGlobal accountGlobal = (CuAccountGlobal) getBusinessObject();
-        Map<String, Boolean> oldAccountClosedStatuses = getExistingAccountClosedStatuses(accountGlobal);
-        boolean closedStatusForLocks = getAccountClosedStatusForMaintenanceLocks(accountGlobal);
+        final List<MaintenanceLock> accountLocks = super.generateMaintenanceLocks();
+        final CuAccountGlobal accountGlobal = (CuAccountGlobal) getBusinessObject();
+        final Map<String, Boolean> oldAccountClosedStatuses = getExistingAccountClosedStatuses(accountGlobal);
+        final boolean closedStatusForLocks = getAccountClosedStatusForMaintenanceLocks(accountGlobal);
         
         Stream<MaintenanceLock> trickleDownLocks = accountGlobal.getAccountGlobalDetails().stream()
                 .map(accountDetail -> buildTemporaryAccountForMaintenanceLocks(accountDetail, closedStatusForLocks))
@@ -54,7 +54,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     }
     
     @Override
-    public void doRouteStatusChange(DocumentHeader documentHeader) {
+    public void doRouteStatusChange(final DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
         if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
             clearBlockingCacheForCurrentDocument();
@@ -62,8 +62,8 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     }
 
     public void clearBlockingCacheForCurrentDocument() {
-        Cache cache = MaintenanceUtils.getBlockingCache();
-        String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
+        final Cache cache = MaintenanceUtils.getBlockingCache();
+        final String cacheKey = MaintenanceUtils.buildLockingDocumentCacheKey(getDocumentNumber());
         if (LOG.isDebugEnabled()) {
             LOG.debug("clearBlockingCacheForCurrentDocument, clear cache id: " + cacheKey);
         }
@@ -76,25 +76,25 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
         super.prepareForSave();
     }
 
-    private boolean getAccountClosedStatusForMaintenanceLocks(CuAccountGlobal accountGlobal) {
+    private boolean getAccountClosedStatusForMaintenanceLocks(final CuAccountGlobal accountGlobal) {
         Boolean closed = accountGlobal.getClosed();
         return closed != null && closed.booleanValue();
     }
 
-    private Account buildTemporaryAccountForMaintenanceLocks(AccountGlobalDetail accountGlobalDetail, boolean closed) {
-        Account account = new Account();
+    private Account buildTemporaryAccountForMaintenanceLocks(final AccountGlobalDetail accountGlobalDetail, final boolean closed) {
+        final Account account = new Account();
         account.setChartOfAccountsCode(accountGlobalDetail.getChartOfAccountsCode());
         account.setAccountNumber(accountGlobalDetail.getAccountNumber());
         account.setClosed(closed);
         return account;
     }
 
-    private Stream<MaintenanceLock> generateTrickleDownMaintenanceLocks(Account inactivatedAccount) {
-        List<MaintenanceLock> subAccountLocks = getSubAccountTrickleDownInactivationService()
+    private Stream<MaintenanceLock> generateTrickleDownMaintenanceLocks(final Account inactivatedAccount) {
+        final List<MaintenanceLock> subAccountLocks = getSubAccountTrickleDownInactivationService()
                 .generateTrickleDownMaintenanceLocks(inactivatedAccount, getDocumentNumber());
-        List<MaintenanceLock> subObjectLocks = getSubObjectTrickleDownInactivationService()
+        final List<MaintenanceLock> subObjectLocks = getSubObjectTrickleDownInactivationService()
                 .generateTrickleDownMaintenanceLocks(inactivatedAccount, getDocumentNumber());
-        List<MaintenanceLock> accountReversionLocks = getAccountReversionTrickleDownInactivationService()
+        final List<MaintenanceLock> accountReversionLocks = getAccountReversionTrickleDownInactivationService()
                 .generateTrickleDownMaintenanceLocks(inactivatedAccount, getDocumentNumber());
         return Stream.of(subAccountLocks, subObjectLocks, accountReversionLocks)
                 .flatMap(List::stream);
@@ -106,22 +106,22 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
      */
     @Override
     public void saveBusinessObject() {
-        BusinessObjectService boService = getBusinessObjectService();
-        GlobalBusinessObject gbo = (GlobalBusinessObject) getBusinessObject();
+        final BusinessObjectService boService = getBusinessObjectService();
+        final GlobalBusinessObject gbo = (GlobalBusinessObject) getBusinessObject();
 
-        Map<String, Boolean> oldAccountClosedStatuses = getExistingAccountClosedStatuses((CuAccountGlobal) gbo);
+        final Map<String, Boolean> oldAccountClosedStatuses = getExistingAccountClosedStatuses((CuAccountGlobal) gbo);
 
         // delete any indicated BOs
-        List<PersistableBusinessObject> bosToDeactivate = gbo.generateDeactivationsToPersist();
+        final List<PersistableBusinessObject> bosToDeactivate = gbo.generateDeactivationsToPersist();
         if (CollectionUtils.isNotEmpty(bosToDeactivate)) {
             boService.save(bosToDeactivate);
         }
 
         // persist any indicated BOs
-        List<PersistableBusinessObject> bosToPersist = gbo.generateGlobalChangesToPersist();
+        final List<PersistableBusinessObject> bosToPersist = gbo.generateGlobalChangesToPersist();
         if (CollectionUtils.isNotEmpty(bosToPersist)) {
-            for (PersistableBusinessObject boToPersist : bosToPersist) {
-                Account account = (Account) boToPersist;
+            for (final PersistableBusinessObject boToPersist : bosToPersist) {
+                final Account account = (Account) boToPersist;
                 boService.save(account);
                 if (isClosingAccount(account, oldAccountClosedStatuses)) {
                     trickleDownInactivateBusinessObjectsForClosedAccount(account);
@@ -131,15 +131,15 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
 
     }
 
-    private void trickleDownInactivateBusinessObjectsForClosedAccount(Account account) {
+    private void trickleDownInactivateBusinessObjectsForClosedAccount(final Account account) {
         getSubAccountTrickleDownInactivationService().trickleDownInactivateSubAccounts(account, getDocumentNumber());
         getSubObjectTrickleDownInactivationService().trickleDownInactivateSubObjects(account, getDocumentNumber());
         getAccountReversionTrickleDownInactivationService().trickleDownInactivateAccountReversions(
                 account, getDocumentNumber());
     }
 
-    private Map<String, Boolean> getExistingAccountClosedStatuses(CuAccountGlobal accountGlobal) {
-        Map<String, List<String>> accountsByChart = accountGlobal.getAccountGlobalDetails().stream()
+    private Map<String, Boolean> getExistingAccountClosedStatuses(final CuAccountGlobal accountGlobal) {
+        final Map<String, List<String>> accountsByChart = accountGlobal.getAccountGlobalDetails().stream()
                 .collect(Collectors.groupingBy(AccountGlobalDetail::getChartOfAccountsCode, Collectors.mapping(
                         AccountGlobalDetail::getAccountNumber, Collectors.toUnmodifiableList())));
         
@@ -148,21 +148,21 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
                 .collect(Collectors.toUnmodifiableMap(this::buildAccountClosedStatusKey, Account::isClosed));
     }
 
-    private Stream<Account> getExistingMatchingAccounts(Map.Entry<String, List<String>> chartAndAccountsListPair) {
-        Map<String, Object> criteria = Map.ofEntries(
+    private Stream<Account> getExistingMatchingAccounts(final Map.Entry<String, List<String>> chartAndAccountsListPair) {
+        final Map<String, Object> criteria = Map.ofEntries(
                 Map.entry(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartAndAccountsListPair.getKey()),
                 Map.entry(KFSPropertyConstants.ACCOUNT_NUMBER, chartAndAccountsListPair.getValue())
         );
-        Collection<Account> accounts = getBusinessObjectService().findMatching(Account.class, criteria);
+        final Collection<Account> accounts = getBusinessObjectService().findMatching(Account.class, criteria);
         return accounts.stream();
     }
 
-    private boolean isClosingAccount(Account account, Map<String, Boolean> oldAccountClosedStatuses) {
+    private boolean isClosingAccount(final Account account, final Map<String, Boolean> oldAccountClosedStatuses) {
         if (!account.isClosed()) {
             return false;
         }
-        String accountKey = buildAccountClosedStatusKey(account);
-        Boolean oldAccountClosedFlag = oldAccountClosedStatuses.get(accountKey);
+        final String accountKey = buildAccountClosedStatusKey(account);
+        final Boolean oldAccountClosedFlag = oldAccountClosedStatuses.get(accountKey);
         return oldAccountClosedFlag != null && !oldAccountClosedFlag.booleanValue();
     }
 
