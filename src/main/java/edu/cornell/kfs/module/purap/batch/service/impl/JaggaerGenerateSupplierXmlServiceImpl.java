@@ -38,6 +38,7 @@ import edu.cornell.kfs.module.purap.JaggaerConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants.JaggaerBooleanToStringType;
 import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.dataaccess.JaggaerUploadDao;
+import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlReportService;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Address;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.AddressList;
@@ -83,6 +84,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected ParameterService parameterService;
     protected WebServiceCredentialService webServiceCredentialService;
     protected ConfigurationService configurationService;
+    protected JaggaerGenerateSupplierXmlReportService jaggaerGenerateSupplierXmlReportService;
 
     @Override
     public List<SupplierSyncMessage> getSupplierSyncMessages(JaggaerUploadSuppliersProcessingMode processingMode,
@@ -104,7 +106,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 LOG.info("getAllVendorsToUploadToJaggaer, created supplier number " + supplierCount);
             }
             Supplier supplier = new Supplier();
-            JaggaerUploadSupplierVendorDetailDto vendorDto = new JaggaerUploadSupplierVendorDetailDto(detail.getVendorNumber(), detail.isActiveIndicator());
+            JaggaerUploadSupplierVendorDetailDto vendorDto = new JaggaerUploadSupplierVendorDetailDto(detail.getVendorNumber(), detail.getVendorName(), detail.isActiveIndicator());
             supplier.setJaggaerUploadSupplierVendorDetailDto(vendorDto);
             
             supplier.setErpNumber(JaggaerBuilder.buildErpNumber(detail.getVendorNumber()));
@@ -200,7 +202,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 return true;
             }
         } catch (UnknownHostException e) {
-            LOG.error("doesUrlHaveDnsEntry, vendor {} with URL of {} does not have a DNS entry", vendorNumber, url, e);
+            LOG.debug("doesUrlHaveDnsEntry, vendor {} with URL of {} does not have a DNS entry", vendorNumber, url);
         }
         return false;
     }
@@ -358,7 +360,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 throw new RuntimeException(e);
             }
         }
-        generateResultsReport(xmlFileDtos);
+        jaggaerGenerateSupplierXmlReportService.generateAndEmailResultsReport(xmlFileDtos);
     }
 
     private String findOutputFileNameStarter() {
@@ -380,16 +382,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             }
         }
         return xmlFileDto;
-    }
-    
-    private void generateResultsReport(List<JaggaerUploadSupplierXmlFileDetailsDto> xmlFileDtos) {
-        /*
-         * A full report will be implemented on Jira KFSPTS-29084. Until then, this
-         * will produce a nice summary at the bottom of the log file
-         */
-        for (JaggaerUploadSupplierXmlFileDetailsDto dto : xmlFileDtos) {
-            LOG.info("generateResultsReport, results: {}", dto.toString());
-        }
     }
     
     protected String getParameterValueString(String parameterName) {
@@ -430,6 +422,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setJaggaerGenerateSupplierXmlReportService(
+            JaggaerGenerateSupplierXmlReportService jaggaerGenerateSupplierXmlReportService) {
+        this.jaggaerGenerateSupplierXmlReportService = jaggaerGenerateSupplierXmlReportService;
     }
 
 }
