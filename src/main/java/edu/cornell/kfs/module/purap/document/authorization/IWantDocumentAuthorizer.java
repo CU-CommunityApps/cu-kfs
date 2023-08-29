@@ -1,14 +1,16 @@
 package edu.cornell.kfs.module.purap.document.authorization;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
-import org.kuali.kfs.kim.bo.impl.KimAttributes;
 
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
@@ -16,6 +18,22 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumentAuthorizerBase {
 
     private static final long serialVersionUID = 1L;
+    
+    /*
+     * Customization to ensure the canSendNoteFyi action is available when the canSendNoteFyi is true. 
+     * This action might have been be removed in the super call if the canSendAdHocRequests returns false.
+     */
+    @Override
+    public Set<String> getDocumentActions(Document document, Person user,
+            Set<String> documentActionsFromPresentationController) {
+        Set<String> documentActionsToReturn = super.getDocumentActions(document, user,
+                documentActionsFromPresentationController);
+
+        if (!documentActionsToReturn.contains(KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI) && canSendNoteFyi(document, user)) {
+            documentActionsToReturn.add(KRADConstants.KUALI_ACTION_CAN_SEND_NOTE_FYI);
+        }
+        return documentActionsToReturn;
+    }
 
     @Override
     protected void addPermissionDetails(Object dataObject, Map<String, String> attributes) {
@@ -34,15 +52,13 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     }
 
     /*
-     * Only allow ad hoc approvals, and only to authorized users.
+     * Only approvers should be able to ad hoc route for approval.
      */
     @Override
-    public boolean canSendAdHocRequests(Document document, String actionRequestCd, Person user) {
-        if (!KewApiConstants.ACTION_REQUEST_APPROVE_REQ.equals(actionRequestCd)) {
-            return false;
-        }
-        return super.canSendAdHocRequests(document, actionRequestCd, user);
+    public boolean canSendAnyTypeAdHocRequests(Document document, Person user) {
+        return canSendAdHocRequests(document, KewApiConstants.ACTION_REQUEST_APPROVE_REQ, user);
     }
+    
 
     /*
      * CU Customization (KFSPTS-2270): Updated authorizer to allow editing of document overview/description
