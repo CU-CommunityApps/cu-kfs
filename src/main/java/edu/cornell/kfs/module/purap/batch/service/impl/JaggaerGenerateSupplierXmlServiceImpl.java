@@ -377,7 +377,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
                 if (vendorDto.isActive()) {
                     xmlFileDto.getActiveVendors().add(vendorDto);
                 } else {
-                    xmlFileDto.getActiveVendors().add(vendorDto);
+                    xmlFileDto.getInactiveVendors().add(vendorDto);
                 }
             }
         }
