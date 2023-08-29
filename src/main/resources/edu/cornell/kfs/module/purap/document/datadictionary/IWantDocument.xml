@@ -26,7 +26,7 @@
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.IWantDocumentPresentationController"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentPreRules"/>
     <property name="allowsCopy" value="true"/>
-    <property name="allowsNoteFYI" value="false"/>    
+    <property name="allowsNoteFYI" value="true"/>    
     <property name="sessionDocument" value="true"/>
     <property name="potentiallySensitive" value="true"/>
 
