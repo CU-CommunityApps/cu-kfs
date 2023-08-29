@@ -19,15 +19,17 @@ import org.kuali.kfs.krad.bo.BusinessObject;
 public class CuOrganizationRoutingModelNameLookupableHelperServiceImpl extends OrganizationRoutingModelNameLookupableHelperServiceImpl {
 
     @Override
-    public HtmlData getReturnUrl(BusinessObject businessObject, LookupForm lookupForm, List returnKeys, BusinessObjectRestrictions businessObjectRestrictions) {
-        String originalBackLocation = this.backLocation;
-        Map<String, String> parameters = getParameters(businessObject, lookupForm.getFieldConversions(), lookupForm.getLookupableImplServiceName(), returnKeys);
+    public HtmlData getReturnUrl(
+            final BusinessObject businessObject, final LookupForm lookupForm, final List returnKeys,
+            final BusinessObjectRestrictions businessObjectRestrictions) {
+        final String originalBackLocation = this.backLocation;
+        final Map<String, String> parameters = getParameters(businessObject, lookupForm.getFieldConversions(), lookupForm.getLookupableImplServiceName(), returnKeys);
         parameters.put(KFSConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.MAINTENANCE_NEW_WITH_EXISTING_ACTION);
         parameters.put(KFSConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, AccountDelegateGlobal.class.getName());
         parameters.put(KFSConstants.OVERRIDE_KEYS, "modelName" + KFSConstants.FIELD_CONVERSIONS_SEPERATOR + "modelChartOfAccountsCode"
                 + KFSConstants.FIELD_CONVERSIONS_SEPERATOR + "modelOrganizationCode");
         setBackLocation(KFSConstants.MAINTENANCE_ACTION);
-        AnchorHtmlData htmlData = (AnchorHtmlData) getReturnAnchorHtmlData(businessObject, parameters, lookupForm, returnKeys, businessObjectRestrictions);
+        final AnchorHtmlData htmlData = (AnchorHtmlData) getReturnAnchorHtmlData(businessObject, parameters, lookupForm, returnKeys, businessObjectRestrictions);
         // set this to prevent breaking Account Delegate Model returnLocation
         setBackLocation(originalBackLocation);
         return htmlData;

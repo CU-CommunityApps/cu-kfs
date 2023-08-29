@@ -7,7 +7,7 @@ public class CuObjectCodeGlobalDetail extends ObjectCodeGlobalDetail {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("CuObjectCodeGlobalDetail: ");
+        final StringBuilder sb = new StringBuilder("CuObjectCodeGlobalDetail: ");
         sb.append("chart of accounts :").append(getChartOfAccountsCode());
         sb.append(" fiscal year: ").append(getUniversityFiscalYear());
         sb.append(" object code: ").append(getFinancialObjectCode());
