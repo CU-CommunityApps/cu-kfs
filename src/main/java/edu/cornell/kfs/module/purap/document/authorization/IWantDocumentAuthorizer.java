@@ -22,6 +22,11 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
 
     private static final long serialVersionUID = 1L;
     
+    /*
+     * Customization to ensure the canSendNoteFyi action is available when the canSendNoteFyi is true. 
+     * This action might have been be removed in the super call if the canSendAdHocRequests returns false.
+     */
+    @Override
     public Set<String> getDocumentActions(Document document, Person user,
             Set<String> documentActionsFromPresentationController) {
         Set<String> documentActionsToReturn = super.getDocumentActions(document, user,
@@ -49,21 +54,11 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
     }
 
-    
+    /*
+     * Only approvers should be able to ad hoc route for approval.
+     */
     @Override
     public boolean canSendAnyTypeAdHocRequests(Document document, Person user) {
-//        if (canSendAdHocRequests(document, KewApiConstants.ACTION_REQUEST_FYI_REQ, user)) {
-//            RoutePath routePath = KEWServiceLocator.getDocumentTypeService().getRoutePathForDocumentTypeName(
-//                document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
-//            ProcessDefinition processDefinition = routePath.getPrimaryProcess();
-//            if (processDefinition != null) {
-//                return processDefinition.getInitialRouteNode() != null;
-//            } else {
-//                return false;
-//            }
-//        } else if (canSendAdHocRequests(document, KewApiConstants.ACTION_REQUEST_ACKNOWLEDGE_REQ, user)) {
-//            return true;
-//        }
         return canSendAdHocRequests(document, KewApiConstants.ACTION_REQUEST_APPROVE_REQ, user);
     }
     
