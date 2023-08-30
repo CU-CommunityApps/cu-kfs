@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,5 +44,21 @@ public class LoadFileUtils {
             throw new IllegalArgumentException("A file must be provided");
         }
         return safelyLoadFileBytes(file.getAbsolutePath());
+    }
+    
+    /**
+     * Returns the string contents of a file.  If the file can not be loaded, an empty string is returned.
+     * @param fullyQualifiedFileName
+     * @return
+     */
+    public static String safelyLoadFileString(String fullyQualifiedFileName) {
+        try {
+            byte[] fileByteArray = safelyLoadFileBytes(fullyQualifiedFileName);
+            String formattedString = new String(fileByteArray);
+            return formattedString;
+        } catch (RuntimeException e) {
+            LOG.error("safelyLoadFileString, unable to read the file.", e);
+            return StringUtils.EMPTY;
+        }
     }
 }

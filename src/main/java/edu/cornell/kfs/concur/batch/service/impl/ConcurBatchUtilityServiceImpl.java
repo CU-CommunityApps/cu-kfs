@@ -150,8 +150,12 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
                 && StringUtils.equalsIgnoreCase(ConcurConstants.CORPORATE_CARD_PAYMENT_TYPE, line.getJournalPayerPaymentTypeName())
                 && StringUtils.equalsIgnoreCase(ConcurConstants.UNIVERSITY_PAYMENT_TYPE, line.getJournalPayeePaymentTypeName());
     }
-
+    
+    /**
+     * @Deprecated use LoadFileUtils.safelyLoadFileString()
+     */
     @Override
+    @Deprecated
     public String getFileContents(String fileName) {
         try {
             byte[] fileByteArray = LoadFileUtils.safelyLoadFileBytes(fileName);
