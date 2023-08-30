@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -12,6 +13,8 @@ import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.batch.JaggaerGenerateSupplierXmlStep;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerGenerateSupplierXmlReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
@@ -109,33 +112,34 @@ public class JaggaerGenerateSupplierXmlReportServiceImpl implements JaggaerGener
     private void emailReport() {
         final String toAddress = findReportToAddress();
         final String fromAddress = toAddress;
+        final String body = LoadFileUtils.safelyLoadFileString(reportWriterService.getReportFile().getAbsolutePath());
         
-        BodyMailMessage message = new BodyMailMessage();
-        message.setFromAddress(fromAddress);
-        String subject = reportWriterService.getTitle();
-        message.setSubject(subject);
-        message.getToAddresses().add(toAddress);
-        String body = LoadFileUtils.safelyLoadFileString(reportWriterService.getReportFile().getAbsolutePath());
-        message.setMessage(body);
-
-        boolean htmlMessage = false;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
-            LOG.debug("sendEmail, the email subject: " + subject);
-            LOG.debug("sendEmail, the email budy: " + body);
-        }
-        try {
-            emailService.sendMessage(message, htmlMessage);
-        } catch (Exception e) {
-            LOG.error("sendEmail, the email could not be sent", e);
+        if (StringUtils.isNotBlank(toAddress)) {        
+            BodyMailMessage message = new BodyMailMessage();
+            message.setFromAddress(fromAddress);
+            String subject = reportWriterService.getTitle();
+            message.setSubject(subject);
+            message.getToAddresses().add(toAddress);
+            message.setMessage(body);
+    
+            boolean htmlMessage = false;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
+                LOG.debug("sendEmail, the email subject: " + subject);
+                LOG.debug("sendEmail, the email budy: " + body);
+            }
+            try {
+                emailService.sendMessage(message, htmlMessage);
+            } catch (Exception e) {
+                LOG.error("sendEmail, the email could not be sent", e);
+            }
+        } else {
+            LOG.info("emailReport, the JAGGAER_XML_REPORT_EMAIL parameter is empty, so not emailing the report");
         }
     }
     
     protected String findReportToAddress() {
-        /*
-         * @todo pull this from a paremeter
-         */
-        return "Contract-support@cornell.edu";
+        return parameterService.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_XML_REPORT_EMAIL);
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {
