@@ -14,8 +14,6 @@ import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.MaintenanceDocumentService;
-import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.cg.businessobject.Agency;
 import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.module.cg.businessobject.Proposal;
@@ -29,7 +27,6 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.document.DocumentProcessingQueue;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
@@ -242,10 +239,6 @@ public class RassMockServiceFactory {
 
     public EmailService buildMockEmailService() throws Exception {
         return Mockito.mock(EmailService.class);
-    }
-    
-    public DocumentProcessingQueue buildMockDocumentProcessingQueue() {
-        return Mockito.mock(DocumentProcessingQueue.class);
     }
 
 }
