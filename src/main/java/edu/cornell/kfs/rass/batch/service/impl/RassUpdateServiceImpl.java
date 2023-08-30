@@ -32,11 +32,9 @@ import org.kuali.kfs.module.cg.businessobject.Primaryable;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.kew.api.KewApiConstants;
-import org.kuali.kfs.kew.api.document.DocumentProcessingQueue;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
 import org.springframework.transaction.annotation.Propagation;
@@ -67,7 +65,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected DataDictionaryService dataDictionaryService;
     protected ConfigurationService configurationService;
     protected RouteHeaderService routeHeaderService;
-    protected DocumentProcessingQueue documentProcessingQueue;
 
     protected long documentStatusCheckDelayMillis;
     protected int maxStatusCheckAttempts;
@@ -461,8 +458,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
             
-            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
-            
         } catch (ValidationException ve) {
             LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(),
                     ve);
@@ -545,8 +540,5 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         this.maxStatusCheckAttempts = maxStatusCheckAttempts;
     }
 
-    public void setDocumentProcessingQueue(DocumentProcessingQueue documentProcessingQueue) {
-        this.documentProcessingQueue = documentProcessingQueue;
-    }
 
 }
