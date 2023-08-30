@@ -8,6 +8,6 @@ import org.kuali.kfs.krad.bo.Note;
 
 public interface CuAccountService extends AccountService{
 	
-	public List<Note> getAccountNotes(Account account);
+	public List<Note> getAccountNotes(final Account account);
 
 }

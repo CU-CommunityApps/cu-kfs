@@ -12,7 +12,7 @@ public class CuSubAccountRule extends SubAccountRule {
     protected boolean checkCgCostSharingRules() {
         boolean allFieldsSet = false;
 
-        A21SubAccount a21 = newSubAccount.getA21SubAccount();
+        final A21SubAccount a21 = newSubAccount.getA21SubAccount();
 
         // check to see if all required fields are set
         if (StringUtils.isNotEmpty(a21.getCostShareChartOfAccountCode())
@@ -56,7 +56,7 @@ public class CuSubAccountRule extends SubAccountRule {
     protected boolean checkCgIcrIsEmpty() {
         boolean success = true;
 
-        A21SubAccount newA21SubAccount = newSubAccount.getA21SubAccount();
+        final A21SubAccount newA21SubAccount = newSubAccount.getA21SubAccount();
         if (ObjectUtils.isNotNull(newA21SubAccount)) {
             success = StringUtils.isEmpty(newA21SubAccount.getFinancialIcrSeriesIdentifier());
 

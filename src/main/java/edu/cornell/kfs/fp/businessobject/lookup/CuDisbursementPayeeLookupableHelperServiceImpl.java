@@ -36,8 +36,8 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
      * @see org.kuali.kfs.kns.lookup.KualiLookupableHelperServiceImpl#getSearchResults(java.util.Map)
      */
     @Override
-    public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
-    		List<DisbursementPayee> searchResults = new ArrayList<>();
+    public List<? extends BusinessObject> getSearchResults(final Map<String, String> fieldValues) {
+    		final List<DisbursementPayee> searchResults = new ArrayList<>();
 
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER)) 
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
@@ -54,7 +54,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
    }
             
     @Override
-    public void validateSearchParameters(Map fieldValues) {
+    public void validateSearchParameters(final Map fieldValues) {
         super.validateSearchParameters(fieldValues);
 
         if (checkMinimumFieldsFilled(fieldValues)) {
@@ -68,7 +68,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
     }
     
     @Deprecated
-    public boolean checkMinimumFieldsFilled(Map fieldValues) {
+    public boolean checkMinimumFieldsFilled(final Map fieldValues) {
         final String principalName = (String) fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME);  
         
         if (StringUtils.isBlank((String) fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER))
@@ -166,7 +166,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
     protected List<DisbursementPayee> getPersonAsPayees(Map<String, String> fieldValues) {
         List<DisbursementPayee> payeeList = new ArrayList<DisbursementPayee>();
 
-        Map<String, String> fieldsForLookup = this.getPersonFieldValues(fieldValues);
+        Map<String, String> fieldsForLookup = getPersonFieldValues(fieldValues);
         List<Person> persons = SpringContext.getBean(PersonService.class).findPeople(fieldsForLookup);
         
        boolean warningExists = false;
@@ -207,7 +207,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         return payeeList;
     }
     
-protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldValues) {
+    protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldValues) {
         List<DisbursementPayee> payeeList = new ArrayList<DisbursementPayee>();
     
         Map<String, String> fieldsForLookup = this.getVendorFieldValues(fieldValues);
@@ -226,8 +226,8 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
 
 
     @Override
-    protected Map<String, String> getPersonFieldValues(Map<String, String> fieldValues) {
-        Map<String, String> personFieldValues = new HashMap<>();
+    protected Map<String, String> getPersonFieldValues(final Map<String, String> fieldValues) {
+        final Map<String, String> personFieldValues = new HashMap<>();
         personFieldValues.put(KFSPropertyConstants.PERSON_FIRST_NAME,
                 fieldValues.get(KFSPropertyConstants.PERSON_FIRST_NAME));
         personFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME,
@@ -236,9 +236,9 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
         personFieldValues.put(KFSPropertyConstants.ACTIVE, fieldValues.get(KFSPropertyConstants.ACTIVE));
         personFieldValues.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME));
         
-        Map<String, String> fieldConversionMap =
+        final Map<String, String> fieldConversionMap =
                 disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndPerson();
-        this.replaceFieldKeys(personFieldValues, fieldConversionMap);
+        replaceFieldKeys(personFieldValues, fieldConversionMap);
         
 
         return personFieldValues;
@@ -255,8 +255,8 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
     
 
     
-    protected Map<String, String> getVendorFieldValues(Map<String, String> fieldValues) {
-        Map<String, String> vendorFieldValues = new HashMap<>();
+    protected Map<String, String> getVendorFieldValues(final Map<String, String> fieldValues) {
+        final Map<String, String> vendorFieldValues = new HashMap<>();
         vendorFieldValues.put(KFSPropertyConstants.TAX_NUMBER, fieldValues.get(KFSPropertyConstants.TAX_NUMBER));
         vendorFieldValues.put(KFSPropertyConstants.VENDOR_NAME, fieldValues.get(KFSPropertyConstants.VENDOR_NAME));
         vendorFieldValues.put(KFSPropertyConstants.VENDOR_NUMBER, fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER));
@@ -264,10 +264,10 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
         vendorFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
         vendorFieldValues.put(KFSPropertyConstants.ACTIVE, fieldValues.get(KFSPropertyConstants.ACTIVE));
 
-        Map<String, String> fieldConversionMap = disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndVendor();
-        this.replaceFieldKeys(vendorFieldValues, fieldConversionMap);
+        final Map<String, String> fieldConversionMap = disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndVendor();
+        replaceFieldKeys(vendorFieldValues, fieldConversionMap);
 
-        String vendorName = this.getVendorName(vendorFieldValues);
+        final String vendorName = this.getVendorName(vendorFieldValues);
         if (StringUtils.isNotBlank(vendorName)) {
             vendorFieldValues.put(KFSPropertyConstants.VENDOR_NAME, vendorName);
         }
@@ -279,8 +279,8 @@ protected List<DisbursementPayee> getVendorsAsPayees(Map<String, String> fieldVa
     }
     
     
-    protected CuDisbursementPayee getPayeeFromVendor(VendorDetail vendorDetail, Map<String, String> fieldValues) {
-        CuDisbursementPayee payee =  ((CuDisbursementVoucherPayeeService)disbursementVoucherPayeeService).getPayeeFromVendor(vendorDetail);
+    protected CuDisbursementPayee getPayeeFromVendor(final VendorDetail vendorDetail, final Map<String, String> fieldValues) {
+        final CuDisbursementPayee payee =  ((CuDisbursementVoucherPayeeService)disbursementVoucherPayeeService).getPayeeFromVendor(vendorDetail);
         payee.setPaymentReasonCode(fieldValues.get(KFSPropertyConstants.PAYMENT_REASON_CODE));
 
         return payee;

@@ -23,8 +23,8 @@ public final class CuCoreUtilities {
      * @param resourceLoc resource location; syntax supported by {@link DefaultResourceLoader}
      * @return a handle to the Resource
      */
-    private static Resource getResource(String resourceLoc) {
-        AbsoluteFileSystemResourceLoader resourceLoader = new AbsoluteFileSystemResourceLoader();
+    private static Resource getResource(final String resourceLoc) {
+        final AbsoluteFileSystemResourceLoader resourceLoader = new AbsoluteFileSystemResourceLoader();
         resourceLoader.setClassLoader(ClassLoaderUtils.getDefaultClassLoader());
         return resourceLoader.getResource(resourceLoc);
     }
@@ -38,8 +38,8 @@ public final class CuCoreUtilities {
      * @throws IOException
      * @see DefaultResourceLoader
      */
-    public static InputStream getResourceAsStream(String resourceLoc) throws MalformedURLException, IOException {
-        Resource resource = getResource(resourceLoc);
+    public static InputStream getResourceAsStream(final String resourceLoc) throws MalformedURLException, IOException {
+        final Resource resource = getResource(resourceLoc);
         if (resource.exists()) {
             return resource.getInputStream();
         }
@@ -53,7 +53,7 @@ public final class CuCoreUtilities {
      */
     private static class AbsoluteFileSystemResourceLoader extends FileSystemResourceLoader {
         @Override
-        protected Resource getResourceByPath(String path) {
+        protected Resource getResourceByPath(final String path) {
             return new FileSystemResource(path);
         }
     }

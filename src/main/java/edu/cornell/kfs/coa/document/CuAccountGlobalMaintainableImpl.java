@@ -166,7 +166,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
         return oldAccountClosedFlag != null && !oldAccountClosedFlag.booleanValue();
     }
 
-    private String buildAccountClosedStatusKey(Account account) {
+    private String buildAccountClosedStatusKey(final Account account) {
         return StringUtils.join(account.getChartOfAccountsCode(),
                 KRADConstants.Maintenance.LOCK_AFTER_VALUE_DELIM, account.getAccountNumber());
     }
@@ -180,7 +180,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     }
 
     public void setSubAccountTrickleDownInactivationService(
-            SubAccountTrickleDownInactivationService subAccountTrickleDownInactivationService) {
+            final SubAccountTrickleDownInactivationService subAccountTrickleDownInactivationService) {
         this.subAccountTrickleDownInactivationService = subAccountTrickleDownInactivationService;
     }
 
@@ -193,7 +193,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     }
 
     public void setSubObjectTrickleDownInactivationService(
-            SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService) {
+            final SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService) {
         this.subObjectTrickleDownInactivationService = subObjectTrickleDownInactivationService;
     }
 
@@ -206,7 +206,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     }
 
     public void setAccountReversionTrickleDownInactivationService(
-            AccountReversionTrickleDownInactivationService accountReversionTrickleDownInactivationService) {
+            final AccountReversionTrickleDownInactivationService accountReversionTrickleDownInactivationService) {
         this.accountReversionTrickleDownInactivationService = accountReversionTrickleDownInactivationService;
     }
 
