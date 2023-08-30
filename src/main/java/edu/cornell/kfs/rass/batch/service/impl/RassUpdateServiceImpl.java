@@ -67,7 +67,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
     protected DataDictionaryService dataDictionaryService;
     protected ConfigurationService configurationService;
     protected RouteHeaderService routeHeaderService;
-    protected DocumentProcessingQueue documentProcessingQueue;
 
     protected long documentStatusCheckDelayMillis;
     protected int maxStatusCheckAttempts;
@@ -461,8 +460,6 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         try {
             maintenanceDocument = (MaintenanceDocument) documentService.routeDocument(maintenanceDocument, annotation, null);
             
-            new Thread(new DocumentProcessingQueueRunner(maintenanceDocument.getDocumentNumber(), documentProcessingQueue)).run();
-            
         } catch (ValidationException ve) {
             LOG.error("createAndRouteMaintenanceDocumentInternal, Error routing document # " + maintenanceDocument.getDocumentNumber() + " " + ve.getMessage(),
                     ve);
@@ -545,8 +542,5 @@ public class RassUpdateServiceImpl implements RassUpdateService {
         this.maxStatusCheckAttempts = maxStatusCheckAttempts;
     }
 
-    public void setDocumentProcessingQueue(DocumentProcessingQueue documentProcessingQueue) {
-        this.documentProcessingQueue = documentProcessingQueue;
-    }
 
 }
