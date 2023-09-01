@@ -1,78 +1,73 @@
-<?xml version='1.0' encoding='UTF-8'?> 
-<!--
- Copyright 2008-2009 The Kuali Foundation
- 
- Licensed under the Educational Community License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- 
- http://www.opensource.org/licenses/ecl2.php
- 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-<data xmlns="ns:workflow" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
-  <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
-    <documentType>
-      <name>ACCT</name>
-      <label>Account</label>
-      <parent>COA</parent>
-      <routePaths>
-        <routePath>
-          <start name="AdHoc" nextNode="Account"/>
-          <requests name="Account" nextNode="OrganizationHierarchy"/>
-          <requests name="OrganizationHierarchy" nextNode="Award"/>
-          <requests name="Award" nextNode="SubFund"/>
-          <requests name="SubFund" nextNode="AccountSupervisor"/>
-          <requests name="AccountSupervisor" nextNode="InitiatorAccountFYISplit"/>
-          <split name="InitiatorAccountFYISplit">
-            <branch name="True">
-              <requests name="InitiatorAccountFYI" nextNode="InitiatorAccountFYIJoin"/>
-            </branch>
-            <branch name="False">
-              <simple name="InitiatorAccountFYIDoNothing" nextNode="InitiatorAccountFYIJoin"/>
-            </branch>
-            <join name="InitiatorAccountFYIJoin"/>
-          </split>
-        </routePath>
-      </routePaths>
-      <routeNodes>
-        <start name="AdHoc"/>
-        <role name="Account">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="OrganizationHierarchy">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="SubFund">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="Award">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="AccountSupervisor">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <role name="InitiatorAccountFYI">
-          <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-          <activationType>P</activationType>
-        </role>
-        <split name="InitiatorAccountFYISplit">
-          <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-        </split>
-        <simple name="InitiatorAccountFYIDoNothing">
-          <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-        </simple>
-        <join name="InitiatorAccountFYIJoin"/>
-      </routeNodes>
-    </documentType>
-  </documentTypes>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
+    <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
+        <documentType>
+            <name>ACCT</name>
+            <parent>COA</parent>
+            <label>Account</label>
+            <authorizer>org.kuali.kfs.krad.workflow.authorizer.CfDocumentTypeAuthorizer</authorizer>
+            <helpDefinitionURL>default.htm?turl=WordDocuments%2Faccount.htm</helpDefinitionURL>
+            <docSearchHelpURL>default.htm?turl=WordDocuments%2Faccount.htm</docSearchHelpURL>
+            <active>true</active>
+            <routingVersion>2</routingVersion>
+            <routePaths>
+                <routePath>
+                    <start name="AdHoc" nextNode="Account"/>
+                    <role name="Account" nextNode="OrganizationHierarchy"/>
+                    <role name="OrganizationHierarchy" nextNode="Award"/>
+                    <role name="Award" nextNode="Fund"/>
+                    <role name="Fund" nextNode="SubFund"/>
+                    <role name="SubFund" nextNode="AccountSupervisor"/>
+                    <role name="AccountSupervisor" nextNode="InitiatorAccountFYISplit"/>
+                    <split name="InitiatorAccountFYISplit">
+                        <branch name="True">
+                            <role name="InitiatorAccountFYI" nextNode="InitiatorAccountFYIJoin"/>
+                        </branch>
+                        <branch name="False">
+                            <simple name="InitiatorAccountFYIDoNothing" nextNode="InitiatorAccountFYIJoin"/>
+                        </branch>
+                        <join name="InitiatorAccountFYIJoin"/>
+                    </split>
+                </routePath>
+            </routePaths>
+            <routeNodes>
+                <start name="AdHoc"/>
+                <role name="Account">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="OrganizationHierarchy">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="Award">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+               <role name="Fund">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="SubFund">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="AccountSupervisor">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <split name="InitiatorAccountFYISplit">
+                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
+                </split>
+                <role name="InitiatorAccountFYI">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <join name="InitiatorAccountFYIJoin"/>
+                <simple name="InitiatorAccountFYIDoNothing">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+            </routeNodes>
+        </documentType>
+    </documentTypes>
 </data>

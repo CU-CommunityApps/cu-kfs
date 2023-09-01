@@ -344,16 +344,29 @@
 	      <map>
 	          <entry key="Chart" value-ref="AccountGlobalMaintenanceDocument-RoutingType-Chart"/>
 	          <entry key="OrganizationHierarchy" value-ref="AccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+              <entry key="Fund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-Fund"/>
 	          <entry key="SubFund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-SubFund"/>
 	      </map>
 	  </property>
 
   </bean>
   
+    <bean id="AccountGlobalMaintenanceDocument-RoutingAttribute-Fund" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
+        <property name="qualificationAttributeName" value="fundGroupCode"/>
+    </bean>
+    
     <bean id="AccountGlobalMaintenanceDocument-RoutingAttribute-SubFund" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
         <property name="qualificationAttributeName" value="subFundGroupCode"/>
     </bean>
     
+  <bean id="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-Fund" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+       <property name="documentCollectionPath">
+           <bean parent="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-Fund">
+               <property name="collectionPath" value="newMaintainableObject.businessObject.accountGlobalDetails"/>
+           </bean>
+       </property>
+  </bean>
+  
   <bean id="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-SubFund" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
        <property name="documentCollectionPath">
            <bean parent="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-SubFund">
@@ -362,10 +375,31 @@
        </property>
   </bean>
   
+    <bean id="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-Fund" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath">
+      <property name="documentValues">
+          <list>
+              <value>account.subFundGroup.fundGroupCode</value>
+          </list>
+      </property>
+  </bean>
+  
   <bean id="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-SubFund" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath">
       <property name="documentValues">
           <list>
               <value>account.subFundGroupCode</value>
+          </list>
+      </property>
+  </bean>
+  
+  <bean id="AccountGlobalMaintenanceDocument-RoutingType-Fund" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
+      <property name="routingAttributes">
+          <list>
+              <ref bean="AccountGlobalMaintenanceDocument-RoutingAttribute-Fund"/>
+          </list>
+      </property>
+      <property name="documentValuePathGroups">
+          <list>
+              <ref bean="AccountGlobalMaintenanceDocument-DocumentValuePathGroup-Fund"/>
           </list>
       </property>
   </bean>
