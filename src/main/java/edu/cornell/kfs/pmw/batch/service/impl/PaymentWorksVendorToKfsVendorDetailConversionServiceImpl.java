@@ -403,6 +403,7 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         kfsVendorDataWrapper = createInitiatorNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createVendorTypeBusinessPurposeNote(pmwVendor, kfsVendorDataWrapper);
         kfsVendorDataWrapper = createConflictOfInterestNote(pmwVendor, kfsVendorDataWrapper);
+        kfsVendorDataWrapper = createComplianceScreeningNote(pmwVendor, kfsVendorDataWrapper);
         return kfsVendorDataWrapper;
     }
     
@@ -415,6 +416,12 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     private KfsVendorDataWrapper createVendorTypeBusinessPurposeNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
         StringBuilder sbText = new StringBuilder(configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_PAYMENT_REASON_LABEL)).append(KFSConstants.BLANK_SPACE).append(pmwVendor.getVendorType());
         kfsVendorDataWrapper = paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, sbText.toString(), PaymentWorksConstants.ErrorDescriptorForBadKfsNote.BUSINESS_PURPOSE.getNoteDescriptionString());
+        return kfsVendorDataWrapper;
+    }
+    
+    private KfsVendorDataWrapper createComplianceScreeningNote(PaymentWorksVendor pmwVendor, KfsVendorDataWrapper kfsVendorDataWrapper) {
+        String noteText = configurationService.getPropertyValueAsString(PaymentWorksKeyConstants.NEW_VENDOR_PVEN_NOTES_COMPLIANCE_SCREENING_MESSAGE);
+        kfsVendorDataWrapper = paymentWorksBatchUtilityService.createNoteRecordingAnyErrors(kfsVendorDataWrapper, noteText, PaymentWorksConstants.ErrorDescriptorForBadKfsNote.COMPLIANCE_SCREENING.getNoteDescriptionString());
         return kfsVendorDataWrapper;
     }
     

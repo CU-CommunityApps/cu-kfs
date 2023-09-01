@@ -250,6 +250,7 @@ public class PaymentWorksConstants {
     public enum ErrorDescriptorForBadKfsNote {
         W8("W8"),
         W9("W9"),
+        COMPLIANCE_SCREENING("OFAC and Debarment Screening"),
         GOODS_AND_SERVICES("Goods and Services"),
         INITIATOR("Initiator"),
         BUSINESS_PURPOSE("Business Purpose"),
