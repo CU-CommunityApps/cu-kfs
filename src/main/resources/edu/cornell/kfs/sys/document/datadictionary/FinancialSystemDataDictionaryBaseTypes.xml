@@ -2,7 +2,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2023 Kuali, Inc.
+    Copyright 2005-2022 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,8 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+    
+    <!-- CU customization add Fund route node -->
     <alias name="RoutingAttribute-Fund" alias="RoutingAttribute-fundGroupCode"/>
 
     <bean id="SearchingAttribute-fundGroupCode" class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
@@ -54,7 +55,7 @@
                   p:collectionPath="targetAccountingLines"/>
         </property>
     </bean>
-
+    
     <bean id="RoutingType-AccountingDocument-Fund" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
         <property name="routingAttributes">
             <list>
@@ -96,5 +97,4 @@
             </list>
         </property>
     </bean>
-
 </beans>
