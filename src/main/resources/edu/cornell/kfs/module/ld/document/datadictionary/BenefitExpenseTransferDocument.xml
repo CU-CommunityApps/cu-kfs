@@ -17,6 +17,7 @@
                 <entry key="AccountingOrganizationHierarchy"
                        value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
                 <entry key="ObjectCode" value-ref="RoutingType-AccountingDocument-ObjectCode"/>
+                <entry key="Fund" value-ref="RoutingType-AccountingDocument-Fund"/>
                 <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
                 <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
             </map>
