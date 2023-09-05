@@ -24,9 +24,11 @@
                 <start name="AdHoc"/>
                 <role name="Account">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
                 </role>
                 <role name="AccountingOrganizationHierarchy">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
                 </role>
                 <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
@@ -34,6 +36,7 @@
                 </role>
                 <role name="SubFund">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
                 </role>
             </routeNodes>
         </documentType>
