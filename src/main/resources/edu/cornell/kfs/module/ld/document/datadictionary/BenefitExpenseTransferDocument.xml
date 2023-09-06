@@ -9,7 +9,7 @@
     <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.ExpiredAccountOverridePreRules"/>
   </bean>
   
-    <bean id="BenefitExpenseTransferDocument-workflowAttributes"
+  <bean id="BenefitExpenseTransferDocument-workflowAttributes"
           parent="BenefitExpenseTransferDocument-workflowAttributes-parentBean">
         <property name="routingTypeDefinitions">
             <map>
@@ -22,7 +22,7 @@
                 <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
             </map>
         </property>
-    </bean>
+  </bean>
 
   <bean id="BenefitExpenseTransferDocument-validations-parentBean" abstract="true"  class="org.springframework.beans.factory.config.MapFactoryBean">
   	<property name="sourceMap">

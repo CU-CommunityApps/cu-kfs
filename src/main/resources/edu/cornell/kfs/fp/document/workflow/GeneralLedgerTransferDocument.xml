@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
     <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
         <documentType>
@@ -18,7 +18,8 @@
                         <branch name="True">
                             <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
                             <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode"/>
-                            <role name="ObjectCode" nextNode="SubFund"/>
+                            <role name="ObjectCode" nextNode="Fund"/>
+                            <role name="Fund" nextNode="SubFund"/>
                             <role name="SubFund" nextNode="Award"/>
                             <role name="Award" nextNode="JoinRequireFullRoutingReview"/>
                         </branch>
@@ -44,6 +45,10 @@
                     <activationType>P</activationType>
                 </role>
                 <role name="ObjectCode">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
+                    <activationType>P</activationType>
+                </role>
+                <role name="Fund">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>

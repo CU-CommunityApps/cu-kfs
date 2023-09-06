@@ -21,24 +21,19 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation=" http://www.springframework.org/schema/beans
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- CU customization add Fund route node -->
-    <bean id="RoutingAttribute-Fund" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute"
-          p:qualificationAttributeName="fundGroupCode"/>
-          
-    <bean id="RoutingType-MaintenanceDocument-Fund"
-          class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
-        <property name="routingAttributes">
-            <list>
-                <ref bean="RoutingAttribute-Fund"/>
-            </list>
-        </property>
-        <property name="documentValuePathGroups">
-            <list>
-                <ref bean="DocumentValuePathGroup-MaintenanceDocument-Fund"/>
-            </list>
+    <bean id="YearEndSalaryExpenseTransferDocument-workflowAttributes"
+          parent="YearEndSalaryExpenseTransferDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="AccountingOrganizationHierarchy"
+                       value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+                <entry key="Fund" value-ref="RoutingType-AccountingDocument-Fund"/>
+                <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
+                <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
+            </map>
         </property>
     </bean>
 

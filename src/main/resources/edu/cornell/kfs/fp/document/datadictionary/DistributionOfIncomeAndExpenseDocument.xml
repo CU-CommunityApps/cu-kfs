@@ -12,5 +12,20 @@
         <property name="documentPresentationControllerClass" value="edu.cornell.kfs.fp.document.authorization.CuDistributionOfIncomeAndExpenseDocumentPresentationController"/>
 		<property name="documentClass" value="edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument"/>
 	</bean>
+    
+    <bean id="DistributionOfIncomeAndExpenseDocument-workflowAttributes"
+          parent="DistributionOfIncomeAndExpenseDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
+                <entry key="AccountingOrganizationHierarchy"
+                       value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+                <entry key="ObjectCode" value-ref="RoutingType-AccountingDocument-ObjectCode"/>
+                <entry key="Fund" value-ref="RoutingType-AccountingDocument-Fund"/>
+                <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
+                <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
+            </map>
+        </property>
+    </bean>
 
 </beans>

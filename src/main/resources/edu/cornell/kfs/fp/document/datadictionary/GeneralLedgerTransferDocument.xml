@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2022 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="GeneralLedgerTransferDocument-workflowAttributes"
+          parent="GeneralLedgerTransferDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Account"
+                       value-ref="RoutingType-AccountingDocument-Account"/>
+                <entry key="AccountingOrganizationHierarchy"
+                       value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+                <entry key="ObjectCode"
+                       value-ref="RoutingType-AccountingDocument-ObjectCode"/>
+                <entry key="SubFund"
+                       value-ref="RoutingType-AccountingDocument-Fund"/>
+                <entry key="SubFund"
+                       value-ref="RoutingType-AccountingDocument-SubFund"/>
+                <entry key="Award"
+                       value-ref="RoutingType-AccountingDocument-Award"/>
+            </map>
+        </property>
+    </bean>
+</beans>
