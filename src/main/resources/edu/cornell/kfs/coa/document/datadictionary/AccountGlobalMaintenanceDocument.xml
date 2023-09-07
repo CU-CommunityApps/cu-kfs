@@ -340,14 +340,14 @@
   </bean>
   
   <bean id="AccountGlobalMaintenanceDocument-workflowAttributes" parent="AccountGlobalMaintenanceDocument-workflowAttributes-parentBean">
-	  <property name="routingTypeDefinitions">
-	      <map>
-	          <entry key="Chart" value-ref="AccountGlobalMaintenanceDocument-RoutingType-Chart"/>
-	          <entry key="OrganizationHierarchy" value-ref="AccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
+      <property name="routingTypeDefinitions">
+          <map>
+              <entry key="Chart" value-ref="AccountGlobalMaintenanceDocument-RoutingType-Chart"/>
+              <entry key="OrganizationHierarchy" value-ref="AccountGlobalMaintenanceDocument-RoutingType-OrganizationHierarchy"/>
               <entry key="Fund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-Fund"/>
-	          <entry key="SubFund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-SubFund"/>
-	      </map>
-	  </property>
+              <entry key="SubFund" value-ref="AccountGlobalMaintenanceDocument-RoutingType-SubFund"/>
+          </map>
+      </property>
 
   </bean>
   
@@ -375,7 +375,7 @@
        </property>
   </bean>
   
-    <bean id="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-Fund" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath">
+  <bean id="AccountGlobalMaintenanceDocument-DocumentValueCollectionPathGroup-Fund" class="org.kuali.kfs.krad.datadictionary.DocumentCollectionPath">
       <property name="documentValues">
           <list>
               <value>account.subFundGroup.fundGroupCode</value>

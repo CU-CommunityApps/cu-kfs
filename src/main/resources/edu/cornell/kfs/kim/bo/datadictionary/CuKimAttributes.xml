@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="CuKimAttributes" parent="CuKimAttributes-parentBean"/>
+    <bean id="CuKimAttributes-parentBean" abstract="true" parent="KimAttributes-parentBean"
+          p:businessObjectClass="edu.cornell.kfs.kim.bo.impl.CuKimAttributes"
+          p:objectLabel="Cornell KFS KIM Attributes">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="CupKimAttributes-fundGroupCode"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="CuKimAttributes-fundGroupCode" parent="FundGroup-code" p:name="fundGroupCode"/>
+
+</beans>

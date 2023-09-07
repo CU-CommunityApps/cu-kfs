@@ -5,19 +5,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
                 
-	<bean id="YearEndTransferOfFundsDocument" parent="YearEndTransferOfFundsDocument-parentBean">
-		<property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.ExpiredAccountOverridePreRules"/>
-	</bean>
+    <bean id="YearEndTransferOfFundsDocument" parent="YearEndTransferOfFundsDocument-parentBean">
+        <property name="promptBeforeValidationClass" value="org.kuali.kfs.fp.document.validation.impl.ExpiredAccountOverridePreRules"/>
+    </bean>
 
-	<bean id="YearEndTransferOfFundsDocument-workflowAttributes" parent="YearEndTransferOfFundsDocument-workflowAttributes-parentBean">
-	    <property name="routingTypeDefinitions">
-    		<map>
-    			<entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
+    <bean id="YearEndTransferOfFundsDocument-workflowAttributes" parent="YearEndTransferOfFundsDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
                 <entry key="Fund" value-ref="RoutingType-AccountingDocument-Fund"/>
-    			<entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
-    			<entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
-    		</map>
-    	</property>
-	</bean>
+                <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
+                <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
+            </map>
+        </property>
+    </bean>
 
 </beans>
