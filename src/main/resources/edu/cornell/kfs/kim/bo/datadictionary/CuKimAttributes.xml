@@ -11,7 +11,7 @@
           p:objectLabel="Cornell KFS KIM Attributes">
         <property name="attributes">
             <list merge="true">
-                <ref bean="CupKimAttributes-fundGroupCode"/>
+                <ref bean="CuKimAttributes-fundGroupCode"/>
             </list>
         </property>
     </bean>
