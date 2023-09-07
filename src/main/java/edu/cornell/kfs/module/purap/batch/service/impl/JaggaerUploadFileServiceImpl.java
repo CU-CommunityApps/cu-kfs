@@ -75,7 +75,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         }
 
         if (shouldUploadFilesToJaggaer()) {
-            logUploadFileResusts(resultsList);
+            logUploadFileResults(resultsList);
         }
 
         fileStorageService.removeDoneFiles(jaggaerUploadXmlFileNames);
@@ -199,9 +199,9 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         }
     }
 
-    private void logUploadFileResusts(List<JaggaerUploadFileResultsDTO> resultsList) {
+    private void logUploadFileResults(List<JaggaerUploadFileResultsDTO> resultsList) {
         for (JaggaerUploadFileResultsDTO result : resultsList) {
-            LOG.info("logUploadFileResusts, results: {}", result.toString());
+            LOG.info("logUploadFileResults, results: {}", result.toString());
         }
     }
 

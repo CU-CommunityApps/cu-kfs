@@ -152,7 +152,7 @@ public class ConcurBatchUtilityServiceImpl implements ConcurBatchUtilityService 
     }
     
     /**
-     * @Deprecated use LoadFileUtils.safelyLoadFileString()
+     * @deprecated use LoadFileUtils.safelyLoadFileString()
      */
     @Override
     @Deprecated
