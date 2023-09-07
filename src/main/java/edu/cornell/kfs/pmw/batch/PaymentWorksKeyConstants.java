@@ -6,6 +6,7 @@ public class PaymentWorksKeyConstants {
     public static final String NOTES_INITIATOR_LABEL = "note.label.paymentworks.initiator";
     public static final String NEW_VENDOR_PVEN_NOTES_W8_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w8.exists";
     public static final String NEW_VENDOR_PVEN_NOTES_W9_URL_EXISTS_MESSAGE = "note.message.paymentworks.pven.w9.exists";
+    public static final String NEW_VENDOR_PVEN_NOTES_COMPLIANCE_SCREENING_MESSAGE = "note.message.paymentworks.pven.compliance.screening";
     public static final String NEW_VENDOR_PVEN_NOTES_PAYMENT_REASON_LABEL = "note.label.paymentworks.pven.payment.reason";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_MESSAGE = "note.message.paymentworks.pven.conflict.of.interest";
     public static final String NEW_VENDOR_PVEN_NOTES_CONFLICT_OF_INTEREST_EMPLOYEE_NAME_LABEL = "note.label.paymentworks.pven.conflict.of.interest.employee.name";
