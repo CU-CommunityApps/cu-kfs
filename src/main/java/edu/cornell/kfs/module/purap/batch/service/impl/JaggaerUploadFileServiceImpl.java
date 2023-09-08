@@ -75,7 +75,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         }
 
         if (shouldUploadFilesToJaggaer()) {
-            generateResultsReport(resultsList);
+            logUploadFileResults(resultsList);
         }
 
         fileStorageService.removeDoneFiles(jaggaerUploadXmlFileNames);
@@ -199,13 +199,9 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         }
     }
 
-    private void generateResultsReport(List<JaggaerUploadFileResultsDTO> resultsList) {
-        /*
-         * A full report will be implemented on Jira KFSPTS-29084. Until then, this
-         * will produce a nice summary at the bottom of the log file
-         */
+    private void logUploadFileResults(List<JaggaerUploadFileResultsDTO> resultsList) {
         for (JaggaerUploadFileResultsDTO result : resultsList) {
-            LOG.info("generateResultsReport, results: {}", result.toString());
+            LOG.info("logUploadFileResults, results: {}", result.toString());
         }
     }
 

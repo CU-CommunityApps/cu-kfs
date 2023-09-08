@@ -139,9 +139,11 @@ public interface ConcurBatchUtilityService {
     
     /**
      * Returns the contents of a file as a String.
+     * @deprecated use LoadFileUtils.safelyLoadFileString()
      * @param fileName
      * @return
      */
+    @Deprecated
     String getFileContents(String fileName);
 
     /**

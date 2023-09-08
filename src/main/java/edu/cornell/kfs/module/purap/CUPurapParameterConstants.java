@@ -47,6 +47,7 @@ public class CUPurapParameterConstants {
     public static final String JAGGAER_ENABLE_UPLOAD_FILES = "JAGGAER_ENABLE_UPLOAD_FILES";
     public static final String JAGGAER_UPLOAD_RETRY_COUNT = "JAGGAER_UPLOAD_RETRY_COUNT";
     public static final String JAGGAER_UPLOAD_ENDPOINT = "JAGGAER_UPLOAD_ENDPOINT";
+    public static final String JAGGAER_XML_REPORT_EMAIL = "JAGGAER_XML_REPORT_EMAIL";
     
     public static final String JAGGAER_WEBSERVICE_GROUP_CODE = "JAGGAER";
     public static final String JAGGAER_WEBSERVICE_UPLOAD_SUPPLIER_NAME = "UPLOAD_SUPPLIER_NAME";
