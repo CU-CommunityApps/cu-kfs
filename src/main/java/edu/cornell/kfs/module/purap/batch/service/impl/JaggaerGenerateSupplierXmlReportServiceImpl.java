@@ -40,44 +40,47 @@ public class JaggaerGenerateSupplierXmlReportServiceImpl implements JaggaerGener
     }
 
     private void buildSummarySection(List<JaggaerUploadSupplierXmlFileDetailsDto> xmlFileDtos) {
-        reportWriterService.writeSubTitle(writeSubTitleValue(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_HEADER, SUMMARY));
+        writeSubTitle(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_HEADER, SUMMARY);
         int dtoCount = 0;
         for (JaggaerUploadSupplierXmlFileDetailsDto dto : xmlFileDtos) {
             if (dtoCount > 0) {
                 reportWriterService.writeNewLines(2);
             }
-            reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(
-                    CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_FILE_NAME), dto.getXmlFileName());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_FILE_NAME, dto.getXmlFileName());
 
-            reportWriterService.writeFormattedMessageLine(
-                    configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_TOTAL), ACTIVE,
-                            dto.getActiveVendors().size());
-            reportWriterService.writeFormattedMessageLine(
-                    configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL),
-                            ACTIVE, WITH, filterDetailDtoWithNotes(dto.getActiveVendors()).size());
-            reportWriterService.writeFormattedMessageLine(
-                    configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL),
-                            ACTIVE, WITHOUT, filterDetailDtoWithoutNotes(dto.getActiveVendors()).size());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_TOTAL, ACTIVE,
+                    dto.getActiveVendors().size());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL, ACTIVE,
+                    WITH, filterDetailDtoWithNotes(dto.getActiveVendors()).size());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL, ACTIVE,
+                    WITHOUT, filterDetailDtoWithoutNotes(dto.getActiveVendors()).size());
 
-            reportWriterService.writeFormattedMessageLine(
-                    configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_TOTAL), INACTIVE,
-                            dto.getInactiveVendors().size());
-            reportWriterService.writeFormattedMessageLine(
-                    configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL),
-                            INACTIVE, WITH, filterDetailDtoWithNotes(dto.getInactiveVendors()).size());
-            reportWriterService.writeFormattedMessageLine(
-                    configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL),
-                            INACTIVE, WITHOUT, filterDetailDtoWithoutNotes(dto.getInactiveVendors()).size());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_TOTAL, INACTIVE,
+                    dto.getInactiveVendors().size());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL,
+                    INACTIVE, WITH, filterDetailDtoWithNotes(dto.getInactiveVendors()).size());
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL,
+                    INACTIVE, WITHOUT, filterDetailDtoWithoutNotes(dto.getInactiveVendors()).size());
 
             dtoCount++;
         }
-        reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_FOOTER));
+        writeSubTitle(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_FOOTER);
     }
     
    
-    private String writeSubTitleValue(String propertyName, Object... args) {
+    private void writeSubTitle(String propertyName, Object... args) {
+        String propertyValue = getPropertyValue(propertyName);
+        reportWriterService.writeSubTitle(String.format(propertyValue, args));
+    }
+
+    private String getPropertyValue(String propertyName) {
         String propertyValue = configurationService.getPropertyValueAsString(propertyName);
-        return String.format(propertyValue, args);
+        return propertyValue;
+    }
+    
+    private void writeFormattedMessageLine(String propertyName, Object... args) {
+        String propertyValue = getPropertyValue(propertyName);
+        reportWriterService.writeFormattedMessageLine(propertyValue, args);
     }
     
     private List<JaggaerUploadSupplierVendorDetailDto> filterDetailDtoWithNotes(List<JaggaerUploadSupplierVendorDetailDto> dtos) {
@@ -97,29 +100,28 @@ public class JaggaerGenerateSupplierXmlReportServiceImpl implements JaggaerGener
     private void buildDetailSections(List<JaggaerUploadSupplierXmlFileDetailsDto> xmlFileDtos) {
         xmlFileDtos.stream().forEach(dto -> {
             reportWriterService.writeNewLines(4);
-            reportWriterService.writeSubTitle(writeSubTitleValue(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_HEADER, dto.getXmlFileName()));
+            writeSubTitle(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_HEADER, dto.getXmlFileName());
             buildDetailLines(filterDetailDtoWithNotes(dto.getActiveVendors()));
             buildDetailLines(filterDetailDtoWithoutNotes(dto.getActiveVendors()));
             buildDetailLines(filterDetailDtoWithNotes(dto.getInactiveVendors()));
             buildDetailLines(filterDetailDtoWithoutNotes(dto.getInactiveVendors()));
-            reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_FOOTER));
+            writeSubTitle(CUPurapKeyConstants.JAGGAER_XML_REPORT_SECTION_FOOTER);
         });
     }
 
     private void buildDetailLines(List<JaggaerUploadSupplierVendorDetailDto> details) {
         details.stream().forEach(detail -> {
-            reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_DETAIL_LINE),
-                        detail.isActive() ? ACTIVE : INACTIVE, detail.getVendorName(), detail.getVendorNumber());
-            
-            detail.getNotes().stream().forEach(note -> 
-                reportWriterService.writeFormattedMessageLine(
-                        configurationService.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_XML_REPORT_DETAIL_NOTE_LINE), note));
+            writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_DETAIL_LINE,
+                    detail.isActive() ? ACTIVE : INACTIVE, detail.getVendorName(), detail.getVendorNumber());
+
+            detail.getNotes().stream().forEach(
+                    note -> writeFormattedMessageLine(CUPurapKeyConstants.JAGGAER_XML_REPORT_DETAIL_NOTE_LINE, note));
         });
     }
     
     private void emailReport() {
         final String toAddress = findReportToAddress();
-        final String fromAddress = toAddress;
+        final String fromAddress = emailService.getDefaultFromAddress();
         final String body = LoadFileUtils.safelyLoadFileString(reportWriterService.getReportFile().getAbsolutePath());
         
         if (StringUtils.isNotBlank(toAddress)) {        
@@ -138,7 +140,7 @@ public class JaggaerGenerateSupplierXmlReportServiceImpl implements JaggaerGener
             try {
                 emailService.sendMessage(message, htmlMessage);
             } catch (Exception e) {
-                LOG.error("sendEmail, the email could not be sent", e);
+                LOG.error("emailReport, the email could not be sent", e);
             }
         } else {
             LOG.warn("emailReport, the JAGGAER_XML_REPORT_EMAIL parameter is empty, so not emailing the report");

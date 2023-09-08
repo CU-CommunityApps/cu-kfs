@@ -50,7 +50,7 @@ public class LoadFileUtils {
     
     /**
      * Returns the string contents of a file.  If the file can not be loaded, an empty string is returned.
-     * Uses a default UTF_*
+     * Uses a default UTF_8
      * @param fullyQualifiedFileName
      * @return
      */
