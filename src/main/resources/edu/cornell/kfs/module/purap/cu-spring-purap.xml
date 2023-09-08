@@ -355,7 +355,8 @@
         p:parameterService-ref="parameterService"
         p:jaggaerUploadDao-ref="jaggaerUploadDao"
         p:webServiceCredentialService-ref="webServiceCredentialService" 
-        p:configurationService-ref="configurationService" />
+        p:configurationService-ref="configurationService"
+        p:jaggaerGenerateSupplierXmlReportService-ref="jaggaerGenerateSupplierXmlReportService" />
 
     <bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
     <bean id="jaggaerUploadFileService-parentBean" abstract="true"
@@ -371,5 +372,18 @@
 		p:directoryPath="${staging.directory}/purap/jaggaer/xml"
 		p:fileExtension="xml" 
 		p:fileTypeIdentifier="jaggaerUploadFileType" />
+        
+    <bean id="jaggaerGenerateSupplierXmlReportService" parent="jaggaerGenerateSupplierXmlReportService-parentBean" />
+    <bean id="jaggaerGenerateSupplierXmlReportService-parentBean" abstract="true"
+        class="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerGenerateSupplierXmlReportServiceImpl"
+        p:configurationService-ref="configurationService"
+        p:parameterService-ref="parameterService"
+        p:reportWriterService-ref="jaggaerGenerateXmlReportWriterService" 
+        p:emailService-ref="emailService"/>
+    
+    <bean id="jaggaerGenerateXmlReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService"
+        p:filePath="${reports.directory}/purap"
+        p:fileNamePrefix="jaggaer_generate_xml_report_"
+        p:title="Jaggaer Generate XML Report File"/>
     
 </beans>

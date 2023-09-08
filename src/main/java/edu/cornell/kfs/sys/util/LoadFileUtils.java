@@ -5,8 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,5 +46,32 @@ public class LoadFileUtils {
             throw new IllegalArgumentException("A file must be provided");
         }
         return safelyLoadFileBytes(file.getAbsolutePath());
+    }
+    
+    /**
+     * Returns the string contents of a file.  If the file can not be loaded, an empty string is returned.
+     * Uses a default UTF_8
+     * @param fullyQualifiedFileName
+     * @return
+     */
+    public static String safelyLoadFileString(String fullyQualifiedFileName) {
+        return safelyLoadFileString(fullyQualifiedFileName, StandardCharsets.UTF_8);
+    }
+    
+    /**
+     * Returns the string contents of a file.  If the file can not be loaded, an empty string is returned.
+     * @param fullyQualifiedFileName
+     * @param charSet
+     * @return
+     */
+    public static String safelyLoadFileString(String fullyQualifiedFileName, Charset charSet) {
+        try {
+            byte[] fileByteArray = safelyLoadFileBytes(fullyQualifiedFileName);
+            String formattedString = new String(fileByteArray, charSet);
+            return formattedString;
+        } catch (RuntimeException e) {
+            LOG.error("safelyLoadFileString, unable to read the file.", e);
+            return StringUtils.EMPTY;
+        }
     }
 }
