@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -56,6 +55,7 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.dataaccess.DisbursementVoucherDao;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
+import org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -78,6 +78,8 @@ import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.State;
+import org.kuali.kfs.sys.service.LocationService;
 import org.kuali.kfs.sys.service.XmlUtilService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
@@ -177,9 +179,13 @@ public class Iso20022FormatExtractor {
     /*
      * CU Customization: Added service for converting country codes/names into ISO country code format.
      *     Also added service to assist with handling Check Stubs (aka Additional Remittance Info).
+     *     Also added LocationService reference.
+     *     Also added ZipcodeValidationPattern reference.
      */
     private final ISOFIPSConversionService isoFipsConversionService;
     private final CuCheckStubService cuCheckStubService;
+    private final LocationService locationService;
+    private final ZipcodeValidationPattern zipcodeValidationPattern;
 
     private enum CheckDeliveryPriority {
         // 00000: Mail via Post to creditor's address. (Default if 'prtry' is omitted.)
@@ -206,6 +212,8 @@ public class Iso20022FormatExtractor {
      * CU Customization: Added setup for ISO FIPS conversion service.
      * Also added checking of paymentDetailService parameter to require it to implement CuPaymentDetailService.
      * Also added setup for Check Stub helper service.
+     * Also added setup for LocationService.
+     * Also added setup for ZipcodeValidationPattern.
      */
     public Iso20022FormatExtractor(
             final AchService achService,
@@ -221,7 +229,9 @@ public class Iso20022FormatExtractor {
             final ProcessDao processDao,
             final XmlUtilService xmlUtilService,
             final ISOFIPSConversionService isoFipsConversionService,
-            final CuCheckStubService cuCheckStubService
+            final CuCheckStubService cuCheckStubService,
+            final LocationService locationService,
+            final ZipcodeValidationPattern zipcodeValidationPattern
     ) {
         this.achService = achService;
         this.achBankService = achBankService;
@@ -237,6 +247,8 @@ public class Iso20022FormatExtractor {
         this.xmlUtilService = xmlUtilService;
         this.isoFipsConversionService = isoFipsConversionService;
         this.cuCheckStubService = cuCheckStubService;
+        this.locationService = locationService;
+        this.zipcodeValidationPattern = zipcodeValidationPattern;
         if (!(paymentDetailService instanceof CuPaymentDetailService)) {
             throw new IllegalArgumentException("paymentDetailService should have implemented CuPaymentDetailService");
         }
@@ -833,8 +845,15 @@ public class Iso20022FormatExtractor {
         String isoCountryCode;
         if (StringUtils.isNotBlank(countryCode)) {
             isoCountryCode = convertFIPSCountryCodeToISOCountryCode(countryCode);
+        } else if (stateAndPostalCodeAreWithinUnitedStates(templateCustomerProfile.getStateCode(),
+                templateCustomerProfile.getZipCode())) {
+            LOG.warn("constructPostalAddress, Customer Profile {} has a blank country code but seems to reference "
+                    + "a domestic address; defaulting to '{}'",
+                    templateCustomerProfile.getId(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
+            isoCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         } else {
-            LOG.warn("constructPostalAddress, Customer Profile {} has a blank country code; defaulting to '{}'",
+            LOG.warn("constructPostalAddress, Customer Profile {} has a blank country code but seems to reference "
+                    + "a foreign address; defaulting to '{}'",
                     templateCustomerProfile.getId(), CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
             isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
         }
@@ -879,8 +898,15 @@ public class Iso20022FormatExtractor {
             isoCountryCode = wasPaymentGroupCreatedPriorToISOCountryConversion(templatePaymentGroup)
                     ? convertFIPSCountryValueToISOCountryCode(countryValue)
                     : convertISOCountryValueToISOCountryCode(countryValue);
+        }  else if (stateAndPostalCodeAreWithinUnitedStates(templatePaymentGroup.getState(),
+                templatePaymentGroup.getZipCd())) {
+            LOG.warn("constructPostalAddress, Payment Group {} has a blank country code but seems to reference "
+                    + "a domestic address; defaulting to '{}'",
+                    templatePaymentGroup.getId(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
+            isoCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         } else {
-            LOG.warn("constructPostalAddress, Payment Group {} has a blank country value; defaulting to '{}'",
+            LOG.warn("constructPostalAddress, Payment Group {} has a blank country code but seems to reference "
+                    + "a foreign address; defaulting to '{}'",
                     templatePaymentGroup.getId(), CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
             isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
         }
@@ -947,7 +973,7 @@ public class Iso20022FormatExtractor {
     /*
      * ==========
      * CU Customization: Added several helper methods for converting country names and FIPS country codes
-     * into ISO country codes.
+     * into ISO country codes, as well as for handling certain blank country codes.
      * ==========
      */
 
@@ -1025,6 +1051,27 @@ public class Iso20022FormatExtractor {
         }
         
         return isoCountryCode;
+    }
+
+    private boolean stateAndPostalCodeAreWithinUnitedStates(String stateCode, String postalCode) {
+        if (StringUtils.isAnyBlank(stateCode, postalCode)) {
+            LOG.debug("stateAndPostalCodeAreWithinUnitedStates, State and/or postal code are blank");
+            return false;
+        }
+
+        State state = locationService.getState(KFSConstants.COUNTRY_CODE_UNITED_STATES, stateCode);
+        if (ObjectUtils.isNull(state)) {
+            LOG.debug("stateAndPostalCodeAreWithinUnitedStates, State {} is not an active US state", stateCode);
+            return false;
+        } else if (!zipcodeValidationPattern.matches(postalCode)) {
+            LOG.debug("stateAndPostalCodeAreWithinUnitedStates, Postal Code {} is not a valid US Zip Code",
+                    postalCode);
+            return false;
+        }
+
+        LOG.debug("stateAndPostalCodeAreWithinUnitedStates, State {} and Postal Code {} appear to be within the US",
+                stateCode, postalCode);
+        return true;
     }
 
     /*
