@@ -848,12 +848,12 @@ public class Iso20022FormatExtractor {
         } else if (stateAndPostalCodeAreWithinUnitedStates(templateCustomerProfile.getStateCode(),
                 templateCustomerProfile.getZipCode())) {
             LOG.warn("constructPostalAddress, Customer Profile {} has a blank country code but seems to reference "
-                    + "a domestic address; defaulting to '{}'",
+                    + "a domestic address; defaulting to ISO country code '{}'",
                     templateCustomerProfile.getId(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
             isoCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         } else {
             LOG.warn("constructPostalAddress, Customer Profile {} has a blank country code but seems to reference "
-                    + "a foreign address; defaulting to '{}'",
+                    + "a foreign address; defaulting to ISO country code '{}'",
                     templateCustomerProfile.getId(), CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
             isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
         }
@@ -898,15 +898,15 @@ public class Iso20022FormatExtractor {
             isoCountryCode = wasPaymentGroupCreatedPriorToISOCountryConversion(templatePaymentGroup)
                     ? convertFIPSCountryValueToISOCountryCode(countryValue)
                     : convertISOCountryValueToISOCountryCode(countryValue);
-        }  else if (stateAndPostalCodeAreWithinUnitedStates(templatePaymentGroup.getState(),
+        } else if (stateAndPostalCodeAreWithinUnitedStates(templatePaymentGroup.getState(),
                 templatePaymentGroup.getZipCd())) {
             LOG.warn("constructPostalAddress, Payment Group {} has a blank country code but seems to reference "
-                    + "a domestic address; defaulting to '{}'",
+                    + "a domestic address; defaulting to ISO country code '{}'",
                     templatePaymentGroup.getId(), KFSConstants.COUNTRY_CODE_UNITED_STATES);
             isoCountryCode = KFSConstants.COUNTRY_CODE_UNITED_STATES;
         } else {
             LOG.warn("constructPostalAddress, Payment Group {} has a blank country code but seems to reference "
-                    + "a foreign address; defaulting to '{}'",
+                    + "a foreign address; defaulting to ISO country code '{}'",
                     templatePaymentGroup.getId(), CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN);
             isoCountryCode = CUKFSConstants.ISO_COUNTRY_CODE_UNKNOWN;
         }
