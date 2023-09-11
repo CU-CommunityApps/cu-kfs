@@ -41,13 +41,13 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
 
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER)) 
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
-            searchResults.addAll(this.getVendorsAsPayees(fieldValues));
+            searchResults.addAll(getVendorsAsPayees(fieldValues));
         } else if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID)) 
                 || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME))) {
-            searchResults.addAll(this.getPersonAsPayees(fieldValues));
+            searchResults.addAll(getPersonAsPayees(fieldValues));
         } else {
-            searchResults.addAll(this.getVendorsAsPayees(fieldValues));
-            searchResults.addAll(this.getPersonAsPayees(fieldValues));
+            searchResults.addAll(getVendorsAsPayees(fieldValues));
+            searchResults.addAll(getPersonAsPayees(fieldValues));
         }
 
         return sortSearchResults( searchResults);
@@ -93,7 +93,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
     
     @Override
     @Deprecated
-    public void validateVendorNameUse(Map fieldValues) {
+    public void validateVendorNameUse(final Map fieldValues) {
         final String vendorName = (String) fieldValues.get(KFSPropertyConstants.VENDOR_NAME);
         final String vendorNumber = (String) fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER);
         final String employeeId = (String) fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID);
@@ -105,10 +105,10 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
   
         if (isVendorInfoEntered && isEmployeeInfoEntered) {
             // only can use the vendor name and vendor number fields or the employee id field, but not both.
-            String messageKey = FPKeyConstants.ERROR_DV_VENDOR_EMPLOYEE_CONFUSION;
-            String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
-            String vendorNumberLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NUMBER);
-            String principalNameLabel = this.getAttributeLabel(KIMPropertyConstants.Principal.PRINCIPAL_NAME); 
+            final String messageKey = FPKeyConstants.ERROR_DV_VENDOR_EMPLOYEE_CONFUSION;
+            final String vendorNameLabel = getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
+            final String vendorNumberLabel = getAttributeLabel(KFSPropertyConstants.VENDOR_NUMBER);
+            final String principalNameLabel = getAttributeLabel(KIMPropertyConstants.Principal.PRINCIPAL_NAME); 
             
 
             GlobalVariables.getMessageMap().putError(KIMPropertyConstants.Person.EMPLOYEE_ID, messageKey, 
@@ -116,7 +116,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         }
 
         if (StringUtils.isBlank(vendorNumber) && !StringUtils.isBlank(vendorName) && !filledEnough(vendorName)) {
-            final String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
+            final String vendorNameLabel = getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME,
                     FPKeyConstants.ERROR_DV_NAME_NOT_FILLED_ENOUGH, vendorNameLabel,
                     Integer.toString(getNameLengthWithWildcardRequirement()));
@@ -125,7 +125,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
     
     @Override
     @Deprecated
-    public void validateEmployeeNameUse(Map fieldValues) {
+    public void validateEmployeeNameUse(final Map fieldValues) {
         final String firstName = (String) fieldValues.get(KIMPropertyConstants.Person.FIRST_NAME);
         final String lastName = (String) fieldValues.get(KIMPropertyConstants.Person.LAST_NAME);
         final String vendorName = (String) fieldValues.get(KFSPropertyConstants.VENDOR_NAME);
@@ -136,11 +136,11 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
 
         if (isPersonNameEntered && StringUtils.isNotBlank(vendorName)) {
             // only can use the person first and last name fields or the vendor name field, but not both.
-            String messageKey = FPKeyConstants.ERROR_DV_VENDOR_NAME_PERSON_NAME_CONFUSION;
+            final String messageKey = FPKeyConstants.ERROR_DV_VENDOR_NAME_PERSON_NAME_CONFUSION;
 
-            String vendorNameLabel = this.getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
-            String firstNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
-            String lastNameLabel = this.getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
+            final String vendorNameLabel = getAttributeLabel(KFSPropertyConstants.VENDOR_NAME);
+            final String firstNameLabel = getAttributeLabel(KIMPropertyConstants.Person.FIRST_NAME);
+            final String lastNameLabel = getAttributeLabel(KIMPropertyConstants.Person.LAST_NAME);
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME, messageKey, vendorNameLabel,
                     firstNameLabel, lastNameLabel);
         }

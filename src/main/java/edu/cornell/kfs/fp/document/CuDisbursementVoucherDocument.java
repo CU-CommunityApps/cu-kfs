@@ -107,41 +107,41 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return;
         }
 
-        getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
-        getDvPayeeDetail().setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
+        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(
                 createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
-        getDvPayeeDetail().setDisbVchrPayeePersonName(vendor.getVendorName());
+        dvPayeeDetail.setDisbVchrPayeePersonName(vendor.getVendorName());
 
-        getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
 
         if (ObjectUtils.isNotNull(vendorAddress) && ObjectUtils.isNotNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
-            getDvPayeeDetail().setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
-            getDvPayeeDetail().setDisbVchrPayeeLine1Addr(vendorAddress.getVendorLine1Address());
-            getDvPayeeDetail().setDisbVchrPayeeLine2Addr(vendorAddress.getVendorLine2Address());
-            getDvPayeeDetail().setDisbVchrPayeeCityName(vendorAddress.getVendorCityName());
-            getDvPayeeDetail().setDisbVchrPayeeStateCode(vendorAddress.getVendorStateCode());
-            getDvPayeeDetail().setDisbVchrPayeeZipCode(vendorAddress.getVendorZipCode());
-            getDvPayeeDetail().setDisbVchrPayeeCountryCode(vendorAddress.getVendorCountryCode());
+            dvPayeeDetail.setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
+            dvPayeeDetail.setDisbVchrPayeeLine1Addr(vendorAddress.getVendorLine1Address());
+            dvPayeeDetail.setDisbVchrPayeeLine2Addr(vendorAddress.getVendorLine2Address());
+            dvPayeeDetail.setDisbVchrPayeeCityName(vendorAddress.getVendorCityName());
+            dvPayeeDetail.setDisbVchrPayeeStateCode(vendorAddress.getVendorStateCode());
+            dvPayeeDetail.setDisbVchrPayeeZipCode(vendorAddress.getVendorZipCode());
+            dvPayeeDetail.setDisbVchrPayeeCountryCode(vendorAddress.getVendorCountryCode());
         } else {
-            getDvPayeeDetail().setDisbVchrVendorAddressIdNumber(StringUtils.EMPTY);
-            getDvPayeeDetail().setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
-            getDvPayeeDetail().setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
-            getDvPayeeDetail().setDisbVchrPayeeCityName(StringUtils.EMPTY);
-            getDvPayeeDetail().setDisbVchrPayeeStateCode(StringUtils.EMPTY);
-            getDvPayeeDetail().setDisbVchrPayeeZipCode(StringUtils.EMPTY);
-            getDvPayeeDetail().setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrVendorAddressIdNumber(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrPayeeCityName(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrPayeeStateCode(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrPayeeZipCode(StringUtils.EMPTY);
+            dvPayeeDetail.setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
         }
 
-        getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
-        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
+        dvPayeeDetail.setDvPayeeSubjectPaymentCode(
                 VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
-        getDvPayeeDetail().setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService()
+        dvPayeeDetail.setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService()
                 .isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
 
-        getDvPayeeDetail().setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
+        dvPayeeDetail.setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
 
 
         boolean w9AndW8Checked = false;
@@ -165,7 +165,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         // if vendor is foreign, default nonresident payment code to true
         if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
-            getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(true);
+            dvPayeeDetail.setDisbVchrNonresidentPaymentCode(true);
         }
 
         // KFSPTS-1891
@@ -185,45 +185,45 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return;
         }
 
-        getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
+        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
         if (StringUtils.isNotBlank(employee.getEmployeeId())) {
-            getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getEmployeeId());
-            ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
+            dvPayeeDetail.setDisbVchrPayeeIdNumber(employee.getEmployeeId());
+            ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                     CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_EMPL);
         } else {
-            getDvPayeeDetail().setDisbVchrPayeeIdNumber(employee.getPrincipalId());
-            ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
+            dvPayeeDetail.setDisbVchrPayeeIdNumber(employee.getPrincipalId());
+            ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                     CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         }
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
-        getDvPayeeDetail().setDisbVchrPayeePersonName(employee.getNameUnmasked());
+        dvPayeeDetail.setDisbVchrPayeePersonName(employee.getNameUnmasked());
 
-        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
-        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
-        getDvPayeeDetail().setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCodeUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
+        dvPayeeDetail.setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
 
         //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the message
         // "Is this payee an employee" = No
         if (employee.isActive()) {
-            getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(true);
+            dvPayeeDetail.setDisbVchrPayeeEmployeeCode(true);
         } else {
-            getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(false);
+            dvPayeeDetail.setDisbVchrPayeeEmployeeCode(false);
         }
 
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the employee must be foreign
         for (final String externalIdentifierTypeCode : employee.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
+                dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if employee is a research subject
         final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
-                getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+                dvPayeeDetail.getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
                     FPParameterConstants.RESEARCH_PAYMENT_LIMIT)) {
@@ -232,8 +232,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
-                    if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
+                    if (disbVchrCheckTotalAmount.isLessThan(payLimit)) {
+                        dvPayeeDetail.setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }
@@ -253,26 +253,26 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return;
         }
 
-        getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
+        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
 
-        getDvPayeeDetail().setDisbVchrPayeeIdNumber(student.getPrincipalId());
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(student.getPrincipalId());
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
-        getDvPayeeDetail().setDisbVchrPayeePersonName(student.getNameUnmasked());
+        dvPayeeDetail.setDisbVchrPayeePersonName(student.getNameUnmasked());
 
-        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
-        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
-        getDvPayeeDetail().setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeStateCode(student.getAddressStateProvinceCodeUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
+        dvPayeeDetail.setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeStateCode(student.getAddressStateProvinceCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
 
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the student must be foreign
         for (final String externalIdentifierTypeCode : student.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
+                dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if student is a research subject
@@ -288,8 +288,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
-                    if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
+                    if (disbVchrCheckTotalAmount.isLessThan(payLimit)) {
+                        dvPayeeDetail.setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }
@@ -309,33 +309,33 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return;
         }
 
-        getDvPayeeDetail().setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
+        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
 
-        getDvPayeeDetail().setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(alumni.getPrincipalId());
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
-        ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
+        ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
         // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
-        getDvPayeeDetail().setDisbVchrPayeePersonName(alumni.getNameUnmasked());
+        dvPayeeDetail.setDisbVchrPayeePersonName(alumni.getNameUnmasked());
 
-        getDvPayeeDetail().setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
-        getDvPayeeDetail().setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
-        getDvPayeeDetail().setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCodeUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
-        getDvPayeeDetail().setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
+        dvPayeeDetail.setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
 
         // I'm assuming that if a tax id type code other than 'TAX' is present, then the alumni must be foreign
         for (final String externalIdentifierTypeCode : alumni.getExternalIdentifiers().keySet()) {
             if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                getDvPayeeDetail().setDisbVchrNonresidentPaymentCode(false);
+                dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
             }
         }
         // Determine if alumni is a research subject
         final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
-                getDvPayeeDetail().getDisbVchrPaymentReasonCode());
+                dvPayeeDetail.getDisbVchrPaymentReasonCode());
         if (researchPaymentReasonCodeEvaluator.evaluationSucceeds()) {
             if (getParameterService().parameterExists(DisbursementVoucherDocument.class,
                     FPParameterConstants.RESEARCH_PAYMENT_LIMIT)) {
@@ -344,8 +344,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
-                    if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
-                        getDvPayeeDetail().setDvPayeeSubjectPaymentCode(true);
+                    if (disbVchrCheckTotalAmount.isLessThan(payLimit)) {
+                        dvPayeeDetail.setDvPayeeSubjectPaymentCode(true);
                     }
                 }
             }
@@ -449,8 +449,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             editModes = docAuthorizer.getEditModes(this, GlobalVariables.getUserSession().getPerson(), editModes);
             if (editModes.contains(KfsAuthorizationConstants.DisbursementVoucherEditMode.PAYEE_ENTRY)) {
                 String newSuffix;
-                if (getDvPayeeDetail().isVendor()) {
-                    VendorDetail vendor = getVendorService().getByVendorNumber(getDvPayeeDetail().getDisbVchrPayeeIdNumber());
+                if (dvPayeeDetail.isVendor()) {
+                    VendorDetail vendor = getVendorService().getByVendorNumber(dvPayeeDetail.getDisbVchrPayeeIdNumber());
                     if (ObjectUtils.isNotNull(vendor)) {
                         newSuffix = createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType());
                     } else {
@@ -459,7 +459,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 } else {
                     newSuffix = StringUtils.EMPTY;
                 }
-                ((CuDisbursementVoucherPayeeDetailExtension) getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(newSuffix);
+                ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(newSuffix);
             }
         }
     }
@@ -492,7 +492,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     @Override
     public void populateDocumentForRouting() {
-        final CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) getDvPayeeDetail();
+        final CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) dvPayeeDetail;
 
         if (payeeDetail.isVendor()) {
             payeeDetail.setDisbVchrPayeeEmployeeCode(
@@ -515,7 +515,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 if (StringUtils.isNotBlank(researchPayLimit)) {
                     final KualiDecimal payLimit = new KualiDecimal(researchPayLimit);
 
-                    if (getDisbVchrCheckTotalAmount().isLessThan(payLimit)) {
+                    if (disbVchrCheckTotalAmount.isLessThan(payLimit)) {
                         payeeDetail.setDvPayeeSubjectPaymentCode(true);
                     }
                 }
@@ -528,11 +528,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
     @Override
     public void toCopy() {
-        String payeeidNumber = getDvPayeeDetail().getDisbVchrPayeeIdNumber();
+        String payeeidNumber = dvPayeeDetail.getDisbVchrPayeeIdNumber();
 
         super.toCopy();
 
-        getDvPayeeDetail().setDisbVchrPayeeIdNumber(payeeidNumber);
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(payeeidNumber);
     }
 
     /**
@@ -541,8 +541,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     @Override
     protected void clearFieldsThatShouldNotBeCopied() {
         super.clearFieldsThatShouldNotBeCopied();
-        setTripAssociationStatusCode(CuFPConstants.IS_NOT_TRIP_DOC);
-        setTripId(null);
+        tripAssociationStatusCode = CuFPConstants.IS_NOT_TRIP_DOC;
+        tripId = null;
     }
 
     /**
@@ -554,13 +554,13 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     protected void clearInvalidPayee() {
         // check vendor id number to see if still valid, if not, clear dvPayeeDetail; otherwise, use the current
         // dvPayeeDetail as is
-        if (!StringUtils.isBlank(getDvPayeeDetail().getDisbVchrPayeeIdNumber())) {
-            final VendorDetail vendorDetail = getVendorService().getVendorDetail(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger(), getDvPayeeDetail().getDisbVchrVendorDetailAssignedIdNumberAsInteger());
+        if (!StringUtils.isBlank(dvPayeeDetail.getDisbVchrPayeeIdNumber())) {
+            final VendorDetail vendorDetail = getVendorService().getVendorDetail(dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), dvPayeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
             if (vendorDetail == null) {
                 clearPayee(FPKeyConstants.WARNING_DV_PAYEE_NON_EXISTENT_CLEARED);
             } else {
                 final DisbursementPayee payee = getDisbursementVoucherPayeeService().getPayeeFromVendor(vendorDetail);
-                if (!getDisbursementVoucherPaymentReasonService().isPayeeQualifiedForPayment(payee, getDvPayeeDetail().getDisbVchrPaymentReasonCode())) {
+                if (!getDisbursementVoucherPaymentReasonService().isPayeeQualifiedForPayment(payee, dvPayeeDetail.getDisbVchrPaymentReasonCode())) {
                     clearPayee(FPKeyConstants.MESSAGE_DV_PAYEE_INVALID_PAYMENT_TYPE_CLEARED);
                 }
             }
@@ -570,56 +570,59 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
     @Override
     protected void clearPayee(final String messageKey) {
         dvPayeeDetail = new CuDisbursementVoucherPayeeDetail();
-        getDvPayeeDetail().setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
+        dvPayeeDetail.setDisbVchrPayeeIdNumber(StringUtils.EMPTY);
         clearDvPayeeIdType();
         KNSGlobalVariables.getMessageList().add(messageKey);
     }
 
     protected void clearDvPayeeIdType() {
-        ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
-        ((CuDisbursementVoucherPayeeDetailExtension)getDvPayeeDetail().getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
+        ((CuDisbursementVoucherPayeeDetailExtension)dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(StringUtils.EMPTY);
+        ((CuDisbursementVoucherPayeeDetailExtension)dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
     }
 
     @Override
     public void initiateDocument() {
         final PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
-        setDisbVchrContactPersonName(currentUser.getName());
-        setDisbVchrContactEmailId(currentUser.getEmailAddressUnmasked());
+        disbVchrContactPersonName = currentUser.getName();
+        disbVchrContactEmailId = currentUser.getEmailAddressUnmasked();
         String phoneNumber = currentUser.getPhoneNumber();
 
         if(StringUtils.isNotBlank(phoneNumber) && !StringUtils.equalsIgnoreCase("null", phoneNumber)) {
             if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
-                setDisbVchrContactPhoneNumber(phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber()));
+                disbVchrContactPhoneNumber = phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber());
             } else if(StringUtils.equalsIgnoreCase(phoneNumber, "null")) {
                 // do nothing... we don't want phone number set to invalid value
             } else {
-                setDisbVchrContactPhoneNumber(phoneNumber);
+                disbVchrContactPhoneNumber = currentUser.getPhoneNumber();
             }
         }
 
         if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
-            setDisbVchrContactPhoneNumber(phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber()));
+            disbVchrContactPhoneNumber = phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber());
         }
 
-        setDisbVchrContactEmailId(currentUser.getEmailAddress());
+        disbVchrContactEmailId = currentUser.getEmailAddress();
         final ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.CoreModuleNamespaces.FINANCIAL);
 
         // Does a valid campus code exist for this person?  If so, simply grab
         // the campus code via the business object service.
         if (chartOrg != null && chartOrg.getOrganization() != null) {
-            setCampusCode(chartOrg.getOrganization().getOrganizationPhysicalCampusCode());
+            campusCode = chartOrg.getOrganization().getOrganizationPhysicalCampusCode();
         } else {
             // A valid campus code was not found; therefore, use the default affiliated  campus code.
             final String affiliatedCampusCode = currentUser.getCampusCode();
-            setCampusCode(affiliatedCampusCode);
+            campusCode = affiliatedCampusCode;
         }
 
-        setDisbursementVoucherDueDate(getCuDisbursementVoucherDefaultDueDateService().findDefaultDueDate());
+        disbursementVoucherDueDate = getCuDisbursementVoucherDefaultDueDateService().findDefaultDueDate();
 
         // default doc location
-        if (StringUtils.isBlank(getDisbursementVoucherDocumentationLocationCode())) {
-            setDisbursementVoucherDocumentationLocationCode(getParameterService().getParameterValueAsString(DisbursementVoucherDocument.class, FPParameterConstants.DOCUMENTATION_LOCATION));
+        if (StringUtils.isBlank(disbursementVoucherDocumentationLocationCode)) {
+            disbursementVoucherDocumentationLocationCode = getParameterService().getParameterValueAsString(
+                    DisbursementVoucherDocument.class, 
+                    FPParameterConstants.DOCUMENTATION_LOCATION
+                    );
         }
 
         updateBankBasedOnPaymentMethodCode();
@@ -718,7 +721,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             overDollarThreshold = true;
         }
 
-        final String paymentReasonCode = getDvPayeeDetail().getDisbVchrPaymentReasonCode();
+        final String paymentReasonCode = dvPayeeDetail.getDisbVchrPaymentReasonCode();
 
         return (getDisbursementVoucherPaymentReasonService().isPrepaidTravelPaymentReason(paymentReasonCode) || getDisbursementVoucherPaymentReasonService().isNonEmployeeTravelPaymentReason(paymentReasonCode) && overDollarThreshold);
     }
@@ -790,17 +793,17 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return true;
         }
 
-        final String payeeTypeCode = getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode();
+        final String payeeTypeCode = dvPayeeDetail.getDisbursementVoucherPayeeTypeCode();
         if (payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.EMPLOYEE)) {
             return false;
         } else if (payeeTypeCode.equals(KFSConstants.PaymentPayeeTypes.VENDOR)) {
-            if(getVendorService().isVendorInstitutionEmployee(getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger())){
+            if(getVendorService().isVendorInstitutionEmployee(dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger())){
                 return true;
             }
         }
 
-        final String paymentReasonCode = getDvPayeeDetail().getDisbVchrPaymentReasonCode();
-        Integer vendorHeaderId = getDvPayeeDetail().getDisbVchrVendorHeaderIdNumberAsInteger();
+        final String paymentReasonCode = dvPayeeDetail.getDisbVchrPaymentReasonCode();
+        Integer vendorHeaderId = dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
         if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewRequired(payeeTypeCode, paymentReasonCode, vendorHeaderId)) {
         	return true;
         }

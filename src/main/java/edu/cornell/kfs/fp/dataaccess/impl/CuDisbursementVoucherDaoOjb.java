@@ -17,10 +17,10 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
     private static final Logger LOG = LogManager.getLogger();
 	
-    public DisbursementVoucherDocument getDocument(String fdocNbr) {
+    public DisbursementVoucherDocument getDocument(final String fdocNbr) {
         LOG.debug("getDocument() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(KRADPropertyConstants.DOCUMENT_NUMBER, fdocNbr);
 
         return (DisbursementVoucherDocument) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(getDisbursementVoucherDocumentClass(), criteria));
