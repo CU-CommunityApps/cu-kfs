@@ -100,10 +100,15 @@
         <property name="cuPayeeAddressService" ref="cuPayeeAddressService" />  
     </bean>
     
+    <bean id="zipcodeValidationPatternForIso20022"
+          class="org.kuali.kfs.kns.datadictionary.validation.fieldlevel.ZipcodeValidationPattern"/>
+    
     <bean id="iso20022FormatExtractor"
           parent="iso20022FormatExtractor-parentBean"
           c:isoFipsConversionService-ref="isoFipsConversionService"
-          c:cuCheckStubService-ref="cuCheckStubService"/>
+          c:cuCheckStubService-ref="cuCheckStubService"
+          c:locationService-ref="locationService-fin"
+          c:zipcodeValidationPattern-ref="zipcodeValidationPatternForIso20022"/>
     
     <bean id="cuPayeeAddressService" parent="cuPayeeAddressService-parentBean" />
 	<bean id="cuPayeeAddressService-parentBean" class="edu.cornell.kfs.pdp.batch.service.impl.CuPayeeAddressServiceImpl" abstract="true">
