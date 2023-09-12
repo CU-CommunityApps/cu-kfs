@@ -38,7 +38,7 @@ public class CuDistributionOfIncomeAndExpenseDocument extends DistributionOfInco
     }
 
 
-    public void setTripAssociationStatusCode(String tripAssociationStatusCode) {
+    public void setTripAssociationStatusCode(final String tripAssociationStatusCode) {
         this.tripAssociationStatusCode = tripAssociationStatusCode;
     }
 

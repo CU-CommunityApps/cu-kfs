@@ -26,10 +26,10 @@ public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
         return (DisbursementVoucherDocument) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(getDisbursementVoucherDocumentClass(), criteria));
     }
 	
-    public Collection<DisbursementVoucherDocument> getDocumentsByHeaderStatus(String statusCode, boolean immediatesOnly) {
+    public Collection<DisbursementVoucherDocument> getDocumentsByHeaderStatus(final String statusCode, final boolean immediatesOnly) {
         LOG.debug("getDocumentsByHeaderStatus() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_HEADER + KFSConstants.DELIMITER +
             KFSPropertyConstants.FINANCIAL_DOCUMENT_STATUS_CODE, statusCode);
         criteria.addEqualTo(KFSPropertyConstants.DISB_VCHR_PAYMENT_METHOD_CODE, KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);

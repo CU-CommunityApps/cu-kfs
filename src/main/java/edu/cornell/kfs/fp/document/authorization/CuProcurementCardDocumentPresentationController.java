@@ -12,9 +12,9 @@ public class CuProcurementCardDocumentPresentationController extends Procurement
     private static final long serialVersionUID = 1L;
 
     @Override
-    public boolean canEditDocumentOverview(Document document) {
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+    public boolean canEditDocumentOverview(final Document document) {
+        final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        final Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
         
         return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
                 && nodeNames.contains(KFSConstants.RouteLevelNames.ACCOUNT_REVIEW_FULL_EDIT)

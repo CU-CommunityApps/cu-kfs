@@ -15,9 +15,9 @@ public class CuDisbursementVoucherDocumentPresentationController extends Disburs
 	private static final Logger LOG = LogManager.getLogger(CuDisbursementVoucherDocumentPresentationController.class);
     
     @Override
-    public Set<String> getEditModes(Document document) {
+    public Set<String> getEditModes(final Document document) {
         LOG.info("Checking presentation permissions for DV.");
-        Set<String> editModes = super.getEditModes(document);
+        final Set<String> editModes = super.getEditModes(document);
         editModes.add(CUKFSAuthorizationConstants.DisbursementVoucherEditMode.DISPLAY_INVOICE_FIELDS); 
 
         return editModes;
