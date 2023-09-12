@@ -13,6 +13,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
@@ -32,11 +34,12 @@ import edu.cornell.kfs.sys.util.LogTestingUtils;
 import edu.cornell.kfs.sys.web.mock.CuLocalServerTestBase;
 import jakarta.xml.bind.JAXBException;
 
-
+@Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/jaggaer/xml/";
     private static final String JAGGAER_TEST_XML_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.xml";
     private static final String JAGGAER_TEST_DONE_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.done";
+    private static final String LOCAL_UPLOAD_ENDPOINT = "http://localhost:8080/apps/Router/TSMSupplierXMLImport";
     private static final String XML = "xml";
     private static final String FILE_TYPE_IDENTIFIER = "jaggaerUploadFileType";
     
@@ -119,18 +122,32 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     }
 
     @Test
-    public void testUploadSupplierXMLFiles() {
+    public void testUploadSupplierXMLFiles_noUpload() {
         boolean shouldUploadFiles = false;
+        String expectedInfoMessage = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
+        
         jaggaerUploadFileServiceImpl.setParameterService(buildMockParameterService(shouldUploadFiles));
         jaggaerUploadFileServiceImpl.uploadSupplierXMLFiles();
-        String expectedInfoMessage = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
         assertTrue(LogTestingUtils.doesLogEntryExist(appender.getLog(), expectedInfoMessage));
+        
+    }
+    
+    @Test
+    public void testUploadSupplierXMLFiles_upload() {
+        boolean shouldUploadFiles = true;
+        String expectedInfoMessage = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
+        
+        jaggaerUploadFileServiceImpl.setParameterService(buildMockParameterService(shouldUploadFiles));
+        jaggaerUploadFileServiceImpl.uploadSupplierXMLFiles();
+        //assertTrue(LogTestingUtils.doesLogEntryExist(appender.getLog(), expectedInfoMessage));
         
     }
     
     private ParameterService buildMockParameterService(boolean shouldUploadFiles) {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsBoolean(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_ENABLE_UPLOAD_FILES)).thenReturn(shouldUploadFiles);
+        Mockito.when(service.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_UPLOAD_RETRY_COUNT)).thenReturn("2");
+        Mockito.when(service.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_UPLOAD_ENDPOINT)).thenReturn(LOCAL_UPLOAD_ENDPOINT);
         return service;
     }
 
