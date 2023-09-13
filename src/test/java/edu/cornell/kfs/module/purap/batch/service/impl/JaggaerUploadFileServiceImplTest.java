@@ -26,9 +26,9 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants.JaggaerMockServerCongiration;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep;
-import edu.cornell.kfs.module.purap.batch.service.impl.MockJaggaerUploadSuppliersEndpoint.JaggaerMockServerCongiration;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Header;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
@@ -42,10 +42,6 @@ import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
-    private static final String NUMBER_OF_ATTTEMPTS_MESSAGE_FORMAT = "processUnsuccessfulResponse, attempt number %s, had an unsuccessful webservice call";
-    private static final String FILE_PROCESSED_MESSAGE_FORMAT = "fileProcessedByJaggaer=%s";
-    private static final String STATUS_CODE_CHECK_FORMAT = "<StatusCode>%s</StatusCode>";
-    private static final String UPLOAD_TURNED_OFF_MESSAGE = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/jaggaer/xml/";
     private static final String JAGGAER_TEST_XML_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.xml";
     private static final String JAGGAER_TEST_DONE_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.done";
@@ -148,11 +144,11 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     
     @ParameterizedTest
     @MethodSource("testUploadSupplierXMLFilesParameters")
-    public void testUploadSupplierXMLFiles(boolean shouldUploadFiles, JaggaerMockServerCongiration configuration, String... searchStrings) {
+    public void testUploadSupplierXMLFiles(boolean shouldUploadFiles, JaggaerMockServerCongiration configuration) {
         uploadSuppliersEndpoint.setJaggaerMockServerCongiration(configuration);
         jaggaerUploadFileServiceImpl.setParameterService(buildMockParameterService(shouldUploadFiles));
         jaggaerUploadFileServiceImpl.uploadSupplierXMLFiles();
-        for (String searchString : searchStrings) {
+        for (String searchString : configuration.logSearchStrings) {
             assertTrue(LogTestingUtils.doesLogEntryExist(appender.getLog(), searchString));
         }
 
@@ -160,26 +156,12 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     
     static Stream<Arguments> testUploadSupplierXMLFilesParameters() {
         return Stream.of(
-                Arguments.of(false, JaggaerMockServerCongiration.OK, new String[]{UPLOAD_TURNED_OFF_MESSAGE}),
-                Arguments.of(true, JaggaerMockServerCongiration.OK, new String[]{buildStatusCodeCheck(200), buildFileProcessedCheck(true)}),
-                Arguments.of(true, JaggaerMockServerCongiration.ACCEPTED, new String[]{buildStatusCodeCheck(202), buildFileProcessedCheck(true)}),
-                Arguments.of(true, JaggaerMockServerCongiration.SERVER_ERROR, new String[]{buildStatusCodeCheck(500), buildFileProcessedCheck(false), 
-                        buildAttemptCheck(1), buildAttemptCheck(2)}),
-                Arguments.of(true, JaggaerMockServerCongiration.BAD_REQUEST, new String[]{buildStatusCodeCheck(400), buildFileProcessedCheck(false), 
-                        buildAttemptCheck(1), buildAttemptCheck(2)})
+                Arguments.of(false, JaggaerMockServerCongiration.DO_NOT_RUN),
+                Arguments.of(true, JaggaerMockServerCongiration.OK),
+                Arguments.of(true, JaggaerMockServerCongiration.ACCEPTED),
+                Arguments.of(true, JaggaerMockServerCongiration.SERVER_ERROR),
+                Arguments.of(true, JaggaerMockServerCongiration.BAD_REQUEST)
         );
-    }
-    
-    private static String buildStatusCodeCheck(int statusCode) {
-        return String.format(STATUS_CODE_CHECK_FORMAT, String.valueOf(statusCode));
-    }
-    
-    private static String buildFileProcessedCheck(boolean fileProcessed) {
-        return String.format(FILE_PROCESSED_MESSAGE_FORMAT, String.valueOf(fileProcessed));
-    }
-    
-    private static String buildAttemptCheck(int attemptNumber) {
-        return String.format(NUMBER_OF_ATTTEMPTS_MESSAGE_FORMAT, String.valueOf(attemptNumber));
     }
 
     private ParameterService buildMockParameterService(boolean shouldUploadFiles) {

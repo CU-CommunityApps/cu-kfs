@@ -9,8 +9,8 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
 
+import edu.cornell.kfs.module.purap.CuPurapTestConstants.JaggaerMockServerCongiration;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Status;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
@@ -20,8 +20,6 @@ import jakarta.xml.bind.JAXBException;
 
 public class MockJaggaerUploadSuppliersEndpoint extends MockServiceEndpointBase {
     private static final String UPLOAD_SUPPLIERS_ENDPOINT_HANDLER_PATTERN = "/apps/Router/TSMSupplierXMLImport";
-    private static final String OK_RESPONSE_MESSAGE = "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)";
-
     private static final Logger LOG = LogManager.getLogger();
 
     private CUMarshalService cuMarshalService;
@@ -73,21 +71,6 @@ public class MockJaggaerUploadSuppliersEndpoint extends MockServiceEndpointBase 
 
     public void setJaggaerMockServerCongiration(JaggaerMockServerCongiration jaggaerMockServerCongiration) {
         this.jaggaerMockServerCongiration = jaggaerMockServerCongiration;
-    }
-
-    public enum JaggaerMockServerCongiration {
-        OK(HttpStatus.OK.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)"),
-        ACCEPTED(HttpStatus.ACCEPTED.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)"),
-        SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)"),
-        BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "Error processing XML");
-        
-        public final int statusCode;
-        public final String responseMessage;
-        
-        private JaggaerMockServerCongiration(int statusCode, String responseMessage) {
-            this.statusCode = statusCode;
-            this.responseMessage = responseMessage;
-        }
     }
 
 }
