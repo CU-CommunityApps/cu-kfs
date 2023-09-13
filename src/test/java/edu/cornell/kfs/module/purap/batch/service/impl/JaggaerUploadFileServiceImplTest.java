@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.log4j.Logger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -39,12 +41,13 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/jaggaer/xml/";
     private static final String JAGGAER_TEST_XML_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.xml";
     private static final String JAGGAER_TEST_DONE_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.done";
-    private static final String LOCAL_UPLOAD_ENDPOINT = "http://localhost:8080/apps/Router/TSMSupplierXMLImport";
     private static final String XML = "xml";
     private static final String FILE_TYPE_IDENTIFIER = "jaggaerUploadFileType";
     
     private JaggaerUploadFileServiceImpl jaggaerUploadFileServiceImpl;
     private CUMarshalService cuMarshalService;
+    private MockJaggaerUploadSuppliersEndpoint uploadSuppliersEndpoint;
+    private String baseServerUrl;
     
     private LogTestAppender appender;
 
@@ -52,7 +55,7 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        Configurator.setLevel(JaggaerUploadFileServiceImpl.class, Level.DEBUG);
+        //Configurator.setLevel(JaggaerUploadFileServiceImpl.class, Level.DEBUG);
 
         appender = new LogTestAppender();
         Logger.getRootLogger().addAppender(appender);
@@ -67,6 +70,14 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
         jaggaerUploadFileServiceImpl.setFileStorageService(new FileSystemFileStorageServiceImpl());
         
         prepareTempDirectory();
+        
+        uploadSuppliersEndpoint = new MockJaggaerUploadSuppliersEndpoint(new CUMarshalServiceImpl());
+        String pattern = uploadSuppliersEndpoint.getRelativeUrlPatternForHandlerRegistration();
+        HttpRequestHandler handler = uploadSuppliersEndpoint;
+        server.registerHandler(pattern, handler);
+        HttpHost httpHost = start();
+        
+        baseServerUrl = httpHost.toURI();
     }
     
     private JAXBXmlBatchInputFileTypeBase buildJAXBXmlBatchInputFileTypeBase() {
@@ -110,8 +121,8 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
         super.shutDown();
         jaggaerUploadFileServiceImpl = null;
         cuMarshalService = null;
-        //logCaptor = null;
         deleteTemporaryFileDirectory();
+        uploadSuppliersEndpoint = null;
     }
     
     private void deleteTemporaryFileDirectory() throws Exception {
@@ -147,7 +158,7 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
         ParameterService service = Mockito.mock(ParameterService.class);
         Mockito.when(service.getParameterValueAsBoolean(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_ENABLE_UPLOAD_FILES)).thenReturn(shouldUploadFiles);
         Mockito.when(service.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_UPLOAD_RETRY_COUNT)).thenReturn("2");
-        Mockito.when(service.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_UPLOAD_ENDPOINT)).thenReturn(LOCAL_UPLOAD_ENDPOINT);
+        Mockito.when(service.getParameterValueAsString(JaggaerUploadSupplierXmlStep.class, CUPurapParameterConstants.JAGGAER_UPLOAD_ENDPOINT)).thenReturn(baseServerUrl + uploadSuppliersEndpoint.getRelativeUrlPatternForHandlerRegistration());
         return service;
     }
 
