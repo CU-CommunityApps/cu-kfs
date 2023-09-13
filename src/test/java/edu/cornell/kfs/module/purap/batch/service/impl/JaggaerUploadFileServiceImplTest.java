@@ -13,7 +13,6 @@ import org.apache.hc.core5.http.io.HttpRequestHandler;
 import org.apache.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,7 +24,6 @@ import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.service.impl.FileSystemFileStorageServiceImpl;
 import org.mockito.Mockito;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
@@ -44,6 +42,10 @@ import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
 public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
+    private static final String NUMBER_OF_ATTTEMPTS_MESSAGE_FORMAT = "processUnsuccessfulResponse, attempt number %s, had an unsuccessful webservice call";
+    private static final String FILE_PROCESSED_MESSAGE_FORMAT = "fileProcessedByJaggaer=%s";
+    private static final String STATUS_CODE_CHECK_FORMAT = "<StatusCode>%s</StatusCode>";
+    private static final String UPLOAD_TURNED_OFF_MESSAGE = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
     private static final String TEMP_SUPPLIER_UPLOAD_DIRECTORY = "test/jaggaer/xml/";
     private static final String JAGGAER_TEST_XML_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.xml";
     private static final String JAGGAER_TEST_DONE_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.done";
@@ -158,17 +160,26 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     
     static Stream<Arguments> testUploadSupplierXMLFilesParameters() {
         return Stream.of(
-                Arguments.of(false, JaggaerMockServerCongiration.OK, 
-                        new String[]{"uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml"}),
-                Arguments.of(true, JaggaerMockServerCongiration.OK, new String[]{"<StatusCode>200</StatusCode>", "fileProcessedByJaggaer=true"}),
-                Arguments.of(true, JaggaerMockServerCongiration.ACCEPTED, new String[]{"<StatusCode>202</StatusCode>", "fileProcessedByJaggaer=true"}),
-                Arguments.of(true, JaggaerMockServerCongiration.SERVER_ERROR, new String[]{"<StatusCode>500</StatusCode>", "fileProcessedByJaggaer=false", 
-                        "processUnsuccessfulResponse, attempt number 1, had an unsuccessful webservice call",
-                        "processUnsuccessfulResponse, attempt number 2, had an unsuccessful webservice call"}),
-                Arguments.of(true, JaggaerMockServerCongiration.BAD_REQUEST, new String[]{"<StatusCode>400</StatusCode>", "fileProcessedByJaggaer=false", 
-                        "processUnsuccessfulResponse, attempt number 1, had an unsuccessful webservice call",
-                        "processUnsuccessfulResponse, attempt number 2, had an unsuccessful webservice call"})
+                Arguments.of(false, JaggaerMockServerCongiration.OK, new String[]{UPLOAD_TURNED_OFF_MESSAGE}),
+                Arguments.of(true, JaggaerMockServerCongiration.OK, new String[]{buildStatusCodeCheck(200), buildFileProcessedCheck(true)}),
+                Arguments.of(true, JaggaerMockServerCongiration.ACCEPTED, new String[]{buildStatusCodeCheck(202), buildFileProcessedCheck(true)}),
+                Arguments.of(true, JaggaerMockServerCongiration.SERVER_ERROR, new String[]{buildStatusCodeCheck(500), buildFileProcessedCheck(false), 
+                        buildAttemptCheck(1), buildAttemptCheck(2)}),
+                Arguments.of(true, JaggaerMockServerCongiration.BAD_REQUEST, new String[]{buildStatusCodeCheck(400), buildFileProcessedCheck(false), 
+                        buildAttemptCheck(1), buildAttemptCheck(2)})
         );
+    }
+    
+    private static String buildStatusCodeCheck(int statusCode) {
+        return String.format(STATUS_CODE_CHECK_FORMAT, String.valueOf(statusCode));
+    }
+    
+    private static String buildFileProcessedCheck(boolean fileProcessed) {
+        return String.format(FILE_PROCESSED_MESSAGE_FORMAT, String.valueOf(fileProcessed));
+    }
+    
+    private static String buildAttemptCheck(int attemptNumber) {
+        return String.format(NUMBER_OF_ATTTEMPTS_MESSAGE_FORMAT, String.valueOf(attemptNumber));
     }
 
     private ParameterService buildMockParameterService(boolean shouldUploadFiles) {
