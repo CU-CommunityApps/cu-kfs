@@ -5,7 +5,7 @@ import java.util.Map;
 import com.prowidesoftware.swift.model.mx.EscapeHandler;
 
 /*
- * CU-specific EscapeHandler implementation that is similar to Prowide's DefaultEscapeHandler,
+ * CU-specific EscapeHandler implementation that behaves similarly to Prowide's DefaultEscapeHandler,
  * but with some important differences:
  * 
  * # Quotes will always be escaped, not just those within XML attributes. Also, this class
@@ -22,7 +22,7 @@ import com.prowidesoftware.swift.model.mx.EscapeHandler;
  */
 public class CuEscapeHandler implements EscapeHandler {
 
-    private static final Map<Character, String> ESCAPED_CHARS = Map.ofEntries(
+    private static final Map<Character, String> CHAR_ESCAPE_MAPPINGS = Map.ofEntries(
             Map.entry('&', "&amp;"),
             Map.entry('<', "&lt;"),
             Map.entry('>', "&gt;"),
@@ -34,7 +34,7 @@ public class CuEscapeHandler implements EscapeHandler {
     public String escape(char[] arr, boolean isAttribute) {
         StringBuilder escapedContent = new StringBuilder(arr.length);
         for (char currentChar : arr) {
-            String explicitlyEscapedValue = ESCAPED_CHARS.get(currentChar);
+            String explicitlyEscapedValue = CHAR_ESCAPE_MAPPINGS.get(currentChar);
             if (explicitlyEscapedValue != null) {
                 escapedContent.append(explicitlyEscapedValue);
             } else {
