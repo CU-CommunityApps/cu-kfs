@@ -22,6 +22,8 @@ public final class CUPdpParameterConstants {
     public static final String CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES =
             "CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES";
 
+    public static final String CU_ISO20022_CHECK_FORMS_CODE = "CU_ISO20022_CHECK_FORMS_CODE";
+
     public static final class CuPayeeAddressService {
         public static final String CU_PAYEE_ADDRESS_SERVICE_COMPONENT = "CuPayeeAddressService";
         public static final String PAYER_NAME_PARAMETER = "PAYER_NAME";

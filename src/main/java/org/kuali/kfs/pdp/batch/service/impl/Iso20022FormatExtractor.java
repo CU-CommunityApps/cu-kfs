@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -127,6 +129,7 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants.MessageIdSuffixes;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
+import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
@@ -693,9 +696,12 @@ public class Iso20022FormatExtractor {
         final PaymentGroup processTemplatePaymentGroup =
                 disbursementPaymentDetails.values().iterator().next().getPaymentGroup();
 
-        final Date disbursementDate = processTemplatePaymentGroup.getDisbursementDate();
-        final XMLGregorianCalendar extractionDate = constructXmlGregorianCalendarWithDateOnly(disbursementDate);
-        paymentInstructionInformation.setReqdExctnDt(extractionDate);
+        /*
+         * CU Customization: Moved most of the execution/extraction date setup to a separate method.
+         */
+        final Date extractionDate = determineExtractionDate(processTemplatePaymentGroup, extractTypeContext);
+        final XMLGregorianCalendar extractionDateForXml = constructXmlGregorianCalendarWithDateOnly(extractionDate);
+        paymentInstructionInformation.setReqdExctnDt(extractionDateForXml);
 
         final PartyIdentification32 debtorPartyIdentification =
                 constructDebtorPartyIdentification(processTemplatePaymentGroup, extractTypeContext);
@@ -743,6 +749,25 @@ public class Iso20022FormatExtractor {
         paymentInstructionInformation.setCtrlSum(controlSum);
 
         return paymentInstructionInformation;
+    }
+
+    /*
+     * CU Customization: Added method for determining what execution/extraction date to use.
+     */
+    private Date determineExtractionDate(
+            final PaymentGroup templatePaymentGroup,
+            final ExtractTypeContext extractTypeContext
+    ) {
+        final Date disbursementDate = templatePaymentGroup.getDisbursementDate();
+        if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
+            return new Date(
+                    Instant.ofEpochMilli(disbursementDate.getTime())
+                            .plus(1, ChronoUnit.DAYS)
+                            .toEpochMilli()
+            );
+        } else {
+            return disbursementDate;
+        }
     }
 
     private PaymentTypeInformation19 constructPaymentTypeInformationWithServiceLevel(
@@ -1329,8 +1354,10 @@ public class Iso20022FormatExtractor {
     /*
      * CU Customization: Added extraction context as a method argument, and added the ability
      * to suppress the Delivery Method and Forms Code when building the Immediate Checks file.
+     * Also converted this method from a static one to an instance one, so that the referenced
+     * determineFormsCode() method can also be converted to an instance one.
      */
-    private static Cheque6 constructCheck(
+    private Cheque6 constructCheck(
             final int disbursementNumber,
             final PaymentGroup templatePaymentGroup,
             final ExtractTypeContext extractTypeContext
@@ -1376,11 +1403,18 @@ public class Iso20022FormatExtractor {
 
     /*
      * The code identifying which check design should be used.
+     * 
+     * CU Customization: Converted this method from a static one to an instance one,
+     * and updated it to derive the Forms Code from a KFS parameter.
      */
-    private static String determineFormsCode() {
-        // Hard-coding for now using an ISO standard value for "the primary check style". If/when this needs to be
-        // more flexible, we'll make it so.
-        return "A1";
+    private String determineFormsCode() {
+        String formsCode = parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.PDP,
+                KFSConstants.Components.ISO_FORMAT, CUPdpParameterConstants.CU_ISO20022_CHECK_FORMS_CODE);
+        if (StringUtils.isBlank(formsCode)) {
+            throw new IllegalStateException("Parameter " + CUPdpParameterConstants.CU_ISO20022_CHECK_FORMS_CODE
+                    + " is missing or contains a blank Forms Code");
+        }
+        return formsCode;
     }
 
     /*
