@@ -18,7 +18,8 @@
                         <branch name="True">
                             <role name="Account" nextNode="AccountingOrganizationHierarchy"/>
                             <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode"/>
-                            <role name="ObjectCode" nextNode="SubFund"/>
+                            <role name="ObjectCode" nextNode="Fund"/>
+                            <role name="Fund" nextNode="SubFund"/>
                             <role name="SubFund" nextNode="Award"/>
                             <role name="Award" nextNode="JoinRequiresFullApproval"/>
                         </branch>
@@ -45,6 +46,9 @@
                 <role name="ObjectCode">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
+                </role>
+                <role name="Fund">
+                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                 </role>
                 <role name="SubFund">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
