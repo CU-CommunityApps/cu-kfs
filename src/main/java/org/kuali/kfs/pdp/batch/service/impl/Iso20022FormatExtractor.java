@@ -684,21 +684,11 @@ public class Iso20022FormatExtractor {
                 disbursementPaymentDetails.values().iterator().next().getPaymentGroup();
 
         /*
-         * CU Customization: When processing ACH transactions, set the execution/extraction date to be one day later.
+         * CU Customization: Moved most of the execution/extraction date setup to a separate method.
          */
-        final Date disbursementDate = processTemplatePaymentGroup.getDisbursementDate();
-        final Date adjustedExtractionDate;
-        if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
-            adjustedExtractionDate = new Date(
-                    Instant.ofEpochMilli(disbursementDate.getTime())
-                            .plus(1, ChronoUnit.DAYS)
-                            .toEpochMilli()
-            );
-        } else {
-            adjustedExtractionDate = disbursementDate;
-        }
-        final XMLGregorianCalendar extractionDate = constructXmlGregorianCalendarWithDateOnly(adjustedExtractionDate);
-        paymentInstructionInformation.setReqdExctnDt(extractionDate);
+        final Date extractionDate = determineExtractionDate(processTemplatePaymentGroup, extractTypeContext);
+        final XMLGregorianCalendar extractionDateForXml = constructXmlGregorianCalendarWithDateOnly(extractionDate);
+        paymentInstructionInformation.setReqdExctnDt(extractionDateForXml);
 
         final PartyIdentification32 debtorPartyIdentification =
                 constructDebtorPartyIdentification(processTemplatePaymentGroup, extractTypeContext);
@@ -746,6 +736,25 @@ public class Iso20022FormatExtractor {
         paymentInstructionInformation.setCtrlSum(controlSum);
 
         return paymentInstructionInformation;
+    }
+
+    /*
+     * CU Customization: Added method for determining what execution/extraction date to use.
+     */
+    private Date determineExtractionDate(
+            final PaymentGroup templatePaymentGroup,
+            final ExtractTypeContext extractTypeContext
+    ) {
+        final Date disbursementDate = templatePaymentGroup.getDisbursementDate();
+        if (extractTypeContext.isExtractionType(ExtractionType.ACH)) {
+            return new Date(
+                    Instant.ofEpochMilli(disbursementDate.getTime())
+                            .plus(1, ChronoUnit.DAYS)
+                            .toEpochMilli()
+            );
+        } else {
+            return disbursementDate;
+        }
     }
 
     private PaymentTypeInformation19 constructPaymentTypeInformationWithServiceLevel(
