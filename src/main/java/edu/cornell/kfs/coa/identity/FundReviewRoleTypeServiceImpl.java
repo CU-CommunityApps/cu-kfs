@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.util.KimCommonUtils;
 import org.kuali.kfs.kns.kim.role.RoleTypeServiceBase;
@@ -25,12 +26,12 @@ public class FundReviewRoleTypeServiceImpl extends RoleTypeServiceBase {
                 return potentialParentDocumentTypeNames.isEmpty();
             }
             return potentialParentDocumentTypeNames.isEmpty()
-                   || qualification.get(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME).equalsIgnoreCase(
-                            roleQualifier.get(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME))
-                   || getClosestParentDocumentTypeName(documentTypeService
+                   || StringUtils.equalsAnyIgnoreCase(qualification.get(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME), 
+                           roleQualifier.get(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME) )
+                   || StringUtils.isNotBlank(getClosestParentDocumentTypeName(documentTypeService
                            .getDocumentTypeByName(qualification
                                    .get(KimConstants.AttributeConstants.DOCUMENT_TYPE_NAME)),
-                                   potentialParentDocumentTypeNames) != null;
+                                   potentialParentDocumentTypeNames));
         }
         return false;
     }
