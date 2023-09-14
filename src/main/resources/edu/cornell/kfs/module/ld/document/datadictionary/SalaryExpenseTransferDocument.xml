@@ -16,5 +16,20 @@
   
   <bean id="SalaryExpenseTransferDocument-sourceAccountingLineGroup" parent="SalaryExpenseTransferDocument-sourceAccountingLineGroup-parentBean">
     <property name="accountingLineAuthorizerClass" value="edu.cornell.kfs.module.ld.document.authorization.CuSalaryExpenseTransferAccountingLineAuthorizer"/>
-  </bean>     
+  </bean> 
+  
+    <bean id="SalaryExpenseTransferDocument-workflowAttributes"
+          parent="SalaryExpenseTransferDocument-workflowAttributes-parentBean">
+        <property name="routingTypeDefinitions">
+            <map>
+                <entry key="Account" value-ref="RoutingType-AccountingDocument-Account"/>
+                <entry key="AccountingOrganizationHierarchy"
+                       value-ref="RoutingType-AccountingDocument-OrganizationHierarchy"/>
+                <entry key="ObjectCode" value-ref="RoutingType-AccountingDocument-ObjectCode"/>
+                <entry key="Fund" value-ref="RoutingType-AccountingDocument-Fund"/>
+                <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund"/>
+                <entry key="Award" value-ref="RoutingType-AccountingDocument-Award"/>
+            </map>
+        </property>
+    </bean>    
 </beans>

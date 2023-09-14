@@ -43,7 +43,18 @@
   <!-- workflow attributes for routing -->
   <bean id="ProcurementCardDocument-workflowAttributes" parent="ProcurementCardDocument-workflowAttributes-parentBean">    
   
-    	
+       <property name="routingTypeDefinitions">
+            <map>
+                <entry key="AccountFullEdit" value-ref="RoutingType-AccountingDocument-Account-targetOnly"/>
+                <entry key="Account" value-ref="RoutingType-AccountingDocument-Account-targetOnly"/>
+                <entry key="AccountingOrganizationHierarchy"
+                       value-ref="RoutingType-AccountingDocument-OrganizationHierarchy-targetOnly"/>
+                <entry key="ObjectCode" value-ref="RoutingType-AccountingDocument-ObjectCode-targetOnly"/>
+                <entry key="Fund" value-ref="RoutingType-AccountingDocument-Fund-targetOnly"/>
+                <entry key="SubFund" value-ref="RoutingType-AccountingDocument-SubFund-targetOnly"/>
+                <entry key="AutoApprove" value-ref="RoutingType-AccountingDocument-Account-targetOnly"/>
+            </map>
+        </property>
     	<property name="searchingTypeDefinitions">
     		<list>
     			<bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">

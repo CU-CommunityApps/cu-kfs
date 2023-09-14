@@ -246,6 +246,13 @@
         <property name="workdayOpenAccountDao" ref="workdayOpenAccountDao" />
         <property name="dateTimeService" ref="dateTimeService" />
     </bean>
+    
+    <bean id="fundReviewRoleTypeService"
+          parent="fundReviewRoleTypeService-parentBean"/>
+    <bean abstract="true"
+          class="edu.cornell.kfs.coa.identity.FundReviewRoleTypeServiceImpl"
+          id="fundReviewRoleTypeService-parentBean"
+          parent="kimRoleTypeService"/>
 
     <bean id="workdayOpenAccountDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.coa.batch.dataaccess.impl.WorkdayOpenAccountDaoJdbc">
         <property name="universityDateService" ref="universityDateService" />
