@@ -39,21 +39,23 @@ public final class CuPurapTestConstants {
     private static final String UPLOAD_TURNED_OFF_MESSAGE = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
     
     public enum JaggaerMockServerConfiguration {
-        DO_NOT_RUN(606, "Condition to not run", new String[]{UPLOAD_TURNED_OFF_MESSAGE}),
-        OK(HttpStatus.OK.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)",
+        DO_NOT_RUN(false, 606, "Condition to not run", new String[]{UPLOAD_TURNED_OFF_MESSAGE}),
+        OK(true, HttpStatus.OK.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)",
                 new String[]{buildStatusCodeCheck(200), buildFileProcessedCheck(true)}),
-        ACCEPTED(HttpStatus.ACCEPTED.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)",
+        ACCEPTED(true, HttpStatus.ACCEPTED.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)",
                 new String[]{buildStatusCodeCheck(202), buildFileProcessedCheck(true)}),
-        SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)",
+        SERVER_ERROR(true, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error while parsing the input / All documents failed. (Counts:  Total documents attempted=1, Total documents completed=0.  Documents attempted but unable to parse=1 - if there were any documents beyond the point of this parsing error, they were not able to be read and are not included in these counts.)",
                 new String[]{buildStatusCodeCheck(500), buildFileProcessedCheck(false), buildAttemptCheck(1), buildAttemptCheck(2)}),
-        BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "Error processing XML", new String[]{buildStatusCodeCheck(400), buildFileProcessedCheck(false), 
+        BAD_REQUEST(true, HttpStatus.BAD_REQUEST.value(), "Error processing XML", new String[]{buildStatusCodeCheck(400), buildFileProcessedCheck(false), 
                 buildAttemptCheck(1), buildAttemptCheck(2)});
         
+        public final boolean shouldUploadFiles;
         public final int statusCode;
         public final String responseMessage;
         public final String[] logSearchStrings;
         
-        private JaggaerMockServerConfiguration(int statusCode, String responseMessage, String[] logSearchStrings) {
+        private JaggaerMockServerConfiguration(boolean shouldUploadFiles, int statusCode, String responseMessage, String[] logSearchStrings) {
+            this.shouldUploadFiles = shouldUploadFiles;
             this.statusCode = statusCode;
             this.responseMessage = responseMessage;
             this.logSearchStrings = logSearchStrings;

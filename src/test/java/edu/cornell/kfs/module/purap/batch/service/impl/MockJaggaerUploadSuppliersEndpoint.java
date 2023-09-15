@@ -72,7 +72,5 @@ public class MockJaggaerUploadSuppliersEndpoint extends MockServiceEndpointBase 
     public void setJaggaerMockServerConfiguration(JaggaerMockServerConfiguration jaggaerMockServerConfiguration) {
         this.jaggaerMockServerConfiguration = jaggaerMockServerConfiguration;
     }
-    
-
 
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.core5.http.HttpHost;
@@ -16,8 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
@@ -143,25 +141,14 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     }
     
     @ParameterizedTest
-    @MethodSource("testUploadSupplierXMLFilesParameters")
-    public void testUploadSupplierXMLFiles(boolean shouldUploadFiles, JaggaerMockServerConfiguration configuration) {
+    @EnumSource(JaggaerMockServerConfiguration.class)
+    public void testUploadSupplierXMLFiles(JaggaerMockServerConfiguration configuration) {
         uploadSuppliersEndpoint.setJaggaerMockServerConfiguration(configuration);
-        jaggaerUploadFileServiceImpl.setParameterService(buildMockParameterService(shouldUploadFiles));
+        jaggaerUploadFileServiceImpl.setParameterService(buildMockParameterService(configuration.shouldUploadFiles));
         jaggaerUploadFileServiceImpl.uploadSupplierXMLFiles();
         for (String searchString : configuration.logSearchStrings) {
             assertTrue(LogTestingUtils.doesLogEntryExist(appender.getLog(), searchString));
         }
-
-    }
-    
-    static Stream<Arguments> testUploadSupplierXMLFilesParameters() {
-        return Stream.of(
-                Arguments.of(false, JaggaerMockServerConfiguration.DO_NOT_RUN),
-                Arguments.of(true, JaggaerMockServerConfiguration.OK),
-                Arguments.of(true, JaggaerMockServerConfiguration.ACCEPTED),
-                Arguments.of(true, JaggaerMockServerConfiguration.SERVER_ERROR),
-                Arguments.of(true, JaggaerMockServerConfiguration.BAD_REQUEST)
-        );
     }
 
     private ParameterService buildMockParameterService(boolean shouldUploadFiles) {
