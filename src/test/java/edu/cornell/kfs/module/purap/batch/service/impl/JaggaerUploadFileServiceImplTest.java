@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
-import edu.cornell.kfs.module.purap.CuPurapTestConstants.JaggaerMockServerCongiration;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants.JaggaerMockServerConfiguration;
 import edu.cornell.kfs.module.purap.JaggaerConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Header;
@@ -144,8 +144,8 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     
     @ParameterizedTest
     @MethodSource("testUploadSupplierXMLFilesParameters")
-    public void testUploadSupplierXMLFiles(boolean shouldUploadFiles, JaggaerMockServerCongiration configuration) {
-        uploadSuppliersEndpoint.setJaggaerMockServerCongiration(configuration);
+    public void testUploadSupplierXMLFiles(boolean shouldUploadFiles, JaggaerMockServerConfiguration configuration) {
+        uploadSuppliersEndpoint.setJaggaerMockServerConfiguration(configuration);
         jaggaerUploadFileServiceImpl.setParameterService(buildMockParameterService(shouldUploadFiles));
         jaggaerUploadFileServiceImpl.uploadSupplierXMLFiles();
         for (String searchString : configuration.logSearchStrings) {
@@ -156,11 +156,11 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     
     static Stream<Arguments> testUploadSupplierXMLFilesParameters() {
         return Stream.of(
-                Arguments.of(false, JaggaerMockServerCongiration.DO_NOT_RUN),
-                Arguments.of(true, JaggaerMockServerCongiration.OK),
-                Arguments.of(true, JaggaerMockServerCongiration.ACCEPTED),
-                Arguments.of(true, JaggaerMockServerCongiration.SERVER_ERROR),
-                Arguments.of(true, JaggaerMockServerCongiration.BAD_REQUEST)
+                Arguments.of(false, JaggaerMockServerConfiguration.DO_NOT_RUN),
+                Arguments.of(true, JaggaerMockServerConfiguration.OK),
+                Arguments.of(true, JaggaerMockServerConfiguration.ACCEPTED),
+                Arguments.of(true, JaggaerMockServerConfiguration.SERVER_ERROR),
+                Arguments.of(true, JaggaerMockServerConfiguration.BAD_REQUEST)
         );
     }
 

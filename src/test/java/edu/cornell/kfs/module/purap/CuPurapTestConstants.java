@@ -35,11 +35,11 @@ public final class CuPurapTestConstants {
     
     private static final String STATUS_CODE_CHECK_FORMAT = "<StatusCode>%s</StatusCode>";
     private static final String FILE_PROCESSED_MESSAGE_FORMAT = "fileProcessedByJaggaer=%s";
-    private static final String NUMBER_OF_ATTTEMPTS_MESSAGE_FORMAT = "processUnsuccessfulResponse, attempt number %s, had an unsuccessful webservice call";
+    private static final String NUMBER_OF_ATTEMPTS_MESSAGE_FORMAT = "processUnsuccessfulResponse, attempt number %s, had an unsuccessful webservice call";
     private static final String UPLOAD_TURNED_OFF_MESSAGE = "uploadSupplierXMLFiles. uploading to Jaggaer is turned off, just remove the DONE file for test/jaggaer/xml/jaggaerTestFile.xml";
     
-    public enum JaggaerMockServerCongiration {
-        DO_NOT_RUN(606, "conition to not run", new String[]{UPLOAD_TURNED_OFF_MESSAGE}),
+    public enum JaggaerMockServerConfiguration {
+        DO_NOT_RUN(606, "Condition to not run", new String[]{UPLOAD_TURNED_OFF_MESSAGE}),
         OK(HttpStatus.OK.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)",
                 new String[]{buildStatusCodeCheck(200), buildFileProcessedCheck(true)}),
         ACCEPTED(HttpStatus.ACCEPTED.value(), "Success (Counts:  Total documents attempted=1, Total documents completed=1.  Documents successful without warnings=1)",
@@ -53,7 +53,7 @@ public final class CuPurapTestConstants {
         public final String responseMessage;
         public final String[] logSearchStrings;
         
-        private JaggaerMockServerCongiration(int statusCode, String responseMessage, String[] logSearchStrings) {
+        private JaggaerMockServerConfiguration(int statusCode, String responseMessage, String[] logSearchStrings) {
             this.statusCode = statusCode;
             this.responseMessage = responseMessage;
             this.logSearchStrings = logSearchStrings;
@@ -68,7 +68,7 @@ public final class CuPurapTestConstants {
         }
         
         private static String buildAttemptCheck(int attemptNumber) {
-            return String.format(NUMBER_OF_ATTTEMPTS_MESSAGE_FORMAT, String.valueOf(attemptNumber));
+            return String.format(NUMBER_OF_ATTEMPTS_MESSAGE_FORMAT, String.valueOf(attemptNumber));
         }
     }
 }

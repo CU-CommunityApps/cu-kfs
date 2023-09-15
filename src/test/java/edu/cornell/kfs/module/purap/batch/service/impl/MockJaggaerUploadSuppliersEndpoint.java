@@ -10,7 +10,7 @@ import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import edu.cornell.kfs.module.purap.CuPurapTestConstants.JaggaerMockServerCongiration;
+import edu.cornell.kfs.module.purap.CuPurapTestConstants.JaggaerMockServerConfiguration;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Status;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
@@ -22,12 +22,12 @@ public class MockJaggaerUploadSuppliersEndpoint extends MockServiceEndpointBase 
     private static final String UPLOAD_SUPPLIERS_ENDPOINT_HANDLER_PATTERN = "/apps/Router/TSMSupplierXMLImport";
     private static final Logger LOG = LogManager.getLogger();
 
-    private CUMarshalService cuMarshalService;
-    private JaggaerMockServerCongiration jaggaerMockServerCongiration;
+    private final CUMarshalService cuMarshalService;
+    private JaggaerMockServerConfiguration jaggaerMockServerConfiguration;
 
     public MockJaggaerUploadSuppliersEndpoint(CUMarshalService cuMarshalService) {
         this.cuMarshalService = cuMarshalService;
-        this.jaggaerMockServerCongiration = JaggaerMockServerCongiration.OK;
+        this.jaggaerMockServerConfiguration = JaggaerMockServerConfiguration.OK;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MockJaggaerUploadSuppliersEndpoint extends MockServiceEndpointBase 
     protected void processRequest(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
             throws HttpException, IOException {
         LOG.info("processRequest, entered");
-        response.setCode(jaggaerMockServerCongiration.statusCode);
+        response.setCode(jaggaerMockServerConfiguration.statusCode);
         response.setEntity(new StringEntity(buildResponseMessage()));
     }
 
@@ -48,29 +48,31 @@ public class MockJaggaerUploadSuppliersEndpoint extends MockServiceEndpointBase 
         SupplierResponseMessage responseMessage = new SupplierResponseMessage();
 
         Status status = new Status();
-        status.setStatusCode(String.valueOf(jaggaerMockServerCongiration.statusCode));
-        status.setStatusText(jaggaerMockServerCongiration.responseMessage);
+        status.setStatusCode(String.valueOf(jaggaerMockServerConfiguration.statusCode));
+        status.setStatusText(jaggaerMockServerConfiguration.responseMessage);
 
         responseMessage.setStatus(status);
         supplierSyncMessage.getSupplierSyncMessageItems().add(responseMessage);
-        return marshalSynchMessageToString(supplierSyncMessage);
+        return marshalSyncMessageToString(supplierSyncMessage);
     }
 
-    private String marshalSynchMessageToString(SupplierSyncMessage supplierSyncMessage) {
+    private String marshalSyncMessageToString(SupplierSyncMessage supplierSyncMessage) {
         try {
             return cuMarshalService.marshalObjectToXmlString(supplierSyncMessage);
         } catch (JAXBException | IOException e) {
-            LOG.error("marshalSynchMessageToString, had an error creating response string", e);
+            LOG.error("marshalSyncMessageToString, had an error creating response string", e);
             throw new RuntimeException(e);
         }
     }
-    
-    public JaggaerMockServerCongiration getJaggaerMockServerCongiration() {
-        return jaggaerMockServerCongiration;
+
+    public JaggaerMockServerConfiguration getJaggaerMockServerConfiguration() {
+        return jaggaerMockServerConfiguration;
     }
 
-    public void setJaggaerMockServerCongiration(JaggaerMockServerCongiration jaggaerMockServerCongiration) {
-        this.jaggaerMockServerCongiration = jaggaerMockServerCongiration;
+    public void setJaggaerMockServerConfiguration(JaggaerMockServerConfiguration jaggaerMockServerConfiguration) {
+        this.jaggaerMockServerConfiguration = jaggaerMockServerConfiguration;
     }
+    
+
 
 }
