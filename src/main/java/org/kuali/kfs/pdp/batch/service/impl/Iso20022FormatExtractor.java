@@ -87,6 +87,7 @@ import org.kuali.kfs.sys.service.XmlUtilService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
 import com.prowidesoftware.swift.model.mx.MxPain00100103;
+import com.prowidesoftware.swift.model.mx.MxWriteConfiguration;
 import com.prowidesoftware.swift.model.mx.dic.AccountIdentification4Choice;
 import com.prowidesoftware.swift.model.mx.dic.ActiveOrHistoricCurrencyAndAmount;
 import com.prowidesoftware.swift.model.mx.dic.AmountType3Choice;
@@ -131,6 +132,7 @@ import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants.MessageIdSuffixes;
 import edu.cornell.kfs.pdp.CUPdpKeyConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
+import edu.cornell.kfs.pdp.batch.service.impl.CuEscapeHandler;
 import edu.cornell.kfs.pdp.batch.service.impl.PaymentUrgency;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
@@ -1871,19 +1873,18 @@ public class Iso20022FormatExtractor {
             final String filename
     ) {
         try (OutputStream os = new FileOutputStream(filename)) {
-            // Ideally, this would be a one-liner -- message.write(os);
-            //
-            // However, Stevens/JPMC requested the namespace be removed. Unfortunately, the ISO library we are using
-            // does not support removing them altogether, which makes me wonder if this really adheres to the standard
-            // or if it's something convenient for JPMC. For now, since Stevens/JPMC are the only ones driving this,
-            // we'll do the hack below; however, in the future, additional customers/banks could drive this in a more
-            // standard direction which might require Stevens to have to post-process our output XML before sending it
-            // on to JPMC.
-            final String xmlString =
-                    message.message()
-                            .replaceAll("xmlns:Doc=", "xmlns=")
-                            .replaceAll("<Doc:", "<")
-                            .replaceAll("</Doc:", "</");
+            /*
+             * CU Customization: Updated the XML string creation to use the pw-iso20022 library's standard means
+             * of changing/removing the namespace prefixes, rather than performing String.replaceAll() substitution.
+             * Also added setup of a CU-specific EscapeHandler to customize the XML-escaping process.
+             */
+            final MxWriteConfiguration writeConfig = new MxWriteConfiguration();
+            writeConfig.includeXMLDeclaration = true;
+            writeConfig.escapeHandler = new CuEscapeHandler();
+            writeConfig.documentPrefix = null;
+            writeConfig.headerPrefix = null;
+
+            final String xmlString = message.message(writeConfig);
             os.write(xmlString.getBytes("UTF-8"));
         } catch (final IOException e) {
             LOG.error("writeMessageToFile(...) - Problem writing message to file : filename={}", filename, e);
