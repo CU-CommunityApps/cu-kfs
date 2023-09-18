@@ -94,7 +94,8 @@
                     <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.totalAmount}"
                             property="newIWantItemLine.totalAmount"
-                            readOnly="true"/>
+                            readOnly="true"
+                            readOnlyAlternateDisplay="${KualiForm.newIWantItemLine.totalAmount}"/>
                 </td>
                 <td class="infoline">
                     <div class="actions">
@@ -175,7 +176,7 @@
                             property="document.item[${ctr}].itemQuantity"
                             readOnly="${not fullEntryMode}"
                             tabindexOverride="${tabindexOverrideBase + 0}"
-                            onchange="updateItemsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${ nbrOfItems}', '${accountsNbr }', 'document.item[${ctr}].totalAmount', '${ctr}')"/>
+                            onchange="updateItemsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${nbrOfItems}', '${accountsNbr}', 'document.item[${ctr}].totalAmount', '${ctr}')"/>
                 </td>
                 <td class="infoline nowrap">
                     <kul:htmlControlAttribute
@@ -200,13 +201,15 @@
                             attributeEntry="${itemAttributes.itemUnitPrice}"
                             property="document.item[${ctr}].itemUnitPrice"
                             readOnly="${not fullEntryMode}"
-                            tabindexOverride="${tabindexOverrideBase + 0}"/>
+                            tabindexOverride="${tabindexOverrideBase + 0}"
+                            onchange="updateItemsTotal('document.totalDollarAmount', 'document.accountingLinesTotal', '${nbrOfItems}', '${accountsNbr}', 'document.item[${ctr}].totalAmount', '${ctr}')"/>
                 </td>
                 <td class="infoline right">
                     <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.totalAmount}"
                             property="document.item[${ctr}].totalAmount"
-                            readOnly="${true}"/>
+                            readOnly="${true}"
+                            readOnlyAlternateDisplay="${itemLine.totalAmount}"/>
                 </td>
                 <td valign="center" class="neutral">
                     <div class="actions">
@@ -246,7 +249,8 @@
                 <kul:htmlControlAttribute
                         attributeEntry="${DataDictionary.IWantDocument.attributes.totalDollarAmount}"
                         property="document.totalDollarAmount"
-                        readOnly="true"/>
+                        readOnly="true"
+                        readOnlyAlternateDisplay="${KualiForm.document.totalDollarAmount}"/>
             </td>
             <td class="datacell">&nbsp;</td>
         </tr>
