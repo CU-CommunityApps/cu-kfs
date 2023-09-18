@@ -66,7 +66,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         		businessObjectService.findBySinglePrimaryKey(CuDisbursementVoucherPayeeDetail.class, document.getDocumentNumber());
         final String rc = pd.getDisbVchrPaymentReasonCode();
 
-        if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(document.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
+        if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(
+                document.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.CUSTOMER);
             pg.setTaxablePayment(Boolean.FALSE);
         } else if ((pd.isVendor() && vendorService.isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger()))
@@ -163,6 +164,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 
     protected PaymentDetail buildPaymentDetail(final DisbursementVoucherDocument document, final Date processRunDate) {
         LOG.debug("buildPaymentDetail() started");
+        
         final String paymentDetailDocumentType = document.getPaymentDetailDocumentType();
         if (paymentDetailDocumentType == null) {
             throw new IllegalStateException("No payment detail document type code found for DV payment method "
@@ -203,7 +205,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         pd.setFinancialSystemOriginCode(KFSConstants.ORIGIN_CODE_KUALI);
 
         // Handle accounts
-        for (final SourceAccountingLine sal : (List<? extends SourceAccountingLine>)document.getSourceAccountingLines()) {
+        for (final SourceAccountingLine sal : 
+                (List<? extends SourceAccountingLine>)document.getSourceAccountingLines()) {
             final PaymentAccountDetail pad = new PaymentAccountDetail();
             pad.setFinChartCode(sal.getChartOfAccountsCode());
             pad.setAccountNbr(sal.getAccountNumber());
@@ -416,7 +419,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	}
 	   
 	   @Override
-	   public boolean shouldExtractPayment(DisbursementVoucherDocument paymentSource) {
+	   public boolean shouldExtractPayment(final DisbursementVoucherDocument paymentSource) {
 	       LOG.debug("paymentSource: " + paymentSource.getClass());
 	       if (isRecurringDV(paymentSource)) {
 	           LOG.debug("shouldExtractPayment: found a recurring DV, returning false for " + paymentSource.getDocumentNumber());
@@ -441,7 +444,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	   }
 
     @Override
-    public void setXmlUtilService(XmlUtilService xmlUtilService) {
+    public void setXmlUtilService(final XmlUtilService xmlUtilService) {
         super.setXmlUtilService(xmlUtilService);
         this.xmlUtilService = xmlUtilService;
     }

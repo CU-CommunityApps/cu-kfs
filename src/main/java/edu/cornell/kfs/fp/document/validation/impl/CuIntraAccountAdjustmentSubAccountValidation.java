@@ -11,7 +11,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 public class CuIntraAccountAdjustmentSubAccountValidation extends IntraAccountAdjustmentSubAccountValidation {
 
 	@Override
-	public boolean validate(AttributedDocumentEvent event) {
+	public boolean validate(final AttributedDocumentEvent event) {
 		// check system parameter to see if validation is needed
 		boolean validate = false;
 		validate = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(IntraAccountAdjustmentDocument.class, CUKFSParameterKeyConstants.FpParameterConstants.FP_VALIDATE_CS_SUB_ACCOUNT_OR_ICR_ATTRIBUTES);

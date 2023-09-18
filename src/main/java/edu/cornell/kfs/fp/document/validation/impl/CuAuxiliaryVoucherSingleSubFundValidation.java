@@ -11,8 +11,8 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 public class CuAuxiliaryVoucherSingleSubFundValidation extends AuxiliaryVoucherSingleSubFundValidation {
     
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
-        boolean allowMultiple = SpringContext.getBean(ParameterService.class)
+    public boolean validate(final AttributedDocumentEvent event) {
+        final boolean allowMultiple = SpringContext.getBean(ParameterService.class)
                 .getParameterValueAsBoolean(AuxiliaryVoucherDocument.class, 
                         CUKFSParameterKeyConstants.FpParameterConstants.FP_ALLOW_MULTIPLE_SUBFUNDS);
         

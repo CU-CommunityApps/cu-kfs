@@ -14,7 +14,7 @@ public class CuDisbursementVoucherTaxServiceImpl extends DisbursementVoucherTaxS
 	protected VendorService vendorService;
 	protected ParameterEvaluatorService parameterEvaluatorService;
 
-    public void processNonresidentTax(DisbursementVoucherDocument document) {
+    public void processNonresidentTax(final DisbursementVoucherDocument document) {
         if (validateNonresidentTaxInformation(document)) {
             generateNonresidentTaxLines(document);
         }
