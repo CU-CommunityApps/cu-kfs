@@ -32,21 +32,24 @@ public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
      *      org.kuali.kfs.sys.businessobject.SystemOptions, java.util.List)
      */
     @SuppressWarnings({ "deprecation", "unchecked" })
-    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear,
-            SystemOptions options, List<ParameterEvaluator> parameterEvaluators) {
+    public Iterator<Balance> findReversionBalancesForFiscalYear(
+            final Integer year, 
+            final boolean endOfYear,
+            final SystemOptions options, 
+            final List<ParameterEvaluator> parameterEvaluators) {
         LOG.debug("findReversionBalancesForFiscalYear() started");
-        Criteria c = new Criteria();
+        final Criteria c = new Criteria();
         c.addEqualTo(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
 
-        for (ParameterEvaluator parameterEvaluator : parameterEvaluators) {
+        for (final ParameterEvaluator parameterEvaluator : parameterEvaluators) {
 
             String currentRule = parameterEvaluator.getValue();
             if (endOfYear) {
                 currentRule = currentRule.replaceAll("account\\.", "priorYearAccount.");
             }
             if (StringUtils.isNotBlank(currentRule)) {
-                String propertyName = StringUtils.substringBefore(currentRule, "=");
-                List<String> ruleValues = Arrays.asList(StringUtils.substringAfter(currentRule, "=").split(";"));
+                final String propertyName = StringUtils.substringBefore(currentRule, "=");
+                final List<String> ruleValues = Arrays.asList(StringUtils.substringAfter(currentRule, "=").split(";"));
                 if (propertyName != null && propertyName.length() > 0 && ruleValues.size() > 0 && !StringUtils.isBlank(ruleValues.get(0))) {
                     if (parameterEvaluator.constraintIsAllow()) {
                         c.addIn(propertyName, ruleValues);
@@ -57,14 +60,14 @@ public class CuBalanceDaoOjb extends BalanceDaoOjb implements CuBalanceDao {
             }
         }
         // we only ever calculate on CB, AC, and encumbrance types, so let's only select those
-        List<String> reversionBalancesToSelect = new ArrayList<String>();
+        final List<String> reversionBalancesToSelect = new ArrayList<String>();
         reversionBalancesToSelect.add(options.getActualFinancialBalanceTypeCd());
         reversionBalancesToSelect.add(options.getFinObjTypeExpenditureexpCd());
         reversionBalancesToSelect.add(options.getCostShareEncumbranceBalanceTypeCd());
         reversionBalancesToSelect.add(options.getIntrnlEncumFinBalanceTypCd());
         reversionBalancesToSelect.add(KFSConstants.BALANCE_TYPE_CURRENT_BUDGET);
         c.addIn(KFSPropertyConstants.BALANCE_TYPE_CODE, reversionBalancesToSelect);
-        QueryByCriteria query = QueryFactory.newQuery(Balance.class, c);
+        final QueryByCriteria query = QueryFactory.newQuery(Balance.class, c);
         query.addOrderByAscending(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
         query.addOrderByAscending(KFSPropertyConstants.ACCOUNT_NUMBER);
         query.addOrderByAscending(KFSPropertyConstants.SUB_ACCOUNT_NUMBER);

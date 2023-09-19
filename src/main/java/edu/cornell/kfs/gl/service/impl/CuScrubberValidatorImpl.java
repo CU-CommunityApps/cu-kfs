@@ -19,13 +19,16 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
     private MessageBuilderService messageBuilderService;
 
     @Override
-    protected Message validateUniversityFiscalPeriodCode(OriginEntryInformation originEntry, OriginEntryInformation workingEntry, 
-            UniversityDate universityRunDate, AccountingCycleCachingService accountingCycleCachingService) {
+    protected Message validateUniversityFiscalPeriodCode(
+            final OriginEntryInformation originEntry, 
+            final OriginEntryInformation workingEntry, 
+            final UniversityDate universityRunDate, 
+            final AccountingCycleCachingService accountingCycleCachingService) {
         LOG.debug("validateUniversityFiscalPeriodCode() started");
         
         Message retVal = null;
         
-        String periodCode = originEntry.getUniversityFiscalPeriodCode();
+        final String periodCode = originEntry.getUniversityFiscalPeriodCode();
         if (!StringUtils.hasText(periodCode)) {
             retVal = updateFiscalAccountingPeriodToCurrent(workingEntry, universityRunDate);
         } else {
@@ -51,7 +54,9 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
      * @param universityRunDate
      * @return
      */
-    private  Message updateFiscalAccountingPeriodToCurrent(OriginEntryInformation workingEntry, UniversityDate universityRunDate) {
+    private  Message updateFiscalAccountingPeriodToCurrent(
+            final OriginEntryInformation workingEntry, 
+            final UniversityDate universityRunDate) {
         if (universityRunDate.getAccountingPeriod().isOpen()) {
             workingEntry.setUniversityFiscalPeriodCode(universityRunDate.getUniversityFiscalAccountingPeriod());
             workingEntry.setUniversityFiscalYear(universityRunDate.getUniversityFiscalYear());                    

@@ -17,7 +17,6 @@ import edu.cornell.kfs.gl.dataaccess.CuBalanceDao;
 import edu.cornell.kfs.gl.service.CuBalanceService;
 
 public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanceService {
-	 public static final String INCEPTION_TO_DATE_SUB_FUNDS = "INCEPTION_TO_DATE_SUB_FUNDS";
 
     /**
      * Returns all of the balances to be forwarded for the organization reversion process
@@ -27,9 +26,11 @@ public class CuBalanceServiceImpl extends BalanceServiceImpl implements CuBalanc
      * @return an iterator of balances to put through the strenuous organization reversion process
      * @see org.kuali.kfs.gl.service.BalanceService#findOrganizationReversionBalancesForFiscalYear(java.lang.Integer, boolean)
      */
-    public Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear) {
-        SystemOptions options = optionsService.getOptions(year);
-        List<ParameterEvaluator> parameterEvaluators = new ArrayList<ParameterEvaluator>();
+    public Iterator<Balance> findReversionBalancesForFiscalYear(
+            final Integer year, 
+            final boolean endOfYear) {
+        final SystemOptions options = optionsService.getOptions(year);
+        final List<ParameterEvaluator> parameterEvaluators = new ArrayList<ParameterEvaluator>();
 
         int i = 1;
         boolean moreParams = true;

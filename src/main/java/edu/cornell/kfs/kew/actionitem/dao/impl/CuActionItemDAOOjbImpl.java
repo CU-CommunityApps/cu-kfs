@@ -16,54 +16,54 @@ import edu.cornell.kfs.kew.actionitem.dao.CuActionItemDAO;
 public class CuActionItemDAOOjbImpl extends ActionItemDAOOjbImpl implements CuActionItemDAO {
 
     @Override
-    public void deleteActionItem(ActionItem actionItem) {
+    public void deleteActionItem(final ActionItem actionItem) {
         deleteExtensionForActionItem(actionItem);
         super.deleteActionItem(actionItem);
     }
 
-    private void deleteExtensionForActionItem(ActionItem actionItem) {
+    private void deleteExtensionForActionItem(final ActionItem actionItem) {
         if (ObjectUtils.isNull(actionItem)) {
             return;
         }
-        ActionItemExtension extension = findActionItemExtensionByActionItemId(actionItem.getId());
+        final ActionItemExtension extension = findActionItemExtensionByActionItemId(actionItem.getId());
         if (ObjectUtils.isNotNull(extension)) {
             getPersistenceBrokerTemplate().delete(extension);
         }
     }
 
     @Override
-    public void deleteByDocumentId(String documentId) {
+    public void deleteByDocumentId(final String documentId) {
         deleteActionItemExtensionsByDocumentId(documentId);
         super.deleteByDocumentId(documentId);
     }
 
-    private void deleteActionItemExtensionsByDocumentId(String documentId) {
-        Criteria criteria = new Criteria();
+    private void deleteActionItemExtensionsByDocumentId(final String documentId) {
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(CuKewPropertyConstants.DOCUMENT_ID, documentId);
         deleteActionItemExtensionsForMatchingActionItems(criteria);
     }
 
-    private void deleteActionItemExtensionsForMatchingActionItems(Criteria actionItemCriteria) {
-        ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(ActionItem.class, actionItemCriteria);
+    private void deleteActionItemExtensionsForMatchingActionItems(final Criteria actionItemCriteria) {
+        final ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(ActionItem.class, actionItemCriteria);
         subQuery.setAttributes(new String[] {KRADPropertyConstants.ID});
         subQuery.setJdbcTypes(new int[] {java.sql.Types.VARCHAR});
         
-        Criteria extensionCriteria = new Criteria();
+        final Criteria extensionCriteria = new Criteria();
         extensionCriteria.addIn(CuKewPropertyConstants.ACTION_ITEM_ID, subQuery);
         getPersistenceBrokerTemplate().deleteByQuery(
                 new QueryByCriteria(ActionItemExtension.class, extensionCriteria));
     }
 
     @Override
-    public ActionItemExtension findActionItemExtensionByActionItemId(String actionItemId) {
-        Criteria criteria = new Criteria();
+    public ActionItemExtension findActionItemExtensionByActionItemId(final String actionItemId) {
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(CuKewPropertyConstants.ACTION_ITEM_ID, actionItemId);
         return (ActionItemExtension) getPersistenceBrokerTemplate().getObjectByQuery(
                 new QueryByCriteria(ActionItemExtension.class, criteria));
     }
 
     @Override
-    public void saveActionItemExtension(ActionItemExtension extension) {
+    public void saveActionItemExtension(final ActionItemExtension extension) {
         getPersistenceBrokerTemplate().store(extension);
     }
 
