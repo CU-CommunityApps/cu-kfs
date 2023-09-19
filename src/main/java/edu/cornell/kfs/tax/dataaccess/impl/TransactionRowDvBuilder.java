@@ -1,13 +1,12 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.kew.routeheader.service.CuRouteHeaderService;
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.businessobject.SecondPassAttributeUpdateValues;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxSqlUtils.SqlText;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
-import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
-
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.RawTransactionDetailRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,7 +60,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         super();
     }
 
-    abstract TaxTableField getExtraField(TransactionDetailRow detailRow);
+    abstract TaxTableField getExtraField(RawTransactionDetailRow rawDetailRow);
 
 
 
@@ -208,7 +207,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
 
     @Override
     String getSqlForSelectingCreatedRows(T summary) {
-        return TaxSqlUtils.getTransactionDetailSelectSql(getExtraField(summary.transactionDetailRow), summary.transactionDetailRow, true, false);
+        return TaxSqlUtils.getRawTransactionDetailSelectSql(getExtraField(summary.rawTransactionDetailRow), summary.rawTransactionDetailRow, true, false);
     }
 
     @Override
@@ -222,10 +221,10 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
 
 
     @Override
-    void buildTransactionRows(ResultSet rs, PreparedStatement insertStatement, T summary) throws SQLException {
+    void buildRawTransactionRows(ResultSet rs, PreparedStatement insertStatement, T summary) throws SQLException {
         DvSourceRow dvRow = summary.dvRow;
-        TransactionDetailRow detailRow = summary.transactionDetailRow;
-        int offset = detailRow.insertOffset;
+        RawTransactionDetailRow rawDetailRow = summary.rawTransactionDetailRow;
+        int offset = rawDetailRow.insertOffset;
         Set<String> docIds = new HashSet<String>();
         String documentId;
         String financialObjectCode;
@@ -255,7 +254,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             }
             
             // Perform extra 1099-specific or 1042S-specific setup as needed.
-            doTaxSpecificRowSetup(rs, insertStatement, financialObjectCode, summary);
+            doTaxSpecificFirstPassRowSetup(rs, insertStatement, financialObjectCode, summary);
             
             /*
              * Prepare to insert another transaction detail row.
@@ -283,45 +282,45 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
              * VENDOR_TAX_NBR (if null, in which case it should be set to an auto-generated value)
              * DV_CHK_STUB_TXT (if it contains non-printable characters, in which case they should be removed)
              */
-            insertStatement.setInt(detailRow.reportYear.index - offset, summary.reportYear);
-            insertStatement.setString(detailRow.documentNumber.index - offset, StringUtils.isNotBlank(documentId) ? documentId : null);
-            insertStatement.setString(detailRow.documentType.index - offset, DisbursementVoucherConstants.DOCUMENT_TYPE_CODE);
-            insertStatement.setInt(detailRow.financialDocumentLineNumber.index - offset, rs.getInt(dvRow.accountingLineSequenceNumber.index));
-            insertStatement.setString(detailRow.finObjectCode.index - offset, financialObjectCode);
-            insertStatement.setBigDecimal(detailRow.netPaymentAmount.index - offset, netPaymentAmount);
-            insertStatement.setString(detailRow.documentTitle.index - offset, rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index));
-            insertStatement.setString(detailRow.vendorTaxNumber.index - offset, rs.getString(dvRow.vendorTaxNumber.index));
-            insertStatement.setString(detailRow.dvCheckStubText.index - offset, rs.getString(dvRow.disbVchrCheckStubText.index));
-            insertStatement.setString(detailRow.payeeId.index - offset, rs.getString(dvRow.disbVchrPayeeIdNumber.index));
-            insertStatement.setString(detailRow.vendorTypeCode.index - offset, rs.getString(dvRow.vendorTypeCode.index));
-            insertStatement.setString(detailRow.vendorOwnershipCode.index - offset, rs.getString(dvRow.vendorOwnershipCode.index));
-            insertStatement.setString(detailRow.vendorOwnershipCategoryCode.index - offset, rs.getString(dvRow.vendorOwnershipCategoryCode.index));
-            insertStatement.setString(detailRow.vendorForeignIndicator.index - offset, rs.getString(dvRow.vendorForeignInd.index));
-            insertStatement.setString(detailRow.nraPaymentIndicator.index - offset, rs.getString(dvRow.disbVchrNonresidentPaymentCode.index));
-            insertStatement.setDate(detailRow.paymentDate.index - offset, rs.getDate(dvRow.paidDate.index));
-            insertStatement.setString(detailRow.paymentPayeeName.index - offset, rs.getString(dvRow.disbVchrPayeePersonName.index));
-            insertStatement.setString(detailRow.incomeClassCode.index - offset, rs.getString(dvRow.incomeClassCode.index));
-            insertStatement.setString(detailRow.incomeTaxTreatyExemptIndicator.index - offset, rs.getString(dvRow.incomeTaxTreatyExemptCode.index));
-            insertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - offset, rs.getString(dvRow.foreignSourceIncomeCode.index));
-            insertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - offset, rs.getBigDecimal(dvRow.federalIncomeTaxPercent.index));
-            insertStatement.setString(detailRow.paymentDescription.index - offset, rs.getString(dvRow.financialDocumentLineDescription.index));
-            insertStatement.setString(detailRow.paymentLine1Address.index - offset, rs.getString(dvRow.disbVchrPayeeLine1Addr.index));
-            insertStatement.setString(detailRow.paymentCountryName.index - offset, rs.getString(dvRow.disbVchrPayeeCountryCode.index));
-            insertStatement.setString(detailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
-            insertStatement.setString(detailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
-            insertStatement.setString(detailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
+            insertStatement.setInt(rawDetailRow.reportYear.index - offset, summary.reportYear);
+            insertStatement.setString(rawDetailRow.documentNumber.index - offset, StringUtils.isNotBlank(documentId) ? documentId : null);
+            insertStatement.setString(rawDetailRow.documentType.index - offset, DisbursementVoucherConstants.DOCUMENT_TYPE_CODE);
+            insertStatement.setInt(rawDetailRow.financialDocumentLineNumber.index - offset, rs.getInt(dvRow.accountingLineSequenceNumber.index));
+            insertStatement.setString(rawDetailRow.finObjectCode.index - offset, financialObjectCode);
+            insertStatement.setBigDecimal(rawDetailRow.netPaymentAmount.index - offset, netPaymentAmount);
+            insertStatement.setString(rawDetailRow.documentTitle.index - offset, rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index));
+            insertStatement.setString(rawDetailRow.vendorTaxNumber.index - offset, rs.getString(dvRow.vendorTaxNumber.index));
+            insertStatement.setString(rawDetailRow.dvCheckStubText.index - offset, rs.getString(dvRow.disbVchrCheckStubText.index));
+            insertStatement.setString(rawDetailRow.payeeId.index - offset, rs.getString(dvRow.disbVchrPayeeIdNumber.index));
+            insertStatement.setString(rawDetailRow.vendorTypeCode.index - offset, rs.getString(dvRow.vendorTypeCode.index));
+            insertStatement.setString(rawDetailRow.vendorOwnershipCode.index - offset, rs.getString(dvRow.vendorOwnershipCode.index));
+            insertStatement.setString(rawDetailRow.vendorOwnershipCategoryCode.index - offset, rs.getString(dvRow.vendorOwnershipCategoryCode.index));
+            insertStatement.setString(rawDetailRow.vendorForeignIndicator.index - offset, rs.getString(dvRow.vendorForeignInd.index));
+            insertStatement.setString(rawDetailRow.nraPaymentIndicator.index - offset, rs.getString(dvRow.disbVchrNonresidentPaymentCode.index));
+            insertStatement.setDate(rawDetailRow.paymentDate.index - offset, rs.getDate(dvRow.paidDate.index));
+            insertStatement.setString(rawDetailRow.paymentPayeeName.index - offset, rs.getString(dvRow.disbVchrPayeePersonName.index));
+            insertStatement.setString(rawDetailRow.incomeClassCode.index - offset, rs.getString(dvRow.incomeClassCode.index));
+            insertStatement.setString(rawDetailRow.incomeTaxTreatyExemptIndicator.index - offset, rs.getString(dvRow.incomeTaxTreatyExemptCode.index));
+            insertStatement.setString(rawDetailRow.foreignSourceIncomeIndicator.index - offset, rs.getString(dvRow.foreignSourceIncomeCode.index));
+            insertStatement.setBigDecimal(rawDetailRow.federalIncomeTaxPercent.index - offset, rs.getBigDecimal(dvRow.federalIncomeTaxPercent.index));
+            insertStatement.setString(rawDetailRow.paymentDescription.index - offset, rs.getString(dvRow.financialDocumentLineDescription.index));
+            insertStatement.setString(rawDetailRow.paymentLine1Address.index - offset, rs.getString(dvRow.disbVchrPayeeLine1Addr.index));
+            insertStatement.setString(rawDetailRow.paymentCountryName.index - offset, rs.getString(dvRow.disbVchrPayeeCountryCode.index));
+            insertStatement.setString(rawDetailRow.chartCode.index - offset, rs.getString(dvRow.chartOfAccountsCode.index));
+            insertStatement.setString(rawDetailRow.accountNumber.index - offset, rs.getString(dvRow.accountNumber.index));
+            insertStatement.setString(rawDetailRow.paymentReasonCode.index - offset, rs.getString(dvRow.disbVchrPaymentReasonCode.index));
 
             String paymentMethodCode = rs.getString(dvRow.documentDisbVchrPaymentMethodCode.index);
             String disbursementNbr = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null: rs.getString(dvRow.disbursementNbr.index);
             String disbursementTypeCode = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null : rs.getString(dvRow.disbursementTypeCode.index);
             String paymentStatusCode = isPaymentCodeWireOrForeignDraft(paymentMethodCode) ? null : rs.getString(dvRow.paymentStatusCode.index);
             String ledgerDocumentType = getLedgerDocumentTypeCode(paymentMethodCode);
-            insertStatement.setString(detailRow.disbursementNbr.index - offset, disbursementNbr);
-            insertStatement.setString(detailRow.disbursementTypeCode.index - offset, disbursementTypeCode);
-            insertStatement.setString(detailRow.paymentStatusCode.index - offset, paymentStatusCode);
-            insertStatement.setString(detailRow.ledgerDocumentTypeCode.index - offset, ledgerDocumentType);
+            insertStatement.setString(rawDetailRow.disbursementNbr.index - offset, disbursementNbr);
+            insertStatement.setString(rawDetailRow.disbursementTypeCode.index - offset, disbursementTypeCode);
+            insertStatement.setString(rawDetailRow.paymentStatusCode.index - offset, paymentStatusCode);
+            insertStatement.setString(rawDetailRow.ledgerDocumentTypeCode.index - offset, ledgerDocumentType);
 
-            insertNullsForTransactionRow(insertStatement, detailRow, offset);
+            insertNullsForTransactionRow(insertStatement, rawDetailRow, offset);
             
             // Add to batch, and execute batch if needed.
             insertStatement.addBatch();
@@ -331,7 +330,6 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                 currentBatchSize = 0;
             }
         }
-            
         
         
         
@@ -359,9 +357,10 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
     }
 
     @Override
-    void updateTransactionRowsFromWorkflowDocuments(ResultSet rs, T summary) throws SQLException {
-        TransactionDetailRow detailRow = summary.transactionDetailRow;
+    void updateTransactionRowsFromWorkflowDocuments(ResultSet rs, PreparedStatement secondPassTransactionInsertStatement, T summary) throws SQLException {
+        RawTransactionDetailRow rawDetailRow = summary.rawTransactionDetailRow;
         Pattern nonPrintableCharsPattern = Pattern.compile("[^\\p{Graph}\\p{Space}]");
+        String rawTransactionDetailId;
         String documentId;
         String initiatorPrincipalId;
         String initiatorPrincipalName;
@@ -382,10 +381,11 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         // Update or remove rows as needed.
         while (rs.next()) {
             // Only update DV-related rows.
-            if (DisbursementVoucherConstants.DOCUMENT_TYPE_CODE.equals(rs.getString(detailRow.documentType.index))) {
+            if (DisbursementVoucherConstants.DOCUMENT_TYPE_CODE.equals(rs.getString(rawDetailRow.documentType.index))) {
                 // Initialized minimal variables for current row.
                 processCurrentRow = true;
-                documentId = rs.getString(detailRow.documentNumber.index);
+                rawTransactionDetailId = rs.getString(rawDetailRow.transactionDetailId.index);
+                documentId = rs.getString(rawDetailRow.documentNumber.index);
                 initiatorPrincipalId = null;
                 documentStatus = null;
                 dateFinalized = null;
@@ -401,7 +401,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                     }
                 }
                 // Retrieve payment method, which is temporarily stored in the doc title field.
-                paymentMethodCode = rs.getString(detailRow.documentTitle.index);
+                paymentMethodCode = rs.getString(rawDetailRow.documentTitle.index);
                 
                 
                 // Depending on payment method, verify that the DV has indeed been finalized during the given time period.
@@ -433,49 +433,53 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                 
                 if (processCurrentRow) {
                     // Finish initialization.
-                    vendorTaxNumber = rs.getString(detailRow.vendorTaxNumber.index);
-                    checkStubText = rs.getString(detailRow.dvCheckStubText.index);
+                    SecondPassAttributeUpdateValues updatedAttributeValues = new SecondPassAttributeUpdateValues();
+                    vendorTaxNumber = rs.getString(rawDetailRow.vendorTaxNumber.index);
+                    checkStubText = rs.getString(rawDetailRow.dvCheckStubText.index);
                     checkStubMatcher = nonPrintableCharsPattern.matcher((checkStubText != null) ? checkStubText : KFSConstants.EMPTY_STRING);
                     
                     // Check for null objects as needed, and get the initiator's principal name.
                     initiatorPrincipalName = checkForEntityAndAccountAndOrgExistence(initiatorPrincipalId,
-                            rs.getString(detailRow.chartCode.index), rs.getString(detailRow.accountNumber.index), summary);
+                            rs.getString(rawDetailRow.chartCode.index), rs.getString(rawDetailRow.accountNumber.index), summary);
                     
                     // If vendor tax number is blank, then replace with a generated value accordingly.
                     if (StringUtils.isBlank(vendorTaxNumber)) {
-                        vendorTaxNumber = getReplacementVendorTaxNumber(rs.getString(detailRow.payeeId.index), summary);
-                        rs.updateString(detailRow.vendorTaxNumber.index, vendorTaxNumber);
+                        vendorTaxNumber = getReplacementVendorTaxNumber(rs.getString(rawDetailRow.payeeId.index), summary);
+                        updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.vendorTaxNumber.index, vendorTaxNumber);
                     }
                     
                     // Remove unprintable characters from the check stub text if necessary.
                     if (checkStubMatcher.find()) {
                         checkStubText = checkStubMatcher.replaceAll(KFSConstants.EMPTY_STRING);
-                        rs.updateString(detailRow.dvCheckStubText.index, checkStubText);
+                        updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.dvCheckStubText.index, checkStubText);
                         numDvCheckStubTextsAltered++;
                     } else {
                         numDvCheckStubTextsNotAltered++;
                     }
                     
                     // Do tax-type-specific updates.
-                    doTaxSpecificSecondPassRowSetup(rs, summary);
+                    doTaxSpecificSecondPassRowSetup(rs, summary, updatedAttributeValues);
                     
                     // Update other fields as needed.
                     if (StringUtils.isBlank(documentId)) {
-                        rs.updateString(detailRow.documentNumber.index, CUTaxConstants.DOC_ID_ZERO);
+                        updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.documentNumber.index, CUTaxConstants.DOC_ID_ZERO);
                     }
-                    rs.updateString(detailRow.documentTitle.index, (document != null && StringUtils.isNotBlank(document.getTitle()))
-                            ? document.getTitle() : CUTaxConstants.DOC_TITLE_IF_NOT_FOUND);
-                    rs.updateString(detailRow.initiatorNetId.index,
+                    updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.documentTitle.index,
+                            (document != null && StringUtils.isNotBlank(document.getTitle())) ? document.getTitle() : CUTaxConstants.DOC_TITLE_IF_NOT_FOUND);
+                    updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.initiatorNetId.index,
                             StringUtils.isNotBlank(initiatorPrincipalName) ? initiatorPrincipalName : CUTaxConstants.NETID_IF_NOT_FOUND);
                     if (useDateFinalized) {
-                        rs.updateDate(detailRow.paymentDate.index, dateFinalized);
+                        updatedAttributeValues.putSqlDateAttributeForUpdating(rawDetailRow.paymentDate.index, dateFinalized);
                     }
                     
                     // Update the transaction row.
-                    rs.updateRow();
+                    LOG.info("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: Inserting updated second pass data for "
+                            + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
+                    insertUpdatedTransactionDetail(rs, secondPassTransactionInsertStatement, summary, updatedAttributeValues);
                 } else {
                     // If a Foreign Draft or Wire Transfer that wasn't finalized or was in the wrong reporting period, then delete the row.
-                    rs.deleteRow();
+                    LOG.info("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: NO data inserted for "
+                            + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                 }
             }
         }
@@ -513,8 +517,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         }
         
         @Override
-        TaxTableField getExtraField(TransactionDetailRow detailRow) {
-            return detailRow.form1099Box;
+        TaxTableField getExtraField(RawTransactionDetailRow rawDetailRow) {
+            return rawDetailRow.form1099Box;
         }
         
         @Override
@@ -530,23 +534,23 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         }
         
         @Override
-        void doTaxSpecificRowSetup(ResultSet rs, PreparedStatement insertStatement, String financialObjectCode,
+        void doTaxSpecificFirstPassRowSetup(ResultSet rs, PreparedStatement insertStatement, String financialObjectCode,
                 Transaction1099Summary summary) throws SQLException {
-            TransactionDetailRow detailRow = summary.transactionDetailRow;
+            RawTransactionDetailRow rawDetailRow = summary.rawTransactionDetailRow;
             
             // Setup prepared statement args accordingly. Income-code-related args are null, and 1099 box is set to "?" for bulk retrieval convenience.
-            insertStatement.setString(detailRow.incomeCode.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.incomeCodeSubType.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1099Type.index - detailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
-            insertStatement.setString(detailRow.form1099Box.index - detailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
-            insertStatement.setString(detailRow.form1099OverriddenType.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1099OverriddenBox.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1042SBox.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1042SOverriddenBox.index - detailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.incomeCode.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.incomeCodeSubType.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1099Type.index - rawDetailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
+            insertStatement.setString(rawDetailRow.form1099Box.index - rawDetailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
+            insertStatement.setString(rawDetailRow.form1099OverriddenType.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1099OverriddenBox.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1042SBox.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1042SOverriddenBox.index - rawDetailRow.insertOffset, null);
         }
         
         @Override
-        void doTaxSpecificSecondPassRowSetup(ResultSet rs, Transaction1099Summary summary) throws SQLException {
+        void doTaxSpecificSecondPassRowSetup(ResultSet rs, Transaction1099Summary summary, SecondPassAttributeUpdateValues updateAttributeValues) throws SQLException {
             // Do nothing.
         }
     }
@@ -573,8 +577,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         }
         
         @Override
-        TaxTableField getExtraField(TransactionDetailRow detailRow) {
-            return detailRow.form1042SBox;
+        TaxTableField getExtraField(RawTransactionDetailRow rawDetailRow) {
+            return rawDetailRow.form1042SBox;
         }
         
         @Override
@@ -584,30 +588,30 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         }
         
         @Override
-        void doTaxSpecificRowSetup(ResultSet rs, PreparedStatement insertStatement, String financialObjectCode,
+        void doTaxSpecificFirstPassRowSetup(ResultSet rs, PreparedStatement insertStatement, String financialObjectCode,
                 Transaction1042SSummary summary) throws SQLException {
-            TransactionDetailRow detailRow = summary.transactionDetailRow;
+            RawTransactionDetailRow rawDetailRow = summary.rawTransactionDetailRow;
             
             // Setup prepared statement args accordingly. The 1042S box is set to "?" for bulk retrieval convenience.
-            insertStatement.setString(detailRow.incomeCode.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.incomeCodeSubType.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1099Type.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1099Box.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1099OverriddenType.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1099OverriddenBox.index - detailRow.insertOffset, null);
-            insertStatement.setString(detailRow.form1042SBox.index - detailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
-            insertStatement.setString(detailRow.form1042SOverriddenBox.index - detailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.incomeCode.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.incomeCodeSubType.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1099Type.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1099Box.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1099OverriddenType.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1099OverriddenBox.index - rawDetailRow.insertOffset, null);
+            insertStatement.setString(rawDetailRow.form1042SBox.index - rawDetailRow.insertOffset, CUTaxConstants.NEEDS_UPDATING_BOX_KEY);
+            insertStatement.setString(rawDetailRow.form1042SOverriddenBox.index - rawDetailRow.insertOffset, null);
         }
         
         @Override
-        void doTaxSpecificSecondPassRowSetup(ResultSet rs, Transaction1042SSummary summary) throws SQLException {
-            String financialObjectCode = rs.getString(summary.transactionDetailRow.finObjectCode.index);
+        void doTaxSpecificSecondPassRowSetup(ResultSet rs, Transaction1042SSummary summary, SecondPassAttributeUpdateValues updateAttributeValues) throws SQLException {
+            String financialObjectCode = rs.getString(summary.rawTransactionDetailRow.finObjectCode.index);
             String incomeClassCode;
             String incomeCode;
             String incomeCodeSubType;
             
             // Prepare the income and subtype codes.
-            incomeClassCode = rs.getString(summary.transactionDetailRow.incomeClassCode.index);
+            incomeClassCode = rs.getString(summary.rawTransactionDetailRow.incomeClassCode.index);
             incomeCode = summary.incomeClassCodeToIrsIncomeCodeMap.get(incomeClassCode);
             if (StringUtils.isBlank(incomeCode)) {
                 // If no income class code was found, then check whether the object code is a fed-tax-withheld one.
@@ -639,8 +643,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             }
             
             // Prepare to update income code and income code subtype fields.
-            rs.updateString(summary.transactionDetailRow.incomeCode.index, incomeCode);
-            rs.updateString(summary.transactionDetailRow.incomeCodeSubType.index, incomeCodeSubType);
+            updateAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.incomeCode.index, incomeCode);
+            updateAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.incomeCodeSubType.index, incomeCodeSubType);
         }
         
         @Override

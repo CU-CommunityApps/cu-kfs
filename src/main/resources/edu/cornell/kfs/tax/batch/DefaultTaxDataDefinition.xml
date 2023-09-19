@@ -249,9 +249,9 @@
         <field name="org.kuali.kfs.krad.bo.Note::noteText" alias="noteText" />
     </row>
     <!--
-        =====================================================
-        The definition pertaining to transaction detail rows.
-        =====================================================
+        =================================================================
+        The definition pertaining to second pass transaction detail rows.
+        =================================================================
      -->
     <row id="DETAIL" numAutoAssignedFieldsForInsert="1">
         <objectClasses>
@@ -384,5 +384,73 @@
         <field name="box????" type="DECIMAL" />
         <field name="endDate" type="DATE" />
         <field name="taxYear" type="VARCHAR" />
+    </row>
+    <!--
+        ================================================================
+        The definition pertaining to first pass transaction detail rows.
+        ================================================================
+     -->
+    <row id="RAW_DETAIL" numAutoAssignedFieldsForInsert="1">
+        <objectClasses>
+            <objectClass name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail" />
+        </objectClasses>
+        <!-- ==== Fields from TX_RAW_TRANSACTION_DETAIL_T ==== -->
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::transactionDetailId" alias="transactionDetailId" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::reportYear" alias="reportYear" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::documentNumber" alias="documentNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::documentType" alias="documentType" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::financialDocumentLineNumber" alias="financialDocumentLineNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::finObjectCode" alias="finObjectCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::netPaymentAmount" alias="netPaymentAmount" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::documentTitle" alias="documentTitle" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorTaxNumber" alias="vendorTaxNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::incomeCode" alias="incomeCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::incomeCodeSubType" alias="incomeCodeSubType" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::dvCheckStubText" alias="dvCheckStubText" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::payeeId" alias="payeeId" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorName" alias="vendorName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::parentVendorName" alias="parentVendorName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorTypeCode" alias="vendorTypeCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorOwnershipCode" alias="vendorOwnershipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorOwnershipCategoryCode" alias="vendorOwnershipCategoryCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignIndicator" alias="vendorForeignIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorEmailAddress" alias="vendorEmailAddress" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorChapter4StatusCode" alias="vendorChapter4StatusCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorGIIN" alias="vendorGIIN" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorLine1Address" alias="vendorLine1Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorLine2Address" alias="vendorLine2Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorCityName" alias="vendorCityName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorStateCode" alias="vendorStateCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorZipCode" alias="vendorZipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignLine1Address" alias="vendorForeignLine1Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignLine2Address" alias="vendorForeignLine2Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignCityName" alias="vendorForeignCityName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignZipCode" alias="vendorForeignZipCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignProvinceName" alias="vendorForeignProvinceName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::vendorForeignCountryCode" alias="vendorForeignCountryCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::nraPaymentIndicator" alias="nraPaymentIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentDate" alias="paymentDate" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentPayeeName" alias="paymentPayeeName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::incomeClassCode" alias="incomeClassCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::incomeTaxTreatyExemptIndicator" alias="incomeTaxTreatyExemptIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::foreignSourceIncomeIndicator" alias="foreignSourceIncomeIndicator" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::federalIncomeTaxPercent" alias="federalIncomeTaxPercent" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentDescription" alias="paymentDescription" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentLine1Address" alias="paymentLine1Address" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentCountryName" alias="paymentCountryName" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::chartCode" alias="chartCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::accountNumber" alias="accountNumber" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::initiatorNetId" alias="initiatorNetId" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::form1099Type" alias="form1099Type" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::form1099Box" alias="form1099Box" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::form1099OverriddenType" alias="form1099OverriddenType" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::form1099OverriddenBox" alias="form1099OverriddenBox" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::form1042SBox" alias="form1042SBox" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::form1042SOverriddenBox" alias="form1042SOverriddenBox" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentReasonCode" alias="paymentReasonCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::disbursementNbr" alias="disbursementNbr" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::paymentStatusCode" alias="paymentStatusCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::disbursementTypeCode" alias="disbursementTypeCode" />
+        <field name="edu.cornell.kfs.tax.businessobject.RawTransactionDetail::ledgerDocumentTypeCode" alias="ledgerDocumentTypeCode" />
     </row>
 </taxDataDefinition>

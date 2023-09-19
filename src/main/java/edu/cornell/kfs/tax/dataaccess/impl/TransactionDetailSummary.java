@@ -33,6 +33,7 @@ import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DocumentNoteRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DvSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.PRNCSourceRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.PdpSourceRow;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.RawTransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorRow;
@@ -68,6 +69,8 @@ abstract class TransactionDetailSummary {
     final VendorAddressRow vendorAddressRow;
     // Document note object metadata.
     final DocumentNoteRow documentNoteRow;
+    // RawTransaction detail metadata.
+    final RawTransactionDetailRow rawTransactionDetailRow;
     // Transaction detail metadata.
     final TransactionDetailRow transactionDetailRow;
     // Non-DB-backed field metadata.
@@ -141,6 +144,7 @@ abstract class TransactionDetailSummary {
         this.documentNoteRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.DOCUMENT_NOTE.name()), DocumentNoteRow.class);
         this.transactionDetailRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.DETAIL.name()), TransactionDetailRow.class);
         this.derivedValues = tableMetadataService.getTransientRowFromData(dataRows.get(TaxFieldSource.DERIVED.name()), DerivedValuesRow.class);
+        this.rawTransactionDetailRow = tableMetadataService.getRowFromData(dataRows.get(TaxFieldSource.RAW_DETAIL.name()), RawTransactionDetailRow.class);
     }
 
     /**

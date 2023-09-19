@@ -55,6 +55,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
             Transaction1099Summary summary = new Transaction1099Summary(reportYear, startDate, endDate, vendorForeign,
                     taxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1099_PREFIX, reportYear).getDataRowsAsMap());
             // Delete any previously-generated rows for the current year and tax type.
+            getJdbcTemplate().update(TaxSqlUtils.getRawTransactionDetailDeleteSql(taxType, summary.rawTransactionDetailRow), Integer.valueOf(reportYear));
             getJdbcTemplate().update(TaxSqlUtils.getTransactionDetailDeleteSql(taxType, summary.transactionDetailRow), Integer.valueOf(reportYear));
             // Create new transaction rows, retrieving summary statistics as needed.
             stats = createTransactionRows(summary, Arrays.<Class<? extends TransactionRowBuilder<Transaction1099Summary>>>asList(
@@ -72,6 +73,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
             Transaction1042SSummary summary = new Transaction1042SSummary(reportYear, startDate, endDate, vendorForeign,
                     taxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, reportYear).getDataRowsAsMap());
             // Delete any previously-generated rows for the current year and tax type.
+            getJdbcTemplate().update(TaxSqlUtils.getRawTransactionDetailDeleteSql(taxType, summary.rawTransactionDetailRow), Integer.valueOf(reportYear));
             getJdbcTemplate().update(TaxSqlUtils.getTransactionDetailDeleteSql(taxType, summary.transactionDetailRow), Integer.valueOf(reportYear));
             // Create new transaction rows, retrieving summary statistics as needed.
             stats = createTransactionRows(summary, Arrays.<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>>asList(
@@ -218,21 +220,25 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
             @Override
             public List<EnumMap<TaxStatType,Integer>> doInConnection(Connection con) throws SQLException {
                 PreparedStatement selectStatement = null;
-                PreparedStatement insertStatement = null;
+                PreparedStatement rawTransactionInsertStatement = null;
+                PreparedStatement selectRawTransactionStatement = null;
+                PreparedStatement secondPassTransactionInsertStatement = null;
                 ResultSet rs = null;
+                ResultSet updatableRs = null;
                 List<EnumMap<TaxStatType,Integer>> stats = new ArrayList<EnumMap<TaxStatType,Integer>>();
                 try {
                     TransactionRowBuilder<T> previousBuilder = null;
                     
-                    // Setup the insertion statement.
-                    insertStatement = con.prepareStatement(TaxSqlUtils.getTransactionDetailInsertSql(summary.transactionDetailRow));
+                    // Setup the insertion statements to be used during the first and second passes.
+                    rawTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getRawTransactionDetailInsertSql(summary.rawTransactionDetailRow));
+                    secondPassTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getTransactionDetailInsertSql(summary.transactionDetailRow));
                     
                     // Process each type of retrievable data row (PDP, DV, etc.).
                     for (Class<? extends TransactionRowBuilder<T>> builderClazz : builderClasses) {
                         // Create and configure the builder.
                         TransactionRowBuilder<T> builder = builderClazz.newInstance();
                         builder.copyValuesFromPreviousBuilder(previousBuilder, currentDao, summary);
-                        LOG.info("Starting creation of transaction rows from the following tax source: " + builder.getTaxSourceName());
+                        LOG.info("Starting creation of first pass (raw) transaction rows from the following tax source: " + builder.getTaxSourceName());
                         
                         // Setup the retrieval statement.
                         selectStatement = con.prepareStatement(builder.getSqlForSelect(summary));
@@ -242,28 +248,31 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                         // Get the results.
                         rs = selectStatement.executeQuery();
                         // Let the builder iterate over the results and insert new transaction detail rows as needed.
-                        builder.buildTransactionRows(rs, insertStatement, summary);
+                        builder.buildRawTransactionRows(rs, rawTransactionInsertStatement, summary);
                         
-                        // Close the result set and SELECT prepared statement to prepare for the second pass.
+                        // Close the result set, SELECT prepared statement and INSERT into first pass (raw) table to prepare for the second pass.
                         rs.close();
                         selectStatement.close();
                         
-                        // Setup retrieval statement for second pass.
-                        selectStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(summary),
+                        // Setup retrieval statement for second pass. SELECT needs to obtain data from first pass (raw) transaction details table
+                        selectRawTransactionStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(summary),
                                 ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-                        setParameters(selectStatement, builder.getParameterValuesForSelectingCreatedRows(summary));
+                        setParameters(selectRawTransactionStatement, builder.getParameterValuesForSelectingCreatedRows(summary));
                         
-                        // Get the updatable results.
-                        rs = selectStatement.executeQuery();
-                        // Let the builder iterate over the results and update or remove transaction detail rows as needed.
-                        builder.updateTransactionRowsFromWorkflowDocuments(rs, summary);
+                        // Get the updatable results from the first pass table.
+                        updatableRs = selectRawTransactionStatement.executeQuery();
+                        
+                        // Let the builder iterate over the raw detail transaction rows from the first pass table 
+                        // updating specific attributes as needed then inserting those rows into the second pass 
+                        // table OR logging the keys of the raw data row if it should not be used.
+                        builder.updateTransactionRowsFromWorkflowDocuments(updatableRs, secondPassTransactionInsertStatement, summary);
                         
                         // Get the statistics collected by the builder.
                         stats.add(builder.getStatistics());
                         
                         // Close the result set and SELECT prepared statement to prepare for any future iterations.
-                        rs.close();
-                        selectStatement.close();
+                        updatableRs.close();
+                        selectRawTransactionStatement.close();
                         
                         LOG.info("Finished creation of transaction rows from the following tax source: " + builder.getTaxSourceName());
                         
@@ -283,21 +292,42 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                         try {
                             rs.close();
                         } catch (SQLException e) {
-                            LOG.error("Could not close tax data ResultSet");
+                            LOG.error("Could not close tax data first pass ResultSet.");
                         }
                     }
-                    if (insertStatement != null) {
+                    if (updatableRs != null) {
                         try {
-                            insertStatement.close();
+                            updatableRs.close();
                         } catch (SQLException e) {
-                            LOG.error("Could not close transaction row insertion statement");
+                            LOG.error("Could not close tax data second pass updatable ResultSet.");
+                        }
+                    }
+                    if (rawTransactionInsertStatement != null) {
+                        try {
+                            rawTransactionInsertStatement.close();
+                        } catch (SQLException e) {
+                            LOG.error("Could not close rawTransactionInsertStatement row insertion statement.");
+                        }
+                    }
+                    if (secondPassTransactionInsertStatement != null) {
+                        try {
+                            secondPassTransactionInsertStatement.close();
+                        } catch (SQLException e) {
+                            LOG.error("Could not close secondPassTransactionInsertStatement row insertion statement.");
+                        }
+                    }
+                    if (selectRawTransactionStatement != null) {
+                        try {
+                            selectRawTransactionStatement.close();
+                        } catch (SQLException e) {
+                            LOG.error("Could not close tax data second pass selectRawTransactionStatement statement.");
                         }
                     }
                     if (selectStatement != null) {
                         try {
                             selectStatement.close();
                         } catch (SQLException e) {
-                            LOG.error("Could not close tax data selection statement");
+                            LOG.error("Could not close tax data first pass selection statement.");
                         }
                     }
                 }
