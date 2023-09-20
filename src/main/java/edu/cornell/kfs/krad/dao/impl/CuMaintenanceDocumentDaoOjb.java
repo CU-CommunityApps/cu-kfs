@@ -22,7 +22,7 @@ public class CuMaintenanceDocumentDaoOjb extends MaintenanceDocumentDaoOjb imple
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public String getAnyLockingDocumentNumber(List<String> lockingRepresentations, String documentNumber) {
+    public String getAnyLockingDocumentNumber(final List<String> lockingRepresentations, final String documentNumber) {
         LOG.debug("getAnyLockingDocumentNumber, Checking for locking document(s)");
         if (CollectionUtils.isEmpty(lockingRepresentations)) {
             LOG.debug("getAnyLockingDocumentNumber, No lock representations specified, skipping search");
@@ -31,16 +31,16 @@ public class CuMaintenanceDocumentDaoOjb extends MaintenanceDocumentDaoOjb imple
         LOG.debug("getAnyLockingDocumentNumber, Performing search with {} lock representations",
                 lockingRepresentations::size);
         
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addIn(KFSPropertyConstants.LOCKING_REPRESENTATION, lockingRepresentations);
         if (StringUtils.isNotBlank(documentNumber)) {
             criteria.addNotEqualTo(KRADPropertyConstants.DOCUMENT_NUMBER, documentNumber);
         }
         criteria.addSql(getDbPlatform().applyLimitSql(1));
         
-        QueryByCriteria query = QueryFactory.newQuery(MaintenanceLock.class, criteria);
-        MaintenanceLock maintenanceLock = (MaintenanceLock) getPersistenceBrokerTemplate().getObjectByQuery(query);
-        String lockingDocumentId = ObjectUtils.isNotNull(maintenanceLock) ? maintenanceLock.getDocumentNumber() : null;
+        final QueryByCriteria query = QueryFactory.newQuery(MaintenanceLock.class, criteria);
+        final MaintenanceLock maintenanceLock = (MaintenanceLock) getPersistenceBrokerTemplate().getObjectByQuery(query);
+        final String lockingDocumentId = ObjectUtils.isNotNull(maintenanceLock) ? maintenanceLock.getDocumentNumber() : null;
         
         LOG.debug("getAnyLockingDocumentNumber, {}",
                 () -> StringUtils.isNotBlank(lockingDocumentId)

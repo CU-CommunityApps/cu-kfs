@@ -10,8 +10,8 @@ import org.kuali.kfs.krad.dao.impl.AttachmentDaoOjb;
 public class CuAttachmentDaoOjb extends AttachmentDaoOjb implements CuAttachmentDao {
 
     @Override
-    public Attachment getAttachmentByAttachmentId(String attachmentIdentifier) {
-        Criteria crit = new Criteria();
+    public Attachment getAttachmentByAttachmentId(final String attachmentIdentifier) {
+        final Criteria crit = new Criteria();
         crit.addEqualTo(CUKRADPropertyConstants.ATTACHMENT_IDENTIFIER, attachmentIdentifier);
         return (Attachment) this.getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(Attachment.class, crit));
     }
