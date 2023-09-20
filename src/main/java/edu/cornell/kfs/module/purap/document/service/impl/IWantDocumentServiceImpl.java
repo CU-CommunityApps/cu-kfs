@@ -109,12 +109,12 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     
         EntityAddress foundAddress = getPersonEntityAddress(principalName);
 
-        String addressLine1 = foundAddress.getLine1Unmasked();
-        String addressLine2 = foundAddress.getLine2Unmasked();
-        String city = foundAddress.getCityUnmasked();
-        String stateCode = foundAddress.getStateProvinceCodeUnmasked();
-        String postalCode = foundAddress.getPostalCodeUnmasked();
-        String countryCode = foundAddress.getCountryCodeUnmasked();
+        String addressLine1 = StringUtils.trimToEmpty(foundAddress.getLine1Unmasked());
+        String addressLine2 = StringUtils.trimToEmpty(foundAddress.getLine2Unmasked());
+        String city = StringUtils.trimToEmpty(foundAddress.getCityUnmasked());
+        String stateCode = StringUtils.trimToEmpty(foundAddress.getStateProvinceCodeUnmasked());
+        String postalCode = StringUtils.trimToEmpty(foundAddress.getPostalCodeUnmasked());
+        String countryCode = StringUtils.trimToEmpty(foundAddress.getCountryCodeUnmasked());
 
         String initiatorAddress = new StringBuilder(100).append(addressLine1).append(KRADConstants.NEWLINE).append(
                 addressLine2).append(KRADConstants.NEWLINE).append(
