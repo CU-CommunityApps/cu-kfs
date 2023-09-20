@@ -356,7 +356,8 @@
                 <kul:htmlControlAttribute
                         attributeEntry="${DataDictionary.IWantDocument.attributes.totalDollarAmount}"
                         property="document.accountingLinesTotal"
-                        readOnly="true"/>
+                        readOnly="true"
+                        readOnlyAlternateDisplay="${KualiForm.document.accountingLinesTotal}"/>
             </td>
             <td class="datacell">&nbsp;</td>
         </tr>
@@ -368,7 +369,8 @@
                 <kul:htmlControlAttribute
                         attributeEntry="${DataDictionary.IWantDocument.attributes.itemAndAccountDifference}"
                         property="document.itemAndAccountDifference"
-                        readOnly="true"/>
+                        readOnly="true"
+                        readOnlyAlternateDisplay="${KualiForm.document.itemAndAccountDifference}"/>
             </td>
             <td class="datacell">&nbsp;</td>
         </tr>

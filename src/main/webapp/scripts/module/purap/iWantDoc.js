@@ -97,7 +97,7 @@ function loadRequestorInfo(sameAsInitiatorFieldName, requestorNetIDFieldName, re
 						setRecipientValue( requestorPhoneNbrFieldName, data.phoneNumber );
 						setRecipientValue( requestorEmailFieldName, data.emailAddress );
 
-						//setRecipientValue( requestorAddressFieldName, data.campusAddress );
+						setRecipientValue( requestorAddressFieldName, data.campusAddress );
 
 					} else {
 
@@ -158,7 +158,7 @@ function loadAccountName(accountNumberFieldName, chartFieldName, accountNameFiel
  }
 
 function updateAccountsTotal(totalDollarAmountFieldName, totalAccountsField, itemsNbr, lineNbr) {
-	var itemsTotal = dwr.util.getValue(totalDollarAmountFieldName);
+	var itemsTotal = getElementValue(totalDollarAmountFieldName);
 
 	var useAmountsOrPercents = new Array();
 	var accountAmountsOrPercents = new Array();
