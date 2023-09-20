@@ -13,7 +13,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 public class CuRoleLookupableHelperServiceImpl extends RoleLookupableHelperServiceImpl {
 
     @Override
-    public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
+    public List<? extends BusinessObject> getSearchResults(final Map<String, String> fieldValues) {
         fieldValues.remove(KRADConstants.REFERENCES_TO_REFRESH);
         return super.getSearchResults(fieldValues);
     }

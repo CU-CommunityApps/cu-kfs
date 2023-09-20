@@ -23,16 +23,16 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
      * and to create a copy of the RoleBo's members list (to prevent potential member auto-deletion).
      */
     @Override
-    public void setMembersInDocument(IdentityManagementRoleDocument identityManagementRoleDocument) {
-        Map<String, String> criteria = new HashMap<>();
+    public void setMembersInDocument(final IdentityManagementRoleDocument identityManagementRoleDocument) {
+        final Map<String, String> criteria = new HashMap<>();
         criteria.put(KimConstants.PrimaryKeyConstants.ROLE_ID, identityManagementRoleDocument.getRoleId());
-        Role roleBo = businessObjectService.findByPrimaryKey(Role.class, criteria);
+        final Role roleBo = businessObjectService.findByPrimaryKey(Role.class, criteria);
         if (ObjectUtils.isNotNull(roleBo)) {
-            List<RoleMember> members = new ArrayList<>(roleBo.getMembers());
-            List<RoleMember> membersToRemove = new ArrayList<>();
+            final List<RoleMember> members = new ArrayList<>(roleBo.getMembers());
+            final List<RoleMember> membersToRemove = new ArrayList<>();
             boolean found = false;
-            for (KimDocumentRoleMember modifiedMember : identityManagementRoleDocument.getModifiedMembers()) {
-                for (RoleMember member : members) {
+            for (final KimDocumentRoleMember modifiedMember : identityManagementRoleDocument.getModifiedMembers()) {
+                for (final RoleMember member : members) {
                     if (modifiedMember.getRoleMemberId().equals(member.getId())) {
                         membersToRemove.add(member);
                         found = true;
@@ -42,7 +42,7 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
                     }
                 }
             }
-            for (RoleMember memberToRemove : membersToRemove) {
+            for (final RoleMember memberToRemove : membersToRemove) {
                 members.remove(memberToRemove);
             }
     

@@ -23,23 +23,25 @@ public class CuDocumentRouteHeaderDAOOjbImpl extends DocumentRouteHeaderDAOOjbIm
         implements CuDocumentRouteHeaderDAO {
 
     @Override
-    public Map<String, Timestamp> getFinalizedDatesForDocumentType(String documentTypeName, Timestamp startDate,
-            Timestamp endDate) {
-        Criteria subCriteria = new Criteria();
+    public Map<String, Timestamp> getFinalizedDatesForDocumentType(
+            final String documentTypeName, 
+            final Timestamp startDate,
+            final Timestamp endDate) {
+        final Criteria subCriteria = new Criteria();
         subCriteria.addEqualTo(KRADPropertyConstants.NAME, documentTypeName);
-        ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(DocumentType.class, subCriteria);
+        final ReportQueryByCriteria subQuery = QueryFactory.newReportQuery(DocumentType.class, subCriteria);
         subQuery.setAttributes(new String[] {KFSPropertyConstants.DOCUMENT_TYPE_ID});
         subQuery.setJdbcTypes(new int[] {Types.VARCHAR});
         
-        Criteria mainCriteria = new Criteria();
+        final Criteria mainCriteria = new Criteria();
         mainCriteria.addIn(KFSPropertyConstants.DOCUMENT_TYPE_ID, subQuery);
         mainCriteria.addBetween(CUKFSPropertyConstants.FINALIZED_DATE, startDate, endDate);
-        ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(DocumentRouteHeaderValue.class, mainCriteria);
+        final ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(DocumentRouteHeaderValue.class, mainCriteria);
         reportQuery.setAttributes(
                 new String[] {CUKFSPropertyConstants.DOCUMENT_ID, CUKFSPropertyConstants.FINALIZED_DATE});
         reportQuery.setJdbcTypes(new int[] {Types.VARCHAR, Types.TIMESTAMP});
         
-        Iterator<?> resultsIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);
+        final Iterator<?> resultsIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);
         return CuOjbUtils.buildStreamForReportQueryResults(resultsIterator).collect(
                 Collectors.toUnmodifiableMap(fieldArray -> (String) fieldArray[0], fieldArray -> (Timestamp) fieldArray[1]));
     }
