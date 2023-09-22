@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -168,6 +169,11 @@ public class Iso20022FormatExtractor {
      */
 
     private static final int VENDOR_NUM_MAX_LENGTH = 20;
+
+    /*
+     * CU Customization: Added a helper regex for replacing newlines.
+     */
+    private static final Pattern NEWLINE_PATTERN = Pattern.compile("(\\r\\n|\\r|\\n)");
 
     private final AchService achService;
     private final AchBankService achBankService;
@@ -1527,6 +1533,8 @@ public class Iso20022FormatExtractor {
      * if the PaymentDetail does not refer to a Disbursement Voucher.
      * 
      * Also updated the method to derive the max check stub length from a helper service instead of a constant.
+     * 
+     * Also updated the method to replace newlines in the check stub with spaces.
      */
     private void addCheckStubText(
             final PaymentDetail paymentDetail,
@@ -1542,8 +1550,9 @@ public class Iso20022FormatExtractor {
         }
 
         // DVs created in the UI will have checkStubText; DVs imported via Payment File Upload will not
-        final String cleanedCheckStubText =
+        String cleanedCheckStubText =
                 xmlUtilService.filterOutIllegalXmlCharacters(checkStubText);
+        cleanedCheckStubText = NEWLINE_PATTERN.matcher(cleanedCheckStubText).replaceAll(KFSConstants.BLANK_SPACE);
         if (StringUtils.isBlank(cleanedCheckStubText)) {
             return;
         }
