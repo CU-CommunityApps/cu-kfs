@@ -224,7 +224,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                 PreparedStatement selectRawTransactionStatement = null;
                 PreparedStatement secondPassTransactionInsertStatement = null;
                 ResultSet rs = null;
-                ResultSet updatableRs = null;
+                ResultSet rawDataTableResultSet = null;
                 List<EnumMap<TaxStatType,Integer>> stats = new ArrayList<EnumMap<TaxStatType,Integer>>();
                 try {
                     TransactionRowBuilder<T> previousBuilder = null;
@@ -250,28 +250,27 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                         // Let the builder iterate over the results and insert new transaction detail rows as needed.
                         builder.buildRawTransactionRows(rs, rawTransactionInsertStatement, summary);
                         
-                        // Close the result set, SELECT prepared statement and INSERT into first pass (raw) table to prepare for the second pass.
+                        // Close the result set and SELECT prepared statement to prepare for the second pass.
                         rs.close();
                         selectStatement.close();
                         
                         // Setup retrieval statement for second pass. SELECT needs to obtain data from first pass (raw) transaction details table
-                        selectRawTransactionStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(summary),
-                                ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+                        selectRawTransactionStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(summary), ResultSet.TYPE_FORWARD_ONLY);
                         setParameters(selectRawTransactionStatement, builder.getParameterValuesForSelectingCreatedRows(summary));
                         
-                        // Get the updatable results from the first pass table.
-                        updatableRs = selectRawTransactionStatement.executeQuery();
+                        // Get the query results from the first pass table.
+                        rawDataTableResultSet = selectRawTransactionStatement.executeQuery();
                         
                         // Let the builder iterate over the raw detail transaction rows from the first pass table 
                         // updating specific attributes as needed then inserting those rows into the second pass 
                         // table OR logging the keys of the raw data row if it should not be used.
-                        builder.updateTransactionRowsFromWorkflowDocuments(updatableRs, secondPassTransactionInsertStatement, summary);
+                        builder.updateTransactionRowsFromWorkflowDocuments(rawDataTableResultSet, secondPassTransactionInsertStatement, summary);
                         
                         // Get the statistics collected by the builder.
                         stats.add(builder.getStatistics());
                         
                         // Close the result set and SELECT prepared statement to prepare for any future iterations.
-                        updatableRs.close();
+                        rawDataTableResultSet.close();
                         selectRawTransactionStatement.close();
                         
                         LOG.info("Finished creation of transaction rows from the following tax source: " + builder.getTaxSourceName());
@@ -295,9 +294,9 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                             LOG.error("Could not close tax data first pass ResultSet.");
                         }
                     }
-                    if (updatableRs != null) {
+                    if (rawDataTableResultSet != null) {
                         try {
-                            updatableRs.close();
+                            rawDataTableResultSet.close();
                         } catch (SQLException e) {
                             LOG.error("Could not close tax data second pass updatable ResultSet.");
                         }
@@ -363,8 +362,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                     String[] tempValues;
                     
                     // Prepare the selection SQL.
-                    selectStatement = con.prepareStatement(processor.getSqlForSelect(summary),
-                            ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+                    selectStatement = con.prepareStatement(processor.getSqlForSelect(summary), ResultSet.TYPE_FORWARD_ONLY);
                     setParameters(selectStatement, processor.getParameterValuesForSelect(summary));
                     
                     // Prepare any other statements needed by the tax processing.

@@ -418,7 +418,7 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.info("Final transaction detail insertion query: {}", insertSql.toString());
+            LOG.debug("Final transaction detail insertion query: {}", insertSql.toString());
         }
         return insertSql.toString();
     }
@@ -435,7 +435,7 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.info("Final transaction detail insertion query: {}", insertSql.toString());
+            LOG.debug("Final transaction detail insertion query: {}", insertSql.toString());
         }
         return insertSql.toString();
     }
@@ -470,7 +470,7 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.info("getTransactionDetailDeleteSql: Final transaction detail deletion query: {}", deleteSql.toString());
+            LOG.debug("getTransactionDetailDeleteSql: Final transaction detail deletion query: {}", deleteSql.toString());
         }
         return deleteSql.toString();
     }
@@ -497,7 +497,7 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.info("getRawTransactionDetailDeleteSql: Final transaction detail deletion query: {}", deleteSql.toString());
+            LOG.debug("getRawTransactionDetailDeleteSql: Final transaction detail deletion query: {}", deleteSql.toString());
         }
         return deleteSql.toString();
     }
@@ -567,7 +567,7 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.info("getRawTransactionDetailSelectSql: Final transaction detail selection query: {}", selectSql.toString());
+            LOG.debug("getRawTransactionDetailSelectSql: Final transaction detail selection query: {}", selectSql.toString());
         }
         return selectSql.toString();
     }

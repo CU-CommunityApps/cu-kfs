@@ -472,12 +472,13 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                         updatedAttributeValues.putSqlDateAttributeForUpdating(rawDetailRow.paymentDate.index, dateFinalized);
                     }
                     
-                    // Update the transaction row.
+                    // Insert updated first pass raw data into second pass transaction row table.
                     LOG.info("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: Inserting updated second pass data for "
                             + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                     insertUpdatedTransactionDetail(rs, secondPassTransactionInsertStatement, summary, updatedAttributeValues);
                 } else {
-                    // If a Foreign Draft or Wire Transfer that wasn't finalized or was in the wrong reporting period, then delete the row.
+                    // If a Foreign Draft or Wire Transfer that wasn't finalized or was in the wrong reporting period,
+                    // then log the raw transaction data row was not inserted into the second pass table.
                     LOG.info("TransactionRowDvBuilder:: updateTransactionRowsFromWorkflowDocuments: NO data inserted for "
                             + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                 }
