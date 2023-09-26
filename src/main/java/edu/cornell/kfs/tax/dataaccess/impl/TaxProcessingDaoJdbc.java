@@ -207,7 +207,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
 
     /*
      * Helper method for retrieving the tax data from the various sources (DV, PDP, etc.)
-     * and placing it in new transaction detail table rows. Returns a list of EnumMaps
+     * and placing it in new raw transaction detail table rows. Returns a list of EnumMaps
      * containing numeric statistics pertaining to the various tax data sources.
      * NOTE: Each builder class must have a default constructor!
      */
@@ -337,9 +337,9 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
 
 
     /*
-     * Helper method that retrieves the generated transaction detail rows and uses them
-     * to print tax rows to the output file(s) accordingly. Returns an EnumMap containing
-     * numeric statistics pertaining to the transaction row processing.
+     * Helper method that retrieves the generated transaction detail rows from the second pass table
+     * TX_TRANSACTION_DETAIL_T and uses them to print tax rows to the output file(s) accordingly. 
+     * Returns an EnumMap containing numeric statistics pertaining to the transaction row processing.
      */
     private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processTransactionRows(final java.util.Date processingStartDate,
             final T summary, final Class<? extends TransactionRowProcessor<T>> processorClazz, final TaxOutputDefinition outputDefinition) {
@@ -361,8 +361,10 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                 try {
                     String[] tempValues;
                     
-                    // Prepare the selection SQL.
-                    selectStatement = con.prepareStatement(processor.getSqlForSelect(summary), ResultSet.TYPE_FORWARD_ONLY);
+                    // Prepare the second pass table selection SQL. Connection needs to be updatable due to the 
+                    // TransactionRowXXXXProcessor classes performing updates to some of the rows based upon 
+                    // processing logic encountered in those classes.
+                    selectStatement = con.prepareStatement(processor.getSqlForSelect(summary), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
                     setParameters(selectStatement, processor.getParameterValuesForSelect(summary));
                     
                     // Prepare any other statements needed by the tax processing.
