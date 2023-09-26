@@ -445,13 +445,13 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                     // If vendor tax number is blank, then replace with a generated value accordingly.
                     if (StringUtils.isBlank(vendorTaxNumber)) {
                         vendorTaxNumber = getReplacementVendorTaxNumber(rs.getString(rawDetailRow.payeeId.index), summary);
-                        updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.vendorTaxNumber.index, vendorTaxNumber);
+                        updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.vendorTaxNumber.index, vendorTaxNumber);
                     }
                     
                     // Remove unprintable characters from the check stub text if necessary.
                     if (checkStubMatcher.find()) {
                         checkStubText = checkStubMatcher.replaceAll(KFSConstants.EMPTY_STRING);
-                        updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.dvCheckStubText.index, checkStubText);
+                        updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.dvCheckStubText.index, checkStubText);
                         numDvCheckStubTextsAltered++;
                     } else {
                         numDvCheckStubTextsNotAltered++;
@@ -462,14 +462,14 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                     
                     // Update other fields as needed.
                     if (StringUtils.isBlank(documentId)) {
-                        updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.documentNumber.index, CUTaxConstants.DOC_ID_ZERO);
+                        updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.documentNumber.index, CUTaxConstants.DOC_ID_ZERO);
                     }
-                    updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.documentTitle.index,
+                    updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.documentTitle.index,
                             (document != null && StringUtils.isNotBlank(document.getTitle())) ? document.getTitle() : CUTaxConstants.DOC_TITLE_IF_NOT_FOUND);
-                    updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.initiatorNetId.index,
+                    updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.initiatorNetId.index,
                             StringUtils.isNotBlank(initiatorPrincipalName) ? initiatorPrincipalName : CUTaxConstants.NETID_IF_NOT_FOUND);
                     if (useDateFinalized) {
-                        updatedAttributeValues.putSqlDateAttributeForUpdating(rawDetailRow.paymentDate.index, dateFinalized);
+                        updatedAttributeValues.putSqlDateAttributeForUpdating(summary.transactionDetailRow.paymentDate.index, dateFinalized);
                     }
                     
                     // Insert updated first pass raw data into second pass transaction row table.

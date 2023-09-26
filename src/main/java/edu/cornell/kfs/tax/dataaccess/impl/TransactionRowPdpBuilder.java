@@ -329,7 +329,7 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                 // If vendor tax number is blank, then replace with a generated value accordingly.
                 if (StringUtils.isBlank(vendorTaxNumber)) {
                     vendorTaxNumber = getReplacementVendorTaxNumber(rs.getString(rawDetailRow.payeeId.index), summary);
-                    updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.vendorTaxNumber.index, vendorTaxNumber);
+                    updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.vendorTaxNumber.index, vendorTaxNumber);
                 }
                 
                 // Do tax-type-specific updates.
@@ -337,11 +337,11 @@ abstract class TransactionRowPdpBuilder<T extends TransactionDetailSummary> exte
                 
                 // Update other fields as needed.
                 if (StringUtils.isBlank(documentId)) {
-                    updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.documentNumber.index, CUTaxConstants.DOC_ID_ZERO);
+                    updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.documentNumber.index, CUTaxConstants.DOC_ID_ZERO);
                 }
-                updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.documentTitle.index, 
+                updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.documentTitle.index, 
                         (document != null && StringUtils.isNotBlank(document.getTitle())) ? document.getTitle() : CUTaxConstants.DOC_TITLE_IF_NOT_FOUND);
-                updatedAttributeValues.putStringAttributeForUpdating(rawDetailRow.initiatorNetId.index,
+                updatedAttributeValues.putStringAttributeForUpdating(summary.transactionDetailRow.initiatorNetId.index,
                         StringUtils.isNotBlank(initiatorPrincipalName) ? initiatorPrincipalName : CUTaxConstants.NETID_IF_NOT_FOUND);
                 
                 // Update the current row.
