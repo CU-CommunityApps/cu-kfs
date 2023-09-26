@@ -311,7 +311,6 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
                 if (processCurrentRow) {
                     // Finish initialization
                     SecondPassAttributeUpdateValues updatedAttributeValues = new SecondPassAttributeUpdateValues();
-                    //updatedAttributeValues = new HashMap<Integer, String>();
                     vendorTaxNumber = rs.getString(rawDetailRow.vendorTaxNumber.index);
           
                     // Check for null objects as needed, and get the initiator's principal name.
