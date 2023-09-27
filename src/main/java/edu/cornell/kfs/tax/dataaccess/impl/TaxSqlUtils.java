@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.DocumentNoteRow;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.RawTransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TaxSourceRowWithVendorData;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.VendorAddressRow;
@@ -417,7 +418,24 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Final transaction detail insertion query: " + insertSql.toString());
+            LOG.debug("Final transaction detail insertion query: {}", insertSql.toString());
+        }
+        return insertSql.toString();
+    }
+
+    static String getRawTransactionDetailInsertSql(RawTransactionDetailRow rawDetailRow) {
+        StringBuilder insertSql = new StringBuilder(SB_START_SIZE);
+        
+        // Build the query.
+        appendQueryWithoutColumnPrefixes(insertSql,
+                SqlText.INSERT_INTO, rawDetailRow.tables.get(0),
+                SqlText.PAREN_OPEN, rawDetailRow.orderedFields, SqlText.PAREN_CLOSE,
+                SqlText.VALUES, SqlText.PAREN_OPEN, "TX_RAW_TRANSACTION_DETAIL_S.NEXTVAL", SqlText.COMMA,
+                        Integer.valueOf(rawDetailRow.orderedFields.size() - rawDetailRow.insertOffset), SqlText.PAREN_CLOSE);
+        
+        // Log and return the query.
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Final transaction detail insertion query: {}", insertSql.toString());
         }
         return insertSql.toString();
     }
@@ -452,7 +470,34 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Final transaction detail deletion query: " + deleteSql.toString());
+            LOG.debug("getTransactionDetailDeleteSql: Final transaction detail deletion query: {}", deleteSql.toString());
+        }
+        return deleteSql.toString();
+    }
+
+    static String getRawTransactionDetailDeleteSql(String taxType, RawTransactionDetailRow rawDetailRow) {
+        TaxTableField extraField;
+        if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
+            extraField = rawDetailRow.form1099Box;
+        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
+            extraField = rawDetailRow.form1042SBox;
+        } else {
+            throw new IllegalArgumentException("Unrecognized tax type");
+        }
+        
+        StringBuilder deleteSql = new StringBuilder(SB_START_SIZE);
+        
+        // Build the deletion SQL.
+        appendQueryWithoutColumnPrefixes(deleteSql,
+                SqlText.DELETE_FROM, rawDetailRow.tables.get(0),
+                SqlText.WHERE,
+                        rawDetailRow.reportYear, SqlText.EQUALS, SqlText.PARAMETER,
+                SqlText.AND,
+                        extraField, SqlText.IS_NOT_NULL);
+        
+        // Log and return the query.
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getRawTransactionDetailDeleteSql: Final transaction detail deletion query: {}", deleteSql.toString());
         }
         return deleteSql.toString();
     }
@@ -495,7 +540,34 @@ final class TaxSqlUtils {
         
         // Log and return the query.
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Final transaction detail selection query: " + selectSql.toString());
+            LOG.debug("getTransactionDetailSelectSql: Final transaction detail selection query: {}", selectSql.toString());
+        }
+        return selectSql.toString();
+    }
+    
+    static String getRawTransactionDetailSelectSql(TaxTableField extraField, RawTransactionDetailRow firstPassDetailRow, boolean equals, boolean forProcessingPhase) {
+        if (extraField == null) {
+            throw new IllegalArgumentException("extraField cannot be null");
+        }
+        StringBuilder selectSql = new StringBuilder(SB_START_SIZE);
+        
+        // Build the query.
+        appendQuery(selectSql,
+                SqlText.SELECT, firstPassDetailRow.orderedFields, SqlText.FROM, firstPassDetailRow.tables,
+                SqlText.WHERE,
+                firstPassDetailRow.reportYear, SqlText.EQUALS, SqlText.PARAMETER,
+                SqlText.AND,
+                        extraField, equals ? SqlText.EQUALS : SqlText.NOT_EQUAL, SqlText.PARAMETER,
+                SqlText.ORDER_BY, new Object[][]
+                {
+                    {forProcessingPhase ? firstPassDetailRow.vendorTaxNumber : firstPassDetailRow.documentNumber, forProcessingPhase ? SqlText.ASC : SqlText.ASC_NULLS_FIRST},
+                    {firstPassDetailRow.incomeCode},
+                    {firstPassDetailRow.incomeCodeSubType}
+                });
+        
+        // Log and return the query.
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("getRawTransactionDetailSelectSql: Final transaction detail selection query: {}", selectSql.toString());
         }
         return selectSql.toString();
     }

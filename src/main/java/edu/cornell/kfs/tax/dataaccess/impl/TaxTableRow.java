@@ -15,6 +15,7 @@ import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonPdpSourceFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonVendorAddressFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.CommonVendorFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.DerivedFieldNames;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.RawTransactionDetailFieldNames;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TransactionDetailFieldNames;
 
 /**
@@ -482,6 +483,134 @@ abstract class TaxTableRow {
             this.noteIdentifier = getAliasedField(CommonDocumentNoteFieldNames.NOTE_ID);
             this.remoteObjectIdentifier = getAliasedField(CommonDocumentNoteFieldNames.REMOTE_OBJECT_ID);
             this.noteText = getAliasedField(CommonDocumentNoteFieldNames.NOTE_TEXT);
+        }
+    }
+
+
+
+    static final class RawTransactionDetailRow extends TaxTableRow {
+        // Fields from TX_RAW_TRANSACTION_DETAIL_T (RawTransactionDetail)
+        final TaxTableField transactionDetailId;
+        final TaxTableField reportYear;
+        final TaxTableField documentNumber;
+        final TaxTableField documentType;
+        final TaxTableField financialDocumentLineNumber;
+        final TaxTableField finObjectCode;
+        final TaxTableField netPaymentAmount;
+        final TaxTableField documentTitle;
+        final TaxTableField vendorTaxNumber;
+        final TaxTableField incomeCode;
+        final TaxTableField incomeCodeSubType;
+        final TaxTableField dvCheckStubText;
+        final TaxTableField payeeId;
+        final TaxTableField vendorName;
+        final TaxTableField parentVendorName;
+        final TaxTableField vendorTypeCode;
+        final TaxTableField vendorOwnershipCode;
+        final TaxTableField vendorOwnershipCategoryCode;
+        final TaxTableField vendorForeignIndicator;
+        final TaxTableField vendorEmailAddress;
+        final TaxTableField vendorChapter4StatusCode;
+        final TaxTableField vendorGIIN;
+        final TaxTableField vendorLine1Address;
+        final TaxTableField vendorLine2Address;
+        final TaxTableField vendorCityName;
+        final TaxTableField vendorStateCode;
+        final TaxTableField vendorZipCode;
+        final TaxTableField vendorForeignLine1Address;
+        final TaxTableField vendorForeignLine2Address;
+        final TaxTableField vendorForeignCityName;
+        final TaxTableField vendorForeignZipCode;
+        final TaxTableField vendorForeignProvinceName;
+        final TaxTableField vendorForeignCountryCode;
+        final TaxTableField nraPaymentIndicator;
+        final TaxTableField paymentDate;
+        final TaxTableField paymentPayeeName;
+        final TaxTableField incomeClassCode;
+        final TaxTableField incomeTaxTreatyExemptIndicator;
+        final TaxTableField foreignSourceIncomeIndicator;
+        final TaxTableField federalIncomeTaxPercent;
+        final TaxTableField paymentDescription;
+        final TaxTableField paymentLine1Address;
+        final TaxTableField paymentCountryName;
+        final TaxTableField chartCode;
+        final TaxTableField accountNumber;
+        final TaxTableField initiatorNetId;
+        final TaxTableField form1099Type;
+        final TaxTableField form1099Box;
+        final TaxTableField form1099OverriddenType;
+        final TaxTableField form1099OverriddenBox;
+        final TaxTableField form1042SBox;
+        final TaxTableField form1042SOverriddenBox;
+        final TaxTableField paymentReasonCode;
+        
+        final TaxTableField disbursementNbr;
+        final TaxTableField paymentStatusCode;
+        final TaxTableField disbursementTypeCode;
+        final TaxTableField ledgerDocumentTypeCode;
+
+        RawTransactionDetailRow(String rowId, Map<String,TaxTableField> fields, List<String> tables, Map<String,TaxTableField> aliasedFields,
+                Integer insertOffset) {
+            super(rowId, fields, tables, aliasedFields, insertOffset);
+            
+            this.transactionDetailId = getAliasedField(RawTransactionDetailFieldNames.TRANSACTION_DETAIL_ID);
+            this.reportYear = getAliasedField(RawTransactionDetailFieldNames.REPORT_YEAR);
+            this.documentNumber = getAliasedField(RawTransactionDetailFieldNames.DOCUMENT_NUMBER);
+            this.documentType = getAliasedField(RawTransactionDetailFieldNames.DOCUMENT_TYPE);
+            this.financialDocumentLineNumber = getAliasedField(RawTransactionDetailFieldNames.FINANCIAL_DOCUMENT_LINE_NUMBER);
+            this.finObjectCode = getAliasedField(RawTransactionDetailFieldNames.FIN_OBJECT_CODE);
+            this.netPaymentAmount = getAliasedField(RawTransactionDetailFieldNames.NET_PAYMENT_AMOUNT);
+            this.documentTitle = getAliasedField(RawTransactionDetailFieldNames.DOCUMENT_TITLE);
+            this.vendorTaxNumber = getAliasedField(RawTransactionDetailFieldNames.VENDOR_TAX_NUMBER);
+            this.incomeCode = getAliasedField(RawTransactionDetailFieldNames.INCOME_CODE);
+            this.incomeCodeSubType = getAliasedField(RawTransactionDetailFieldNames.INCOME_CODE_SUB_TYPE);
+            this.dvCheckStubText = getAliasedField(RawTransactionDetailFieldNames.DV_CHECK_STUB_TEXT);
+            this.payeeId = getAliasedField(RawTransactionDetailFieldNames.PAYEE_ID);
+            this.vendorName = getAliasedField(RawTransactionDetailFieldNames.VENDOR_NAME);
+            this.parentVendorName = getAliasedField(RawTransactionDetailFieldNames.PARENT_VENDOR_NAME);
+            this.vendorTypeCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_TYPE_CODE);
+            this.vendorOwnershipCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_OWNERSHIP_CODE);
+            this.vendorOwnershipCategoryCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_OWNERSHIP_CATEGORY_CODE);
+            this.vendorForeignIndicator = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_INDICATOR);
+            this.vendorEmailAddress = getAliasedField(RawTransactionDetailFieldNames.VENDOR_EMAIL_ADDRESS);
+            this.vendorChapter4StatusCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_CHAPTER4_STATUS_CODE);
+            this.vendorGIIN = getAliasedField(RawTransactionDetailFieldNames.VENDOR_GIIN);
+            this.vendorLine1Address = getAliasedField(RawTransactionDetailFieldNames.VENDOR_LINE1_ADDRESS);
+            this.vendorLine2Address = getAliasedField(RawTransactionDetailFieldNames.VENDOR_LINE2_ADDRESS);
+            this.vendorCityName = getAliasedField(RawTransactionDetailFieldNames.VENDOR_CITY_NAME);
+            this.vendorStateCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_STATE_CODE);
+            this.vendorZipCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_ZIP_CODE);
+            this.vendorForeignLine1Address = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_LINE1_ADDRESS);
+            this.vendorForeignLine2Address = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_LINE2_ADDRESS);
+            this.vendorForeignCityName = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_CITY_NAME);
+            this.vendorForeignZipCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_ZIP_CODE);
+            this.vendorForeignProvinceName = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_PROVINCE_NAME);
+            this.vendorForeignCountryCode = getAliasedField(RawTransactionDetailFieldNames.VENDOR_FOREIGN_COUNTRY_CODE);
+            this.nraPaymentIndicator = getAliasedField(RawTransactionDetailFieldNames.NRA_PAYMENT_INDICATOR);
+            this.paymentDate = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_DATE);
+            this.paymentPayeeName = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_PAYEE_NAME);
+            this.incomeClassCode = getAliasedField(RawTransactionDetailFieldNames.INCOME_CLASS_CODE);
+            this.incomeTaxTreatyExemptIndicator = getAliasedField(RawTransactionDetailFieldNames.INCOME_TAX_TREATY_EXEMPT_INDICATOR);
+            this.foreignSourceIncomeIndicator = getAliasedField(RawTransactionDetailFieldNames.FOREIGN_SOURCE_INCOME_INDICATOR);
+            this.federalIncomeTaxPercent = getAliasedField(RawTransactionDetailFieldNames.FEDERAL_INCOME_TAX_PERCENT);
+            this.paymentDescription = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_DESCRIPTION);
+            this.paymentLine1Address = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_LINE1_ADDRESS);
+            this.paymentCountryName = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_COUNTRY_NAME);
+            this.chartCode = getAliasedField(RawTransactionDetailFieldNames.CHART_CODE);
+            this.accountNumber = getAliasedField(RawTransactionDetailFieldNames.ACCOUNT_NUMBER);
+            this.initiatorNetId = getAliasedField(RawTransactionDetailFieldNames.INITIATOR_NETID);
+            this.form1099Type = getAliasedField(RawTransactionDetailFieldNames.FORM_1099_TYPE);
+            this.form1099Box = getAliasedField(RawTransactionDetailFieldNames.FORM_1099_BOX);
+            this.form1099OverriddenType = getAliasedField(RawTransactionDetailFieldNames.FORM_1099_OVERRIDDEN_TYPE);
+            this.form1099OverriddenBox = getAliasedField(RawTransactionDetailFieldNames.FORM_1099_OVERRIDDEN_BOX);
+            this.form1042SBox = getAliasedField(RawTransactionDetailFieldNames.FORM_1042S_BOX);
+            this.form1042SOverriddenBox = getAliasedField(RawTransactionDetailFieldNames.FORM_1042S_OVERRIDDEN_BOX);
+            this.paymentReasonCode = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_REASON_CODE);
+
+            this.disbursementNbr = getAliasedField(RawTransactionDetailFieldNames.DISBURSEMENT_NUMBER);
+            this.paymentStatusCode = getAliasedField(RawTransactionDetailFieldNames.PAYMENT_STATUS_CODE);
+            this.disbursementTypeCode = getAliasedField(RawTransactionDetailFieldNames.DISBURSEMENT_TYPE_CODE);
+            this.ledgerDocumentTypeCode = getAliasedField(RawTransactionDetailFieldNames.LEDGER_DOCUMENT_TYPE_CODE);
         }
     }
 
