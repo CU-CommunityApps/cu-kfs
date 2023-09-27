@@ -43,7 +43,9 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.businessobject.SecondPassAttributeUpdateValues;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.RawTransactionDetailRow;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxTableRow.TransactionDetailRow;
 
 /**
@@ -147,7 +149,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
 
 
     /**
-     * Gets the SQL for retrieving the transaction rows built by the buildTransactionRows() method.
+     * Gets the SQL for retrieving the first pass transaction rows built by the buildRawTransactionRows() method.
      * 
      * @param summary The object encapsulating the tax-type-specific summary info.
      * @return A String representing the tax source retrieval SQL.
@@ -168,18 +170,19 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
 
 
     /**
-     * Creates transaction rows from the given source.
+     * Creates first pass (raw) transaction rows from the given source.
      * 
      * @param rs The ResultSet containing the tax source data; can only move forwards and is read-only.
-     * @param insertStatement The PreparedStatement to use for inserting new transaction rows.
+     * @param insertStatement The PreparedStatement to use for inserting new transaction rows into table TX_RAW_TRANSACTION_DETAIL_T.
      * @param summary The object encapsulating the tax-type-specific summary info.
      * @throws SQLException
      */
-    abstract void buildTransactionRows(ResultSet rs, PreparedStatement insertStatement, T summary) throws SQLException;
+    abstract void buildRawTransactionRows(ResultSet rs, PreparedStatement insertStatement, T summary) throws SQLException;
+
 
     /**
      * Helper method for performing tax-type-specific setup in the transaction row creation process.
-     * This method is typically called by the buildTransactionRows() method at some point.
+     * This method is typically called by the buildRawTransactionRows() method at some point.
      * 
      * @param rs The ResultSet containing the tax source data; can only move forwards and is read-only.
      * @param insertStatement The PreparedStatement to use for inserting new transaction rows.
@@ -187,7 +190,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      * @param summary The object encapsulating the tax-type-specific summary info.
      * @throws SQLException
      */
-    abstract void doTaxSpecificRowSetup(ResultSet rs, PreparedStatement insertStatement, String financialObjectCode, T summary) throws SQLException;
+    abstract void doTaxSpecificFirstPassRowSetup(ResultSet rs, PreparedStatement insertStatement, String financialObjectCode, T summary) throws SQLException;
 
     /**
      * Helper method for performing tax-type-specific setup in the second pass of the transaction row creation process.
@@ -195,21 +198,26 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      * 
      * @param rs The ResultSet containing the generated transaction rows; can only move forwards, but is updatable.
      * @param summary The object encapsulating the tax-type-specific summary info.
+     * @param updateAttributeValues Attribute values that should be applied to the raw transaction detail row before 
+     *                              creating (inserting) transaction detail row due to second pass processing.
      * @throws SQLException
      */
-    abstract void doTaxSpecificSecondPassRowSetup(ResultSet rs, T summary) throws SQLException;
+    abstract void doTaxSpecificSecondPassRowSetup(ResultSet rs, T summary, SecondPassAttributeUpdateValues updateAttributeValues) throws SQLException;
 
 
 
     /**
-     * Performs another iteration over the transaction rows created by the buildTransactionRows() method,
+     * Performs another iteration over the transaction rows created by the buildRawTransactionRows() method,
      * to perform updates based on workflow-document-related data.
+     * This method will perform an insert of all fully processed transaction detail rows into the 
+     * final (second pass) table TX_TRANSACTION_DETAIL_T.
      * 
      * @param rs The ResultSet containing the transaction row data; can only move forwards, but is updatable.
+     * @param secondPassTransactionInsertStatement The PreparedStatement that will insert tranasaction details into table TX_TRANSACTION_DETAIL_T.
      * @param summary The object encapsulating the tax-type-specific summary info.
      * @throws SQLException
      */
-    abstract void updateTransactionRowsFromWorkflowDocuments(ResultSet rs, T summary) throws SQLException;
+    abstract void updateTransactionRowsFromWorkflowDocuments(ResultSet rs, PreparedStatement secondPassTransactionInsertStatement, T summary) throws SQLException;
 
 
 
@@ -275,24 +283,24 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      * @param offset The amount to subtract from the metadata indexes to get the actual insertion statement indexes.
      * @throws SQLException
      */
-    void insertNullsForTransactionRow(PreparedStatement insertStatement, TransactionDetailRow detailRow, int offset) throws SQLException {
-        insertStatement.setString(detailRow.vendorName.index - offset, null);
-        insertStatement.setString(detailRow.parentVendorName.index - offset, null);
-        insertStatement.setString(detailRow.vendorEmailAddress.index - offset, null);
-        insertStatement.setString(detailRow.vendorChapter4StatusCode.index - offset, null);
-        insertStatement.setString(detailRow.vendorGIIN.index - offset, null);
-        insertStatement.setString(detailRow.vendorLine1Address.index - offset, null);
-        insertStatement.setString(detailRow.vendorLine2Address.index - offset, null);
-        insertStatement.setString(detailRow.vendorCityName.index - offset, null);
-        insertStatement.setString(detailRow.vendorStateCode.index - offset, null);
-        insertStatement.setString(detailRow.vendorZipCode.index - offset, null);
-        insertStatement.setString(detailRow.vendorForeignLine1Address.index - offset, null);
-        insertStatement.setString(detailRow.vendorForeignLine2Address.index - offset, null);
-        insertStatement.setString(detailRow.vendorForeignCityName.index - offset, null);
-        insertStatement.setString(detailRow.vendorForeignZipCode.index - offset, null);
-        insertStatement.setString(detailRow.vendorForeignProvinceName.index - offset, null);
-        insertStatement.setString(detailRow.vendorForeignCountryCode.index - offset, null);
-        insertStatement.setString(detailRow.initiatorNetId.index - offset, null);
+    void insertNullsForTransactionRow(PreparedStatement insertStatement, RawTransactionDetailRow rawDetailRow, int offset) throws SQLException {
+        insertStatement.setString(rawDetailRow.vendorName.index - offset, null);
+        insertStatement.setString(rawDetailRow.parentVendorName.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorEmailAddress.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorChapter4StatusCode.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorGIIN.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorLine1Address.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorLine2Address.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorCityName.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorStateCode.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorZipCode.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorForeignLine1Address.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorForeignLine2Address.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorForeignCityName.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorForeignZipCode.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorForeignProvinceName.index - offset, null);
+        insertStatement.setString(rawDetailRow.vendorForeignCountryCode.index - offset, null);
+        insertStatement.setString(rawDetailRow.initiatorNetId.index - offset, null);
     }
 
 
@@ -485,4 +493,106 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
     	return SpringContext.getBean(ParameterService.class);
     }
 
+    /**
+     * 
+     * @param rs RawTransactionDetail data row being processed by the second pass logic.
+     * @param secondPassInsertStatement Transaction detail insert statement requiring data assignments from the raw detail row.
+     * @param summary The object encapsulating the tax-type-specific summary info. 
+     * @throws SQLException
+     */
+    void initializeTransactionDetailFromRawTransactionDetail(ResultSet rs, PreparedStatement secondPassInsertStatement, T summary) throws SQLException {
+        RawTransactionDetailRow rawDetailRow = summary.rawTransactionDetailRow;
+        TransactionDetailRow detailRow = summary.transactionDetailRow;
+        int detailRowInsertOffset = detailRow.insertOffset;
+        
+        //transactionDetailId is generated by table sequence, not copied over
+        secondPassInsertStatement.setInt(detailRow.reportYear.index - detailRowInsertOffset, rs.getInt(rawDetailRow.reportYear.index));
+        secondPassInsertStatement.setString(detailRow.documentNumber.index - detailRowInsertOffset, rs.getString(rawDetailRow.documentNumber.index));
+        secondPassInsertStatement.setString(detailRow.documentType.index - detailRowInsertOffset, rs.getString(rawDetailRow.documentType.index));
+        secondPassInsertStatement.setInt(detailRow.financialDocumentLineNumber.index - detailRowInsertOffset, rs.getInt(rawDetailRow.financialDocumentLineNumber.index));
+        secondPassInsertStatement.setString(detailRow.finObjectCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.finObjectCode.index));
+        secondPassInsertStatement.setBigDecimal(detailRow.netPaymentAmount.index - detailRowInsertOffset, rs.getBigDecimal(rawDetailRow.netPaymentAmount.index));
+        secondPassInsertStatement.setString(detailRow.documentTitle.index - detailRowInsertOffset, rs.getString(rawDetailRow.documentTitle.index));
+        secondPassInsertStatement.setString(detailRow.vendorTaxNumber.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorTaxNumber.index));
+        secondPassInsertStatement.setString(detailRow.incomeCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.incomeCode.index));
+        secondPassInsertStatement.setString(detailRow.incomeCodeSubType.index - detailRowInsertOffset, rs.getString(rawDetailRow.incomeCodeSubType.index));
+        secondPassInsertStatement.setString(detailRow.dvCheckStubText.index - detailRowInsertOffset, rs.getString(rawDetailRow.dvCheckStubText.index));
+        secondPassInsertStatement.setString(detailRow.payeeId.index - detailRowInsertOffset, rs.getString(rawDetailRow.payeeId.index));
+        secondPassInsertStatement.setString(detailRow.vendorName.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorName.index));
+        secondPassInsertStatement.setString(detailRow.parentVendorName.index - detailRowInsertOffset, rs.getString(rawDetailRow.parentVendorName.index));
+        secondPassInsertStatement.setString(detailRow.vendorTypeCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorTypeCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorOwnershipCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorOwnershipCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorOwnershipCategoryCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorOwnershipCategoryCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignIndicator.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignIndicator.index));
+        secondPassInsertStatement.setString(detailRow.vendorEmailAddress.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorEmailAddress.index));
+        secondPassInsertStatement.setString(detailRow.vendorChapter4StatusCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorChapter4StatusCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorGIIN.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorGIIN.index));
+        secondPassInsertStatement.setString(detailRow.vendorLine1Address.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorLine1Address.index));
+        secondPassInsertStatement.setString(detailRow.vendorLine2Address.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorLine2Address.index));
+        secondPassInsertStatement.setString(detailRow.vendorCityName.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorCityName.index));
+        secondPassInsertStatement.setString(detailRow.vendorStateCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorStateCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorZipCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorZipCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignLine1Address.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignLine1Address.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignLine2Address.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignLine2Address.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignCityName.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignCityName.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignZipCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignZipCode.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignProvinceName.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignProvinceName.index));
+        secondPassInsertStatement.setString(detailRow.vendorForeignCountryCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.vendorForeignCountryCode.index));
+        secondPassInsertStatement.setString(detailRow.nraPaymentIndicator.index - detailRowInsertOffset, rs.getString(rawDetailRow.nraPaymentIndicator.index));
+        secondPassInsertStatement.setDate(detailRow.paymentDate.index - detailRowInsertOffset, rs.getDate(rawDetailRow.paymentDate.index));
+        secondPassInsertStatement.setString(detailRow.paymentPayeeName.index - detailRowInsertOffset, rs.getString(rawDetailRow.paymentPayeeName.index));
+        secondPassInsertStatement.setString(detailRow.incomeClassCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.incomeClassCode.index));
+        secondPassInsertStatement.setString(detailRow.incomeTaxTreatyExemptIndicator.index - detailRowInsertOffset, rs.getString(rawDetailRow.incomeTaxTreatyExemptIndicator.index));
+        secondPassInsertStatement.setString(detailRow.foreignSourceIncomeIndicator.index - detailRowInsertOffset, rs.getString(rawDetailRow.foreignSourceIncomeIndicator.index));
+        secondPassInsertStatement.setBigDecimal(detailRow.federalIncomeTaxPercent.index - detailRowInsertOffset, rs.getBigDecimal(rawDetailRow.federalIncomeTaxPercent.index));
+        secondPassInsertStatement.setString(detailRow.paymentDescription.index - detailRowInsertOffset, rs.getString(rawDetailRow.paymentDescription.index));
+        secondPassInsertStatement.setString(detailRow.paymentLine1Address.index - detailRowInsertOffset, rs.getString(rawDetailRow.paymentLine1Address.index));
+        secondPassInsertStatement.setString(detailRow.paymentCountryName.index - detailRowInsertOffset, rs.getString(rawDetailRow.paymentCountryName.index));
+        secondPassInsertStatement.setString(detailRow.chartCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.chartCode.index));
+        secondPassInsertStatement.setString(detailRow.accountNumber.index - detailRowInsertOffset, rs.getString(rawDetailRow.accountNumber.index));
+        secondPassInsertStatement.setString(detailRow.initiatorNetId.index - detailRowInsertOffset, rs.getString(rawDetailRow.initiatorNetId.index));
+        secondPassInsertStatement.setString(detailRow.form1099Type.index - detailRowInsertOffset, rs.getString(rawDetailRow.form1099Type.index));
+        secondPassInsertStatement.setString(detailRow.form1099Box.index - detailRowInsertOffset, rs.getString(rawDetailRow.form1099Box.index));
+        secondPassInsertStatement.setString(detailRow.form1099OverriddenType.index - detailRowInsertOffset, rs.getString(rawDetailRow.form1099OverriddenType.index));
+        secondPassInsertStatement.setString(detailRow.form1099OverriddenBox.index - detailRowInsertOffset, rs.getString(rawDetailRow.form1099OverriddenBox.index));
+        secondPassInsertStatement.setString(detailRow.form1042SBox.index - detailRowInsertOffset, rs.getString(rawDetailRow.form1042SBox.index));
+        secondPassInsertStatement.setString(detailRow.form1042SOverriddenBox.index - detailRowInsertOffset, rs.getString(rawDetailRow.form1042SOverriddenBox.index));
+        secondPassInsertStatement.setString(detailRow.paymentReasonCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.paymentReasonCode.index));
+        secondPassInsertStatement.setInt(detailRow.disbursementNbr.index - detailRowInsertOffset, rs.getInt(rawDetailRow.disbursementNbr.index));
+        secondPassInsertStatement.setString(detailRow.paymentStatusCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.paymentStatusCode.index));
+        secondPassInsertStatement.setString(detailRow.disbursementTypeCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.disbursementTypeCode.index));
+        secondPassInsertStatement.setString(detailRow.ledgerDocumentTypeCode.index - detailRowInsertOffset, rs.getString(rawDetailRow.ledgerDocumentTypeCode.index));
+    }
+    
+    void updateTransactionDetailWithSecondPassData(SecondPassAttributeUpdateValues dataForUpdates, PreparedStatement secondPassInsertStatement, T summary) throws SQLException {
+        TransactionDetailRow detailRow = summary.transactionDetailRow;
+        int detailRowInsertOffset = detailRow.insertOffset;
+
+        //Update all String(s) in the transaction detail insert statement with data values determined by the second pass processing.
+        dataForUpdates.getUpdateStringAttributeValues().forEach((index, value) -> {
+            try {
+                secondPassInsertStatement.setString(index.intValue() - detailRowInsertOffset, value);
+            } catch (SQLException sqle) {
+                LOG.error("updateTransactionDetailWithSecondPassData: Updating String attribute for index = {} generated SQLException.", index.intValue(), sqle);
+                throw new RuntimeException(sqle);
+            }
+        });
+        
+        //Update all java.sql.Date(s) in the transaction detail insert statement with data values determined by the second pass processing.
+        dataForUpdates.getUpdateDateAttributeValues().forEach((index, value) -> {
+            try {
+                secondPassInsertStatement.setDate(index.intValue() - detailRowInsertOffset, value);
+            } catch (SQLException sqle) {
+                LOG.error("updateTransactionDetailWithSecondPassData: Updating java.sql.Date attribute for index = {} generated SQLException.", index.intValue(), sqle);
+                throw new RuntimeException(sqle);
+            }
+        });
+    }
+    
+    void insertUpdatedTransactionDetail(ResultSet rs, PreparedStatement secondPassInsertStatement, T summary, SecondPassAttributeUpdateValues dataForUpdates) throws SQLException {
+        initializeTransactionDetailFromRawTransactionDetail(rs, secondPassInsertStatement, summary);
+        updateTransactionDetailWithSecondPassData(dataForUpdates, secondPassInsertStatement, summary);
+        secondPassInsertStatement.execute();
+        secondPassInsertStatement.clearParameters();
+    }
 }

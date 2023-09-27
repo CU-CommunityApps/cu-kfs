@@ -27,7 +27,8 @@ public final class CUTaxBatchConstants {
      * <ul>
      *   <li>BLANK :: An unconditionally-blank field.</li>
      *   <li>STATIC :: A field containing a static String value.</li>
-     *   <li>DETAIL :: A field from transaction detail row.</li>
+     *   <li>RAW_DETAIL :: A field from raw transaction detail row loaded during first pass processing.</li>
+     *   <li>DETAIL :: A field from transaction detail row that has been updated by the second pass processing.</li>
      *   <li>PDP :: A field from the PDP tax source data.</li>
      *   <li>DV :: A field from the DV tax source data.</li>
      *   <li>VENDOR :: A vendor object field.</li>
@@ -43,6 +44,7 @@ public final class CUTaxBatchConstants {
     public static enum TaxFieldSource {
         BLANK,
         STATIC,
+        RAW_DETAIL,
         DETAIL,
         PDP,
         DV,
@@ -295,6 +297,77 @@ public final class CUTaxBatchConstants {
         
         private CommonDocumentNoteFieldNames() {
             throw new UnsupportedOperationException("do not call CommonDocumentNoteFieldNames constructor");
+        }
+    }
+
+
+
+    /**
+     * Helper subclass containing aliases for raw transaction detail fields used by the tax first pass processing.
+     */
+    public static final class RawTransactionDetailFieldNames {
+        // Fields from TX_RAW_TRANSACTION_DETAIL_T (RawTransactionDetail)
+        public static final String TRANSACTION_DETAIL_ID = "transactionDetailId";
+        public static final String REPORT_YEAR = "reportYear";
+        public static final String DOCUMENT_NUMBER = "documentNumber";
+        public static final String DOCUMENT_TYPE = "documentType";
+        public static final String FINANCIAL_DOCUMENT_LINE_NUMBER = "financialDocumentLineNumber";
+        public static final String FIN_OBJECT_CODE = CUTaxBatchConstants.FIN_OBJECT_CODE;
+        public static final String NET_PAYMENT_AMOUNT = "netPaymentAmount";
+        public static final String DOCUMENT_TITLE = "documentTitle";
+        public static final String VENDOR_TAX_NUMBER = CommonVendorFieldNames.VENDOR_TAX_NUMBER;
+        public static final String INCOME_CODE = CUTaxBatchConstants.INCOME_CODE;
+        public static final String INCOME_CODE_SUB_TYPE = "incomeCodeSubType";
+        public static final String DV_CHECK_STUB_TEXT = "dvCheckStubText";
+        public static final String PAYEE_ID = CUTaxBatchConstants.PAYEE_ID;
+        public static final String VENDOR_NAME = CommonVendorFieldNames.VENDOR_NAME;
+        public static final String PARENT_VENDOR_NAME = "parentVendorName";
+        public static final String VENDOR_TYPE_CODE = CommonVendorFieldNames.VENDOR_TYPE_CODE;
+        public static final String VENDOR_OWNERSHIP_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CODE;
+        public static final String VENDOR_OWNERSHIP_CATEGORY_CODE = CommonVendorFieldNames.VENDOR_OWNERSHIP_CATEGORY_CODE;
+        public static final String VENDOR_FOREIGN_INDICATOR = CommonVendorFieldNames.VENDOR_FOREIGN_IND;
+        public static final String VENDOR_EMAIL_ADDRESS = CUTaxBatchConstants.VENDOR_EMAIL_ADDRESS;
+        public static final String VENDOR_CHAPTER4_STATUS_CODE = CommonVendorFieldNames.VENDOR_CHAPTER4_STATUS_CODE;
+        public static final String VENDOR_GIIN = CommonVendorFieldNames.VENDOR_GIIN;
+        public static final String VENDOR_LINE1_ADDRESS = CommonVendorAddressFieldNames.VENDOR_LINE1_ADDRESS;
+        public static final String VENDOR_LINE2_ADDRESS = CommonVendorAddressFieldNames.VENDOR_LINE2_ADDRESS;
+        public static final String VENDOR_CITY_NAME = CommonVendorAddressFieldNames.VENDOR_CITY_NAME;
+        public static final String VENDOR_STATE_CODE = CommonVendorAddressFieldNames.VENDOR_STATE_CODE;
+        public static final String VENDOR_ZIP_CODE = CommonVendorAddressFieldNames.VENDOR_ZIP_CODE;
+        public static final String VENDOR_FOREIGN_LINE1_ADDRESS = "vendorForeignLine1Address";
+        public static final String VENDOR_FOREIGN_LINE2_ADDRESS = "vendorForeignLine2Address";
+        public static final String VENDOR_FOREIGN_CITY_NAME = "vendorForeignCityName";
+        public static final String VENDOR_FOREIGN_ZIP_CODE = "vendorForeignZipCode";
+        public static final String VENDOR_FOREIGN_PROVINCE_NAME = "vendorForeignProvinceName";
+        public static final String VENDOR_FOREIGN_COUNTRY_CODE = "vendorForeignCountryCode";
+        public static final String NRA_PAYMENT_INDICATOR = "nraPaymentIndicator";
+        public static final String PAYMENT_DATE = "paymentDate";
+        public static final String PAYMENT_PAYEE_NAME = "paymentPayeeName";
+        public static final String INCOME_CLASS_CODE = CUTaxBatchConstants.INCOME_CLASS_CODE;
+        public static final String INCOME_TAX_TREATY_EXEMPT_INDICATOR = "incomeTaxTreatyExemptIndicator";
+        public static final String FOREIGN_SOURCE_INCOME_INDICATOR = "foreignSourceIncomeIndicator";
+        public static final String FEDERAL_INCOME_TAX_PERCENT = CUTaxBatchConstants.FEDERAL_INCOME_TAX_PERCENT;
+        public static final String PAYMENT_DESCRIPTION = "paymentDescription";
+        public static final String PAYMENT_LINE1_ADDRESS = "paymentLine1Address";
+        public static final String PAYMENT_COUNTRY_NAME = "paymentCountryName";
+        public static final String CHART_CODE = "chartCode";
+        public static final String ACCOUNT_NUMBER = CUTaxBatchConstants.ACCOUNT_NUMBER;
+        public static final String INITIATOR_NETID = "initiatorNetId";
+        public static final String FORM_1099_TYPE = "form1099Type";
+        public static final String FORM_1099_BOX = "form1099Box";
+        public static final String FORM_1099_OVERRIDDEN_TYPE = "form1099OverriddenType";
+        public static final String FORM_1099_OVERRIDDEN_BOX = "form1099OverriddenBox";
+        public static final String FORM_1042S_BOX = "form1042SBox";
+        public static final String FORM_1042S_OVERRIDDEN_BOX = "form1042SOverriddenBox";
+        public static final String PAYMENT_REASON_CODE = "paymentReasonCode";
+        
+        public static final String DISBURSEMENT_NUMBER = "disbursementNbr";
+        public static final String PAYMENT_STATUS_CODE = "paymentStatusCode";
+        public static final String DISBURSEMENT_TYPE_CODE = "disbursementTypeCode";
+        public static final String LEDGER_DOCUMENT_TYPE_CODE = "ledgerDocumentTypeCode";
+
+        private RawTransactionDetailFieldNames() {
+            throw new UnsupportedOperationException("do not call RawTransactionDetailFieldNames constructor");
         }
     }
 
