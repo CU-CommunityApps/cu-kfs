@@ -343,7 +343,8 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
                             + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                     insertUpdatedTransactionDetail(rs, secondPassTransactionInsertStatement, summary, updatedAttributeValues);
                 } else {
-                    // If a Foreign Draft or Wire Transfer that wasn't finalized or was in the wrong reporting period, then delete the row.
+                    // If a Foreign Draft or Wire Transfer that wasn't finalized or was in the wrong reporting period,
+                    // then log the raw transaction data row was not inserted into the second pass table.
                     LOG.info("TransactionRowPRNCBuilder:: updateTransactionRowsFromWorkflowDocuments: NO data inserted for "
                             + "rawTransactionDetailId = {}, documentId = {}", rawTransactionDetailId, documentId);
                 }
