@@ -82,16 +82,7 @@
                         <join name="JoinNewUnorderedItems"/>
                     </split>
                     <role name="SubAccount" nextNode="Account" nextAppDocStatus="Awaiting Fiscal Officer"/>
-                    <role name="Account" nextNode="RequiresAwardReview" nextAppDocStatus="Awaiting C and G Approval"/>
-                    <split name="RequiresAwardReview" nextNode="Commodity">
-                        <branch name="True">
-                            <role name="Award" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
-                        </branch>
-                        <branch name="False">
-                            <simple name="NoOpRequiresAwardReview" nextNode="JoinRequiresAwardReview" nextAppDocStatus="Awaiting Commodity Code Approval"/>
-                        </branch>
-                        <join name="JoinRequiresAwardReview"/>
-                    </split>
+                    <role name="Account" nextNode="Commodity" nextAppDocStatus="Awaiting Commodity Code Approval"/>
                     <role name="Commodity" nextNode="AmountRequiresSeparationOfDutiesReview" nextAppDocStatus="Awaiting Separation of Duties"/>
                     <split name="AmountRequiresSeparationOfDutiesReview" nextNode="RequiresContractManagementReview" nextAppDocStatus="Awaiting Purchasing Approval">
                         <branch name="True">
@@ -146,17 +137,6 @@
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
-                <split name="RequiresAwardReview">
-                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-                </split>
-                <role name="Award">
-                    <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
-                    <activationType>P</activationType>
-                </role>
-                <join name="JoinRequiresAwardReview"/>
-                <simple name="NoOpRequiresAwardReview">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
                 <role name="Commodity">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
