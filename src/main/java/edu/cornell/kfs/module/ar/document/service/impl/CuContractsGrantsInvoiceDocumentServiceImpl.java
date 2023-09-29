@@ -47,11 +47,11 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      * Add institution specific parameters to the template parameters
      */
     @Override
-    protected Map<String, String> getTemplateParameterList(ContractsGrantsInvoiceDocument document) {
-        Map<String, String> templateParameters = new HashMap<String, String>();
+    protected Map<String, String> getTemplateParameterList(final ContractsGrantsInvoiceDocument document) {
+        final Map<String, String> templateParameters = new HashMap<String, String>();
         templateParameters.putAll(super.getTemplateParameterList(document));
         
-        Map<String, String> localParameterMap = getInstitutionTemplateParameters(document);
+        final Map<String, String> localParameterMap = getInstitutionTemplateParameters(document);
         
         if(!localParameterMap.isEmpty()) {
             templateParameters.putAll(localParameterMap);
@@ -177,18 +177,18 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     }
     
     @Override
-    public void prorateBill(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+    public void prorateBill(final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         LOG.debug("prorateBill, entering");
         KualiDecimal totalCost = new KualiDecimal(0); // Amount to be billed on
                                                       // this invoice
         // must iterate through the invoice details because the user might have
         // manually changed the value
-        for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
+        for (final ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
             totalCost = totalCost.add(invD.getInvoiceAmount());
         }
         
         // Total Billed so far
-        KualiDecimal billedTotalCost = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()
+        final KualiDecimal billedTotalCost = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail()
                 .getTotalPreviouslyBilled();
 
         // CU Customization, use award budget total, and not the award total
@@ -196,25 +196,25 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
         
         Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
         AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
-        KualiDecimal accountAwardTotal = awardExtension.getBudgetTotalAmount();
+        final KualiDecimal accountAwardTotal = awardExtension.getBudgetTotalAmount();
         
         if (accountAwardTotal.subtract(billedTotalCost).isGreaterEqual(new KualiDecimal(0))) {
-            KualiDecimal amountEligibleForBilling = accountAwardTotal.subtract(billedTotalCost);
+            final KualiDecimal amountEligibleForBilling = accountAwardTotal.subtract(billedTotalCost);
             // only recalculate if the current invoice is over what's billable.
             
             if (totalCost.isGreaterThan(amountEligibleForBilling)) {
                 // use BigDecimal because percentage should not have only a
                 // scale of 2, we need more for accuracy
-                BigDecimal percentage = amountEligibleForBilling.bigDecimalValue().divide(totalCost.bigDecimalValue(),
+                final BigDecimal percentage = amountEligibleForBilling.bigDecimalValue().divide(totalCost.bigDecimalValue(),
                         10, RoundingMode.HALF_DOWN);
                 // use to check if rounding has left a few cents off
                 KualiDecimal amountToBill = new KualiDecimal(0);
 
                 ContractsGrantsInvoiceDetail largestCostCategory = null;
                 BigDecimal largestAmount = BigDecimal.ZERO;
-                for (ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
-                    BigDecimal newValue = invD.getInvoiceAmount().bigDecimalValue().multiply(percentage);
-                    KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, RoundingMode.DOWN));
+                for (final ContractsGrantsInvoiceDetail invD : contractsGrantsInvoiceDocument.getInvoiceDetails()) {
+                    final BigDecimal newValue = invD.getInvoiceAmount().bigDecimalValue().multiply(percentage);
+                    final KualiDecimal newKualiDecimalValue = new KualiDecimal(newValue.setScale(2, RoundingMode.DOWN));
                     invD.setInvoiceAmount(newKualiDecimalValue);
                     amountToBill = amountToBill.add(newKualiDecimalValue);
                     if (newValue.compareTo(largestAmount) > 0) {
@@ -223,7 +223,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
                     }
                 }
                 if (!amountToBill.equals(amountEligibleForBilling)) {
-                    KualiDecimal remaining = amountEligibleForBilling.subtract(amountToBill);
+                    final KualiDecimal remaining = amountEligibleForBilling.subtract(amountToBill);
                     if (ObjectUtils.isNull(largestCostCategory)
                             && CollectionUtils.isNotEmpty(contractsGrantsInvoiceDocument.getInvoiceDetails())) {
                         largestCostCategory = contractsGrantsInvoiceDocument.getInvoiceDetails().get(0);
@@ -238,9 +238,10 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
     }
     
     @Override
-    public void recalculateObjectCodeByCategory(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
-            ContractsGrantsInvoiceDetail invoiceDetail, KualiDecimal total,
-            List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes) {
+    public void recalculateObjectCodeByCategory(
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument,
+            final ContractsGrantsInvoiceDetail invoiceDetail, KualiDecimal total,
+            final List<InvoiceDetailAccountObjectCode> invoiceDetailAccountObjectCodes) {
         super.recalculateObjectCodeByCategory(contractsGrantsInvoiceDocument, invoiceDetail, total, invoiceDetailAccountObjectCodes);
     }
     
@@ -248,8 +249,8 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      * CUMod: KFSPTS-14929
      */
     @Override
-    protected String determineContractControlAccountNumber(ContractsGrantsInvoiceDocument document) {
-        List<InvoiceAccountDetail> accountDetails = document.getAccountDetails();
+    protected String determineContractControlAccountNumber(final ContractsGrantsInvoiceDocument document) {
+        final List<InvoiceAccountDetail> accountDetails = document.getAccountDetails();
         if (CollectionUtils.isNotEmpty(accountDetails)) {
             Account contractControlAccount = determineContractControlAccount(accountDetails.get(0));
             if (ObjectUtils.isNotNull(contractControlAccount) 
@@ -288,14 +289,14 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      */
     @Override
     protected CustomerInvoiceDetail createSourceAccountingLinesByContractControlAccount(
-            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         String coaCode = null;
         String accountNumber = null;
         SubFundGroup subFundGroup = null;
 
-        List<InvoiceAccountDetail> accountDetails = contractsGrantsInvoiceDocument.getAccountDetails();
+        final List<InvoiceAccountDetail> accountDetails = contractsGrantsInvoiceDocument.getAccountDetails();
         if (CollectionUtils.isNotEmpty(accountDetails)) {
-            Account contractControlAccount = determineContractControlAccount(accountDetails.get(0));
+            final Account contractControlAccount = determineContractControlAccount(accountDetails.get(0));
             if (ObjectUtils.isNotNull(contractControlAccount)) {
                 coaCode = contractControlAccount.getChartOfAccountsCode();
                 accountNumber = contractControlAccount.getAccountNumber();
@@ -323,7 +324,7 @@ public class CuContractsGrantsInvoiceDocumentServiceImpl extends ContractsGrants
      * this customization.
      */
     @Override
-    public void updateLastBilledDate(ContractsGrantsInvoiceDocument document) {
+    public void updateLastBilledDate(final ContractsGrantsInvoiceDocument document) {
         super.updateLastBilledDate(document);
         setInvoiceDueDateBasedOnNetTermsAndCurrentDate(document);
     }

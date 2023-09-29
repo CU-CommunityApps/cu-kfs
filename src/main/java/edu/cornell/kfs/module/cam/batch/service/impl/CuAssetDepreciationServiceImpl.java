@@ -40,15 +40,15 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
         Integer fiscalYear = -1;
         Integer fiscalMonth = -1;
         String errorMsg = "";
-        List<String> documentNos = new ArrayList<>();
-        List<String[]> reportLog = new ArrayList<>();
+        final List<String> documentNos = new ArrayList<>();
+        final List<String[]> reportLog = new ArrayList<>();
         Collection<AssetObjectCode> assetObjectCodes = new ArrayList<>();
         boolean hasErrors = false;
         LocalDate depreciationDate = dateTimeService.getLocalDateNow();
         String depreciationDateParameter = null;
-        DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY, Locale.US);
+        final DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY, Locale.US);
         boolean executeJob = false;
-        String errorMessage = kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_ALREADY_RAN_MSG);
+        final String errorMessage = kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_ALREADY_RAN_MSG);
 
         try {
             executeJob = runAssetDepreciation();

@@ -14,8 +14,8 @@ import org.kuali.kfs.kim.impl.identity.Person;
 public class CuAREmailServiceImpl extends AREmailServiceImpl {
     
     @Override
-    protected String getSubject(ContractsGrantsInvoiceDocument invoice) {
-        String grantNumber = invoice.getInvoiceGeneralDetail().getAward().getProposal().getGrantNumber();
+    protected String getSubject(final ContractsGrantsInvoiceDocument invoice) {
+        final String grantNumber = invoice.getInvoiceGeneralDetail().getAward().getProposal().getGrantNumber();
         String subject;
         String message;
         if (StringUtils.isBlank(grantNumber)) {
@@ -35,10 +35,10 @@ public class CuAREmailServiceImpl extends AREmailServiceImpl {
     }
     
     @Override
-    protected String getMessageBody(ContractsGrantsInvoiceDocument invoice, CustomerAddress customerAddress) {
-        String message = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_BODY);
+    protected String getMessageBody(final ContractsGrantsInvoiceDocument invoice, final CustomerAddress customerAddress) {
+        final String message = kualiConfigurationService.getPropertyValueAsString(ArKeyConstants.CGINVOICE_EMAIL_BODY);
 
-        Person fundManager = invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager();
+        final Person fundManager = invoice.getInvoiceGeneralDetail().getAward().getAwardPrimaryFundManager().getFundManager();
         return MessageFormat.format(message, customerAddress.getCustomerAddressName(),
             fundManager.getFirstName() + KFSConstants.BLANK_SPACE + fundManager.getLastName(), fundManager.getPhoneNumber(),
             fundManager.getEmailAddress());

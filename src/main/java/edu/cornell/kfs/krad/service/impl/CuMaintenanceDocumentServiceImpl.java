@@ -13,9 +13,9 @@ import edu.cornell.kfs.krad.dao.CuMaintenanceDocumentDao;
 public class CuMaintenanceDocumentServiceImpl extends MaintenanceDocumentServiceImpl {
 
     @Override
-    public String getLockingDocumentId(Maintainable maintainable, String documentNumber) {
-        List<MaintenanceLock> maintenanceLocks = maintainable.generateMaintenanceLocks();
-        List<String> lockingRepresentations = maintenanceLocks.stream()
+    public String getLockingDocumentId(final Maintainable maintainable, final String documentNumber) {
+        final List<MaintenanceLock> maintenanceLocks = maintainable.generateMaintenanceLocks();
+        final List<String> lockingRepresentations = maintenanceLocks.stream()
                 .map(MaintenanceLock::getLockingRepresentation)
                 .collect(Collectors.toUnmodifiableList());
         return getCuMaintenanceDocumentDao().getAnyLockingDocumentNumber(lockingRepresentations, documentNumber);
@@ -26,7 +26,7 @@ public class CuMaintenanceDocumentServiceImpl extends MaintenanceDocumentService
     }
 
     @Override
-    public void setMaintenanceDocumentDao(MaintenanceDocumentDao maintenanceDocumentDao) {
+    public void setMaintenanceDocumentDao(final MaintenanceDocumentDao maintenanceDocumentDao) {
         if (!(maintenanceDocumentDao instanceof CuMaintenanceDocumentDao)) {
             throw new IllegalArgumentException(
                     "maintenanceDocumentDao was not an instance of CuMaintenanceDocumentDao");
