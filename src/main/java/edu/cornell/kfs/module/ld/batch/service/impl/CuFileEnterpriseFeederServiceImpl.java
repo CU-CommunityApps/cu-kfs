@@ -25,52 +25,52 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
     private static final Logger LOG = LogManager.getLogger();
     
     @Override
-    public void feed(String processName, boolean performNotifications) {
+    public void feed(final String processName, final boolean performNotifications) {
         // ensure that this feeder implementation may not be run concurrently on this JVM
         // to consider: maybe use java NIO classes to perform done file locking?
         synchronized (this) {
             if (StringUtils.isBlank(directoryName)) {
                 throw new IllegalArgumentException("directoryName not set for FileEnterpriseFeederServiceImpl.");
             }
-            FileFilter doneFileFilter = new SuffixFileFilter(GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
+            final FileFilter doneFileFilter = new SuffixFileFilter(GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION);
 
             File enterpriseFeedFile = null;
-            String enterpriseFeedFileName = LaborConstants.BatchFileSystem.LABOR_ENTERPRISE_FEED + LaborConstants.BatchFileSystem.EXTENSION;
+            final String enterpriseFeedFileName = LaborConstants.BatchFileSystem.LABOR_ENTERPRISE_FEED + LaborConstants.BatchFileSystem.EXTENSION;
             enterpriseFeedFile = new File(laborOriginEntryDirectoryName + File.separator + enterpriseFeedFileName);
 
 			PrintStream enterpriseFeedPs = null;
 			try {
 				enterpriseFeedPs = new PrintStream(enterpriseFeedFile, StandardCharsets.UTF_8);
 			}
-			catch (IOException e) {
+			catch (final IOException e) {
 				LOG.error("enterpriseFeedFile doesn't exist {}", enterpriseFeedFileName);
 				throw new RuntimeException("enterpriseFeedFile doesn't exist " + enterpriseFeedFileName);
 			}
 			
 			LOG.info("New File created for enterprise feeder service run: {}", enterpriseFeedFileName);
 
-			File directory = new File(directoryName);
+			final File directory = new File(directoryName);
 			if (!directory.exists() || !directory.isDirectory()) {
 			    LOG.error("Directory doesn't exist and or it's not really a directory {}", directoryName);
 				throw new RuntimeException("Directory doesn't exist and or it's not really a directory " + directoryName);
 			}
 
-			File[] doneFiles = directory.listFiles(doneFileFilter);
+			final File[] doneFiles = directory.listFiles(doneFileFilter);
 			reorderDoneFiles(doneFiles);
 			boolean fatal = false;
 			
-			LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
+			final LedgerSummaryReport ledgerSummaryReport = new LedgerSummaryReport();
 
 			//  keeps track of statistics for reporting
-			EnterpriseFeederReportData feederReportData = new EnterpriseFeederReportData();
+			final EnterpriseFeederReportData feederReportData = new EnterpriseFeederReportData();
 
-			List<EnterpriseFeederStatusAndErrorMessagesWrapper> statusAndErrorsList = new ArrayList<EnterpriseFeederStatusAndErrorMessagesWrapper>();
+			final List<EnterpriseFeederStatusAndErrorMessagesWrapper> statusAndErrorsList = new ArrayList<EnterpriseFeederStatusAndErrorMessagesWrapper>();
 
-			for (File doneFile : doneFiles) {
+			for (final File doneFile : doneFiles) {
 				File dataFile = null;
 				File reconFile = null;
 
-				EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors = new EnterpriseFeederStatusAndErrorMessagesWrapper();
+				final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors = new EnterpriseFeederStatusAndErrorMessagesWrapper();
 				statusAndErrors.setErrorMessages(new ArrayList<Message>());
 
 				dataFile = getDataFile(doneFile);
@@ -101,14 +101,14 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 								reconciliationTableId, statusAndErrors, ledgerSummaryReport, errorStatisticsReport, feederReportData);
 					}
 				}
-				catch (RuntimeException e) {
+				catch (final RuntimeException e) {
 					// we need to be extremely resistant to a file load failing so that it doesn't prevent other files from loading
 				    LOG.error("Caught exception when feeding done file: {}", doneFile::getAbsolutePath);
 					fatal = true;
 				}
 				finally {
 					statusAndErrorsList.add(statusAndErrors);
-					boolean doneFileDeleted = doneFile.delete();
+					final boolean doneFileDeleted = doneFile.delete();
 					if (!doneFileDeleted) {
 						statusAndErrors.getErrorMessages().add(
 								new Message("Unable to delete done file: " + doneFile.getAbsolutePath(), Message.TYPE_FATAL));
@@ -129,15 +129,15 @@ public class CuFileEnterpriseFeederServiceImpl extends FileEnterpriseFeederServi
 			}
 			else {
 				// generate done file
-				String enterpriseFeedDoneFileName = enterpriseFeedFileName.replace(
+				final String enterpriseFeedDoneFileName = enterpriseFeedFileName.replace(
 						LaborConstants.BatchFileSystem.EXTENSION, LaborConstants.BatchFileSystem.DONE_FILE_EXTENSION);
-				File enterpriseFeedDoneFile = new File(laborOriginEntryDirectoryName + File.separator
+				final File enterpriseFeedDoneFile = new File(laborOriginEntryDirectoryName + File.separator
 						+ enterpriseFeedDoneFileName);
 				if (!enterpriseFeedDoneFile.exists()) {
 					try {
 						enterpriseFeedDoneFile.createNewFile();
 					}
-					catch (IOException e) {
+					catch (final IOException e) {
 						LOG.error("Unable to create done file for enterprise feed output group.", e);
 						throw new RuntimeException("Unable to create done file for enterprise feed output group.", e);
 					}
