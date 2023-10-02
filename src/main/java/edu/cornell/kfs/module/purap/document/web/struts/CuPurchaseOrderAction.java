@@ -44,13 +44,14 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	   
 
 	@Override
-	public ActionForward save(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
+	public ActionForward save(
+	        final ActionMapping mapping, final ActionForm form,
+			final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
-		ActionForward forward =  super.save(mapping, form, request, response);
+		final ActionForward forward =  super.save(mapping, form, request, response);
         //reindex the document to pick up the changes.
-        PurchaseOrderDocument document = (PurchaseOrderDocument) ((PurchaseOrderForm)form).getDocument();
-        this.reIndexDocument(document);
+        final PurchaseOrderDocument document = (PurchaseOrderDocument) ((PurchaseOrderForm)form).getDocument();
+        reIndexDocument(document);
         return forward;
 	}
 
@@ -61,24 +62,30 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
      * 
      * @param document - The document to be re-indexed.
      */
-    private void reIndexDocument(PurchaseOrderDocument document) {
+    private void reIndexDocument(final PurchaseOrderDocument document) {
         final DocumentAttributeIndexingQueue documentAttributeIndexingQueue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
         documentAttributeIndexingQueue.indexDocument(document.getDocumentNumber());
     }
     
-	public ActionForward openPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ActionForward openPoCxer(
+	        final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+	        final HttpServletResponse response) throws Exception {
 		return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.APPDOC_OPEN, "Open");
 	}
 	   
-	public ActionForward voidPoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ActionForward voidPoCxer(
+	        final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+	        final HttpServletResponse response) throws Exception {
 	    return movePoCxer(mapping, form, request, response, PurchaseOrderStatuses.APPDOC_VOID, "Void");
 	}
 	   
-	protected ActionForward movePoCxer(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response,
-	            String newStatus, String newStatusLabel) throws Exception {
-		KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-	    PurchaseOrderDocument po = (PurchaseOrderDocument) kualiDocumentFormBase.getDocument();
-	    Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+	protected ActionForward movePoCxer(
+	        final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+	        final HttpServletResponse response,
+	        final String newStatus, final String newStatusLabel) throws Exception {
+	    final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+	    final PurchaseOrderDocument po = (PurchaseOrderDocument) kualiDocumentFormBase.getDocument();
+	    final Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
 	       
 	    // If the user has not received the question screen yet, then perform the PO status update.
 	    if (ObjectUtils.isNull(question)) {
@@ -88,11 +95,11 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	    	
 	    	// Use logic similar to the executeManualStatusChange() method to override the document's status.
 	    	try {
-	    		PurapService purapService = SpringContext.getBean(PurapService.class);
+	    		final PurapService purapService = SpringContext.getBean(PurapService.class);
 	    		po.updateAndSaveAppDocStatus(newStatus);
 	    		purapService.saveDocumentNoValidation(po);
 	    		}
-	    	catch (Exception e) {
+	    	catch (final Exception e) {
 	    		throw new RuntimeException(e);
 	    		}
 	    	
@@ -100,9 +107,9 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	    	po.getDocumentHeader().getWorkflowDocument().logAnnotation("Moved PO document from 'Error occurred sending cxml' status to '" + newStatusLabel + "' status.");
 	    	
 	    	// Present a success message to the user.
-	    	String message = "PO document " + po.getDocumentNumber() + " was successfully moved to '" + newStatusLabel + "' status.";
+	    	final String message = "PO document " + po.getDocumentNumber() + " was successfully moved to '" + newStatusLabel + "' status.";
 	    	
-	    	return this.performQuestionWithoutInput(mapping, form, request, response, MOVE_CXML_ERROR_PO_SUCCESS, message, STATUS_OVERRIDE_QUESTION, MOVE_CXML_ERROR_PO_SUCCESS, "");
+	    	return performQuestionWithoutInput(mapping, form, request, response, MOVE_CXML_ERROR_PO_SUCCESS, message, STATUS_OVERRIDE_QUESTION, MOVE_CXML_ERROR_PO_SUCCESS, "");
 	    	}
 	    
 	    // If the user already went to the success "question" (which only had a "close" button), then simply perform the "returnToSender" logic.
@@ -111,7 +118,7 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
 	    }
 	// A helper method for checking if the user has authorization to move CXML Error POs and if the document is indeed in CXML error status.
 	
-	private void checkMovePoCxerAuthorization(PurchaseOrderDocument po) throws Exception {
+	private void checkMovePoCxerAuthorization(final PurchaseOrderDocument po) throws Exception {
 		
 		// Check if the user is authorized to open/void the PO.
 		if (!KimApiServiceLocator.getPermissionService().hasPermission(
@@ -139,9 +146,9 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
      * org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase)
      */
     @Override
-    protected void processAccountingLineOverrides(KualiAccountingDocumentFormBase transForm) {
+    protected void processAccountingLineOverrides(final KualiAccountingDocumentFormBase transForm) {
         if (transForm.hasDocumentId() && transForm.getDocument() instanceof PurchaseOrderAmendmentDocument) {
-            PurchaseOrderAmendmentDocument poaDocument = (PurchaseOrderAmendmentDocument) transForm.getDocument();
+            final PurchaseOrderAmendmentDocument poaDocument = (PurchaseOrderAmendmentDocument) transForm.getDocument();
             processAccountingLineOverrides(transForm.getNewSourceLine());
             processAccountingLineOverrides(transForm.getNewTargetLine());
             processAccountingLineOverrides(poaDocument, getItemSourceAccountingLines(poaDocument));
@@ -156,15 +163,15 @@ public class CuPurchaseOrderAction extends PurchaseOrderAction {
         }
     }
 
-    protected List<PurApAccountingLine> getItemSourceAccountingLines(PurchaseOrderAmendmentDocument document) {
-        List<PurApItem> items = (List<PurApItem>) document.getItems();
+    protected List<PurApAccountingLine> getItemSourceAccountingLines(final PurchaseOrderAmendmentDocument document) {
+        final List<PurApItem> items = (List<PurApItem>) document.getItems();
         return items.stream()
                 .flatMap((item) -> item.getSourceAccountingLines().stream())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    protected List<PurApAccountingLine> getItemAccountingAddLines(PurchaseOrderAmendmentDocument document) {
-        List<PurApItem> items = (List<PurApItem>) document.getItems();
+    protected List<PurApAccountingLine> getItemAccountingAddLines(final PurchaseOrderAmendmentDocument document) {
+        final List<PurApItem> items = (List<PurApItem>) document.getItems();
         return items.stream()
                 .map(PurApItem::getNewSourceLine)
                 .collect(Collectors.toCollection(ArrayList::new));
