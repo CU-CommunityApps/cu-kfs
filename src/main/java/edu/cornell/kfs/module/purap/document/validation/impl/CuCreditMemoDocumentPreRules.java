@@ -28,7 +28,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
     private CuCheckStubService cuCheckStubService;
     
     @Override
-    public boolean doPrompts(Document document){
+    public boolean doPrompts(final Document document){
 
         boolean preRulesOK = true;
         
@@ -37,7 +37,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
 
         preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
 
-        AccountsPayableDocument accountsPayableDocument = (AccountsPayableDocument) document;
+        final AccountsPayableDocument accountsPayableDocument = (AccountsPayableDocument) document;
 
         // Check if the total does not match the submitted credit if the document hasn't been completed.
         if (!SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(accountsPayableDocument)) {
@@ -53,7 +53,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
 	
 	@SuppressWarnings("deprecation")
 	@Override
-    public boolean confirmInvoiceNoMatchOverride(AccountsPayableDocument accountsPayableDocument) {
+    public boolean confirmInvoiceNoMatchOverride(final AccountsPayableDocument accountsPayableDocument) {
     	// Check if the total does not match the submitted credit. 
     	GlobalVariables.getMessageMap().clearErrorPath();
         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.DOCUMENT);
@@ -70,19 +70,19 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
     }
 	
 	// KFSUPGRADE-779
-	protected boolean checkWireTransferTabState(VendorCreditMemoDocument cmDocument) {
+	protected boolean checkWireTransferTabState(final VendorCreditMemoDocument cmDocument) {
         boolean tabStatesOK = true;
 
-        CreditMemoWireTransfer cmWireTransfer = ((CuVendorCreditMemoDocument)cmDocument).getCmWireTransfer();
+        final CreditMemoWireTransfer cmWireTransfer = ((CuVendorCreditMemoDocument)cmDocument).getCmWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
         if (!StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode()) && hasWireTransferValues(cmWireTransfer)) {
             String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB);
 
-            Object[] args = { CUPurapConstants.PAYMENT_METHOD, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode(), CUPurapConstants.WIRE_TRANSFER, KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE };
+            final Object[] args = { CUPurapConstants.PAYMENT_METHOD, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode(), CUPurapConstants.WIRE_TRANSFER, KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE };
             questionText = MessageFormat.format(questionText, args);
 
-            boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
+            final boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
             if (clearTab) {
                 // NOTE: Can't replace with new instance because Foreign Draft uses same object
                 clearWireTransferValues(cmWireTransfer);
@@ -97,7 +97,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         return tabStatesOK;
     }
 
-    protected boolean hasWireTransferValues(CreditMemoWireTransfer cmWireTransfer) {
+    protected boolean hasWireTransferValues(final CreditMemoWireTransfer cmWireTransfer) {
         boolean hasValues = false;
 
         // Checks each explicit field in the tab for user entered values
@@ -116,7 +116,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         return hasValues;
     }
     
-    protected void clearWireTransferValues(CreditMemoWireTransfer cmWireTransfer) {
+    protected void clearWireTransferValues(final CreditMemoWireTransfer cmWireTransfer) {
     	cmWireTransfer.setCmAutomatedClearingHouseProfileNumber(null);
     	cmWireTransfer.setCmBankName(null);
     	cmWireTransfer.setCmBankRoutingNumber(null);

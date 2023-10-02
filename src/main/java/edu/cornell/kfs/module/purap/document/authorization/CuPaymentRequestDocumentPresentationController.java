@@ -21,11 +21,11 @@ import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 public class CuPaymentRequestDocumentPresentationController extends PaymentRequestDocumentPresentationController {
 	
 	@Override
-	public Set<String> getEditModes(Document document) {
-		Set<String> editModes = super.getEditModes(document);
+	public Set<String> getEditModes(final Document document) {
+		final Set<String> editModes = super.getEditModes(document);
 		
-		WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-		PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument)document;
+		final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+		final PaymentRequestDocument paymentRequestDocument = (PaymentRequestDocument)document;
 		
         if(workflowDocument.isInitiated() || workflowDocument.isSaved()){
             // KFSPTS-1891
@@ -60,7 +60,7 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
 	}
 
 	// KFSPTS-1891
-	private boolean canEditAmount(PaymentRequestDocument paymentRequestDocument) {
+	private boolean canEditAmount(final PaymentRequestDocument paymentRequestDocument) {
 		if (ObjectUtils.isNotNull(paymentRequestDocument.getApplicationDocumentStatus())) {
 			return PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.contains(paymentRequestDocument.getApplicationDocumentStatus());
 		} else {
@@ -70,10 +70,10 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
 	
 	// KFSUPGRADE-964
     @Override
-    public boolean canDisapprove(Document document) {
+    public boolean canDisapprove(final Document document) {
         // disapprove is never allowed for PREQ except PRNC by Treasury
-        CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) document;
-        String paymentMethodCode = paymentRequestDocument.getPaymentMethodCode();
+        final CuPaymentRequestDocument paymentRequestDocument = (CuPaymentRequestDocument) document;
+        final String paymentMethodCode = paymentRequestDocument.getPaymentMethodCode();
         
         if ((KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode)) && paymentRequestDocument.isDocumentStoppedInRouteNode(PaymentRequestStatuses.NODE_PAYMENT_METHOD_REVIEW)) {
             return true;
