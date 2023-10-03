@@ -924,7 +924,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     @Override
     protected boolean processElectronicInvoice(
             final ElectronicInvoiceLoad eInvoiceLoad, 
-            final File invoiceFile, byte[] xmlAsBytes) {
+            final File invoiceFile, 
+            final byte[] xmlAsBytes) {
 
         // Checks parameter to see if files should be moved to the accept/reject folders after load
         boolean moveFiles = BooleanUtils.toBoolean(parameterService.getParameterValueAsString(ElectronicInvoiceStep.class, PurapParameterConstants.ElectronicInvoiceParameters.FILE_MOVE_AFTER_LOAD_IND));
@@ -961,7 +962,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 		        final Map<String, ElectronicInvoiceItemMapping> itemTypeMappings = getItemTypeMappings(eInvoice.getVendorHeaderID(),eInvoice.getVendorDetailID());
 		        final Map<String, ItemType> kualiItemTypes = getKualiItemTypes();
 		        
-		        if (itemTypeMappings != null && itemTypeMappings.size() > 0) {
+		        if (itemTypeMappings != null && !itemTypeMappings.isEmpty()) {
 		            LOG.info("Item mappings found");
 		        }
 		        
@@ -978,7 +979,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			            PurchaseOrderDocument po = null;
 			            
 			            if (NumberUtils.isDigits(StringUtils.defaultString(poID)) && !isIntegerTooLarge(poID)) {
-			                po = purchaseOrderService.getCurrentPurchaseOrder(new Integer(poID));    
+			                po = purchaseOrderService.getCurrentPurchaseOrder(Integer.valueOf(poID));    
 			                if (po != null) {
 			                    order.setInvoicePurchaseOrderID(poID);
 			                    order.setPurchaseOrderID(po.getPurapDocumentIdentifier());
@@ -1024,7 +1025,13 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			            
 			            
 			            
-			            final CuElectronicInvoiceOrderHolder orderHolder = new CuElectronicInvoiceOrderHolder(eInvoice,order,po,itemTypeMappings,kualiItemTypes,validateHeader);
+			            final CuElectronicInvoiceOrderHolder orderHolder = new CuElectronicInvoiceOrderHolder(
+			                    eInvoice,
+			                    order,
+			                    po,
+			                    itemTypeMappings,
+			                    kualiItemTypes,
+			                    validateHeader);
 			            matchingService.doMatchingProcess(orderHolder);
 			            
 			            if (orderHolder.isInvoiceRejected()) {
@@ -1048,18 +1055,20 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 			                updateSummaryCounts(REJECT);
 			            } else {
 			                
-			                final PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder);
+			                final PaymentRequestDocument preqDoc  = createPaymentRequest(orderHolder, invoiceFile);
 			                
 			                if (orderHolder.isInvoiceRejected()) {
 			                    clearErrorMessagesToPreventSaveAndRouteErrors();
 			                    
-			                    final ElectronicInvoiceRejectDocument rejectDocument = createRejectDocument(eInvoice, order, eInvoiceLoad);
+			                    final ElectronicInvoiceRejectDocument rejectDocument = 
+			                            createRejectDocument(eInvoice, order, eInvoiceLoad);
 			                    
 			                    if (orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier() != null) {
 			                        rejectDocument.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
 			                    }
 			                    
-			                    final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
+			                    final ElectronicInvoiceLoadSummary loadSummary = 
+			                            getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
 			                    loadSummary.addFailedInvoiceOrder(rejectDocument.getTotalAmount(),eInvoice);
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 			                    
@@ -1067,7 +1076,8 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 				                getBusinessObjectService().save(loadSummary);
 				                updateSummaryCounts(REJECT);
 			                } else {
-			                    final ElectronicInvoiceLoadSummary loadSummary = getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
+			                    final ElectronicInvoiceLoadSummary loadSummary = 
+			                            getOrCreateLoadSummary(eInvoiceLoad, eInvoice.getDunsNumber());
 			                    loadSummary.addSuccessfulInvoiceOrder(preqDoc.getTotalDollarAmount(),eInvoice);
 			                    eInvoiceLoad.insertInvoiceLoadSummary(loadSummary);
 
@@ -1449,7 +1459,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     @Override
     public boolean createPaymentRequest(ElectronicInvoiceRejectDocument rejectDocument){
 
-        if (rejectDocument.getInvoiceRejectReasons().size() > 0){
+        if (!rejectDocument.getInvoiceRejectReasons().isEmpty()){
             throw new RuntimeException("Not possible to create payment request since the reject document contains " + rejectDocument.getInvoiceRejectReasons().size() + " rejects");
         }
 

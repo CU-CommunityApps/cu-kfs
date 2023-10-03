@@ -44,7 +44,9 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	}
  
     @Override
-    public boolean shouldMethodToCallParameterBeUsed(String methodToCallParameterName, String methodToCallParameterValue, HttpServletRequest request) {
+    public boolean shouldMethodToCallParameterBeUsed(
+            final String methodToCallParameterName, 
+            final String methodToCallParameterValue, final HttpServletRequest request) {
     	// KFSPTS-985
         if (methodToCallParameterName.contains("addFavoriteAccount")) {
             return true;
@@ -53,8 +55,8 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
     }
 
 	@Override
-	public boolean shouldPropertyBePopulatedInForm(String requestParameterName,
-			HttpServletRequest request) {
+	public boolean shouldPropertyBePopulatedInForm(
+	        final String requestParameterName, final HttpServletRequest request) {
 		// KFSPTS-985 : force it to populate
 		if (requestParameterName.contains(".favoriteAccountLineIdentifier")) {
 			return true;
@@ -87,18 +89,18 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	
 	@Override
 	protected Map<String, ExtraButton> createButtonsMap() {
-		Map<String, ExtraButton> result = super.createButtonsMap();
+		final Map<String, ExtraButton> result = super.createButtonsMap();
 		
         // ==== CU Customization (KFSPTS-1457) ====
         
         // Reopen PO button
-        ExtraButton openCxerButton = new ExtraButton();
+        final ExtraButton openCxerButton = new ExtraButton();
         openCxerButton.setExtraButtonProperty("methodToCall.openPoCxer");
         openCxerButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_openorder.gif");
         openCxerButton.setExtraButtonAltText("Open PO");
 
         // Void PO button
-        ExtraButton voidCxerButton = new ExtraButton();
+        final ExtraButton voidCxerButton = new ExtraButton();
         voidCxerButton.setExtraButtonProperty("methodToCall.voidPoCxer");
         voidCxerButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_voidorder.gif");
         voidCxerButton.setExtraButtonAltText("Void PO");
@@ -113,7 +115,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 	@Override
 	public List<ExtraButton> getExtraButtons() {
 		super.getExtraButtons();
-		Map buttonsMap = createButtonsMap();
+		final Map buttonsMap = createButtonsMap();
 				
         // ==== CU Customization (KFSPTS-1457) ====
         
@@ -142,7 +144,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase#populate(javax.servlet.http.HttpServletRequest)
      */
 	@Override
-	public void populate(HttpServletRequest request) {
+	public void populate(final HttpServletRequest request) {
 		PurchaseOrderDocument po = (PurchaseOrderDocument) this.getDocument();
 
 		super.populate(request);
@@ -178,11 +180,11 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
         boolean can = getPurchaseOrderDocument().isPurchaseOrderCurrentIndicator() && !getPurchaseOrderDocument().isPendingActionIndicator();
 
         if (can) {
-            boolean pendingPrint = PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
-            boolean open = PurchaseOrderStatuses.APPDOC_OPEN.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
-            boolean errorFax = PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            final boolean pendingPrint = PurchaseOrderStatuses.APPDOC_PENDING_PRINT.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            final boolean open = PurchaseOrderStatuses.APPDOC_OPEN.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
+            final boolean errorFax = PurchaseOrderStatuses.APPDOC_FAX_ERROR.equals(getPurchaseOrderDocument().getApplicationDocumentStatus());
 
-            List<PaymentRequestView> preqViews = SpringContext.getBean(PurapService.class)
+            final List<PaymentRequestView> preqViews = SpringContext.getBean(PurapService.class)
                     .getRelatedViews(PaymentRequestView.class, getPurchaseOrderDocument().getAccountsPayablePurchasingDocumentLinkIdentifier());
             boolean hasPaymentRequest = preqViews != null && preqViews.size() > 0;
 
@@ -191,7 +193,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 
         // check user authorization
         if (can) {
-            DocumentAuthorizer documentAuthorizer = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(getPurchaseOrderDocument());
+            final DocumentAuthorizer documentAuthorizer = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(getPurchaseOrderDocument());
             can = documentAuthorizer.canInitiate(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_VOID_DOCUMENT, GlobalVariables.getUserSession().getPerson());
         }
 
@@ -207,19 +209,19 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    protected void populateItemAccountingLines(Map parameterMap) {
+    protected void populateItemAccountingLines(final Map parameterMap) {
         if (!(getDocument() instanceof PurchaseOrderAmendmentDocument)) {
             super.populateItemAccountingLines(parameterMap);
             return;
         }
         
         int itemCount = 0;
-        for (PurApItem item : ((PurchasingAccountsPayableDocument) getDocument()).getItems()) {
+        for (final PurApItem item : ((PurchasingAccountsPayableDocument) getDocument()).getItems()) {
             populateAccountingLine(item.getNewSourceLine(), KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.ITEM + "[" + itemCount + "]."
                     + KFSPropertyConstants.NEW_SOURCE_LINE, parameterMap);
 
             int sourceLineCount = 0;
-            for (PurApAccountingLine purApLine : item.getSourceAccountingLines()) {
+            for (final PurApAccountingLine purApLine : item.getSourceAccountingLines()) {
                 populateAccountingLine(purApLine, KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.ITEM + "[" + itemCount + "]."
                         + KFSPropertyConstants.SOURCE_ACCOUNTING_LINE + "[" + sourceLineCount + "]", parameterMap);
                 sourceLineCount += 1;
@@ -237,7 +239,9 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    protected void repopulateOverrides(AccountingLine line, String accountingLinePropertyName, Map parameterMap) {
+    protected void repopulateOverrides(
+            final AccountingLine line, 
+            final String accountingLinePropertyName, final Map parameterMap) {
         super.repopulateOverrides(line, accountingLinePropertyName, parameterMap);
         
         if (!(getPurchaseOrderDocument() instanceof PurchaseOrderAmendmentDocument)) {
@@ -258,7 +262,7 @@ public class CuPurchaseOrderForm extends PurchaseOrderForm {
 		return copiedNotes;
 	}
 
-	public void setCopiedNotes(List<Note> copiedNotes) {
+	public void setCopiedNotes(final List<Note> copiedNotes) {
 		this.copiedNotes = copiedNotes;
 	}
 

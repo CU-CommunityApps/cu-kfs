@@ -21,31 +21,31 @@ public class CuVendorCreditMemoForm extends VendorCreditMemoForm {
     
     @Override
     public List<ExtraButton> getExtraButtons() {
-    	List<ExtraButton> extraButtons = super.getExtraButtons();
-    	VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) getDocument();
-    	String appExternalImageURL = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
-    	
-    	if (!getEditingMode().containsKey(CreditMemoEditMode.DISPLAY_INIT_TAB)){
-    		
+        final List<ExtraButton> extraButtons = super.getExtraButtons();
+        final VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) getDocument();
+        final String appExternalImageURL = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
+        
+        if (!getEditingMode().containsKey(CreditMemoEditMode.DISPLAY_INIT_TAB)){
+            
             if (!(SpringContext.getBean(PurapService.class).isFullDocumentEntryCompleted(cmDocument) == false && documentActions.containsKey(KRADConstants.KUALI_ACTION_CAN_EDIT))) {
-            	if (getEditingMode().containsKey(CUPaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE)) {
-            		addExtraButton("methodToCall.calculate", appExternalImageURL + "buttonsmall_calculate.gif", "Calculate");
-            	}
-           	
+                if (getEditingMode().containsKey(CUPaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE)) {
+                    addExtraButton("methodToCall.calculate", appExternalImageURL + "buttonsmall_calculate.gif", "Calculate");
+                }
+            
             }
-    		
-    	}
-    	
-    	return extraButtons;
+            
+        }
+        
+        return extraButtons;
     }
     
-	public String getWireChargeMessage() {
-		return wireChargeMessage;
-	}
+    public String getWireChargeMessage() {
+        return wireChargeMessage;
+    }
 
-	public void setWireChargeMessage(String wireChargeMessage) {
-		this.wireChargeMessage = wireChargeMessage;
-	}
+    public void setWireChargeMessage(final String wireChargeMessage) {
+        this.wireChargeMessage = wireChargeMessage;
+    }
 
 
 }
