@@ -723,7 +723,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
     }
 
     @Override
-    protected PaymentRequestDocument initializePaymentRequestDocument(ElectronicInvoiceOrderHolder orderHolder) {
+    protected PaymentRequestDocument initializePaymentRequestDocument(final ElectronicInvoiceOrderHolder orderHolder) {
         LOG.info("Creating Payment Request document");
 
         KNSGlobalVariables.getMessageList().clear();
