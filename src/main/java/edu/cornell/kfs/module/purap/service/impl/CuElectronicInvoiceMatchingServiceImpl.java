@@ -50,7 +50,9 @@ public class CuElectronicInvoiceMatchingServiceImpl extends ElectronicInvoiceMat
         }
     }
 
-    protected void validateInvoiceItem(final ElectronicInvoiceItemHolder itemHolder, final Set poLineNumbers, final Set invLineNumbers){
+    protected void validateInvoiceItem(
+            final ElectronicInvoiceItemHolder itemHolder, 
+            final Set poLineNumbers, final Set invLineNumbers){
 
         final PurchaseOrderItem poItem = itemHolder.getPurchaseOrderItem();
         final ElectronicInvoiceOrderHolder orderHolder = itemHolder.getInvoiceOrderHolder();
