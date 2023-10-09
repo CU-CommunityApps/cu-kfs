@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        CU Customization: Added bean overrides for backporting the FINP-7147 changes into this release.
+        This file can be removed when we upgrade to the 2023-06-28 financials patch.
+     -->
+
+    <bean id="SystemInformationMaintenanceDocument" parent="SystemInformationMaintenanceDocument-parentBean">
+        <property name="defaultExistenceChecks">
+            <list merge="true">
+                <bean parent="ReferenceDefinition" p:attributeName="organizationRemitToCounty"
+                      p:attributeToHighlightOnFail="organizationRemitToCountyCode"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SystemInformationMaintenanceDocument-EditRemitToInformation"
+          parent="SystemInformationMaintenanceDocument-EditRemitToInformation-parentBean">
+        <property name="maintainableItems">
+            <list merge="true">
+                <bean parent="MaintainableFieldDefinition" p:name="organizationRemitToCountyCode" p:required="false"/>
+                <bean parent="MaintainableFieldDefinition" p:name="uniqueEntityId" p:required="false"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
