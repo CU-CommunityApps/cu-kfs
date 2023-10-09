@@ -216,6 +216,13 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     }
     
     private void populateAddressFields(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherDocument dvDocument) {
+        if (StringUtils.isNotBlank(paymentInfo.getPayeeAddressId()) && 
+                !StringUtils.equalsAnyIgnoreCase(paymentInfo.getPayeeTypeCode(), CUPdpConstants.PAYEE_TYPE_CODE_VENDOR)) {
+            String messageFormat = "Payee type code {0} and payee address id {1} were supplied.  THe payee address id may only be used with payee type of V.";
+            String messageString = MessageFormat.format(messageFormat,
+                    paymentInfo.getPayeeAddressId(), paymentInfo.getPayeeTypeCode());
+            throw new ValidationException(messageString);
+        }
         if (StringUtils.isNotBlank(paymentInfo.getPayeeAddressId())) {
             VendorAddress vendorAddress = findVendorAddress(paymentInfo);
             dvDocument.templateVendor(vendorAddress.getVendorDetail(), vendorAddress);
