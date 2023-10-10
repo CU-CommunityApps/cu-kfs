@@ -53,7 +53,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     }
     
     @Override
-    public void loadPayments(PaymentFileLoad paymentFile, LoadPaymentStatus status, String incomingFileName) {
+    public void loadPayments(final PaymentFileLoad paymentFile, final LoadPaymentStatus status, final String incomingFileName) {
         status.setChart(paymentFile.getCampus());
         status.setUnit(paymentFile.getUnit());
         status.setSubUnit(paymentFile.getSubUnit());
@@ -62,18 +62,18 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         status.setDetailTotal(paymentFile.getCalculatedPaymentTotalAmount());
 
         // create batch record for payment load
-        Batch batch = createNewBatch(paymentFile, getBaseFileName(incomingFileName));
+        final Batch batch = createNewBatch(paymentFile, getBaseFileName(incomingFileName));
         businessObjectService.save(batch);
 
         paymentFile.setBatchId(batch.getId());
         status.setBatchId(batch.getId());
 
         // do warnings and set defaults
-        List<String> warnings = paymentFileValidationService.doSoftEdits(paymentFile);
+        final List<String> warnings = paymentFileValidationService.doSoftEdits(paymentFile);
         status.setWarnings(warnings);
 
         // store groups
-        for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
+        for (final PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             assignDisbursementTypeCode(paymentGroup);
             updatePaymentFieldsForEmployeePayee(paymentFile, paymentGroup);
             businessObjectService.save(paymentGroup);
@@ -94,17 +94,17 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         status.setLoadStatus(LoadPaymentStatus.LoadStatus.SUCCESS);
     }
     
-    private void updatePaymentFieldsForEmployeePayee(PaymentFileLoad paymentFile, PaymentGroup paymentGroup) {
+    private void updatePaymentFieldsForEmployeePayee(final PaymentFileLoad paymentFile, final PaymentGroup paymentGroup) {
         LOG.debug("updatePaymentFieldsForEmployeePayee, entering");
         if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
-            Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
+            final Person employee = personService.getPersonByEmployeeId(paymentGroup.getPayeeId());
             LOG.debug("updatePaymentFieldsForEmployeePayee, processing payee as emoployee: " + employee.getName());
             updatePayeeAddressFieldsFromPerson(paymentGroup, employee);
             paymentGroup.setEmployeeIndicator(true);
         }
     }
     
-    private void updatePayeeAddressFieldsFromPerson(PaymentGroup paymentGroup, Person person) {
+    private void updatePayeeAddressFieldsFromPerson(final PaymentGroup paymentGroup, final Person person) {
         paymentGroup.setLine1Address(person.getAddressLine1Unmasked());
         paymentGroup.setLine2Address(person.getAddressLine2Unmasked());
         paymentGroup.setLine3Address(person.getAddressLine3Unmasked());
@@ -115,11 +115,13 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     }
     
     @Override
-    protected PaymentFileLoad parsePaymentFile(BatchInputFileType paymentInputFileType, String incomingFileName, MessageMap errorMap) {
-        FileInputStream fileContents;
+    protected PaymentFileLoad parsePaymentFile(
+            final BatchInputFileType paymentInputFileType, final String incomingFileName, 
+            final MessageMap errorMap) {
+        final FileInputStream fileContents;
         try {
             fileContents = new FileInputStream(incomingFileName);
-        } catch (FileNotFoundException e1) {
+        } catch (final FileNotFoundException e1) {
             LOG.error("parsePaymentFile: file to load not found {}", incomingFileName, e1);
             throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
         }
@@ -127,19 +129,19 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         // do the parse
         PaymentFileLoad paymentFile = null;
         try {
-            byte[] fileByteContent = IOUtils.toByteArray(fileContents);
+            final byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             paymentFile = (PaymentFileLoad) batchInputFileService.parse(paymentInputFileType, fileByteContent);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("parsePaymentFile: error while getting file bytes:  {}", e::getMessage, () -> e);
             sendErrorEmailForGenericException(e, incomingFileName, paymentFile);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
-        } catch (ParseException e1) {
+        } catch (final ParseException e1) {
             LOG.error("parsePaymentFile: Error parsing xml {}", e1::getMessage);
             errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                     e1.getMessage());
             // Get customer object from unparsable file so error email can be sent.
             paymentFile = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
-        } catch (RuntimeException e2) {
+        } catch (final RuntimeException e2) {
             LOG.error("parsePaymentFile: Error reading XML: {}", e2::getMessage);
             sendErrorEmailForGenericException(e2, incomingFileName, paymentFile);
             throw e2;
@@ -157,7 +159,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      * 
      * @param pg
      */
-    private void assignDisbursementTypeCode(PaymentGroup pg) {
+    private void assignDisbursementTypeCode(final PaymentGroup pg) {
         if (pg.isPayableByACH()) {
             pg.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
         } else {
@@ -166,16 +168,16 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     }
     
     private void sendErrorEmailForGenericException(
-            Exception genericException, String incomingFileName, PaymentFileLoad paymentFile) {
+            final Exception genericException, final String incomingFileName, final PaymentFileLoad paymentFile) {
         PaymentFileLoad paymentFileForEmail;
         try {
             paymentFileForEmail = getCustomerProfileFromUnparsableFile(incomingFileName, paymentFile);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             LOG.error("sendErrorEmailForGenericException: Could not read file contents as plain text", e);
             paymentFileForEmail = paymentFile;
         }
         
-        MessageMap errorMap = new MessageMap();
+        final MessageMap errorMap = new MessageMap();
         errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                 "Error reading XML file: " + genericException.getMessage());
         paymentFileEmailService.sendErrorEmail(paymentFileForEmail, errorMap);
@@ -186,19 +188,19 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      * @param paymentFile
      * @return
      */
-    private PaymentFileLoad getCustomerProfileFromUnparsableFile(String incomingFileName, PaymentFileLoad paymentFile) {
-        FileInputStream exFileContents;
+    private PaymentFileLoad getCustomerProfileFromUnparsableFile(final String incomingFileName, PaymentFileLoad paymentFile) {
+        final FileInputStream exFileContents;
 
         try {
             exFileContents = new FileInputStream(incomingFileName); 
-        } catch (FileNotFoundException e1) {
+        } catch (final FileNotFoundException e1) {
             LOG.error("file to load not found " + incomingFileName, e1);
             throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
         }
 
         try {   
-            InputStreamReader inputReader = new InputStreamReader(exFileContents, StandardCharsets.UTF_8);
-            BufferedReader bufferedReader = new BufferedReader(inputReader);
+            final InputStreamReader inputReader = new InputStreamReader(exFileContents, StandardCharsets.UTF_8);
+            final BufferedReader bufferedReader = new BufferedReader(inputReader);
             String line = "";
             boolean found = false;
             String campusVal = "";
@@ -227,7 +229,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 // Note: the pdpEmailServiceImpl doesn't actually use the customer object from the paymentFile, but rather retrieves an instance using
                 // the values provided for chart, unit and sub_unit.  However, it doesn't make sense to even populate the paymentFile object if 
                 // the values retrieved don't map to a valid customer object, so we will retrieve the object here to validate the values.
-                CustomerProfile customer = customerProfileService.get(campusVal, unitVal, subUnitVal);
+                final CustomerProfile customer = customerProfileService.get(campusVal, unitVal, subUnitVal);
                 if(ObjectUtils.isNotNull(customer)) {
                     if(ObjectUtils.isNull(paymentFile)) {
                         paymentFile = new PaymentFileLoad();
@@ -239,12 +241,12 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 }
             }
             
-        } catch(Exception ex) {
+        } catch(final Exception ex) {
             LOG.error("Attempts to retrieve the customer profile from the unparsable XML file failed with the following error.", ex);
         } finally {
             try {
                 exFileContents.close();
-            } catch(IOException io) {
+            } catch(final IOException io) {
                 LOG.error("File stream object could not be closed.", io);                   
             }
         }
@@ -258,19 +260,19 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      * @param paymentGroups The payment groups that were loaded.
      * @param customer The customer's profile.
      */
-    private void checkForInactiveVendors(List<PaymentGroup> paymentGroups, CustomerProfile customer) {
+    private void checkForInactiveVendors(final List<PaymentGroup> paymentGroups, final CustomerProfile customer) {
         final int MESSAGE_START_SIZE = 300;
-        StringBuilder inactiveVendorsMessage = new StringBuilder(MESSAGE_START_SIZE);
+        final StringBuilder inactiveVendorsMessage = new StringBuilder(MESSAGE_START_SIZE);
         
-        for (PaymentGroup paymentGroup : paymentGroups) {
+        for (final PaymentGroup paymentGroup : paymentGroups) {
             // Determine whether the payment group's vendor is inactive.
-            VendorDetail vendor = vendorService.getVendorDetail(paymentGroup.getPayeeId());
+            final VendorDetail vendor = vendorService.getVendorDetail(paymentGroup.getPayeeId());
             
             if (vendor != null && !vendor.isActiveIndicator()) {
                 // If vendor is inactive, then append warning text to final email message.
                 LOG.warn("Found payment group with inactive vendor payee. Payment Group ID: " + paymentGroup.getId()
                         + ", Vendor ID: " + paymentGroup.getPayeeId());
-                String warnMessageStart = getStartOfVendorInactiveMessage(vendor);
+                final String warnMessageStart = getStartOfVendorInactiveMessage(vendor);
                 if (inactiveVendorsMessage.length() == 0) {
                     // Add header if necessary.
                     inactiveVendorsMessage.append("The PDP feed submitted by your unit includes payments to inactive vendors.  ")
@@ -279,7 +281,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
                 }
                 
                 // Append payment detail information to the message. (As per the payment file XSD, there should be at least one detail.)
-                for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+                for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
                     inactiveVendorsMessage.append(warnMessageStart)
                             .append("Customer Payment Doc Nbr: ").append(paymentDetail.getCustPaymentDocNbr()).append('\n')
                             .append("Payment Group ID: ").append(paymentDetail.getPaymentGroupId()).append('\n')
@@ -300,7 +302,7 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      * 
      * @param vendor The inactive vendor.
      */
-    private String getStartOfVendorInactiveMessage(VendorDetail vendor) {
+    private String getStartOfVendorInactiveMessage(final VendorDetail vendor) {
         final int BUILDER_SIZE = 100;
         // Have the inactivation reason printed as "reasonCode -- reasonDescription", or as "None" if no reason is given.
         String reasonCode = vendor.getVendorInactiveReasonCode();
@@ -324,8 +326,8 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
      * @param customer The customer's profile.
      * @param messageText The text to use as the body of the email message.
      */
-    private void sendInactiveVendorsMessage(CustomerProfile customer, String messageText) {
-        BodyMailMessage message = new BodyMailMessage();
+    private void sendInactiveVendorsMessage(final CustomerProfile customer,final String messageText) {
+        final BodyMailMessage message = new BodyMailMessage();
         message.setFromAddress(parameterService.getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARAM_NM));
         message.setSubject("Inactive vendors detected in PDP feed for customer: " + customer.getCustomerDescription());
@@ -338,19 +340,19 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
         emailService.sendMessage(message, false);
     }
 
-    public void setVendorService(VendorService vendorService) {
+    public void setVendorService(final VendorService vendorService) {
         this.vendorService = vendorService;
     }
 
-    public void setEmailService(EmailService emailService) {
+    public void setEmailService(final EmailService emailService) {
         this.emailService = emailService;
     }
 
-    public void setPersonService(PersonService personService) {
+    public void setPersonService(final PersonService personService) {
         this.personService = personService;
     }
 
-    public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
+    public void setCuPdpEmployeeService(final CuPdpEmployeeService cuPdpEmployeeService) {
         this.cuPdpEmployeeService = cuPdpEmployeeService;
     }
 

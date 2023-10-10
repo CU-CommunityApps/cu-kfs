@@ -146,18 +146,18 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     ) {
         LOG.debug("extractChecksToProprietaryFormat(...) - Enter : extractedStatus={}", extractedStatus);
 
-        Date processDate = dateTimeService.getCurrentDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        final Date processDate = dateTimeService.getCurrentDate();
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
         String checkFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(
                 PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
         checkFilePrefix = MessageFormat.format(checkFilePrefix, new Object[]{null});
 
-        String filename = getOutputFile(checkFilePrefix, processDate);
+        final String filename = getOutputFile(checkFilePrefix, processDate);
         LOG.debug("extractChecksToProprietaryFormat(...) - : filename={}", filename);
 
-        List<PaymentProcess> extractsToRun = this.processDao.getAllExtractsToRun();
-        for (PaymentProcess extractToRun : extractsToRun) {
+        final List<PaymentProcess> extractsToRun = this.processDao.getAllExtractsToRun();
+        for (final PaymentProcess extractToRun : extractsToRun) {
             writeExtractCheckFile(extractedStatus, extractToRun, filename, extractToRun.getId().intValue());
             if (shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles()) {
                 extractToRun.setExtractedInd(true);
@@ -184,7 +184,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
 
-    private boolean isIso20022FormatParameterEnabled(String parameterName) {
+    private boolean isIso20022FormatParameterEnabled(final String parameterName) {
         return parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.PDP,
                 KFSConstants.Components.ISO_FORMAT, parameterName, Boolean.FALSE);
     }
@@ -218,12 +218,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     * @param processDate
     * @param sdf
     */
-   protected void writeExtractBundledAchFile(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf) {
+   protected void writeExtractBundledAchFile(
+           final PaymentStatus extractedStatus, final String filename, 
+           final Date processDate, final SimpleDateFormat sdf) {
        LOG.info("writeExtractBundledAchFile started.");
        BufferedWriter os = null;
 
        try {
-           List<String> notificationEmailAddresses = getBankPaymentFileNotificationEmailAddresses();  
+           final List<String> notificationEmailAddresses = getBankPaymentFileNotificationEmailAddresses();  
            
            // Writes out the BNY Mellon Fast Track formatted file for ACH payments.
            // We need to do this first since the status is set in this method which
@@ -231,35 +233,35 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
            writeExtractAchFileMellonBankFastTrack(extractedStatus, filename, processDate, sdf, notificationEmailAddresses);
            
            // totals for summary
-           Map<String, Integer> unitCounts = new HashMap<String, Integer>();
-           Map<String, KualiDecimal> unitTotals = new HashMap<String, KualiDecimal>();
+           final Map<String, Integer> unitCounts = new HashMap<String, Integer>();
+           final Map<String, KualiDecimal> unitTotals = new HashMap<String, KualiDecimal>();
            
            os = new BufferedWriter(new FileWriter(filename, StandardCharsets.UTF_8));
            os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
            writeOpenTag(os, 0, "achPayments");            
 
-           HashSet<String> bankCodes = getAchBundlerHelperService().getDistinctBankCodesForPendingAchPayments();
+           final HashSet<String> bankCodes = getAchBundlerHelperService().getDistinctBankCodesForPendingAchPayments();
 
-           for (String bankCode : bankCodes) {
-               HashSet<Integer> disbNbrs = getAchBundlerHelperService().getDistinctDisbursementNumbersForPendingAchPaymentsByBankCode(bankCode);
+           for (final String bankCode : bankCodes) {
+               final HashSet<Integer> disbNbrs = getAchBundlerHelperService().getDistinctDisbursementNumbersForPendingAchPaymentsByBankCode(bankCode);
                for (Iterator<Integer> iter = disbNbrs.iterator(); iter.hasNext();) {
-                   Integer disbursementNbr = iter.next();
+                   final Integer disbursementNbr = iter.next();
 
                    boolean first = true;
 
                    KualiDecimal totalNetAmount = new KualiDecimal(0);
 
                    // this seems wasteful, but since the total net amount is needed on the first payment detail...it's needed
-                   Iterator<PaymentDetail> i2 = getAchBundlerHelperService().getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
+                   final Iterator<PaymentDetail> i2 = getAchBundlerHelperService().getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
                    while (i2.hasNext()) {
-                       PaymentDetail pd = i2.next();
+                       final PaymentDetail pd = i2.next();
                        totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
                    }
 
-                   Iterator<PaymentDetail> paymentDetails = getAchBundlerHelperService().getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
+                   final Iterator<PaymentDetail> paymentDetails = getAchBundlerHelperService().getPendingAchPaymentDetailsByDisbursementNumberAndBank(disbursementNbr, bankCode);
                    while (paymentDetails.hasNext()) {
-                       PaymentDetail paymentDetail = paymentDetails.next();
-                       PaymentGroup paymentGroup = paymentDetail.getPaymentGroup();
+                       final PaymentDetail paymentDetail = paymentDetails.next();
+                       final PaymentGroup paymentGroup = paymentDetail.getPaymentGroup();
                        if (!testMode) {
                            paymentGroup.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                            paymentGroup.setPaymentStatus(extractedStatus);
@@ -282,7 +284,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
            
            getPaymentFileEmailService().sendAchSummaryEmail(unitCounts, unitTotals, dateTimeService.getCurrentDate());
        }
-       catch (IOException ie) {
+       catch (final IOException ie) {
            LOG.error("MOD: extractAchFile() Problem reading file:  " + filename, ie);
            throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
        }
@@ -293,7 +295,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                    os.close();
                    renameFile(filename, filename + ".NOT_USED");  //  Need to do this at the end to indicate that the file is NOT USED after it is closed.
                }
-               catch (IOException ie) {
+               catch (final IOException ie) {
                    // Not much we can do now
                    LOG.error("IOException encountered in writeExtractBundledAchFile.  Message is: " + ie.getMessage());
                }
@@ -301,10 +303,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
        }
    }    
     @Override
-    protected void writeExtractCheckFile(PaymentStatus extractedStatus, PaymentProcess p, String filename,
-            Integer processId) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        Date processDate = dateTimeService.getCurrentDate();
+    protected void writeExtractCheckFile(
+            final PaymentStatus extractedStatus, final PaymentProcess p, String filename,
+            final Integer processId) {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        final Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
         BufferedWriter osI = null;
         boolean wroteImmediateHeaderRecords = false;
@@ -324,42 +327,42 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             filename = getOutputFile(checkFilePrefix, processDate);
         }
         
-        List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId,
+        final List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId,
                 PdpConstants.DisbursementTypeCodes.CHECK);
         if (bankCodes.isEmpty()) {
             return;
         }
 
         try {
-            List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
+            final List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
             
             if (shouldCreateFastTrackCheckFiles()) {
                 writeExtractCheckFileMellonBankFastTrack(extractedStatus, p, filename, processId, notificationEmailAddresses);
             }
 
-            for (String bankCode : bankCodes) {
-                List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
-                for (Integer disbursementNbr : disbNbrs) {
+            for (final String bankCode : bankCodes) {
+                final List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
+                for (final Integer disbursementNbr : disbNbrs) {
                     first = true;
 
                     KualiDecimal totalNetAmount = new KualiDecimal(0);
 
                     // this seems wasteful, but since the total net amount is needed on the first payment detail...it's needed
-                    Iterator<PaymentDetail> i2 =
+                    final Iterator<PaymentDetail> i2 =
                             paymentDetailService.getByDisbursementNumber(disbursementNbr, processId,
                                     PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (i2.hasNext()) {
-                        PaymentDetail pd = i2.next();
+                        final PaymentDetail pd = i2.next();
                         totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
                     }
 
-                    List<KualiInteger> paymentGroupIdsSaved = new ArrayList<>();
+                    final List<KualiInteger> paymentGroupIdsSaved = new ArrayList<>();
 
-                    Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(
+                    final Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(
                             disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (paymentDetails.hasNext()) {
-                        PaymentDetail detail = paymentDetails.next();
-                        PaymentGroup group = detail.getPaymentGroup();
+                        final PaymentDetail detail = paymentDetails.next();
+                        final PaymentGroup group = detail.getPaymentGroup();
                         if (!testMode && shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles()) {
                             if (!paymentGroupIdsSaved.contains(group.getId())) {
                                 group.setDisbursementDate(new java.sql.Date(processDate.getTime()));
@@ -501,7 +504,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             }
             
             
-        } catch (IOException ie) {
+        } catch (final IOException ie) {
             LOG.error("extractChecks() Problem reading file:  {}", filename, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
         } finally {
@@ -513,7 +516,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     // An XML file containing these records are NEVER sent to anyone at this time.
                     renameFile(checkFilename, checkFilename + ".NOT_USED");  
                     createDoneFile( checkFilename + ".NOT_USED");
-                } catch (IOException ie) {
+                } catch (final IOException ie) {
                     // Not much we can do now
                 }
             }
@@ -524,7 +527,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     // An XML file containing these records are ONLY used for local check printing.
                     renameFile(immediateFilename, immediateFilename + ".READY");  
                     createDoneFile( immediateFilename + ".READY");
-                } catch (IOException ie) {
+                } catch (final IOException ie) {
                     // Not much we can do now
                    LOG.error("IOException encountered in writeExtractCheckFile.  Message is: " + ie.getMessage());
                 }
@@ -532,8 +535,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
 
-    private String createAchFormattedRemittanceIdTextBasedOnInvoiceDataForDv(String invoiceNumber, Date invoiceDate, String customerPaymentDocumentNumber) {
-        StringBuilder formattedRemittanceIdText = new StringBuilder(KFSConstants.EMPTY_STRING);
+    private String createAchFormattedRemittanceIdTextBasedOnInvoiceDataForDv(
+            final String invoiceNumber, final Date invoiceDate, 
+            final String customerPaymentDocumentNumber) {
+        final StringBuilder formattedRemittanceIdText = new StringBuilder(KFSConstants.EMPTY_STRING);
 
         if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
             formattedRemittanceIdText.append(invoiceNumber);
@@ -556,8 +561,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
      * @param customerPaymentDocumentNumber
      * @return
      */
-    private String createCheckFormattedRemittanceIdTextBasedOnInvoiceDataFromDv(String invoiceNumber, Date invoiceDate, String customerPaymentDocumentNumber) {
-        StringBuilder formattedRemittanceIdText = new StringBuilder(KFSConstants.EMPTY_STRING);
+    private String createCheckFormattedRemittanceIdTextBasedOnInvoiceDataFromDv(
+            final String invoiceNumber, final Date invoiceDate, 
+            final String customerPaymentDocumentNumber) {
+        final StringBuilder formattedRemittanceIdText = new StringBuilder(KFSConstants.EMPTY_STRING);
         
         if (StringUtils.isNotBlank(invoiceNumber) && ObjectUtils.isNotNull(invoiceDate)) {
             formattedRemittanceIdText.append(invoiceNumber);
@@ -568,9 +575,10 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return formattedRemittanceIdText.toString();
     }
     
-    private String constructDocumentNumberForFirstNoteLineWhenDv(PaymentGroup pdpPaymentGroup, String customerPaymentDocumentNumber) {
-        StringBuilder formattedEdocText = new StringBuilder(KFSConstants.EMPTY_STRING);
-        String customerProfileSubUnitCode = determineCustomerProfileSubUnitCode(pdpPaymentGroup);
+    private String constructDocumentNumberForFirstNoteLineWhenDv(
+            final PaymentGroup pdpPaymentGroup, final String customerPaymentDocumentNumber) {
+        final StringBuilder formattedEdocText = new StringBuilder(KFSConstants.EMPTY_STRING);
+        final String customerProfileSubUnitCode = determineCustomerProfileSubUnitCode(pdpPaymentGroup);
 
         if (StringUtils.equalsIgnoreCase(customerProfileSubUnitCode, CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) {
             formattedEdocText.append(CuDisbursementVoucherConstants.DV_EXTRACT_EDOC_NUMBER_PREFIX_IDENTIFIER);
@@ -580,7 +588,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return formattedEdocText.toString();
     }
     
-    private String determineCustomerProfileSubUnitCode(PaymentGroup pdpPaymentGroup) {
+    private String determineCustomerProfileSubUnitCode(final PaymentGroup pdpPaymentGroup) {
         CustomerProfile customerProfile = null;
         String subUnitCode = KFSConstants.EMPTY_STRING;
         
@@ -602,15 +610,15 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return subUnitCode;
     }
     
-    public String stripLeadingSpace(String stringToCheck) {
+    public String stripLeadingSpace(final String stringToCheck) {
         return (StringUtils.isNotEmpty(stringToCheck)) ? StringUtils.removeStart(stringToCheck, KFSConstants.BLANK_SPACE) : stringToCheck;
     }
     
-    public String stripTrailingSpace(String stringToCheck) {
+    public String stripTrailingSpace(final String stringToCheck) {
         return (StringUtils.isNotEmpty(stringToCheck)) ? StringUtils.removeEnd(stringToCheck, KFSConstants.BLANK_SPACE) : stringToCheck;
     }
     
-    public int calculateMaxNumCharsFromNewNoteLine(String noteLine, String currentCheckStubDataLine) {
+    public int calculateMaxNumCharsFromNewNoteLine(final String noteLine, final String currentCheckStubDataLine) {
         String proposedCheckStubLine;
         
         if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
@@ -631,41 +639,45 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         if (totalNumChars == 0 || totalNumChars <= CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
             return noteLine.length();
         } else {
-            String wrappedText = WordUtils.wrap(proposedCheckStubLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE, "\n", false);
-            String[] constructedCheckStubLines = wrappedText.split("\n");
+            final String wrappedText = WordUtils.wrap(proposedCheckStubLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE, "\n", false);
+            final String[] constructedCheckStubLines = wrappedText.split("\n");
             return noteLine.length() - constructedCheckStubLines[1].length();
         }
     }
     
-    public String obtainNoteLineSectionExceedingCheckStubLine(String noteLine, String currentCheckStubDataLine) {
-        String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
-        String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
+    public String obtainNoteLineSectionExceedingCheckStubLine(
+            final String noteLine, final String currentCheckStubDataLine) {
+        final String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
+        final String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
         
-        int startPositionOfTextBeingTruncated = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
+        final int startPositionOfTextBeingTruncated = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
         return (startPositionOfTextBeingTruncated == strippedNoteLine.length()) ? "" : strippedNoteLine.substring(startPositionOfTextBeingTruncated);
     }
     
-    public String obtainLeadingNoteLineSection(String noteLine, String currentCheckStubDataLine) {
-        String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
-        String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
+    public String obtainLeadingNoteLineSection(
+            final String noteLine, final String currentCheckStubDataLine) {
+        final String strippedNoteLine = stripTrailingSpace(stripLeadingSpace(noteLine));
+        final String strippedCurrentCheckStubDataLine = stripTrailingSpace(stripLeadingSpace(currentCheckStubDataLine));
         
-        int maxNumCharsFromNewNoteLine = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
+        final int maxNumCharsFromNewNoteLine = calculateMaxNumCharsFromNewNoteLine(strippedNoteLine, strippedCurrentCheckStubDataLine);
         return stripTrailingSpace(stripLeadingSpace(strippedNoteLine.substring(0, maxNumCharsFromNewNoteLine)));
     }
     
     // This method is called by the method that generates the XML file for checks to be printed by BNY Mellon
-    protected void writeExtractCheckFileMellonBankFastTrack(PaymentStatus extractedStatus, PaymentProcess p, String filename, Integer processId, List<String> notificationEmailAddresses) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US); //Used in the Fast Track file HEADER record
-        SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd", Locale.US); //Used in the Fast Track file PAY01000 record
-        SimpleDateFormat sdfIDate = new SimpleDateFormat("yyMMdd", Locale.US);    //Used in the issuance file
-        SimpleDateFormat sdfITime = new SimpleDateFormat("HHmm", Locale.US);      //Used in the issuance file (NO SECONDS)
-        Date processDate = dateTimeService.getCurrentDate();
+    protected void writeExtractCheckFileMellonBankFastTrack(
+            final PaymentStatus extractedStatus, final PaymentProcess p, 
+            final String filename, final Integer processId, final List<String> notificationEmailAddresses) {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US); //Used in the Fast Track file HEADER record
+        final SimpleDateFormat sdfPAY1000Rec = new SimpleDateFormat("yyyyMMdd", Locale.US); //Used in the Fast Track file PAY01000 record
+        final SimpleDateFormat sdfIDate = new SimpleDateFormat("yyMMdd", Locale.US);    //Used in the issuance file
+        final SimpleDateFormat sdfITime = new SimpleDateFormat("HHmm", Locale.US);      //Used in the issuance file (NO SECONDS)
+        final Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
         BufferedWriter osI = null;
         String cDelim = "^";  //column delimiter: Per BNY Mellon FastTrack spec, your choices are: "^" or ",".  If you change this make sure you change the associated name on the next line!
-        String cDname = "FFCARET";  // column delimiter name: Per BNY Mellon FastTrack spec, your choices are: FFCARET and FFCOMMA for variable record types
-        String hdrRecType = "V";    // record type: Per BNY Mellon's FastTrack spec, can be either V for variable or F for fixed.
-        String testIndicator;       // For Mellon Fast Track files - indicates whether the generated file is for (T)est or for (P)roduction
+        final String cDname = "FFCARET";  // column delimiter name: Per BNY Mellon FastTrack spec, your choices are: FFCARET and FFCOMMA for variable record types
+        final String hdrRecType = "V";    // record type: Per BNY Mellon's FastTrack spec, can be either V for variable or F for fixed.
+        final String testIndicator;       // For Mellon Fast Track files - indicates whether the generated file is for (T)est or for (P)roduction
         String ourBankAccountNumber = "";
         String ourBankRoutingNumber = "";
         String subUnitCode = "";
@@ -726,14 +738,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             arFilename = ftFilename.replace("check", "check_immediate");
 
             //  Obtain the bank account number from the check information provided
-            List<String> bankCodes1 = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);
+            final List<String> bankCodes1 = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);
             if (!bankCodes1.isEmpty()) {
-                List<Integer> disbNbrs1 = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCodes1.get(0));
+                final List<Integer> disbNbrs1 = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCodes1.get(0));
                 if (!disbNbrs1.isEmpty()) {
-                    Iterator<PaymentDetail> myPds = paymentDetailService.getByDisbursementNumber(disbNbrs1.get(0));
+                    final Iterator<PaymentDetail> myPds = paymentDetailService.getByDisbursementNumber(disbNbrs1.get(0));
                     if (myPds.hasNext()) {
-                        PaymentDetail myPd = myPds.next();
-                        PaymentGroup myPg = myPd.getPaymentGroup();
+                        final PaymentDetail myPd = myPds.next();
+                        final PaymentGroup myPg = myPd.getPaymentGroup();
                         if (ObjectUtils.isNotNull(myPg)) {
                             ourBankAccountNumber = myPg.getBank().getBankAccountNumber().replace("-", "");
                             ourBankRoutingNumber = myPg.getBank().getBankRoutingNumber();   
@@ -748,27 +760,27 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             // At this point we will start looping through all the checks and write the PAY01000 record (one for each payee), 
             // two (2) PDT2010 records (one for the Payer & Payee) and as many REM3020 records as needed for each amount being
             // paid to this payee.
-            List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);
-            for (String bankCode : bankCodes) {
-                List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
+            final List<String> bankCodes = paymentGroupService.getDistinctBankCodesForProcessAndType(processId, PdpConstants.DisbursementTypeCodes.CHECK);
+            for (final String bankCode : bankCodes) {
+                final List<Integer> disbNbrs = paymentGroupService.getDisbursementNumbersByDisbursementTypeAndBankCode(processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                 for (Iterator<Integer> iter = disbNbrs.iterator(); iter.hasNext();) {
-                    Integer disbursementNbr = iter.next();
+                    final Integer disbursementNbr = iter.next();
 
                     boolean first = true;   //If this payee has multiple checks coming to them, this ensures we only generate 1 PAY01000 record
 
                     KualiDecimal totalNetAmount = new KualiDecimal(0);
 
                     // We continue to need this for the FastTrack file as well since the total net amount is needed on the PAY01000 record for each payee
-                    Iterator<PaymentDetail> i2 = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
+                    final Iterator<PaymentDetail> i2 = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (i2.hasNext()) {
-                        PaymentDetail pd = i2.next();
+                        final PaymentDetail pd = i2.next();
                         totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
                     }
 
-                    Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
+                    final Iterator<PaymentDetail> paymentDetails = paymentDetailService.getByDisbursementNumber(disbursementNbr, processId, PdpConstants.DisbursementTypeCodes.CHECK, bankCode);
                     while (paymentDetails.hasNext()) {
-                        PaymentDetail pd = paymentDetails.next();
-                        PaymentGroup pg = pd.getPaymentGroup();
+                        final PaymentDetail pd = paymentDetails.next();
+                        final PaymentGroup pg = pd.getPaymentGroup();
                         
                         // We save these values to the DB AFTER we know that this check has passed all validation and has actually been written
                         pg.setDisbursementDate(new java.sql.Date(processDate.getTime()));
@@ -1711,11 +1723,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     "\n");                             // EOR
             }
         } //try
-        catch (IOException ie) {
+        catch (final IOException ie) {
             LOG.error("IO Exception with writeExtractCheckFileMellonBankFastTrack() Problem reading file:  " + ftFilename, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
         }
-        catch (Exception ex) {
+        catch (final Exception ex) {
             LOG.error("General Exception with writeExtractCheckFileMellonBankFastTrack().  Error is:  " + ex.getMessage(), ex);
         }
         finally {
@@ -1724,7 +1736,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                 try {
                     os.close();
                     renameFile(ftFilename,ftFilename + ".READY");  //  Need to do this at the end to indicate that the file is ready after it is closed.
-                } catch (IOException ie) {
+                } catch (final IOException ie) {
                     // Not much we can do now
                     LOG.error("IOException encountered in writeExtractCheckFileMellonBankFastTrack.  Message is: " + ie.getMessage());
                 }
@@ -1735,7 +1747,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     // Rename the resulting file to have a .READY at the end
                     //  Need to do this at the end to indicate that the file is ready after it is closed.
                     renameFile(arFilename,arFilename + ".READY");  
-                } catch (IOException ie) {
+                } catch (final IOException ie) {
                     // Not much we can do now
                     LOG.error("IOException encountered in writeExtractAchFile.  Message is: " + ie.getMessage());
                 }
@@ -1766,7 +1778,9 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
     // Adjusted the code in this method to deal with the output of the payment details based upon 
     // payee with multiple payments in the same payment group.
-    protected void writeExtractAchFileMellonBankFastTrack(PaymentStatus extractedStatus, String filename, Date processDate, SimpleDateFormat sdf, List<String> notificationEmailAddresses) {
+    protected void writeExtractAchFileMellonBankFastTrack(
+            final PaymentStatus extractedStatus, String filename, 
+            final Date processDate, SimpleDateFormat sdf, final List<String> notificationEmailAddresses) {
         BufferedWriter os = null;
         sdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US); //Used in the Fast Track file HEADER record
         Date headerDate = calculateHeaderDate(processDate); //headerDate must be day after processDate to prevent additional cost for same day ACH payments
@@ -2081,8 +2095,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         
                         // Write the REM03020 record
                         // Set up remittanceIdCode and remittanceIdText based on whether its a DV or something else.
-                        String remittanceIdCode = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
-                        String remittanceIdText = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
+                        final String remittanceIdCode = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? "TN" : "IV" ;
+                        final String remittanceIdText = (subUnitCode.equals(CuDisbursementVoucherConstants.DV_EXTRACT_SUB_UNIT_CODE)) ? 
                                 createAchFormattedRemittanceIdTextBasedOnInvoiceDataForDv(pd.getInvoiceNbr(), pd.getInvoiceDate(), pd.getCustPaymentDocNbr()) :
                                     ObjectUtils.isNotNull(pd.getInvoiceNbr()) ? pd.getInvoiceNbr() : "";
                         
@@ -2165,11 +2179,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             }
 
         }  // try
-        catch (IOException ie) {
+        catch (final IOException ie) {
             LOG.error("extractAchPayments() Problem reading file:  " + filename, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
         }
-        catch (Exception ex) {
+        catch (final Exception ex) {
             LOG.error("General Exception with writeExtractBundledAchFileMellonBankFastTrack().  Error is:  " + ex.getMessage(), ex);
         }
         finally {
@@ -2179,7 +2193,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     os.close();
                     renameFile(filename, filename + ".READY");   //  Need to do this at the end to indicate that the file is ready after it is closed.
                 }
-                catch (IOException ie) {
+                catch (final IOException ie) {
                     // Not much we can do now
                     LOG.error("IOException in extractAchPayments():  " + filename, ie);
                 }
@@ -2187,13 +2201,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
 
-    protected Date calculateHeaderDate(Date processDate) {
+    protected Date calculateHeaderDate(final Date processDate) {
         return DateUtils.addDays(new Date(processDate.getTime()), 1);
     } 
     
     @Override
-    protected void writeExtractAchFile(PaymentStatus extractedStatus, String filename, Date processDate,
-            SimpleDateFormat sdf) {
+    protected void writeExtractAchFile(
+            final PaymentStatus extractedStatus, final String filename, final Date processDate,
+            final SimpleDateFormat sdf) {
         BufferedWriter os = null;
         try {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
@@ -2203,19 +2218,19 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             writeExtractAchFileMellonBankFastTrack(extractedStatus, filename, processDate, sdf, notificationEmailAddresses);
             
             // totals for summary
-            Map<String, Integer> unitCounts = new HashMap<String, Integer>();
-            Map<String, KualiDecimal> unitTotals = new HashMap<String, KualiDecimal>();
+            final Map<String, Integer> unitCounts = new HashMap<String, Integer>();
+            final Map<String, KualiDecimal> unitTotals = new HashMap<String, KualiDecimal>();
 
             Iterator iter = paymentGroupService.getByDisbursementTypeStatusCode(PdpConstants.DisbursementTypeCodes.ACH, 
                     PdpConstants.PaymentStatusCodes.PENDING_ACH);
             if (iter.hasNext()) {
-                OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8);
+                final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8);
                 os = new BufferedWriter(writer);
                 os.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                 writeOpenTag(os, 0, "achPayments");
 
                 while (iter.hasNext()) {
-                    PaymentGroup paymentGroup = (PaymentGroup) iter.next();
+                    final PaymentGroup paymentGroup = (PaymentGroup) iter.next();
                     if (!testMode) {
                         paymentGroup.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                         paymentGroup.setPaymentStatus(extractedStatus);
@@ -2226,8 +2241,8 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
                     // Write all payment level information
                     writeOpenTag(os, 4, "payments");
-                    List<PaymentDetail> pdList = paymentGroup.getPaymentDetails();
-                    for ( PaymentDetail paymentDetail: pdList) {
+                    final List<PaymentDetail> pdList = paymentGroup.getPaymentDetails();
+                    for ( final PaymentDetail paymentDetail: pdList) {
                         writePaymentDetailToAchFile(os, paymentGroup, paymentDetail, unitCounts, unitTotals, sdf);
                     }
 
@@ -2238,7 +2253,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
 
                 paymentFileEmailService.sendAchSummaryEmail(unitCounts, unitTotals, dateTimeService.getCurrentDate());
             }
-        } catch (IOException ie) {
+        } catch (final IOException ie) {
             LOG.error("extractAchPayments() Problem reading file:  {}", filename, ie);
             throw new IllegalArgumentException("Error writing to output file: " + ie.getMessage());
         } finally {
@@ -2246,7 +2261,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             if (os != null) {
                 try {
                     os.close();
-                } catch (IOException ie) {
+                } catch (final IOException ie) {
                     // Not much we can do now
                 }
             }
@@ -2256,12 +2271,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
      * New method created due to refactoring the code from ExtractPaymentServiceImpl and AchBundlerExtractPaymnetServiceImpl.
      * Method writes all tags and data for a single payee from open ach to close of customerProfile.
      */
-    protected void writePayeeSpecificsToAchFile(BufferedWriter os, PaymentGroup paymentGroup, Date processDate, SimpleDateFormat sdf) throws IOException {
+    protected void writePayeeSpecificsToAchFile(
+            final BufferedWriter os, final PaymentGroup paymentGroup, final Date processDate, 
+            final SimpleDateFormat sdf) throws IOException {
         
         try {
             writeOpenTagAttribute(os, 2, "ach", "disbursementNbr",
                     paymentGroup.getDisbursementNbr().toString());
-            PaymentProcess paymentProcess = paymentGroup.getProcess();
+            final PaymentProcess paymentProcess = paymentGroup.getProcess();
             writeTag(os, 4, "processCampus", paymentProcess.getCampusCode());
             writeTag(os, 4, "processId", paymentProcess.getId().toString());
         
@@ -2278,7 +2295,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         
             writeOpenTag(os, 4, "payments");
         }
-        catch (IOException ioe) {
+        catch (final IOException ioe) {
             LOG.error("writePayeeSpecificsToAchFile(): Problem writing to file - IOException caught and rethrown.");
             throw ioe;
         }
@@ -2288,7 +2305,9 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     /*
      * New method created due to refactoring the code from ExtractPaymentServiceImpl and AchBundlerExtractPaymnetServiceImpl
      */
-    protected void writePaymentDetailToAchFile(BufferedWriter os, PaymentGroup paymentGroup, PaymentDetail paymentDetail, Map<String, Integer> unitCounts, Map<String, KualiDecimal> unitTotals, SimpleDateFormat sdf) throws IOException {
+    protected void writePaymentDetailToAchFile(
+            final BufferedWriter os, final PaymentGroup paymentGroup, final PaymentDetail paymentDetail, 
+            final Map<String, Integer> unitCounts, final Map<String, KualiDecimal> unitTotals, final SimpleDateFormat sdf) throws IOException {
         
         try {           
             writeOpenTag(os, 6, "payment");
@@ -2308,14 +2327,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             writeTag(os, 8, "invTotOtherCreditAmount", paymentDetail.getInvTotOtherCreditAmount().toString());
     
             writeOpenTag(os, 8, "notes");
-            for (PaymentNoteText note : paymentDetail.getNotes()) {
+            for (final PaymentNoteText note : paymentDetail.getNotes()) {
                 writeTag(os, 10, "note", updateNoteLine(escapeString(note.getCustomerNoteText())));
             }
             writeCloseTag(os, 8, "notes");
     
             writeCloseTag(os, 6, "payment");
     
-            String unit = paymentGroup.getBatch().getCustomerProfile().getCampusCode() + "-" +
+            final String unit = paymentGroup.getBatch().getCustomerProfile().getCampusCode() + "-" +
                     paymentGroup.getBatch().getCustomerProfile().getUnitCode() + "-" +
                     paymentGroup.getBatch().getCustomerProfile().getSubUnitCode();
     
@@ -2330,7 +2349,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                 unitTotal = paymentDetail.getNetPaymentAmount().add(unitTotals.get(unit));
             }
             unitTotals.put(unit, unitTotal);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             LOG.error("writePaymentDetailToAchFile(): Problem writing to file - IOException caught and rethrown.");
             throw ioe;
         }
@@ -2347,13 +2366,13 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         try {
             emailAddressesStr = parameterService.getParameterValueAsString(CUKFSParameterKeyConstants.KFS_PDP, CUKFSParameterKeyConstants.ALL_COMPONENTS, 
                     CUKFSParameterKeyConstants.BANK_PAYMENT_FILE_EMAIL_NOTIFICATION);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.error("ExtractPaymentServiceImpl.getBankPaymentFileNotificationEmailAddresses: The " + CUKFSParameterKeyConstants.KFS_PDP + ":" 
                     + CUKFSParameterKeyConstants.ALL_COMPONENTS + ":" + CUKFSParameterKeyConstants.BANK_PAYMENT_FILE_EMAIL_NOTIFICATION 
                     + "system parameter was not found registered in the system.");
         }
         
-        List<String> emailAddressList = Arrays.asList(emailAddressesStr.split(";"));
+        final List<String> emailAddressList = Arrays.asList(emailAddressesStr.split(";"));
         
         return emailAddressList;
     }
@@ -2370,19 +2389,19 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return noteLine;
     }
     
-    protected boolean renameFile(String fromFile, String toFile) {
+    protected boolean renameFile(final String fromFile, final String toFile) {
         boolean bResult = false;
         try {
-            File f = new File(fromFile);
+            final File f = new File(fromFile);
             f.renameTo(new File(toFile));
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             LOG.error("renameFile Exception: " + ex.getMessage());
             LOG.error("fromFile: " + fromFile + ", toFile: " + toFile);
         }
         return bResult;
     }
     // This utility function produces a string of (s) characters (n) times.
-    protected String repeatThis(String s, int n) {
+    protected String repeatThis(final String s, final int n) {
         return  String.format(String.format("%%0%dd", n), 0).replace("0",s);
     }
     
@@ -2390,11 +2409,11 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         return achBundlerHelperService;
     }
 
-    public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
+    public void setAchBundlerHelperService(final AchBundlerHelperService achBundlerHelperService) {
         this.achBundlerHelperService = achBundlerHelperService;
     }
 
-    public void setCuPayeeAddressService(CuPayeeAddressService cuPayeeAddressService) {
+    public void setCuPayeeAddressService(final CuPayeeAddressService cuPayeeAddressService) {
         this.cuPayeeAddressService = cuPayeeAddressService;
     }
 }

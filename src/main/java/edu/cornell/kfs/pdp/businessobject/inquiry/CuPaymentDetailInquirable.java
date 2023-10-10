@@ -15,7 +15,7 @@ public class CuPaymentDetailInquirable extends PaymentDetailInquirable {
      * Overridden to handle a space in the country code.
      */
     @Override
-    protected void convertCountryForDisplay(Section section) {
+    protected void convertCountryForDisplay(final Section section) {
         section.getRows().stream()
                 .flatMap((row) -> row.getFields().stream())
                 .filter(this::isPaymentGroupCountryField)
@@ -24,11 +24,11 @@ public class CuPaymentDetailInquirable extends PaymentDetailInquirable {
         super.convertCountryForDisplay(section);
     }
 
-    protected boolean isPaymentGroupCountryField(Field field) {
+    protected boolean isPaymentGroupCountryField(final Field field) {
         return StringUtils.equalsIgnoreCase(CUPdpPropertyConstants.PAYMENT_COUNTRY, field.getPropertyName());
     }
     
-    protected void resetBlankPropertyValueToEmptyString(Field field) {
+    protected void resetBlankPropertyValueToEmptyString(final Field field) {
         if (StringUtils.isBlank(field.getPropertyValue())) {
             field.setPropertyValue(StringUtils.EMPTY);
         }

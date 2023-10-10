@@ -19,16 +19,16 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
     private BusinessObjectService businessObjectService;
 
     @Override
-    public PayeeACHAccount getAchInformationIncludingInactive(String idType, String payeeId, String achTransactionType) {
+    public PayeeACHAccount getAchInformationIncludingInactive(final String idType, final String payeeId, final String achTransactionType) {
         LOG.debug("getAchInformationIncludingInactive() started");
 
-        Map<String, Object> fields = new HashMap<>();
+        final Map<String, Object> fields = new HashMap<>();
 
         fields.put(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, idType);
         fields.put(PdpPropertyConstants.ACH_TRANSACTION_TYPE, achTransactionType);
         fields.put(PdpPropertyConstants.PAYEE_ID_NUMBER, payeeId);
 
-        Collection<PayeeACHAccount> rows = businessObjectService.findMatching(PayeeACHAccount.class, fields);
+        final Collection<PayeeACHAccount> rows = businessObjectService.findMatching(PayeeACHAccount.class, fields);
         if (rows.size() != 1) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("getAchInformationIncludingInactive() not found rows = " + rows.size());
@@ -43,7 +43,7 @@ public class CuAchServiceImpl extends AchServiceImpl implements CuAchService {
     }
 
     @Override
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         super.setBusinessObjectService(businessObjectService);
         this.businessObjectService = businessObjectService;
     }

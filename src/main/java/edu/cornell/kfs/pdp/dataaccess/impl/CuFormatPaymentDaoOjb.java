@@ -20,10 +20,10 @@ public class CuFormatPaymentDaoOjb extends FormatPaymentDaoOjb implements CuForm
     private static final Logger LOG = LogManager.getLogger();
    
     @Override
-    public Iterator markPaymentsForFormat(List customerIds, Timestamp paydateTs, String paymentTypes, String paymentDistribution) {
+    public Iterator markPaymentsForFormat(final List customerIds, final Timestamp paydateTs, final String paymentTypes, final String paymentDistribution) {
         LOG.debug("markPaymentsForFormat() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
 
         if (customerIds.size() > 0) {
             criteria.addIn(PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_BATCH + "." + PdpPropertyConstants.BatchConstants.CUSTOMER_ID, customerIds);
@@ -49,10 +49,10 @@ public class CuFormatPaymentDaoOjb extends FormatPaymentDaoOjb implements CuForm
             criteria.addEqualTo(PdpPropertyConstants.PaymentGroup.PROCESS_IMMEDIATE, Boolean.TRUE);
         } else {
             // (Payment date <= usePaydate OR immediate = TRUE)
-            Criteria criteria1 = new Criteria();
+            final Criteria criteria1 = new Criteria();
             criteria1.addEqualTo(PdpPropertyConstants.PaymentGroup.PROCESS_IMMEDIATE, Boolean.TRUE);
 
-            Criteria criteria2 = new Criteria();
+            final Criteria criteria2 = new Criteria();
             criteria2.addLessOrEqualThan(PdpPropertyConstants.PaymentGroup.PAYMENT_DATE, paydateTs);
             criteria1.addOrCriteria(criteria2);
 
@@ -62,17 +62,17 @@ public class CuFormatPaymentDaoOjb extends FormatPaymentDaoOjb implements CuForm
         if (CUPdpConstants.PaymentDistributions.PROCESS_ACH_ONLY.equals(paymentDistribution)) {
             criteria.addEqualTo(PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_DISBURSEMENT_TYPE_CODE, PdpConstants.DisbursementTypeCodes.ACH);
         } else if (CUPdpConstants.PaymentDistributions.PROCESS_CHECK_ONLY.equals(paymentDistribution)) {
-            Criteria criteria3 = new Criteria();
+            final Criteria criteria3 = new Criteria();
             criteria3.addEqualTo(PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_DISBURSEMENT_TYPE_CODE, PdpConstants.DisbursementTypeCodes.CHECK);
             
-            Criteria criteria4 = new Criteria();
+            final Criteria criteria4 = new Criteria();
             criteria4.addIsNull(PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_DISBURSEMENT_TYPE_CODE);
             criteria3.addOrCriteria(criteria4);
             
             criteria.addAndCriteria(criteria3);
         } 
 
-        Iterator groupIterator = getPersistenceBrokerTemplate().getIteratorByQuery(new QueryByCriteria(PaymentGroup.class, criteria));
+        final Iterator groupIterator = getPersistenceBrokerTemplate().getIteratorByQuery(new QueryByCriteria(PaymentGroup.class, criteria));
         return groupIterator;
     }
 }
