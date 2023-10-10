@@ -94,9 +94,9 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
             accountingLine.setDocumentNumber(documentNumber);
             accountingLine.setChartOfAccountsCode(xmlLine.getChartCode());
             accountingLine.setAccountNumber(xmlLine.getAccountNumber());
-            accountingLine.setSubAccountNumber(xmlLine.getSubAccountNumber());
+            accountingLine.setSubAccountNumber(cleanAccountingLineValue(xmlLine.getSubAccountNumber()));
             accountingLine.setFinancialObjectCode(xmlLine.getObjectCode());
-            accountingLine.setFinancialSubObjectCode(xmlLine.getSubObjectCode());
+            accountingLine.setFinancialSubObjectCode(cleanAccountingLineValue(xmlLine.getSubObjectCode()));
             accountingLine.setProjectCode(xmlLine.getProjectCode());
             accountingLine.setOrganizationReferenceId(xmlLine.getOrgRefId());
             accountingLine.setFinancialDocumentLineDescription(xmlLine.getLineDescription());
@@ -105,6 +105,10 @@ public abstract class AccountingDocumentGeneratorBase<T extends AccountingDocume
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    protected String cleanAccountingLineValue(String stringToClean) {
+        return StringUtils.trim(stringToClean);
     }
 
     protected void populateDocumentNotes(T document, AccountingXmlDocumentEntry documentEntry) {
