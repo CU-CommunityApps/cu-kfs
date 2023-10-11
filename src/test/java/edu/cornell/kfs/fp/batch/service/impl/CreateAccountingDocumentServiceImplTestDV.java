@@ -30,6 +30,7 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherPayeeServiceImpl;
+import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingDocumentServiceImplTestBase {
@@ -45,9 +46,16 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
         createAccountingDocumentService = new DvTestCreateAccountingDocumentServiceImpl(buildMockPersonService(),
                 buildAccountingXmlDocumentDownloadAttachmentService(), configurationService,
                 buildMockUniversityDateService(), dateTimeService, cuDisbursementVoucherDefaultDueDateService,
-                buildCuDisbursementVoucherPayeeService(), buildMockVendorService());
+                buildCuDisbursementVoucherPayeeService(), buildMockVendorService(), buildMockCuCheckStubService());
         createAccountingDocumentService.initializeDocumentGeneratorsFromMappings(AccountingDocumentMapping.DV_DOCUMENT);
         setupBasicCreateAccountingDocumentServices();
+    }
+    
+    private CuCheckStubService buildMockCuCheckStubService() {
+        CuCheckStubService checkService = Mockito.mock(CuCheckStubService.class);
+        Mockito.when(checkService.doesCheckStubNeedTruncatingForIso20022(Mockito.any())).thenReturn(true);
+        Mockito.when(checkService.createWarningMessageForCheckStubIso20022MaxLength(Mockito.any())).thenReturn("Testing warning message");
+        return checkService;
     }
 
     @Override
@@ -125,18 +133,22 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
     }
 
     protected static class DvTestCreateAccountingDocumentServiceImpl extends TestCreateAccountingDocumentServiceImpl {
-
+        private CuCheckStubService checkStubService;
+        
         public DvTestCreateAccountingDocumentServiceImpl(PersonService personService,
                 AccountingXmlDocumentDownloadAttachmentService downloadAttachmentService,
                 ConfigurationService configurationService, UniversityDateService universityDateService,
                 DateTimeService dateTimeService,
                 CuDisbursementVoucherDefaultDueDateService cuDisbursementVoucherDefaultDueDateService,
-                CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService, VendorService vendorService) {
+                CuDisbursementVoucherPayeeService cuDisbursementVoucherPayeeService, VendorService vendorService,
+                CuCheckStubService checkStubService) {
             super(personService, downloadAttachmentService, configurationService, universityDateService,
                     dateTimeService);
             this.cuDisbursementVoucherDefaultDueDateService = cuDisbursementVoucherDefaultDueDateService;
             this.cuDisbursementVoucherPayeeService = cuDisbursementVoucherPayeeService;
             this.vendorService = vendorService;
+            this.checkStubService = checkStubService;
+            
         }
 
         @Override
@@ -148,6 +160,7 @@ public class CreateAccountingDocumentServiceImplTestDV extends CreateAccountingD
             dvGenerator.setCuDisbursementVoucherDefaultDueDateService(cuDisbursementVoucherDefaultDueDateService);
             dvGenerator.setCuDisbursementVoucherPayeeService(cuDisbursementVoucherPayeeService);
             dvGenerator.setVendorService(vendorService);
+            dvGenerator.setCuCheckStubService(checkStubService);
             return dvGenerator;
         }
     }
