@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.xmladapters;
 
-import com.amazonaws.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
