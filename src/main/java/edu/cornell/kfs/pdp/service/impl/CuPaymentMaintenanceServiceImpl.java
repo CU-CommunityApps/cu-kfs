@@ -27,7 +27,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
     private static final Logger LOG = LogManager.getLogger();
     
     @Override
-    public boolean cancelDisbursement(Integer paymentGroupId, Integer paymentDetailId, String note, Person user) {
+    public boolean cancelDisbursement(final Integer paymentGroupId, final Integer paymentDetailId, final String note, final Person user) {
         LOG.debug("cancelDisbursement() started");
 
         // All actions must be performed on entire group not individual detail record
@@ -41,7 +41,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     " does not have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
-        PaymentGroup paymentGroup = this.paymentGroupService.get(paymentGroupId);
+        final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
 
         if (paymentGroup == null) {
             LOG.debug("cancelDisbursement() Disbursement not found; throw exception.");
@@ -50,13 +50,13 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
             return false;
         }
         //get the target PaymentGroup info
-        PaymentDetail targetPd = getPaymentDetail(paymentDetailId);
-        KualiInteger targetGroupId = targetPd.getPaymentGroupId();
-        PaymentGroup targetPg = getPaymentGroup(targetGroupId);
-        String targetDvTypeCode = targetPg.getDisbursementTypeCode();
-        String targetDvBankCode = targetPg.getBankCode();
+        final PaymentDetail targetPd = getPaymentDetail(paymentDetailId);
+        final KualiInteger targetGroupId = targetPd.getPaymentGroupId();
+        final PaymentGroup targetPg = getPaymentGroup(targetGroupId);
+        final String targetDvTypeCode = targetPg.getDisbursementTypeCode();
+        final String targetDvBankCode = targetPg.getBankCode();
         
-        String paymentStatus = paymentGroup.getPaymentStatus().getCode();
+        final String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
         if (!PdpConstants.PaymentStatusCodes.CANCEL_DISBURSEMENT.equals(paymentStatus)) {
             if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
@@ -64,16 +64,16 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                 || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
                 LOG.debug("cancelDisbursement() Payment status is {}; continue with cancel.", paymentStatus);
 
-                List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(
+                final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
                         paymentGroup.getDisbursementNbr().intValue());
 
-                for (PaymentGroup element : allDisbursementPaymentGroups) {
+                for (final PaymentGroup element : allDisbursementPaymentGroups) {
                     // should be the same DV type and the same bank
                     if (!(element.getDisbursementTypeCode().equalsIgnoreCase(targetDvTypeCode) && element.getBankCode().equalsIgnoreCase(targetDvBankCode))) {
                         continue;
                     }
                     
-                    PaymentGroupHistory pgh = new PaymentGroupHistory();
+                    final PaymentGroupHistory pgh = new PaymentGroupHistory();
 
                     if (!element.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
                         LOG.warn("cancelDisbursement() Payment does not allow disbursement action. This should " +
@@ -94,16 +94,16 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
 
                     // set primary cancel indicator for EPIC to use
                     // these payment details will be canceled when running processPdpCancelAndPaidJOb
-                    Map<String, KualiInteger> primaryKeys = new HashMap<>();
+                    final Map<String, KualiInteger> primaryKeys = new HashMap<>();
 
                     primaryKeys.put(PdpPropertyConstants.PaymentDetail.PAYMENT_DETAIL_PAYMENT_GROUP_ID, element.getId());
 
                     // cancel all  payment details for payment group
-                    List<PaymentDetail> pds = (List<PaymentDetail>) this.businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
+                    final List<PaymentDetail> pds = (List<PaymentDetail>) businessObjectService.findMatching(PaymentDetail.class, primaryKeys);
                     if (pds != null && !pds.isEmpty()) {
-                        for (PaymentDetail pd : pds) {
+                        for (final PaymentDetail pd : pds) {
                             pd.setPrimaryCancelledPayment(Boolean.TRUE);
-                            this.businessObjectService.save(pd);
+                            businessObjectService.save(pd);
                         }
                     }
                 }
@@ -127,7 +127,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
     }
 
     @Override
-    public boolean cancelReissueDisbursement(Integer paymentGroupId, String note, Person user) {
+    public boolean cancelReissueDisbursement(final Integer paymentGroupId, final String note, final Person user) {
         LOG.debug("cancelReissueDisbursement() started");
 
         // All actions must be performed on entire group not individual detail record
@@ -141,14 +141,14 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     "have rights to cancel payments. This should not happen unless user is URL spoofing.");
         }
 
-        PaymentGroup paymentGroup = this.paymentGroupService.get(paymentGroupId);
+        final PaymentGroup paymentGroup = paymentGroupService.get(paymentGroupId);
         if (paymentGroup == null) {
             LOG.debug("cancelReissueDisbursement() Disbursement not found; throw exception.");
             GlobalVariables.getMessageMap().putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.PaymentDetail.ErrorMessages.ERROR_DISBURSEMENT_NOT_FOUND);
             return false;
         }
 
-        String paymentStatus = paymentGroup.getPaymentStatus().getCode();
+        final String paymentStatus = paymentGroup.getPaymentStatus().getCode();
 
         if (!PdpConstants.PaymentStatusCodes.OPEN.equals(paymentStatus)) {
             if (PdpConstants.PaymentStatusCodes.EXTRACTED.equals(paymentStatus)
@@ -156,11 +156,11 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                     || PdpConstants.PaymentStatusCodes.PENDING_ACH.equals(paymentStatus)) {
                 LOG.debug("cancelReissueDisbursement() Payment status is {}; continue with cancel.", paymentStatus);
 
-                List<PaymentGroup> allDisbursementPaymentGroups = this.paymentGroupService.getByDisbursementNumber(
+                final List<PaymentGroup> allDisbursementPaymentGroups = paymentGroupService.getByDisbursementNumber(
                         paymentGroup.getDisbursementNbr().intValue());
 
-                for (PaymentGroup pg : allDisbursementPaymentGroups) {
-                    PaymentGroupHistory pgh = new PaymentGroupHistory();
+                for (final PaymentGroup pg : allDisbursementPaymentGroups) {
+                    final PaymentGroupHistory pgh = new PaymentGroupHistory();
 
                     if (!pg.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
                         LOG.warn("cancelDisbursement() Payment does not allow disbursement action. This should " +
@@ -195,10 +195,10 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
                             paymentStatus
                     );
 
-                    AchAccountNumber achAccountNumber = pg.getAchAccountNumber();
+                    final AchAccountNumber achAccountNumber = pg.getAchAccountNumber();
 
                     if (ObjectUtils.isNotNull(achAccountNumber)) {
-                        this.businessObjectService.delete(achAccountNumber);
+                        businessObjectService.delete(achAccountNumber);
                         pg.setAchAccountNumber(null);
                     }
 
@@ -240,17 +240,17 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         return true;
     }
     
-    protected PaymentDetail getPaymentDetail(Integer paymentDetailId) {
-        Map<String, Integer> primaryKeys = new HashMap<String, Integer>();
+    protected PaymentDetail getPaymentDetail(final Integer paymentDetailId) {
+        final Map<String, Integer> primaryKeys = new HashMap<String, Integer>();
         primaryKeys.put(PdpPropertyConstants.PaymentDetail.PAYMENT_ID, paymentDetailId);
         
-        return (PaymentDetail) this.businessObjectService.findByPrimaryKey(PaymentDetail.class, primaryKeys);
+        return (PaymentDetail) businessObjectService.findByPrimaryKey(PaymentDetail.class, primaryKeys);
     }
 
-    protected PaymentGroup getPaymentGroup(KualiInteger paymentGroupId) {
-        Map<String, KualiInteger> primaryKeys = new HashMap<String, KualiInteger>();
+    protected PaymentGroup getPaymentGroup(final KualiInteger paymentGroupId) {
+        final Map<String, KualiInteger> primaryKeys = new HashMap<String, KualiInteger>();
         primaryKeys.put(PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_ID, paymentGroupId);
         
-        return (PaymentGroup) this.businessObjectService.findByPrimaryKey(PaymentGroup.class, primaryKeys);
+        return (PaymentGroup) businessObjectService.findByPrimaryKey(PaymentGroup.class, primaryKeys);
     }
 }

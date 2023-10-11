@@ -16,16 +16,16 @@ import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperServiceImpl {
     
     @Override
-    public List<PaymentNoteText> buildNotesForCheckStubText(String text, int previousLineCount) {
+    public List<PaymentNoteText> buildNotesForCheckStubText(final String text, int previousLineCount) {
         PaymentNoteText pnt = null;
-        List<PaymentNoteText> pnts = new ArrayList<PaymentNoteText>();
+        final List<PaymentNoteText> pnts = new ArrayList<PaymentNoteText>();
         final String maxNoteLinesParam = parameterService.getParameterValueAsString(KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
 
-        int maxNoteLines;
+        final int maxNoteLines;
         try {
             maxNoteLines = Integer.parseInt(maxNoteLinesParam);
         }
-        catch (NumberFormatException nfe) {
+        catch (final NumberFormatException nfe) {
             throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: " + maxNoteLinesParam +
                     " cannot be converted to an integer");
         }
@@ -35,16 +35,16 @@ public class CuPaymentSourceHelperServiceImpl extends PaymentSourceHelperService
         // word by a newline character.  The 'wrap' method adds line feeds to the end causing
         // the character length to exceed the max length by 1, hence the need for the replace
         // method before splitting.
-        String   wrappedText = WordUtils.wrap(text, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE);
-        String[] noteLines   = wrappedText.replaceAll("[\r]", "").split("\\n");
+        final String   wrappedText = WordUtils.wrap(text, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE);
+        final String[] noteLines   = wrappedText.replaceAll("[\r]", "").split("\\n");
 
         // Loop through all the note lines.
-        for (String noteLine : noteLines) {
+        for (final String noteLine : noteLines) {
             if (previousLineCount < maxNoteLines - 3 && StringUtils.isNotEmpty(noteLine)) {
                 // This should only happen if we encounter a word that is greater than the max length.
                 // The only concern I have for this occurring is with URLs/email addresses.
                 if (noteLine.length() >CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
-                    for (String choppedWord : chopWord(noteLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE)) {
+                    for (final String choppedWord : chopWord(noteLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE)) {
                         // Make sure we're still under the maximum number of note lines.
                         if (previousLineCount < maxNoteLines - 3 && StringUtils.isNotEmpty(choppedWord)) {
                             pnt = new PaymentNoteText();

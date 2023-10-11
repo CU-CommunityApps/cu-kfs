@@ -42,10 +42,10 @@ public class CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl
      * Gets search results and passes to access security service to apply access restrictions
      */
     @Override
-    public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
-        List<? extends BusinessObject> results = super.getSearchResults(fieldValues);
+    public List<? extends BusinessObject> getSearchResults(final Map<String, String> fieldValues) {
+        final List<? extends BusinessObject> results = super.getSearchResults(fieldValues);
 
-        int resultSizeBeforeRestrictions = results.size();
+        final int resultSizeBeforeRestrictions = results.size();
         accessSecurityService.applySecurityRestrictionsForLookup(results, GlobalVariables.getUserSession().getPerson());
 
         accessSecurityService.compareListSizeAndAddMessageIfChanged(resultSizeBeforeRestrictions, results,
@@ -58,10 +58,10 @@ public class CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl
      * Gets search results and passes to access security service to apply access restrictions
      */
     @Override
-    public List<? extends BusinessObject> getSearchResultsUnbounded(Map<String, String> fieldValues) {
-        List<? extends BusinessObject> results = super.getSearchResultsUnbounded(fieldValues);
+    public List<? extends BusinessObject> getSearchResultsUnbounded(final Map<String, String> fieldValues) {
+        final List<? extends BusinessObject> results = super.getSearchResultsUnbounded(fieldValues);
 
-        int resultSizeBeforeRestrictions = results.size();
+        final int resultSizeBeforeRestrictions = results.size();
         accessSecurityService.applySecurityRestrictionsForLookup(results, GlobalVariables.getUserSession().getPerson());
 
         accessSecurityService.compareListSizeAndAddMessageIfChanged(resultSizeBeforeRestrictions, results,
@@ -70,7 +70,7 @@ public class CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl
         return results;
     }
 
-    public void setAccessSecurityService(AccessSecurityService accessSecurityService) {
+    public void setAccessSecurityService(final AccessSecurityService accessSecurityService) {
         this.accessSecurityService = accessSecurityService;
     }
 

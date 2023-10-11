@@ -37,17 +37,17 @@ public class CuAutoDisapproveDocumentsServiceImplIntegTest extends KualiIntegTes
     }
 
     public final void testCheckIfRunDateParameterExists() {
-        boolean isExist = autoDisapproveDocumentsService.checkIfRunDateParameterExists();
+        final boolean isExist = autoDisapproveDocumentsService.checkIfRunDateParameterExists();
         boolean parameterExists = false;
         
         // check to make sure the system parameter for run date check has already been setup...
         if (parameterService.parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_STEP_RUN_DATE)) {
             try {
                 // TODO : YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE is different from the parameter checked in service ?
-                Date runDate = dateTimeService.convertToDate(parameterService.getParameterValueAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_STEP_RUN_DATE));
+                final Date runDate = dateTimeService.convertToDate(parameterService.getParameterValueAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_STEP_RUN_DATE));
                 parameterExists = true;
             }
-            catch (ParseException pe) {
+            catch (final ParseException pe) {
             }
         }
        
@@ -56,17 +56,17 @@ public class CuAutoDisapproveDocumentsServiceImplIntegTest extends KualiIntegTes
 
     
     public final void testCheckIfDocumentCompareCreateDateParameterExists() {
-        boolean isExist = autoDisapproveDocumentsService.checkIfDocumentCompareCreateDateParameterExists();
+        final boolean isExist = autoDisapproveDocumentsService.checkIfDocumentCompareCreateDateParameterExists();
         boolean parameterExists = false;
         
         // check to make sure the system parameter for run date check has already been setup...
         if (parameterService.parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE)) {
             try {
                 // TODO : YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE is different from the parameter checked in service ?
-                Date runDate = dateTimeService.convertToDate(parameterService.getParameterValueAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
+                final Date runDate = dateTimeService.convertToDate(parameterService.getParameterValueAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
                 parameterExists = true;
             }
-            catch (ParseException pe) {
+            catch (final ParseException pe) {
             }
         }
        
@@ -89,12 +89,12 @@ public class CuAutoDisapproveDocumentsServiceImplIntegTest extends KualiIntegTes
 //    }
 
     public final void testCheckIfDocumentTypesExceptionParameterExists() {
-        boolean isExist = autoDisapproveDocumentsService.checkIfDocumentTypesExceptionParameterExists();
+        final boolean isExist = autoDisapproveDocumentsService.checkIfDocumentTypesExceptionParameterExists();
         boolean parameterExists = false;
         
         if (parameterService.parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES)) {
-            Collection<String> documentTypes = parameterService.getParameterValuesAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES);
-            for (String dT : documentTypes)
+            final Collection<String> documentTypes = parameterService.getParameterValuesAsString(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES);
+            for (final String dT : documentTypes)
             {
                 if (ObjectUtils.isNotNull(documentTypeService.getDocumentTypeByName( dT ))) {             
                     parameterExists = true;
@@ -107,13 +107,13 @@ public class CuAutoDisapproveDocumentsServiceImplIntegTest extends KualiIntegTes
      }
 
     public final void testCheckIffParentDocumentTypeParameterExists() {
-        boolean isExist = autoDisapproveDocumentsService.checkIfParentDocumentTypeParameterExists();
+        final boolean isExist = autoDisapproveDocumentsService.checkIfParentDocumentTypeParameterExists();
         boolean parameterExists = false;
         
         if (parameterService.parameterExists(AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE)) {
-            List<DocumentType> parentDocumentTypes = autoDisapproveDocumentsService.getYearEndAutoDisapproveParentDocumentTypes();
+            final List<DocumentType> parentDocumentTypes = autoDisapproveDocumentsService.getYearEndAutoDisapproveParentDocumentTypes();
             
-            for (DocumentType parentDocumentType : parentDocumentTypes) {   
+            for (final DocumentType parentDocumentType : parentDocumentTypes) {   
                 if (ObjectUtils.isNotNull(documentTypeService.getDocumentTypeByName(parentDocumentType.getName()))) {
                     parameterExists = true;
                     break;

@@ -34,13 +34,14 @@ public class CuFormatAction extends FormatAction {
     }
     
     @Override
-    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        CuFormatForm formatForm = (CuFormatForm) form;
+    public ActionForward start(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final CuFormatForm formatForm = (CuFormatForm) form;
         
-        Person kualiUser = GlobalVariables.getUserSession().getPerson();
-        FormatSelection formatSelection = formatService.getDataForFormat(kualiUser);
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+        final Person kualiUser = GlobalVariables.getUserSession().getPerson();
+        final FormatSelection formatSelection = formatService.getDataForFormat(kualiUser);
+        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
 
         formatForm.setCampus(kualiUser.getCampusCode());
 
@@ -50,9 +51,9 @@ public class CuFormatAction extends FormatAction {
                     PdpKeyConstants.Format.ERROR_PDP_FORMAT_PROCESS_ALREADY_RUNNING, 
                     dateTimeService.toDateTimeString(formatSelection.getStartDate()));
         } else {
-            List<CustomerProfile> customers = formatSelection.getCustomerList();
+            final List<CustomerProfile> customers = formatSelection.getCustomerList();
 
-            for (CustomerProfile element : customers) {
+            for (final CustomerProfile element : customers) {
                 if (formatSelection.getCampus().equals(element.getFormatCampusCode())) {
                     element.setSelectedForFormat(Boolean.TRUE);
                 } else {
@@ -71,29 +72,30 @@ public class CuFormatAction extends FormatAction {
     }
    
     @Override
-    public ActionForward prepare(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        CuFormatForm formatForm = (CuFormatForm) form;
+    public ActionForward prepare(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final CuFormatForm formatForm = (CuFormatForm) form;
     
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
     
         if (formatForm.getCampus() == null) {
             return mapping.findForward(PdpConstants.MAPPING_SELECTION);
         }
     
         // Figure out which ones they have selected
-        List<CustomerProfile> selectedCustomers = new ArrayList<>();
+        final List<CustomerProfile> selectedCustomers = new ArrayList<>();
     
-        for (CustomerProfile customer : formatForm.getCustomers()) {
+        for (final CustomerProfile customer : formatForm.getCustomers()) {
             if (customer.isSelectedForFormat()) {
                 selectedCustomers.add(customer);
             }
         }
     
-        Date paymentDate = dateTimeService.convertToSqlDate(formatForm.getPaymentDate());
-        Person kualiUser = GlobalVariables.getUserSession().getPerson();
+        final Date paymentDate = dateTimeService.convertToSqlDate(formatForm.getPaymentDate());
+        final Person kualiUser = GlobalVariables.getUserSession().getPerson();
     
-        FormatProcessSummary formatProcessSummary = ((CuFormatService) formatService).startFormatProcess(kualiUser, formatForm.getCampus(), 
+        final FormatProcessSummary formatProcessSummary = ((CuFormatService) formatService).startFormatProcess(kualiUser, formatForm.getCampus(), 
                 selectedCustomers, paymentDate, formatForm.getPaymentTypes(), formatForm.getPaymentDistribution());
         if (formatProcessSummary.getProcessSummaryList().size() == 0) {
             KNSGlobalVariables.getMessageList().add(PdpKeyConstants.Format.ERROR_PDP_NO_MATCHING_PAYMENT_FOR_FORMAT);
