@@ -111,7 +111,7 @@ import edu.cornell.kfs.sys.xmladapters.StringToJavaDateAdapter;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuDistributionOfIncomeAndExpenseDocument.class, TestAdHocRoutePerson.class, TestNote.class})
 @PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "javax.management.*"})
-public class CreateAccountingDocumentServiceImplTestBase {
+public abstract class CreateAccountingDocumentServiceImplTestBase {
 
     private static final String SOURCE_TEST_FILE_PATH = "src/test/resources/edu/cornell/kfs/fp/batch/xml";
     private static final String TARGET_TEST_FILE_PATH = "test/fp/accountingXmlDocument";
