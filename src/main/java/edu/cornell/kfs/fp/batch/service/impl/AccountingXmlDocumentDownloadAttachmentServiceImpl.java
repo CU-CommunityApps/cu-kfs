@@ -34,9 +34,8 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 
 public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends DisposableClientServiceImplBase implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
-	private static final String UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE = "Unable to download attachment: ";
-
     private static final Logger LOG = LogManager.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
+    private static final String UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE = "Unable to download attachment: ";
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;
