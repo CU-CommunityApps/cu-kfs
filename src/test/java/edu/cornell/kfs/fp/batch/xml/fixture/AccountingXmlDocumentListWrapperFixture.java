@@ -49,9 +49,9 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_DI_DOCUMENT_TEST_DOC1)),
     SINGLE_DI_DOCUMENT_WITH_BAD_ATTACHMENT_TEST(
-            BASE_WRAPPER,
+            "09/28/2017", "abc123@cornell.edu", "Example XML file",
             documents(
-                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER)),
+                    AccountingXmlDocumentEntryFixture.BAD_RULES_DOCUMENT_PLACEHOLDER), false),
     SINGLE_DI_DOCUMENT_WITH_BAD_AMOUNT_TEST(
             BASE_WRAPPER,
             documents(

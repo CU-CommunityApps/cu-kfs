@@ -28,12 +28,14 @@ import org.springframework.beans.factory.DisposableBean;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentBackupLink;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 import edu.cornell.kfs.sys.service.impl.DisposableClientServiceImplBase;
 
 public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends DisposableClientServiceImplBase implements AccountingXmlDocumentDownloadAttachmentService, DisposableBean {
-	private static final Logger LOG = LogManager.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(AccountingXmlDocumentDownloadAttachmentServiceImpl.class);
+    private static final String UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE = "Unable to download attachment: ";
 
     protected AttachmentService attachmentService;
     protected WebServiceCredentialService webServiceCredentialService;
@@ -64,12 +66,19 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
 
             } else {
                 LOG.error("createAttachmentFromBackupLink, the form file is NULL");
-                throw new ValidationException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
+                throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
             }
         } catch (IOException e) {
             LOG.error("createAttachmentFromBackupLink, Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl(), e);
-            throw new ValidationException("Unable to download attachment: " + accountingXmlDocumentBackupLink.getLinkUrl());
-        }      
+            throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
+        } catch (IllegalArgumentException iae) {
+            if (StringUtils.equalsIgnoreCase(CUKFSConstants.ANTIVIRUS_FAILED_MESSAGE, iae.getMessage())) {
+                throw new ValidationException("Unable to download attachment due to failing antivirus scan: " + accountingXmlDocumentBackupLink.getLinkUrl());
+            } else {
+                LOG.error("createAttachmentFromBackupLink, Unable to download attachment due to illegal argument exception: " + accountingXmlDocumentBackupLink.getLinkUrl(), iae);
+                throw new ValidationException(UNABLE_TO_DOWNLOAD_ATTACHMENT_MESSAGE + accountingXmlDocumentBackupLink.getLinkUrl());
+            }
+        }
     }
 
     protected String findMimeType(String uploadFileName) {
