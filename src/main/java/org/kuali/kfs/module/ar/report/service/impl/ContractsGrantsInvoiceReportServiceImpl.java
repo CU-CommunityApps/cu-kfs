@@ -77,8 +77,11 @@ import org.kuali.kfs.module.ar.service.ContractsGrantsBillingUtilityService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.PdfFormFillerUtil;
+import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
+import org.kuali.kfs.sys.businessobject.ChartOrgHolderImpl;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.report.ReportInfo;
+import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.sys.service.OptionsService;
 import org.kuali.kfs.sys.service.ReportGenerationService;
 import org.springframework.core.io.ClassPathResource;
@@ -103,8 +106,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * CU Customization: Backported the FINP-7147 changes into this file.
- * This overlay can be removed when we upgrade to the 2023-06-28 financials patch.
+ * CU Customization: Backported the FINP-7147 and FINP-9927 changes into this file.
+ * This overlay can be removed when we upgrade to the 2023-10-11 financials patch.
  * 
  * This class implements the methods for report generation services for Contracts & Grants.
  */
@@ -127,6 +130,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
     protected ContractsGrantsBillingUtilityService contractsGrantsBillingUtilityService;
     protected OptionsService optionsService;
     private ContractsGrantsBillingAwardVerificationService contractsGrantsBillingAwardVerificationService;
+    private FinancialSystemUserService financialSystemUserService;
 
     @Override
     public byte[] generateLOCReviewAsPdf(ContractsGrantsLetterOfCreditReviewDocument document) {
@@ -716,13 +720,23 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      * @return the System Information object, or null if nothing is found
      */
     protected SystemInformation retrieveSystemInformationForAward(ContractsAndGrantsBillingAward award, String year) {
+        ChartOrgHolder chartOrgHolder = financialSystemUserService.getPrimaryOrganization(
+                award.getAwardPrimaryFundManager().getFundManager().getPrincipalId(),
+                KFSConstants.OptionalModuleNamespaces.ACCOUNTS_RECEIVABLE);
+
+        final List<String> processingCodes = getContractsGrantsInvoiceDocumentService().getProcessingFromBillingCodes(
+                chartOrgHolder.getChartOfAccountsCode(), chartOrgHolder.getOrganizationCode());
+        if (!CollectionUtils.isEmpty(processingCodes) && processingCodes.size() > 1) {
+            chartOrgHolder = new ChartOrgHolderImpl(processingCodes.get(0), processingCodes.get(1));
+        }
+
         Map<String, String> primaryKeys = new HashMap<>();
         primaryKeys.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, year);
         primaryKeys.put(KFSPropertyConstants.PROCESSING_CHART_OF_ACCT_CD,
-                award.getPrimaryAwardOrganization().getChartOfAccountsCode()
+                chartOrgHolder.getChartOfAccountsCode()
         );
         primaryKeys.put(KFSPropertyConstants.PROCESSING_ORGANIZATION_CODE,
-                award.getPrimaryAwardOrganization().getOrganizationCode()
+                chartOrgHolder.getOrganizationCode()
         );
         return businessObjectService.findByPrimaryKey(SystemInformation.class, primaryKeys);
     }
@@ -1502,4 +1516,13 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
     ) {
         this.contractsGrantsBillingAwardVerificationService = contractsGrantsBillingAwardVerificationService;
     }
+
+    public FinancialSystemUserService getFinancialSystemUserService() {
+        return financialSystemUserService;
+    }
+
+    public void setFinancialSystemUserService(final FinancialSystemUserService financialSystemUserService) {
+        this.financialSystemUserService = financialSystemUserService;
+    }
+
 }
