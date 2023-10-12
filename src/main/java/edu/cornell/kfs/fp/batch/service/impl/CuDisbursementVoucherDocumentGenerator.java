@@ -217,7 +217,7 @@ public class CuDisbursementVoucherDocumentGenerator extends AccountingDocumentGe
     
     private void populateAddressFields(DisbursementVoucherPaymentInformationXml paymentInfo, CuDisbursementVoucherDocument dvDocument) {
         if (StringUtils.isNotBlank(paymentInfo.getPayeeAddressId()) && 
-                !StringUtils.equalsAnyIgnoreCase(paymentInfo.getPayeeTypeCode(), CUPdpConstants.PAYEE_TYPE_CODE_VENDOR)) {
+                !StringUtils.equalsIgnoreCase(paymentInfo.getPayeeTypeCode(), CUPdpConstants.PAYEE_TYPE_CODE_VENDOR)) {
             String messageFormat = configurationService.getPropertyValueAsString(CuFPKeyConstants.CREATE_ACCOUNTING_DOCUMENT_PAYEE_ADDRESS_ID_WITH_NON_VENDOR);
             String messageString = MessageFormat.format(messageFormat,
                     paymentInfo.getPayeeTypeCode(), paymentInfo.getPayeeAddressId());

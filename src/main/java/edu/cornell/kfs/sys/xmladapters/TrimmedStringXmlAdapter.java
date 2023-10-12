@@ -16,8 +16,8 @@ public class TrimmedStringXmlAdapter extends XmlAdapter<String, String> {
         return cleanString(v);
     }
     
-    protected String cleanString(String streamToClean) {
-        return StringUtils.trim(streamToClean);
+    protected String cleanString(String stringToClean) {
+        return StringUtils.trim(stringToClean);
     }
 
 }

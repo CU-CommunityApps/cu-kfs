@@ -4,17 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import edu.cornell.kfs.concur.ConcurConstants.ConcurOAuth2.WebServiceCredentialKeys;
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
-
-class TrimmedStringXmlAdapterTest {
+public class TrimmedStringXmlAdapterTest {
     private static final String FOO = "foo";
     private static final String ONE_TWO_THREE = "123";
     private static final String SPACES = "    ";
