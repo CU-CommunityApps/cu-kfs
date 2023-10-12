@@ -46,6 +46,7 @@ public class CuFPKeyConstants {
     public static final String CREATE_ACCOUNTING_DOCUMENT_VENDOR_ID_BAD = "create.accounting.document.vendor.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_PAYEE_TYPE_CODE_BAD = "create.accounting.document.payee.type.code.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_PAYEE_NAME_NOT_SAME_AS_VENDOR = "create.accounting.document.payee.name.not.same.as.vendor";
+    public static final String CREATE_ACCOUNTING_DOCUMENT_PAYEE_ADDRESS_ID_WITH_NON_VENDOR = "create.accounting.document.payee.address.id.with.non.vendor";
 
     public static final String VALIDATION_CREATE_ACCOUNTING_DOCUMENT_EXCEPTION_MESSAGE_REGEX
             = "validation.create.accounting.document.exception.message.regex";

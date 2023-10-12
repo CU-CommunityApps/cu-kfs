@@ -2,13 +2,6 @@ package edu.cornell.kfs.fp.batch.xml;
 
 import java.util.Objects;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.adapters.NormalizedStringAdapter;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -16,41 +9,47 @@ import org.kuali.kfs.core.api.util.type.KualiInteger;
 
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.KualiIntegerXmlAdapter;
+import edu.cornell.kfs.sys.xmladapters.TrimmedStringXmlAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Accounting", namespace = StringUtils.EMPTY)
 public class AccountingXmlDocumentAccountingLine {
 
     @XmlElement(name = "coa_cd", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String chartCode;
 
     @XmlElement(name = "account_nbr", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String accountNumber;
 
     @XmlElement(name = "sub_account_nbr", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String subAccountNumber;
 
     @XmlElement(name = "object_cd", namespace = StringUtils.EMPTY, required = true)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String objectCode;
 
     @XmlElement(name = "sub_object_cd", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String subObjectCode;
 
     @XmlElement(name = "project", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String projectCode;
 
     @XmlElement(name = "org_ref_id", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String orgRefId;
 
     @XmlElement(name = "line_description", namespace = StringUtils.EMPTY, required = false)
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String lineDescription;
 
     @XmlElement(name = "amount", namespace = StringUtils.EMPTY, required = true)
