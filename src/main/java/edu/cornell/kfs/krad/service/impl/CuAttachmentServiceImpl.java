@@ -1,6 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import edu.cornell.kfs.krad.dao.CuAttachmentDao;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.krad.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 import org.apache.commons.io.IOUtils;
@@ -87,7 +88,7 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
                 LOG.error("createAttachment, virus protection failure!  uploadedFileName: " + uploadedFileName 
                         + ", mimeType: " + mimeType + ", attachmentTypeCode: " + attachmentTypeCode + ", scan result: " + 
                                 virusScanResults.getStatus() + ", parent object: " + parent);
-                throw new IllegalArgumentException("file contents failed virus scan");
+                throw new IllegalArgumentException(CUKFSConstants.ANTIVIRUS_FAILED_MESSAGE);
             } else {
                 InputStream fileContentsForAttachment = new ByteArrayInputStream(fileContentsAsByteArray);
                 return super.createAttachment(parent, uploadedFileName, mimeType, fileSize, fileContentsForAttachment, attachmentTypeCode);
