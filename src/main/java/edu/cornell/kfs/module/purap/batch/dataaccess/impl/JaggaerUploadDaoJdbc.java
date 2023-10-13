@@ -245,7 +245,7 @@ public class JaggaerUploadDaoJdbc extends CuSqlQueryPlatformAwareDaoBaseJdbc imp
                 "FROM KFS.PUR_PO_T ",
                 "WHERE PO_LST_TRNS_DT > ",
                 CuSqlChunk.forParameter(Types.DATE, processingDate),
-                " GROUP BY VNDR_HDR_GNRTD_ID HAVING COUNT(1) > 1)");
+                " GROUP BY VNDR_HDR_GNRTD_ID HAVING COUNT(1) >= 1)");
         return chunk;
     }
     
