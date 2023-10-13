@@ -53,6 +53,7 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -64,6 +65,7 @@ import edu.cornell.kfs.sys.util.MockPersonUtil;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuDisbursementVoucherDocument.class})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuDisbursementVoucherDocumentTest {
 
     private static final String VENDOR_PAYEE_TYPE_NAME = "Vendor";

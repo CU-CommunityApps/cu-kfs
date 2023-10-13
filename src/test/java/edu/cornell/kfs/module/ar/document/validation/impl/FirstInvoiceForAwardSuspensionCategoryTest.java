@@ -39,7 +39,7 @@ import edu.cornell.kfs.module.ar.document.fixture.ContractsGrantsInvoiceDocument
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ContractsGrantsInvoiceDocument.class})
-@PowerMockIgnore({ "javax.xml.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class FirstInvoiceForAwardSuspensionCategoryTest {
 
     private FinancialSystemDocumentService financialSystemDocumentService;
