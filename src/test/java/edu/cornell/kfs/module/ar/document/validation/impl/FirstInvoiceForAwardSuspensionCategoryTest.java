@@ -30,6 +30,7 @@ import org.kuali.kfs.core.api.search.SearchOperator;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -38,6 +39,7 @@ import edu.cornell.kfs.module.ar.document.fixture.ContractsGrantsInvoiceDocument
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ContractsGrantsInvoiceDocument.class})
+@PowerMockIgnore({ "javax.xml.*"})
 public class FirstInvoiceForAwardSuspensionCategoryTest {
 
     private FinancialSystemDocumentService financialSystemDocumentService;
