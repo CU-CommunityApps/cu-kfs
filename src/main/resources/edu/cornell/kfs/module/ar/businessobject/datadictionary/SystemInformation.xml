@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        CU Customization: Added bean overrides for backporting the FINP-7147 changes into this release.
+        This file can be removed when we upgrade to the 2023-06-28 financials patch.
+     -->
+
+    <bean id="SystemInformation"
+          parent="SystemInformation-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="SystemInformation-organizationRemitToCountyCode"/>
+                <ref bean="SystemInformation-uniqueEntityId" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SystemInformation-organizationRemitToCountyCode"
+        parent="SystemInformation-organizationRemitToCountyCode-parentBean" />
+    <bean
+        id="SystemInformation-organizationRemitToCountyCode-parentBean"
+        p:name="organizationRemitToCountyCode" abstract="true"
+        parent="County-code" />
+
+    <bean id="SystemInformation-uniqueEntityId"
+        parent="SystemInformation-uniqueEntityId-parentBean" />
+    <bean id="SystemInformation-uniqueEntityId-parentBean"
+        abstract="true" parent="AttributeDefinition"
+        p:name="uniqueEntityId" p:label="Unique Entity Id"
+        p:shortLabel="UEI"
+        p:maxLength="12"
+        p:required="false">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="12" />
+        </property>
+    </bean>
+
+    <bean id="SystemInformation-sectionDefinition-remitToInformation"
+          parent="SystemInformation-sectionDefinition-remitToInformation-parentBean">
+        <property name="fields">
+            <list merge="true">
+                <ref bean="SystemInformation-organizationRemitToCountyCode"/>
+                <ref bean="SystemInformation-uniqueEntityId"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SystemInformation-inquirySectionDefinition-remitToInformation"
+          parent="SystemInformation-inquirySectionDefinition-remitToInformation-parentBean">
+        <property name="inquiryFields">
+            <list merge="true">
+                <bean parent="FieldDefinition"
+                      p:attributeName="organizationRemitToCountyCode" />
+                <bean parent="FieldDefinition"
+                      p:attributeName="uniqueEntityId" />
+            </list>
+        </property>
+    </bean>
+
+</beans>

@@ -72,4 +72,248 @@
         <field-descriptor name="netTermsInDays" column="NET_TERMS" jdbc-type="INTEGER"/>
     </class-descriptor>
 
+    <!--
+        CU Customization: Added class descriptor override for backporting the the FINP-7147 changes into this release.
+        This override can be removed when we upgrade to the 2023-06-28 financials patch.
+     -->
+    <class-descriptor class="org.kuali.kfs.module.ar.businessobject.SystemInformation"
+                      table="AR_SYS_INFO_T">
+        <field-descriptor name="universityFiscalYear"
+                          column="UNIV_FISCAL_YR"
+                          jdbc-type="INTEGER"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="processingChartOfAccountCode"
+                          column="PRCS_FIN_COA_CD"
+                          jdbc-type="VARCHAR"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="processingOrganizationCode"
+                          column="PRCS_ORG_CD"
+                          jdbc-type="VARCHAR"
+                          primarykey="true"
+                          index="true"/>
+        <field-descriptor name="objectId"
+                          column="OBJ_ID"
+                          jdbc-type="VARCHAR"
+                          index="true"/>
+        <field-descriptor name="versionNumber"
+                          column="VER_NBR"
+                          jdbc-type="BIGINT"
+                          locking="true"/>
+        <field-descriptor name="universityFederalEmployerIdentificationNumber"
+                          column="UNIV_FEIN_NBR"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="discountObjectCode"
+                          column="REFUND_FIN_OBJ_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="universityClearingChartOfAccountsCode"
+                          column="UNIV_CLR_COA_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="universityClearingAccountNumber"
+                          column="UNIV_CLR_ACCT_NBR"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="universityClearingSubAccountNumber"
+                          column="UNIV_CLR_SUBAC_NBR"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="universityClearingObjectCode"
+                          column="UNIV_CLR_OBJECT_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="universityClearingSubObjectCode"
+                          column="UNIV_CLR_SUBOBJ_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="creditCardObjectCode"
+                          column="PMT_CLR_FIN_OBJ_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="lockboxNumber"
+                          column="AR_LOCKBOX_NBR"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="active"
+                          column="ROW_ACTV_IND"
+                          jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="organizationRemitToAddressName"
+                          column="ORG_REMIT_ADDR_NM"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationRemitToLine1StreetAddress"
+                          column="ORG_REMIT_LN1_ADDR"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationRemitToLine2StreetAddress"
+                          column="ORG_REMIT_LN2_ADDR"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationRemitToCityName"
+                          column="ORG_REMIT_CITY_NM"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationRemitToStateCode"
+                          column="ORG_REMIT_ST_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationRemitToZipCode"
+                          column="ORG_REMIT_ZIP_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationRemitToCountryCode"
+                          column="ORG_REMIT_CNTRY_CD"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="organizationCheckPayableToName"
+                          column="ORG_CHCK_PAY_TO_NM"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="financialDocumentInitiatorIdentifier"
+                          column="FDOC_INITIATOR_ID"
+                          jdbc-type="VARCHAR"/>
+        <field-descriptor name="lastUpdatedTimestamp"
+                          column="LAST_UPDT_TS"
+                          jdbc-type="TIMESTAMP"
+                          index="true"/>
+        <field-descriptor name="uniqueEntityId"
+                          column="UNIQUE_ENTITY_ID"
+                          jdbc_type="VARCHAR" />
+        <field-descriptor name="organizationRemitToCountyCode"
+                          column="ORG_REMIT_CNTY_CD"
+                          jdbc-type="VARCHAR" />
+        <reference-descriptor name="creditCardFinancialObject"
+                              class-ref="org.kuali.kfs.coa.businessobject.ObjectCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="processingChartOfAccountCode"/>
+            <foreignkey field-ref="creditCardObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityFiscalYearObject"
+                              class-ref="org.kuali.kfs.coa.businessobject.ObjectCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="processingChartOfAccountCode"/>
+            <foreignkey field-ref="creditCardObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityClearingSubObject"
+                              class-ref="org.kuali.kfs.coa.businessobject.SubObjectCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="universityClearingChartOfAccountsCode"/>
+            <foreignkey field-ref="universityClearingAccountNumber"/>
+            <foreignkey field-ref="universityClearingObjectCode"/>
+            <foreignkey field-ref="universityClearingSubObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityClearingObject"
+                              class-ref="org.kuali.kfs.coa.businessobject.ObjectCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="universityClearingChartOfAccountsCode"/>
+            <foreignkey field-ref="universityClearingObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityClearingSubAccount"
+                              class-ref="org.kuali.kfs.coa.businessobject.SubAccount"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityClearingChartOfAccountsCode"/>
+            <foreignkey field-ref="universityClearingAccountNumber"/>
+            <foreignkey field-ref="universityClearingSubAccountNumber"/>
+        </reference-descriptor>
+        <reference-descriptor name="discountFinancialObject"
+                              class-ref="org.kuali.kfs.coa.businessobject.ObjectCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+            <foreignkey field-ref="processingChartOfAccountCode"/>
+            <foreignkey field-ref="discountObjectCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="processingOrganization"
+                              class-ref="org.kuali.kfs.coa.businessobject.Organization"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="processingChartOfAccountCode"/>
+            <foreignkey field-ref="processingOrganizationCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="processingChartOfAccount"
+                              class-ref="org.kuali.kfs.coa.businessobject.Chart"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="processingChartOfAccountCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityClearingAccount"
+                              class-ref="org.kuali.kfs.coa.businessobject.Account"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityClearingChartOfAccountsCode"/>
+            <foreignkey field-ref="universityClearingAccountNumber"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityClearingChartOfAccounts"
+                              class-ref="org.kuali.kfs.coa.businessobject.Chart"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityClearingChartOfAccountsCode"/>
+        </reference-descriptor>
+        <reference-descriptor name="universityFiscal"
+                              class-ref="org.kuali.kfs.sys.businessobject.SystemOptions"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="universityFiscalYear"/>
+        </reference-descriptor>
+        <reference-descriptor name="orgRemitToCountry"
+                              class-ref="org.kuali.kfs.sys.businessobject.Country"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="organizationRemitToCountryCode"
+                        target-field-ref="code"/>
+        </reference-descriptor>
+        <reference-descriptor name="organizationRemitToState"
+                              class-ref="org.kuali.kfs.sys.businessobject.State"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="organizationRemitToCountryCode"
+                        target-field-ref="countryCode"/>
+            <foreignkey field-ref="organizationRemitToStateCode"
+                        target-field-ref="code"/>
+        </reference-descriptor>
+        <reference-descriptor name="orgRemitToZipCode"
+                              class-ref="org.kuali.kfs.sys.businessobject.PostalCode"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="organizationRemitToCountryCode"
+                        target-field-ref="countryCode"/>
+            <foreignkey field-ref="organizationRemitToZipCode"
+                        target-field-ref="code"/>
+        </reference-descriptor>
+        <reference-descriptor name="organizationRemitToCounty"
+                              class-ref="org.kuali.kfs.sys.businessobject.County"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="organizationRemitToCountryCode" />
+            <foreignkey field-ref="organizationRemitToStateCode" />
+            <foreignkey field-ref="organizationRemitToCountyCode" />
+        </reference-descriptor>
+    </class-descriptor>
+
 </descriptor-repository>
