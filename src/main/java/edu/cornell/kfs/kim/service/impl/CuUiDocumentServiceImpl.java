@@ -5,13 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.ojb.broker.core.proxy.CollectionProxyDefaultImpl;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleMember;
 import org.kuali.kfs.kim.document.IdentityManagementRoleDocument;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
+import org.kuali.kfs.kim.impl.role.RoleResponsibilityAction;
 import org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl;
-import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
@@ -47,6 +49,25 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
             identityManagementRoleDocument.setMembers(loadRoleMembers(identityManagementRoleDocument, members));
             loadMemberRoleRspActions(identityManagementRoleDocument);
         }
+    }
+
+    /**
+     * Overridden to also iterate over the role's members and forcibly load their lists of responsibility actions.
+     * This is needed to fix a bug that sometimes occurs when an object contains a lazy-loaded OJB collection proxy
+     * but the code forcibly replaces that list with a different type. Such situations may trigger a rare exception
+     * when OJB tries to perform a bulk pre-fetch of that specific collection property across multiple objects.
+     */
+    protected void updateRoleMembers(String roleId, List<KimDocumentRoleMember> modifiedRoleMembers,
+            List<RoleMember> roleMembers) {
+        if (CollectionUtils.isNotEmpty(modifiedRoleMembers) && CollectionUtils.isNotEmpty(roleMembers)) {
+            for (RoleMember roleMember : roleMembers) {
+                List<RoleResponsibilityAction> rspActions = roleMember.getRoleRspActions();
+                if (rspActions instanceof CollectionProxyDefaultImpl) {
+                    ((CollectionProxyDefaultImpl) rspActions).getData();
+                }
+            }
+        }
+        super.updateRoleMembers(roleId, modifiedRoleMembers, roleMembers);
     }
 
 }
