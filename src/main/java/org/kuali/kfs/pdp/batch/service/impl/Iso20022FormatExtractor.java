@@ -127,6 +127,7 @@ import com.prowidesoftware.swift.model.mx.dic.RemittanceInformation5;
 import com.prowidesoftware.swift.model.mx.dic.ServiceLevel8Choice;
 import com.prowidesoftware.swift.model.mx.dic.StructuredRemittanceInformation7;
 
+import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder.BankAccountTypes;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants;
 import edu.cornell.kfs.pdp.CUPdpConstants.Iso20022Constants.MessageIdSuffixes;
@@ -1298,6 +1299,9 @@ public class Iso20022FormatExtractor {
         return agent;
     }
 
+    /*
+     * CU Customization: Added the ability to derive the ISO 20022 ACH account type from the Payment Group.
+     */
     private static CashAccount16 constructCreditorAccount(
             final PaymentGroup templatePaymentGroup
     ) {
@@ -1310,7 +1314,20 @@ public class Iso20022FormatExtractor {
         accountId.setOthr(otherId);
         creditorAccount.setId(accountId);
 
-        final CashAccountType4Code accountTypeCode = CashAccountType4Code.CASH;
+        final String kfsAchAccountType = templatePaymentGroup.getAchAccountType();
+        final CashAccountType4Code accountTypeCode;
+        if (StringUtils.equalsAnyIgnoreCase(kfsAchAccountType,
+                BankAccountTypes.PERSONAL_CHECKING, BankAccountTypes.CORPORATE_CHECKING)) {
+            accountTypeCode = CashAccountType4Code.CASH;
+        } else if (StringUtils.equalsAnyIgnoreCase(kfsAchAccountType,
+                BankAccountTypes.PERSONAL_SAVINGS, BankAccountTypes.CORPORATE_SAVINGS)) {
+            accountTypeCode = CashAccountType4Code.SVGS;
+        } else {
+            LOG.warn("constructCreditorAccount, Payment Group {} is for ACH but does not specify a valid ACH account "
+                    + "type; defaulting to Checking account type", templatePaymentGroup.getId());
+            accountTypeCode = CashAccountType4Code.CASH;
+        }
+
         final CashAccountType2 accountType = new CashAccountType2();
         accountType.setCd(accountTypeCode);
         creditorAccount.setTp(accountType);
