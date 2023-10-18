@@ -57,6 +57,7 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
      * but the code forcibly replaces that list with a different type. Such situations may trigger a rare exception
      * when OJB tries to perform a bulk pre-fetch of that specific collection property across multiple objects.
      */
+    @Override
     protected void updateRoleMembers(String roleId, List<KimDocumentRoleMember> modifiedRoleMembers,
             List<RoleMember> roleMembers) {
         if (CollectionUtils.isNotEmpty(modifiedRoleMembers) && CollectionUtils.isNotEmpty(roleMembers)) {
