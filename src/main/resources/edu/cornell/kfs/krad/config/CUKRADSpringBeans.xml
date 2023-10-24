@@ -9,6 +9,12 @@
 
     <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl" />
 
+    <bean id="dummyAntiVirusServiceFail" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl">
+        <property name="scanResultStatus">
+            <value type="edu.cornell.kfs.krad.antivirus.service.ScanResult.Status">FAILED</value>
+        </property>
+    </bean>
+
     <bean id="antiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.ClamAVAntiVirusServiceImpl"
           p:host="${cu.antivirus.clamav.host}"
           p:port="${cu.antivirus.clamav.port}"

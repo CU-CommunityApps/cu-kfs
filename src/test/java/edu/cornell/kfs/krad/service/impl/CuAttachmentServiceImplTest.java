@@ -31,7 +31,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.krad.antivirus.service.ScanResult;
-import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 import edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
 
@@ -68,7 +67,7 @@ public class CuAttachmentServiceImplTest {
         attachmentService.setKualiConfigurationService(buildMockConfigurationService());
         attachmentService.setAttachmentDao(buildMockAttachmentDao());
         attachmentService.setNoteService(buildMockNoteService());
-        attachmentService.setAntiVirusService(buildMockAntiVirusService());
+        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl());
 
         attachment = new Attachment();
         attachment.setObjectId(String.valueOf(new Guid()));
@@ -136,12 +135,6 @@ public class CuAttachmentServiceImplTest {
         return null;
     }
     
-    private AntiVirusService buildMockAntiVirusService() {
-        AntiVirusService mockAntivirusService = Mockito.mock(AntiVirusService.class);
-        Mockito.when(mockAntivirusService.scan(Mockito.any(InputStream.class))).then(this::getScanResultFromInputStream);
-        return mockAntivirusService;
-    }
-    
     private ScanResult getScanResultFromInputStream(InvocationOnMock invocation) {
         InputStream scannedInputStream = invocation.getArgument(0);
         String scannedContents;
@@ -207,8 +200,6 @@ public class CuAttachmentServiceImplTest {
 
     @Test
     public void createAttachment() throws Exception {
-        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl());
-
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
 
         Attachment createdAttachment = attachmentService.createAttachment(pbo, GOOD_FILE_NAME, "txt", 10, goodInputStream, "txt");
@@ -236,6 +227,8 @@ public class CuAttachmentServiceImplTest {
 
     @Test
     public void createAttachmentWithVirus() throws Exception {
+        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.FAILED));
+        
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
         setupExpectedException("file contents failed virus scan");
         attachmentService.createAttachment(pbo, VIRUS_FILE_NAME, "txt", 50, virusInputStream, "txt");
@@ -243,6 +236,8 @@ public class CuAttachmentServiceImplTest {
     
     @Test
     public void createAttachmentWithError() throws Exception {
+        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.ERROR));
+        
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
         setupExpectedException("file contents failed virus scan");
         attachmentService.createAttachment(pbo, ERROR_FILE_NAME, "txt", 50, errorInputStream, "txt");
