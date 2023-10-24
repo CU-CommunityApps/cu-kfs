@@ -38,7 +38,7 @@
           class="edu.cornell.kfs.module.ar.service.impl.CuCustomerAddressHelperServiceImpl"
           p:customerAddressService-ref="customerAddressService"/>
         
-    <bean id="cuContractsGrantsInvoiceCreateDocumentService" parent="contractsGrantsInvoiceCreateDocumentService-parentBean" />
+    <alias name="contractsGrantsInvoiceCreateDocumentService" alias="cuContractsGrantsInvoiceCreateDocumentService"/>
 
     <bean id="contractsGrantsInvoiceCreateDocumentService" 
           class="edu.cornell.kfs.module.ar.service.impl.CuContractsGrantsInvoiceCreateDocumentServiceImpl"
@@ -46,7 +46,7 @@
           p:cuContractsGrantsInvoiceDocumentService-ref="cuContractsGrantsInvoiceDocumentService"
           p:cuCustomerAddressHelperService-ref="cuCustomerAddressHelperService"/>
 
-    <bean id="cuContractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService" />
+    <alias name="contractsGrantsInvoiceDocumentService" alias="cuContractsGrantsInvoiceDocumentService"/>
     
     <bean id="contractsGrantsInvoiceDocumentService" parent="contractsGrantsInvoiceDocumentService-parentBean"
           class="edu.cornell.kfs.module.ar.document.service.impl.CuContractsGrantsInvoiceDocumentServiceImpl">
