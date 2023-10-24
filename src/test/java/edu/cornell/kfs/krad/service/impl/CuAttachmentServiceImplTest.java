@@ -134,26 +134,6 @@ public class CuAttachmentServiceImplTest {
         }
         return null;
     }
-    
-    private ScanResult getScanResultFromInputStream(InvocationOnMock invocation) {
-        InputStream scannedInputStream = invocation.getArgument(0);
-        String scannedContents;
-        try {
-            scannedContents = IOUtils.toString(scannedInputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        ScanResult result = Mockito.mock(ScanResult.class);
-        
-        if (StringUtils.equals(scannedContents, GOOD_FILE_CONTENTS)) {
-            Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.PASSED);
-        } else if (StringUtils.equals(scannedContents, VIRUS_FILE_CONTENTS)) {
-            Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.FAILED);
-        } else {
-            Mockito.when(result.getStatus()).thenReturn(ScanResult.Status.ERROR);
-        }
-        return result;
-    }
 
     private void createAttachmentFile(Note note, String fileName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException {
         String documentDirectory = buildDocumentDirectory(note);
