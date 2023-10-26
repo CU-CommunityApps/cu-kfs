@@ -2333,7 +2333,7 @@
             <artifactId>log4j-web</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-        <!-- This is needed to support JSON logging output for DataDog -->
+        <!-- CU customization to support JSON logging for DataDog. Log4j minimum version 2.21.1 required for this feature. -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-layout-template-json</artifactId>
