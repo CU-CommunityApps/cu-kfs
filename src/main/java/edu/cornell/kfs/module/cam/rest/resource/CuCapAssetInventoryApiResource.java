@@ -149,7 +149,7 @@ public class CuCapAssetInventoryApiResource {
             String netid = jsonFields.get(CuCamsConstants.CapAssetApi.NETID);
 
             if(!validateBuildingRoomCombination(buildingCode, roomNumber)) {
-                String errorMessage = "Invalid Room # " + roomNumber + " for Building # " + buildingCode;
+                String errorMessage = "Invalid Room #" + roomNumber + " for Building Code " + buildingCode;
                 LOG.error("updateAsset: " + errorMessage);
                 return respondBadRequest(errorMessage);
             }
@@ -172,13 +172,8 @@ public class CuCapAssetInventoryApiResource {
     }
 
     private boolean validateBuildingRoomCombination(String buildingCode, String roomNumber) {
-        List<Room> rooms = getCuCapAssetInventoryDao().getBuildingRooms(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode);
-        for (Room r : rooms) {
-            if (r.getBuildingRoomNumber().equalsIgnoreCase(roomNumber)) {
-                return true;
-            }
-        }
-        return false;
+        List<Room> roomsInBuilding = getCuCapAssetInventoryDao().getBuildingRooms(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode);
+        return roomsInBuilding.stream().anyMatch(room -> StringUtils.equalsIgnoreCase(room.getBuildingRoomNumber(), roomNumber));
     }
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
