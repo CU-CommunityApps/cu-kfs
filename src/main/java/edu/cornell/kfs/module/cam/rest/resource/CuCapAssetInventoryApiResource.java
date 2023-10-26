@@ -149,7 +149,7 @@ public class CuCapAssetInventoryApiResource {
             String netid = jsonFields.get(CuCamsConstants.CapAssetApi.NETID);
 
             if(!validateBuildingRoomCombination(buildingCode, roomNumber)) {
-                String errorMessage = "Invalid Room #" + roomNumber + " for Building Code " + buildingCode;
+                String errorMessage = String.format("Invalid Room #%s for Building Code %s", roomNumber, buildingCode);
                 LOG.error("updateAsset: " + errorMessage);
                 return respondBadRequest(errorMessage);
             }
