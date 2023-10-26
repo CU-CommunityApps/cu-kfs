@@ -148,6 +148,12 @@ public class CuCapAssetInventoryApiResource {
             String roomNumber = jsonFields.get(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
             String netid = jsonFields.get(CuCamsConstants.CapAssetApi.NETID);
 
+            if(!validateBuildingRoomCombination(buildingCode, roomNumber)) {
+                String errorMessage = "Invalid Room # " + roomNumber + " for Building # " + buildingCode;
+                LOG.error("updateAsset: " + errorMessage);
+                return respondBadRequest(errorMessage);
+            }
+
             Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
             if (ObjectUtils.isNull(asset)) {
                 LOG.error("updateAsset: Asset Inventory Tag #" + assetTag + " Not Found");
@@ -163,6 +169,16 @@ public class CuCapAssetInventoryApiResource {
             LOG.error("updateAsset", ex);
             return ex instanceof BadRequestException ? respondBadRequest() : respondInternalServerError(ex);
         }
+    }
+
+    private boolean validateBuildingRoomCombination(String buildingCode, String roomNumber) {
+        List<Room> rooms = getCuCapAssetInventoryDao().getBuildingRooms(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode);
+        for (Room r : rooms) {
+            if (r.getBuildingRoomNumber().equalsIgnoreCase(roomNumber)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
@@ -294,7 +310,15 @@ public class CuCapAssetInventoryApiResource {
     }
 
     private Response respondBadRequest() {
-        String responseBody = getSimpleJsonObject(CuCamsConstants.CapAssetApi.ERROR, CuCamsConstants.CapAssetApi.BAD_REQUEST);
+        return respondBadRequest("");
+    }
+    private Response respondBadRequest(String errorMessage) {
+        String responseErrorMessage = CuCamsConstants.CapAssetApi.BAD_REQUEST;
+        if (StringUtils.isNotBlank(errorMessage)) {
+            responseErrorMessage += ": " + errorMessage;
+        }
+
+        final String responseBody = getSimpleJsonObject(CuCamsConstants.CapAssetApi.ERROR, responseErrorMessage);
         return Response.status(400).entity(responseBody).build();
     }
 
