@@ -66,7 +66,7 @@
         <plugin.war.version>3.3.2</plugin.war.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
-        <log4j.version>2.18.0</log4j.version>
+        <log4j.version>2.21.1</log4j.version>
         <ehcache.version>2.10.10.3.24</ehcache.version>
         <cxf.version>3.4.10</cxf.version>
         <wss4j.version>2.2.5</wss4j.version>
@@ -2331,6 +2331,12 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- CU customization to support JSON logging for DataDog. Log4j minimum version 2.21.1 required for this feature. -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-layout-template-json</artifactId>
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
