@@ -966,7 +966,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     @Override
     public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
 
@@ -975,14 +974,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         if (refreshCaller != null && refreshCaller.endsWith(KFSConstants.LOOKUPABLE_SUFFIX)) {
 
-            String deliverToNetID = iWantDocument.getDeliverToNetID();
-            if (StringUtils.isNotEmpty(deliverToNetID)) {
-                IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
-                String address = iWantDocumentService.getPersonCampusAddress(deliverToNetID);
-
-                iWantDocument.setDeliverToAddress(address);
-
-            }
+            iWantDocument.setDeliverToAddress(getPersonCampusAddressForRefresh(iWantDocument.getDeliverToNetID()));
+            iWantDocument.setInitiatorAddress(getPersonCampusAddressForRefresh(iWantDocument.getInitiatorNetID()));
 
             if ("iWantDocVendorLookupable".equalsIgnoreCase(refreshCaller)) {
                 Integer vendorHeaderId = iWantDocument.getVendorHeaderGeneratedIdentifier();
@@ -1033,6 +1026,15 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         }
         return actionForward;
+    }
+
+    private String getPersonCampusAddressForRefresh(String netId) {
+        String address = KFSConstants.EMPTY_STRING;
+        if (StringUtils.isNotEmpty(netId)) {
+            IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+            address = iWantDocumentService.getPersonCampusAddress(netId);
+        }
+        return address;
     }
 
     @Override
