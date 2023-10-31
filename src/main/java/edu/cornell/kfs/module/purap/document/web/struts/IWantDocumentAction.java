@@ -974,8 +974,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         if (refreshCaller != null && refreshCaller.endsWith(KFSConstants.LOOKUPABLE_SUFFIX)) {
 
-            iWantDocument.setDeliverToAddress(obtainDeliverToAddressForRefresh(iWantDocument));
-            iWantDocument.setInitiatorAddress(obtainRequestorAddressForRefresh(iWantDocument));
+            iWantDocument.setDeliverToAddress(getPersonCampusAddressForRefresh(iWantDocument.getDeliverToNetID()));
+            iWantDocument.setInitiatorAddress(getPersonCampusAddressForRefresh(iWantDocument.getInitiatorNetID()));
 
             if ("iWantDocVendorLookupable".equalsIgnoreCase(refreshCaller)) {
                 Integer vendorHeaderId = iWantDocument.getVendorHeaderGeneratedIdentifier();
@@ -1028,22 +1028,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return actionForward;
     }
 
-    private String obtainDeliverToAddressForRefresh(IWantDocument iWantDocument) {
+    private String getPersonCampusAddressForRefresh(String netId) {
         String address = KFSConstants.EMPTY_STRING;
-        String deliverToNetID = iWantDocument.getDeliverToNetID();
-        if (StringUtils.isNotEmpty(deliverToNetID)) {
+        if (StringUtils.isNotEmpty(netId)) {
             IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
-            address = iWantDocumentService.getPersonCampusAddress(deliverToNetID);
-        }
-        return address;
-    }
-
-    private String obtainRequestorAddressForRefresh(IWantDocument iWantDocument) {
-        String address = KFSConstants.EMPTY_STRING;
-        String requestorNetID = iWantDocument.getInitiatorNetID();
-        if (StringUtils.isNotEmpty(requestorNetID)) {
-            IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
-            address = iWantDocumentService.getPersonCampusAddress(requestorNetID);
+            address = iWantDocumentService.getPersonCampusAddress(netId);
         }
         return address;
     }
