@@ -6,8 +6,22 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="cuAttachmentDaoOjb" parent="platformAwareDao" class="edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb"/>
-
+    
+    <!-- 
+        This bean is injected via properties file configuration.
+        To have dummy anti virus service mimic a passed scan, update local properties file: cu.antivirus.service=dummyAntiVirusService
+     -->
     <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl" />
+    
+    <!-- 
+        This bean is injected via properties file configuration.  
+        To have dummy anti virus service mimic a failed scan, update local properties file: cu.antivirus.service=dummyAntiVirusServiceFail
+     -->
+    <bean id="dummyAntiVirusServiceFail" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl">
+        <property name="scanResultStatus">
+            <value type="edu.cornell.kfs.krad.antivirus.service.ScanResult.Status">FAILED</value>
+        </property>
+    </bean>
 
     <bean id="antiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.ClamAVAntiVirusServiceImpl"
           p:host="${cu.antivirus.clamav.host}"
