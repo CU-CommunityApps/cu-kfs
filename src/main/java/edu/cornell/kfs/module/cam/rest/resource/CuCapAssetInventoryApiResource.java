@@ -25,9 +25,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -65,6 +67,8 @@ public class CuCapAssetInventoryApiResource {
     private CuAssetService cuAssetService;
     private DocumentService documentService;
     private DateTimeService dateTimeService;
+
+    protected ConfigurationService configurationService;
 
     @Context
     protected HttpServletRequest servletRequest;
@@ -148,8 +152,16 @@ public class CuCapAssetInventoryApiResource {
             String roomNumber = jsonFields.get(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
             String netid = jsonFields.get(CuCamsConstants.CapAssetApi.NETID);
 
+            if(!validateBuildingCode(buildingCode)) {
+                String errorMessageFormat = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.Asset.ERROR_INVALID_BUILDING_CODE);
+                String errorMessage = String.format(errorMessageFormat, buildingCode);
+                LOG.error("updateAsset: " + errorMessage);
+                return respondBadRequest(errorMessage);
+            }
+
             if(!validateBuildingRoomCombination(buildingCode, roomNumber)) {
-                String errorMessage = String.format("Invalid Room #%s for Building Code %s", roomNumber, buildingCode);
+                String errorMessageFormat = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.Asset.ERROR_INVALID_BUILDING_ROOM);
+                String errorMessage = String.format(errorMessageFormat, buildingCode);
                 LOG.error("updateAsset: " + errorMessage);
                 return respondBadRequest(errorMessage);
             }
@@ -174,6 +186,11 @@ public class CuCapAssetInventoryApiResource {
     private boolean validateBuildingRoomCombination(String buildingCode, String roomNumber) {
         List<Room> roomsInBuilding = getCuCapAssetInventoryDao().getBuildingRooms(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode);
         return roomsInBuilding.stream().anyMatch(room -> StringUtils.equalsIgnoreCase(room.getBuildingRoomNumber(), roomNumber));
+    }
+
+    private boolean validateBuildingCode(String buildingCode) {
+        List<Building> buildings = getCuCapAssetInventoryDao().getBuildings(CuCamsConstants.CapAssetApi.CAMPUS_CODE_VALUE, buildingCode, StringUtils.EMPTY);
+        return !buildings.isEmpty();
     }
 
     private void createCapitalAssetErrorDocument(String netid, String assetTag, String condition, String buildingCode, String roomNumber) {
@@ -305,12 +322,12 @@ public class CuCapAssetInventoryApiResource {
     }
 
     private Response respondBadRequest() {
-        return respondBadRequest("");
+        return respondBadRequest(StringUtils.EMPTY);
     }
     private Response respondBadRequest(String errorMessage) {
         String responseErrorMessage = CuCamsConstants.CapAssetApi.BAD_REQUEST;
         if (StringUtils.isNotBlank(errorMessage)) {
-            responseErrorMessage += ": " + errorMessage;
+            responseErrorMessage += CuCamsConstants.CapAssetApi.COLON_SPACE + errorMessage;
         }
 
         final String responseBody = getSimpleJsonObject(CuCamsConstants.CapAssetApi.ERROR, responseErrorMessage);
@@ -353,6 +370,13 @@ public class CuCapAssetInventoryApiResource {
             documentService = SpringContext.getBean(DocumentService.class);
         }
         return documentService;
+    }
+
+    private ConfigurationService getConfigurationService() {
+        if (ObjectUtils.isNull(configurationService)) {
+            configurationService = SpringContext.getBean(ConfigurationService.class);
+        }
+        return configurationService;
     }
 
 }
