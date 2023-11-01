@@ -2893,13 +2893,13 @@
     <distributionManagement>
         <repository>
             <id>cornell-internal</id>
-            <url>https://nexus.cucloud.net/nexus/content/repositories/internal</url>
+            <url>https://nexus.kuali.cucloud.net/nexus/content/repositories/internal</url>
         </repository>
         <snapshotRepository>
             <id>cornell-snapshots</id>
             <name>cornell-snapshots</name>
             <uniqueVersion>true</uniqueVersion>
-            <url>https://nexus.cucloud.net/nexus/content/repositories/snapshots</url>
+            <url>https://nexus.kuali.cucloud.net/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
