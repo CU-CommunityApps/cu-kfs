@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -78,17 +78,17 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     // phone data
     protected String phoneNumber = "";
     // privacy preferences data
-    protected boolean suppressName = false;
-    protected boolean suppressAddress = false;
-    protected boolean suppressPhone = false;
-    protected boolean suppressPersonal = false;
-    protected boolean suppressEmail = false;
+    protected boolean suppressName;
+    protected boolean suppressAddress;
+    protected boolean suppressPhone;
+    protected boolean suppressPersonal;
+    protected boolean suppressEmail;
     // affiliation data
     protected List<EntityAffiliation> affiliations;
     protected String campusCode = "";
     //protected Campus campus;
     // external identifier data
-    protected Map<String, String> externalIdentifiers = null;
+    protected Map<String, String> externalIdentifiers;
     // employment data
     protected String employeeStatusCode = "";
     protected EntityEmploymentStatus employeeStatus;
@@ -97,18 +97,18 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     protected String primaryDepartmentCode = "";
     protected String employeeId = "";
     protected KualiDecimal baseSalaryAmount = KualiDecimal.ZERO;
-    protected boolean primary = false;
+    protected boolean primary;
     protected boolean active = true;
     private String lookupRoleNamespaceCode;
     private String lookupRoleName;
-    protected List<EntityName> names = null;
-    protected List<EntityTypeContactInfo> entityTypeContactInfos = null;
-    protected List<EntityAddress> addresses = null;
-    protected List<EntityPhone> phoneNumbers = null;
-    protected List<EntityEmail> emailAddresses = null;
-    protected List<GroupMember> groupMembers = null;
-    protected List<RoleMember> roleMembers = null;
-    protected List<DelegateMember> delegateMembers = null;
+    protected List<EntityName> names;
+    protected List<EntityTypeContactInfo> entityTypeContactInfos;
+    protected List<EntityAddress> addresses;
+    protected List<EntityPhone> phoneNumbers;
+    protected List<EntityEmail> emailAddresses;
+    protected List<GroupMember> groupMembers;
+    protected List<RoleMember> roleMembers;
+    protected List<DelegateMember> delegateMembers;
 
     protected static BusinessObjectService businessObjectService;
     protected static IdentityService identityService;
@@ -117,22 +117,22 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     public Person() {
     }
 
-    public Person(Principal principal, String personEntityTypeCode) {
+    public Person(final Principal principal, final String personEntityTypeCode) {
         this(principal, null, personEntityTypeCode);
     }
 
-    public Person(Principal principal, Entity entity, String personEntityTypeCode) {
+    public Person(final Principal principal, final Entity entity, final String personEntityTypeCode) {
         setPrincipal(principal, entity, personEntityTypeCode);
     }
 
-    public Person(String principalId, String personEntityTypeCode) {
+    public Person(final String principalId, final String personEntityTypeCode) {
         this(getIdentityService().getPrincipal(principalId), personEntityTypeCode);
     }
 
     /**
      * Sets the principal object and populates the person object from that.
      */
-    public void setPrincipal(Principal principal, Entity entity, String personEntityTypeCode) {
+    public void setPrincipal(final Principal principal, Entity entity, final String personEntityTypeCode) {
         populatePrincipalInfo(principal);
         if (entity == null) {
             entity = getIdentityService().getEntity(principal.getEntityId());
@@ -140,17 +140,17 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         populateEntityInfo(entity, principal, personEntityTypeCode);
     }
 
-    protected void populatePrincipalInfo(Principal principal) {
+    protected void populatePrincipalInfo(final Principal principal) {
         entityId = principal.getEntityId();
         principalId = principal.getPrincipalId();
         principalName = principal.getPrincipalName();
         active = principal.isActive();
     }
 
-    protected void populateEntityInfo(Entity entity, Principal principal, String personEntityTypeCode) {
+    protected void populateEntityInfo(final Entity entity, final Principal principal, final String personEntityTypeCode) {
         if (entity != null) {
             populatePrivacyInfo(entity);
-            EntityTypeContactInfo entityTypeContactInfoDefault =
+            final EntityTypeContactInfo entityTypeContactInfoDefault =
                     entity.getEntityTypeContactInfoByTypeCode(personEntityTypeCode);
             entityTypeCode = personEntityTypeCode;
             populateNameInfo(personEntityTypeCode, entity, principal);
@@ -164,9 +164,9 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populateNameInfo(String entityTypeCode, Entity entity, Principal principal) {
+    protected void populateNameInfo(final String entityTypeCode, final Entity entity, final Principal principal) {
         if (entity != null) {
-            EntityName entityName = entity.getDefaultName();
+            final EntityName entityName = entity.getDefaultName();
             if (entityName != null) {
                 firstName = unNullify(entityName.getFirstNameUnmasked());
                 middleName = unNullify(entityName.getMiddleNameUnmasked());
@@ -199,7 +199,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         populateDelegateMembers();
     }
 
-    protected void populatePrivacyInfo(Entity entity) {
+    protected void populatePrivacyInfo(final Entity entity) {
         if (entity != null) {
             if (entity.getPrivacyPreferences() != null) {
                 suppressName = entity.getPrivacyPreferences().isSuppressName();
@@ -211,9 +211,9 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populateAddressInfo(EntityTypeContactInfo contactInfoDefault) {
+    protected void populateAddressInfo(final EntityTypeContactInfo contactInfoDefault) {
         if (contactInfoDefault != null) {
-            EntityAddress defaultAddress = contactInfoDefault.getDefaultAddress();
+            final EntityAddress defaultAddress = contactInfoDefault.getDefaultAddress();
             if (defaultAddress != null) {
                 address = defaultAddress;
             } else {
@@ -232,9 +232,9 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populateEmailInfo(EntityTypeContactInfo contactInfoDefault) {
+    protected void populateEmailInfo(final EntityTypeContactInfo contactInfoDefault) {
         if (contactInfoDefault != null) {
-            EntityEmail entityEmail = contactInfoDefault.getDefaultEmailAddress();
+            final EntityEmail entityEmail = contactInfoDefault.getDefaultEmailAddress();
             if (entityEmail != null) {
                 emailAddress = unNullify(entityEmail.getEmailAddressUnmasked());
             } else {
@@ -243,9 +243,9 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populatePhoneInfo(EntityTypeContactInfo contactInfoDefault) {
+    protected void populatePhoneInfo(final EntityTypeContactInfo contactInfoDefault) {
         if (contactInfoDefault != null) {
-            EntityPhone entityPhone = contactInfoDefault.getDefaultPhoneNumber();
+            final EntityPhone entityPhone = contactInfoDefault.getDefaultPhoneNumber();
             if (entityPhone != null) {
                 phoneNumber = unNullify(entityPhone.getFormattedPhoneNumberUnmasked());
             } else {
@@ -254,14 +254,14 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populateAffiliationInfo(Entity entity) {
+    protected void populateAffiliationInfo(final Entity entity) {
         if (entity != null) {
             if (affiliations == null) {
                 affiliations = new ArrayList<>();
             }
             affiliations.addAll(entity.getAffiliations());
 
-            EntityAffiliation defaultAffiliation = entity.getDefaultAffiliation();
+            final EntityAffiliation defaultAffiliation = entity.getDefaultAffiliation();
             if (defaultAffiliation != null) {
                 campusCode = unNullify(defaultAffiliation.getCampusCode());
             } else {
@@ -270,9 +270,9 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populateEmploymentInfo(Entity entity) {
+    protected void populateEmploymentInfo(final Entity entity) {
         if (entity != null) {
-            EntityEmployment employmentInformation = entity.getPrimaryEmployment();
+            final EntityEmployment employmentInformation = entity.getPrimaryEmployment();
             if (employmentInformation != null) {
                 employeeStatusCode = unNullify(employmentInformation.getEmployeeStatus() != null ?
                         employmentInformation.getEmployeeStatus().getCode() : null);
@@ -296,18 +296,18 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    protected void populateExternalIdentifiers(Entity entity) {
+    protected void populateExternalIdentifiers(final Entity entity) {
         if (entity != null) {
-            List<? extends EntityExternalIdentifier> externalIds = entity.getExternalIdentifiers();
+            final List<? extends EntityExternalIdentifier> externalIds = entity.getExternalIdentifiers();
             externalIdentifiers = new HashMap<>(externalIds.size());
-            for (EntityExternalIdentifier eei : externalIds) {
+            for (final EntityExternalIdentifier eei : externalIds) {
                 externalIdentifiers.put(eei.getExternalIdentifierTypeCode(), eei.getExternalId());
             }
         }
     }
 
     protected void populateFullEntityInfo() {
-        Entity entity = getIdentityService().getEntity(entityId);
+        final Entity entity = getIdentityService().getEntity(entityId);
 
         if (entity != null) {
             populateNames(entity);
@@ -318,21 +318,21 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    private void populateNames(Entity entity) {
+    private void populateNames(final Entity entity) {
         if (names == null) {
             names = new ArrayList<>();
         }
         names.addAll(entity.getNames());
     }
 
-    private void populateEntityTypeContactInfo(Entity entity) {
+    private void populateEntityTypeContactInfo(final Entity entity) {
         if (entityTypeContactInfos == null) {
             entityTypeContactInfos = new ArrayList<>();
         }
         entityTypeContactInfos.addAll(entity.getEntityTypeContactInfos());
     }
 
-    private void populateAddresses(Entity entity) {
+    private void populateAddresses(final Entity entity) {
         if (addresses == null) {
             addresses = new ArrayList<>();
         }
@@ -340,7 +340,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
                 addresses.addAll(entityTypeContactInfo.getAddresses()));
     }
 
-    private void populatePhoneNumbers(Entity entity) {
+    private void populatePhoneNumbers(final Entity entity) {
         if (phoneNumbers == null) {
             phoneNumbers = new ArrayList<>();
         }
@@ -348,7 +348,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
                 phoneNumbers.addAll(entityTypeContactInfo.getPhoneNumbers()));
     }
 
-    private void populateEmailAddresses(Entity entity) {
+    private void populateEmailAddresses(final Entity entity) {
         if (emailAddresses == null) {
             emailAddresses = new ArrayList<>();
         }
@@ -357,7 +357,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     }
 
     private void populateGroupMembers() {
-        Map<String, String> criteria = new HashMap<>(2);
+        final Map<String, String> criteria = new HashMap<>(2);
         criteria.put(KIMPropertyConstants.GroupMember.MEMBER_ID, principalId);
         criteria.put(KIMPropertyConstants.KimMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
@@ -365,7 +365,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     }
 
     private void populateRoleMembers() {
-        Map<String, String> criteria = new HashMap<>(2);
+        final Map<String, String> criteria = new HashMap<>(2);
         criteria.put(KIMPropertyConstants.RoleMember.MEMBER_ID, principalId);
         criteria.put(KIMPropertyConstants.RoleMember.MEMBER_TYPE_CODE,
                 KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.getCode());
@@ -373,15 +373,15 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     }
 
     private void populateDelegateMembers() {
-        Map<String, String> criteria = new HashMap<>(2);
+        final Map<String, String> criteria = new HashMap<>(2);
         criteria.put(KIMPropertyConstants.DelegationMember.MEMBER_ID, principalId);
         criteria.put(KIMPropertyConstants.DelegationMember.MEMBER_TYPE_CODE, MemberType.PRINCIPAL.getCode());
         delegateMembers = (List<DelegateMember>) getBusinessObjectService().findMatching(DelegateMember.class,
                 criteria);
         criteria.clear();
-        for (DelegateMember dmb: delegateMembers) {
+        for (final DelegateMember dmb: delegateMembers) {
             criteria.put(KIMPropertyConstants.Delegation.DELEGATION_ID, dmb.getDelegationId());
-            DelegateType delegate = getBusinessObjectService().findByPrimaryKey(DelegateType.class, criteria);
+            final DelegateType delegate = getBusinessObjectService().findByPrimaryKey(DelegateType.class, criteria);
             dmb.setDelegationType(delegate.getDelegationTypeCode());
         }
     }
@@ -389,7 +389,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     /**
      * So users of this class don't need to program around nulls.
      */
-    private String unNullify(String str) {
+    private String unNullify(final String str) {
         if (str == null) {
             return "";
         }
@@ -408,7 +408,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return principalName;
     }
 
-    public void setPrincipalName(String principalName) {
+    public void setPrincipalName(final String principalName) {
         this.principalName = principalName;
     }
 
@@ -452,12 +452,12 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     public String getNameUnmasked() {
-        return this.name;
+        return name;
     }
 
     public String getPhoneNumber() {
@@ -486,7 +486,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return suppressName;
     }
 
-    public void setSuppressName(boolean suppressName) {
+    public void setSuppressName(final boolean suppressName) {
         this.suppressName = suppressName;
     }
 
@@ -494,7 +494,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return suppressAddress;
     }
 
-    public void setSuppressAddress(boolean suppressAddress) {
+    public void setSuppressAddress(final boolean suppressAddress) {
         this.suppressAddress = suppressAddress;
     }
 
@@ -502,7 +502,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return suppressPhone;
     }
 
-    public void setSuppressPhone(boolean suppressPhone) {
+    public void setSuppressPhone(final boolean suppressPhone) {
         this.suppressPhone = suppressPhone;
     }
 
@@ -510,7 +510,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return suppressPersonal;
     }
 
-    public void setSuppressPersonal(boolean suppressPersonal) {
+    public void setSuppressPersonal(final boolean suppressPersonal) {
         this.suppressPersonal = suppressPersonal;
     }
 
@@ -518,7 +518,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return suppressEmail;
     }
 
-    public void setSuppressEmail(boolean suppressEmail) {
+    public void setSuppressEmail(final boolean suppressEmail) {
         this.suppressEmail = suppressEmail;
     }
 
@@ -526,11 +526,11 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return affiliations;
     }
 
-    public void setAffiliations(List<EntityAffiliation> affiliations) {
+    public void setAffiliations(final List<EntityAffiliation> affiliations) {
         this.affiliations = affiliations;
     }
 
-    public String getExternalId(String externalIdentifierTypeCode) {
+    public String getExternalId(final String externalIdentifierTypeCode) {
         return externalIdentifiers.get(externalIdentifierTypeCode);
     }
 
@@ -602,76 +602,76 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
     }
 
     public String getEmployeeStatusCode() {
-        return this.employeeStatusCode;
+        return employeeStatusCode;
     }
 
     public String getEmployeeTypeCode() {
-        return this.employeeTypeCode;
+        return employeeTypeCode;
     }
 
     public KualiDecimal getBaseSalaryAmount() {
-        return this.baseSalaryAmount;
+        return baseSalaryAmount;
     }
 
     public String getEmployeeId() {
-        return this.employeeId;
+        return employeeId;
     }
 
     public String getPrimaryDepartmentCode() {
-        return this.primaryDepartmentCode;
+        return primaryDepartmentCode;
     }
 
     public String getEntityTypeCode() {
-        return this.entityTypeCode;
+        return entityTypeCode;
     }
 
     public boolean isPrimary() {
         return primary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setPrimary(final boolean primary) {
         this.primary = primary;
     }
 
     @Override
     public boolean isActive() {
-        return this.active;
+        return active;
     }
 
     @Override
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
     public String getLookupRoleNamespaceCode() {
-        return this.lookupRoleNamespaceCode;
+        return lookupRoleNamespaceCode;
     }
 
-    public void setLookupRoleNamespaceCode(String lookupRoleNamespaceCode) {
+    public void setLookupRoleNamespaceCode(final String lookupRoleNamespaceCode) {
         this.lookupRoleNamespaceCode = lookupRoleNamespaceCode;
     }
 
     public String getLookupRoleName() {
-        return this.lookupRoleName;
+        return lookupRoleName;
     }
 
-    public void setLookupRoleName(String lookupRoleName) {
+    public void setLookupRoleName(final String lookupRoleName) {
         this.lookupRoleName = lookupRoleName;
     }
 
     public EntityEmploymentStatus getEmployeeStatus() {
-        return this.employeeStatus;
+        return employeeStatus;
     }
 
     public EntityEmploymentType getEmployeeType() {
-        return this.employeeType;
+        return employeeType;
     }
 
     public List<EntityName> getNames() {
         return names;
     }
 
-    public void setNames(List<EntityName> names) {
+    public void setNames(final List<EntityName> names) {
         this.names = names;
     }
 
@@ -679,7 +679,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return entityTypeContactInfos;
     }
 
-    public void setEntityTypeContactInfos(List<EntityTypeContactInfo> entityTypeContactInfos) {
+    public void setEntityTypeContactInfos(final List<EntityTypeContactInfo> entityTypeContactInfos) {
         this.entityTypeContactInfos = entityTypeContactInfos;
     }
 
@@ -687,7 +687,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return addresses;
     }
 
-    public void setAddresses(List<EntityAddress> addresses) {
+    public void setAddresses(final List<EntityAddress> addresses) {
         this.addresses = addresses;
     }
 
@@ -695,7 +695,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(List<EntityPhone> phoneNumbers) {
+    public void setPhoneNumbers(final List<EntityPhone> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
 
@@ -703,7 +703,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return emailAddresses;
     }
 
-    public void setEmailAddresses(List<EntityEmail> emailAddresses) {
+    public void setEmailAddresses(final List<EntityEmail> emailAddresses) {
         this.emailAddresses = emailAddresses;
     }
 
@@ -711,7 +711,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return groupMembers;
     }
 
-    public void setGroupMembers(List<GroupMember> groupMembers) {
+    public void setGroupMembers(final List<GroupMember> groupMembers) {
         this.groupMembers = groupMembers;
     }
 
@@ -719,7 +719,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return roleMembers;
     }
 
-    public void setRoleMembers(List<RoleMember> roleMembers) {
+    public void setRoleMembers(final List<RoleMember> roleMembers) {
         this.roleMembers = roleMembers;
     }
 
@@ -727,7 +727,7 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         return delegateMembers;
     }
 
-    public void setDelegateMembers(List<DelegateMember> delegateMembers) {
+    public void setDelegateMembers(final List<DelegateMember> delegateMembers) {
         this.delegateMembers = delegateMembers;
     }
 

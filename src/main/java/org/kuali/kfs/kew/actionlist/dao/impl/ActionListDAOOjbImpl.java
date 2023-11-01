@@ -221,26 +221,26 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeLastModifiedDate()) {
                 if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() != null) {
                     criteria.addNotBetween("routeHeader.dateModified",
-                            new Timestamp(beginningOfDay(filter.getLastModifiedDateFrom()).getTime()),
-                            new Timestamp(endOfDay(filter.getLastModifiedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 } else if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() == null) {
                     criteria.addLessOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(beginningOfDay(filter.getLastModifiedDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
                 } else if (filter.getLastAssignedDateFrom() == null && filter.getLastModifiedDateTo() != null) {
                     criteria.addGreaterOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(endOfDay(filter.getLastModifiedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 }
             } else {
                 if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() != null) {
                     criteria.addBetween("routeHeader.dateModified",
-                            new Timestamp(beginningOfDay(filter.getLastModifiedDateFrom()).getTime()),
-                            new Timestamp(endOfDay(filter.getLastModifiedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 } else if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() == null) {
                     criteria.addGreaterOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(beginningOfDay(filter.getLastModifiedDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
                 } else if (filter.getLastModifiedDateFrom() == null && filter.getLastModifiedDateTo() != null) {
                     criteria.addLessOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(endOfDay(filter.getLastModifiedDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
                 }
             }
             filteredByItems += filteredByItems.length() > 0 ? ", " : "";
@@ -546,24 +546,6 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
         criteria.addEqualTo("principalId", userId);
         return (OutboxItemActionListExtension) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(
                 OutboxItemActionListExtension.class, criteria));
-    }
-
-    private Date beginningOfDay(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        return cal.getTime();
-    }
-
-    private Date endOfDay(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 23);
-        cal.set(Calendar.MINUTE, 59);
-        cal.set(Calendar.SECOND, 59);
-        return cal.getTime();
     }
 
     public void setGroupService(final GroupService groupService) {
