@@ -161,7 +161,7 @@ public class CuCapAssetInventoryApiResource {
 
             if(!validateBuildingRoomCombination(buildingCode, roomNumber)) {
                 String errorMessageFormat = getConfigurationService().getPropertyValueAsString(CuCamsPropertyConstants.Asset.ERROR_INVALID_BUILDING_ROOM);
-                String errorMessage = String.format(errorMessageFormat, buildingCode);
+                String errorMessage = String.format(errorMessageFormat, roomNumber, buildingCode);
                 LOG.error("updateAsset: " + errorMessage);
                 return respondBadRequest(errorMessage);
             }
