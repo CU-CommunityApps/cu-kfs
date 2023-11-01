@@ -20,7 +20,7 @@ public class DummyAntiVirusServiceImpl implements AntiVirusService {
     
     public DummyAntiVirusServiceImpl(Status scanResultStatus) {
         this.scanResultStatus = scanResultStatus;
-        LOG.debug("DummyAntiVirusServiceImpl, create with virus scan status of {}", scanResultStatus);
+        LOG.debug("DummyAntiVirusServiceImpl, created with virus scan status of {}", scanResultStatus);
     }
 
     @Override
