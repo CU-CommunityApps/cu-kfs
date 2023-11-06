@@ -74,7 +74,7 @@ public final class MaintenanceUtils {
         LOG.info("starting checkForLockingDocument (by MaintenanceDocument)");
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
-        final String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+        final String blockingDocId = findLockingDocId(document);
         checkDocumentBlockingDocumentId(blockingDocId, throwExceptionIfLocked);
     }
 

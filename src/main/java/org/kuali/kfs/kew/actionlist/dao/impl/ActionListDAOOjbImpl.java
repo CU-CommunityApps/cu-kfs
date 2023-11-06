@@ -221,26 +221,26 @@ public class ActionListDAOOjbImpl extends PersistenceBrokerDaoSupport implements
             if (filter.isExcludeLastModifiedDate()) {
                 if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() != null) {
                     criteria.addNotBetween("routeHeader.dateModified",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastModifiedDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastModifiedDateTo()).getTime()));
                 } else if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() == null) {
                     criteria.addLessOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastModifiedDateFrom()).getTime()));
                 } else if (filter.getLastAssignedDateFrom() == null && filter.getLastModifiedDateTo() != null) {
                     criteria.addGreaterOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastModifiedDateTo()).getTime()));
                 }
             } else {
                 if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() != null) {
                     criteria.addBetween("routeHeader.dateModified",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()),
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastModifiedDateFrom()).getTime()),
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastModifiedDateTo()).getTime()));
                 } else if (filter.getLastModifiedDateFrom() != null && filter.getLastModifiedDateTo() == null) {
                     criteria.addGreaterOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getCreateDateFrom()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtStartOfDay(filter.getLastModifiedDateFrom()).getTime()));
                 } else if (filter.getLastModifiedDateFrom() == null && filter.getLastModifiedDateTo() != null) {
                     criteria.addLessOrEqualThan("routeHeader.dateModified",
-                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getCreateDateTo()).getTime()));
+                            new Timestamp(dateTimeService.getUtilDateAtEndOfDay(filter.getLastModifiedDateTo()).getTime()));
                 }
             }
             filteredByItems += filteredByItems.length() > 0 ? ", " : "";
