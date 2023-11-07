@@ -367,7 +367,8 @@
         p:cuMarshalService-ref="cuMarshalService"
         p:parameterService-ref="parameterService"
         p:configurationService-ref="configurationService"
-        p:jaggaerUploadFileType-ref="jaggaerUploadFileType" />
+        p:jaggaerUploadFileType-ref="jaggaerUploadFileType"
+        p:jaggaerXMLInputFileType-ref="jaggaerXMLInputFileType" />
 
 	<bean id="jaggaerUploadFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase"
 		p:directoryPath="${staging.directory}/purap/jaggaer/xml"

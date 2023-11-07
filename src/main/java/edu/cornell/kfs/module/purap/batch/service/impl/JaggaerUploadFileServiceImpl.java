@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
 
+import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -49,6 +50,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
     protected ConfigurationService configurationService;
+    protected JaggaerXMLInputFileType jaggaerXMLInputFileType;
 
     @Override
     protected Client getClient() {
@@ -235,6 +237,10 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public void setJaggaerXMLInputFileType(JaggaerXMLInputFileType jaggaerXMLInputFileType) {
+        this.jaggaerXMLInputFileType = jaggaerXMLInputFileType;
     }
 
 }
