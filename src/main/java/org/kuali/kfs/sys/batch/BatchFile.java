@@ -33,7 +33,7 @@ public class BatchFile extends TransientBusinessObjectBase {
     private static final Logger LOG = LogManager.getLogger();
     public static final String CACHE_NAME = "BatchFile";
 
-    private File file;
+    private final File file;
     
 	/*
 	 * Cornell customization: add default constructor so that the old batch file
@@ -41,7 +41,7 @@ public class BatchFile extends TransientBusinessObjectBase {
 	 * once the new batch file lookup will suppport return from lookup.
 	 */
 	public BatchFile() {
-
+	    file = null;
 	}
 
     /**

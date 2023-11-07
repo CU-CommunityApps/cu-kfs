@@ -449,7 +449,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      * @return the URL to the line item import instructions
      */
     public String getLineItemImportInstructionsUrl() {
-        return SpringContext.getBean(ParameterService.class)
+        return getParameterService()
                 .getParameterValueAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class,
                         PurapParameterConstants.LINE_ITEM_IMPORT);
     }

@@ -1286,7 +1286,7 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
 
     @Override
     public Collection<ContractsGrantsInvoiceLookupResult> getPopulatedContractsGrantsInvoiceLookupResults(
-            final  Collection<ContractsAndGrantsBillingAward> awards
+            final Collection<ContractsAndGrantsBillingAward> awards
     ) {
         final Collection<ContractsGrantsInvoiceLookupResult> populatedContractsGrantsInvoiceLookupResults = new ArrayList<>();
 

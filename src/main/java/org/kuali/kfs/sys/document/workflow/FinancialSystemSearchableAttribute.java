@@ -144,7 +144,7 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                 final Field chartField = FieldUtils.getPropertyField(alClass, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
                         true);
                 chartField.setFieldDataType(CoreConstants.DATA_TYPE_STRING);
-                chartField.setColumnVisible(false);
+                chartField.setColumnVisible(true);
                 LookupUtils.setFieldQuickfinder(alBusinessObject, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
                         chartField, Collections.singletonList(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(chartField)));

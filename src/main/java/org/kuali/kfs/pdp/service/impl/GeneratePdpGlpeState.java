@@ -111,7 +111,7 @@ public class GeneratePdpGlpeState {
     /**
      * @return a state object with the correct options defined for a stopped payment.
      */
-    // CU customization for stale checks
+    // CU customization for stopped payments
     public static GeneratePdpGlpeState forStop() {
         return new GeneratePdpGlpeState(true, false, TYPE_MAP_STOP);
     }

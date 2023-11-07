@@ -105,7 +105,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         final String handler = docHandlerUrl.substring(endSubString + 1, docHandlerUrl.lastIndexOf("?"));
         return serverName + "/" + handler + "?channelTitle=" + docType.getName() + "&" +
                 KRADConstants.DISPATCH_REQUEST_PARAMETER + "=" + KRADConstants.DOC_HANDLER_METHOD + "&" +
-                KRADConstants.PARAMETER_DOC_ID + "=" + this.getDocumentNumber() + "&" +
+                KRADConstants.PARAMETER_DOC_ID + "=" + getDocumentNumber() + "&" +
                 KRADConstants.PARAMETER_COMMAND + "=" + KewApiConstants.DOCSEARCH_COMMAND;
     }
 
