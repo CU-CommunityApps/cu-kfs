@@ -356,7 +356,8 @@
         p:jaggaerUploadDao-ref="jaggaerUploadDao"
         p:webServiceCredentialService-ref="webServiceCredentialService" 
         p:configurationService-ref="configurationService"
-        p:jaggaerGenerateSupplierXmlReportService-ref="jaggaerGenerateSupplierXmlReportService" />
+        p:jaggaerGenerateSupplierXmlReportService-ref="jaggaerGenerateSupplierXmlReportService"
+        p:jaggaerXMLInputFileType-ref="jaggaerXMLInputFileType"/>
 
     <bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
     <bean id="jaggaerUploadFileService-parentBean" abstract="true"
@@ -385,5 +386,21 @@
         p:filePath="${reports.directory}/purap"
         p:fileNamePrefix="jaggaer_generate_xml_report_"
         p:title="Jaggaer Generate XML Report File"/>
+
+	<bean id="jaggaerXMLInputFileType"
+		  parent="jaggaerXMLInputFileType-parentBean"/>
+	<bean abstract="true"
+		  class="edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType"
+		  id="jaggaerXMLInputFileType-parentBean"
+		  p:directoryPath="${staging.directory}/purap/jaggaer/xml"
+		  p:fileExtension="xml"
+		  p:fileNamePrefix="jaggaer_generate_xml_report_"
+		  p:parameterService-ref="parameterService"
+		  p:configurationService-ref="configurationService"
+		  p:outputClass="edu.cornell.kfs.module.purap.batch.service.impl.JaggaerUploadSupplierXmlFileDetailsDto"
+		  p:reportExtension="txt"
+		  p:reportPath="${reports.directory}/purap"
+		  p:reportPrefix="jaggaerGenerateSupplierXmlJob"
+		  p:schemaLocation="classpath:org/kuali/kfs/module/purap/batch/electronicInvoice.xsd"/>
     
 </beans>
