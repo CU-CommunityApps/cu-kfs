@@ -60,7 +60,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
  */
 public class FormatAction extends KualiAction {
 
-    private final FormatService formatService;
+    protected final FormatService formatService;
 
     public FormatAction() {
         formatService = SpringContext.getBean(FormatService.class);
