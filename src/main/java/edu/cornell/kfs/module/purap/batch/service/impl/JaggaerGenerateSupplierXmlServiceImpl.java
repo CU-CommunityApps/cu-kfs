@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -85,7 +84,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     protected ParameterService parameterService;
     protected WebServiceCredentialService webServiceCredentialService;
     protected ConfigurationService configurationService;
-    protected JaggaerXMLInputFileType jaggaerXMLInputFileType;
     protected JaggaerGenerateSupplierXmlReportService jaggaerGenerateSupplierXmlReportService;
 
     @Override
@@ -346,12 +344,11 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
 
     @Override
     public void generateXMLForSyncMessages(List<SupplierSyncMessage> messages) {
-        List<JaggaerUploadSupplierXmlFileDetailsDto> xmlFileDtos = new ArrayList<>();
+        List<JaggaerUploadSupplierXmlFileDetailsDto> xmlFileDtos = new ArrayList<JaggaerUploadSupplierXmlFileDetailsDto>();
         for (SupplierSyncMessage message : messages) {
             String outputFileName = jaggaerXmlDirectory + findOutputFileNameStarter()
                     + DATE_FORMATTER_FOR_FILE_NAME.print(dateTimeService.getCurrentDate().getTime())
                     + CUKFSConstants.XML_FILE_EXTENSION;
-
             xmlFileDtos.add(buildJaggaerUploadSupplierXmlFileDetailsDto(message,outputFileName));
             
             try {
@@ -430,10 +427,6 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
     public void setJaggaerGenerateSupplierXmlReportService(
             JaggaerGenerateSupplierXmlReportService jaggaerGenerateSupplierXmlReportService) {
         this.jaggaerGenerateSupplierXmlReportService = jaggaerGenerateSupplierXmlReportService;
-    }
-
-    public void setJaggaerXMLInputFileType(JaggaerXMLInputFileType jaggaerXMLInputFileType) {
-        this.jaggaerXMLInputFileType = jaggaerXMLInputFileType;
     }
 
 }

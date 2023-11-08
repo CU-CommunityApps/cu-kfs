@@ -356,8 +356,7 @@
         p:jaggaerUploadDao-ref="jaggaerUploadDao"
         p:webServiceCredentialService-ref="webServiceCredentialService" 
         p:configurationService-ref="configurationService"
-        p:jaggaerGenerateSupplierXmlReportService-ref="jaggaerGenerateSupplierXmlReportService"
-        p:jaggaerXMLInputFileType-ref="jaggaerXMLInputFileType"/>
+        p:jaggaerGenerateSupplierXmlReportService-ref="jaggaerGenerateSupplierXmlReportService" />
 
     <bean id="jaggaerUploadFileService" parent="jaggaerUploadFileService-parentBean" />
     <bean id="jaggaerUploadFileService-parentBean" abstract="true"
