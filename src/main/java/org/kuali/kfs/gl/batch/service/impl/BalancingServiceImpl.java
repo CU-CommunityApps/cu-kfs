@@ -261,6 +261,7 @@ public class BalancingServiceImpl extends BalancingServiceBaseImpl<EntryHistory,
      */
     protected void updateAccountBalanceHistory(final OriginEntryInformation originEntry) {
         final OriginEntryFull originEntryFull = (OriginEntryFull) originEntry;
+        LOG.info("updateAccountBalanceHistory() started");
 
         // As taken from PostAccountBalance#post: only post transactions where: balance type code is AC or CB or where
         // object type  isn't FB and balance type code is EX, IE, PE and CE
@@ -284,12 +285,14 @@ public class BalancingServiceImpl extends BalancingServiceBaseImpl<EntryHistory,
             final AccountBalanceHistory retrievedAccountBalanceHistory =
                     (AccountBalanceHistory) businessObjectService.retrieve(accountBalanceHistory);
             if (ObjectUtils.isNotNull(retrievedAccountBalanceHistory)) {
+                LOG.info("retrievedAccountBalanceHistory not null " + originEntry.getAccountNumber() + ";" + originEntry.getFinancialObjectCode());
                 accountBalanceHistory = retrievedAccountBalanceHistory;
             }
 
             // Following is a copy of PostAccountBalance.updateAccountBalanceReturn since the balancing process is to
             // do this independently
             if (accountBalanceHistory.addAmount(originEntryFull)) {
+                LOG.info("addAmount returns true " + originEntry.getAccountNumber() + ";" + originEntry.getFinancialObjectCode());
                 businessObjectService.save(accountBalanceHistory);
             }
         }
