@@ -30,7 +30,7 @@ import edu.cornell.kfs.pdp.service.CuFormatService;
 public class CuFormatAction extends FormatAction {
 
     public CuFormatAction() {
-    	formatService = SpringContext.getBean(CuFormatService.class);
+    	super();
     }
     
     @Override
