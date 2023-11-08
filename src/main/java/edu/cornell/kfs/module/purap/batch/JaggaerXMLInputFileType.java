@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.purap.batch;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.batch.service.impl.JaggaerUploadSupplierXmlFileDetailsDto;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -27,14 +28,9 @@ public class JaggaerXMLInputFileType extends XmlBatchInputFileTypeBase<JaggaerUp
     protected ConfigurationService configurationService;
     protected String fileNamePrefix;
 
-    /**
-     * Returns the identifier of the electronic invoice file type
-     *
-     * @return the electronic invoice file type identifier
-     */
     @Override
     public String getFileTypeIdentifier() {
-        return PurapConstants.ELECTRONIC_INVOICE_FILE_TYPE_INDENTIFIER;
+        return CUPurapConstants.JAGGAER_XML_INPUT_FILE_TYPE_IDENTIFIER;
     }
 
     @Override

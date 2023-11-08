@@ -533,4 +533,6 @@ public class CUPurapConstants {
         }
         
     }
+
+    public static final String JAGGAER_XML_INPUT_FILE_TYPE_IDENTIFIER = "jaggaerUploadFileType";
 }

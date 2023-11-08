@@ -31,7 +31,6 @@ import edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.Header;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierRequestMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierSyncMessage;
-import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.LogTestAppender;
@@ -64,7 +63,6 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
         Logger.getRootLogger().addAppender(appender);
 
         jaggaerUploadFileServiceImpl = new JaggaerUploadFileServiceImpl();
-        jaggaerUploadFileServiceImpl.setJaggaerUploadFileType(buildJAXBXmlBatchInputFileTypeBase());
         jaggaerUploadFileServiceImpl.setJaggaerXMLInputFileType(buildJaggaerXMLInputFileType());
 
         cuMarshalService = new CUMarshalServiceImpl();
@@ -85,19 +83,10 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
         baseServerUrl = httpHost.toURI();
     }
 
-    private JAXBXmlBatchInputFileTypeBase buildJAXBXmlBatchInputFileTypeBase() {
-        JAXBXmlBatchInputFileTypeBase fileType = new JAXBXmlBatchInputFileTypeBase();
-        fileType.setDirectoryPath(TEMP_SUPPLIER_UPLOAD_DIRECTORY);
-        fileType.setFileExtension(XML);
-        fileType.setFileTypeIdentifier(FILE_TYPE_IDENTIFIER);
-        return fileType;
-    }
-
     private JaggaerXMLInputFileType buildJaggaerXMLInputFileType() {
         JaggaerXMLInputFileType fileType = new JaggaerXMLInputFileType();
         fileType.setDirectoryPath(TEMP_SUPPLIER_UPLOAD_DIRECTORY);
         fileType.setFileExtension(XML);
-//        fileType.setFileTypeIdentifier(FILE_TYPE_IDENTIFIER);
         return fileType;
     }
 

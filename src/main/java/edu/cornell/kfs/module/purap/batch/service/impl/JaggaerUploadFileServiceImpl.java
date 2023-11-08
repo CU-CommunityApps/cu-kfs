@@ -45,12 +45,11 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     private static final Logger LOG = LogManager.getLogger();
 
     protected BatchInputFileService batchInputFileService;
-    protected BatchInputFileType jaggaerUploadFileType;
+    protected JaggaerXMLInputFileType jaggaerXMLInputFileType;
     protected FileStorageService fileStorageService;
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
     protected ConfigurationService configurationService;
-    protected JaggaerXMLInputFileType jaggaerXMLInputFileType;
 
     @Override
     protected Client getClient() {
@@ -217,10 +216,6 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
-    }
-
-    public void setJaggaerUploadFileType(BatchInputFileType jaggaerUploadFileType) {
-        this.jaggaerUploadFileType = jaggaerUploadFileType;
     }
 
     public void setFileStorageService(FileStorageService fileStorageService) {
