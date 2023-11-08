@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
@@ -64,6 +65,7 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
 
         jaggaerUploadFileServiceImpl = new JaggaerUploadFileServiceImpl();
         jaggaerUploadFileServiceImpl.setJaggaerUploadFileType(buildJAXBXmlBatchInputFileTypeBase());
+        jaggaerUploadFileServiceImpl.setJaggaerXMLInputFileType(buildJaggaerXMLInputFileType());
 
         cuMarshalService = new CUMarshalServiceImpl();
         jaggaerUploadFileServiceImpl.setCuMarshalService(cuMarshalService);
@@ -90,7 +92,15 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
         fileType.setFileTypeIdentifier(FILE_TYPE_IDENTIFIER);
         return fileType;
     }
-    
+
+    private JaggaerXMLInputFileType buildJaggaerXMLInputFileType() {
+        JaggaerXMLInputFileType fileType = new JaggaerXMLInputFileType();
+        fileType.setDirectoryPath(TEMP_SUPPLIER_UPLOAD_DIRECTORY);
+        fileType.setFileExtension(XML);
+//        fileType.setFileTypeIdentifier(FILE_TYPE_IDENTIFIER);
+        return fileType;
+    }
+
     private ConfigurationService buildMockConfigurationService() {
         ConfigurationService service = Mockito.mock(ConfigurationService.class);
         Mockito.when(service.getPropertyValueAsString(CUPurapKeyConstants.JAGGAER_UPLOAD_WEBSERVICE_ERROR)).thenReturn(JAGGAER_WEBSERVICE_ERROR_MESSAGE);

@@ -60,7 +60,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     @Override
     public void uploadSupplierXMLFiles() {
         List<String> jaggaerUploadXmlFileNames = batchInputFileService
-                .listInputFileNamesWithDoneFile(jaggaerUploadFileType);
+                .listInputFileNamesWithDoneFile(jaggaerXMLInputFileType);
         LOG.info("uploadSupplierXMLFiles, found {} files to upload", jaggaerUploadXmlFileNames.size());
 
         List<JaggaerUploadFileResultsDTO> resultsList = new ArrayList<JaggaerUploadFileResultsDTO>();
