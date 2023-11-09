@@ -71,7 +71,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z).withLocale(Locale.US).withZoneUTC();
     protected static final DateTimeFormatter DATE_FORMATTER_FOR_FILE_NAME = DateTimeFormat
             .forPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmssSSS).withLocale(Locale.US);
-
+    
     private Pattern numberPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     private String jaggaerXmlDirectory;
@@ -383,7 +383,7 @@ public class JaggaerGenerateSupplierXmlServiceImpl implements JaggaerGenerateSup
         }
         return xmlFileDto;
     }
-
+    
     protected String getParameterValueString(String parameterName) {
         return parameterService.getParameterValueAsString(JaggaerGenerateSupplierXmlStep.class, parameterName);
     }
