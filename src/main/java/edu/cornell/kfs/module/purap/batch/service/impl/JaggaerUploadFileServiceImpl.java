@@ -25,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
 
@@ -218,6 +217,10 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         this.batchInputFileService = batchInputFileService;
     }
 
+    public void setJaggaerXMLInputFileType(JaggaerXMLInputFileType jaggaerXMLInputFileType) {
+        this.jaggaerXMLInputFileType = jaggaerXMLInputFileType;
+    }
+
     public void setFileStorageService(FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
     }
@@ -232,10 +235,6 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    public void setJaggaerXMLInputFileType(JaggaerXMLInputFileType jaggaerXMLInputFileType) {
-        this.jaggaerXMLInputFileType = jaggaerXMLInputFileType;
     }
 
 }
