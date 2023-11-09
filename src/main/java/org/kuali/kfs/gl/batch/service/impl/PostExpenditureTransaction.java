@@ -334,12 +334,13 @@ public class PostExpenditureTransaction implements IndirectCostRecoveryService, 
      * @return the accomplished post type
      */
     protected String postTransaction(final Transaction t, final int mode) {
-        LOG.debug("postTransaction() started");
+        LOG.info("postTransaction() started");
+        LOG.info("transaction that might generate expenditure transaction:" + t);
 
         String returnCode = GeneralLedgerConstants.UPDATE_CODE;
         ExpenditureTransaction et = getAccountingCycleCachingService().getExpenditureTransaction(t);
         if (et == null) {
-            LOG.debug("Posting expenditure transaction");
+            LOG.info("Posting expenditure transaction");
             et = new ExpenditureTransaction(t);
             returnCode = GeneralLedgerConstants.INSERT_CODE;
         }
