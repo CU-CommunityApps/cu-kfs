@@ -106,6 +106,7 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
      */
     @Override
     public void saveBusinessObject() {
+        super.saveBusinessObject();
         final BusinessObjectService boService = getBusinessObjectService();
         final GlobalBusinessObject gbo = (GlobalBusinessObject) getBusinessObject();
 
