@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.stream.XMLStreamException;
 
-import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +30,7 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep;
+import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerUploadFileService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.ErrorMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
