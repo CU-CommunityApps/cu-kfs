@@ -34,7 +34,6 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
     private static final Logger LOG = LogManager.getLogger(CuScrubberProcessImpl.class);
 
     private static final int CONTINUATION_ACCOUNT_DEPTH_LIMIT = 10;
-    private static final String SCRUBBER_JOB_PLANT_INDEBTEDNESS_COMPONENT = "ScrubberJobPlantFundIndebtedness";
 
     /**
      * Overridden to update cost share source account entries so that they will post to the
