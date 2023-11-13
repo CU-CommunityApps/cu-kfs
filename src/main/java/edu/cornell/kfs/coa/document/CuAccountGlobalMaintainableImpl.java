@@ -3,6 +3,7 @@ package edu.cornell.kfs.coa.document;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,8 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.AccountGlobal;
 import org.kuali.kfs.coa.businessobject.AccountGlobalDetail;
 import org.kuali.kfs.coa.document.AccountGlobalMaintainableImpl;
+import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.SubAccountTrickleDownInactivationService;
 import org.kuali.kfs.coa.service.SubObjectTrickleDownInactivationService;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
@@ -33,6 +36,7 @@ import edu.cornell.kfs.coa.service.AccountReversionTrickleDownInactivationServic
 public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableImpl {
     private static final Logger LOG = LogManager.getLogger();
 
+    private transient AccountService accountService;
     private transient SubAccountTrickleDownInactivationService subAccountTrickleDownInactivationService;
     private transient SubObjectTrickleDownInactivationService subObjectTrickleDownInactivationService;
     private transient AccountReversionTrickleDownInactivationService accountReversionTrickleDownInactivationService;
@@ -106,7 +110,6 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
      */
     @Override
     public void saveBusinessObject() {
-        super.saveBusinessObject();
         final BusinessObjectService boService = getBusinessObjectService();
         final GlobalBusinessObject gbo = (GlobalBusinessObject) getBusinessObject();
 
@@ -129,6 +132,14 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
                 }
             }
         }
+        
+        final AccountGlobal accountGlobal = (AccountGlobal) getBusinessObject();
+        final Set<String> accountNumbers = accountGlobal.getAccountGlobalDetails().stream()
+                .map(AccountGlobalDetail::getAccountNumber)
+                .collect(Collectors.toSet());
+        getAccountService().updateRoleAssignmentsForAccountChange(
+                getDocumentNumber(),
+                accountNumbers);
 
     }
 
@@ -209,6 +220,13 @@ public class CuAccountGlobalMaintainableImpl extends AccountGlobalMaintainableIm
     public void setAccountReversionTrickleDownInactivationService(
             final AccountReversionTrickleDownInactivationService accountReversionTrickleDownInactivationService) {
         this.accountReversionTrickleDownInactivationService = accountReversionTrickleDownInactivationService;
+    }
+    
+    private AccountService getAccountService() {
+        if (accountService == null) {
+            accountService = SpringContext.getBean(AccountService.class);
+        }
+        return accountService;
     }
 
 }
