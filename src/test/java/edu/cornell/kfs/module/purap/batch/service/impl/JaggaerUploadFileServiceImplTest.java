@@ -44,7 +44,6 @@ public class JaggaerUploadFileServiceImplTest extends CuLocalServerTestBase {
     private static final String JAGGAER_TEST_XML_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.xml";
     private static final String JAGGAER_TEST_DONE_FILE_NAME = TEMP_SUPPLIER_UPLOAD_DIRECTORY + "jaggaerTestFile.done";
     private static final String XML = "xml";
-    private static final String FILE_TYPE_IDENTIFIER = "jaggaerUploadFileType";
     private static final String JAGGAER_WEBSERVICE_ERROR_MESSAGE = "There was an error calling the Jaggaer upload service";
 
     private JaggaerUploadFileServiceImpl jaggaerUploadFileServiceImpl;
