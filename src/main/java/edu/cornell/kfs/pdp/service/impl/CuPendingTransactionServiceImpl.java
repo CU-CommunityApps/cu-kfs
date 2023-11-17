@@ -138,6 +138,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param checkFdocTypeCod doc type for check disbursements
      * @param reversal boolean indicating if this is a reversal
      */
+     // CU customization: This method is Cornell specific and it is distinct and not an override 
+     // of the method with the same name and arguments from base code 
      private void populatePaymentGeneralLedgerPendingEntry(
              final PaymentGroup paymentGroup,
              final GeneratePdpGlpeState state
