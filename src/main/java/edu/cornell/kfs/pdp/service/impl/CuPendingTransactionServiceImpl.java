@@ -138,7 +138,6 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param checkFdocTypeCod doc type for check disbursements
      * @param reversal boolean indicating if this is a reversal
      */
-     //protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode, String checkFdocTypeCod, boolean reversal) {
      private void populatePaymentGeneralLedgerPendingEntry(
              final PaymentGroup paymentGroup,
              final GeneratePdpGlpeState state
@@ -150,7 +149,6 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             accountListings.addAll(paymentDetail.getAccountDetail());
         }
 
-        //GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         for (final PaymentAccountDetail paymentAccountDetail : accountListings) {
             final GlPendingTransaction glPendingTransaction = new GlPendingTransaction();
             glPendingTransaction.setSequenceNbr(new KualiInteger(sequenceHelper.getSequenceCounter()));

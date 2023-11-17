@@ -69,6 +69,7 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
     }
     
     public void setMessageBuilderService(final MessageBuilderService messageBuilderService) {
+        super.setMessageBuilderService(messageBuilderService);
         this.messageBuilderService = messageBuilderService;
     }
 

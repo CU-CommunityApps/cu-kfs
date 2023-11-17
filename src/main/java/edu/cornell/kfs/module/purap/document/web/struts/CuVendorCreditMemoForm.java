@@ -23,7 +23,7 @@ public class CuVendorCreditMemoForm extends VendorCreditMemoForm {
     public List<ExtraButton> getExtraButtons() {
         final List<ExtraButton> extraButtons = super.getExtraButtons();
         final VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) getDocument();
-        final String appExternalImageURL = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
+        final String appExternalImageURL = getConfigurationService().getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
         
         if (!getEditingMode().containsKey(CreditMemoEditMode.DISPLAY_INIT_TAB)){
             
