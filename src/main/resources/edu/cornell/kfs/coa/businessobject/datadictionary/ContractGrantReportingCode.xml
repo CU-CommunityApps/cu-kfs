@@ -14,9 +14,16 @@
           p:businessObjectClass="edu.cornell.kfs.coa.businessobject.ContractGrantReportingCode"
           p:inquiryDefinition-ref="ContractGrantReportingCode-inquiryDefinition"
           p:lookupDefinition-ref="ContractGrantReportingCode-lookupDefinition"
-          p:objectLabel="ContractGrantReportingCode"
+          p:objectLabel="Contract Grant Reporting Code"
           p:searchService-ref="defaultSearchService"
           p:titleAttribute="code">
+          
+        <property name="keyAttributes">
+            <list>
+                <ref bean="ContractGrantReportingCode-chartOfAccountsCode"/>
+                <ref bean="ContractGrantReportingCode-code"/>
+            </list>
+        </property>
         <property name="attributes">
             <list>
                 <ref bean="ContractGrantReportingCode-chartOfAccountsCode"/>
@@ -71,17 +78,13 @@
     <!-- Business Object Inquiry Definition -->
     
     <bean id="ContractGrantReportingCode-sectionDefinition" parent="ContractGrantReportingCode-sectionDefinition-parentBean"/>     
-    <bean id="ContractGrantReportingCode-sectionDefinition-parentBean" abstract="true" parent="InquirySectionDefinition" p:title="Contract Grant Reporting Code Inquiry">
-        <property name="inquiryFields">
+    <bean id="ContractGrantReportingCode-sectionDefinition-parentBean" abstract="true" parent="sectionDefinition" p:title="Contract Grant Reporting Code Inquiry">
+        <property name="fields">
             <list>
-                <bean parent="FieldDefinition"
-                      p:attributeName="chartOfAccountsCode"/>
-                <bean parent="FieldDefinition"
-                      p:attributeName="code"/>
-                <bean parent="FieldDefinition"
-                      p:attributeName="name"/>
-                <bean parent="FieldDefinition"
-                      p:attributeName="active"/>
+            <ref bean="ContractGrantReportingCode-chartOfAccountsCode"/>
+            <ref bean="ContractGrantReportingCode-code"/>
+            <ref bean="ContractGrantReportingCode-name"/>
+            <ref bean="ContractGrantReportingCode-active"/>
             </list>
          </property>
      </bean>
@@ -89,7 +92,7 @@
     <bean id="ContractGrantReportingCode-inquiryDefinition" parent="ContractGrantReportingCode-inquiryDefinition-parentBean"/>
     <bean id="ContractGrantReportingCode-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
           p:title="CG Reporting Code Inquiry">
-        <property name="inquirySections">
+        <property name="sections">
             <list>
                 <ref bean="ContractGrantReportingCode-sectionDefinition"/>
             </list>
