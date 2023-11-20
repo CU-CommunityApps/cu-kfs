@@ -90,7 +90,9 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             } catch (ConcurWebserviceException e) {
                 LOG.error("processExpenseListing, Unable to call next page", e);
             }
-            processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
+            if (nextConcurExpenseV3ListingDTO != null) {
+                processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
+            }
         } 
     }
     
