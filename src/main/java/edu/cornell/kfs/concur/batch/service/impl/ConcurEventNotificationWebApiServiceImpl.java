@@ -12,6 +12,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
+import edu.cornell.kfs.concur.exception.ConcurWebserviceException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +40,7 @@ public class ConcurEventNotificationWebApiServiceImpl implements ConcurEventNoti
     protected ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
-    public <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType, String logMessageDetail) {
+    public <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType, String logMessageDetail) throws ConcurWebserviceException {
         ConcurWebRequest<T> webRequest = ConcurWebRequestBuilder.forRequestExpectingResponseOfType(dtoType)
                 .withUrl(concurEndPoint)
                 .withHttpMethod(HttpMethod.GET)
@@ -48,7 +50,7 @@ public class ConcurEventNotificationWebApiServiceImpl implements ConcurEventNoti
     }
 
     @Override
-    public <T> T callConcurEndpoint(String accessToken, ConcurWebRequest<T> webRequest, String logMessageDetail) {
+    public <T> T callConcurEndpoint(String accessToken, ConcurWebRequest<T> webRequest, String logMessageDetail) throws ConcurWebserviceException {
         LOG.info("buildConcurDTOFromEndpoint, " + logMessageDetail + " about to call endpoint: " + webRequest.getUrl());
         String callPurpose = webRequest.expectsEmptyResponse()
                 ? "run no-response-content operation"
@@ -63,7 +65,7 @@ public class ConcurEventNotificationWebApiServiceImpl implements ConcurEventNoti
             retryCount++;
         }
         if (StringUtils.isBlank(jsonResponseString)) {
-            throw new RuntimeException("buildConcurClientRequest, unable to call concur endpoint " + webRequest.getUrl());
+            throw new ConcurWebserviceException("buildConcurClientRequest, unable to call concur endpoint " + webRequest.getUrl());
         }
 
         if (webRequest.expectsEmptyResponse()) {

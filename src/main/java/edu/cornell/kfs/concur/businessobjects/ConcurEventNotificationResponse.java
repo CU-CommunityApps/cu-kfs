@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 
 public class ConcurEventNotificationResponse {
@@ -20,6 +21,12 @@ public class ConcurEventNotificationResponse {
     private String travelerName;
     private String travelerEmail;
     private List<String> messages;
+    
+    public ConcurEventNotificationResponse(ConcurEventNotificationType eventType,
+            ConcurEventNotificationStatus eventNotificationStatus, String reportNumber) {
+        this(eventType, eventNotificationStatus, reportNumber, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY,
+                StringUtils.EMPTY);
+    }
     
     public ConcurEventNotificationResponse(ConcurEventNotificationType eventType,
                                            ConcurEventNotificationStatus eventNotificationStatus, String reportNumber, String reportName, String reportStatus,

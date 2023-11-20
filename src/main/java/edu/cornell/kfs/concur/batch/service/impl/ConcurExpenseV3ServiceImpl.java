@@ -29,6 +29,7 @@ import edu.cornell.kfs.concur.batch.service.ConcurExpenseV3Service;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
+import edu.cornell.kfs.concur.exception.ConcurWebserviceException;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItemDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListItemDetailDTO;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurExpenseAllocationV3ListingDTO;
@@ -71,18 +72,19 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList,
             List<ConcurEventNotificationResponse> processingResults) {
         for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
-            ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken,
-                    partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
+            ConcurExpenseV3ListItemDTO fullExpenseReport = null;
+            try {
+                fullExpenseReport = getConcurExpenseReport(accessToken,
+                        partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
+            } catch (ConcurWebserviceException e) {
+                LOG.error("processExpenseListing, Unable to call concur endpoint", e);
+            }
             
-            List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, fullExpenseReport.getId());
-            
-            String reportNumber = fullExpenseReport.getId();
-            String reportName = fullExpenseReport.getName();
-            String reportStatus = fullExpenseReport.getApprovalStatusName();
-            String travelerName = fullExpenseReport.getOwnerName();
-            String travelerEmail = fullExpenseReport.getOwnerLoginID();
-            
-            validateExpenseAllocations(accessToken, processingResults, allocationItems, reportNumber, reportName, reportStatus, travelerName, travelerEmail);
+            if (fullExpenseReport != null) {
+                valdiateFullExpenseReport(accessToken, processingResults, fullExpenseReport);
+            } else {
+                addProcessingErrorToResultsReport(processingResults, partialExpenseReportFromListing.getId());
+            }
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
@@ -90,6 +92,31 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                     .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         } 
+    }
+    
+    private void addProcessingErrorToResultsReport(List<ConcurEventNotificationResponse> processingResults, String reportNumber) {
+        ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(
+                ConcurEventNotificationType.ExpenseReport, ConcurEventNotificationStatus.processingError, reportNumber);
+
+        String validationMessage = MessageFormat.format(
+                configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_PROCESSING_ERROR),
+                ConcurEventNotificationType.ExpenseReport.reportNameDescription, reportNumber);
+        resultsDTO.getMessages().add(validationMessage);
+
+        processingResults.add(resultsDTO);
+    }
+
+    private void valdiateFullExpenseReport(String accessToken, List<ConcurEventNotificationResponse> processingResults,
+            ConcurExpenseV3ListItemDTO fullExpenseReport) {
+        List<ConcurExpenseAllocationV3ListItemDTO> allocationItems = getConcurExpenseAllocationV3ListItemsForReport(accessToken, fullExpenseReport.getId());
+        
+        String reportNumber = fullExpenseReport.getId();
+        String reportName = fullExpenseReport.getName();
+        String reportStatus = fullExpenseReport.getApprovalStatusName();
+        String travelerName = fullExpenseReport.getOwnerName();
+        String travelerEmail = fullExpenseReport.getOwnerLoginID();
+        
+        validateExpenseAllocations(accessToken, processingResults, allocationItems, reportNumber, reportName, reportStatus, travelerName, travelerEmail);
     }
     
     protected ConcurExpenseV3ListItemDTO getConcurExpenseReport(String accessToken, String reportId, String userName) {
