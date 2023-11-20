@@ -152,14 +152,14 @@ public class FinancialSystemSearchableAttribute extends DataDictionarySearchable
                 final Field orgField = FieldUtils.getPropertyField(Organization.class, KFSPropertyConstants.ORGANIZATION_CODE,
                         true);
                 orgField.setFieldDataType(CoreConstants.DATA_TYPE_STRING);
-                orgField.setColumnVisible(false);
+                orgField.setColumnVisible(true);
                 LookupUtils.setFieldQuickfinder(new Account(), KFSPropertyConstants.ORGANIZATION_CODE, orgField,
                         Collections.singletonList(KFSPropertyConstants.ORGANIZATION_CODE));
                 docSearchRows.add(new Row(Collections.singletonList(orgField)));
 
                 final Field accountField = FieldUtils.getPropertyField(alClass, KFSPropertyConstants.ACCOUNT_NUMBER, true);
                 accountField.setFieldDataType(CoreConstants.DATA_TYPE_STRING);
-                accountField.setColumnVisible(false);
+                accountField.setColumnVisible(true);
                 LookupUtils.setFieldQuickfinder(alBusinessObject, KFSPropertyConstants.ACCOUNT_NUMBER, accountField,
                         Collections.singletonList(KFSPropertyConstants.ACCOUNT_NUMBER));
                 docSearchRows.add(new Row(Collections.singletonList(accountField)));

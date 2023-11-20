@@ -131,6 +131,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
         return true;
     }
     
+    // CU customization: method has been copied from base class due to being private
     private static boolean isCheckAchDisbursement(final PaymentGroup paymentGroup) {
         return PdpConstants.DisbursementTypeCodes.CHECK.equals(paymentGroup.getDisbursementTypeCode())
                 || PdpConstants.DisbursementTypeCodes.ACH.equals(paymentGroup.getDisbursementTypeCode());
@@ -142,6 +143,7 @@ public class CuPaymentMaintenanceServiceImpl extends PaymentMaintenanceServiceIm
      * don't need to create cancel GLPEs.
      * @return true if the GLPEs were deleted and there is no need to create further GLPEs
      */
+    // CU customization: method has been copied from base class due to being private
     private boolean deleteGlpesForCancelDisbursement(final PaymentGroup paymentGroup) {
         if (isCheckAchDisbursement(paymentGroup)) {
             return false;

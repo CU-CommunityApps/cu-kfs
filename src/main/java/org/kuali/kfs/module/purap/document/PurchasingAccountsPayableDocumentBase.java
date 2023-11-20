@@ -257,7 +257,8 @@ public abstract class PurchasingAccountsPayableDocumentBase extends AccountingDo
 
         final Set<String> names = workflowDocument.getCurrentNodeNames();
         if (CollectionUtils.isNotEmpty(names)) {
-            final List<String> currentRouteLevels = new ArrayList<String>(names);                    
+            final List<String> currentRouteLevels = new ArrayList<String>(names);
+            // CU customization: KFSUPGRADE-756 
             for (final String routeLevel  : currentRouteLevels) {    
                 if (routeLevel.contains(nodeName) && workflowDocument.isApprovalRequested()) {
                     return true;
