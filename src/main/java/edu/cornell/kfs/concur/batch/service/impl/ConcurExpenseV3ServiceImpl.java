@@ -72,24 +72,24 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected void processExpenseListing(String accessToken, ConcurExpenseV3ListingDTO expenseList,
             List<ConcurEventNotificationResponse> processingResults) {
         for (ConcurExpenseV3ListItemDTO partialExpenseReportFromListing : expenseList.getItems()) {
-            ConcurExpenseV3ListItemDTO fullExpenseReport = null;
             try {
-                fullExpenseReport = getConcurExpenseReport(accessToken,
+                ConcurExpenseV3ListItemDTO fullExpenseReport = getConcurExpenseReport(accessToken,
                         partialExpenseReportFromListing.getId(), partialExpenseReportFromListing.getOwnerLoginID());
+                valdiateFullExpenseReport(accessToken, processingResults, fullExpenseReport);
             } catch (ConcurWebserviceException e) {
                 LOG.error("processExpenseListing, Unable to call concur endpoint", e);
-            }
-            
-            if (fullExpenseReport != null) {
-                valdiateFullExpenseReport(accessToken, processingResults, fullExpenseReport);
-            } else {
                 addProcessingErrorToResultsReport(processingResults, partialExpenseReportFromListing.getId());
             }
         }
         if (StringUtils.isNotBlank(expenseList.getNextPage())) {
             String logMessageDetail = configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_LISTING_NEXT_PAGE);
-            ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = concurEventNotificationWebApiService
+            ConcurExpenseV3ListingDTO nextConcurExpenseV3ListingDTO = null;
+            try {
+                nextConcurExpenseV3ListingDTO = concurEventNotificationWebApiService
                     .buildConcurDTOFromEndpoint(accessToken, expenseList.getNextPage(), ConcurExpenseV3ListingDTO.class, logMessageDetail);
+            } catch (ConcurWebserviceException e) {
+                LOG.error("processExpenseListing, Unable to call next page", e);
+            }
             processExpenseListing(accessToken, nextConcurExpenseV3ListingDTO, processingResults);
         } 
     }
