@@ -58,11 +58,12 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
      * when OJB tries to perform a bulk pre-fetch of that specific collection property across multiple objects.
      */
     @Override
-    protected void updateRoleMembers(String roleId, List<KimDocumentRoleMember> modifiedRoleMembers,
-            List<RoleMember> roleMembers) {
+    protected void updateRoleMembers(
+            final String roleId, final List<KimDocumentRoleMember> modifiedRoleMembers,
+            final List<RoleMember> roleMembers) {
         if (CollectionUtils.isNotEmpty(modifiedRoleMembers) && CollectionUtils.isNotEmpty(roleMembers)) {
-            for (RoleMember roleMember : roleMembers) {
-                List<RoleResponsibilityAction> rspActions = roleMember.getRoleRspActions();
+            for (final RoleMember roleMember : roleMembers) {
+                final List<RoleResponsibilityAction> rspActions = roleMember.getRoleRspActions();
                 if (rspActions instanceof CollectionProxyDefaultImpl) {
                     ((CollectionProxyDefaultImpl) rspActions).getData();
                 }
