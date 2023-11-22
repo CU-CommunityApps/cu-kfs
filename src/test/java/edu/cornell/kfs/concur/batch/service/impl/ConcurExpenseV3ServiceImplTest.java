@@ -6,6 +6,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.resource.spi.IllegalStateException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +19,7 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService;
 import edu.cornell.kfs.concur.businessobjects.ConcurEventNotificationResponse;
@@ -138,7 +142,23 @@ class ConcurExpenseV3ServiceImplTest {
 
     @Test
     public void test() {
+        assertEquals(0, processingResults.size());
         expenseService.processExpenseReports(ACCESS_TOKEN, processingResults);
+        assertEquals(2, processingResults.size());
+        ConcurEventNotificationResponse goodReport = findConcurEventNotificationResponse(GOOD_ID);
+        assertEquals(ConcurEventNotificationStatus.validAccounts, goodReport.getEventNotificationStatus());
+        
+        ConcurEventNotificationResponse badReport = findConcurEventNotificationResponse(BAD_ID);
+        assertEquals(ConcurEventNotificationStatus.processingError, badReport.getEventNotificationStatus());
+    }
+    
+    private ConcurEventNotificationResponse findConcurEventNotificationResponse(String reportNumber) {
+        for (ConcurEventNotificationResponse response : processingResults) {
+            if (StringUtils.equals(reportNumber, response.getReportNumber())) {
+                return response;
+            }
+        }
+        throw new RuntimeException("Unable to find report number " + reportNumber);
     }
 
     private class TestableConcurExpenseV3ServiceImpl extends ConcurExpenseV3ServiceImpl {
