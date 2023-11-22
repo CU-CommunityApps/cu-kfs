@@ -101,30 +101,5 @@
           p:parameterService-ref="parameterService"
           p:personService-ref="personService"/>
 
-    <!--
-        Override refresh queue service to backport the FINP-9050 changes, in addition to including
-        custom preservation of action list notes. We will still need this override
-        after we upgrade to the 2023-02-08 financials patch.
-     -->
-    <bean id="documentRefreshQueue" class="edu.cornell.kfs.kew.impl.document.CuDocumentRefreshQueueImpl"
-          p:actionRequestService-ref="actionRequestService"
-          p:documentProcessingQueue-ref="documentProcessingQueue"
-          p:routeNodeService-ref="routeNodeService"
-          p:personService-ref="personService"
-          p:workflowDocumentActionsService-ref="workflowDocumentActionsService"
-    />
-
-    <!--
-        Override processing queue service to fix an issue that can cause the workflow engine
-        to process a stale copy of the route header and/or its downstream data.
-     -->
-    <bean id="documentProcessingQueue" class="org.kuali.kfs.kew.impl.document.DocumentProcessingQueueImpl"
-          p:workflowEngineFactory-ref="workflowEngineFactory"
-          p:actionRequestService-ref="actionRequestService"
-          p:documentAttributeIndexingQueue-ref="documentAttributeIndexingQueue"
-          p:routeHeaderService-ref="documentRouteHeaderService"
-          p:routeNodeService-ref="routeNodeService"
-          p:ksbMessageDeliveryMode="${message.delivery}"
-    />
 
 </beans>

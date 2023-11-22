@@ -1,6 +1,5 @@
 package edu.cornell.kfs.sys.service.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -15,10 +14,8 @@ import org.kuali.kfs.kew.actionlist.dao.impl.ActionListPriorityComparator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
-import edu.cornell.kfs.kew.api.document.CuDocumentRefreshQueue;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
@@ -28,7 +25,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     private static final Logger LOG = LogManager.getLogger();
 
     private DocumentMaintenanceDao documentMaintenanceDao;
-    private CuDocumentRefreshQueue documentRefreshQueue;
     private BusinessObjectService businessObjectService;
 
     @Override
@@ -36,29 +32,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         return documentMaintenanceDao.getActionNotesToBeRequeuedForDocument(documentId);
     }
 
-    @Override
-    public boolean requeueDocuments() {
-        Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
-        LOG.info("requeueDocuments: Total number of documents flagged for requeuing: " + docIds.size());
-
-        List<ActionItemNoteDetailDto> noteDetails = documentMaintenanceDao.getActionNotesToBeRequeued();
-        LOG.info("requeueDocuments: Total number of action note details: " + noteDetails.size());
-        
-        for (String docId : docIds) {
-            requeueDocumentByDocumentId(noteDetails, docId);
-        }
-        return true;
-    }
-    
-    @Transactional
-    private void requeueDocumentByDocumentId(List<ActionItemNoteDetailDto> noteDetails, String docId) {
-        LOG.info("requeueDocumentByDocumentId: Requesting requeue for document: " + docId);
-        documentRefreshQueue.refreshDocumentWithoutRestoringActionNotes(docId);
-        
-        List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
-        restoreActionNotesForRequeuedDocument(docId, noteDetailsForDocument);
-    }
-    
     @Override
     public void restoreActionNotesForRequeuedDocument(String documentId, List<ActionItemNoteDetailDto> actionNotes) {
         if (CollectionUtils.isEmpty(actionNotes)) {
@@ -125,23 +98,9 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
         actionItemExtension.setActionNote(detailDto.getActionNote());
         return actionItemExtension;
     }
-    
-    private List<ActionItemNoteDetailDto> findNoteDetailsForDocument(List<ActionItemNoteDetailDto> noteDetails, String documentId) {
-        List<ActionItemNoteDetailDto> noteDetailsForDocument = new ArrayList<ActionItemNoteDetailDto>();
-        for (ActionItemNoteDetailDto detail : noteDetails) {
-            if (StringUtils.equalsIgnoreCase(documentId, detail.getDocHeaderId())) {
-                noteDetailsForDocument.add(detail);
-            }
-        }
-        return noteDetailsForDocument;
-    }
 
     public void setDocumentMaintenanceDao(DocumentMaintenanceDao documentMaintenanceDao) {
         this.documentMaintenanceDao = documentMaintenanceDao;
-    }
-
-    public void setDocumentRefreshQueue(CuDocumentRefreshQueue documentRefreshQueue) {
-        this.documentRefreshQueue = documentRefreshQueue;
     }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {

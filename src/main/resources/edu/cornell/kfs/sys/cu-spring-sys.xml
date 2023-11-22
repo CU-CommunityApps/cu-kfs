@@ -58,18 +58,6 @@
 			</map>
 		</property>
 	</bean>
- 	
- 	<bean id="documentRequeuerJob" parent="unscheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="documentRequeuerStep" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
-		<property name="documentMaintenanceService" ref="documentMaintenanceService" />
-	</bean>
 	
 	<bean id="documentReindexerJob" parent="unscheduledJobDescriptor">
 		<property name="steps">
@@ -88,7 +76,6 @@
 
     <bean id="documentMaintenanceService" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl"
           p:documentMaintenanceDao-ref="documentMaintenanceDao"
-          p:documentRefreshQueue-ref="documentRefreshQueue"
           p:businessObjectService-ref="businessObjectService"/>
 
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
