@@ -23,6 +23,8 @@ import edu.cornell.kfs.concur.batch.service.ConcurEventNotificationWebApiService
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -39,6 +41,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationStatus;
 import edu.cornell.kfs.concur.ConcurConstants.ConcurEventNotificationType;
 import edu.cornell.kfs.concur.ConcurConstants.RequestV4Status;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
@@ -89,6 +92,7 @@ public class ConcurRequestV4ServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        Configurator.setLevel(ConcurRequestV4ServiceImpl.class.getName(), Level.DEBUG);
         mockAccessToken = buildMockAccessTokenFromUUID();
         mockConcurEndpoint = new MockConcurRequestV4ServiceEndpoint(mockAccessToken,
                 RequestV4DetailFixture.PENDING_EXTERNAL_VALIDATION_TEST_REQUEST_JOHN_TEST,
@@ -119,6 +123,7 @@ public class ConcurRequestV4ServiceImplTest {
         
         requestV4Service = new TestConcurRequestV4ServiceImpl();
         requestV4Service.setSimulateProductionMode(false);
+        requestV4Service.setShouldUpdateStatusInConcur(false);
         requestV4Service.setSkipRequestListItemProcessing(false);
         requestV4Service.setConcurBatchUtilityService(mockConcurBatchUtilityService);
         requestV4Service.setConcurEventNotificationWebApiService(
@@ -201,6 +206,7 @@ public class ConcurRequestV4ServiceImplTest {
                 PropertyTestValues.REQUESTV4_REQUEST_LIST_SEARCH_MESSAGE);
         properties.put(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_REQUEST,
                 PropertyTestValues.REQUESTV4_SINGLE_REQUEST_SEARCH_MESSAGE);
+        properties.put(ConcurKeyConstants.MESSAGE_CONCUR_REQUESTV4_WORKFLOW, PropertyTestValues.REQUESTV4_WORKFLOW_MESSAGE);
         return properties;
     }
 
@@ -718,11 +724,22 @@ public class ConcurRequestV4ServiceImplTest {
             assertNull(actualDate, dateLabel + " should not have been present");
         }
     }
+    
+    @Test
+    public void testMockWebServiceError() {
+        requestV4Service.setShouldUpdateStatusInConcur(true);
+        List<ConcurEventNotificationResponse> actualResults = requestV4Service.processTravelRequests(mockAccessToken);
+        assertEquals(1, actualResults.size());
+        ConcurEventNotificationResponse response = actualResults.get(0);
+        assertEquals(ConcurEventNotificationStatus.processingError, response.getEventNotificationStatus());
+        assertEquals(ConcurEventNotificationType.TravelRequest, response.getEventType());
+    }
 
     private static class TestConcurRequestV4ServiceImpl extends ConcurRequestV4ServiceImpl {
         private boolean simulateProductionMode;
         private List<ConcurRequestV4ListingDTO> encounteredRequestListings = new ArrayList<>();
         private boolean skipRequestListItemProcessing;
+        private boolean shouldUpdateStatusInConcur;
         
         @Override
         protected Stream<ConcurEventNotificationResponse> processTravelRequestsSubset(
@@ -737,9 +754,13 @@ public class ConcurRequestV4ServiceImplTest {
         
         @Override
         protected boolean shouldUpdateStatusInConcur() {
-            return false;
+            return shouldUpdateStatusInConcur;
         }
         
+        public void setShouldUpdateStatusInConcur(boolean shouldUpdateStatusInConcur) {
+            this.shouldUpdateStatusInConcur = shouldUpdateStatusInConcur;
+        }
+
         @Override
         protected boolean isProduction() {
             return simulateProductionMode;
