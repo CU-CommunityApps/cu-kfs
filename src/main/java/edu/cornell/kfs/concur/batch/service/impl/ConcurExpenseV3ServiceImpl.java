@@ -125,6 +125,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String expenseReportEndpoint = findBaseExpenseReportEndPoint() + reportId + ConcurConstants.QUESTION_MARK_USER_EQUALS + userName;
         String logMessageDetail = MessageFormat.format(
                 configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EXPENSEV3_EXPENSE_REPORT), reportId);
+        LOG.info("getConcurExpenseReport,  expenseReportEndpoint: {}, logMessageDetail {}", expenseReportEndpoint, logMessageDetail);
         return concurEventNotificationWebApiService.buildConcurDTOFromEndpoint(accessToken,
                 expenseReportEndpoint, ConcurExpenseV3ListItemDTO.class, logMessageDetail);
     }
@@ -149,6 +150,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     protected ConcurExpenseAllocationV3ListingDTO getConcurExpenseAllocationV3ListingDTO(String accessToken, String allocationEndpoint, String logMessageDetail) {
+        LOG.info("getConcurExpenseAllocationV3ListingDTO,  allocationEndpoint: {}, logMessageDetail {}", allocationEndpoint, logMessageDetail);
         return concurEventNotificationWebApiService.buildConcurDTOFromEndpoint(accessToken,
                 allocationEndpoint, ConcurExpenseAllocationV3ListingDTO.class, logMessageDetail);
     }
