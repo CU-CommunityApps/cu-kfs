@@ -78,13 +78,14 @@
     <!-- Business Object Inquiry Definition -->
     
     <bean id="ContractGrantReportingCode-sectionDefinition" parent="ContractGrantReportingCode-sectionDefinition-parentBean"/>     
-    <bean id="ContractGrantReportingCode-sectionDefinition-parentBean" abstract="true" parent="sectionDefinition" p:title="Contract Grant Reporting Code Inquiry">
+    <bean id="ContractGrantReportingCode-sectionDefinition-parentBean" abstract="true" parent="sectionDefinition" 
+          p:title="Contract Grant Reporting Code Inquiry">
         <property name="fields">
             <list>
-            <ref bean="ContractGrantReportingCode-chartOfAccountsCode"/>
-            <ref bean="ContractGrantReportingCode-code"/>
-            <ref bean="ContractGrantReportingCode-name"/>
-            <ref bean="ContractGrantReportingCode-active"/>
+                <ref bean="ContractGrantReportingCode-chartOfAccountsCode"/>
+                <ref bean="ContractGrantReportingCode-code"/>
+                <ref bean="ContractGrantReportingCode-name"/>
+                <ref bean="ContractGrantReportingCode-active"/>
             </list>
          </property>
      </bean>
