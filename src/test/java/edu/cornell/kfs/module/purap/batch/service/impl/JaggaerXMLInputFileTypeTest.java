@@ -1,14 +1,18 @@
 package edu.cornell.kfs.module.purap.batch.service.impl;
 
 import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
+import edu.cornell.kfs.sys.util.LoadSpringFile;
+import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.kuali.kfs.sys.ConfigureContext;
-import org.kuali.kfs.sys.context.KualiIntegTestBase;
 import org.kuali.kfs.sys.context.SpringContext;
 
-@ConfigureContext
-public class JaggaerXMLInputFileTypeTest extends KualiIntegTestBase {
+import java.io.File;
+
+import static org.junit.Assert.assertTrue;
+
+@LoadSpringFile("edu/cornell/kfs/rass/batch/cu-spring-rass-report-test.xml")
+public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
     private static final String EXPECTED_FILE_EXTENSION_XML = "xml";
     private static final String JAGGAER_STAGING_RELATIVE_PATH = "purap/jaggaer/xml";
 
@@ -35,5 +39,10 @@ public class JaggaerXMLInputFileTypeTest extends KualiIntegTestBase {
     @Test
     public void testJaggaerXMLInputFileTypeDirectoryPath() {
         assertTrue(jaggaerXMLInputFileType.getDirectoryPath().endsWith(JAGGAER_STAGING_RELATIVE_PATH));
+    }
+
+    @Test
+    public void testJaggaerXMLInputFileTypeGetAuthor() {
+        assertTrue(jaggaerXMLInputFileType.getAuthorPrincipalName(new File("")).endsWith(JAGGAER_STAGING_RELATIVE_PATH));
     }
 }
