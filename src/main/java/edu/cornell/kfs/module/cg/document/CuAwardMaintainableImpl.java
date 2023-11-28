@@ -18,9 +18,9 @@ public class CuAwardMaintainableImpl extends AwardMaintainableImpl {
      * @param refreshFromLookup
      */
     @Override
-    protected void refreshAward(boolean refreshFromLookup) {       
-        Award award = getAward();
-        Proposal tempProposal = getAward().getProposal();
+    protected void refreshAward(final boolean refreshFromLookup) {       
+        final Award award = getAward();
+        final Proposal tempProposal = getAward().getProposal();
         award.setProposal(tempProposal);
         award.clearCustomerAddressIfNecessary();
         
@@ -40,7 +40,7 @@ public class CuAwardMaintainableImpl extends AwardMaintainableImpl {
     public void prepareForSave() {
         super.prepareForSave();
         if (CollectionUtils.isNotEmpty(getAward().getAwardAccounts())) {
-            for (AwardAccount awardAccount : getAward().getAwardAccounts()) {
+            for (final AwardAccount awardAccount : getAward().getAwardAccounts()) {
                 AwardAccountExtendedAttribute extension;
                 if (ObjectUtils.isNotNull(awardAccount.getExtension())) {
                     extension = (AwardAccountExtendedAttribute) awardAccount.getExtension();

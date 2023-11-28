@@ -23,7 +23,7 @@ public class CuActionListEmailServiceImpl extends CustomizableActionListEmailSer
     }
 
     protected boolean shouldSimulateProductionWorkflowEmailBehavior() {
-        String workflowEmailMode = parameterService.getParameterValueAsString(
+        final String workflowEmailMode = parameterService.getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.WORKFLOW, KRADConstants.DetailTypes.ACTION_LIST_DETAIL_TYPE,
                 CuKewParameterConstants.NON_PRODUCTION_WORKFLOW_EMAIL_MODE);
 
@@ -43,7 +43,7 @@ public class CuActionListEmailServiceImpl extends CustomizableActionListEmailSer
     }
 
     @Override
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
         super.setParameterService(parameterService);
     }

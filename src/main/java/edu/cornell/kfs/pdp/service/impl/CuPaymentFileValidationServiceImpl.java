@@ -35,9 +35,9 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
     protected List<String> paymentDetailPropertiesToCheckMaxLength;
     
     @Override
-    protected void processGroupValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+    protected void processGroupValidation(final PaymentFileLoad paymentFile, final MessageMap errorMap) {
         int groupCount = 0;
-        for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
+        for (final PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             groupCount++;
             int noteLineCount = 0;
             int detailCount = 0;
@@ -60,7 +60,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
 
             // validate payee id type
             if (StringUtils.isNotBlank(paymentGroup.getPayeeIdTypeCd())) {
-                PayeeType payeeType = businessObjectService.findBySinglePrimaryKey(PayeeType.class, paymentGroup.getPayeeIdTypeCd());
+                final PayeeType payeeType = businessObjectService.findBySinglePrimaryKey(PayeeType.class, paymentGroup.getPayeeIdTypeCd());
                 if (payeeType == null) {
                     LOG.debug("processGroupValidation, no payee type");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_PAYEE_ID_TYPE, Integer.toString(groupCount), paymentGroup.getPayeeIdTypeCd());
@@ -71,14 +71,14 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             if (paymentGroup.getPayeeId().split("-").length > 1) {
                 try {
                     paymentGroup.validateVendorIdAndCustomerInstitutionIdentifier(); 
-                } catch(RuntimeException e1) {
+                } catch(final RuntimeException e1) {
                     LOG.error("processGroupValidation, there was an error validating customer institution information", e1);
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING, new String[] { e1.getMessage() });
                 }
             } else {
                 LOG.debug("processGroupValidation, found a non vendor number payee ID: " + paymentGroup.getPayeeId());
                 if (cuPdpEmployeeService.shouldPayeeBeProcessedAsEmployeeForThisCustomer(paymentFile)) {
-                    Person employee = findPerson(paymentGroup.getPayeeId());
+                    final Person employee = findPerson(paymentGroup.getPayeeId());
                     if (ObjectUtils.isNull(employee)) {
                         LOG.error("processGroupValidation, unable to get a person from the employee id");
                         errorMap.putError(KFSConstants.GLOBAL_ERRORS, CUPdpKeyConstants.ERROR_PDP_PAYMENTLOAD_INVALID_EMPLOYEE_ID, paymentGroup.getPayeeId());
@@ -87,9 +87,9 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             }
             
             // validate bank
-            String bankCode = paymentGroup.getBankCode();
+            final String bankCode = paymentGroup.getBankCode();
             if (StringUtils.isNotBlank(bankCode)) {
-                Bank bank = bankService.getByPrimaryId(bankCode);
+                final Bank bank = bankService.getByPrimaryId(bankCode);
                 if (bank == null) {
                     LOG.debug("processGroupValidation, no bank");
                     errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_BANK_CODE, Integer.toString(groupCount), bankCode);
@@ -101,7 +101,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
             }
 
             KualiDecimal groupTotal = KualiDecimal.ZERO;
-            for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+            for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
                 detailCount++;
 
                 // CU Customization: Check max lengths on Payment Detail properties.
@@ -127,7 +127,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
 
                 // validate origin code if given
                 if (StringUtils.isNotBlank(paymentDetail.getFinancialSystemOriginCode())) {
-                    OriginationCode originationCode = originationCodeService.getByPrimaryKey(paymentDetail.getFinancialSystemOriginCode());
+                    final OriginationCode originationCode = originationCodeService.getByPrimaryKey(paymentDetail.getFinancialSystemOriginCode());
                     if (originationCode == null) {
                         LOG.debug("processGroupValidation, origination code is null");
                         errorMap.putError(KFSConstants.GLOBAL_ERRORS, PdpKeyConstants.ERROR_PAYMENT_LOAD_INVALID_ORIGIN_CODE, Integer.toString(groupCount), Integer.toString(detailCount), paymentDetail.getFinancialSystemOriginCode());
@@ -162,25 +162,25 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
     
-    private Person findPerson(String employeeId) {
+    private Person findPerson(final String employeeId) {
         Person person = null;
         if (StringUtils.isNotBlank(employeeId)) {
             try {
                 person = personService.getPersonByEmployeeId(employeeId);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.error("findPerson, Unable to build a person from employee ID: " + employeeId, e);
             }
         }
         return person;
     }
     
-    public String printErrorMap(MessageMap errorMap) {
-        StringBuilder sb = new StringBuilder();
-        Set<String> keys = errorMap.getErrorMessages().keySet();
+    public String printErrorMap(final MessageMap errorMap) {
+        final StringBuilder sb = new StringBuilder();
+        final Set<String> keys = errorMap.getErrorMessages().keySet();
         if (keys.size() > 0) {
-            for (String key : keys) {
-                AutoPopulatingList<ErrorMessage> errors = errorMap.getErrorMessages().get(key);
-                for (ErrorMessage error : errors) {
+            for (final String key : keys) {
+                final AutoPopulatingList<ErrorMessage> errors = errorMap.getErrorMessages().get(key);
+                for (final ErrorMessage error : errors) {
                     sb.append("  Key: ").append(key).append("  error: ").append(error.toString());
                 }
             }
@@ -191,7 +191,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
     }
     
     @Override
-    public void doHardEdits(PaymentFileLoad paymentFile, MessageMap errorMap) {
+    public void doHardEdits(final PaymentFileLoad paymentFile, final MessageMap errorMap) {
         super.doHardEdits(paymentFile, errorMap);
         if (LOG.isDebugEnabled()) {
             LOG.debug("After doHardEdits: " + printErrorMap(errorMap));
@@ -199,7 +199,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
     }
 
     @Override
-    protected void processHeaderValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+    protected void processHeaderValidation(final PaymentFileLoad paymentFile, final MessageMap errorMap) {
         super.processHeaderValidation(paymentFile, errorMap);
         if (LOG.isDebugEnabled()) {
             LOG.debug("After processHeaderValidation: " + printErrorMap(errorMap));
@@ -207,7 +207,7 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
     }
 
     @Override
-    protected void processTrailerValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+    protected void processTrailerValidation(final PaymentFileLoad paymentFile, final MessageMap errorMap) {
         super.processTrailerValidation(paymentFile, errorMap);
         if (LOG.isDebugEnabled()) {
             LOG.debug("After processTrailerValidation: " + printErrorMap(errorMap));
@@ -215,18 +215,18 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
     }
 
     @Override
-    protected void checkPaymentGroupPropertyMaxLength(PaymentGroup paymentGroup, MessageMap errorMap) {
+    protected void checkPaymentGroupPropertyMaxLength(final PaymentGroup paymentGroup, final MessageMap errorMap) {
         super.checkPaymentGroupPropertyMaxLength(paymentGroup, errorMap);
         if (LOG.isDebugEnabled()) {
             LOG.debug("After checkPaymentGroupPropertyMaxLength: " + printErrorMap(errorMap));
         }
     }
 
-    protected void checkPaymentDetailPropertyMaxLength(PaymentDetail paymentDetail, MessageMap errorMap) {
-        for (String propertyName : paymentDetailPropertiesToCheckMaxLength) {
-            String propertyValue = (String) ObjectUtils.getPropertyValue(paymentDetail, propertyName);
+    protected void checkPaymentDetailPropertyMaxLength(final PaymentDetail paymentDetail, final MessageMap errorMap) {
+        for (final String propertyName : paymentDetailPropertiesToCheckMaxLength) {
+            final String propertyValue = (String) ObjectUtils.getPropertyValue(paymentDetail, propertyName);
             if (StringUtils.isNotEmpty(propertyValue)) {
-                Integer maxLength = dataDictionaryService.getAttributeMaxLength(PaymentDetail.class, propertyName);
+                final Integer maxLength = dataDictionaryService.getAttributeMaxLength(PaymentDetail.class, propertyName);
                 if (maxLength == null) {
                     LOG.warn("checkPaymentDetailPropertyMaxLength, PaymentDetail field '" + propertyName
                             + "' does not have a max length specified in the data dictionary");
@@ -243,15 +243,15 @@ public class CuPaymentFileValidationServiceImpl extends PaymentFileValidationSer
         }
     }
 
-    public void setPersonService(PersonService personService) {
+    public void setPersonService(final PersonService personService) {
         this.personService = personService;
     }
 
-    public void setCuPdpEmployeeService(CuPdpEmployeeService cuPdpEmployeeService) {
+    public void setCuPdpEmployeeService(final CuPdpEmployeeService cuPdpEmployeeService) {
         this.cuPdpEmployeeService = cuPdpEmployeeService;
     }
     
-    public void setPaymentDetailPropertiesToCheckMaxLength(List<String> paymentDetailPropertiesToCheckMaxLength) {
+    public void setPaymentDetailPropertiesToCheckMaxLength(final List<String> paymentDetailPropertiesToCheckMaxLength) {
         this.paymentDetailPropertiesToCheckMaxLength = paymentDetailPropertiesToCheckMaxLength;
     }
 }

@@ -25,39 +25,41 @@ public class CuPdpExtractService extends PdpExtractService {
     private DocumentTypeService documentTypeService;
     
     @Override
-    protected void updatePaymentRequest(PaymentRequestDocument paymentRequestDocument, Person puser, Date processRunDate) {
-        PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
+    protected void updatePaymentRequest(
+            final PaymentRequestDocument paymentRequestDocument, final Person puser, 
+            final Date processRunDate) {
+        final PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
         doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
         getPurapService().saveDocumentNoValidation(doc);
         
-        DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
-        DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
+        final DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
+        final DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
         queue.indexDocument(doc.getDocumentNumber());
     }
     
     @Override
-    protected void addNotes(AccountsPayableDocument accountsPayableDocument, PaymentDetail paymentDetail) {
+    protected void addNotes(final AccountsPayableDocument accountsPayableDocument, final PaymentDetail paymentDetail) {
         int count = 1;
 
         if (accountsPayableDocument instanceof PaymentRequestDocument) {
-            PaymentRequestDocument prd = (PaymentRequestDocument) accountsPayableDocument;
+            final PaymentRequestDocument prd = (PaymentRequestDocument) accountsPayableDocument;
 
             if (prd.getSpecialHandlingInstructionLine1Text() != null) {
-                PaymentNoteText pnt = new PaymentNoteText();
+                final PaymentNoteText pnt = new PaymentNoteText();
                 pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
                 pnt.setCustomerNoteText(CUPurapConstants.SPECIAL_HANDLING_NOTE_LINE_1_NAME +  prd.getSpecialHandlingInstructionLine1Text());
                 paymentDetail.addNote(pnt);
             }
 
             if (prd.getSpecialHandlingInstructionLine2Text() != null) {
-                PaymentNoteText pnt = new PaymentNoteText();
+                final PaymentNoteText pnt = new PaymentNoteText();
                 pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
                 pnt.setCustomerNoteText(CUPurapConstants.SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS + prd.getSpecialHandlingInstructionLine2Text());
                 paymentDetail.addNote(pnt);
             }
 
             if (prd.getSpecialHandlingInstructionLine3Text() != null) {
-                PaymentNoteText pnt = new PaymentNoteText();
+                final PaymentNoteText pnt = new PaymentNoteText();
                 pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
                 pnt.setCustomerNoteText(CUPurapConstants.SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP + prd.getSpecialHandlingInstructionLine3Text());
                 paymentDetail.addNote(pnt);
@@ -65,34 +67,34 @@ public class CuPdpExtractService extends PdpExtractService {
         }
 
         if (accountsPayableDocument.getNoteLine1Text() != null) {
-            PaymentNoteText pnt = new PaymentNoteText();
+            final PaymentNoteText pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
             pnt.setCustomerNoteText(CUPurapConstants.PURAP_NOTES_IDENTIFIER + accountsPayableDocument.getNoteLine1Text());
             paymentDetail.addNote(pnt);
         }
 
         if (accountsPayableDocument.getNoteLine2Text() != null) {
-            PaymentNoteText pnt = new PaymentNoteText();
+            final PaymentNoteText pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
             pnt.setCustomerNoteText(CUPurapConstants.PURAP_NOTES_IDENTIFIER + accountsPayableDocument.getNoteLine2Text());
             paymentDetail.addNote(pnt);
         }
 
         if (accountsPayableDocument.getNoteLine3Text() != null) {
-            PaymentNoteText pnt = new PaymentNoteText();
+            final PaymentNoteText pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
             pnt.setCustomerNoteText(CUPurapConstants.PURAP_NOTES_IDENTIFIER + accountsPayableDocument.getNoteLine3Text());
             paymentDetail.addNote(pnt);
         }
 
-        PaymentNoteText pnt = new PaymentNoteText();
+        final PaymentNoteText pnt = new PaymentNoteText();
         pnt.setCustomerNoteLineNbr(new KualiInteger(count++));
         pnt.setCustomerNoteText("Sales Tax: " + accountsPayableDocument.getTotalRemitTax());
     }
     
     @Override
-    protected PaymentGroup populatePaymentGroup(PaymentRequestDocument paymentRequestDocument, Batch batch) {
-        PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
+    protected PaymentGroup populatePaymentGroup(final PaymentRequestDocument paymentRequestDocument, final Batch batch) {
+        final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
         if (paymentGroup.isPayableByACH()) {
             paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
@@ -104,7 +106,7 @@ public class CuPdpExtractService extends PdpExtractService {
     }
     
     @Override
-    protected PaymentGroup populatePaymentGroup(VendorCreditMemoDocument creditMemoDocument, Batch batch) {
+    protected PaymentGroup populatePaymentGroup(final VendorCreditMemoDocument creditMemoDocument, final Batch batch) {
         PaymentGroup paymentGroup = super.populatePaymentGroup(creditMemoDocument, batch);
         
         if (paymentGroup.isPayableByACH()) {
@@ -116,7 +118,7 @@ public class CuPdpExtractService extends PdpExtractService {
         return paymentGroup;
     }
 
-    public void setDocumentTypeService(DocumentTypeService documentTypeService) {
+    public void setDocumentTypeService(final DocumentTypeService documentTypeService) {
         this.documentTypeService = documentTypeService;
     }
 }

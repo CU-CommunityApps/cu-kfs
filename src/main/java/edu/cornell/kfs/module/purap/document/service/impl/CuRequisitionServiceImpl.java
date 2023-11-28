@@ -35,10 +35,10 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
      *         eligible, or an empty String if the requisition is eligible to become an APO.
      */
     @Override
-    protected String checkAutomaticPurchaseOrderRules(RequisitionDocument requisition) {
-        String requisitionSource = requisition.getRequisitionSourceCode();
-        KualiDecimal reqTotal = requisition.getTotalDollarAmount();
-        KualiDecimal apoLimit = ((CuPurapService) purapService).getApoLimit(requisition);
+    protected String checkAutomaticPurchaseOrderRules(final RequisitionDocument requisition) {
+        final String requisitionSource = requisition.getRequisitionSourceCode();
+        final KualiDecimal reqTotal = requisition.getTotalDollarAmount();
+        final KualiDecimal apoLimit = ((CuPurapService) purapService).getApoLimit(requisition);
         requisition.setOrganizationAutomaticPurchaseOrderLimit(apoLimit);
 
         LOG.debug(
@@ -68,7 +68,7 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
                 || requisition.getVendorDetailAssignedIdentifier() == null) {
             return "Vendor was not selected from the vendor database.";
         } else {
-            VendorDetail vendorDetail = vendorService.getVendorDetail(requisition.getVendorHeaderGeneratedIdentifier(),
+            final VendorDetail vendorDetail = vendorService.getVendorDetail(requisition.getVendorHeaderGeneratedIdentifier(),
                     requisition.getVendorDetailAssignedIdentifier());
             if (vendorDetail == null) {
                 return "Error retrieving vendor from the database.";
@@ -90,9 +90,9 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
 
             if (!PurapConstants.RequisitionSources.B2B.equals(requisitionSource)
                     && ObjectUtils.isNull(requisition.getVendorContractGeneratedIdentifier())) {
-                Person initiator = personService.getPerson(requisition.getDocumentHeader().getWorkflowDocument()
+                final Person initiator = personService.getPerson(requisition.getDocumentHeader().getWorkflowDocument()
                         .getInitiatorPrincipalId());
-                VendorContract b2bContract = vendorService.getVendorB2BContract(vendorDetail,
+                final VendorContract b2bContract = vendorService.getVendorB2BContract(vendorDetail,
                         initiator.getCampusCode());
                 if (b2bContract != null) {
                     return "Standard requisition with no contract selected but a B2B contract exists for the " +
@@ -105,7 +105,7 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
             if (StringUtils.isNotBlank(requisition.getVendorContractName())) {
                 
                 //CU mod: KFSUPGRADE-926
-                boolean routeToCM = parameterService.getParameterValueAsBoolean(RequisitionDocument.class,
+                final boolean routeToCM = parameterService.getParameterValueAsBoolean(RequisitionDocument.class,
                         CUPurapParameterConstants.ROUTE_REQS_WITH_EXPIRED_CONTRACT_TO_CM, Boolean.FALSE);
 
                 if (routeToCM && 
@@ -127,21 +127,21 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
 
         // These are needed for commodity codes. They are put in here so that we don't have to loop through items too
         // many times.
-        String purchaseOrderRequiresCommodityCode = parameterService.getParameterValueAsString(
+        final String purchaseOrderRequiresCommodityCode = parameterService.getParameterValueAsString(
                 PurchaseOrderDocument.class, PurapRuleConstants.ITEMS_REQUIRE_COMMODITY_CODE_IND);
-        boolean commodityCodeRequired = "Y".equals(purchaseOrderRequiresCommodityCode);
+        final boolean commodityCodeRequired = "Y".equals(purchaseOrderRequiresCommodityCode);
         
-        for (Object anItem : requisition.getItems()) {
-            RequisitionItem item = (RequisitionItem) anItem;
+        for (final Object anItem : requisition.getItems()) {
+            final RequisitionItem item = (RequisitionItem) anItem;
             if (item.isItemRestrictedIndicator()) {
                 return "Requisition contains an item that is marked as restricted.";
             }
 
             //We only need to check the commodity codes if this is an above the line item.
             if (item.getItemType().isLineItemIndicator()) {
-                List<VendorCommodityCode> vendorCommodityCodes = commodityCodeRequired ?
+                final List<VendorCommodityCode> vendorCommodityCodes = commodityCodeRequired ?
                         requisition.getVendorDetail().getVendorCommodities() : null;
-                String commodityCodesReason = checkAPORulesPerItemForCommodityCodes(item, vendorCommodityCodes,
+                final String commodityCodesReason = checkAPORulesPerItemForCommodityCodes(item, vendorCommodityCodes,
                         commodityCodeRequired);
                 if (StringUtils.isNotBlank(commodityCodesReason)) {
                     return commodityCodesReason;
@@ -222,12 +222,13 @@ public class CuRequisitionServiceImpl extends RequisitionServiceImpl {
      * @param commodityCodeRequired
      * @return
      */
-    protected String checkAPORulesPerItemForCommodityCodes(RequisitionItem purItem,
-            List<VendorCommodityCode> vendorCommodityCodes, boolean commodityCodeRequired) {
+    protected String checkAPORulesPerItemForCommodityCodes(
+            final RequisitionItem purItem,
+            final List<VendorCommodityCode> vendorCommodityCodes, final boolean commodityCodeRequired) {
         // If the commodity code is blank on any line item and a commodity code is required, then the system should
         // use the default commodity code for the vendor
         if (purItem.getCommodityCode() == null && commodityCodeRequired) {
-            for (VendorCommodityCode vcc : vendorCommodityCodes) {
+            for (final VendorCommodityCode vcc : vendorCommodityCodes) {
                 if (vcc.isCommodityDefaultIndicator()) {
                     purItem.setCommodityCode(vcc.getCommodityCode());
                     purItem.setPurchasingCommodityCode(vcc.getPurchasingCommodityCode());

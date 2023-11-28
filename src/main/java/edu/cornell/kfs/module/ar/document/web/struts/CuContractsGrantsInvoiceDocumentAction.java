@@ -42,9 +42,10 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     private static final Logger LOG = LogManager.getLogger(CuContractsGrantsInvoiceDocumentAction.class);
 
     @Override
-    public ActionForward prorateBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm = (ContractsGrantsInvoiceDocumentForm) form;
+    public ActionForward prorateBill(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm = (ContractsGrantsInvoiceDocumentForm) form;
         KualiDecimal budgetTotalAmount = findAwardBudgetTotal(contractsGrantsInvoiceDocumentForm);
         
         if (budgetTotalAmount == null || budgetTotalAmount.isLessEqual(KualiDecimal.ZERO)) {
@@ -61,23 +62,26 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     @Override
-    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ActionForward forward = validateBillingPeriod(mapping, form, request, response);
+    public ActionForward approve(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ActionForward forward = validateBillingPeriod(mapping, form, request, response);
         return forward != null ? forward : super.approve(mapping, form, request, response);
     }
 
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ActionForward forward = validateBillingPeriod(mapping, form, request, response);
+    public ActionForward save(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ActionForward forward = validateBillingPeriod(mapping, form, request, response);
         return forward != null ? forward : super.save(mapping, form, request, response);
     }
 
     @Override
-    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ActionForward forward = validateBillingPeriod(mapping, form, request, response);
+    public ActionForward route(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ActionForward forward = validateBillingPeriod(mapping, form, request, response);
         return forward != null ? forward : super.route(mapping, form, request, response);
     }
 
@@ -202,15 +206,16 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
     @Override
-    protected ActionForward promptForSuspensionCategories(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response,
-            ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, String caller) throws Exception {
+    protected ActionForward promptForSuspensionCategories(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response,
+            final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument, final String caller) throws Exception {
         ActionForward forward = null;
 
         if (CollectionUtils.size(contractsGrantsInvoiceDocument.getInvoiceSuspensionCategories()) > 0) {
-            Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+            final Object question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
             if (question == null || question.toString().equals(CuArConstants.CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION)) {
-                String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+                final String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
                         ArKeyConstants.WARNING_SUSPENSION_CATEGORIES_PRESENT);
                 return performQuestionWithoutInput(mapping, form, request, response, ArConstants.SUSPENSION_CATEGORIES_PRESENT_QUESTION, questionText, KFSConstants.CONFIRMATION_QUESTION, caller, StringUtils.EMPTY);
             }
@@ -225,10 +230,10 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     }
 
 
-    private KualiDecimal findAwardBudgetTotal(ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm) {
-        ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = contractsGrantsInvoiceDocumentForm.getContractsGrantsInvoiceDocument();
-        Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
-        AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+    private KualiDecimal findAwardBudgetTotal(final ContractsGrantsInvoiceDocumentForm contractsGrantsInvoiceDocumentForm) {
+        final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument = contractsGrantsInvoiceDocumentForm.getContractsGrantsInvoiceDocument();
+        final Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+        final AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
         KualiDecimal budgetTotalAmount = null;
         if (ObjectUtils.isNotNull(awardExtension)) {
             budgetTotalAmount = awardExtension.getBudgetTotalAmount();
@@ -242,13 +247,13 @@ public class CuContractsGrantsInvoiceDocumentAction extends ContractsGrantsInvoi
     private Pair<Date, Date> parseDateRange(String dateRange) throws ParseException {
         if (StringUtils.length(dateRange) != CuArConstants.CINV_DATE_RANGE_EXPECTED_FORMAT_LENGTH) {
             dateRange = StringUtils.defaultString(dateRange);
-            String errorMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH);
+            final String errorMessage = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.WARNING_CINV_DATE_RANGE_INVALID_FORMAT_LENGTH);
             throw new ParseException(MessageFormat.format(errorMessage, new String[] {dateRange}), 0);
         }
 
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-        Date startDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_START_DATE_START_INDEX, CuArConstants.CINV_DATE_RANGE_START_DATE_END_INDEX));
-        Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_END_DATE_START_INDEX));
+        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+        final Date startDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_START_DATE_START_INDEX, CuArConstants.CINV_DATE_RANGE_START_DATE_END_INDEX));
+        final Date endDate = dateTimeService.convertToSqlDate(dateRange.substring(CuArConstants.CINV_DATE_RANGE_END_DATE_START_INDEX));
         return Pair.of(startDate, endDate);
     }
 

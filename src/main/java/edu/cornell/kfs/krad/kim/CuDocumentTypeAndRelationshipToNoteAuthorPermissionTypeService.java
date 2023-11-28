@@ -22,8 +22,8 @@ public class CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService
 
     @Override
     protected List<Permission> performPermissionMatches(
-        Map<String, String> requestedDetails,
-        List<Permission> permissionsList) {
+        final Map<String, String> requestedDetails,
+        final List<Permission> permissionsList) {
 
         List<Permission> matchingPermissions = new ArrayList<>();
         if (requestedDetails == null) {
@@ -31,7 +31,7 @@ public class CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService
         }
 
         // loop over the permissions, checking the non-document-related ones
-        for (Permission permission : permissionsList) {
+        for (final Permission permission : permissionsList) {
             if (Boolean.parseBoolean(requestedDetails.get(KimConstants.AttributeConstants.CREATED_BY_SELF))) {
                 if (Boolean.parseBoolean(permission.getAttributes().get(KimConstants.AttributeConstants.CREATED_BY_SELF_ONLY))) {
                     matchingPermissions.add(permission);

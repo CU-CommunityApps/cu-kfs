@@ -37,7 +37,7 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
     private String code;
     private ContractGrantReportingCode contractGrantReportingCode;
 
-    public void populate(ObjectCode old, ObjectCodeGlobalDetail detail) {
+    public void populate(final ObjectCode old, final ObjectCodeGlobalDetail detail) {
     	super.populate(old, detail);
         //set extended attribute values that may have changed ... 
         //also ensure values for primary key are set so extended table insert does not fail on create new
@@ -56,7 +56,7 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 	}
 
 
-	public void setSunyObjectCode(String sunyObjectCode) {
+	public void setSunyObjectCode(final String sunyObjectCode) {
 		this.sunyObjectCode = sunyObjectCode;
 	}
 	
@@ -64,7 +64,7 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		return financialObjectCodeDescr;
 	}
 
-	public void setFinancialObjectCodeDescr(String financialObjectCodeDescr) {
+	public void setFinancialObjectCodeDescr(final String financialObjectCodeDescr) {
 		this.financialObjectCodeDescr = financialObjectCodeDescr;
 	}
 
@@ -72,7 +72,7 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		return this.cgReportingCode;
 	}
 
-	public void setCgReportingCode(String cgReportingCode) {
+	public void setCgReportingCode(final String cgReportingCode) {
 		this.cgReportingCode = cgReportingCode;
 		this.code = cgReportingCode;
 		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
@@ -87,7 +87,7 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		return this.code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 		this.cgReportingCode = code;
 		BusinessObjectService bos = SpringContext.getBean(BusinessObjectService.class);
@@ -102,7 +102,7 @@ public class CUObjectCodeGlobal extends ObjectCodeGlobal implements GlobalBusine
 		return this.contractGrantReportingCode;
 	}	
 
-	public void setContractGrantReportingCode(ContractGrantReportingCode contractGrantReportingCode) {
+	public void setContractGrantReportingCode(final ContractGrantReportingCode contractGrantReportingCode) {
 		this.contractGrantReportingCode = contractGrantReportingCode;
 	}
 	

@@ -51,7 +51,7 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
     private CuCheckStubService cuCheckStubService;
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
                 kualiDocumentFormBase.getDocument());
@@ -322,13 +322,13 @@ public class CuDisbursementVoucherAction extends DisbursementVoucherAction {
      */
     @SuppressWarnings("deprecation")
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) form;
+    public ActionForward save(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final CuDisbursementVoucherForm dvForm = (CuDisbursementVoucherForm) form;
         ActionForward forward;
         
         // If the document is ENROUTE, then also send address change notifications as needed.
         if (dvForm.getFinancialDocument().getDocumentHeader().getWorkflowDocument().isEnroute()) {
-            boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new SaveDocumentEvent(dvForm.getFinancialDocument()));
+            final boolean passed = SpringContext.getBean(KualiRuleService.class).applyRules(new SaveDocumentEvent(dvForm.getFinancialDocument()));
             if (passed) {
                 SpringContext.getBean(DisbursementVoucherPayeeServiceImpl.class).checkPayeeAddressForChanges(
                         (CuDisbursementVoucherDocument) dvForm.getFinancialDocument());

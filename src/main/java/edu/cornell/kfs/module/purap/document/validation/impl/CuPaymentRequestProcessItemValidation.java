@@ -13,11 +13,12 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 
 public class CuPaymentRequestProcessItemValidation extends PaymentRequestProcessItemValidation {
 
-    protected boolean validateAboveTheLineItems(PaymentRequestItem item, String identifierString,
-            boolean isReceivingDocumentRequiredIndicator, PaymentRequestDocument paymentRequestDocument) {
+    protected boolean validateAboveTheLineItems(
+            final PaymentRequestItem item, final String identifierString,
+            final boolean isReceivingDocumentRequiredIndicator, final PaymentRequestDocument paymentRequestDocument) {
         boolean valid = true;
         // Currently Quantity is allowed to be NULL on screen; must be either a positive number or NULL for DB
-        MessageMap errorMap = GlobalVariables.getMessageMap();
+        final MessageMap errorMap = GlobalVariables.getMessageMap();
         errorMap.clearErrorPath();
         
         if (ObjectUtils.isNotNull(item.getItemQuantity())) {

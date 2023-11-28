@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,8 +33,9 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
     protected LocationService locationService;
 
     @Override
-    public boolean validateAddress(String postalCountryCode, String stateCode, String postalCode,
-            String statePropertyConstant, String postalCodePropertyConstant) {
+    public boolean validateAddress(
+            final String postalCountryCode, final String stateCode, final String postalCode,
+            final String statePropertyConstant, final String postalCodePropertyConstant) {
         boolean valid = true;
 
         if (StringUtils.equals(KFSConstants.COUNTRY_CODE_UNITED_STATES, postalCountryCode)) {
@@ -53,7 +54,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
                             KFSKeyConstants.ERROR_US_REQUIRES_ZIP);
                 }
             } else {
-                ZipcodeValidationPattern zipPattern = getZipcodeValidatePattern();
+                final ZipcodeValidationPattern zipPattern = getZipcodeValidatePattern();
                 if (!zipPattern.matches(StringUtils.defaultString(postalCode))) {
                     valid = false;
                     if (StringUtils.isNotBlank(postalCodePropertyConstant)) {
@@ -66,7 +67,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
 
         // verify state code exist
         if (StringUtils.isNotBlank(postalCountryCode) && StringUtils.isNotBlank(stateCode)) {
-            State state = locationService.getState(postalCountryCode, stateCode);
+            final State state = locationService.getState(postalCountryCode, stateCode);
             if (state == null) {
                 valid = false;
                 GlobalVariables.getMessageMap().putError(statePropertyConstant,
@@ -85,7 +86,7 @@ public class PostalCodeValidationServiceImpl implements PostalCodeValidationServ
 		return new ZipcodeValidationPattern();
 	}
 
-    public void setLocationService(LocationService locationService) {
+    public void setLocationService(final LocationService locationService) {
         this.locationService = locationService;
     }
 }

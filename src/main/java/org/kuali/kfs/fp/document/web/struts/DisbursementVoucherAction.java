@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -103,14 +103,14 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
      */
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
 
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) kualiDocumentFormBase;
-        DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) kualiDocumentFormBase;
+        final DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
 
         // do not execute the further refreshing logic if a payee is not selected
-        String payeeIdNumber = dvDoc.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
+        final String payeeIdNumber = dvDoc.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
         // KFSCNTRB-1735: no need to check for identity and issue a message per KFSMI-8935 if there's no payeeId and the
         // document is saved. On other statuses (e.g. enroute) throw exception if there's no payee
         // ==== CU Customization: Updated condition to prevent errors when opening no-payee, non-SAVED DV docs that are at the initial AdHoc node. ====
@@ -136,33 +136,35 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
     
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ActionForward actionForward = super.save(mapping, form, request, response);
+    public ActionForward save(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final ActionForward actionForward = super.save(mapping, form, request, response);
 
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
 
         checkForDuplicatePayments(dvDoc);
 
         return actionForward;
     }
 
-    protected void checkForDuplicatePayments(DisbursementVoucherDocument dvDoc) {
-        Map<String, String> duplicateMessages = new HashMap<>();
+    protected void checkForDuplicatePayments(final DisbursementVoucherDocument dvDoc) {
+        final Map<String, String> duplicateMessages = new HashMap<>();
         duplicateMessages.putAll(getDisbursementVoucherValidationService().checkForDuplicatePaymentRequests(dvDoc, false));
         duplicateMessages.putAll(getDisbursementVoucherValidationService().checkForDuplicateDisbursementVouchers(dvDoc, false));
 
         if (duplicateMessages.size() > 0) {
-            String[] splitMessage = DuplicatePaymentCheckUtils.buildQuestionText(duplicateMessages).split(DuplicatePaymentCheckUtils.ESCAPED_NEWLINE);
+            final String[] splitMessage = DuplicatePaymentCheckUtils.buildQuestionText(duplicateMessages).split(DuplicatePaymentCheckUtils.ESCAPED_NEWLINE);
             Arrays.stream(splitMessage).forEach(message -> GlobalVariables.getMessageMap().putWarning(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_CUSTOM, message));
         }
     }
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+    public ActionForward execute(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
         populatePaymentMethodCodesRequiringAdditionalDvData(dvForm);
 
         final ActionForward dest;
@@ -175,16 +177,16 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         final DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) dvForm.getDocument();
 
         if (dvDoc != null) {
-            DisbursementVoucherNonEmployeeTravel dvNet = dvDoc.getDvNonEmployeeTravel();
+            final DisbursementVoucherNonEmployeeTravel dvNet = dvDoc.getDvNonEmployeeTravel();
             if (dvNet != null) {
                 // clear values derived from travelMileageAmount if that amount has been (manually) cleared
-                Integer amount = dvNet.getDvPersonalCarMileageAmount();
+                final Integer amount = dvNet.getDvPersonalCarMileageAmount();
                 if (amount == null || amount == 0) {
                     clearTravelMileageAmount(dvNet);
                 }
 
                 // clear values derived from perDiemRate if that amount has been (manually) cleared
-                KualiDecimal rate = dvNet.getDisbVchrPerdiemRate();
+                final KualiDecimal rate = dvNet.getDisbVchrPerdiemRate();
                 if (rate == null || rate.isZero()) {
                     clearTravelPerDiem(dvNet);
                 }
@@ -238,8 +240,10 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     @Override
-    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+    public ActionForward approve(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
         SpringContext.getBean(DisbursementVoucherPayeeService.class).checkPayeeAddressForChanges((DisbursementVoucherDocument) dvForm.getDocument());
 
         return super.approve(mapping, form, request, response);
@@ -249,7 +253,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * Do initialization for a new disbursement voucher
      */
     @Override
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.createDocument(kualiDocumentFormBase);
         ((DisbursementVoucherDocument) kualiDocumentFormBase.getDocument()).initiateDocument();
 
@@ -260,14 +264,14 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calls service to generate the disbursement voucher cover sheet as a pdf.
      */
-    public ActionForward printDisbursementVoucherCoverSheet(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-    	    DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+    public ActionForward printDisbursementVoucherCoverSheet(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
 
         // get directory of template
-        String directory = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY);
+        final String directory = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY);
 
-        DisbursementVoucherDocument document = (DisbursementVoucherDocument) SpringContext.getBean(
+        final DisbursementVoucherDocument document = (DisbursementVoucherDocument) SpringContext.getBean(
                 DocumentService.class).getByDocumentHeaderId(
                 request.getParameter(KFSPropertyConstants.DOCUMENT_NUMBER));
         
@@ -275,11 +279,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         // error when checking permissions since we are bypassing form submit and just linking directly to the action
         dvForm.setDocument(document);
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DisbursementVoucherCoverSheetService coverSheetService = SpringContext.getBean(DisbursementVoucherCoverSheetService.class);
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final DisbursementVoucherCoverSheetService coverSheetService = SpringContext.getBean(DisbursementVoucherCoverSheetService.class);
 
         coverSheetService.generateDisbursementVoucherCoverSheet(document, baos);
-        String fileName = document.getDocumentNumber() + "_cover_sheet.pdf";
+        final String fileName = document.getDocumentNumber() + "_cover_sheet.pdf";
         WebUtils.saveMimeOutputStreamAsFile(response, "application/pdf", baos, fileName);
 
         return null;
@@ -289,14 +293,15 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calculates the travel per diem amount.
      */
-    public ActionForward calculateTravelPerDiem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+    public ActionForward calculateTravelPerDiem(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
 
         try {
             // call service to calculate per diem
-            DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
-            KualiDecimal perDiemAmount = SpringContext.getBean(DisbursementVoucherTravelService.class)
+            final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+            final KualiDecimal perDiemAmount = SpringContext.getBean(DisbursementVoucherTravelService.class)
                     .calculatePerDiemAmount(dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp(),
                             dvDocument.getDvNonEmployeeTravel().getDvPerdiemEndDttmStamp(),
                             dvDocument.getDvNonEmployeeTravel().getDisbVchrPerdiemRate());
@@ -322,12 +327,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Clears the travel per diem amount
      */
-    public ActionForward clearTravelPerDiem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward clearTravelPerDiem(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherNonEmployeeTravel dvNet = dvDocument.getDvNonEmployeeTravel();
+        final DisbursementVoucherNonEmployeeTravel dvNet = dvDocument.getDvNonEmployeeTravel();
         if (dvNet != null) {
             clearTravelPerDiem(dvNet);
         }
@@ -338,7 +344,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * clear travel perdiem amounts
      */
-    protected void clearTravelPerDiem(DisbursementVoucherNonEmployeeTravel dvNet) {
+    protected void clearTravelPerDiem(final DisbursementVoucherNonEmployeeTravel dvNet) {
         dvNet.setDisbVchrPerdiemCalculatedAmt(null);
         dvNet.setDisbVchrPerdiemActualAmount(null);
     }
@@ -346,10 +352,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calculates the travel mileage amount.
      */
-    public ActionForward calculateTravelMileageAmount(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward calculateTravelMileageAmount(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
         if (dvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount() == null) {
             LOG.error("Total Mileage must be given");
@@ -365,7 +372,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
         if (!GlobalVariables.getMessageMap().hasErrors()) {
             // call service to calculate mileage amount
-            KualiDecimal mileageAmount = SpringContext.getBean(DisbursementVoucherTravelService.class)
+            final KualiDecimal mileageAmount = SpringContext.getBean(DisbursementVoucherTravelService.class)
                     .calculateMileageAmount(dvDocument.getDvNonEmployeeTravel().getDvPersonalCarMileageAmount(),
                             dvDocument.getDvNonEmployeeTravel().getDvPerdiemStartDttmStamp());
 
@@ -379,12 +386,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Clears the travel mileage amount
      */
-    public ActionForward clearTravelMileageAmount(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward clearTravelMileageAmount(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherNonEmployeeTravel dvNet = dvDocument.getDvNonEmployeeTravel();
+        final DisbursementVoucherNonEmployeeTravel dvNet = dvDocument.getDvNonEmployeeTravel();
         if (dvNet != null) {
             clearTravelMileageAmount(dvNet);
         }
@@ -395,7 +403,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * reset the travel mileage amount as null
      */
-    protected void clearTravelMileageAmount(DisbursementVoucherNonEmployeeTravel dvNet) {
+    protected void clearTravelMileageAmount(final DisbursementVoucherNonEmployeeTravel dvNet) {
         dvNet.setDisbVchrMileageCalculatedAmt(null);
         dvNet.setDisbVchrPersonalCarAmount(null);
     }
@@ -403,12 +411,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Adds a new employee travel expense line.
      */
-    public ActionForward addNonEmployeeExpenseLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward addNonEmployeeExpenseLine(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherNonEmployeeExpense newExpenseLine = dvForm.getNewNonEmployeeExpenseLine();
+        final DisbursementVoucherNonEmployeeExpense newExpenseLine = dvForm.getNewNonEmployeeExpenseLine();
 
         // validate line
         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.NEW_NONEMPLOYEE_EXPENSE_LINE);
@@ -436,7 +445,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         if (!GlobalVariables.getMessageMap().hasErrors()) {
             newExpenseLine.setDocumentNumber(dvDocument.getDocumentNumber());
             dvDocument.getDvNonEmployeeTravel().addDvNonEmployeeExpenseLine(newExpenseLine);
-            DisbursementVoucherNonEmployeeExpense newNewNonEmployeeExpenseLine = new DisbursementVoucherNonEmployeeExpense();
+            final DisbursementVoucherNonEmployeeExpense newNewNonEmployeeExpenseLine = new DisbursementVoucherNonEmployeeExpense();
             newNewNonEmployeeExpenseLine.setFinancialDocumentLineNumber(newExpenseLine.getFinancialDocumentLineNumber() + 1);
             dvForm.setNewNonEmployeeExpenseLine(newNewNonEmployeeExpenseLine);
         }
@@ -447,12 +456,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Adds a new employee pre paid travel expense line.
      */
-    public ActionForward addPrePaidNonEmployeeExpenseLine(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward addPrePaidNonEmployeeExpenseLine(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherNonEmployeeExpense newExpenseLine = dvForm.getNewPrePaidNonEmployeeExpenseLine();
+        final DisbursementVoucherNonEmployeeExpense newExpenseLine = dvForm.getNewPrePaidNonEmployeeExpenseLine();
 
         // validate line
         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.NEW_PREPAID_EXPENSE_LINE);
@@ -479,7 +489,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         if (!GlobalVariables.getMessageMap().hasErrors()) {
             newExpenseLine.setDocumentNumber(dvDocument.getDocumentNumber());
             dvDocument.getDvNonEmployeeTravel().addDvPrePaidEmployeeExpenseLine(newExpenseLine);
-            DisbursementVoucherNonEmployeeExpense newNewNonEmployeeExpenseLine = new DisbursementVoucherNonEmployeeExpense();
+            final DisbursementVoucherNonEmployeeExpense newNewNonEmployeeExpenseLine = new DisbursementVoucherNonEmployeeExpense();
             newNewNonEmployeeExpenseLine.setFinancialDocumentLineNumber(newExpenseLine.getFinancialDocumentLineNumber() + 1);
             dvForm.setNewPrePaidNonEmployeeExpenseLine(newNewNonEmployeeExpenseLine);
         }
@@ -490,12 +500,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Deletes a non employee travel expense line.
      */
-    public ActionForward deleteNonEmployeeExpenseLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward deleteNonEmployeeExpenseLine(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        int deleteIndex = getLineToDelete(request);
+        final int deleteIndex = getLineToDelete(request);
         dvDocument.getDvNonEmployeeTravel().getDvNonEmployeeExpenses().remove(deleteIndex);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -504,12 +515,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Deletes a pre paid travel expense line.
      */
-    public ActionForward deletePrePaidEmployeeExpenseLine(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward deletePrePaidEmployeeExpenseLine(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        int deleteIndex = getLineToDelete(request);
+        final int deleteIndex = getLineToDelete(request);
         dvDocument.getDvNonEmployeeTravel().getDvPrePaidEmployeeExpenses().remove(deleteIndex);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -518,12 +530,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Adds a new pre conference registrant line.
      */
-    public ActionForward addPreConfRegistrantLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward addPreConfRegistrantLine(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherPreConferenceRegistrant newRegistrantLine = dvForm.getNewPreConferenceRegistrantLine();
+        final DisbursementVoucherPreConferenceRegistrant newRegistrantLine = dvForm.getNewPreConferenceRegistrantLine();
 
         // validate line
         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.NEW_PRECONF_REGISTRANT_LINE);
@@ -541,12 +554,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Deletes a pre conference registrant line.
      */
-    public ActionForward deletePreConfRegistrantLine(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward deletePreConfRegistrantLine(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        int deleteIndex = getLineToDelete(request);
+        final int deleteIndex = getLineToDelete(request);
         dvDocument.getDvPreConferenceDetail().getDvPreConferenceRegistrants().remove(deleteIndex);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -555,12 +569,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calls service to generate tax accounting lines and updates nonresident tax line string in action form.
      */
-    public ActionForward generateNonresidentTaxLines(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward generateNonresidentTaxLines(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
+        final DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
 
         /* call service to generate new tax lines */
         GlobalVariables.getMessageMap().addToErrorPath("document");
@@ -573,12 +588,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calls service to clear tax accounting lines and updates nra tax line string in action form.
      */
-    public ActionForward clearNonresidentTaxLines(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward clearNonresidentTaxLines(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
+        final DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
 
         /* call service to clear previous lines */
         taxService.clearNonresidentTaxLines(document);
@@ -589,12 +605,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Calls service to clear tax info.
      */
-    public ActionForward clearNonresidentTaxInfo(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward clearNonresidentTaxInfo(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
+        final DisbursementVoucherTaxService taxService = SpringContext.getBean(DisbursementVoucherTaxService.class);
 
         /* call service to clear previous lines */
         taxService.clearNonresidentTaxInfo(document);
@@ -608,23 +625,24 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * @return the wire charge message for the current fiscal year
      */
     protected String retrieveWireChargeMessage() {
-        String message = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+        final String message = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
                 KFSKeyConstants.MESSAGE_PAYMENT_WIRE_CHARGE);
         WireCharge wireCharge = new WireCharge();
         wireCharge.setUniversityFiscalYear(SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear());
 
         wireCharge = (WireCharge) SpringContext.getBean(BusinessObjectService.class).retrieve(wireCharge);
-        Object[] args = {wireCharge.getDomesticChargeAmt(), wireCharge.getForeignChargeAmt()};
+        final Object[] args = {wireCharge.getDomesticChargeAmt(), wireCharge.getForeignChargeAmt()};
 
         return MessageFormat.format(message, args);
     }
 
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+    public ActionForward refresh(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
 
-        ActionForward actionAfterPayeeLookup = this.refreshAfterPayeeSelection(mapping, dvForm, request);
+        final ActionForward actionAfterPayeeLookup = this.refreshAfterPayeeSelection(mapping, dvForm, request);
         if (actionAfterPayeeLookup != null) {
             return actionAfterPayeeLookup;
         }
@@ -633,15 +651,16 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     // do refresh after a payee is selected
-    protected ActionForward refreshAfterPayeeSelection(ActionMapping mapping, DisbursementVoucherForm dvForm,
-            HttpServletRequest request) {
-        String refreshCaller = dvForm.getRefreshCaller();
+    protected ActionForward refreshAfterPayeeSelection(
+            final ActionMapping mapping, final DisbursementVoucherForm dvForm,
+            final HttpServletRequest request) {
+        final String refreshCaller = dvForm.getRefreshCaller();
 
-        DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
+        final DisbursementVoucherDocument document = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        boolean isPayeeLookupable = KFSConstants.KUALI_DISBURSEMENT_PAYEE_LOOKUPABLE_IMPL.equals(refreshCaller);
-        boolean isAddressLookupable = KFSConstants.KUALI_VENDOR_ADDRESS_LOOKUPABLE_IMPL.equals(refreshCaller);
-        boolean isKualiLookupable = KFSConstants.KUALI_LOOKUPABLE_IMPL.equals(refreshCaller);
+        final boolean isPayeeLookupable = KFSConstants.KUALI_DISBURSEMENT_PAYEE_LOOKUPABLE_IMPL.equals(refreshCaller);
+        final boolean isAddressLookupable = KFSConstants.KUALI_VENDOR_ADDRESS_LOOKUPABLE_IMPL.equals(refreshCaller);
+        final boolean isKualiLookupable = KFSConstants.KUALI_LOOKUPABLE_IMPL.equals(refreshCaller);
 
         // if a cancel occurred on address lookup we need to reset the payee id and type, rest of fields will still have
         // correct information
@@ -660,7 +679,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         }
 
         // do not execute the further refreshing logic if a payee is not selected
-        String payeeIdNumber = document.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
+        final String payeeIdNumber = document.getDvPayeeDetail().getDisbVchrPayeeIdNumber();
         if (payeeIdNumber == null) {
             return null;
         }
@@ -676,8 +695,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
             VendorAddress defaultVendorAddress = null;
             if (refreshVendorDetail != null) {
-                List<VendorAddress> vendorAddresses = refreshVendorDetail.getVendorAddresses();
-                boolean hasMultipleAddresses = vendorAddresses != null && vendorAddresses.size() > 1;
+                final List<VendorAddress> vendorAddresses = refreshVendorDetail.getVendorAddresses();
+                final boolean hasMultipleAddresses = vendorAddresses != null && vendorAddresses.size() > 1;
                 dvForm.setHasMultipleAddresses(hasMultipleAddresses);
 
                 if (vendorAddresses != null) {
@@ -694,27 +713,27 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             return null;
         }
 
-        String payeeAddressIdentifier = request.getParameter(KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID);
+        final String payeeAddressIdentifier = request.getParameter(KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID);
         if (isAddressLookupable && StringUtils.isNotBlank(payeeAddressIdentifier)) {
             setupPayeeAsVendor(dvForm, payeeIdNumber, payeeAddressIdentifier);
         }
 
         if (isPayeeLookupable && dvForm.isEmployee()) {
-            this.setupPayeeAsEmployee(dvForm, payeeIdNumber);
+            setupPayeeAsEmployee(dvForm, payeeIdNumber);
         }
 
         // check for multiple custom addresses
         if (isPayeeLookupable && dvForm.isCustomer()) {
-            AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
+            final AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
 
             AccountsReceivableCustomerAddress defaultCustomerAddress = null;
             if (customer != null) {
                 defaultCustomerAddress = customer.getPrimaryAddress();
 
-                Map<String, String> addressSearch = new HashMap<>();
+                final Map<String, String> addressSearch = new HashMap<>();
                 addressSearch.put(KFSPropertyConstants.CUSTOMER_NUMBER, payeeIdNumber);
 
-                List<AccountsReceivableCustomerAddress> customerAddresses = (List<AccountsReceivableCustomerAddress>)
+                final List<AccountsReceivableCustomerAddress> customerAddresses = (List<AccountsReceivableCustomerAddress>)
                     SpringContext.getBean(AccountsReceivableModuleService.class).searchForCustomerAddresses(addressSearch);
                 if (customerAddresses != null && !customerAddresses.isEmpty()) {
                     if (customerAddresses.size() > 1) {
@@ -732,12 +751,12 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             }
         }
 
-        String customerAddressIdentifier = request.getParameter(KFSPropertyConstants.CUSTOMER_ADDRESS_IDENTIFIER);
+        final String customerAddressIdentifier = request.getParameter(KFSPropertyConstants.CUSTOMER_ADDRESS_IDENTIFIER);
         if (isKualiLookupable && StringUtils.isNotBlank(customerAddressIdentifier)) {
             setupPayeeAsCustomer(dvForm, payeeIdNumber, customerAddressIdentifier);
         }
 
-        String paymentReasonCode = document.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
+        final String paymentReasonCode = document.getDvPayeeDetail().getDisbVchrPaymentReasonCode();
         addPaymentCodeWarningMessage(dvForm, paymentReasonCode);
 
         return null;
@@ -749,7 +768,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * @param document the document to check for full edit permissions on
      * @return true if full edit is allowed on the document, false otherwise
      */
-    protected boolean hasFullEdit(DisbursementVoucherDocument document) {
+    protected boolean hasFullEdit(final DisbursementVoucherDocument document) {
         final Person user = GlobalVariables.getUserSession().getPerson();
         final TransactionalDocumentPresentationController documentPresentationController = (TransactionalDocumentPresentationController) getDocumentHelperService()
                 .getDocumentPresentationController(document);
@@ -768,25 +787,27 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * Hook into performLookup to switch the payee lookup based on the payee type selected.
      */
     @Override
-    public ActionForward performLookup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward performLookup(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         return super.performLookup(mapping, form, request, response);
     }
 
     /**
      * render the vendor address lookup results if there are multiple addresses for the selected vendor
      */
-    protected ActionForward renderVendorAddressSelection(ActionMapping mapping, HttpServletRequest request,
-            DisbursementVoucherForm dvForm) {
-        Map<String, String> props = new HashMap<>();
+    protected ActionForward renderVendorAddressSelection(
+            final ActionMapping mapping, final HttpServletRequest request,
+            final DisbursementVoucherForm dvForm) {
+        final Map<String, String> props = new HashMap<>();
 
         props.put(KRADConstants.SUPPRESS_ACTIONS, Boolean.toString(true));
         props.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, VendorAddress.class.getName());
         props.put(KRADConstants.LOOKUP_ANCHOR, KRADConstants.ANCHOR_TOP_OF_FORM);
         props.put(KRADConstants.LOOKED_UP_COLLECTION_NAME, KFSPropertyConstants.VENDOR_ADDRESSES);
 
-        String conversionPattern = "{0}" + KFSConstants.FIELD_CONVERSION_PAIR_SEPERATOR + "{0}";
-        String filedConversion = MessageFormat.format(conversionPattern,
+        final String conversionPattern = "{0}" + KFSConstants.FIELD_CONVERSION_PAIR_SEPERATOR + "{0}";
+        final String filedConversion = MessageFormat.format(conversionPattern,
                 KFSPropertyConstants.VENDOR_ADDRESS_GENERATED_ID) +
                 KFSConstants.FIELD_CONVERSIONS_SEPERATOR +
                 MessageFormat.format(conversionPattern, KFSPropertyConstants.VENDOR_HEADER_GENERATED_ID) +
@@ -808,7 +829,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.DOC_NUM, dvForm.getDocument().getDocumentNumber());
 
         // TODO: how should this forward be handled
-        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION, props);
+        final String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION, props);
 
         dvForm.registerEditableProperty("methodToCall");
 
@@ -818,8 +839,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * setup the payee as an employee with the given id number
      */
-    protected void setupPayeeAsEmployee(DisbursementVoucherForm dvForm, String payeeIdNumber) {
-        Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
+    protected void setupPayeeAsEmployee(final DisbursementVoucherForm dvForm, String payeeIdNumber) {
+        final Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
         if (person != null) {
             ((DisbursementVoucherDocument) dvForm.getDocument()).templateEmployee(person);
             dvForm.setTempPayeeIdNumber(payeeIdNumber);
@@ -833,7 +854,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * setup the payee as a vendor with the given id number and address id
      */
-    protected void setupPayeeAsVendor(DisbursementVoucherForm dvForm, String payeeIdNumber, String payeeAddressIdentifier) {
+    protected void setupPayeeAsVendor(final DisbursementVoucherForm dvForm, String payeeIdNumber, String payeeAddressIdentifier) {
         VendorDetail vendorDetail = new VendorDetail();
         vendorDetail.setVendorNumber(payeeIdNumber);
         vendorDetail = (VendorDetail) SpringContext.getBean(BusinessObjectService.class).retrieve(vendorDetail);
@@ -846,7 +867,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
                 dvForm.setTempPayeeIdNumber(payeeIdNumber);
                 dvForm.setOldPayeeType(KFSConstants.PaymentPayeeTypes.VENDOR);
 
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.error(
                         "Exception while attempting to retrieve vendor address for vendor address id {}: {}",
                         payeeAddressIdentifier,
@@ -861,17 +882,18 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * render the customer address lookup results if there are multiple addresses for the selected customer
      */
-    protected ActionForward renderCustomerAddressSelection(ActionMapping mapping, HttpServletRequest request,
-            DisbursementVoucherForm dvForm) {
-        Map<String, String> props = new HashMap<>();
+    protected ActionForward renderCustomerAddressSelection(
+            final ActionMapping mapping, final HttpServletRequest request,
+            final DisbursementVoucherForm dvForm) {
+        final Map<String, String> props = new HashMap<>();
 
         props.put(KRADConstants.SUPPRESS_ACTIONS, Boolean.toString(true));
         props.put(KRADConstants.BUSINESS_OBJECT_CLASS_ATTRIBUTE, AccountsReceivableCustomerAddress.class.getName());
         props.put(KRADConstants.LOOKUP_ANCHOR, KRADConstants.ANCHOR_TOP_OF_FORM);
         props.put(KRADConstants.LOOKED_UP_COLLECTION_NAME, KFSPropertyConstants.VENDOR_ADDRESSES);
 
-        String conversionPattern = "{0}" + KFSConstants.FIELD_CONVERSION_PAIR_SEPERATOR + "{0}";
-        String filedConversion = MessageFormat.format(conversionPattern, KFSPropertyConstants.CUSTOMER_NUMBER) +
+        final String conversionPattern = "{0}" + KFSConstants.FIELD_CONVERSION_PAIR_SEPERATOR + "{0}";
+        final String filedConversion = MessageFormat.format(conversionPattern, KFSPropertyConstants.CUSTOMER_NUMBER) +
                 KFSConstants.FIELD_CONVERSIONS_SEPERATOR + MessageFormat.format(conversionPattern,
                 KFSPropertyConstants.CUSTOMER_ADDRESS_IDENTIFIER);
         props.put(KRADConstants.CONVERSION_FIELDS_PARAMETER, filedConversion);
@@ -889,7 +911,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.DOC_NUM, dvForm.getDocument().getDocumentNumber());
 
         // TODO: how should this forward be handled
-        String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION,
+        final String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION,
                 props);
 
         dvForm.registerEditableProperty("methodToCall");
@@ -900,9 +922,10 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * setup the payee as a customer with the given id number and address id
      */
-    protected void setupPayeeAsCustomer(DisbursementVoucherForm dvForm, String payeeIdNumber,
-            String payeeAddressIdentifier) {
-        AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
+    protected void setupPayeeAsCustomer(
+            final DisbursementVoucherForm dvForm, final String payeeIdNumber,
+            final String payeeAddressIdentifier) {
+        final AccountsReceivableCustomer customer = SpringContext.getBean(AccountsReceivableModuleService.class).findCustomer(payeeIdNumber);
 
         AccountsReceivableCustomerAddress customerAddress = null;
         if (StringUtils.isNotBlank(payeeAddressIdentifier)) {
@@ -919,13 +942,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * add warning message based on the given reason code
      */
-    protected void addPaymentCodeWarningMessage(DisbursementVoucherForm dvForm, String paymentReasonCode) {
+    protected void addPaymentCodeWarningMessage(final DisbursementVoucherForm dvForm, String paymentReasonCode) {
         // clear up the warning message and tab state carried from previous screen
-        for (String tabKey : TabByReasonCode.getAllTabKeys()) {
+        for (final String tabKey : TabByReasonCode.getAllTabKeys()) {
             dvForm.getTabStates().remove(tabKey);
         }
 
-        for (String propertyKey : TabByReasonCode.getAllDocumentPropertyKeys()) {
+        for (final String propertyKey : TabByReasonCode.getAllDocumentPropertyKeys()) {
             GlobalVariables.getMessageMap().removeAllWarningMessagesForProperty(propertyKey);
         }
 
@@ -934,7 +957,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         GlobalVariables.getMessageMap().removeAllWarningMessagesForProperty(reasonCodeProperty);
 
         // add warning message and reset tab state as open if any
-        TabByReasonCode tab = TabByReasonCode.getTabByReasonCode(paymentReasonCode);
+        final TabByReasonCode tab = TabByReasonCode.getTabByReasonCode(paymentReasonCode);
         if (tab != null) {
             dvForm.getTabStates().put(tab.tabKey, "OPEN");
             GlobalVariables.getMessageMap().putWarning(reasonCodeProperty, tab.messageKey);
@@ -945,12 +968,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * Extracts the DV as immediate payment upon user's request after it routes to FINAL.
      */
-    public ActionForward extractNow(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
+    public ActionForward extractNow(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) dvForm.getDocument();
 
-        PaymentSourceExtractionService disbursementVoucherExtractService = DisbursementVoucherDocument.getDisbursementVoucherExtractService();
+        final PaymentSourceExtractionService disbursementVoucherExtractService = DisbursementVoucherDocument.getDisbursementVoucherExtractService();
         dvDocument.setImmediatePaymentIndicator(true);
         disbursementVoucherExtractService.extractSingleImmediatePayment(dvDocument);
 

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -51,7 +51,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
     public static final String UNORDERED_ITEM_DEFAULT_COMMODITY_CODE = "UNORDERED_ITEM_DEFAULT_COMMODITY_CODE";
   
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = true;
         GlobalVariables.getMessageMap().clearErrorPath();                
         GlobalVariables.getMessageMap().addToErrorPath(PurapConstants.ITEM_TAB_ERRORS);
@@ -72,7 +72,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         return itemForValidation;
     }
 
-    public void setItemForValidation(PurApItem itemForValidation) {
+    public void setItemForValidation(final PurApItem itemForValidation) {
         this.itemForValidation = itemForValidation;
     }
 
@@ -84,10 +84,10 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
      * @param item  The PurApItem containing the commodity code to be validated.
      * @return boolean false if the validation fails and true otherwise.
      */
-    protected boolean validateCommodityCodes(PurApItem item, boolean commodityCodeRequired) {
+    protected boolean validateCommodityCodes(final PurApItem item, final boolean commodityCodeRequired) {
         boolean valid = true;
-        String identifierString = item.getItemIdentifierString();
-        PurchasingItemBase purItem = (PurchasingItemBase) item;
+        final String identifierString = item.getItemIdentifierString();
+        final PurchasingItemBase purItem = (PurchasingItemBase) item;
         
         // check to see if item is unordered and commodity code is required, if so, assign a default commodity code and return true
         if (commodityCodeRequired && purItem.getItemTypeCode().equals("UNOR") ) {
@@ -101,7 +101,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         if (commodityCodeRequired && StringUtils.isBlank(purItem.getPurchasingCommodityCode()) ) {
             //This is the case where the commodity code is required but the item does not currently contain the commodity code.
             valid = false;
-            String attributeLabel = businessObjectDictionaryService
+            final String attributeLabel = businessObjectDictionaryService
                     .getBusinessObjectEntry(CommodityCode.class.getName()).getAttributeDefinition(
                             PurapPropertyConstants.ITEM_COMMODITY_CODE).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE,
@@ -109,7 +109,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         }
         else if (StringUtils.isNotBlank(purItem.getPurchasingCommodityCode())) {
             //Find out whether the commodity code has existed in the database
-            Map<String,String> fieldValues = new HashMap<String, String>();
+            final Map<String,String> fieldValues = new HashMap<String, String>();
             fieldValues.put(PurapPropertyConstants.ITEM_COMMODITY_CODE, purItem.getPurchasingCommodityCode());
             if (businessObjectService.countMatching(CommodityCode.class, fieldValues) != 1) {
                 //This is the case where the commodity code on the item does not exist in the database.
@@ -133,7 +133,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
      * @param item - PurApItem object that contains the commodity code to be checked.
      * @return
      */
-    protected boolean validateThatCommodityCodeIsActive(PurApItem item) {
+    protected boolean validateThatCommodityCodeIsActive(final PurApItem item) {
         if (shouldCheckCommodityCodeIsActive(item)) {
 	        if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
 	            //This is the case where the commodity code on the item is not active.
@@ -186,7 +186,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
     }
     
     public void setBusinessObjectDictionaryService(
-            BusinessObjectDictionaryService businessObjectDictionaryService) {
+            final BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
@@ -194,7 +194,7 @@ public class PurchasingCommodityCodeValidation extends GenericValidation {
         return businessObjectService;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 

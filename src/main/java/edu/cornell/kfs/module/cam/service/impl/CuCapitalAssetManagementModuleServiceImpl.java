@@ -28,12 +28,13 @@ import java.util.Map;
 
 public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManagementModuleServiceImpl {
 
-    protected boolean checkNewCapitalAssetFieldsExist(CapitalAssetInformation capitalAssetInformation,
-            AccountingDocument accountingDocument, int caLineIndex) {
+    protected boolean checkNewCapitalAssetFieldsExist(
+            final CapitalAssetInformation capitalAssetInformation,
+            final AccountingDocument accountingDocument, final int caLineIndex) {
         boolean valid = true;
 
         if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetTypeCode())) {
-            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+            final String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
                     KFSPropertyConstants.CAPITAL_ASSET_TYPE_CODE);
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_TYPE_CODE,
                     KFSKeyConstants.ERROR_REQUIRED, label);
@@ -42,7 +43,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
 
         if (capitalAssetInformation.getCapitalAssetQuantity() == null
                 || capitalAssetInformation.getCapitalAssetQuantity() <= 0) {
-            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+            final String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
                     KFSPropertyConstants.CAPITAL_ASSET_QUANTITY);
             GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_QUANTITY,
                     KFSKeyConstants.ERROR_REQUIRED, label);
@@ -56,11 +57,11 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
         if ("Y".equalsIgnoreCase(vendorNameRequired)) {
             // skip vendor name required validation for procurement card document
             // skip vendor name required validation for FP Docs
-            String pid = KEWServiceLocator.getDocumentTypeService().findByDocumentId(accountingDocument.getDocumentNumber()).getDocTypeParentId();
-            String docType = KEWServiceLocator.getDocumentTypeService().findById(pid).getName();
+            final String pid = KEWServiceLocator.getDocumentTypeService().findByDocumentId(accountingDocument.getDocumentNumber()).getDocTypeParentId();
+            final String docType = KEWServiceLocator.getDocumentTypeService().findById(pid).getName();
 
             if (!("FP".equals(docType)) && !(accountingDocument instanceof ProcurementCardDocument) && StringUtils.isBlank(capitalAssetInformation.getVendorName())) {
-                String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class, KFSPropertyConstants.VENDOR_NAME);
+                final String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class, KFSPropertyConstants.VENDOR_NAME);
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.VENDOR_NAME, KFSKeyConstants.ERROR_REQUIRED, label);
                 valid = false;
             }
@@ -68,11 +69,11 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
 
         //MANUFACTURER_IS_REQUIRED_FOR_NON_MOVEABLE_ASSET parameter determines if we need to check
         //vendor name entered.
-        String manufacturerNameRequired = getParameterService().getParameterValueAsString(Asset.class, CamsParameterConstants.MANUFACTURER_REQUIRED_FOR_NON_MOVABLE_ASSET_IND);
+        final String manufacturerNameRequired = getParameterService().getParameterValueAsString(Asset.class, CamsParameterConstants.MANUFACTURER_REQUIRED_FOR_NON_MOVABLE_ASSET_IND);
 
         if ("Y".equalsIgnoreCase(manufacturerNameRequired)) {
             if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetManufacturerName())) {
-                String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+                final String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
                         KFSPropertyConstants.CAPITAL_ASSET_MANUFACTURE_NAME);
                 GlobalVariables.getMessageMap().putError(KFSPropertyConstants.CAPITAL_ASSET_MANUFACTURE_NAME,
                         KFSKeyConstants.ERROR_REQUIRED, label);
@@ -81,7 +82,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
         }
 
         if (StringUtils.isBlank(capitalAssetInformation.getCapitalAssetDescription())) {
-            String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
+            final String label = this.getDataDictionaryService().getAttributeLabel(CapitalAssetInformation.class,
                     CamsPropertyConstants.Asset.CAPITAL_ASSET_DESCRIPTION);
             GlobalVariables.getMessageMap().putError(CamsPropertyConstants.Asset.CAPITAL_ASSET_DESCRIPTION,
                     KFSKeyConstants.ERROR_REQUIRED, label);
@@ -89,29 +90,29 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
         }
 
         int index = 0;
-        List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
-        for (CapitalAssetInformationDetail dtl : capitalAssetInformationDetails) {
-            String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." +
+        final List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
+        for (final CapitalAssetInformationDetail dtl : capitalAssetInformationDetails) {
+            final String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." +
                     KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "[" + caLineIndex + "]." +
                     KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
-            CapitalAssetInformationDetailExtendedAttribute capDetailExt = (CapitalAssetInformationDetailExtendedAttribute) dtl.getExtension();
+            final CapitalAssetInformationDetailExtendedAttribute capDetailExt = (CapitalAssetInformationDetailExtendedAttribute) dtl.getExtension();
 
-            String buildingCd = dtl.getBuildingCode();
-            String roomCd = dtl.getBuildingRoomNumber();
-            String assetLocationCityName = capDetailExt.getAssetLocationCityName();
-            String assetLocationCountryCode = capDetailExt.getAssetLocationCountryCode();
-            String assetLocationStateCode = capDetailExt.getAssetLocationStateCode();
-            String assetLocationStreetAddress = capDetailExt.getAssetLocationStreetAddress();
-            String assetLocationZipCode = capDetailExt.getAssetLocationZipCode();
+            final String buildingCd = dtl.getBuildingCode();
+            final String roomCd = dtl.getBuildingRoomNumber();
+            final String assetLocationCityName = capDetailExt.getAssetLocationCityName();
+            final String assetLocationCountryCode = capDetailExt.getAssetLocationCountryCode();
+            final String assetLocationStateCode = capDetailExt.getAssetLocationStateCode();
+            final String assetLocationStreetAddress = capDetailExt.getAssetLocationStreetAddress();
+            final String assetLocationZipCode = capDetailExt.getAssetLocationZipCode();
             
             // Room is not required for non-moveable
-            AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
+            final AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
 
             if (StringUtils.isBlank(assetLocationCityName) && StringUtils.isBlank(assetLocationStateCode) && StringUtils.isBlank(assetLocationCountryCode) && StringUtils.isBlank(assetLocationStreetAddress) && StringUtils.isBlank(assetLocationZipCode)) {
                 // Building code required for moveable assets or assets that require building
                 if (ObjectUtils.isNull(assetType) || assetType.isMovingIndicator() || assetType.isRequiredBuildingIndicator()) {
                     if (StringUtils.isBlank(dtl.getBuildingCode())) {
-                        String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
+                        final String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
                         GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, KFSKeyConstants.ERROR_REQUIRED, label);
                         valid = false;
                     }
@@ -120,7 +121,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
                 if (ObjectUtils.isNull(assetType) || assetType.isMovingIndicator()) {
                     // Room is required for moveable
                     if (StringUtils.isBlank(roomCd)) {
-                        String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
+                        final String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
                         GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, KFSKeyConstants.ERROR_REQUIRED, label);
                         valid = false;
                     }
@@ -166,29 +167,31 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
         return valid;
     }
 
-    protected boolean validateAssetTagLocationLines(CapitalAssetInformation capitalAssetInformation, int capitalAssetIndex, AccountingDocument accountingDocument) {
+    protected boolean validateAssetTagLocationLines(
+            final CapitalAssetInformation capitalAssetInformation, 
+            final int capitalAssetIndex, final AccountingDocument accountingDocument) {
         boolean valid = true;
 
-        List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
+        final List<CapitalAssetInformationDetail> capitalAssetInformationDetails = capitalAssetInformation.getCapitalAssetInformationDetails();
         int index = 0;
 
-        for (CapitalAssetInformationDetail dtl : capitalAssetInformationDetails) {
-            CapitalAssetInformationDetailExtendedAttribute capDetailExt = (CapitalAssetInformationDetailExtendedAttribute) dtl.getExtension();
+        for (final CapitalAssetInformationDetail dtl : capitalAssetInformationDetails) {
+            final CapitalAssetInformationDetailExtendedAttribute capDetailExt = (CapitalAssetInformationDetailExtendedAttribute) dtl.getExtension();
             
-            String assetLocationCityName = capDetailExt.getAssetLocationCityName();
-            String assetLocationCountryCode = capDetailExt.getAssetLocationCountryCode();
-            String assetLocationStateCode = capDetailExt.getAssetLocationStateCode();
-            String assetLocationStreetAddress = capDetailExt.getAssetLocationStreetAddress();
-            String assetLocationZipCode = capDetailExt.getAssetLocationZipCode();
+            final String assetLocationCityName = capDetailExt.getAssetLocationCityName();
+            final String assetLocationCountryCode = capDetailExt.getAssetLocationCountryCode();
+            final String assetLocationStateCode = capDetailExt.getAssetLocationStateCode();
+            final String assetLocationStreetAddress = capDetailExt.getAssetLocationStreetAddress();
+            final String assetLocationZipCode = capDetailExt.getAssetLocationZipCode();
             // We have to explicitly call this DD service to upper case each field. This may not be the best place and maybe form
             // populate is a better place but we CAMS team don't own FP document. This is the best we can do for now.
             businessObjectDictionaryService.performForceUppercase(dtl);
-            String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "[" + capitalAssetIndex + "]." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
+            final String errorPathPrefix = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION + "[" + capitalAssetIndex + "]." + KFSPropertyConstants.CAPITAL_ASSET_INFORMATION_DETAILS;
             if (StringUtils.isNotBlank(dtl.getCampusCode())) {
-                Campus campus = businessObjectService.findBySinglePrimaryKey(Campus.class, dtl.getCampusCode());
+                final Campus campus = businessObjectService.findBySinglePrimaryKey(Campus.class, dtl.getCampusCode());
                 if (ObjectUtils.isNull(campus)) {
                     valid = false;
-                    String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CODE);
+                    final String label = this.getDataDictionaryService().getAttributeLabel(Campus.class, KFSPropertyConstants.CODE);
                     GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.CAMPUS_CODE, KFSKeyConstants.ERROR_EXISTENCE, label);
                 }
             }
@@ -198,7 +201,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
                 params = new HashMap<String, String>();
                 params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
                 params.put(KFSPropertyConstants.BUILDING_CODE, dtl.getBuildingCode());
-                Building building = businessObjectService.findByPrimaryKey(Building.class, params);
+                final Building building = businessObjectService.findByPrimaryKey(Building.class, params);
                 // Check if building is valid
                 if (ObjectUtils.isNull(building)) {
                     valid = false;
@@ -206,12 +209,12 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
                 }
             }
 
-            AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
+            final AssetType assetType = getAssetType(capitalAssetInformation.getCapitalAssetTypeCode());
             if (StringUtils.isBlank(assetLocationCityName) && StringUtils.isBlank(assetLocationStateCode) && StringUtils.isBlank(assetLocationCountryCode) && StringUtils.isBlank(assetLocationStreetAddress) && StringUtils.isBlank(assetLocationZipCode)) {
                 // If building was specified but was not required for this asset type display an error
                 if (StringUtils.isNotBlank(dtl.getBuildingCode()) && ObjectUtils.isNotNull(assetType) && !assetType.isMovingIndicator() && !assetType.isRequiredBuildingIndicator()) {
                     valid = false;
-                    String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
+                    final String label = this.getDataDictionaryService().getAttributeLabel(Building.class, KFSPropertyConstants.BUILDING_CODE);
                     GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_CODE, CamsKeyConstants.AssetLocation.ERROR_ASSET_LOCATION_BUILDING_NON_MOVABLE, label);
                 }
 
@@ -220,7 +223,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
                     params.put(KFSPropertyConstants.CAMPUS_CODE, dtl.getCampusCode());
                     params.put(KFSPropertyConstants.BUILDING_CODE, dtl.getBuildingCode());
                     params.put(KFSPropertyConstants.BUILDING_ROOM_NUMBER, dtl.getBuildingRoomNumber());
-                    Room room = businessObjectService.findByPrimaryKey(Room.class, params);
+                    final Room room = businessObjectService.findByPrimaryKey(Room.class, params);
                     // Check if room is valid
                     if (ObjectUtils.isNull(room)) {
                         valid = false;
@@ -231,7 +234,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
                 // If room was specified but was not required for this asset type display an error
                 if (StringUtils.isNotBlank(dtl.getBuildingRoomNumber()) && ObjectUtils.isNotNull(assetType) && !assetType.isMovingIndicator()) {
                     valid = false;
-                    String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
+                    final String label = this.getDataDictionaryService().getAttributeLabel(Room.class, KFSPropertyConstants.BUILDING_ROOM_NUMBER);
                     GlobalVariables.getMessageMap().putErrorWithoutFullErrorPath(errorPathPrefix + "[" + index + "]" + "." + KFSPropertyConstants.BUILDING_ROOM_NUMBER, CamsKeyConstants.AssetLocation.ERROR_ASSET_LOCATION_ROOM_NUMBER_NON_MOVABLE, label);
                 }
             }
@@ -250,8 +253,8 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
      * @return
      */
     @Override
-    protected String buildNoteTextForPurApDoc(String documentType, List<Long> assetNumbers) {
-        StringBuffer noteText = new StringBuffer();
+    protected String buildNoteTextForPurApDoc(final String documentType, final List<Long> assetNumbers) {
+        final StringBuffer noteText = new StringBuffer();
 
         if (CamsConstants.DocumentTypeName.ASSET_ADD_GLOBAL.equalsIgnoreCase(documentType)) {
             noteText.append("Asset Numbers have been created for this document: ");
@@ -261,7 +264,7 @@ public class CuCapitalAssetManagementModuleServiceImpl extends CapitalAssetManag
 
         if (assetNumbers != null && assetNumbers.size() > 0) {
             int i = 0;
-            for (Long assetNumber : assetNumbers) {
+            for (final Long assetNumber : assetNumbers) {
                 if (i++ == 0) {
                     noteText.append(assetNumber.toString());
                 } else {

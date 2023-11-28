@@ -18,25 +18,26 @@ import edu.cornell.kfs.module.purap.document.CuPurchaseOrderAmendmentDocument;
 
 public class CuReceivingServiceImpl extends ReceivingServiceImpl {
 
-    protected void spawnPoAmendmentForUnorderedItems(ReceivingDocument receivingDocument, PurchaseOrderDocument po){
+    protected void spawnPoAmendmentForUnorderedItems(
+            final ReceivingDocument receivingDocument, final PurchaseOrderDocument po){
 
         //if receiving line document
         if (receivingDocument instanceof LineItemReceivingDocument) {
-            LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)receivingDocument;
+            final LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)receivingDocument;
 
             //if a new item has been added spawn a purchase order amendment
             if( hasNewUnorderedItem((LineItemReceivingDocument)receivingDocument) ){
-                String newSessionUserId = KFSConstants.SYSTEM_USER;
+                final String newSessionUserId = KFSConstants.SYSTEM_USER;
 
 
-                LogicContainer logicToRun = new LogicContainer() {
+                final LogicContainer logicToRun = new LogicContainer() {
                     @Override
                     public Object runLogic(Object[] objects) {
-                        LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
-                        String poDocNumber = (String)objects[1];
+                        final LineItemReceivingDocument rlDoc = (LineItemReceivingDocument)objects[0];
+                        final String poDocNumber = (String)objects[1];
 
                         //create a PO amendment
-                        PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
+                        final PurchaseOrderAmendmentDocument amendmentPo = (PurchaseOrderAmendmentDocument) purchaseOrderService.createAndSavePotentialChangeDocument(poDocNumber, PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT, PurchaseOrderStatuses.APPDOC_AMENDMENT);
 
                         // KFSPTS-1769, KFSUPGRADE-339
                         ((CuPurchaseOrderAmendmentDocument)amendmentPo).setSpawnPoa(true);
@@ -47,9 +48,9 @@ public class CuReceivingServiceImpl extends ReceivingServiceImpl {
                         documentService.routeDocument(amendmentPo, null, null);
 
                         //add note to amendment po document
-                        String note = "Purchase Order Amendment " + amendmentPo.getPurapDocumentIdentifier() + " (document id " + amendmentPo.getDocumentNumber() + ") created for new unordered line items due to Receiving (document id " + rlDoc.getDocumentNumber() + ")";
+                        final String note = "Purchase Order Amendment " + amendmentPo.getPurapDocumentIdentifier() + " (document id " + amendmentPo.getDocumentNumber() + ") created for new unordered line items due to Receiving (document id " + rlDoc.getDocumentNumber() + ")";
 
-                        Note noteObj = documentService.createNoteFromDocument(amendmentPo, note);
+                        final Note noteObj = documentService.createNoteFromDocument(amendmentPo, note);
                         amendmentPo.addNote(noteObj);
                         noteService.save(noteObj);
 
@@ -64,7 +65,7 @@ public class CuReceivingServiceImpl extends ReceivingServiceImpl {
     }
     
     @Override
-    public String getReceivingDeliveryCampusCode(PurchaseOrderDocument po){
+    public String getReceivingDeliveryCampusCode(final PurchaseOrderDocument po){
         if (GlobalVariables.getUserSession() == null) {
             GlobalVariables.setUserSession(new UserSession(KRADConstants.SYSTEM_USER));
             GlobalVariables.clear();

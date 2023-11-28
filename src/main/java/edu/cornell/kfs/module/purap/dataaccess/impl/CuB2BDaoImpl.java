@@ -36,7 +36,7 @@ public class CuB2BDaoImpl extends B2BDaoImpl {
              final HttpPost httpPost = new HttpPost(punchoutUrl);
              if (request.contains("MIME_BOUNDARY_FOR_ATTACHMENTS")) {
             	// KFSPTS-794 : for attachments
-                 Map<String, String> parameters = new HashMap<String, String>();
+                 final Map<String, String> parameters = new HashMap<String, String>();
                  parameters.put("boundary", CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS);
                  httpPost.addHeader(HttpHeaders.CONTENT_TYPE, new MediaType(MediaType.MULTIPART_RELATED, parameters));
                  httpPost.setEntity(new StringEntity(request, StandardCharsets.ISO_8859_1));

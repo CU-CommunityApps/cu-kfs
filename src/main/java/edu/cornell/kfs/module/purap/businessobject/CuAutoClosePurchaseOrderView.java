@@ -12,7 +12,7 @@ public class CuAutoClosePurchaseOrderView extends AutoClosePurchaseOrderView {
         return appDocStatus;
     }
 
-    public void setAppDocStatus(String appDocStatus) {
+    public void setAppDocStatus(final String appDocStatus) {
         this.appDocStatus = appDocStatus;
     }
 

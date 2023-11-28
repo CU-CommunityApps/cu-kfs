@@ -25,12 +25,12 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
      * @see org.kuali.kfs.coa.service.impl.SubAccountTrickleDownInactivationServiceImpl#trickleDownInactivateSubAccounts(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
      */
 	@Override
-    public void trickleDownInactivateSubAccounts(Account inactivatedAccount, String documentNumber) {
-        List<SubAccount> inactivatedSubAccounts = new ArrayList<>();
-        Map<SubAccount, String> alreadyLockedSubAccounts = new HashMap<>();
-        List<SubAccount> errorPersistingSubAccounts = new ArrayList<>();
+    public void trickleDownInactivateSubAccounts(final Account inactivatedAccount, final String documentNumber) {
+        final List<SubAccount> inactivatedSubAccounts = new ArrayList<>();
+        final Map<SubAccount, String> alreadyLockedSubAccounts = new HashMap<>();
+        final List<SubAccount> errorPersistingSubAccounts = new ArrayList<>();
         
-        Maintainable subAccountMaintainable;
+        final Maintainable subAccountMaintainable;
         try {
             subAccountMaintainable = (Maintainable) maintenanceDocumentDictionaryService.getMaintainableClass(SubAccount.class.getName()).newInstance();
             subAccountMaintainable.setDataObjectClass(SubAccount.class);
@@ -44,13 +44,13 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
         inactivatedAccount.refreshReferenceObject(KFSPropertyConstants.SUB_ACCOUNTS);
 		if (ObjectUtils.isNotNull(inactivatedAccount.getSubAccounts()) 
 		        && !inactivatedAccount.getSubAccounts().isEmpty()) {
-			for (Object entry : inactivatedAccount.getSubAccounts()) {
-				SubAccount subAccount = (SubAccount) entry;
+			for (final Object entry : inactivatedAccount.getSubAccounts()) {
+				final SubAccount subAccount = (SubAccount) entry;
                 if (subAccount.isActive()) {
                     subAccountMaintainable.setBusinessObject(subAccount);
-                    List<MaintenanceLock> subAccountLocks = subAccountMaintainable.generateMaintenanceLocks();
+                    final List<MaintenanceLock> subAccountLocks = subAccountMaintainable.generateMaintenanceLocks();
                     
-                    MaintenanceLock failedLock = verifyAllLocksFromThisDocument(subAccountLocks, documentNumber);
+                    final MaintenanceLock failedLock = verifyAllLocksFromThisDocument(subAccountLocks, documentNumber);
                     if (failedLock != null) {
                         // another document has locked this sub account, so we don't try to inactivate the account
                         alreadyLockedSubAccounts.put(subAccount, failedLock.getDocumentNumber());
@@ -85,13 +85,15 @@ public class CuSubAccountTrickleDownInactivationServiceImpl extends SubAccountTr
      * @param alreadyLockedSubAccounts
      * @param errorPersistingSubAccounts
      */
-    protected void addNotesToAccountObject(String documentNumber, Account inactivatedAccount, List<SubAccount> inactivatedSubAccounts, Map<SubAccount, String> alreadyLockedSubAccounts, List<SubAccount> errorPersistingSubAccounts) {
+    protected void addNotesToAccountObject(final String documentNumber, final Account inactivatedAccount,
+            final List<SubAccount> inactivatedSubAccounts, final Map<SubAccount, String> alreadyLockedSubAccounts,
+            final List<SubAccount> errorPersistingSubAccounts) {
         if (inactivatedSubAccounts.isEmpty() && alreadyLockedSubAccounts.isEmpty() && errorPersistingSubAccounts.isEmpty()) {
             // if we didn't try to inactivate any sub-accounts, then don't bother
             return;
         }
 
-        Note newNote = new Note();
+        final Note newNote = new Note();
         
         addNotes(documentNumber, inactivatedSubAccounts, COAKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION, inactivatedAccount, newNote);
         addNotes(documentNumber, errorPersistingSubAccounts,COAKeyConstants.SUB_ACCOUNT_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, inactivatedAccount, newNote);

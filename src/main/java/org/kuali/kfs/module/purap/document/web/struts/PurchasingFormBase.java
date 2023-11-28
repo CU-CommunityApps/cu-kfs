@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,15 +52,16 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     protected Boolean notOtherDeliveryBuilding = true;
     protected Boolean hideDistributeAccounts = true;
     protected PurApItem newPurchasingItemLine;
-    protected FormFile itemImportFile; // file from which items can be imported
+    // file from which items can be imported
+    protected FormFile itemImportFile; 
     protected String distributePurchasingCommodityCode;
     protected String distributePurchasingCommodityDescription;
     protected boolean calculated;
 
     protected String initialZipCode;
 
-    // *** Note that the following variables do not use camel caps ON PURPOSE, because of how the accounting lines tag uses the
-    // accountPrefix
+    // *** Note that the following variables do not use camel caps ON PURPOSE, because of how the accounting lines
+    // tag uses the accountPrefix
     protected Integer accountDistributionnextSourceLineNumber;
     protected List<PurApAccountingLine> accountDistributionsourceAccountingLines;
     protected PurApAccountingLine accountDistributionnewSourceLine;
@@ -80,21 +81,21 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      */
     public PurchasingFormBase() {
         super();
-        this.setNewPurchasingItemLine(setupNewPurchasingItemLine());
+        setNewPurchasingItemLine(setupNewPurchasingItemLine());
         newPurchasingItemLine.setItemTypeCode("ITEM");
 
-        this.accountDistributionnextSourceLineNumber = new Integer(1);
-        setAccountDistributionsourceAccountingLines(new ArrayList());
-        this.setAccountDistributionnewSourceLine(setupNewAccountDistributionAccountingLine());
+        accountDistributionnextSourceLineNumber = new Integer(1);
+        setAccountDistributionsourceAccountingLines(new ArrayList<>());
+        setAccountDistributionnewSourceLine(setupNewAccountDistributionAccountingLine());
 
-        this.setNewPurchasingCapitalAssetLocationLine(this.setupNewPurchasingCapitalAssetLocationLine());
+        setNewPurchasingCapitalAssetLocationLine(setupNewPurchasingCapitalAssetLocationLine());
 
         calculated = false;
     }
 
 
     @Override
-    protected void populateAccountingLinesForResponse(String methodToCall, Map parameterMap) {
+    protected void populateAccountingLinesForResponse(final String methodToCall, final Map parameterMap) {
         super.populateAccountingLinesForResponse(methodToCall, parameterMap);
         populateAccountingLine(getAccountDistributionnewSourceLine(), PurapPropertyConstants.ACCOUNT_DISTRIBUTION_NEW_SRC_LINE, parameterMap);
 
@@ -104,7 +105,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return notOtherDeliveryBuilding;
     }
 
-    public void setNotOtherDeliveryBuilding(Boolean notOtherDeliveryBuilding) {
+    public void setNotOtherDeliveryBuilding(final Boolean notOtherDeliveryBuilding) {
         this.notOtherDeliveryBuilding = notOtherDeliveryBuilding;
     }
 
@@ -112,7 +113,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return hideDistributeAccounts;
     }
 
-    public void setHideDistributeAccounts(Boolean hideDistributeAccounts) {
+    public void setHideDistributeAccounts(final Boolean hideDistributeAccounts) {
         this.hideDistributeAccounts = hideDistributeAccounts;
     }
 
@@ -120,7 +121,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return accountDistributionnextSourceLineNumber;
     }
 
-    public void setAccountDistributionnextSourceLineNumber(Integer accountDistributionnextSourceLineNumber) {
+    public void setAccountDistributionnextSourceLineNumber(final Integer accountDistributionnextSourceLineNumber) {
         this.accountDistributionnextSourceLineNumber = accountDistributionnextSourceLineNumber;
     }
 
@@ -128,21 +129,21 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return accountDistributionsourceAccountingLines;
     }
 
-    public void setAccountDistributionsourceAccountingLines(List<PurApAccountingLine> accountDistributionAccountingLines) {
+    public void setAccountDistributionsourceAccountingLines(final List<PurApAccountingLine> accountDistributionAccountingLines) {
         this.accountDistributionsourceAccountingLines = accountDistributionAccountingLines;
     }
 
     public BigDecimal getTotalPercentageOfAccountDistributionsourceAccountingLines() {
-        this.totalPercentageOfAccountDistributionsourceAccountingLines = new BigDecimal(0);
-        for (PurApAccountingLine line : this.getAccountDistributionsourceAccountingLines()) {
+        totalPercentageOfAccountDistributionsourceAccountingLines = new BigDecimal(0);
+        for (final PurApAccountingLine line : getAccountDistributionsourceAccountingLines()) {
             if (line.getAccountLinePercent() != null) {
-                setTotalPercentageOfAccountDistributionsourceAccountingLines(this.totalPercentageOfAccountDistributionsourceAccountingLines.add(line.getAccountLinePercent()));
+                setTotalPercentageOfAccountDistributionsourceAccountingLines(totalPercentageOfAccountDistributionsourceAccountingLines.add(line.getAccountLinePercent()));
             }
         }
-        return this.totalPercentageOfAccountDistributionsourceAccountingLines;
+        return totalPercentageOfAccountDistributionsourceAccountingLines;
     }
 
-    public void setTotalPercentageOfAccountDistributionsourceAccountingLines(BigDecimal total) {
+    public void setTotalPercentageOfAccountDistributionsourceAccountingLines(final BigDecimal total) {
         this.totalPercentageOfAccountDistributionsourceAccountingLines = total;
     }
 
@@ -150,7 +151,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return accountDistributionnewSourceLine;
     }
 
-    public void setAccountDistributionnewSourceLine(PurApAccountingLine accountDistributionnewSourceLine) {
+    public void setAccountDistributionnewSourceLine(final PurApAccountingLine accountDistributionnewSourceLine) {
         this.accountDistributionnewSourceLine = accountDistributionnewSourceLine;
     }
 
@@ -158,7 +159,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return newPurchasingItemLine;
     }
 
-    public void setNewPurchasingItemLine(PurApItem newPurchasingItemLine) {
+    public void setNewPurchasingItemLine(final PurApItem newPurchasingItemLine) {
         this.newPurchasingItemLine = newPurchasingItemLine;
     }
 
@@ -166,7 +167,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return itemImportFile;
     }
 
-    public void setItemImportFile(FormFile itemImportFile) {
+    public void setItemImportFile(final FormFile itemImportFile) {
         this.itemImportFile = itemImportFile;
     }
 
@@ -176,7 +177,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      * @param index the index of the Account Distribution Source Accounting Line.
      * @return the specified Account Distribution Source Accounting Line.
      */
-    public PurApAccountingLine getAccountDistributionsourceAccountingLine(int index) {
+    public PurApAccountingLine getAccountDistributionsourceAccountingLine(final int index) {
         while (accountDistributionsourceAccountingLines.size() <= index) {
             accountDistributionsourceAccountingLines.add(setupNewAccountDistributionAccountingLine());
         }
@@ -189,7 +190,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      * @return the new Purchasing Item Line.
      */
     public PurApItem getAndResetNewPurchasingItemLine() {
-        PurApItem aPurchasingItemLine = getNewPurchasingItemLine();
+        final PurApItem aPurchasingItemLine = getNewPurchasingItemLine();
         setNewPurchasingItemLine(setupNewPurchasingItemLine());
         return aPurchasingItemLine;
     }
@@ -223,18 +224,18 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      * @param line the accounting line to add to the list.
      * @see org.kuali.kfs.sys.document.AccountingDocument#addSourceAccountingLine(SourceAccountingLine)
      */
-    public void addAccountDistributionsourceAccountingLine(PurApAccountingLine line) {
-        line.setSequenceNumber(this.getAccountDistributionnextSourceLineNumber());
-        this.accountDistributionsourceAccountingLines.add(line);
-        this.accountDistributionnextSourceLineNumber = new Integer(this.getAccountDistributionnextSourceLineNumber().intValue() + 1);
-        this.setAccountDistributionnewSourceLine(setupNewAccountDistributionAccountingLine());
+    public void addAccountDistributionsourceAccountingLine(final PurApAccountingLine line) {
+        line.setSequenceNumber(getAccountDistributionnextSourceLineNumber());
+        accountDistributionsourceAccountingLines.add(line);
+        accountDistributionnextSourceLineNumber = new Integer(getAccountDistributionnextSourceLineNumber().intValue() + 1);
+        setAccountDistributionnewSourceLine(setupNewAccountDistributionAccountingLine());
     }
 
     public String getDistributePurchasingCommodityCode() {
         return distributePurchasingCommodityCode;
     }
 
-    public void setDistributePurchasingCommodityCode(String distributePurchasingCommodityCode) {
+    public void setDistributePurchasingCommodityCode(final String distributePurchasingCommodityCode) {
         this.distributePurchasingCommodityCode = distributePurchasingCommodityCode;
     }
 
@@ -242,7 +243,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return distributePurchasingCommodityDescription;
     }
 
-    public void setDistributePurchasingCommodityDescription(String distributePurchasingCommodityDescription) {
+    public void setDistributePurchasingCommodityDescription(final String distributePurchasingCommodityDescription) {
         this.distributePurchasingCommodityDescription = distributePurchasingCommodityDescription;
     }
 
@@ -257,24 +258,21 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     //CAMS LOCATION
     //Must be overridden
     public CapitalAssetLocation setupNewPurchasingCapitalAssetLocationLine() {
-        CapitalAssetLocation location = null;
+        final CapitalAssetLocation location;
         try{
             location = (CapitalAssetLocation)getCapitalAssetLocationClass().newInstance();
         }
-        catch (InstantiationException e) {
+        catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Unable to get class");
         }
-        catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to get class");
-        }
-        catch (NullPointerException e) {
+        catch (final NullPointerException e) {
             throw new RuntimeException("Can't instantiate Purchasing Account from base");
         }
 
         return location;
     }
 
-    public void setNewPurchasingCapitalAssetLocationLine(CapitalAssetLocation newCapitalAssetLocationLine) {
+    public void setNewPurchasingCapitalAssetLocationLine(final CapitalAssetLocation newCapitalAssetLocationLine) {
         this.newPurchasingCapitalAssetLocationLine = newCapitalAssetLocationLine;
     }
 
@@ -283,7 +281,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     }
 
     public CapitalAssetLocation getAndResetNewPurchasingCapitalAssetLocationLine() {
-        CapitalAssetLocation assetLocation = getNewPurchasingCapitalAssetLocationLine();
+        final CapitalAssetLocation assetLocation = getNewPurchasingCapitalAssetLocationLine();
         setNewPurchasingCapitalAssetLocationLine(setupNewPurchasingCapitalAssetLocationLine());
         return assetLocation;
     }
@@ -295,7 +293,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     //Availability once
     public String getPurchasingItemCapitalAssetAvailability() {
         String availability = PurapConstants.CapitalAssetAvailability.NONE;
-        PurchasingDocument pd = (PurchasingDocument) this.getDocument();
+        final PurchasingDocument pd = (PurchasingDocument)getDocument();
 
         if (PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM.equals(pd.getCapitalAssetSystemTypeCode())
             && PurapConstants.CapitalAssetSystemStates.MODIFY.equals(pd.getCapitalAssetSystemStateCode())
@@ -312,7 +310,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 
     public String getPurchasingCapitalAssetSystemAvailability(){
         String availability = PurapConstants.CapitalAssetAvailability.NONE;
-        PurchasingDocument pd = (PurchasingDocument)this.getDocument();
+        final PurchasingDocument pd = (PurchasingDocument)getDocument();
 
         if( (PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM.equals(pd.getCapitalAssetSystemTypeCode()) && PurapConstants.CapitalAssetSystemStates.NEW.equals(pd.getCapitalAssetSystemStateCode())) ){
 
@@ -329,7 +327,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 
     public String getPurchasingCapitalAssetSystemCommentsAvailability(){
         String availability = PurapConstants.CapitalAssetAvailability.NONE;
-        PurchasingDocument pd = (PurchasingDocument)this.getDocument();
+        final PurchasingDocument pd = (PurchasingDocument)getDocument();
 
         if( (PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM.equals(pd.getCapitalAssetSystemTypeCode()) || PurapConstants.CapitalAssetSystemTypes.MULTIPLE.equals(pd.getCapitalAssetSystemTypeCode())) ){
 
@@ -346,7 +344,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 
     public String getPurchasingCapitalAssetSystemDescriptionAvailability() {
         String availability = PurapConstants.CapitalAssetAvailability.NONE;
-        PurchasingDocument pd = (PurchasingDocument) this.getDocument();
+        final PurchasingDocument pd = (PurchasingDocument)getDocument();
 
         if (PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM.equals(pd.getCapitalAssetSystemTypeCode())
             && PurapConstants.CapitalAssetSystemStates.NEW.equals(pd.getCapitalAssetSystemStateCode())
@@ -359,7 +357,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     }
     public String getPurchasingCapitalAssetLocationAvailability() {
         String availability = PurapConstants.CapitalAssetAvailability.NONE;
-        PurchasingDocument pd = (PurchasingDocument) this.getDocument();
+        final PurchasingDocument pd = (PurchasingDocument) getDocument();
 
         if ((PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM.equals(pd.getCapitalAssetSystemTypeCode()) && PurapConstants.CapitalAssetSystemStates.NEW.equals(pd.getCapitalAssetSystemStateCode()))) {
             availability = PurapConstants.CapitalAssetAvailability.ONCE;
@@ -373,7 +371,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
 
     public String getPurchasingCapitalAssetCountAssetNumberAvailability() {
         String availability = PurapConstants.CapitalAssetAvailability.NONE;
-        PurchasingDocument pd = (PurchasingDocument) this.getDocument();
+        final PurchasingDocument pd = (PurchasingDocument)getDocument();
 
         if ((PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM.equals(pd.getCapitalAssetSystemTypeCode()) && PurapConstants.CapitalAssetSystemStates.NEW.equals(pd.getCapitalAssetSystemStateCode()))) {
             availability = PurapConstants.CapitalAssetAvailability.ONCE;
@@ -392,7 +390,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     public List<ExtraButton> getExtraButtons() {
         extraButtons.clear();
 
-        String appExternalImageURL = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
+        final String appExternalImageURL = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY);
 
         // add the calculate button if the user can edit
         if (canUserCalculate()) {
@@ -406,7 +404,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return locationBuildingFromLookup;
     }
 
-    public void setLocationBuildingFromLookup(String locationBuildingFromLookup) {
+    public void setLocationBuildingFromLookup(final String locationBuildingFromLookup) {
         this.locationBuildingFromLookup = locationBuildingFromLookup;
     }
 
@@ -414,7 +412,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return locationCampusFromLookup;
     }
 
-    public void setLocationCampusFromLookup(String locationCampusFromLookup) {
+    public void setLocationCampusFromLookup(final String locationCampusFromLookup) {
         this.locationCampusFromLookup = locationCampusFromLookup;
     }
 
@@ -422,7 +420,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return initialZipCode;
     }
 
-    public void setInitialZipCode(String initialZipCode) {
+    public void setInitialZipCode(final String initialZipCode) {
         this.initialZipCode = initialZipCode;
     }
 
@@ -430,7 +428,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
         return calculated;
     }
 
-    public void setCalculated(boolean calculated) {
+    public void setCalculated(final boolean calculated) {
         this.calculated = calculated;
     }
 
@@ -443,7 +441,7 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentFormBase#repopulateOverrides(org.kuali.kfs.sys.businessobject.AccountingLine, java.lang.String, java.util.Map)
      */
     @Override
-    protected void repopulateOverrides(AccountingLine line, String accountingLinePropertyName, Map parameterMap) {
+    protected void repopulateOverrides(final AccountingLine line, final String accountingLinePropertyName, final Map parameterMap) {
         // do nothing; purchasing documents do not have overrides
     }
 
@@ -451,13 +449,13 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
      * @return the URL to the line item import instructions
      */
     public String getLineItemImportInstructionsUrl() {
-        return SpringContext.getBean(ParameterService.class)
+        return getParameterService()
                 .getParameterValueAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class,
                         PurapParameterConstants.LINE_ITEM_IMPORT);
     }
     
     @Override
-    public boolean shouldMethodToCallParameterBeUsed(String methodToCallParameterName, String methodToCallParameterValue, HttpServletRequest request) {
+    public boolean shouldMethodToCallParameterBeUsed(final String methodToCallParameterName, final String methodToCallParameterValue, final HttpServletRequest request) {
     	// KFSPTS-985
         if (methodToCallParameterName.contains("addFavoriteAccount")) {
             return true;
@@ -466,8 +464,8 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     }
 
 	@Override
-	public boolean shouldPropertyBePopulatedInForm(String requestParameterName,
-			HttpServletRequest request) {
+	public boolean shouldPropertyBePopulatedInForm(final String requestParameterName,
+			final HttpServletRequest request) {
 		// KFSPTS-985 : force it to populate
 		if (requestParameterName.contains(".favoriteAccountLineIdentifier")) {
 			return true;
@@ -484,15 +482,15 @@ public abstract class PurchasingFormBase extends PurchasingAccountsPayableFormBa
     }
     
     public boolean isDocFinal() {
-    	WorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
     	return workflowDocument != null ? workflowDocument.isApproved() : false;
     }
     public boolean isDocEnroute() {
-    	WorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
     	return workflowDocument != null ? workflowDocument.isEnroute()  : false;
     }
     public boolean isDocCanceledOrDisapproved() {
-    	WorkflowDocument workflowDocument = this.getDocument().getDocumentHeader().getWorkflowDocument();
+    	final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
     	return workflowDocument != null ? workflowDocument.isCanceled() ||  workflowDocument.isDisapproved() : false;
     }
 

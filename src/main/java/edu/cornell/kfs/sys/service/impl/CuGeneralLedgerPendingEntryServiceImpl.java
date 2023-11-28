@@ -26,22 +26,23 @@ public class CuGeneralLedgerPendingEntryServiceImpl extends GeneralLedgerPending
      * this function is a copy of the code that was removed
      */
     @Override
-    public GeneralLedgerPendingEntry buildGeneralLedgerPendingEntry(GeneralLedgerPostingDocument document,
-            Account account, ObjectCode objectCode, String subAccountNumber, String subObjectCode,
-            String organizationReferenceId, String projectCode, String referenceNumber, String referenceTypeCode,
-            String referenceOriginCode, String description, boolean isDebit, KualiDecimal amount,
-            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public GeneralLedgerPendingEntry buildGeneralLedgerPendingEntry(
+            final GeneralLedgerPostingDocument document,
+            final Account account, final ObjectCode objectCode, final String subAccountNumber, final String subObjectCode,
+            final String organizationReferenceId, final String projectCode, final String referenceNumber, final String referenceTypeCode,
+            final String referenceOriginCode, final String description, final boolean isDebit, final KualiDecimal amount,
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("populateExplicitGeneralLedgerPendingEntry(AccountingDocument, AccountingLine,"
                     + " GeneralLedgerPendingEntrySequenceHelper, GeneralLedgerPendingEntry)  start");
         }
 
-        GeneralLedgerPendingEntry explicitEntry = new GeneralLedgerPendingEntry();
+        final GeneralLedgerPendingEntry explicitEntry = new GeneralLedgerPendingEntry();
         explicitEntry
                 .setFinancialDocumentTypeCode(document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
         explicitEntry.setVersionNumber(1L);
         explicitEntry.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
-        Timestamp transactionTimestamp = new Timestamp(dateTimeService.getCurrentDate().getTime());
+        final Timestamp transactionTimestamp = new Timestamp(dateTimeService.getCurrentDate().getTime());
         explicitEntry.setTransactionDate(new java.sql.Date(transactionTimestamp.getTime()));
         explicitEntry.setTransactionEntryProcessedTs(transactionTimestamp);
         explicitEntry.setAccountNumber(account.getAccountNumber());

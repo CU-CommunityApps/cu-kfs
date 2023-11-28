@@ -30,23 +30,23 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
     private FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService;
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = super.validate(event);
-        PurchasingAccountsPayableDocument purapDocument = (PurchasingAccountsPayableDocument)event.getDocument();
-        PurchaseOrderDocument poDocument = (PurchaseOrderDocument) purapDocument;
-        MessageMap errorMap = GlobalVariables.getMessageMap();
+        final PurchasingAccountsPayableDocument purapDocument = (PurchasingAccountsPayableDocument)event.getDocument();
+        final PurchaseOrderDocument poDocument = (PurchaseOrderDocument) purapDocument;
+        final MessageMap errorMap = GlobalVariables.getMessageMap();
         errorMap.clearErrorPath();
         errorMap.addToErrorPath(PurapConstants.VENDOR_ERRORS);
 
         // check to see if the vendor exists in the database, i.e. its ID is not null
-        Integer vendorHeaderID = poDocument.getVendorHeaderGeneratedIdentifier();
+        final Integer vendorHeaderID = poDocument.getVendorHeaderGeneratedIdentifier();
         if (ObjectUtils.isNull(vendorHeaderID)) {
             valid = false;
             errorMap.putError(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.ERROR_NONEXIST_VENDOR);
         }
 
         // vendor active validation...
-        VendorDetail vendorDetail = super.getVendorService().getVendorDetail(poDocument.getVendorHeaderGeneratedIdentifier(), poDocument.getVendorDetailAssignedIdentifier());
+        final VendorDetail vendorDetail = super.getVendorService().getVendorDetail(poDocument.getVendorHeaderGeneratedIdentifier(), poDocument.getVendorDetailAssignedIdentifier());
         if (ObjectUtils.isNull(vendorDetail)) {
             return valid;
         }
@@ -61,10 +61,10 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
         super.getPostalCodeValidationService().validateAddress(poDocument.getVendorCountryCode(), poDocument.getVendorStateCode(), poDocument.getVendorPostalCode(), PurapPropertyConstants.VENDOR_STATE_CODE, PurapPropertyConstants.VENDOR_POSTAL_CODE);
 
         // Do checks for alternate payee vendor.
-        Integer alternateVendorHdrGeneratedId = poDocument.getAlternateVendorHeaderGeneratedIdentifier();
-        Integer alternateVendorHdrDetailAssignedId = poDocument.getAlternateVendorDetailAssignedIdentifier();
+        final Integer alternateVendorHdrGeneratedId = poDocument.getAlternateVendorHeaderGeneratedIdentifier();
+        final Integer alternateVendorHdrDetailAssignedId = poDocument.getAlternateVendorDetailAssignedIdentifier();
 
-        VendorDetail alternateVendor = super.getVendorService().getVendorDetail(alternateVendorHdrGeneratedId,alternateVendorHdrDetailAssignedId);
+        final VendorDetail alternateVendor = super.getVendorService().getVendorDetail(alternateVendorHdrGeneratedId,alternateVendorHdrDetailAssignedId);
 
         if (alternateVendor != null) {
             if (alternateVendor.isVendorDebarred()) {
@@ -99,7 +99,7 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
 		return vendorService;
 	}
 
-	public void setVendorService(VendorService vendorService) {
+	public void setVendorService(final VendorService vendorService) {
 		super.setVendorService(vendorService);
 		this.vendorService = vendorService;
 	}
@@ -108,7 +108,7 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
 		return parameterService;
 	}
 
-	public void setParameterService(ParameterService parameterService) {
+	public void setParameterService(final ParameterService parameterService) {
 		super.setParameterService(parameterService);
 		this.parameterService = parameterService;
 	}
@@ -118,7 +118,7 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
 	}
 
 	public void setPostalCodeValidationService(
-			PostalCodeValidationService postalCodeValidationService) {
+			final PostalCodeValidationService postalCodeValidationService) {
 		super.setPostalCodeValidationService(postalCodeValidationService);
 		this.postalCodeValidationService = postalCodeValidationService;
 	}
@@ -128,7 +128,7 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
 	}
 
 	public void setPurchaseOrderTransmissionMethodDataRulesService(
-			PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService) {
+			final PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService) {
 		super.setPurchaseOrderTransmissionMethodDataRulesService(purchaseOrderTransmissionMethodDataRulesService);
 		this.purchaseOrderTransmissionMethodDataRulesService = purchaseOrderTransmissionMethodDataRulesService;
 	}
@@ -138,7 +138,7 @@ public class CuPurchaseOrderProcessVendorValidation extends CuPurchasingProcessV
 	}
 
 	public void setFinancialSystemWorkflowHelperService(
-			FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService) {
+			final FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService) {
 		super.setFinancialSystemWorkflowHelperService(financialSystemWorkflowHelperService);
 		this.financialSystemWorkflowHelperService = financialSystemWorkflowHelperService;
 	}

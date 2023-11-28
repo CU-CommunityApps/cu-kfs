@@ -46,51 +46,51 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
     
     @Override
     public void addSourceAccountingLine(SourceAccountingLine sourceLine) {
-        ProcurementCardSourceAccountingLine line = (ProcurementCardSourceAccountingLine) sourceLine;
+        final ProcurementCardSourceAccountingLine line = (ProcurementCardSourceAccountingLine) sourceLine;
 
-        line.setSequenceNumber(this.getNextSourceLineNumber());
+        line.setSequenceNumber(getNextSourceLineNumber());
 
-        for (Object transactionEntryObj : transactionEntries) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
+        for (final Object transactionEntryObj : transactionEntries) {
+            final ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
             transactionEntry.getSourceAccountingLines().add(line);
         }
 
-        this.nextSourceLineNumber = this.getNextSourceLineNumber() + 1;
+        nextSourceLineNumber = getNextSourceLineNumber() + 1;
     }
 
     @Override
-    public void addTargetAccountingLine(TargetAccountingLine targetLine) {
-        ProcurementCardTargetAccountingLine line = (ProcurementCardTargetAccountingLine) targetLine;
+    public void addTargetAccountingLine(final TargetAccountingLine targetLine) {
+        final ProcurementCardTargetAccountingLine line = (ProcurementCardTargetAccountingLine) targetLine;
 
-        line.setSequenceNumber(this.getNextTargetLineNumber());
+        line.setSequenceNumber(getNextTargetLineNumber());
 
-        for (Object transactionEntryObj : transactionEntries) {
-            ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
+        for (final Object transactionEntryObj : transactionEntries) {
+            final ProcurementCardTransactionDetail transactionEntry = (ProcurementCardTransactionDetail) transactionEntryObj;
             transactionEntry.getTargetAccountingLines().add(line);
         }
 
-        this.nextTargetLineNumber = this.getNextTargetLineNumber() + 1;
+        nextTargetLineNumber = getNextTargetLineNumber() + 1;
     }
     
     @Override
-    public void customizeExplicitGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
-        Date temp = getProcurementCardTransactionPostingDetailDate();
+    public void customizeExplicitGeneralLedgerPendingEntry(final GeneralLedgerPendingEntrySourceDetail postable, GeneralLedgerPendingEntry explicitEntry) {
+        final Date temp = getProcurementCardTransactionPostingDetailDate();
         
         if (temp != null && allowBackpost(temp)) {
-            Integer prevFiscYr = getPreviousFiscalYear();
+            final Integer prevFiscYr = getPreviousFiscalYear();
             
             explicitEntry.setUniversityFiscalPeriodCode(FINAL_ACCOUNTING_PERIOD);
             explicitEntry.setUniversityFiscalYear(prevFiscYr);
             
-            List<SourceAccountingLine> srcLines = getSourceAccountingLines();
+            final List<SourceAccountingLine> srcLines = getSourceAccountingLines();
             
-            for (SourceAccountingLine src : srcLines) {
+            for (final SourceAccountingLine src : srcLines) {
                 src.setPostingYear(prevFiscYr);
             }
 
-            List<TargetAccountingLine> trgLines = getTargetAccountingLines();
+            final List<TargetAccountingLine> trgLines = getTargetAccountingLines();
             
-            for (TargetAccountingLine trg : trgLines) {
+            for (final TargetAccountingLine trg : trgLines) {
                 trg.setPostingYear(prevFiscYr);
             }
         }
@@ -106,7 +106,7 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
     public Date getProcurementCardTransactionPostingDetailDate() {
         Date date = null;
         
-        for (Object temp : getTransactionEntries()) {
+        for (final Object temp : getTransactionEntries()) {
             date = ((ProcurementCardTransactionDetail) temp).getTransactionPostingDate();
         }
         
@@ -119,26 +119,26 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
      * @param tranDate
      * @return
      */
-    public boolean allowBackpost(Date tranDate) {
-        ParameterService      parameterService      = SpringContext.getBean(ParameterService.class);
-        UniversityDateService universityDateService = SpringContext.getBean(UniversityDateService.class);
+    public boolean allowBackpost(final Date tranDate) {
+        final ParameterService      parameterService      = SpringContext.getBean(ParameterService.class);
+        final UniversityDateService universityDateService = SpringContext.getBean(UniversityDateService.class);
        
-        int allowBackpost = Integer.parseInt(parameterService.getParameterValueAsString(
+        final int allowBackpost = Integer.parseInt(parameterService.getParameterValueAsString(
                 ProcurementCardLoadStep.class, PurapRuleConstants.ALLOW_BACKPOST_DAYS));
 
-        Calendar today = Calendar.getInstance();
-        Integer currentFY = universityDateService.getCurrentUniversityDate().getUniversityFiscalYear();
-        java.util.Date priorClosingDateTemp = universityDateService.getLastDateOfFiscalYear(currentFY - 1);
+        final Calendar today = Calendar.getInstance();
+        final Integer currentFY = universityDateService.getCurrentUniversityDate().getUniversityFiscalYear();
+        final java.util.Date priorClosingDateTemp = universityDateService.getLastDateOfFiscalYear(currentFY - 1);
         
-        Calendar priorClosingDate = Calendar.getInstance();
+        final Calendar priorClosingDate = Calendar.getInstance();
         priorClosingDate.setTime(priorClosingDateTemp);
 
         // adding 1 to set the date to midnight the day after backpost is allowed so that preqs allow backpost on the last day
-        Calendar allowBackpostDate = Calendar.getInstance();
+        final Calendar allowBackpostDate = Calendar.getInstance();
         allowBackpostDate.setTime(priorClosingDate.getTime());
         allowBackpostDate.add(Calendar.DATE, allowBackpost + 1);
 
-        Calendar tranCal = Calendar.getInstance();
+        final Calendar tranCal = Calendar.getInstance();
         tranCal.setTime(tranDate);
 
         // if today is after the closing date but before/equal to the allowed backpost date and the transaction date is for the
@@ -153,9 +153,9 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
     }
     
     public String getAccountNumberForSearching() {
-        ProcurementCardTransactionDetail transaction = (ProcurementCardTransactionDetail) transactionEntries.get(0);
-        TargetAccountingLine tal = (TargetAccountingLine) transaction.getTargetAccountingLines().get(0);
-        String acctNbr = tal.getAccountNumber();
+        final ProcurementCardTransactionDetail transaction = (ProcurementCardTransactionDetail) transactionEntries.get(0);
+        final TargetAccountingLine tal = (TargetAccountingLine) transaction.getTargetAccountingLines().get(0);
+        final String acctNbr = tal.getAccountNumber();
         return acctNbr;
     }
 
@@ -182,7 +182,7 @@ public class CuProcurementCardDocument extends ProcurementCardDocument {
     protected String getCustomDocumentTitle() {
        
         // set the workflow document title
-        String pcdoAmount = this.getTotalDollarAmount().toString();
+        final String pcdoAmount = this.getTotalDollarAmount().toString();
 
         return new StringBuffer(super.getDocumentTitle()).append(" - Amount: ").append(pcdoAmount).toString();
 

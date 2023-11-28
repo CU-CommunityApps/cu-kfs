@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -192,80 +192,80 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public abstract PurchasingDocumentSpecificService getDocumentSpecificService();
 
     @Override
-    public void templateVendorDetail(VendorDetail vendorDetail) {
+    public void templateVendorDetail(final VendorDetail vendorDetail) {
         if (ObjectUtils.isNotNull(vendorDetail)) {
-            this.setVendorDetail(vendorDetail);
-            this.setVendorName(vendorDetail.getVendorName());
-            this.setVendorShippingTitleCode(vendorDetail.getVendorShippingTitleCode());
-            this.setVendorPaymentTermsCode(vendorDetail.getVendorPaymentTermsCode());
-            this.setVendorShippingPaymentTermsCode(vendorDetail.getVendorShippingPaymentTermsCode());
-            this.setVendorCustomerNumber("");
+            setVendorDetail(vendorDetail);
+            setVendorName(vendorDetail.getVendorName());
+            setVendorShippingTitleCode(vendorDetail.getVendorShippingTitleCode());
+            setVendorPaymentTermsCode(vendorDetail.getVendorPaymentTermsCode());
+            setVendorShippingPaymentTermsCode(vendorDetail.getVendorShippingPaymentTermsCode());
+            setVendorCustomerNumber("");
         }
     }
 
     @Override
-    public void templateVendorContract(VendorContract vendorContract) {
+    public void templateVendorContract(final VendorContract vendorContract) {
         if (ObjectUtils.isNotNull(vendorContract)) {
-            this.setVendorContract(vendorContract);
-            this.setVendorContractGeneratedIdentifier(vendorContract.getVendorContractGeneratedIdentifier());
-            this.setVendorShippingTitleCode(vendorContract.getVendorShippingTitleCode());
-            this.setVendorPaymentTermsCode(vendorContract.getVendorPaymentTermsCode());
-            this.setVendorShippingPaymentTermsCode(vendorContract.getVendorShippingPaymentTermsCode());
-            this.setPurchaseOrderCostSourceCode(vendorContract.getPurchaseOrderCostSourceCode());
+            setVendorContract(vendorContract);
+            setVendorContractGeneratedIdentifier(vendorContract.getVendorContractGeneratedIdentifier());
+            setVendorShippingTitleCode(vendorContract.getVendorShippingTitleCode());
+            setVendorPaymentTermsCode(vendorContract.getVendorPaymentTermsCode());
+            setVendorShippingPaymentTermsCode(vendorContract.getVendorShippingPaymentTermsCode());
+            setPurchaseOrderCostSourceCode(vendorContract.getPurchaseOrderCostSourceCode());
         }
     }
 
     @Override
-    public void templateVendorAddress(VendorAddress vendorAddress) {
+    public void templateVendorAddress(final VendorAddress vendorAddress) {
         super.templateVendorAddress(vendorAddress);
         if (vendorAddress != null) {
-            this.setVendorFaxNumber(vendorAddress.getVendorFaxNumber());
-            this.setVendorAttentionName(vendorAddress.getVendorAttentionName());
+            setVendorFaxNumber(vendorAddress.getVendorFaxNumber());
+            setVendorAttentionName(vendorAddress.getVendorAttentionName());
             // KFSUPGRADE-348 : CU enhancement
             //need to save vendorAddressGeneratedIdentifier for Method of PO Transmission mod, value is null in business object when it is needed
-            this.setVendorAddressGeneratedIdentifier(vendorAddress.getVendorAddressGeneratedIdentifier());            
+            setVendorAddressGeneratedIdentifier(vendorAddress.getVendorAddressGeneratedIdentifier());            
             //Method of PO Transmission on Vendor Address should be the default when a vendor is selected.
             //set purchasing document value for po transmission method
-            this.setPurchaseOrderTransmissionMethodCode(((CuVendorAddressExtension)vendorAddress.getExtension()).getPurchaseOrderTransmissionMethodCode());
+            setPurchaseOrderTransmissionMethodCode(((CuVendorAddressExtension)vendorAddress.getExtension()).getPurchaseOrderTransmissionMethodCode());
             // end CU enhancement
         }
     }
 
     @Override
-    public void templateBillingAddress(BillingAddress billingAddress) {
+    public void templateBillingAddress(final BillingAddress billingAddress) {
         if (ObjectUtils.isNotNull(billingAddress)) {
-            this.setBillingName(billingAddress.getBillingName());
-            this.setBillingLine1Address(billingAddress.getBillingLine1Address());
-            this.setBillingLine2Address(billingAddress.getBillingLine2Address());
-            this.setBillingCityName(billingAddress.getBillingCityName());
-            this.setBillingStateCode(billingAddress.getBillingStateCode());
-            this.setBillingPostalCode(billingAddress.getBillingPostalCode());
-            this.setBillingCountryCode(billingAddress.getBillingCountryCode());
-            this.setBillingPhoneNumber(billingAddress.getBillingPhoneNumber());
-            this.setBillingEmailAddress(billingAddress.getBillingEmailAddress());
+            setBillingName(billingAddress.getBillingName());
+            setBillingLine1Address(billingAddress.getBillingLine1Address());
+            setBillingLine2Address(billingAddress.getBillingLine2Address());
+            setBillingCityName(billingAddress.getBillingCityName());
+            setBillingStateCode(billingAddress.getBillingStateCode());
+            setBillingPostalCode(billingAddress.getBillingPostalCode());
+            setBillingCountryCode(billingAddress.getBillingCountryCode());
+            setBillingPhoneNumber(billingAddress.getBillingPhoneNumber());
+            setBillingEmailAddress(billingAddress.getBillingEmailAddress());
         }
     }
 
     @Override
-    public void templateReceivingAddress(ReceivingAddress receivingAddress) {
+    public void templateReceivingAddress(final ReceivingAddress receivingAddress) {
         if (receivingAddress != null) {
-            this.setReceivingName(receivingAddress.getReceivingName());
-            this.setReceivingLine1Address(receivingAddress.getReceivingLine1Address());
-            this.setReceivingLine2Address(receivingAddress.getReceivingLine2Address());
-            this.setReceivingCityName(receivingAddress.getReceivingCityName());
-            this.setReceivingStateCode(receivingAddress.getReceivingStateCode());
-            this.setReceivingPostalCode(receivingAddress.getReceivingPostalCode());
-            this.setReceivingCountryCode(receivingAddress.getReceivingCountryCode());
-            this.setAddressToVendorIndicator(receivingAddress.isUseReceivingIndicator());
+            setReceivingName(receivingAddress.getReceivingName());
+            setReceivingLine1Address(receivingAddress.getReceivingLine1Address());
+            setReceivingLine2Address(receivingAddress.getReceivingLine2Address());
+            setReceivingCityName(receivingAddress.getReceivingCityName());
+            setReceivingStateCode(receivingAddress.getReceivingStateCode());
+            setReceivingPostalCode(receivingAddress.getReceivingPostalCode());
+            setReceivingCountryCode(receivingAddress.getReceivingCountryCode());
+            setAddressToVendorIndicator(receivingAddress.isUseReceivingIndicator());
         } else {
-            this.setReceivingName(null);
-            this.setReceivingLine1Address(null);
-            this.setReceivingLine2Address(null);
-            this.setReceivingCityName(null);
-            this.setReceivingStateCode(null);
-            this.setReceivingPostalCode(null);
-            this.setReceivingCountryCode(null);
-            this.setAddressToVendorIndicator(false);
+            setReceivingName(null);
+            setReceivingLine1Address(null);
+            setReceivingLine2Address(null);
+            setReceivingCityName(null);
+            setReceivingStateCode(null);
+            setReceivingPostalCode(null);
+            setReceivingCountryCode(null);
+            setAddressToVendorIndicator(false);
         }
     }
 
@@ -274,15 +274,15 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      */
     @Override
     public void loadReceivingAddress() {
-        String chartCode = getChartOfAccountsCode();
-        String orgCode = getOrganizationCode();
+        final String chartCode = getChartOfAccountsCode();
+        final String orgCode = getOrganizationCode();
         ReceivingAddress address = SpringContext.getBean(ReceivingAddressService.class)
                 .findUniqueDefaultByChartOrg(chartCode, orgCode);
         // if default address for chart/org not found, look for chart default
         if (address == null && orgCode != null) {
             address = SpringContext.getBean(ReceivingAddressService.class).findUniqueDefaultByChartOrg(chartCode, null);
         }
-        this.templateReceivingAddress(address);
+        templateReceivingAddress(address);
     }
 
     /**
@@ -292,8 +292,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      * @param itemIdentifier item id to match on.
      * @return the PurchasingCapitalAssetItem if a match is found, else null.
      */
-    public PurchasingCapitalAssetItem getPurchasingCapitalAssetItemByItemIdentifier(int itemIdentifier) {
-        for (PurchasingCapitalAssetItem camsItem : purchasingCapitalAssetItems) {
+    public PurchasingCapitalAssetItem getPurchasingCapitalAssetItemByItemIdentifier(final int itemIdentifier) {
+        for (final PurchasingCapitalAssetItem camsItem : purchasingCapitalAssetItems) {
             if (camsItem.getItemIdentifier() == itemIdentifier) {
                 return camsItem;
             }
@@ -302,17 +302,17 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void addItem(PurApItem item) {
+    public void addItem(final PurApItem item) {
         item.refreshReferenceObject(PurapPropertyConstants.COMMODITY_CODE);
         super.addItem(item);
     }
 
     @Override
-    public void deleteItem(int lineNum) {
+    public void deleteItem(final int lineNum) {
         // remove associated asset items
-        PurApItem item = items.get(lineNum);
+        final PurApItem item = items.get(lineNum);
         if (ObjectUtils.isNotNull(item) && item.getItemIdentifier() != null) {
-            PurchasingCapitalAssetItem purchasingCapitalAssetItem =
+            final PurchasingCapitalAssetItem purchasingCapitalAssetItem =
                     getPurchasingCapitalAssetItemByItemIdentifier(item.getItemIdentifier());
 
             if (ObjectUtils.isNotNull(purchasingCapitalAssetItem)) {
@@ -333,7 +333,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         if (this instanceof PurchaseOrderAmendmentDocument) {
             previousPOItems = getPreviousPoItems();
         }
-        for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
+        for (final PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
             // KFSPTS-1973
            if (item.getCommodityCode() != null && !commodityCodesForRouting.contains(item.getCommodityCode())) {
                if (this instanceof PurchaseOrderAmendmentDocument) {
@@ -500,7 +500,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingCityName(String billingCityName) {
+    public void setBillingCityName(final String billingCityName) {
         this.billingCityName = billingCityName;
     }
 
@@ -510,14 +510,14 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingCountryCode(String billingCountryCode) {
+    public void setBillingCountryCode(final String billingCountryCode) {
         this.billingCountryCode = billingCountryCode;
     }
 
     @Override
     public String getBillingCountryName() {
         if (StringUtils.isNotBlank(getBillingCountryCode())) {
-            Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
+            final Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
                     .getCountry(getBillingCountryCode());
             if (country != null) {
                 return country.getName();
@@ -532,7 +532,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingLine1Address(String billingLine1Address) {
+    public void setBillingLine1Address(final String billingLine1Address) {
         this.billingLine1Address = billingLine1Address;
     }
 
@@ -542,7 +542,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingLine2Address(String billingLine2Address) {
+    public void setBillingLine2Address(final String billingLine2Address) {
         this.billingLine2Address = billingLine2Address;
     }
 
@@ -552,7 +552,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingName(String billingName) {
+    public void setBillingName(final String billingName) {
         this.billingName = billingName;
     }
 
@@ -562,7 +562,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingPhoneNumber(String billingPhoneNumber) {
+    public void setBillingPhoneNumber(final String billingPhoneNumber) {
         this.billingPhoneNumber = billingPhoneNumber;
     }
 
@@ -570,7 +570,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return billingEmailAddress;
     }
 
-    public void setBillingEmailAddress(String billingEmailAddress) {
+    public void setBillingEmailAddress(final String billingEmailAddress) {
         this.billingEmailAddress = billingEmailAddress;
     }
 
@@ -580,7 +580,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingPostalCode(String billingPostalCode) {
+    public void setBillingPostalCode(final String billingPostalCode) {
         this.billingPostalCode = billingPostalCode;
     }
 
@@ -590,7 +590,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setBillingStateCode(String billingStateCode) {
+    public void setBillingStateCode(final String billingStateCode) {
         this.billingStateCode = billingStateCode;
     }
 
@@ -600,7 +600,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingCityName(String receivingCityName) {
+    public void setReceivingCityName(final String receivingCityName) {
         this.receivingCityName = receivingCityName;
     }
 
@@ -610,14 +610,14 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingCountryCode(String receivingCountryCode) {
+    public void setReceivingCountryCode(final String receivingCountryCode) {
         this.receivingCountryCode = receivingCountryCode;
     }
 
     @Override
     public String getReceivingCountryName() {
         if (StringUtils.isNotBlank(getReceivingCountryCode())) {
-            Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
+            final Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
                     .getCountry(getReceivingCountryCode());
             if (country != null) {
                 return country.getName();
@@ -632,7 +632,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingLine1Address(String receivingLine1Address) {
+    public void setReceivingLine1Address(final String receivingLine1Address) {
         this.receivingLine1Address = receivingLine1Address;
     }
 
@@ -642,7 +642,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingLine2Address(String receivingLine2Address) {
+    public void setReceivingLine2Address(final String receivingLine2Address) {
         this.receivingLine2Address = receivingLine2Address;
     }
 
@@ -652,7 +652,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingName(String receivingName) {
+    public void setReceivingName(final String receivingName) {
         this.receivingName = receivingName;
     }
 
@@ -662,7 +662,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingPostalCode(String receivingPostalCode) {
+    public void setReceivingPostalCode(final String receivingPostalCode) {
         this.receivingPostalCode = receivingPostalCode;
     }
 
@@ -672,7 +672,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingStateCode(String receivingStateCode) {
+    public void setReceivingStateCode(final String receivingStateCode) {
         this.receivingStateCode = receivingStateCode;
     }
 
@@ -682,8 +682,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setAddressToVendorIndicator(boolean addressToVendor) {
-        this.addressToVendorIndicator = addressToVendor;
+    public void setAddressToVendorIndicator(final boolean addressToVendor) {
+        addressToVendorIndicator = addressToVendor;
     }
 
     @Override
@@ -692,7 +692,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setChartOfAccountsCode(String chartOfAccountsCode) {
+    public void setChartOfAccountsCode(final String chartOfAccountsCode) {
         this.chartOfAccountsCode = chartOfAccountsCode;
     }
 
@@ -702,7 +702,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryBuildingCode(String deliveryBuildingCode) {
+    public void setDeliveryBuildingCode(final String deliveryBuildingCode) {
         this.deliveryBuildingCode = deliveryBuildingCode != null ? deliveryBuildingCode.toUpperCase(Locale.US) : null;
     }
 
@@ -712,7 +712,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryBuildingLine1Address(String deliveryBuildingLine1Address) {
+    public void setDeliveryBuildingLine1Address(final String deliveryBuildingLine1Address) {
         this.deliveryBuildingLine1Address = deliveryBuildingLine1Address;
     }
 
@@ -722,7 +722,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryBuildingLine2Address(String deliveryBuildingLine2Address) {
+    public void setDeliveryBuildingLine2Address(final String deliveryBuildingLine2Address) {
         this.deliveryBuildingLine2Address = deliveryBuildingLine2Address;
     }
 
@@ -732,7 +732,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryBuildingName(String deliveryBuildingName) {
+    public void setDeliveryBuildingName(final String deliveryBuildingName) {
         this.deliveryBuildingName = deliveryBuildingName;
     }
 
@@ -742,7 +742,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryBuildingOtherIndicator(boolean deliveryBuildingOtherIndicator) {
+    public void setDeliveryBuildingOtherIndicator(final boolean deliveryBuildingOtherIndicator) {
         this.deliveryBuildingOtherIndicator = deliveryBuildingOtherIndicator;
     }
 
@@ -752,7 +752,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryBuildingRoomNumber(String deliveryBuildingRoomNumber) {
+    public void setDeliveryBuildingRoomNumber(final String deliveryBuildingRoomNumber) {
         this.deliveryBuildingRoomNumber = deliveryBuildingRoomNumber;
     }
 
@@ -762,7 +762,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryCampusCode(String deliveryCampusCode) {
+    public void setDeliveryCampusCode(final String deliveryCampusCode) {
         this.deliveryCampusCode = deliveryCampusCode;
     }
 
@@ -772,7 +772,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryCityName(String deliveryCityName) {
+    public void setDeliveryCityName(final String deliveryCityName) {
         this.deliveryCityName = deliveryCityName;
     }
 
@@ -784,7 +784,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     @Override
     public String getDeliveryCountryName() {
         if (StringUtils.isNotBlank(getDeliveryCountryCode())) {
-            Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
+            final Country country = SpringContext.getBean(LocationService.class, "locationService-fin")
                     .getCountry(getDeliveryCountryCode());
             if (country != null) {
                 return country.getName();
@@ -794,7 +794,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryCountryCode(String deliveryCountryCode) {
+    public void setDeliveryCountryCode(final String deliveryCountryCode) {
         this.deliveryCountryCode = deliveryCountryCode;
     }
 
@@ -804,7 +804,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryInstructionText(String deliveryInstructionText) {
+    public void setDeliveryInstructionText(final String deliveryInstructionText) {
         this.deliveryInstructionText = deliveryInstructionText;
     }
 
@@ -814,7 +814,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryPostalCode(String deliveryPostalCode) {
+    public void setDeliveryPostalCode(final String deliveryPostalCode) {
         this.deliveryPostalCode = deliveryPostalCode;
     }
 
@@ -824,7 +824,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryRequiredDate(Date deliveryRequiredDate) {
+    public void setDeliveryRequiredDate(final Date deliveryRequiredDate) {
         this.deliveryRequiredDate = deliveryRequiredDate;
     }
 
@@ -834,7 +834,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryRequiredDateReasonCode(String deliveryRequiredDateReasonCode) {
+    public void setDeliveryRequiredDateReasonCode(final String deliveryRequiredDateReasonCode) {
         this.deliveryRequiredDateReasonCode = deliveryRequiredDateReasonCode;
     }
 
@@ -844,7 +844,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryStateCode(String deliveryStateCode) {
+    public void setDeliveryStateCode(final String deliveryStateCode) {
         this.deliveryStateCode = deliveryStateCode;
     }
 
@@ -854,7 +854,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryToEmailAddress(String deliveryToEmailAddress) {
+    public void setDeliveryToEmailAddress(final String deliveryToEmailAddress) {
         this.deliveryToEmailAddress = deliveryToEmailAddress;
     }
 
@@ -864,7 +864,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryToName(String deliveryToName) {
+    public void setDeliveryToName(final String deliveryToName) {
         this.deliveryToName = deliveryToName;
     }
 
@@ -874,7 +874,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setDeliveryToPhoneNumber(String deliveryToPhoneNumber) {
+    public void setDeliveryToPhoneNumber(final String deliveryToPhoneNumber) {
         this.deliveryToPhoneNumber = deliveryToPhoneNumber;
     }
 
@@ -884,7 +884,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setExternalOrganizationB2bSupplierIdentifier(String externalOrganizationB2bSupplierIdentifier) {
+    public void setExternalOrganizationB2bSupplierIdentifier(final String externalOrganizationB2bSupplierIdentifier) {
         this.externalOrganizationB2bSupplierIdentifier = externalOrganizationB2bSupplierIdentifier;
     }
 
@@ -894,7 +894,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setInstitutionContactEmailAddress(String institutionContactEmailAddress) {
+    public void setInstitutionContactEmailAddress(final String institutionContactEmailAddress) {
         this.institutionContactEmailAddress = institutionContactEmailAddress;
     }
 
@@ -904,7 +904,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setInstitutionContactName(String institutionContactName) {
+    public void setInstitutionContactName(final String institutionContactName) {
         this.institutionContactName = institutionContactName;
     }
 
@@ -914,7 +914,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setInstitutionContactPhoneNumber(String institutionContactPhoneNumber) {
+    public void setInstitutionContactPhoneNumber(final String institutionContactPhoneNumber) {
         this.institutionContactPhoneNumber = institutionContactPhoneNumber;
     }
 
@@ -924,7 +924,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setNonInstitutionFundAccountNumber(String nonInstitutionFundAccountNumber) {
+    public void setNonInstitutionFundAccountNumber(final String nonInstitutionFundAccountNumber) {
         this.nonInstitutionFundAccountNumber = nonInstitutionFundAccountNumber;
     }
 
@@ -934,7 +934,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setNonInstitutionFundChartOfAccountsCode(String nonInstitutionFundChartOfAccountsCode) {
+    public void setNonInstitutionFundChartOfAccountsCode(final String nonInstitutionFundChartOfAccountsCode) {
         this.nonInstitutionFundChartOfAccountsCode = nonInstitutionFundChartOfAccountsCode;
     }
 
@@ -944,7 +944,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setNonInstitutionFundOrganizationCode(String nonInstitutionFundOrganizationCode) {
+    public void setNonInstitutionFundOrganizationCode(final String nonInstitutionFundOrganizationCode) {
         this.nonInstitutionFundOrganizationCode = nonInstitutionFundOrganizationCode;
     }
 
@@ -954,7 +954,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setNonInstitutionFundOrgChartOfAccountsCode(String nonInstitutionFundOrgChartOfAccountsCode) {
+    public void setNonInstitutionFundOrgChartOfAccountsCode(final String nonInstitutionFundOrgChartOfAccountsCode) {
         this.nonInstitutionFundOrgChartOfAccountsCode = nonInstitutionFundOrgChartOfAccountsCode;
     }
 
@@ -964,7 +964,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setOrganizationCode(String organizationCode) {
+    public void setOrganizationCode(final String organizationCode) {
         this.organizationCode = organizationCode;
     }
 
@@ -974,7 +974,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchaseOrderAutomaticIndicator(boolean purchaseOrderAutomaticIndicator) {
+    public void setPurchaseOrderAutomaticIndicator(final boolean purchaseOrderAutomaticIndicator) {
         this.purchaseOrderAutomaticIndicator = purchaseOrderAutomaticIndicator;
     }
 
@@ -984,7 +984,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchaseOrderBeginDate(Date purchaseOrderBeginDate) {
+    public void setPurchaseOrderBeginDate(final Date purchaseOrderBeginDate) {
         this.purchaseOrderBeginDate = purchaseOrderBeginDate;
     }
 
@@ -994,7 +994,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchaseOrderCostSourceCode(String purchaseOrderCostSourceCode) {
+    public void setPurchaseOrderCostSourceCode(final String purchaseOrderCostSourceCode) {
         this.purchaseOrderCostSourceCode = purchaseOrderCostSourceCode;
     }
 
@@ -1004,7 +1004,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchaseOrderEndDate(Date purchaseOrderEndDate) {
+    public void setPurchaseOrderEndDate(final Date purchaseOrderEndDate) {
         this.purchaseOrderEndDate = purchaseOrderEndDate;
     }
 
@@ -1014,7 +1014,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchaseOrderTotalLimit(KualiDecimal purchaseOrderTotalLimit) {
+    public void setPurchaseOrderTotalLimit(final KualiDecimal purchaseOrderTotalLimit) {
         this.purchaseOrderTotalLimit = purchaseOrderTotalLimit;
     }
 
@@ -1024,7 +1024,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchaseOrderTransmissionMethodCode(String purchaseOrderTransmissionMethodCode) {
+    public void setPurchaseOrderTransmissionMethodCode(final String purchaseOrderTransmissionMethodCode) {
         this.purchaseOrderTransmissionMethodCode = purchaseOrderTransmissionMethodCode;
     }
 
@@ -1034,7 +1034,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setRecurringPaymentTypeCode(String recurringPaymentTypeCode) {
+    public void setRecurringPaymentTypeCode(final String recurringPaymentTypeCode) {
         this.recurringPaymentTypeCode = recurringPaymentTypeCode;
     }
 
@@ -1044,7 +1044,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setRequestorPersonEmailAddress(String requestorPersonEmailAddress) {
+    public void setRequestorPersonEmailAddress(final String requestorPersonEmailAddress) {
         this.requestorPersonEmailAddress = requestorPersonEmailAddress;
     }
 
@@ -1054,7 +1054,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setRequestorPersonName(String requestorPersonName) {
+    public void setRequestorPersonName(final String requestorPersonName) {
         this.requestorPersonName = requestorPersonName;
     }
 
@@ -1064,7 +1064,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setRequestorPersonPhoneNumber(String requestorPersonPhoneNumber) {
+    public void setRequestorPersonPhoneNumber(final String requestorPersonPhoneNumber) {
         this.requestorPersonPhoneNumber = requestorPersonPhoneNumber;
     }
 
@@ -1074,7 +1074,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setRequisitionSourceCode(String requisitionSourceCode) {
+    public void setRequisitionSourceCode(final String requisitionSourceCode) {
         this.requisitionSourceCode = requisitionSourceCode;
     }
 
@@ -1082,7 +1082,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return vendorContactsLabel;
     }
 
-    public void setVendorContactsLabel(String vendorContactsLabel) {
+    public void setVendorContactsLabel(final String vendorContactsLabel) {
         this.vendorContactsLabel = vendorContactsLabel;
     }
 
@@ -1093,7 +1093,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return vendorContract;
     }
 
-    public void setVendorContract(VendorContract vendorContract) {
+    public void setVendorContract(final VendorContract vendorContract) {
         this.vendorContract = vendorContract;
     }
 
@@ -1103,7 +1103,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorContractGeneratedIdentifier(Integer vendorContractGeneratedIdentifier) {
+    public void setVendorContractGeneratedIdentifier(final Integer vendorContractGeneratedIdentifier) {
         this.vendorContractGeneratedIdentifier = vendorContractGeneratedIdentifier;
     }
 
@@ -1122,7 +1122,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorFaxNumber(String vendorFaxNumber) {
+    public void setVendorFaxNumber(final String vendorFaxNumber) {
         this.vendorFaxNumber = vendorFaxNumber;
     }
 
@@ -1132,7 +1132,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorNoteText(String vendorNoteText) {
+    public void setVendorNoteText(final String vendorNoteText) {
         this.vendorNoteText = vendorNoteText;
     }
 
@@ -1142,7 +1142,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorPaymentTermsCode(String vendorPaymentTermsCode) {
+    public void setVendorPaymentTermsCode(final String vendorPaymentTermsCode) {
         this.vendorPaymentTermsCode = vendorPaymentTermsCode;
     }
 
@@ -1152,7 +1152,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorPhoneNumber(String vendorPhoneNumber) {
+    public void setVendorPhoneNumber(final String vendorPhoneNumber) {
         this.vendorPhoneNumber = vendorPhoneNumber;
     }
 
@@ -1162,7 +1162,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorRestrictedIndicator(Boolean vendorRestrictedIndicator) {
+    public void setVendorRestrictedIndicator(final Boolean vendorRestrictedIndicator) {
         this.vendorRestrictedIndicator = vendorRestrictedIndicator;
     }
 
@@ -1172,7 +1172,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorShippingPaymentTermsCode(String vendorShippingPaymentTermsCode) {
+    public void setVendorShippingPaymentTermsCode(final String vendorShippingPaymentTermsCode) {
         this.vendorShippingPaymentTermsCode = vendorShippingPaymentTermsCode;
     }
 
@@ -1182,7 +1182,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setVendorShippingTitleCode(String vendorShippingTitleCode) {
+    public void setVendorShippingTitleCode(final String vendorShippingTitleCode) {
         this.vendorShippingTitleCode = vendorShippingTitleCode;
     }
 
@@ -1255,73 +1255,73 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Deprecated
     @Override
-    public void setChartOfAccounts(Chart chartOfAccounts) {
+    public void setChartOfAccounts(final Chart chartOfAccounts) {
         this.chartOfAccounts = chartOfAccounts;
     }
 
     @Deprecated
     @Override
-    public void setDeliveryCampus(CampusParameter deliveryCampus) {
+    public void setDeliveryCampus(final CampusParameter deliveryCampus) {
         this.deliveryCampus = deliveryCampus;
     }
 
     @Deprecated
     @Override
-    public void setDeliveryRequiredDateReason(DeliveryRequiredDateReason deliveryRequiredDateReason) {
+    public void setDeliveryRequiredDateReason(final DeliveryRequiredDateReason deliveryRequiredDateReason) {
         this.deliveryRequiredDateReason = deliveryRequiredDateReason;
     }
 
     @Deprecated
     @Override
-    public void setNonInstitutionFundAccount(Account nonInstitutionFundAccount) {
+    public void setNonInstitutionFundAccount(final Account nonInstitutionFundAccount) {
         this.nonInstitutionFundAccount = nonInstitutionFundAccount;
     }
 
     @Deprecated
     @Override
-    public void setNonInstitutionFundChartOfAccounts(Chart nonInstitutionFundChartOfAccounts) {
+    public void setNonInstitutionFundChartOfAccounts(final Chart nonInstitutionFundChartOfAccounts) {
         this.nonInstitutionFundChartOfAccounts = nonInstitutionFundChartOfAccounts;
     }
 
     @Deprecated
     @Override
-    public void setNonInstitutionFundOrganization(Organization nonInstitutionFundOrganization) {
+    public void setNonInstitutionFundOrganization(final Organization nonInstitutionFundOrganization) {
         this.nonInstitutionFundOrganization = nonInstitutionFundOrganization;
     }
 
     @Deprecated
     @Override
-    public void setNonInstitutionFundOrgChartOfAccounts(Chart nonInstitutionFundOrgChartOfAccounts) {
+    public void setNonInstitutionFundOrgChartOfAccounts(final Chart nonInstitutionFundOrgChartOfAccounts) {
         this.nonInstitutionFundOrgChartOfAccounts = nonInstitutionFundOrgChartOfAccounts;
     }
 
     @Deprecated
     @Override
-    public void setOrganization(Organization organization) {
+    public void setOrganization(final Organization organization) {
         this.organization = organization;
     }
 
     @Deprecated
     @Override
-    public void setPurchaseOrderCostSource(PurchaseOrderCostSource purchaseOrderCostSource) {
+    public void setPurchaseOrderCostSource(final PurchaseOrderCostSource purchaseOrderCostSource) {
         this.purchaseOrderCostSource = purchaseOrderCostSource;
     }
 
     @Deprecated
     @Override
-    public void setPurchaseOrderTransmissionMethod(PurchaseOrderTransmissionMethod purchaseOrderTransmissionMethod) {
+    public void setPurchaseOrderTransmissionMethod(final PurchaseOrderTransmissionMethod purchaseOrderTransmissionMethod) {
         this.purchaseOrderTransmissionMethod = purchaseOrderTransmissionMethod;
     }
 
     @Deprecated
     @Override
-    public void setRecurringPaymentType(RecurringPaymentType recurringPaymentType) {
+    public void setRecurringPaymentType(final RecurringPaymentType recurringPaymentType) {
         this.recurringPaymentType = recurringPaymentType;
     }
 
     @Deprecated
     @Override
-    public void setRequisitionSource(RequisitionSource requisitionSource) {
+    public void setRequisitionSource(final RequisitionSource requisitionSource) {
         this.requisitionSource = requisitionSource;
     }
 
@@ -1331,7 +1331,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setReceivingDocumentRequiredIndicator(boolean receivingDocumentRequiredIndicator) {
+    public void setReceivingDocumentRequiredIndicator(final boolean receivingDocumentRequiredIndicator) {
         // if receivingDocumentRequiredIndicator functionality is disabled, always set it to false, overriding the
         // passed-in value
         if (!isEnableReceivingDocumentRequiredIndicator()) {
@@ -1347,7 +1347,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPaymentRequestPositiveApprovalIndicator(boolean paymentRequestPositiveApprovalIndicator) {
+    public void setPaymentRequestPositiveApprovalIndicator(final boolean paymentRequestPositiveApprovalIndicator) {
         // if paymentRequestPositiveApprovalIndicator functionality is disabled, always set it to false, overriding the
         // passed-in value
         if (!isEnablePaymentRequestPositiveApprovalIndicator()) {
@@ -1361,7 +1361,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return commodityCodesForRouting;
     }
 
-    public void setCommodityCodesForRouting(List<CommodityCode> commodityCodesForRouting) {
+    public void setCommodityCodesForRouting(final List<CommodityCode> commodityCodesForRouting) {
         this.commodityCodesForRouting = commodityCodesForRouting;
     }
 
@@ -1371,7 +1371,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setCapitalAssetSystemTypeCode(String capitalAssetSystemTypeCode) {
+    public void setCapitalAssetSystemTypeCode(final String capitalAssetSystemTypeCode) {
         this.capitalAssetSystemTypeCode = capitalAssetSystemTypeCode;
     }
 
@@ -1381,7 +1381,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setCapitalAssetSystemStateCode(String capitalAssetSystemStateCode) {
+    public void setCapitalAssetSystemStateCode(final String capitalAssetSystemStateCode) {
         this.capitalAssetSystemStateCode = capitalAssetSystemStateCode;
     }
 
@@ -1389,33 +1389,33 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
         return justification;
     }
 
-    public void setJustification(String justification) {
+    public void setJustification(final String justification) {
         this.justification = justification;
     }
 
     @Override
     public CapitalAssetSystemType getCapitalAssetSystemType() {
         if (ObjectUtils.isNull(capitalAssetSystemType)) {
-            this.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_TYPE);
+            refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_TYPE);
         }
         return capitalAssetSystemType;
     }
 
     @Override
-    public void setCapitalAssetSystemType(CapitalAssetSystemType capitalAssetSystemType) {
+    public void setCapitalAssetSystemType(final CapitalAssetSystemType capitalAssetSystemType) {
         this.capitalAssetSystemType = capitalAssetSystemType;
     }
 
     @Override
     public CapitalAssetSystemState getCapitalAssetSystemState() {
         if (ObjectUtils.isNull(capitalAssetSystemState)) {
-            this.refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE);
+            refreshReferenceObject(PurapPropertyConstants.CAPITAL_ASSET_SYSTEM_STATE);
         }
         return capitalAssetSystemState;
     }
 
     @Override
-    public void setCapitalAssetSystemState(CapitalAssetSystemState capitalAssetSystemState) {
+    public void setCapitalAssetSystemState(final CapitalAssetSystemState capitalAssetSystemState) {
         this.capitalAssetSystemState = capitalAssetSystemState;
     }
 
@@ -1425,7 +1425,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchasingCapitalAssetSystems(List<CapitalAssetSystem> purchasingCapitalAssetSystems) {
+    public void setPurchasingCapitalAssetSystems(final List<CapitalAssetSystem> purchasingCapitalAssetSystems) {
         this.purchasingCapitalAssetSystems = purchasingCapitalAssetSystems;
     }
 
@@ -1435,7 +1435,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public void setPurchasingCapitalAssetItems(List<PurchasingCapitalAssetItem> purchasingCapitalAssetItems) {
+    public void setPurchasingCapitalAssetItems(final List<PurchasingCapitalAssetItem> purchasingCapitalAssetItems) {
         this.purchasingCapitalAssetItems = purchasingCapitalAssetItems;
     }
 
@@ -1446,7 +1446,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public abstract Class getPurchasingCapitalAssetSystemClass();
 
     @Override
-    public PurchasingItem getPurchasingItem(Integer itemIdentifier) {
+    public PurchasingItem getPurchasingItem(final Integer itemIdentifier) {
 
         if (ObjectUtils.isNull(itemIdentifier)) {
             return null;
@@ -1454,7 +1454,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
         PurchasingItem item = null;
 
-        for (PurchasingItem pi : (List<PurchasingItem>) this.getItems()) {
+        for (final PurchasingItem pi : (List<PurchasingItem>) getItems()) {
             if (itemIdentifier.equals(pi.getItemIdentifier())) {
                 item = pi;
                 break;
@@ -1465,14 +1465,14 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     }
 
     @Override
-    public PurchasingCapitalAssetItem getPurchasingCapitalAssetItem(Integer itemIdentifier) {
+    public PurchasingCapitalAssetItem getPurchasingCapitalAssetItem(final Integer itemIdentifier) {
         if (ObjectUtils.isNull(itemIdentifier)) {
             return null;
         }
 
         PurchasingCapitalAssetItem item = null;
 
-        for (PurchasingCapitalAssetItem pcai : this.getPurchasingCapitalAssetItems()) {
+        for (final PurchasingCapitalAssetItem pcai : getPurchasingCapitalAssetItems()) {
             if (itemIdentifier.equals(pcai.getItemIdentifier())) {
                 item = pcai;
                 break;
@@ -1484,7 +1484,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Override
     public List buildListOfDeletionAwareLists() {
-        List managedLists = new ArrayList<List>();
+        final List managedLists = new ArrayList<List>();
         managedLists.add(getDeletionAwareAccountingLines());
         managedLists.add(getDeletionAwareUseTaxItems());
         if (allowDeleteAwareCollection) {
@@ -1500,21 +1500,21 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
      * purchasingCapitalAssetSystem when the system type is either ONE or MULT.
      */
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
         super.prepareForSave(event);
-        if (StringUtils.isNotBlank(this.getCapitalAssetSystemTypeCode())) {
-            if (this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM)
-                    || this.getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.MULTIPLE)) {
+        if (StringUtils.isNotBlank(getCapitalAssetSystemTypeCode())) {
+            if (getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.ONE_SYSTEM)
+                || getCapitalAssetSystemTypeCode().equals(PurapConstants.CapitalAssetSystemTypes.MULTIPLE)) {
                 // If the system state is ONE or MULT, we have to remove all the systems on the items because it's not
                 // applicable.
-                for (PurchasingCapitalAssetItem camsItem : this.getPurchasingCapitalAssetItems()) {
+                for (final PurchasingCapitalAssetItem camsItem : getPurchasingCapitalAssetItems()) {
                     camsItem.setPurchasingCapitalAssetSystem(null);
                 }
             }
         }
         if (event instanceof RouteDocumentEvent || event instanceof ApproveDocumentEvent) {
 
-            boolean defaultUseTaxIndicatorValue = SpringContext.getBean(PurchasingService.class)
+            final boolean defaultUseTaxIndicatorValue = SpringContext.getBean(PurchasingService.class)
                     .getDefaultUseTaxIndicatorValue(this);
             SpringContext.getBean(PurapService.class).updateUseTaxIndicator(this,
                     defaultUseTaxIndicatorValue);
@@ -1528,12 +1528,12 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
 
     @Override
     public void clearCapitalAssetFields() {
-        this.getPurchasingCapitalAssetItems().clear();
-        this.getPurchasingCapitalAssetSystems().clear();
-        this.setCapitalAssetSystemStateCode(null);
-        this.setCapitalAssetSystemTypeCode(null);
-        this.setCapitalAssetSystemState(null);
-        this.setCapitalAssetSystemType(null);
+        getPurchasingCapitalAssetItems().clear();
+        getPurchasingCapitalAssetSystems().clear();
+        setCapitalAssetSystemStateCode(null);
+        setCapitalAssetSystemTypeCode(null);
+        setCapitalAssetSystemState(null);
+        setCapitalAssetSystemType(null);
     }
 
     public boolean getPaymentRequestPositiveApprovalIndicatorForSearching() {
@@ -1568,8 +1568,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public boolean getHasB2BVendor() {
         if (getVendorHeaderGeneratedIdentifier() != null) {
             refreshReferenceObject(VendorPropertyConstants.VENDOR_DETAIL);
-            String campusCode = GlobalVariables.getUserSession().getPerson().getCampusCode();
-            VendorDetail vendorDetail = getVendorDetail();
+            final String campusCode = GlobalVariables.getUserSession().getPerson().getCampusCode();
+            final VendorDetail vendorDetail = getVendorDetail();
             if (vendorDetail == null || StringUtils.isEmpty(campusCode)) {
                 // this should never happen
                 return false;

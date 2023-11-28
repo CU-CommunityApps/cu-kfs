@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -89,11 +89,11 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         setUnmatchedOverride(false);
     }
 
-    public void setLineItemTotal(KualiDecimal total) {
+    public void setLineItemTotal(final KualiDecimal total) {
         // do nothing, this is so that the jsp won't complain about lineItemTotal have no setter method.
     }
 
-    public void setGrandTotal(KualiDecimal total) {
+    public void setGrandTotal(final KualiDecimal total) {
         // do nothing, this is so that the jsp won't complain about grandTotal have no setter method.
     }
 
@@ -130,10 +130,10 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     @Override
     public void populateDocumentForRouting() {
         if (ObjectUtils.isNotNull(getPurchaseOrderDocument())) {
-            this.setChartOfAccountsCode(getPurchaseOrderDocument().getChartOfAccountsCode());
-            this.setOrganizationCode(getPurchaseOrderDocument().getOrganizationCode());
-            if (ObjectUtils.isNull(this.getPurchaseOrderDocument().getDocumentHeader().getDocumentNumber())) {
-                this.getPurchaseOrderDocument().refreshReferenceObject(KFSPropertyConstants.DOCUMENT_HEADER);
+            setChartOfAccountsCode(getPurchaseOrderDocument().getChartOfAccountsCode());
+            setOrganizationCode(getPurchaseOrderDocument().getOrganizationCode());
+            if (ObjectUtils.isNull(getPurchaseOrderDocument().getDocumentHeader().getDocumentNumber())) {
+                getPurchaseOrderDocument().refreshReferenceObject(KFSPropertyConstants.DOCUMENT_HEADER);
             }
         }
         super.populateDocumentForRouting();
@@ -144,7 +144,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * documents.
      */
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
         // copied from super because we can't call super for AP docs
         customPrepareForSave(event);
 
@@ -160,12 +160,12 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     public abstract String getPoDocumentTypeForAccountsPayableDocumentCancel();
 
     @Override
-    public void doRouteLevelChange(DocumentRouteLevelChange levelChangeEvent) {
+    public void doRouteLevelChange(final DocumentRouteLevelChange levelChangeEvent) {
         LOG.debug("handleRouteLevelChange() started");
         super.doRouteLevelChange(levelChangeEvent);
 
         //process node change for documents
-        String newNodeName = levelChangeEvent.getNewNodeName();
+        final String newNodeName = levelChangeEvent.getNewNodeName();
         processNodeChange(newNodeName, levelChangeEvent.getOldNodeName());
 
         // KFSMI-9715 - need to call this after processNodeChange, otherwise if PO is closed while processing PREQ
@@ -194,7 +194,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setPurchaseOrderIdentifier(Integer purchaseOrderIdentifier) {
+    public void setPurchaseOrderIdentifier(final Integer purchaseOrderIdentifier) {
         this.purchaseOrderIdentifier = purchaseOrderIdentifier;
     }
 
@@ -204,7 +204,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setAccountsPayableProcessorIdentifier(String accountsPayableProcessorIdentifier) {
+    public void setAccountsPayableProcessorIdentifier(final String accountsPayableProcessorIdentifier) {
         this.accountsPayableProcessorIdentifier = accountsPayableProcessorIdentifier;
     }
 
@@ -214,7 +214,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setLastActionPerformedByPersonId(String lastActionPerformedByPersonId) {
+    public void setLastActionPerformedByPersonId(final String lastActionPerformedByPersonId) {
         this.lastActionPerformedByPersonId = lastActionPerformedByPersonId;
     }
 
@@ -224,7 +224,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setProcessingCampusCode(String processingCampusCode) {
+    public void setProcessingCampusCode(final String processingCampusCode) {
         this.processingCampusCode = processingCampusCode;
     }
 
@@ -234,7 +234,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setAccountsPayableApprovalTimestamp(Timestamp accountsPayableApprovalTimestamp) {
+    public void setAccountsPayableApprovalTimestamp(final Timestamp accountsPayableApprovalTimestamp) {
         this.accountsPayableApprovalTimestamp = accountsPayableApprovalTimestamp;
     }
 
@@ -244,7 +244,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setExtractedTimestamp(Timestamp extractedTimestamp) {
+    public void setExtractedTimestamp(final Timestamp extractedTimestamp) {
         this.extractedTimestamp = extractedTimestamp;
     }
 
@@ -254,7 +254,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setHoldIndicator(boolean holdIndicator) {
+    public void setHoldIndicator(final boolean holdIndicator) {
         this.holdIndicator = holdIndicator;
     }
 
@@ -264,7 +264,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setNoteLine1Text(String noteLine1Text) {
+    public void setNoteLine1Text(final String noteLine1Text) {
         this.noteLine1Text = noteLine1Text;
     }
 
@@ -274,7 +274,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setNoteLine2Text(String noteLine2Text) {
+    public void setNoteLine2Text(final String noteLine2Text) {
         this.noteLine2Text = noteLine2Text;
     }
 
@@ -284,7 +284,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setNoteLine3Text(String noteLine3Text) {
+    public void setNoteLine3Text(final String noteLine3Text) {
         this.noteLine3Text = noteLine3Text;
     }
 
@@ -297,7 +297,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return chartOfAccountsCode;
     }
 
-    public void setChartOfAccountsCode(String chartOfAccountsCode) {
+    public void setChartOfAccountsCode(final String chartOfAccountsCode) {
         this.chartOfAccountsCode = chartOfAccountsCode;
     }
 
@@ -305,7 +305,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return organizationCode;
     }
 
-    public void setOrganizationCode(String organizationCode) {
+    public void setOrganizationCode(final String organizationCode) {
         this.organizationCode = organizationCode;
     }
 
@@ -313,7 +313,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return generateEncumbranceEntries;
     }
 
-    public void setGenerateEncumbranceEntries(boolean generateEncumbranceEntries) {
+    public void setGenerateEncumbranceEntries(final boolean generateEncumbranceEntries) {
         this.generateEncumbranceEntries = generateEncumbranceEntries;
     }
 
@@ -323,13 +323,13 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
                 || ObjectUtils.isNull(purchaseOrderDocument.getPurapDocumentIdentifier()))
                 && ObjectUtils.isNotNull(getPurchaseOrderIdentifier())) {
             setPurchaseOrderDocument(SpringContext.getBean(PurchaseOrderService.class).getCurrentPurchaseOrder(
-                    this.getPurchaseOrderIdentifier()));
+                    getPurchaseOrderIdentifier()));
         }
         return purchaseOrderDocument;
     }
 
     @Override
-    public void setPurchaseOrderDocument(PurchaseOrderDocument purchaseOrderDocument) {
+    public void setPurchaseOrderDocument(final PurchaseOrderDocument purchaseOrderDocument) {
         if (ObjectUtils.isNull(purchaseOrderDocument)) {
             this.purchaseOrderDocument = null;
         } else {
@@ -344,7 +344,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return closePurchaseOrderIndicator;
     }
 
-    public void setClosePurchaseOrderIndicator(boolean closePurchaseOrderIndicator) {
+    public void setClosePurchaseOrderIndicator(final boolean closePurchaseOrderIndicator) {
         this.closePurchaseOrderIndicator = closePurchaseOrderIndicator;
     }
 
@@ -352,7 +352,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return reopenPurchaseOrderIndicator;
     }
 
-    public void setReopenPurchaseOrderIndicator(boolean reopenPurchaseOrderIndicator) {
+    public void setReopenPurchaseOrderIndicator(final boolean reopenPurchaseOrderIndicator) {
         this.reopenPurchaseOrderIndicator = reopenPurchaseOrderIndicator;
     }
 
@@ -360,7 +360,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return bankCode;
     }
 
-    public void setBankCode(String bankCode) {
+    public void setBankCode(final String bankCode) {
         this.bankCode = bankCode;
     }
 
@@ -368,12 +368,12 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return bank;
     }
 
-    public void setBank(Bank bank) {
+    public void setBank(final Bank bank) {
         this.bank = bank;
     }
 
     @Deprecated
-    public void setProcessingCampus(CampusParameter processingCampus) {
+    public void setProcessingCampus(final CampusParameter processingCampus) {
         this.processingCampus = processingCampus;
     }
 
@@ -389,7 +389,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * @return the person's name who last performed an action on the document.
      */
     public String getLastActionPerformedByPersonName() {
-        Person user = getLastActionPerformedByUser();
+        final Person user = getLastActionPerformedByUser();
         if (ObjectUtils.isNull(user)) {
             return "";
         } else {
@@ -401,7 +401,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
         return debitCreditCodeForGLEntries;
     }
 
-    public void setDebitCreditCodeForGLEntries(String debitCreditCodeForGLEntries) {
+    public void setDebitCreditCodeForGLEntries(final String debitCreditCodeForGLEntries) {
         this.debitCreditCodeForGLEntries = debitCreditCodeForGLEntries;
     }
 
@@ -411,7 +411,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setUnmatchedOverride(boolean unmatchedOverride) {
+    public void setUnmatchedOverride(final boolean unmatchedOverride) {
         this.unmatchedOverride = unmatchedOverride;
     }
 
@@ -435,7 +435,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     }
 
     @Override
-    public void setContinuationAccountIndicator(boolean continuationAccountIndicator) {
+    public void setContinuationAccountIndicator(final boolean continuationAccountIndicator) {
         this.continuationAccountIndicator = continuationAccountIndicator;
     }
 
@@ -448,8 +448,8 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
     public abstract AccountsPayableDocumentSpecificService getDocumentSpecificService();
 
     @Override
-    public AccountsPayableItem getAPItemFromPOItem(PurchaseOrderItem poi) {
-        for (AccountsPayableItem preqItem : (List<AccountsPayableItem>) this.getItems()) {
+    public AccountsPayableItem getAPItemFromPOItem(final PurchaseOrderItem poi) {
+        for (final AccountsPayableItem preqItem : (List<AccountsPayableItem>) getItems()) {
             preqItem.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
 
             if (preqItem.getItemType().isLineItemIndicator()) {
@@ -483,12 +483,12 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * KFSUPGRADE-1124 / KFSPTS-16954: Fixed an issue that prevented extended prices from being calculated properly.
      */
     public void updateExtendedPriceOnItems() {
-        for (AccountsPayableItem item : (List<AccountsPayableItem>) getItems()) {
+        for (final AccountsPayableItem item : (List<AccountsPayableItem>) getItems()) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
 
             if (ObjectUtils.isNotNull(item.getItemType())) {
                 if (item.getItemType().isQuantityBasedGeneralLedgerIndicator()) {
-                    KualiDecimal newExtendedPrice = item.calculateExtendedPrice();
+                    final KualiDecimal newExtendedPrice = item.calculateExtendedPrice();
                     item.setExtendedPrice(newExtendedPrice);
                 }
             }
@@ -497,22 +497,23 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
 
     @Override
     public KualiDecimal getTotalRemitTax() {
-        if (!this.isUseTaxIndicator()) {
-            return KualiDecimal.ZERO.equals(this.getTotalTaxAmount()) ? null : this.getTotalTaxAmount();
+        if (!isUseTaxIndicator()) {
+            return KualiDecimal.ZERO.equals(getTotalTaxAmount()) ? null : getTotalTaxAmount();
         }
         return null;
     }
 
     @Override
-    public boolean customizeOffsetGeneralLedgerPendingEntry(GeneralLedgerPendingEntrySourceDetail accountingLine,
-            GeneralLedgerPendingEntry explicitEntry, GeneralLedgerPendingEntry offsetEntry) {
+    public boolean customizeOffsetGeneralLedgerPendingEntry(
+            final GeneralLedgerPendingEntrySourceDetail accountingLine,
+            final GeneralLedgerPendingEntry explicitEntry, final GeneralLedgerPendingEntry offsetEntry) {
         boolean value = super.customizeOffsetGeneralLedgerPendingEntry(accountingLine, explicitEntry, offsetEntry);
-        if (offsetEntry != null && this.offsetUseTax != null) {
-            offsetEntry.setChartOfAccountsCode(this.offsetUseTax.getChartOfAccountsCode());
+        if (offsetEntry != null && offsetUseTax != null) {
+            offsetEntry.setChartOfAccountsCode(offsetUseTax.getChartOfAccountsCode());
             offsetEntry.refreshReferenceObject(KFSPropertyConstants.CHART);
-            offsetEntry.setAccountNumber(this.offsetUseTax.getAccountNumber());
+            offsetEntry.setAccountNumber(offsetUseTax.getAccountNumber());
             offsetEntry.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
-            offsetEntry.setFinancialObjectCode(this.offsetUseTax.getFinancialObjectCode());
+            offsetEntry.setFinancialObjectCode(offsetUseTax.getFinancialObjectCode());
             offsetEntry.refreshReferenceObject(KFSPropertyConstants.FINANCIAL_OBJECT);
         } else {
             value = false;
@@ -549,7 +550,7 @@ public abstract class AccountsPayableDocumentBase extends PurchasingAccountsPaya
      * @return workflow document type for the purap document
      */
     public String getDocumentType() {
-        return SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(this.getClass());
+        return SpringContext.getBean(DataDictionaryService.class).getDocumentTypeNameByClass(getClass());
     }
 
     @Override

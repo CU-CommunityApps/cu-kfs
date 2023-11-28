@@ -26,11 +26,11 @@ public class CuPaymentDetailServiceImpl extends PaymentDetailServiceImpl impleme
      * Copied the superclass's 4-arg version of this method and added an arg for the Process Immediate flag.
      */
     @Override
-    public Iterator<PaymentDetail> getByDisbursementNumber(Integer disbursementNumber, Integer processId,
+    public Iterator<PaymentDetail> getByDisbursementNumber(final Integer disbursementNumber, Integer processId,
             String disbursementType, String bankCode, boolean processImmediate) {
         LOG.debug("getByDisbursementNumber() started");
 
-        Map<String, Object> fieldValues = new HashMap<>();
+        final Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_NUMBER, disbursementNumber);
         fieldValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_GROUP + "." +
                 PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_PROCESS_ID, processId);
@@ -40,8 +40,8 @@ public class CuPaymentDetailServiceImpl extends PaymentDetailServiceImpl impleme
                 PdpPropertyConstants.PaymentGroup.PAYMENT_GROUP_BANK_CODE, bankCode);
         fieldValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_PROCESS_IMMEDIATE,
                 processImmediate ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE);
-        List<PaymentDetail> paymentDetailByDisbursementNumberList =
-                (List<PaymentDetail>) this.businessObjectService.findMatching(PaymentDetail.class, fieldValues);
+        final List<PaymentDetail> paymentDetailByDisbursementNumberList =
+                (List<PaymentDetail>) businessObjectService.findMatching(PaymentDetail.class, fieldValues);
         DynamicCollectionComparator.sort(paymentDetailByDisbursementNumberList,
                 PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_FINANCIAL_DOCUMENT_TYPE_CODE,
                 PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_CUST_PAYMENT_DOC_NBR);
@@ -50,7 +50,7 @@ public class CuPaymentDetailServiceImpl extends PaymentDetailServiceImpl impleme
     }
 
     @Override
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         super.setBusinessObjectService(businessObjectService);
         this.businessObjectService = businessObjectService;
     }

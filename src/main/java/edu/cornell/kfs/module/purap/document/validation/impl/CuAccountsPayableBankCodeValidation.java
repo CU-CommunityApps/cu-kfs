@@ -19,15 +19,15 @@ import edu.cornell.kfs.sys.document.validation.impl.CuBankCodeValidation;
 public class CuAccountsPayableBankCodeValidation extends AccountsPayableBankCodeValidation {
     
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
-        AccountsPayableDocumentBase apDocument = (AccountsPayableDocumentBase) getAccountingDocumentForValidation();
+    public boolean validate(final AttributedDocumentEvent event) {
+        final AccountsPayableDocumentBase apDocument = (AccountsPayableDocumentBase) getAccountingDocumentForValidation();
 
         if (!isDocumentTypeUsingBankCode(apDocument)) {
             return true;
         }
 
-        String paymentMethodCode = getPaymentMethodCodeFromDocumentIfSupported(apDocument);
-        boolean isValid = CuBankCodeValidation.validate(
+        final String paymentMethodCode = getPaymentMethodCodeFromDocumentIfSupported(apDocument);
+        final boolean isValid = CuBankCodeValidation.validate(
                 apDocument.getBankCode(), KFSPropertyConstants.DOCUMENT + KFSConstants.DELIMITER + PurapPropertyConstants.BANK_CODE,
                 paymentMethodCode, false, true);
 
@@ -35,14 +35,14 @@ public class CuAccountsPayableBankCodeValidation extends AccountsPayableBankCode
     }
 
     // This method is private on the superclass, so it has been copied into this class and tweaked accordingly.
-    protected boolean isDocumentTypeUsingBankCode(AccountsPayableDocumentBase apDocument) {
-        String documentTypeName = apDocument.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
-        ParameterEvaluator evaluator = getParameterEvaluatorService().getParameterEvaluator(
+    protected boolean isDocumentTypeUsingBankCode(final AccountsPayableDocumentBase apDocument) {
+        final String documentTypeName = apDocument.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
+        final ParameterEvaluator evaluator = getParameterEvaluatorService().getParameterEvaluator(
                 Bank.class, KFSParameterKeyConstants.BANK_CODE_DOCUMENT_TYPES, documentTypeName);
         return evaluator.evaluationSucceeds();
     }
 
-    protected String getPaymentMethodCodeFromDocumentIfSupported(AccountsPayableDocumentBase apDocument) {
+    protected String getPaymentMethodCodeFromDocumentIfSupported(final AccountsPayableDocumentBase apDocument) {
         if (apDocument instanceof PaymentRequestDocument) {
             return ((CuPaymentRequestDocument) apDocument).getPaymentMethodCode();
         } else if (apDocument instanceof VendorCreditMemoDocument) {

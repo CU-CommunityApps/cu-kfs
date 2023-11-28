@@ -18,10 +18,10 @@ public class CuPayeeACHAccountMaintenanceDocumentAuthorizer extends PayeeACHAcco
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public boolean canApprove(Document document, Person user) {
+    public boolean canApprove(final Document document, final Person user) {
 
         try {
-            WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+            final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
 
             if (StringUtils.equalsIgnoreCase(user.getPrincipalName(), KFSConstants.SYSTEM_USER)) {
                 return true;
@@ -31,11 +31,11 @@ public class CuPayeeACHAccountMaintenanceDocumentAuthorizer extends PayeeACHAcco
                 return true;
             }
 
-            String documentInitiatorPrincipalId = workflowDocument.getInitiatorPrincipalId();
+            final String documentInitiatorPrincipalId = workflowDocument.getInitiatorPrincipalId();
             if (StringUtils.equalsIgnoreCase(user.getPrincipalId(), documentInitiatorPrincipalId)) {
                 return false;
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             LOG.error("canApprove " + ex.getMessage(), ex);
             return false;
         }

@@ -10,7 +10,7 @@ import edu.cornell.kfs.coa.dataaccess.CuAccountDelegateGlobalDao;
 public class CuAccountDelegateGlobalDaoOjb extends AccountDelegateGlobalDaoOjb implements CuAccountDelegateGlobalDao {
 
     @Override
-    public List<String> createSearchPatternsFromLockingRepresentations(List<String> lockingRepresentations) {
+    public List<String> createSearchPatternsFromLockingRepresentations(final List<String> lockingRepresentations) {
         return lockingRepresentations.stream()
                 .map(this::convertForLikeCriteria)
                 .distinct()

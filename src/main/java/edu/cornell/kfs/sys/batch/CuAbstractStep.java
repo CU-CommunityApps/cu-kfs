@@ -23,13 +23,13 @@ public abstract class CuAbstractStep extends AbstractStep implements Step, BeanN
 	 * @param fileName Original file's name
 	 * @param directory Directory path where the file will reside
 	 */
-	public void addTimeStampToFileName(File origFile, String fileName, String directory) {
-		String fileNameProper = fileName.substring(0, fileName.lastIndexOf('.'));
-		String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+	public void addTimeStampToFileName(final File origFile, final String fileName, final String directory) {
+		final String fileNameProper = fileName.substring(0, fileName.lastIndexOf('.'));
+		final String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
 
-		DateFormat df = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_MMddyyyy_hhmmss, Locale.US);
+		final DateFormat df = new SimpleDateFormat(CUKFSConstants.DATE_FORMAT_MMddyyyy_hhmmss, Locale.US);
 		
-		File newFile = new File(directory+File.separator+fileNameProper+"_"+df.format(new Date())+fileExtension);
+		final File newFile = new File(directory+File.separator+fileNameProper+"_"+df.format(new Date())+fileExtension);
 		origFile.renameTo(newFile);
 		
 	}

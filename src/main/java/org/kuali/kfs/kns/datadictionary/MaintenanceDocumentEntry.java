@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,19 +62,19 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
     protected String additionalSectionsFile;
 
     //for issue KULRice3072, to enable PK field copy
-    protected boolean preserveLockingKeysOnCopy = false;
+    protected boolean preserveLockingKeysOnCopy;
 
     // for issue KULRice3070, to enable deleting a db record using maintenance doc
-    protected boolean allowsRecordDeletion = false;
+    protected boolean allowsRecordDeletion;
 
-    protected boolean translateCodes = false;
+    protected boolean translateCodes;
 
     protected Class<? extends PromptBeforeValidation> promptBeforeValidationClass;
     protected Class<? extends DerivedValuesSetter> derivedValuesSetterClass;
     protected List<String> webScriptFiles = new ArrayList<>(3);
     protected List<HeaderNavigation> headerNavigationList = new ArrayList<>();
 
-    protected boolean sessionDocument = false;
+    protected boolean sessionDocument;
     protected Class<?> dataObjectClass;
     protected Class<? extends Maintainable> maintainableClass;
     private BusinessObjectDictionaryService businessObjectDictionaryService;
@@ -97,8 +97,8 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * user should be asked any questions prior to running validation.
      */
     @Override
-    public void setPromptBeforeValidationClass(Class<? extends PromptBeforeValidation> preRulesCheckClass) {
-        this.promptBeforeValidationClass = preRulesCheckClass;
+    public void setPromptBeforeValidationClass(final Class<? extends PromptBeforeValidation> preRulesCheckClass) {
+        promptBeforeValidationClass = preRulesCheckClass;
     }
 
     public Class<? extends Document> getStandardDocumentBaseClass() {
@@ -109,7 +109,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * This attribute is used in many contexts, for example, in maintenance docs, it's used to specify the classname
      * of the BO being maintained.
      */
-    public void setBusinessObjectClass(Class<? extends BusinessObject> businessObjectClass) {
+    public void setBusinessObjectClass(final Class<? extends BusinessObject> businessObjectClass) {
         if (businessObjectClass == null) {
             throw new IllegalArgumentException("invalid (null) businessObjectClass");
         }
@@ -154,7 +154,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * @param allowsNewOrCopy element contains a value of true or false. If true, this indicates the maintainable
      *                        should allow the new and/or copy maintenance actions.
      */
-    public void setAllowsNewOrCopy(boolean allowsNewOrCopy) {
+    public void setAllowsNewOrCopy(final boolean allowsNewOrCopy) {
         this.allowsNewOrCopy = allowsNewOrCopy;
     }
 
@@ -170,14 +170,14 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
         }
         super.completeValidation();
 
-        for (String lockingKey : lockingKeys) {
+        for (final String lockingKey : lockingKeys) {
             if (!businessObjectDictionaryService.isPropertyOf(dataObjectClass, lockingKey)) {
                 throw new AttributeValidationException("unable to find attribute '" + lockingKey +
                         "' for lockingKey in dataObjectClass '" + dataObjectClass.getName());
             }
         }
 
-        for (ReferenceDefinition reference : defaultExistenceChecks) {
+        for (final ReferenceDefinition reference : defaultExistenceChecks) {
             reference.completeValidation(dataObjectClass, null);
         }
 
@@ -188,7 +188,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
                     "Maintenance Documents must use an implementation of MaintenanceDocumentAuthorizer.");
         }
 
-        for (MaintainableSectionDefinition maintainableSectionDefinition : maintainableSections) {
+        for (final MaintainableSectionDefinition maintainableSectionDefinition : maintainableSections) {
             maintainableSectionDefinition.completeValidation(getDataObjectClass(), null);
         }
     }
@@ -209,7 +209,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * of jsp:include.
      */
     @Deprecated
-    public void setAdditionalSectionsFile(String additionalSectionsFile) {
+    public void setAdditionalSectionsFile(final String additionalSectionsFile) {
         this.additionalSectionsFile = additionalSectionsFile;
     }
 
@@ -221,8 +221,8 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * The lockingKeys element specifies a list of fields that comprise a unique key. This is used for record locking
      * during the file maintenance process.
      */
-    public void setLockingKeys(List<String> lockingKeys) {
-        for (String lockingKey : lockingKeys) {
+    public void setLockingKeys(final List<String> lockingKeys) {
+        for (final String lockingKey : lockingKeys) {
             if (lockingKey == null) {
                 throw new IllegalArgumentException("invalid (null) lockingKey");
             }
@@ -243,14 +243,14 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * @see org.kuali.kfs.kns.datadictionary.exporter.MaintenanceDocumentEntryMapper
      */
     @Deprecated
-    public void setMaintainableSections(List<MaintainableSectionDefinition> maintainableSections) {
+    public void setMaintainableSections(final List<MaintainableSectionDefinition> maintainableSections) {
         maintainableSectionMap.clear();
-        for (MaintainableSectionDefinition maintainableSectionDefinition : maintainableSections) {
+        for (final MaintainableSectionDefinition maintainableSectionDefinition : maintainableSections) {
             if (maintainableSectionDefinition == null) {
                 throw new IllegalArgumentException("invalid (null) maintainableSectionDefinition");
             }
 
-            String sectionTitle = maintainableSectionDefinition.getTitle();
+            final String sectionTitle = maintainableSectionDefinition.getTitle();
             if (maintainableSectionMap.containsKey(sectionTitle)) {
                 throw new DuplicateEntryException(
                     "section '" + sectionTitle + "' already defined for maintenanceDocument '" +
@@ -263,28 +263,28 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
     }
 
     public boolean getPreserveLockingKeysOnCopy() {
-        return this.preserveLockingKeysOnCopy;
+        return preserveLockingKeysOnCopy;
     }
 
-    public void setPreserveLockingKeysOnCopy(boolean preserveLockingKeysOnCopy) {
+    public void setPreserveLockingKeysOnCopy(final boolean preserveLockingKeysOnCopy) {
         this.preserveLockingKeysOnCopy = preserveLockingKeysOnCopy;
     }
 
     public boolean getAllowsRecordDeletion() {
-        return this.allowsRecordDeletion;
+        return allowsRecordDeletion;
     }
 
-    public void setAllowsRecordDeletion(boolean allowsRecordDeletion) {
+    public void setAllowsRecordDeletion(final boolean allowsRecordDeletion) {
         this.allowsRecordDeletion = allowsRecordDeletion;
     }
 
     @Deprecated
     public boolean isTranslateCodes() {
-        return this.translateCodes;
+        return translateCodes;
     }
 
     @Deprecated
-    public void setTranslateCodes(boolean translateCodes) {
+    public void setTranslateCodes(final boolean translateCodes) {
         this.translateCodes = translateCodes;
     }
 
@@ -313,7 +313,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * The specified javascript files will be included in the generated html.
      */
     @Override
-    public void setWebScriptFiles(List<String> webScriptFiles) {
+    public void setWebScriptFiles(final List<String> webScriptFiles) {
         this.webScriptFiles = webScriptFiles;
     }
 
@@ -321,28 +321,28 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
      * The headerNavigation element defines a set of additional tabs which will appear on the document.
      */
     @Override
-    public void setHeaderNavigationList(List<HeaderNavigation> headerNavigationList) {
+    public void setHeaderNavigationList(final List<HeaderNavigation> headerNavigationList) {
         this.headerNavigationList = headerNavigationList;
     }
 
     @Override
     public boolean isSessionDocument() {
-        return this.sessionDocument;
+        return sessionDocument;
     }
 
     @Override
-    public void setSessionDocument(boolean sessionDocument) {
+    public void setSessionDocument(final boolean sessionDocument) {
         this.sessionDocument = sessionDocument;
     }
 
     @Override
     public Class<? extends DerivedValuesSetter> getDerivedValuesSetterClass() {
-        return this.derivedValuesSetterClass;
+        return derivedValuesSetterClass;
     }
 
     @Override
-    public void setDerivedValuesSetterClass(Class<? extends DerivedValuesSetter> derivedValuesSetter) {
-        this.derivedValuesSetterClass = derivedValuesSetter;
+    public void setDerivedValuesSetterClass(final Class<? extends DerivedValuesSetter> derivedValuesSetter) {
+        derivedValuesSetterClass = derivedValuesSetter;
     }
 
     @Override
@@ -371,7 +371,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
 
     // This attribute is used in many contexts, for example, in maintenance docs, it's used to specify the classname
     // of the BO being maintained.
-    public void setDataObjectClass(Class<?> dataObjectClass) {
+    public void setDataObjectClass(final Class<?> dataObjectClass) {
         if (dataObjectClass == null) {
             throw new IllegalArgumentException("invalid (null) dataObjectClass");
         }
@@ -385,7 +385,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
 
     // The maintainableClass element specifies the name of the java class which is responsible for implementing the
     // maintenance logic. The normal one is KualiMaintainableImpl.java.
-    public void setMaintainableClass(Class<? extends Maintainable> maintainableClass) {
+    public void setMaintainableClass(final Class<? extends Maintainable> maintainableClass) {
         if (maintainableClass == null) {
             throw new IllegalArgumentException("invalid (null) maintainableClass");
         }
@@ -393,7 +393,7 @@ public class MaintenanceDocumentEntry extends DocumentEntry {
     }
 
     public void setBusinessObjectDictionaryService(
-            BusinessObjectDictionaryService businessObjectDictionaryService) {
+            final BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 }

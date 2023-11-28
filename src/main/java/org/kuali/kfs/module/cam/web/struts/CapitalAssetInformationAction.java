@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -56,22 +56,23 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @return {@link ActionForward}
      * @throws Exception
      */
-    public ActionForward process(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
-        String glAcctId = request.getParameter(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER);
-        Long cabGlEntryId = Long.valueOf(glAcctId);
+    public ActionForward process(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
+        final String glAcctId = request.getParameter(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER);
+        final Long cabGlEntryId = Long.valueOf(glAcctId);
         capitalAssetForm.setGeneralLedgerAccountIdentifier(cabGlEntryId);
 
-        GeneralLedgerEntry entry = findGeneralLedgerEntry(request);
+        final GeneralLedgerEntry entry = findGeneralLedgerEntry(request);
         if (ObjectUtils.isNotNull(entry)) {
             prepareRecordsForDisplay(capitalAssetForm, entry);
         }
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    protected void prepareRecordsForDisplay(CapitalAssetInformationForm capitalAssetForm, GeneralLedgerEntry entry) {
-        GlLineService glLineService = SpringContext.getBean(GlLineService.class);
+    protected void prepareRecordsForDisplay(final CapitalAssetInformationForm capitalAssetForm, final GeneralLedgerEntry entry) {
+        final GlLineService glLineService = SpringContext.getBean(GlLineService.class);
 
         entry.setSelected(true);
         capitalAssetForm.setGeneralLedgerEntry(entry);
@@ -105,9 +106,9 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @param request HttpServletRequest
      * @return GeneralLedgerEntry
      */
-    protected GeneralLedgerEntry findGeneralLedgerEntry(HttpServletRequest request) {
-        String glAcctId = request.getParameter(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER);
-        Long cabGlEntryId = Long.valueOf(glAcctId);
+    protected GeneralLedgerEntry findGeneralLedgerEntry(final HttpServletRequest request) {
+        final String glAcctId = request.getParameter(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER);
+        final Long cabGlEntryId = Long.valueOf(glAcctId);
         return findGeneralLedgerEntry(cabGlEntryId, false);
     }
 
@@ -117,9 +118,9 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @param generalLedgerEntryId Entry Id
      * @return GeneralLedgerEntry
      */
-    protected GeneralLedgerEntry findGeneralLedgerEntry(Long generalLedgerEntryId, boolean requireNew) {
-        BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
-        Map<String, Object> pkeys = new HashMap<>();
+    protected GeneralLedgerEntry findGeneralLedgerEntry(final Long generalLedgerEntryId, final boolean requireNew) {
+        final BusinessObjectService boService = SpringContext.getBean(BusinessObjectService.class);
+        final Map<String, Object> pkeys = new HashMap<>();
         pkeys.put(CamsPropertyConstants.GeneralLedgerEntry.GENERAL_LEDGER_ACCOUNT_IDENTIFIER, generalLedgerEntryId);
         if (requireNew) {
             pkeys.put(CamsPropertyConstants.GeneralLedgerEntry.ACTIVITY_STATUS_CODE, CamsConstants.ActivityStatusCode.NEW);
@@ -137,16 +138,18 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @return {@link ActionForward}
      * @throws Exception
      */
-    public ActionForward cancel(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward cancel(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         return mapping.findForward(KRADConstants.MAPPING_PORTAL);
     }
 
     @Override
-    public ActionForward showAllTabs(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
-        GeneralLedgerEntry generalLedgerEntry = capitalAssetForm.getGeneralLedgerEntry();
+    public ActionForward showAllTabs(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
+        final GeneralLedgerEntry generalLedgerEntry = capitalAssetForm.getGeneralLedgerEntry();
         generalLedgerEntry.setSelected(true);
 
         return super.showAllTabs(mapping, form, request, response);
@@ -162,11 +165,12 @@ public class CapitalAssetInformationAction extends CabActionBase {
      * @return
      * @throws Exception
      */
-    public ActionForward reload(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
+    public ActionForward reload(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
+        final CapitalAssetInformationForm capitalAssetForm = (CapitalAssetInformationForm) form;
 
-        GeneralLedgerEntry entry = capitalAssetForm.getGeneralLedgerEntry();
+        final GeneralLedgerEntry entry = capitalAssetForm.getGeneralLedgerEntry();
         prepareRecordsForDisplay(capitalAssetForm, entry);
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);

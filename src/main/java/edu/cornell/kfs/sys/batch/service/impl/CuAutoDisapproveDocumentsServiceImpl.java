@@ -146,9 +146,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         return true;
     }
 
-    private String buildSuccessMessage(Document document) throws Exception{
+    private String buildSuccessMessage(final Document document) throws Exception{
 
-    	StringBuilder headerBuilder = new StringBuilder();
+    	final StringBuilder headerBuilder = new StringBuilder();
     	headerBuilder.append(document.getDocumentNumber());
     	headerBuilder.append(TAB);
     	headerBuilder.append(document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
@@ -163,9 +163,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     	headerBuilder.append(TAB);
     
     	
-    	ConfigurationService k = KRADServiceLocator.getKualiConfigurationService();
-    	StringBuilder routeBuilder = new StringBuilder();
-    	String url = k.getPropertyValueAsString("workflow.url");
+    	final ConfigurationService k = KRADServiceLocator.getKualiConfigurationService();
+    	final StringBuilder routeBuilder = new StringBuilder();
+    	final String url = k.getPropertyValueAsString("workflow.url");
     	routeBuilder.append(url);
     	routeBuilder.append("/RouteLog.do?routeHeaderId=");
     	routeBuilder.append(document.getDocumentNumber());
@@ -173,12 +173,12 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     	
     	headerBuilder.append(routeBuilder);
     	
-    	List<ActionTaken> actions;
+    	final List<ActionTaken> actions;
 //    	try {
 //    		actions = KEWServiceLocator.getActionTakenService().findByDocumentId(document.getDocumentHeader().getWorkflowDocument().getDocumentId());
 		actions = KEWServiceLocator.getActionTakenService().findByDocumentIdIgnoreCurrentInd(document.getDocumentNumber());
 		ActionTaken max = null;
-		for (ActionTaken at : actions) {
+		for (final ActionTaken at : actions) {
 
 			if (ObjectUtils.isNull(max)) {
 				max = at;
@@ -198,12 +198,12 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
 		headerBuilder.append(max.getActionTakenLabel());
 		headerBuilder.append(TAB);
     	
-    	String headerString = headerBuilder.toString(); 
-    	StringBuilder builder = new StringBuilder();
+    	final String headerString = headerBuilder.toString(); 
+    	final StringBuilder builder = new StringBuilder();
 
     	if (document instanceof AccountingDocumentBase) {
-    		for (Object o : ((AccountingDocumentBase) document).getSourceAccountingLines()) {
-    			SourceAccountingLine sal = (SourceAccountingLine)o;
+    		for (final Object o : ((AccountingDocumentBase) document).getSourceAccountingLines()) {
+    			final SourceAccountingLine sal = (SourceAccountingLine)o;
     			builder.append(headerString);
     			builder.append(sal.getChartOfAccountsCode());
     			builder.append(TAB);
@@ -215,8 +215,8 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
     			builder.append(TAB);
     			builder.append(KFSConstants.NEWLINE);
     		}
-    		for (Object o : ((AccountingDocumentBase) document).getTargetAccountingLines()) {
-    			TargetAccountingLine tal = (TargetAccountingLine)o;
+    		for (final Object o : ((AccountingDocumentBase) document).getTargetAccountingLines()) {
+    			final TargetAccountingLine tal = (TargetAccountingLine)o;
     			builder.append(headerString);
     			builder.append(tal.getChartOfAccountsCode());
     			builder.append(TAB);
@@ -239,13 +239,13 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
      */
     
     protected List<DocumentType> getYearEndAutoDisapproveParentDocumentTypes() {
-		List<DocumentType> parentDocumentTypes = new ArrayList<DocumentType>();
+		final List<DocumentType> parentDocumentTypes = new ArrayList<DocumentType>();
 
-		Collection<String> documentTypeCodes = getParameterService().getParameterValuesAsString(
+		final Collection<String> documentTypeCodes = getParameterService().getParameterValuesAsString(
 			AutoDisapproveDocumentsStep.class, KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE);
 
-		for (String documentTypeCode : documentTypeCodes) {
-			DocumentType parentDocumentType = (DocumentType) documentTypeService.getDocumentTypeByName(documentTypeCode);
+		for (final String documentTypeCode : documentTypeCodes) {
+			final DocumentType parentDocumentType = (DocumentType) documentTypeService.getDocumentTypeByName(documentTypeCode);
 
 			if (ObjectUtils.isNotNull(parentDocumentType)) {
 				parentDocumentTypes.add(parentDocumentType);
@@ -266,9 +266,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
                             "parameters list.  The job can not continue without this parameter");
             return false;
         }
-        List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
+        final List<DocumentType> parentDocumentTypes = this.getYearEndAutoDisapproveParentDocumentTypes();
         
-        for (DocumentType parentDocumentType : parentDocumentTypes) {   
+        for (final DocumentType parentDocumentType : parentDocumentTypes) {   
             if (ObjectUtils.isNull(documentTypeService.getDocumentTypeByName(parentDocumentType.getName()))) {
             	LOG.warn("Invalid Document Type: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_PARENT_DOCUMENT_TYPE " +
             	        "is invalid. The auto disapproval job cannot use this value.");
@@ -293,13 +293,13 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
             return false;
         }
 	    try {
-	        Date compareDate = getDateTimeService().convertToDate(
+	        final Date compareDate = getDateTimeService().convertToDate(
 	                getParameterService().getParameterValueAsString(AutoDisapproveDocumentsStep.class,
 	                        KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE));
 	    }
-	    catch (ParseException pe) {
+	    catch (final ParseException pe) {
 	        LOG.warn("ParseException: System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREATE_DATE can not be determined.");
-	        String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREAT_DATE " +
+	        final String message = ("ParseException: The value for System Parameter YEAR_END_AUTO_DISAPPROVE_DOCUMENT_CREAT_DATE " +
 	                "is invalid.  The auto disapproval job will not use this value.");
 	        getAutoDisapproveErrorReportWriterService().writeFormattedMessageLine(message);                         
 	        return false;
@@ -321,9 +321,9 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         }
         
         boolean parameterExists = true;
-        Collection<String> documentTypes = getParameterService().getParameterValuesAsString(AutoDisapproveDocumentsStep.class,
+        final Collection<String> documentTypes = getParameterService().getParameterValuesAsString(AutoDisapproveDocumentsStep.class,
                 KFSParameterKeyConstants.YearEndAutoDisapprovalConstants.YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES);
-        for (String dT : documentTypes) {
+        for (final String dT : documentTypes) {
         	if (ObjectUtils.isNull(documentTypeService.getDocumentTypeByName(dT))) {        		
                 LOG.warn("YEAR_END_AUTO_DISAPPROVE_DOCUMENT_TYPES System parameter contains invalid value: \"" + dT +
                         "\" The job can not continue with invalid values in this parameter.");
@@ -336,11 +336,11 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         return parameterExists;
     }
 
-    protected void autoDisapprovalYearEndDocument(Document document,
-                                                  String annotationForAutoDisapprovalDocument)  throws Exception {
-        Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
+    protected void autoDisapprovalYearEndDocument(final Document document,
+            final String annotationForAutoDisapprovalDocument)  throws Exception {
+        final Person systemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);      
         
-        Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
+        final Note approveNote = getNoteService().createNote(new Note(), document.getDocumentHeader(), systemUser.getPrincipalId());
         approveNote.setNoteText(annotationForAutoDisapprovalDocument);
 
         approveNote.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
@@ -374,21 +374,21 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
      * @return A new collection containing only the KFS doc headers whose matching route headers actually have the given workflow status.
      */
     protected Collection<DocumentHeader> getDocumentsWithActualWorkflowStatus(
-            Collection<DocumentHeader> documentList, DocumentStatus status) {
+            final Collection<DocumentHeader> documentList, DocumentStatus status) {
         final int SCALED_SET_SIZE = (int) (documentList.size() * 1.4);
-        Set<String> documentIds = new HashSet<String>(SCALED_SET_SIZE);
-        Collection<DocumentHeader> finalList = new ArrayList<DocumentHeader>(documentList.size());
+        final Set<String> documentIds = new HashSet<String>(SCALED_SET_SIZE);
+        final Collection<DocumentHeader> finalList = new ArrayList<DocumentHeader>(documentList.size());
         
         // Assemble document IDs, then search for workflow headers.
-        for (DocumentHeader docHeader : documentList) {
-        	DocumentRouteHeaderValue routeHeader = routeHeaderService.getRouteHeader(docHeader.getDocumentNumber());
+        for (final DocumentHeader docHeader : documentList) {
+        	final DocumentRouteHeaderValue routeHeader = routeHeaderService.getRouteHeader(docHeader.getDocumentNumber());
         	if (ObjectUtils.isNotNull(routeHeader) && status.equals(routeHeader.getStatus())) {
                 documentIds.add(routeHeader.getDocumentId());
         	}
         }
         
         // Update final-headers collection with any doc headers that actually have the given workflow status in KEW.
-        for (DocumentHeader docHeader : documentList) {
+        for (final DocumentHeader docHeader : documentList) {
             if (documentIds.contains(docHeader.getDocumentNumber())) {
                 finalList.add(docHeader);
             }
@@ -403,12 +403,12 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
      * @param documentHeaderId
      * @return document The document in the workflow that matches the document header id.
      */
-    protected Document findDocumentForAutoDisapproval(String documentHeaderId) {
+    protected Document findDocumentForAutoDisapproval(final String documentHeaderId) {
         Document document = null;
 
         try {
             document = getDocumentService().getByDocumentHeaderId(documentHeaderId);
-        } catch (UnknownDocumentTypeException ex) {
+        } catch (final UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
             LOG.error("Exception encountered on finding the document: " + documentHeaderId, ex);
         }
@@ -416,12 +416,12 @@ public class CuAutoDisapproveDocumentsServiceImpl extends AutoDisapproveDocument
         return document;
     }
 
-    public void setRouteHeaderService(RouteHeaderService routeHeaderService) {
+    public void setRouteHeaderService(final RouteHeaderService routeHeaderService) {
         this.routeHeaderService = routeHeaderService;
     } 
 
     @Override
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         super.setParameterService(parameterService);
         this.parameterService = parameterService;
     }

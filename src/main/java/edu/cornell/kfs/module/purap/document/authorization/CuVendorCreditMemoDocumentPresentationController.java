@@ -11,16 +11,16 @@ import org.kuali.kfs.krad.document.Document;
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
 
 public class CuVendorCreditMemoDocumentPresentationController extends VendorCreditMemoDocumentPresentationController {
-	
-	@Override
-	public Set<String> getEditModes(Document document) {
-		Set<String> editModes = super.getEditModes(document);
-		
+    
+    @Override
+    public Set<String> getEditModes(final Document document) {
+        final Set<String> editModes = super.getEditModes(document);
+        
         // KFSPTS-1891
         editModes.add(KfsAuthorizationConstants.TransactionalEditMode.FRN_ENTRY);
         editModes.add(KfsAuthorizationConstants.TransactionalEditMode.WIRE_ENTRY);
         
-        VendorCreditMemoDocument vendorCreditMemoDocument = (VendorCreditMemoDocument)document;
+        final VendorCreditMemoDocument vendorCreditMemoDocument = (VendorCreditMemoDocument)document;
         
         // KFSPTS-1891, KFSPTS-2851
         if (canApprove(vendorCreditMemoDocument) && canEditAmount(vendorCreditMemoDocument)) {
@@ -34,7 +34,7 @@ public class CuVendorCreditMemoDocumentPresentationController extends VendorCred
 	}
 	
     // KFSPTS-1891, KFSPTS-2851
-    private boolean canEditAmount(VendorCreditMemoDocument vendorCreditMemoDocument) {
+    private boolean canEditAmount(final VendorCreditMemoDocument vendorCreditMemoDocument) {
     		return  PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.contains(vendorCreditMemoDocument.getApplicationDocumentStatus());
     }
 

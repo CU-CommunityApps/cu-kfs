@@ -15,7 +15,7 @@ public class CuDisbursementPayee extends DisbursementPayee {
         return principalName;
     }
 
-    public void setPrincipalName(String principalName) {
+    public void setPrincipalName(final String principalName) {
         this.principalName = principalName;
     }
     

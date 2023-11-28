@@ -95,7 +95,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
 
         e.setFinancialDocumentTypeCode(parameterService.getParameterValueAsString(PosterIcrGenerationStep.class, DOCUMENT_TYPE));
         e.setFinancialSystemOriginationCode(parameterService.getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.GL_ORIGINATION_CODE));
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING, Locale.US);
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_STRING, Locale.US);
         /*CUMod - start*/
         StringBuffer docNbr = new StringBuffer(ICR_EDOC_PREFIX);
         docNbr.append(sdf.format(runDate));
@@ -152,7 +152,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
         // TODO 2031-2039
         try {
             createOutputEntry(e, group);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             LOG.error("generateTransactions Stopped: {}", ioe::getMessage);
             throw new RuntimeException("generateTransactions Stopped: " + ioe.getMessage(), ioe);
         }
@@ -186,8 +186,8 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
 
         try {
             flexibleOffsetAccountService.updateOffset(e);
-        } catch (InvalidFlexibleOffsetException ex) {
-            List<Message> warnings = new ArrayList<Message>();
+        } catch (final InvalidFlexibleOffsetException ex) {
+            final List<Message> warnings = new ArrayList<Message>();
             warnings.add(new Message("FAILED TO GENERATE FLEXIBLE OFFSETS " + ex.getMessage(), Message.TYPE_WARNING));
             reportWriterService.writeError(et, warnings);
             LOG.warn("FAILED TO GENERATE FLEXIBLE OFFSETS FOR EXPENDITURE TRANSACTION {}", et, ex);
@@ -195,7 +195,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
 
         try {
             createOutputEntry(e, group);
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             LOG.error("generateTransactions Stopped: {}", ioe::getMessage);
             throw new RuntimeException("generateTransactions Stopped: " + ioe.getMessage(), ioe);
         }
@@ -209,7 +209,7 @@ public class CuPosterServiceImpl extends PosterServiceImpl implements PosterServ
      * org.kuali.kfs.gl.businessobject.Transaction, java.util.List)
      */
     @Override
-    protected Account getAccountWithPotentialContinuation(Transaction tran, List<Message> errors) {
+    protected Account getAccountWithPotentialContinuation(final Transaction tran, final List<Message> errors) {
         Account account = accountingCycleCachingService.getAccount(tran.getChartOfAccountsCode(),
                 tran.getAccountNumber());
 

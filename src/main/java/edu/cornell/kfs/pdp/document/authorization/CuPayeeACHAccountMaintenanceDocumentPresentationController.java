@@ -17,11 +17,11 @@ public class CuPayeeACHAccountMaintenanceDocumentPresentationController extends 
      * @see org.kuali.kfs.kns.document.authorization.MaintenanceDocumentPresentationControllerBase#getConditionallyReadOnlyPropertyNames(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
-    public Set<String> getConditionallyReadOnlyPropertyNames(MaintenanceDocument document) {
-        Set<String> readOnlyPropertyNames = super.getConditionallyReadOnlyPropertyNames(document);
+    public Set<String> getConditionallyReadOnlyPropertyNames(final MaintenanceDocument document) {
+        final Set<String> readOnlyPropertyNames = super.getConditionallyReadOnlyPropertyNames(document);
         
-        PayeeACHAccount payeeAccount = (PayeeACHAccount)document.getNewMaintainableObject().getBusinessObject();
-        String payeeIdTypeCode = payeeAccount.getPayeeIdentifierTypeCode();
+        final PayeeACHAccount payeeAccount = (PayeeACHAccount)document.getNewMaintainableObject().getBusinessObject();
+        final String payeeIdTypeCode = payeeAccount.getPayeeIdentifierTypeCode();
 
         // make name and email address readOnly if payee type is Employee or Entity
         if (StringUtils.equalsIgnoreCase(payeeIdTypeCode, PayeeIdTypeCodes.EMPLOYEE) ||

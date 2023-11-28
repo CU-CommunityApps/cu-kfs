@@ -21,9 +21,9 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
     public boolean autoCloseFullyDisencumberedOrders() {
         LOG.debug("autoCloseFullyDisencumberedOrders() started");
 
-        List<AutoClosePurchaseOrderView> autoCloseList = this.getAllOpenPurchaseOrdersForAutoClose();
+        final List<AutoClosePurchaseOrderView> autoCloseList = this.getAllOpenPurchaseOrdersForAutoClose();
 
-        for (AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
+        for (final AutoClosePurchaseOrderView poAutoClose : autoCloseList) {
             if ((poAutoClose.getTotalAmount() != null) && ((KualiDecimal.ZERO.compareTo(poAutoClose.getTotalAmount())) != 0)) {
                 // KFSUPGRADE-363
                 if (paymentRequestsStatusCanAutoClose(poAutoClose)) {
@@ -34,10 +34,10 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
                             poAutoClose::getPurapDocumentIdentifier,
                             () -> poAutoClose.getTotalAmount().doubleValue()
                     );
-                    String newStatus = PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
-                    String annotation = "This PO was automatically closed in batch.";
-                    String documentType = PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT;
-                    PurchaseOrderDocument document = purchaseOrderService.getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
+                    final String newStatus = PurchaseOrderStatuses.APPDOC_PENDING_CLOSE;
+                    final String annotation = "This PO was automatically closed in batch.";
+                    final String documentType = PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_CLOSE_DOCUMENT;
+                    final PurchaseOrderDocument document = purchaseOrderService.getPurchaseOrderByDocumentNumber(poAutoClose.getDocumentNumber());
                     this.createNoteForAutoCloseOrders(document, annotation);
                     purchaseOrderService.createAndRoutePotentialChangeDocument(poAutoClose.getDocumentNumber(), documentType, annotation, null, newStatus);
                 }
@@ -56,10 +56,10 @@ public class CuAutoClosePurchaseOrderServiceImpl extends AutoClosePurchaseOrderS
      * @param poAutoClose The AutoClosePurchaseOrderView used to get related PaymentRequestView(s) to check
      * @return whether the PaymentRequestView(s) are in a status that will should allow auto closing the related PO.
      */
-    private boolean paymentRequestsStatusCanAutoClose(AutoClosePurchaseOrderView poAutoClose) {
-        PurApRelatedViews relatedViews = new PurApRelatedViews(poAutoClose.getPurapDocumentIdentifier().toString(), poAutoClose.getAccountsPayablePurchasingDocumentLinkIdentifier());
+    private boolean paymentRequestsStatusCanAutoClose(final AutoClosePurchaseOrderView poAutoClose) {
+        final PurApRelatedViews relatedViews = new PurApRelatedViews(poAutoClose.getPurapDocumentIdentifier().toString(), poAutoClose.getAccountsPayablePurchasingDocumentLinkIdentifier());
         if (relatedViews.getRelatedPaymentRequestViews() != null) {
-            for (PaymentRequestView paymentRequestView : relatedViews.getRelatedPaymentRequestViews()) {
+            for (final PaymentRequestView paymentRequestView : relatedViews.getRelatedPaymentRequestViews()) {
                 if (!CUPurapConstants.CUPaymentRequestStatuses.STATUSES_ALLOWING_AUTO_CLOSE.contains(paymentRequestView.getApplicationDocumentStatus())) {
                     return false;
                 }

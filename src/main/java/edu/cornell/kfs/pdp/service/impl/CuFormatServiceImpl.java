@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pdp.service.impl;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,26 +35,26 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
     private static final Logger LOG = LogManager.getLogger();
     
     @Override
-    public FormatProcessSummary startFormatProcess(Person user, String campus,
-			List<CustomerProfile> customers, Date paydate, String paymentTypes,
-			String paymentDistribution) {
+    public FormatProcessSummary startFormatProcess(final Person user, final String campus,
+			final List<CustomerProfile> customers, final Date paydate, final String paymentTypes,
+			final String paymentDistribution) {
         LOG.debug("startFormatProcess() started");
 
-        for (CustomerProfile element : customers) {
+        for (final CustomerProfile element : customers) {
             LOG.debug("startFormatProcess() Customer: {}", element);
         }
 
         // Create the process
-        Date d = new Date();
-        PaymentProcess paymentProcess = new PaymentProcess();
+        final Date d = new Date();
+        final PaymentProcess paymentProcess = new PaymentProcess();
         paymentProcess.setCampusCode(campus);
         paymentProcess.setProcessUser(user);
         paymentProcess.setProcessTimestamp(new Timestamp(d.getTime()));
 
-        this.businessObjectService.save(paymentProcess);
+        businessObjectService.save(paymentProcess);
 
         // add an entry in the format process table (to lock the format process)
-        FormatProcess formatProcess = new FormatProcess();
+        final FormatProcess formatProcess = new FormatProcess();
 
         formatProcess.setPhysicalCampusProcessCode(campus);
         formatProcess.setBeginFormat(dateTimeService.getCurrentTimestamp());
@@ -62,33 +63,27 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
         this.businessObjectService.save(formatProcess);
 
 
-        Timestamp now = new Timestamp(new Date().getTime());
-        java.sql.Date sqlDate = new java.sql.Date(paydate.getTime());
-        Calendar c = Calendar.getInstance();
-        c.setTime(sqlDate);
-        c.set(Calendar.HOUR, 11);
-        c.set(Calendar.MINUTE, 59);
-        c.set(Calendar.SECOND, 59);
-        c.set(Calendar.MILLISECOND, 59);
-        c.set(Calendar.AM_PM, Calendar.PM);
-        Timestamp paydateTs = new Timestamp(c.getTime().getTime());
+        final Timestamp now = new Timestamp(new Date().getTime());
+        final java.sql.Date sqlDate = new java.sql.Date(paydate.getTime());
+        final LocalDateTime endOfPayDate = dateTimeService.getLocalDateTimeAtEndOfDay(sqlDate);
+        final Timestamp paydateTs = Timestamp.valueOf(endOfPayDate);
 
         LOG.debug("startFormatProcess() last update = {}", now);
         LOG.debug("startFormatProcess() entered paydate = {}", paydate);
         LOG.debug("startFormatProcess() actual paydate = {}", paydateTs);
 
-        PaymentStatus format = this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.FORMAT);
+        final PaymentStatus format = this.businessObjectService.findBySinglePrimaryKey(PaymentStatus.class, PdpConstants.PaymentStatusCodes.FORMAT);
 
-        List<KualiInteger> customerIds = new ArrayList<>();
-        for (CustomerProfile element : customers) {
+        final List<KualiInteger> customerIds = new ArrayList<>();
+        for (final CustomerProfile element : customers) {
             customerIds.add(element.getId());
         }
 
         // Mark all of them ready for format
-        Iterator groupIterator = ((CuFormatPaymentDao) formatPaymentDao).markPaymentsForFormat(customerIds, paydateTs, paymentTypes, paymentDistribution);
+        final Iterator groupIterator = ((CuFormatPaymentDao) formatPaymentDao).markPaymentsForFormat(customerIds, paydateTs, paymentTypes, paymentDistribution);
 
         while (groupIterator.hasNext()) {
-            PaymentGroup paymentGroup = (PaymentGroup) groupIterator.next();
+            final PaymentGroup paymentGroup = (PaymentGroup) groupIterator.next();
             paymentGroup.setLastUpdatedTimestamp(paydateTs);
             paymentGroup.setPaymentStatus(format);
             paymentGroup.setProcess(paymentProcess);
@@ -97,11 +92,11 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
 
 
         // summarize them
-        FormatProcessSummary preFormatProcessSummary = new FormatProcessSummary();
-        Iterator<PaymentGroup> iterator = this.paymentGroupService.getByProcess(paymentProcess);
+        final FormatProcessSummary preFormatProcessSummary = new FormatProcessSummary();
+        final Iterator<PaymentGroup> iterator = this.paymentGroupService.getByProcess(paymentProcess);
 
         while (iterator.hasNext()) {
-            PaymentGroup paymentGroup = iterator.next();
+            final PaymentGroup paymentGroup = iterator.next();
             preFormatProcessSummary.add(paymentGroup);
         }
 
@@ -144,8 +139,8 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
      * 
      * @param paymentGroup
      */
-    protected void populateDisbursementType(PaymentGroup paymentGroup) {
-        DisbursementType disbursementType;
+    protected void populateDisbursementType(final PaymentGroup paymentGroup) {
+        final DisbursementType disbursementType;
         if (paymentGroup.isPayableByCheck()) {
             disbursementType = (DisbursementType) businessObjectService
                     .findBySinglePrimaryKey(DisbursementType.class, PdpConstants.DisbursementTypeCodes.CHECK);
@@ -156,15 +151,15 @@ public class CuFormatServiceImpl extends FormatServiceImpl implements CuFormatSe
             paymentGroup.setDisbursementType(disbursementType);
             paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
 
-            CustomerProfile customer = paymentGroup.getBatch().getCustomerProfile();
-            PayeeACHAccount payeeAchAccount = SpringContext.getBean(AchService.class)
+            final CustomerProfile customer = paymentGroup.getBatch().getCustomerProfile();
+            final PayeeACHAccount payeeAchAccount = SpringContext.getBean(AchService.class)
                     .getAchInformation(paymentGroup.getPayeeIdTypeCd(), paymentGroup.getPayeeId(), customer.getAchTransactionType());
             
             paymentGroup.setAchBankRoutingNbr(payeeAchAccount.getBankRoutingNumber());
             paymentGroup.setAdviceEmailAddress(payeeAchAccount.getPayeeEmailAddress());
             paymentGroup.setAchAccountType(payeeAchAccount.getBankAccountTypeCode());
 
-            AchAccountNumber achAccountNumber = new AchAccountNumber();
+            final AchAccountNumber achAccountNumber = new AchAccountNumber();
             achAccountNumber.setAchBankAccountNbr(payeeAchAccount.getBankAccountNumber());
             achAccountNumber.setId(paymentGroup.getId());
             paymentGroup.setAchAccountNumber(achAccountNumber);

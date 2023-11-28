@@ -33,7 +33,7 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
      * org.kuali.kfs.gl.businessobject.CurrentAccountBalance, org.kuali.kfs.gl.businessobject.Balance, java.lang.String)
      */
     @Override
-    protected void updateCurrentBalance(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
+    protected void updateCurrentBalance(final CurrentAccountBalance currentBalance, final Balance balance, final String fiscalPeriod) {
         new BalanceUpdaterHelper(currentBalance, balance, fiscalPeriod)
                 .updateCurrentBalance();
     }
@@ -59,7 +59,7 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
         protected final Account replacementAccount;
         protected final boolean isCashBudgetRecording;
         
-        public BalanceUpdaterHelper(CurrentAccountBalance currentBalance, Balance balance, String fiscalPeriod) {
+        public BalanceUpdaterHelper(final CurrentAccountBalance currentBalance, final Balance balance, final String fiscalPeriod) {
             this.currentBalance = currentBalance;
             this.balance = balance;
             this.fiscalPeriod = fiscalPeriod;
@@ -94,11 +94,11 @@ public class CuCurrentAccountBalanceLookupableHelperServiceImpl extends CurrentA
             this.isCashBudgetRecording = cashBudgetRecordLevelCodes.contains(account.getBudgetRecordingLevelCode());
         }
         
-        protected Collection<String> getParameterValuesAsString(String parameterName) {
+        protected Collection<String> getParameterValuesAsString(final String parameterName) {
             return getParameterService().getParameterValuesAsString(CurrentAccountBalance.class, parameterName);
         }
         
-        protected Boolean getParameterValueAsBoolean(String parameterName, Boolean defaultValue) {
+        protected Boolean getParameterValueAsBoolean(final String parameterName, final Boolean defaultValue) {
             return getParameterService().getParameterValueAsBoolean(CurrentAccountBalance.class, parameterName, defaultValue);
         }
         

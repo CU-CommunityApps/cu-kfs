@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2021 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -64,18 +64,19 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
      * removes container if view is not allowed
      */
     @Override
-    public void initialize(AccountingLineGroupDefinition groupDefinition, AccountingDocument accountingDocument,
-            List<RenderableAccountingLineContainer> containers, String collectionPropertyName,
-            String collectionItemPropertyName, String newLinePropertyName, Map<String, Object> displayedErrors,
-            Map<String, Object> displayedWarnings, Map<String, Object> displayedInfo, boolean canEdit) {
-        AccessSecurityService accessSecurityService = SpringContext.getBean(AccessSecurityService.class);
-        Person currentUser = GlobalVariables.getUserSession().getPerson();
+    public void initialize(
+            final AccountingLineGroupDefinition groupDefinition, final AccountingDocument accountingDocument,
+            final List<RenderableAccountingLineContainer> containers, final String collectionPropertyName,
+            final String collectionItemPropertyName, final String newLinePropertyName, final Map<String, Object> displayedErrors,
+            final Map<String, Object> displayedWarnings, final Map<String, Object> displayedInfo, final boolean canEdit) {
+        final AccessSecurityService accessSecurityService = SpringContext.getBean(AccessSecurityService.class);
+        final Person currentUser = GlobalVariables.getUserSession().getPerson();
 
         // check view and edit access
-        List<RenderableAccountingLineContainer> unviewableContainers = new ArrayList<>();
-        for (RenderableAccountingLineContainer container : containers) {
+        final List<RenderableAccountingLineContainer> unviewableContainers = new ArrayList<>();
+        for (final RenderableAccountingLineContainer container : containers) {
             boolean lineHasError = false;
-            for (Object errorKeyAsObject : GlobalVariables.getMessageMap().getErrorMessages().keySet() ) {
+            for (final Object errorKeyAsObject : GlobalVariables.getMessageMap().getErrorMessages().keySet() ) {
                 if (((String) errorKeyAsObject).startsWith(collectionItemPropertyName)) {
                     // KFSUPGRADE-503 : only the matched item/acctline will be set to editable, otherwise use default
                     // collectionItemPropertyName is like 'document.item[0].sourceAccountingLine', it does not specify which acctline
@@ -94,14 +95,14 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
                 continue;
             }
 
-            boolean viewAllowed = accessSecurityService.canViewDocumentAccountingLine(accountingDocument,
+           final boolean viewAllowed = accessSecurityService.canViewDocumentAccountingLine(accountingDocument,
                     container.getAccountingLine(), currentUser);
             if (!viewAllowed) {
                 unviewableContainers.add(container);
                 hasViewRestrictions = true;
             }
             else {
-                boolean editAllowed = accessSecurityService.canEditDocumentAccountingLine(accountingDocument,
+                final boolean editAllowed = accessSecurityService.canEditDocumentAccountingLine(accountingDocument,
                         container.getAccountingLine(), currentUser);
 
                 if (container.isEditableLine() && !editAllowed) {
@@ -112,7 +113,7 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
         }
 
         // remove containers that are not viewable
-        for (RenderableAccountingLineContainer container : unviewableContainers) {
+        for (final RenderableAccountingLineContainer container : unviewableContainers) {
             containers.remove(container);
         }
 
@@ -125,7 +126,7 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
      * Adds info message if we have restricted view of any accounting lines and adds an additional key to match on
      */
     @Override
-    protected void renderErrors(PageContext pageContext, Tag parentTag) throws JspException {
+    protected void renderErrors(final PageContext pageContext, final Tag parentTag) throws JspException {
         renderSecurityMessage(pageContext, parentTag);
         renderMessages(pageContext, parentTag, groupDefinition.getErrorKey());
     }
@@ -138,8 +139,8 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
      * @param messageKey key for messages to display
      * @throws JspException
      */
-    protected void renderMessages(PageContext pageContext, Tag parentTag, String messageKey) throws JspException {
-        GroupErrorsRenderer errorRenderer = getErrorRenderer();
+    protected void renderMessages(final PageContext pageContext, final Tag parentTag, final String messageKey) throws JspException {
+        final GroupErrorsRenderer errorRenderer = getErrorRenderer();
         errorRenderer.setErrorKeyMatch(messageKey);
         errorRenderer.setColSpan(getWidthInCells());
         errorRenderer.render(pageContext, parentTag);
@@ -158,8 +159,8 @@ public class SecAccountingLineGroupImpl extends DefaultAccountingLineGroupImpl {
      * @param parentTag
      * @throws JspException
      */
-    protected void renderSecurityMessage(PageContext pageContext, Tag parentTag) throws JspException {
-        String secErrorKey = SecConstants.ACCOUNTING_GROUP_ERROR_KEY_PREFIX + collectionItemPropertyName +
+    protected void renderSecurityMessage(final PageContext pageContext, final Tag parentTag) throws JspException {
+        final String secErrorKey = SecConstants.ACCOUNTING_GROUP_ERROR_KEY_PREFIX + collectionItemPropertyName +
                 collectionPropertyName;
 
         // add info message if we are restricting any lines from view

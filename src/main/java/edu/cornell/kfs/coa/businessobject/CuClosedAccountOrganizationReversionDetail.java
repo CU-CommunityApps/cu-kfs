@@ -8,13 +8,13 @@ import org.kuali.kfs.sys.KFSConstants;
  * returns "R2" as the organization reversion strategy code
  */
 public class CuClosedAccountOrganizationReversionDetail implements ReversionCategoryInfo {
-    private ReversionCategoryInfo reversionCategoryInfo;
+    final private ReversionCategoryInfo reversionCategoryInfo;
     
     /**
      * Constructs a ClosedAccountOrganizationReversionDetail.java.
      * @param organizationReversionDetail the decorated organization reversion detail
      */
-    protected CuClosedAccountOrganizationReversionDetail(ReversionCategoryInfo organizationReversionDetail) {
+    protected CuClosedAccountOrganizationReversionDetail(final ReversionCategoryInfo organizationReversionDetail) {
         this.reversionCategoryInfo = organizationReversionDetail;
     }
 

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -96,13 +96,13 @@ public class PreferencesServiceImpl implements PreferencesService {
     }
 
     @Override
-    public Preferences getPreferences(String principalId) {
+    public Preferences getPreferences(final String principalId) {
         LOG.debug("start preferences fetch user {}", principalId);
-        Collection<UserOptions> options = getUserOptionService().findByWorkflowUser(principalId);
-        Map<String, UserOptions> optionMap = new HashMap<>();
-        Map<String, String> optionValueMap = new HashMap<>();
-        Map<String, String> documentTypeNotificationPreferences = new HashMap<>();
-        for (UserOptions option : options) {
+        final Collection<UserOptions> options = getUserOptionService().findByWorkflowUser(principalId);
+        final Map<String, UserOptions> optionMap = new HashMap<>();
+        final Map<String, String> optionValueMap = new HashMap<>();
+        final Map<String, String> documentTypeNotificationPreferences = new HashMap<>();
+        for (final UserOptions option : options) {
             if (option.getOptionId().endsWith(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_PREFERENCE_SUFFIX)) {
                 String preferenceName = option.getOptionId();
                 preferenceName = StringUtils.substringBeforeLast(preferenceName,
@@ -115,9 +115,9 @@ public class PreferencesServiceImpl implements PreferencesService {
 
         boolean isSaveRequired = false;
 
-        for (Map.Entry<String, String> entry : USER_OPTION_KEY_DEFAULT_MAP.entrySet()) {
-            String optionKey = entry.getKey();
-            String defaultValue = configurationService.getPropertyValueAsString(entry.getValue());
+        for (final Map.Entry<String, String> entry : USER_OPTION_KEY_DEFAULT_MAP.entrySet()) {
+            final String optionKey = entry.getKey();
+            final String defaultValue = configurationService.getPropertyValueAsString(entry.getValue());
             LOG.debug("start fetch option {} user {}", optionKey, principalId);
 
             UserOptions option = optionMap.get(optionKey);
@@ -151,12 +151,12 @@ public class PreferencesServiceImpl implements PreferencesService {
     }
 
     @Override
-    public void savePreferences(String principalId, Preferences preferences) {
+    public void savePreferences(final String principalId, final Preferences preferences) {
         // NOTE: this previously displayed the principalName.  Now it's just the id
         LOG.debug("saving preferences user {}", principalId);
 
         validate(preferences);
-        Map<String, String> optionsMap = new HashMap<>(50);
+        final Map<String, String> optionsMap = new HashMap<>(50);
 
         optionsMap.put(Preferences.KEYS.REFRESH_RATE, preferences.getRefreshRate().trim());
         optionsMap.put(Preferences.KEYS.OPEN_NEW_WINDOW, preferences.getOpenNewWindow());
@@ -187,7 +187,7 @@ public class PreferencesServiceImpl implements PreferencesService {
         if (ConfigContext.getCurrentContextConfig().getOutBoxOn()) {
             optionsMap.put(Preferences.KEYS.USE_OUT_BOX, preferences.getUseOutbox());
         }
-        for (Entry<String, String> documentTypePreference : preferences.getDocumentTypeNotificationPreferences()
+        for (final Entry<String, String> documentTypePreference : preferences.getDocumentTypeNotificationPreferences()
                 .entrySet()) {
             optionsMap.put(documentTypePreference.getKey() +
                     KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_PREFERENCE_SUFFIX, documentTypePreference.getValue());
@@ -195,8 +195,8 @@ public class PreferencesServiceImpl implements PreferencesService {
         getUserOptionService().save(principalId, optionsMap);
 
         // Find which document type notification preferences have been deleted and remove them from the database
-        Preferences storedPreferences = this.getPreferences(principalId);
-        for (Entry<String, String> storedEntry : storedPreferences.getDocumentTypeNotificationPreferences()
+        final Preferences storedPreferences = getPreferences(principalId);
+        for (final Entry<String, String> storedEntry : storedPreferences.getDocumentTypeNotificationPreferences()
                 .entrySet()) {
             if (preferences.getDocumentTypeNotificationPreference(storedEntry.getKey()) == null) {
                 getUserOptionService().deleteUserOptions(getUserOptionService().findByOptionId(
@@ -207,10 +207,10 @@ public class PreferencesServiceImpl implements PreferencesService {
         LOG.debug("saved preferences user {}", principalId);
     }
 
-    private void validate(Preferences preferences) {
+    private void validate(final Preferences preferences) {
         LOG.debug("validating preferences");
 
-        List<WorkflowServiceError> errors = new ArrayList<>();
+        final List<WorkflowServiceError> errors = new ArrayList<>();
         try {
             Integer.valueOf(preferences.getRefreshRate().trim());
         } catch (NumberFormatException | NullPointerException e) {

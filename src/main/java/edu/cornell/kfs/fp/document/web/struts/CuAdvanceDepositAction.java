@@ -25,10 +25,10 @@ public class CuAdvanceDepositAction extends AdvanceDepositAction {
      */
     @SuppressWarnings("deprecation")
     @Override
-    public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AdvanceDepositForm adForm = (AdvanceDepositForm) form;
-        Note newNote = adForm.getNewNote();
-        Document document = adForm.getDocument();
+    public ActionForward insertBONote(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final AdvanceDepositForm adForm = (AdvanceDepositForm) form;
+        final Note newNote = adForm.getNewNote();
+        final Document document = adForm.getDocument();
         
         if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(
                 newNote, document, adForm.getAttachmentFile(), getDocumentHelperService().getDocumentAuthorizer(document))) {

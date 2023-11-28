@@ -20,7 +20,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants;
 public class CuPurchaseOrderAmendmentDocumentPresentationController extends PurchaseOrderAmendmentDocumentPresentationController {
 
     @Override
-    public boolean canEdit(Document document) {
+    public boolean canEdit(final Document document) {
         // KFSUPGRADE-339
         if (CUPurapConstants.PurchaseOrderStatuses.APPDOC_AWAITING_FISCAL_REVIEW.equals(((PurchaseOrderDocument)document).getApplicationDocumentStatus())) {
             return true;
@@ -30,11 +30,11 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
 
     @Override
     public Set<String> getEditModes(Document document) {
-        Set<String> editModes = super.getEditModes(document);
-        PurchaseOrderDocument poDocument = (PurchaseOrderDocument) document;
+        final Set<String> editModes = super.getEditModes(document);
+        final PurchaseOrderDocument poDocument = (PurchaseOrderDocument) document;
 
         if (PurchaseOrderStatuses.APPDOC_CHANGE_IN_PROCESS.equals(poDocument.getApplicationDocumentStatus())) {
-            WorkflowDocument workflowDocument = poDocument.getDocumentHeader().getWorkflowDocument();
+            final WorkflowDocument workflowDocument = poDocument.getDocumentHeader().getWorkflowDocument();
             //  amendment doc needs to lock its field for initiator while enroute
             if (workflowDocument.isInitiated() || workflowDocument.isSaved()
                     || workflowDocument.isCompletionRequested()) {
@@ -52,11 +52,11 @@ public class CuPurchaseOrderAmendmentDocumentPresentationController extends Purc
             editModes.add(PurchaseOrderEditMode.UNORDERED_ITEM_ACCOUNT_ENTRY);
         }
 
-        PurchasingAccountsPayableDocument purchasingAccountsPayableDocument = (PurchasingAccountsPayableDocument) document;
-        List<PurApItem> aboveTheLinePOItems = PurApItemUtils.getAboveTheLineOnly(
+        final PurchasingAccountsPayableDocument purchasingAccountsPayableDocument = (PurchasingAccountsPayableDocument) document;
+        final List<PurApItem> aboveTheLinePOItems = PurApItemUtils.getAboveTheLineOnly(
                 purchasingAccountsPayableDocument.getItems());
-        boolean containsUnpaidPaymentRequestsOrCreditMemos = poDocument.getContainsUnpaidPaymentRequestsOrCreditMemos();
-        for (PurApItem poItem : aboveTheLinePOItems) {
+        final boolean containsUnpaidPaymentRequestsOrCreditMemos = poDocument.getContainsUnpaidPaymentRequestsOrCreditMemos();
+        for (final PurApItem poItem : aboveTheLinePOItems) {
             if (!allowAccountingLinesAreEditable((PurchaseOrderItem) poItem,
                     containsUnpaidPaymentRequestsOrCreditMemos)) {
                 editModes.add(PurchaseOrderEditMode.DISABLE_REMOVE_ACCTS);

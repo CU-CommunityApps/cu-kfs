@@ -30,14 +30,14 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
     private PersonServiceImpl personService;
 
     @Override
-    public List<Asset> findActiveAssetsMatchingTagNumber(String campusTagNumber) {
-        List<Asset> activeMatches = new ArrayList<>();
+    public List<Asset> findActiveAssetsMatchingTagNumber(final String campusTagNumber) {
+        final List<Asset> activeMatches = new ArrayList<>();
         // find all assets matching this tag number
-        Map<String, String> params = new HashMap<>();
+        final Map<String, String> params = new HashMap<>();
         params.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER, campusTagNumber);
-        Collection<Asset> tagMatches = businessObjectService.findMatching(Asset.class, params);
+        final Collection<Asset> tagMatches = businessObjectService.findMatching(Asset.class, params);
         if (tagMatches != null && !tagMatches.isEmpty()) {
-            for (Asset asset : tagMatches) {
+            for (final Asset asset : tagMatches) {
                 // if found matching, check if status is not retired
                 if (!isAssetRetired(asset) || parameterService.getParameterValueAsBoolean(CamsConstants.CAM_MODULE_CODE, "Asset", CuCamsConstants.Parameters.RE_USE_RETIRED_ASSET_TAG_NUMBER, Boolean.FALSE)) {
                     activeMatches.add(asset);
@@ -47,11 +47,11 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         return activeMatches;
     }
 
-    public Asset updateAssetInventory(Asset asset, String conditionCode, String buildingCode, String roomNumber, String netid) {
+    public Asset updateAssetInventory(Asset asset, final String conditionCode, final String buildingCode, final String roomNumber, final String netid) {
         asset.setConditionCode(conditionCode);
         asset.setBuildingCode(buildingCode);
         asset.setBuildingRoomNumber(roomNumber);
-        Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
+        final Timestamp currentTimestamp = dateTimeService.getCurrentTimestamp();
         asset.setLastInventoryDate(currentTimestamp);
         asset.setLastUpdatedTimestamp(currentTimestamp);
 
@@ -61,29 +61,29 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
             asset.setExtension(assetExtension);
         }
 
-        Person person = personService.getPersonByPrincipalName(netid);
-        String lastScannedBy = person.getFirstName() + " " + person.getLastName() + " (" + netid + ")";
+        final Person person = personService.getPersonByPrincipalName(netid);
+        final String lastScannedBy = person.getFirstName() + " " + person.getLastName() + " (" + netid + ")";
         assetExtension.setLastScannedBy(lastScannedBy);
         assetExtension.setLastScannedDate(currentTimestamp);
         asset = businessObjectService.save(asset);
         return asset;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         super.setBusinessObjectService(businessObjectService);
         this.businessObjectService = businessObjectService;
     }
 
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         super.setParameterService(parameterService);
         this.parameterService = parameterService;
     }
 
-    public void setDateTimeService(DateTimeService dateTimeService) {
+    public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setPersonService(PersonServiceImpl personService) {
+    public void setPersonService(final PersonServiceImpl personService) {
         this.personService = personService;
     }
 

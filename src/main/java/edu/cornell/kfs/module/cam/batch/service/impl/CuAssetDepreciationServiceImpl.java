@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.cam.batch.service.impl;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -39,15 +40,15 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
         Integer fiscalYear = -1;
         Integer fiscalMonth = -1;
         String errorMsg = "";
-        List<String> documentNos = new ArrayList<>();
-        List<String[]> reportLog = new ArrayList<>();
+        final List<String> documentNos = new ArrayList<>();
+        final List<String[]> reportLog = new ArrayList<>();
         Collection<AssetObjectCode> assetObjectCodes = new ArrayList<>();
         boolean hasErrors = false;
-        Calendar depreciationDate = dateTimeService.getCurrentCalendar();
+        LocalDate depreciationDate = dateTimeService.getLocalDateNow();
         String depreciationDateParameter = null;
-        DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY, Locale.US);
+        final DateFormat dateFormat = new SimpleDateFormat(CamsConstants.DateFormats.YEAR_MONTH_DAY, Locale.US);
         boolean executeJob = false;
-        String errorMessage = kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_ALREADY_RAN_MSG);
+        final String errorMessage = kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.DEPRECIATION_ALREADY_RAN_MSG);
 
         try {
             executeJob = runAssetDepreciation();
@@ -62,12 +63,13 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                     depreciationDateParameter = dateFormat.format(dateTimeService.getCurrentDate());
                 }
                 // This validates the system parameter depreciation_date has a valid format of YYYY-MM-DD.
-                if (!StringUtils.isBlank(depreciationDateParameter)) {
+                if (StringUtils.isNotBlank(depreciationDateParameter)) {
                     try {
-                        depreciationDate.setTime(dateFormat.parse(depreciationDateParameter.trim()));
-                    } catch (ParseException e) {
-                        throw new IllegalArgumentException(
-                                kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.INVALID_DEPRECIATION_DATE_FORMAT));
+                        depreciationDate =
+                                dateTimeService.getLocalDate(dateFormat.parse(depreciationDateParameter.trim()));
+                    } catch (final ParseException e) {
+                        throw new IllegalArgumentException(kualiConfigurationService.getPropertyValueAsString(
+                                CamsKeyConstants.Depreciation.INVALID_DEPRECIATION_DATE_FORMAT));
                     }
                 }
                 LOG.info(
@@ -79,10 +81,12 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 /**
                  * CU Customization to use java.sql.Date
                  */
-                UniversityDate universityDate = businessObjectService.findBySinglePrimaryKey(UniversityDate.class,
-                        new java.sql.Date(depreciationDate.getTimeInMillis()));
+                
+                final UniversityDate universityDate = businessObjectService.findBySinglePrimaryKey(UniversityDate.class,
+                        new java.sql.Date((dateTimeService.getUtilDate(depreciationDate)).getTime()));
                 if (universityDate == null) {
-                    throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_UNIV_DATE_NOT_FOUND));
+                    throw new IllegalStateException(kualiConfigurationService.getPropertyValueAsString(
+                            KFSKeyConstants.ERROR_UNIV_DATE_NOT_FOUND));
                 }
 
                 fiscalYear = universityDate.getUniversityFiscalYear();
@@ -97,8 +101,17 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 );
 
                 int fiscalStartMonth = Integer.parseInt(optionsService.getCurrentYearOptions().getUniversityFiscalYearStartMo());
-                reportLog.addAll(depreciableAssetsDao.generateStatistics(true, null, fiscalYear, fiscalMonth, depreciationDate,
-                        dateTimeService.toDateString(depreciationDate.getTime()), assetObjectCodes, fiscalStartMonth, errorMessage));
+                reportLog.addAll(depreciableAssetsDao.generateStatistics(
+                        true, 
+                        null, 
+                        fiscalYear, 
+                        fiscalMonth, 
+                        depreciationDate,
+                        dateTimeService.toDateString(dateTimeService.getUtilDate(depreciationDate)), 
+                        assetObjectCodes, 
+                        fiscalStartMonth, 
+                        errorMessage)
+                );
                 // update if fiscal period is 12
                 // depreciationBatchDao.updateAssetsCreatedInLastFiscalPeriod(fiscalMonth, fiscalYear);
                 updateAssetsDatesForLastFiscalPeriod(fiscalMonth, fiscalYear);
@@ -141,8 +154,17 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
         } finally {
             if (!hasErrors && executeJob) {
                 int fiscalStartMonth = Integer.parseInt(optionsService.getCurrentYearOptions().getUniversityFiscalYearStartMo());
-                reportLog.addAll(depreciableAssetsDao.generateStatistics(false, documentNos, fiscalYear, fiscalMonth, depreciationDate,
-                        dateTimeService.toDateString(depreciationDate.getTime()), assetObjectCodes, fiscalStartMonth, errorMessage));
+                reportLog.addAll(depreciableAssetsDao.generateStatistics(
+                        false, 
+                        documentNos, 
+                        fiscalYear, 
+                        fiscalMonth, 
+                        depreciationDate,
+                        dateTimeService.toDateString(dateTimeService.getUtilDate(depreciationDate)), 
+                        assetObjectCodes, 
+                        fiscalStartMonth, 
+                        errorMessage)
+                );
             }
             // the report will be generated only when there is an error or when the log has something.
             if (!reportLog.isEmpty() || !errorMsg.trim().equals("")) {

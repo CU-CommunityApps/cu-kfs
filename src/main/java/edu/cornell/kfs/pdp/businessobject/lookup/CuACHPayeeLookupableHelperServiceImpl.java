@@ -60,14 +60,14 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
      */
     @SuppressWarnings({"deprecation", "rawtypes", "unchecked"})
     @Override
-    public List<? extends BusinessObject> getSearchResults(Map<String, String> fieldValues) {
+    public List<? extends BusinessObject> getSearchResults(final Map<String, String> fieldValues) {
         /*
          * This is mostly a copy of the superclass's method, but has been tweaked to account for principal name
          * and to conform to our line formatting standards.
          */
-        List<DisbursementPayee> searchResults = new ArrayList<>();
+        final List<DisbursementPayee> searchResults = new ArrayList<>();
 
-        String payeeTypeCode = fieldValues.get(KFSPropertyConstants.PAYEE_TYPE_CODE);
+        final String payeeTypeCode = fieldValues.get(KFSPropertyConstants.PAYEE_TYPE_CODE);
         if (StringUtils.isBlank(payeeTypeCode)) {
             GlobalVariables.getMessageMap().putInfo(KFSPropertyConstants.PAYEE_TYPE_CODE,
                     PdpKeyConstants.MESSAGE_PDP_ACH_PAYEE_LOOKUP_NO_PAYEE_TYPE);
@@ -85,16 +85,16 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
                 || StringUtils.isNotBlank(payeeTypeCode)
                         && (PdpConstants.PayeeIdTypeCodes.EMPLOYEE.equals(payeeTypeCode)
                                 || PdpConstants.PayeeIdTypeCodes.ENTITY.equals(payeeTypeCode))) {
-            searchResults.addAll(this.getPersonAsPayees(fieldValues));
+            searchResults.addAll(getPersonAsPayees(fieldValues));
         } else {
-            searchResults.addAll(this.getVendorsAsPayees(fieldValues));
-            searchResults.addAll(this.getPersonAsPayees(fieldValues));
+            searchResults.addAll(getVendorsAsPayees(fieldValues));
+            searchResults.addAll(getPersonAsPayees(fieldValues));
         }
 
-        CollectionIncomplete results = new CollectionIncomplete(searchResults, (long) searchResults.size());
+        final CollectionIncomplete results = new CollectionIncomplete(searchResults, (long) searchResults.size());
 
         // sort list if default sort column given
-        List<String> defaultSortColumns = getDefaultSortColumns();
+        final List<String> defaultSortColumns = getDefaultSortColumns();
         if (defaultSortColumns.size() > 0) {
             results.sort(new BeanPropertyComparator(getDefaultSortColumns(), true));
         }
@@ -108,10 +108,10 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
      * @see org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl#getPayeeFromPerson(Person, Map)
      */
     @Override
-    protected DisbursementPayee getPayeeFromPerson(Person personDetail, Map<String,String> fieldValues) {
-        ACHPayee payee = (ACHPayee) super.getPayeeFromPerson(personDetail, fieldValues);
+    protected DisbursementPayee getPayeeFromPerson(final Person personDetail, final Map<String,String> fieldValues) {
+        final ACHPayee payee = (ACHPayee) super.getPayeeFromPerson(personDetail, fieldValues);
         
-        CuACHPayee cuPayee = new CuACHPayee();
+        final CuACHPayee cuPayee = new CuACHPayee();
         cuPayee.setPayeeIdNumber(payee.getPayeeIdNumber());
         cuPayee.setPayeeTypeCode(payee.getPayeeTypeCode());
         cuPayee.setPayeeName(payee.getPayeeName());
@@ -130,10 +130,10 @@ public class CuACHPayeeLookupableHelperServiceImpl extends ACHPayeeLookupableHel
      * @see org.kuali.kfs.pdp.businessobject.lookup.ACHPayeeLookupableHelperServiceImpl#getPayeeFromVendor(VendorDetail, Map)
      */
     @Override
-    protected DisbursementPayee getPayeeFromVendor(VendorDetail vendorDetail, Map<String,String> fieldValues) {
-        ACHPayee payee = (ACHPayee) super.getPayeeFromVendor(vendorDetail, fieldValues);
+    protected DisbursementPayee getPayeeFromVendor(final VendorDetail vendorDetail, final Map<String,String> fieldValues) {
+        final ACHPayee payee = (ACHPayee) super.getPayeeFromVendor(vendorDetail, fieldValues);
         
-        CuACHPayee cuPayee = new CuACHPayee();
+        final CuACHPayee cuPayee = new CuACHPayee();
         cuPayee.setPayeeIdNumber(payee.getPayeeIdNumber());
         cuPayee.setPayeeTypeCode(payee.getPayeeTypeCode());
         cuPayee.setPayeeName(payee.getPayeeName());

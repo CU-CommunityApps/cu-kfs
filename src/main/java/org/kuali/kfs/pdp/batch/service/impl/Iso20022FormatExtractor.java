@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -1919,7 +1919,7 @@ public class Iso20022FormatExtractor {
         final String doneFilename = StringUtils.substringBeforeLast(filename, ".") + ".done";
         final File doneFile = new File(doneFilename);
         if (!doneFile.exists()) {
-            boolean doneFileCreated;
+            final boolean doneFileCreated;
             try {
                 doneFileCreated = doneFile.createNewFile();
             } catch (final IOException e) {

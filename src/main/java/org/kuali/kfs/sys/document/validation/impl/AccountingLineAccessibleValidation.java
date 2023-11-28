@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -84,7 +84,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
 
         public final String accessibilityErrorKey;
 
-        AccountingLineAction(String accessibilityErrorKey) {
+        AccountingLineAction(final String accessibilityErrorKey) {
             this.accessibilityErrorKey = accessibilityErrorKey;
         }
     }
@@ -94,7 +94,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * <strong>This method expects a document as the first parameter and an accounting line as the second</strong>
      */
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
 
         if (accountingDocumentForValidation instanceof Correctable) {
@@ -203,12 +203,12 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @param updatedAccountingLine updated accounting line to compare
      * @return true if only the object code has changed on the accounting line, false otherwise
      */
-    protected boolean onlyObjectCodeChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
+    protected boolean onlyObjectCodeChanged(final AccountingLine accountingLine, final AccountingLine updatedAccountingLine) {
         if (accountingLine.isLike(updatedAccountingLine)) {
             return false;
         }
 
-        AccountingLine updatedLine;
+        final AccountingLine updatedLine;
         try {
             updatedLine = updatedAccountingLine.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -233,12 +233,12 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @param updatedAccountingLine updated accounting line to compare
      * @return true if only the posting year has changed on the accounting line, false otherwise
      */
-    private boolean onlyPostingYearChanged(AccountingLine accountingLine, AccountingLine updatedAccountingLine) {
+    private boolean onlyPostingYearChanged(final AccountingLine accountingLine, final AccountingLine updatedAccountingLine) {
         if (accountingLine.isLike(updatedAccountingLine)) {
             return false;
         }
 
-        AccountingLine updatedLine;
+        final AccountingLine updatedLine;
         try {
             updatedLine = updatedAccountingLine.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -297,7 +297,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @return the accounting line collection property
      */
     protected String getAccountingLineCollectionProperty() {
-        String propertyName;
+        final String propertyName;
         if (GlobalVariables.getMessageMap().getErrorPath().size() > 0) {
             propertyName = GlobalVariables.getMessageMap().getErrorPath().get(0).replaceFirst(".*?document\\.",
                     "");
@@ -321,7 +321,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
      * @param event the event to use to determine the error message
      * @return the key of the error message to display
      */
-    protected String convertEventToMessage(KualiDocumentEvent event) {
+    protected String convertEventToMessage(final KualiDocumentEvent event) {
         if (event instanceof AddAccountingLineEvent) {
             return AccountingLineAction.ADD.accessibilityErrorKey;
         } else if (event instanceof UpdateAccountingLineEvent) {
@@ -337,7 +337,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         return accountingDocumentForValidation;
     }
 
-    public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
+    public void setAccountingDocumentForValidation(final AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
     }
 
@@ -345,11 +345,11 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         return accountingLineForValidation;
     }
 
-    public void setAccountingLineForValidation(AccountingLine accountingLineForValidation) {
+    public void setAccountingLineForValidation(final AccountingLine accountingLineForValidation) {
         this.accountingLineForValidation = accountingLineForValidation;
     }
 
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
     }
 
@@ -399,7 +399,7 @@ public class AccountingLineAccessibleValidation extends GenericValidation {
         return documentDictionaryService;
     }
 
-    public void setDocumentDictionaryService(DocumentDictionaryService documentDictionaryService) {
+    public void setDocumentDictionaryService(final DocumentDictionaryService documentDictionaryService) {
         this.documentDictionaryService = documentDictionaryService;
     }
 

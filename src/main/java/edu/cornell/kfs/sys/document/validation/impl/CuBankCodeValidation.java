@@ -16,21 +16,24 @@ public class CuBankCodeValidation {
 	protected static volatile BankService bankService;
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
 
-    public static boolean validate(Document document, String bankCode, String bankCodeProperty, boolean requireDeposit,
-            boolean requireDisbursement) {
+    public static boolean validate(
+            final Document document, final String bankCode, final String bankCodeProperty, final boolean requireDeposit,
+            final boolean requireDisbursement) {
         if (document != null && !getBankService().isBankSpecificationEnabledForDocument(document.getClass())) {
             return true;
         }
         return validate(bankCode, bankCodeProperty, requireDeposit, requireDisbursement);
     }
 
-    public static boolean validate(String bankCode, String bankCodeProperty, boolean requireDeposit,
-            boolean requireDisbursement) {
+    public static boolean validate(
+            final String bankCode, final String bankCodeProperty, final boolean requireDeposit,
+            final boolean requireDisbursement) {
         return validate(bankCode, bankCodeProperty, null, requireDeposit, requireDisbursement);
     }
 
-    public static boolean validate(String bankCode, String bankCodeProperty, String paymentMethodCode, boolean requireDeposit,
-            boolean requireDisbursement) {
+    public static boolean validate(
+            final String bankCode, final String bankCodeProperty, final String paymentMethodCode, final boolean requireDeposit,
+            final boolean requireDisbursement) {
         if (!getBankService().isBankSpecificationEnabled()) {
             return true;
         }
@@ -47,11 +50,11 @@ public class CuBankCodeValidation {
         return true;
     }
 
-    public static boolean doesBankCodeNeedToBePopulated(String paymentMethodCode) {
+    public static boolean doesBankCodeNeedToBePopulated(final String paymentMethodCode) {
         return ObjectUtils.isNotNull(getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod(paymentMethodCode));
     }
 
-    public static boolean checkBankCodePopulation(String bankCode, String paymentMethodCode, String bankCodeProperty) {
+    public static boolean checkBankCodePopulation(final String bankCode, final String paymentMethodCode, final String bankCodeProperty) {
         if (doesBankCodeNeedToBePopulated(paymentMethodCode)) {
             if (StringUtils.isBlank(bankCode)) {
                 GlobalVariables.getMessageMap().putError(bankCodeProperty, CUKFSKeyConstants.ERROR_BANK_REQUIRED_PER_PAYMENT_METHOD, paymentMethodCode);
@@ -67,7 +70,7 @@ public class CuBankCodeValidation {
         return true;
     }
 
-    protected static boolean doesBankExist(String bankCode) {
+    protected static boolean doesBankExist(final String bankCode) {
         return ObjectUtils.isNotNull(getBankService().getByPrimaryId(bankCode));
     }
 
@@ -85,7 +88,7 @@ public class CuBankCodeValidation {
         return bankService;
     }
     
-    public static void setBankService(BankService bankService) {
+    public static void setBankService(final BankService bankService) {
         CuBankCodeValidation.bankService = bankService;
     }
 

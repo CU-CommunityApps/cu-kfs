@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -53,13 +53,13 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
 
     private String delegatorName = "";
     private String groupName = "";
-    private boolean isInitialized = false;
+    private boolean isInitialized;
     private DocumentRouteHeaderValueActionListExtension routeHeader;
 
-    private boolean lastApprovedDateInitialized = false;
-    private boolean lastModifiedDateInitialized = false;
-    private boolean delegatorNameInitialized = false;
-    private boolean groupNameInitialized = false;
+    private boolean lastApprovedDateInitialized;
+    private boolean lastModifiedDateInitialized;
+    private boolean delegatorNameInitialized;
+    private boolean groupNameInitialized;
 
     public String getRouteHeaderRouteStatus() {
         return routeHeader.getDocRouteStatus();
@@ -69,25 +69,25 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
         return actionListIndex;
     }
 
-    public void setActionListIndex(Integer actionListIndex) {
+    public void setActionListIndex(final Integer actionListIndex) {
         this.actionListIndex = actionListIndex;
     }
 
     public Timestamp getLastApprovedDate() {
         initializeLastApprovedDate();
-        return this.lastApprovedDate;
+        return lastApprovedDate;
     }
     
     public Timestamp getLastModifiedDate() {
         initializeLastModifiedDate();
-        return this.lastModifiedDate;
+        return lastModifiedDate;
     }
 
     public Map<String, String> getCustomActions() {
         return customActions;
     }
 
-    public void setCustomActions(Map<String, String> customActions) {
+    public void setCustomActions(final Map<String, String> customActions) {
         this.customActions = customActions;
     }
 
@@ -97,7 +97,7 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
     }
 
     @Override
-    public void setRowStyleClass(String rowStyleClass) {
+    public void setRowStyleClass(final String rowStyleClass) {
         this.rowStyleClass = rowStyleClass;
     }
 
@@ -111,7 +111,7 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
         return groupName;
     }
 
-    public void initialize(Preferences preferences) {
+    public void initialize(final Preferences preferences) {
         if (isInitialized) {
             return;
         }
@@ -127,15 +127,15 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
         if (KewApiConstants.PREFERENCES_YES_VAL.equals(preferences.getShowLastModifiedDate())) {
             initializeLastModifiedDate();
         }
-        this.routeHeader.initialize(preferences);
+        routeHeader.initialize(preferences);
         isInitialized = true;
     }
 
     private void initializeGroupName() {
         if (!groupNameInitialized) {
             if (getGroupId() != null) {
-                Group group = super.getGroup();
-                this.groupName = group.getName();
+                final Group group = super.getGroup();
+                groupName = group.getName();
             }
             groupNameInitialized = true;
         }
@@ -144,14 +144,14 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
     private void initializeDelegatorName() {
         if (!delegatorNameInitialized) {
             if (getDelegatorPrincipalId() != null) {
-                EntityName name = KimApiServiceLocator.getIdentityService()
+                final EntityName name = KimApiServiceLocator.getIdentityService()
                         .getDefaultNamesForPrincipalId(getDelegatorPrincipalId());
                 if (name != null) {
-                    this.delegatorName = name.getCompositeName();
+                    delegatorName = name.getCompositeName();
                 }
             }
             if (getDelegatorGroupId() != null) {
-                Group delegatorGroup = KimApiServiceLocator.getGroupService().getGroup(getDelegatorGroupId());
+                final Group delegatorGroup = KimApiServiceLocator.getGroupService().getGroup(getDelegatorGroupId());
                 if (delegatorGroup != null) {
                     delegatorName = delegatorGroup.getName();
                 }
@@ -162,23 +162,23 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
 
     private void initializeLastApprovedDate() {
         if (!lastApprovedDateInitialized) {
-            this.lastApprovedDate = KEWServiceLocator.getActionTakenService().getLastApprovedDate(getDocumentId());
+            lastApprovedDate = KEWServiceLocator.getActionTakenService().getLastApprovedDate(getDocumentId());
             lastApprovedDateInitialized = true;
         }
     }
     
     private void initializeLastModifiedDate() {
         if (!lastModifiedDateInitialized) {
-            this.lastModifiedDate = KEWServiceLocator.getActionTakenService().getLastModifiedDate(getDocumentId());
+            lastModifiedDate = KEWServiceLocator.getActionTakenService().getLastModifiedDate(getDocumentId());
             lastModifiedDateInitialized = true;
         }
     }
 
     public DocumentRouteHeaderValueActionListExtension getRouteHeader() {
-        return this.routeHeader;
+        return routeHeader;
     }
 
-    public void setRouteHeader(DocumentRouteHeaderValueActionListExtension routeHeader) {
+    public void setRouteHeader(final DocumentRouteHeaderValueActionListExtension routeHeader) {
         this.routeHeader = routeHeader;
     }
 

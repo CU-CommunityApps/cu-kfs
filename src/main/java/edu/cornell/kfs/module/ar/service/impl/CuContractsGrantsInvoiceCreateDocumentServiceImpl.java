@@ -30,12 +30,12 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      * CUMod: KFSPTS-12866 
      */
     @Override
-    public void populateDocumentDescription(ContractsGrantsInvoiceDocument cgInvoiceDocument) {
+    public void populateDocumentDescription(final ContractsGrantsInvoiceDocument cgInvoiceDocument) {
         if (ObjectUtils.isNotNull(cgInvoiceDocument) && ObjectUtils.isNotNull(cgInvoiceDocument.getInvoiceGeneralDetail())) {
-            String proposalNumber = cgInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
+            final String proposalNumber = cgInvoiceDocument.getInvoiceGeneralDetail().getProposalNumber();
             if (StringUtils.isNotBlank(proposalNumber)) {
-                String contractControlAccount = findContractControlAccountNumber(cgInvoiceDocument.getAccountDetails());
-                String newTitle =  MessageFormat.format(findTitleFormatString(), proposalNumber, contractControlAccount);
+                final String contractControlAccount = findContractControlAccountNumber(cgInvoiceDocument.getAccountDetails());
+                final String newTitle =  MessageFormat.format(findTitleFormatString(), proposalNumber, contractControlAccount);
                 LOG.info("populateDocumentDescription, setting document description to " + newTitle);
                 cgInvoiceDocument.getDocumentHeader().setDocumentDescription(newTitle);
             } else {
@@ -49,9 +49,9 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     /*
      * CUMod: KFSPTS-12866, KFSPTS-14929
      */
-    protected String findContractControlAccountNumber(List<InvoiceAccountDetail> details) {
+    protected String findContractControlAccountNumber(final List<InvoiceAccountDetail> details) {
         for (InvoiceAccountDetail detail : details) {
-            Account contractControlAccount = getCuContractsGrantsInvoiceDocumentService().determineContractControlAccount(detail);
+            final Account contractControlAccount = getCuContractsGrantsInvoiceDocumentService().determineContractControlAccount(detail);
             if (ObjectUtils.isNotNull(contractControlAccount) 
                     && StringUtils.isNotBlank(contractControlAccount.getAccountNumber())) {
                 return contractControlAccount.getAccountNumber();
@@ -68,11 +68,12 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
     }
 
     @Override
-    public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(ContractsAndGrantsBillingAward awd,
-            List<ContractsAndGrantsBillingAwardAccount> accounts, String chartOfAccountsCode, String organizationCode,
-            List<ErrorMessage> errorMessages, List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
-            String locCreationType) {
-        ContractsGrantsInvoiceDocument cgInvoiceDocument = super.createCGInvoiceDocumentByAwardInfo(awd, accounts, chartOfAccountsCode, 
+    public ContractsGrantsInvoiceDocument createCGInvoiceDocumentByAwardInfo(
+            final ContractsAndGrantsBillingAward awd,
+            final List<ContractsAndGrantsBillingAwardAccount> accounts, final String chartOfAccountsCode, final String organizationCode,
+            final List<ErrorMessage> errorMessages, final List<ContractsGrantsLetterOfCreditReviewDetail> accountDetails,
+            final String locCreationType) {
+        final ContractsGrantsInvoiceDocument cgInvoiceDocument = super.createCGInvoiceDocumentByAwardInfo(awd, accounts, chartOfAccountsCode, 
                 organizationCode, errorMessages, accountDetails, locCreationType);
         //CUMod: KFSPTS-12866
         populateDocumentDescription(cgInvoiceDocument);
@@ -90,7 +91,7 @@ public class CuContractsGrantsInvoiceCreateDocumentServiceImpl extends Contracts
      * CUMod: KFSPTS-14929
      */
     public void setCuContractsGrantsInvoiceDocumentService(
-            CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService) {
+            final CuContractsGrantsInvoiceDocumentService cuContractsGrantsInvoiceDocumentService) {
         this.cuContractsGrantsInvoiceDocumentService = cuContractsGrantsInvoiceDocumentService;
     }
 

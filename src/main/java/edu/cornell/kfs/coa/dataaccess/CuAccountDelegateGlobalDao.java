@@ -6,6 +6,6 @@ import org.kuali.kfs.coa.dataaccess.AccountDelegateGlobalDao;
 
 public interface CuAccountDelegateGlobalDao extends AccountDelegateGlobalDao {
 
-    List<String> createSearchPatternsFromLockingRepresentations(List<String> lockingRepresentations);
+    List<String> createSearchPatternsFromLockingRepresentations(final List<String> lockingRepresentations);
 
 }

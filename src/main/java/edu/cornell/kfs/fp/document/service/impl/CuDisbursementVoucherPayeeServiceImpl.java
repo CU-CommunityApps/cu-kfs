@@ -36,8 +36,8 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
      * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#getPayeeFromVendor(org.kuali.kfs.vnd.businessobject.VendorDetail)
      */
     @Override
-    public CuDisbursementPayee getPayeeFromVendor(VendorDetail vendorDetail) {
-        CuDisbursementPayee disbursementPayee = new CuDisbursementPayee();
+    public CuDisbursementPayee getPayeeFromVendor(final VendorDetail vendorDetail) {
+        final CuDisbursementPayee disbursementPayee = new CuDisbursementPayee();
 
         disbursementPayee.setActive(vendorDetail.isActiveIndicator());
 
@@ -45,11 +45,11 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         disbursementPayee.setPayeeName(vendorDetail.getAltVendorName());
         disbursementPayee.setTaxNumber(vendorDetail.getVendorHeader().getVendorTaxNumber());
 
-        String vendorTypeCode = vendorDetail.getVendorHeader().getVendorTypeCode();
-        String payeeTypeCode = getVendorPayeeTypeCodeMapping().get(vendorTypeCode);
+        final String vendorTypeCode = vendorDetail.getVendorHeader().getVendorTypeCode();
+        final String payeeTypeCode = getVendorPayeeTypeCodeMapping().get(vendorTypeCode);
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
 
-        String vendorAddress = MessageFormat.format(addressPattern, vendorDetail.getDefaultAddressLine1(),
+        final String vendorAddress = MessageFormat.format(addressPattern, vendorDetail.getDefaultAddressLine1(),
                 vendorDetail.getDefaultAddressCity(), vendorDetail.getDefaultAddressStateCode(),
                 vendorDetail.getDefaultAddressCountryCode());
         disbursementPayee.setAddress(vendorAddress);
@@ -59,7 +59,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
     
     
     @Override
-    public String getPayeeTypeDescription(String payeeTypeCode) {
+    public String getPayeeTypeDescription(final String payeeTypeCode) {
         String payeeTypeDescription = StringUtils.EMPTY;
 
         if (KFSConstants.PaymentPayeeTypes.EMPLOYEE.equals(payeeTypeCode) || 
@@ -71,10 +71,10 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
             payeeTypeDescription = parameterService.getParameterValueAsString(CuDisbursementVoucherDocument.class, FPParameterConstants.VENDOR_PAYEE_LABEL);
         }
         else if (KFSConstants.PaymentPayeeTypes.REVOLVING_FUND_VENDOR.equals(payeeTypeCode)) {
-            payeeTypeDescription = this.getVendorTypeDescription(VendorConstants.VendorTypes.REVOLVING_FUND);
+            payeeTypeDescription = getVendorTypeDescription(VendorConstants.VendorTypes.REVOLVING_FUND);
         }
         else if (KFSConstants.PaymentPayeeTypes.SUBJECT_PAYMENT_VENDOR.equals(payeeTypeCode)) {
-            payeeTypeDescription = this.getVendorTypeDescription(VendorConstants.VendorTypes.SUBJECT_PAYMENT);
+            payeeTypeDescription = getVendorTypeDescription(VendorConstants.VendorTypes.SUBJECT_PAYMENT);
         }
         else if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(payeeTypeCode)) {
             payeeTypeDescription = parameterService.getParameterValueAsString(DisbursementVoucherDocument.class, DisbursementVoucherConstants.PAYEE_TYPE_NAME);
@@ -84,12 +84,12 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
     }
     
     
-    public DisbursementPayee getPayeeFromPerson(Person person, String payeeTypeCode) {
-        CuDisbursementPayee disbursementPayee = new CuDisbursementPayee();
+    public DisbursementPayee getPayeeFromPerson(final Person person, final String payeeTypeCode) {
+        final CuDisbursementPayee disbursementPayee = new CuDisbursementPayee();
 
         disbursementPayee.setActive(person.isActive());
         
-        Collection<String> payableEmplStatusCodes = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(CuDisbursementVoucherDocument.class, CuDisbursementVoucherConstants.ALLOWED_EMPLOYEE_STATUSES_FOR_PAYMENT);
+        final Collection<String> payableEmplStatusCodes = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(CuDisbursementVoucherDocument.class, CuDisbursementVoucherConstants.ALLOWED_EMPLOYEE_STATUSES_FOR_PAYMENT);
 
         if (StringUtils.equalsIgnoreCase(payeeTypeCode, KFSConstants.PaymentPayeeTypes.EMPLOYEE) && StringUtils.isNotBlank(person.getEmployeeId()) && payableEmplStatusCodes.contains(person.getEmployeeStatusCode())) {
             disbursementPayee.setPayeeIdNumber(person.getEmployeeId());
@@ -107,7 +107,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
 
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
         
-        String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityUnmasked(), person.getAddressStateProvinceCodeUnmasked(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
+        final String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityUnmasked(), person.getAddressStateProvinceCodeUnmasked(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
         disbursementPayee.setAddress(personAddress);
 
         return (DisbursementPayee) disbursementPayee;
@@ -118,7 +118,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
      */
     @Override
     public Map<String, String> getFieldConversionBetweenPayeeAndPerson() {
-        Map<String, String> fieldConversionMap = super.getFieldConversionBetweenPayeeAndPerson();
+        final Map<String, String> fieldConversionMap = super.getFieldConversionBetweenPayeeAndPerson();
         fieldConversionMap.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, KIMPropertyConstants.Principal.PRINCIPAL_NAME);
         return fieldConversionMap;
     }
@@ -128,36 +128,27 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         return CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT.equals(payeeTypeCode);
     }
 
-    /**
-     * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#isVendor(org.kuali.kfs.fp.businessobject.DisbursementPayee)
-     */
     public boolean isStudent(CuDisbursementPayee payee) {
         String payeeTypeCode = payee.getPayeeTypeCode();
         return CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT.equals(payeeTypeCode);
     }
 
-    /**
-     * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#isVendor(org.kuali.kfs.fp.businessobject.DisbursementVoucherPayeeDetail)
-     */
     public boolean isAlumni(CuDisbursementVoucherPayeeDetail dvPayeeDetail) {
         String payeeTypeCode = dvPayeeDetail.getDisbursementVoucherPayeeTypeCode();
         return CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI.equals(payeeTypeCode);
     }
 
-    /**
-     * @see org.kuali.kfs.fp.document.service.DisbursementVoucherPayeeService#isVendor(org.kuali.kfs.fp.businessobject.DisbursementPayee)
-     */
     public boolean isAlumni(CuDisbursementPayee payee) {
         String payeeTypeCode = payee.getPayeeTypeCode();
         return CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI.equals(payeeTypeCode);
     }
 
     @Override
-    public boolean isPayeeSignedUpForACH(DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
+    public boolean isPayeeSignedUpForACH(final DisbursementVoucherPayeeDetail disbursementVoucherPayeeDetail) {
         boolean result = false;
 
         if (ObjectUtils.isNotNull(disbursementVoucherPayeeDetail)) {
-            String payeeTypeCode = disbursementVoucherPayeeDetail.getDisbursementVoucherPayeeTypeCode();
+            final String payeeTypeCode = disbursementVoucherPayeeDetail.getDisbursementVoucherPayeeTypeCode();
             String payeeIdNumber = disbursementVoucherPayeeDetail.getDisbVchrPayeeIdNumber();
 
             result = payeeACHService.isPayeeSignedUpForACH(payeeTypeCode, payeeIdNumber);
@@ -170,7 +161,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         return result;
     }
     
-    protected String getPayeeEntityId(String payeeIdNumber) {
+    protected String getPayeeEntityId(final String payeeIdNumber) {
         String entityId = StringUtils.EMPTY;
 
         Person person = personService.getPersonByEmployeeId(payeeIdNumber);
@@ -184,7 +175,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
     }
 
     @Override
-    public String getPayeeTypeCodeForVendorType(String vendorTypeCode) {
+    public String getPayeeTypeCodeForVendorType(final String vendorTypeCode) {
         if (StringUtils.isBlank(vendorTypeCode)) {
             return null;
         }

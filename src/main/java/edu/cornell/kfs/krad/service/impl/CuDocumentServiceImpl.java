@@ -34,10 +34,12 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
      * @return
      */
     @Override
-    protected Document postProcessDocument(String documentHeaderId, WorkflowDocument workflowDocument, Document document) {
+    protected Document postProcessDocument(
+            final String documentHeaderId, final WorkflowDocument workflowDocument, 
+            final Document document) {
         try {
             return super.postProcessDocument(documentHeaderId, workflowDocument, document);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             if (shouldConvertMaintenanceXML(e, document)) {
                 return postProcessDocumentWithLegacyMaintenanceXML(documentHeaderId, workflowDocument, (MaintenanceDocument) document);
             } else {
@@ -46,26 +48,28 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
         }
     }
 
-    protected Document postProcessDocumentWithLegacyMaintenanceXML(String documentHeaderId, WorkflowDocument workflowDocument, MaintenanceDocument document) {
-        String oldXml = document.getXmlDocumentContents();
-        String newXml = maintainableXMLConversionService.transformMaintainableXML(oldXml);
+    protected Document postProcessDocumentWithLegacyMaintenanceXML(
+            final String documentHeaderId, final WorkflowDocument workflowDocument, 
+            final MaintenanceDocument document) {
+        final String oldXml = document.getXmlDocumentContents();
+        final String newXml = maintainableXMLConversionService.transformMaintainableXML(oldXml);
 
         try {
             document.setXmlDocumentContents(newXml);
             return super.postProcessDocument(documentHeaderId, workflowDocument, document);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             document.setXmlDocumentContents(oldXml);
             throw e;
         }
     }
 
-    protected boolean shouldConvertMaintenanceXML(RuntimeException e, Document document) {
+    protected boolean shouldConvertMaintenanceXML(final RuntimeException e, final Document document) {
         return document != null
                 && document instanceof MaintenanceDocument
                 && BaseException.class.isAssignableFrom(e.getClass());
     }
 
-    public void setMaintainableXMLConversionService(MaintainableXMLConversionService maintainableXMLConversionService) {
+    public void setMaintainableXMLConversionService(final MaintainableXMLConversionService maintainableXMLConversionService) {
         this.maintainableXMLConversionService = maintainableXMLConversionService;
     }
 

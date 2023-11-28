@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -71,7 +71,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public String getItemIdentifierString() {
-        String itemLineNumberString = getItemLineNumber() != null ? getItemLineNumber().toString() : "";
+        final String itemLineNumberString = getItemLineNumber() != null ? getItemLineNumber().toString() : "";
         return getItemType().isLineItemIndicator() ? "Item " + itemLineNumberString :
                 getItemType().getItemTypeDescription();
     }
@@ -82,8 +82,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemIdentifier(Integer ItemIdentifier) {
-        this.itemIdentifier = ItemIdentifier;
+    public void setItemIdentifier(final Integer ItemIdentifier) {
+        itemIdentifier = ItemIdentifier;
     }
 
     @Override
@@ -92,7 +92,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemLineNumber(Integer itemLineNumber) {
+    public void setItemLineNumber(final Integer itemLineNumber) {
         this.itemLineNumber = itemLineNumber;
     }
 
@@ -102,7 +102,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemUnitOfMeasureCode(String itemUnitOfMeasureCode) {
+    public void setItemUnitOfMeasureCode(final String itemUnitOfMeasureCode) {
         this.itemUnitOfMeasureCode = StringUtils.isNotBlank(itemUnitOfMeasureCode) ?
                 itemUnitOfMeasureCode.toUpperCase(Locale.US) : itemUnitOfMeasureCode;
     }
@@ -113,7 +113,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemCatalogNumber(String itemCatalogNumber) {
+    public void setItemCatalogNumber(final String itemCatalogNumber) {
         this.itemCatalogNumber = itemCatalogNumber;
     }
 
@@ -123,7 +123,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemDescription(String itemDescription) {
+    public void setItemDescription(final String itemDescription) {
         this.itemDescription = itemDescription;
     }
 
@@ -163,7 +163,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemTypeCode(String itemTypeCode) {
+    public void setItemTypeCode(final String itemTypeCode) {
         this.itemTypeCode = itemTypeCode;
     }
 
@@ -173,7 +173,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemAuxiliaryPartIdentifier(String itemAuxiliaryPartIdentifier) {
+    public void setItemAuxiliaryPartIdentifier(final String itemAuxiliaryPartIdentifier) {
         this.itemAuxiliaryPartIdentifier = itemAuxiliaryPartIdentifier;
     }
 
@@ -183,7 +183,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setExternalOrganizationB2bProductReferenceNumber(String externalOrganizationB2bProductReferenceNumber) {
+    public void setExternalOrganizationB2bProductReferenceNumber(final String externalOrganizationB2bProductReferenceNumber) {
         this.externalOrganizationB2bProductReferenceNumber = externalOrganizationB2bProductReferenceNumber;
     }
 
@@ -193,7 +193,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setExternalOrganizationB2bProductTypeName(String externalOrganizationB2bProductTypeName) {
+    public void setExternalOrganizationB2bProductTypeName(final String externalOrganizationB2bProductTypeName) {
         this.externalOrganizationB2bProductTypeName = externalOrganizationB2bProductTypeName;
     }
 
@@ -203,7 +203,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemAssignedToTradeInIndicator(boolean itemAssignedToTradeInIndicator) {
+    public void setItemAssignedToTradeInIndicator(final boolean itemAssignedToTradeInIndicator) {
         this.itemAssignedToTradeInIndicator = itemAssignedToTradeInIndicator;
     }
 
@@ -217,7 +217,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     @Deprecated
-    public void setItemType(ItemType itemType) {
+    public void setItemType(final ItemType itemType) {
         this.itemType = itemType;
     }
 
@@ -226,14 +226,14 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         KualiDecimal taxAmount = KualiDecimal.ZERO;
 
         if (ObjectUtils.isNull(purapDocument)) {
-            this.refreshReferenceObject("purapDocument");
+            refreshReferenceObject("purapDocument");
         }
 
         if (!purapDocument.isUseTaxIndicator()) {
-            taxAmount = this.itemSalesTaxAmount;
+            taxAmount = itemSalesTaxAmount;
         } else {
             // sum use tax item tax amounts
-            for (PurApItemUseTax useTaxItem : this.getUseTaxItems()) {
+            for (final PurApItemUseTax useTaxItem : getUseTaxItems()) {
                 taxAmount = taxAmount.add(useTaxItem.getTaxAmount());
             }
         }
@@ -242,14 +242,14 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemTaxAmount(KualiDecimal itemTaxAmount) {
+    public void setItemTaxAmount(final KualiDecimal itemTaxAmount) {
 
         if (purapDocument == null) {
-            this.refreshReferenceObject("purapDocument");
+            refreshReferenceObject("purapDocument");
         }
 
         if (!purapDocument.isUseTaxIndicator()) {
-            this.itemSalesTaxAmount = itemTaxAmount;
+            itemSalesTaxAmount = itemTaxAmount;
         }
 
     }
@@ -258,7 +258,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         return itemSalesTaxAmount;
     }
 
-    public final void setItemSalesTaxAmount(KualiDecimal itemSalesTaxAmount) {
+    public final void setItemSalesTaxAmount(final KualiDecimal itemSalesTaxAmount) {
         this.itemSalesTaxAmount = itemSalesTaxAmount;
     }
 
@@ -285,7 +285,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setTotalAmount(KualiDecimal totalAmount) {
+    public void setTotalAmount(final KualiDecimal totalAmount) {
         // do nothing, setter required by interface
     }
 
@@ -293,11 +293,11 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     public KualiDecimal calculateExtendedPrice() {
         KualiDecimal extendedPrice = KualiDecimal.ZERO;
         if (ObjectUtils.isNotNull(itemUnitPrice)) {
-            if (this.itemType.isAmountBasedGeneralLedgerIndicator()) {
+            if (itemType.isAmountBasedGeneralLedgerIndicator()) {
                 // SERVICE ITEM: return unit price as extended price
-                extendedPrice = new KualiDecimal(this.itemUnitPrice.toString());
-            } else if (ObjectUtils.isNotNull(this.getItemQuantity())) {
-                BigDecimal calcExtendedPrice = this.itemUnitPrice.multiply(this.itemQuantity.bigDecimalValue());
+                extendedPrice = new KualiDecimal(itemUnitPrice.toString());
+            } else if (ObjectUtils.isNotNull(getItemQuantity())) {
+                final BigDecimal calcExtendedPrice = itemUnitPrice.multiply(itemQuantity.bigDecimalValue());
                 // ITEM TYPE (qty driven): return (unitPrice x qty)
                 extendedPrice = new KualiDecimal(calcExtendedPrice.setScale(KualiDecimal.SCALE,
                         KualiDecimal.ROUND_BEHAVIOR));
@@ -307,7 +307,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setExtendedPrice(KualiDecimal extendedPrice) {
+    public void setExtendedPrice(final KualiDecimal extendedPrice) {
         this.extendedPrice = extendedPrice;
     }
 
@@ -317,8 +317,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setSourceAccountingLines(List<PurApAccountingLine> accountingLines) {
-        this.sourceAccountingLines = accountingLines;
+    public void setSourceAccountingLines(final List<PurApAccountingLine> accountingLines) {
+        sourceAccountingLines = accountingLines;
     }
 
     @Override
@@ -326,8 +326,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
         return baselineSourceAccountingLines;
     }
 
-    public void setBaselineSourceAccountingLines(List<PurApAccountingLine> baselineSourceLines) {
-        this.baselineSourceAccountingLines = baselineSourceLines;
+    public void setBaselineSourceAccountingLines(final List<PurApAccountingLine> baselineSourceLines) {
+        baselineSourceAccountingLines = baselineSourceLines;
     }
 
     /**
@@ -338,9 +338,9 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
      * instantiated. So changing the code below will cause adding lines to break if you add more than one item to the
      * list.
      */
-    public PurApAccountingLine getSourceAccountingLine(int index) {
+    public PurApAccountingLine getSourceAccountingLine(final int index) {
         while (getSourceAccountingLines().size() <= index) {
-            PurApAccountingLine newAccount = getNewAccount();
+            final PurApAccountingLine newAccount = getNewAccount();
             getSourceAccountingLines().add(newAccount);
         }
         return getSourceAccountingLines().get(index);
@@ -354,21 +354,21 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
      * instantiated. So changing the code below will cause adding lines to break if you add more than one item to the
      * list.
      */
-    public PurApAccountingLine getBaselineSourceAccountingLine(int index) {
+    public PurApAccountingLine getBaselineSourceAccountingLine(final int index) {
         while (getBaselineSourceAccountingLines().size() <= index) {
-            PurApAccountingLine newAccount = getNewAccount();
+            final PurApAccountingLine newAccount = getNewAccount();
             getBaselineSourceAccountingLines().add(newAccount);
         }
         return getBaselineSourceAccountingLines().get(index);
     }
 
     private PurApAccountingLine getNewAccount() throws RuntimeException {
-        Class accountingLineClass = getAccountingLineClass();
+        final Class accountingLineClass = getAccountingLineClass();
         if (accountingLineClass == null) {
             throw new RuntimeException("Can't instantiate Purchasing Account from base");
         }
 
-        PurApAccountingLine newAccount;
+        final PurApAccountingLine newAccount;
         try {
             newAccount = (PurApAccountingLine) accountingLineClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -386,9 +386,9 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     @Override
     public void resetAccount() {
         // add a blank accounting line
-        PurApAccountingLine purApAccountingLine = getNewAccount();
+        final PurApAccountingLine purApAccountingLine = getNewAccount();
 
-        purApAccountingLine.setItemIdentifier(this.itemIdentifier);
+        purApAccountingLine.setItemIdentifier(itemIdentifier);
         purApAccountingLine.setPurapItem(this);
         purApAccountingLine.setSequenceNumber(0);
         setNewSourceLine(purApAccountingLine);
@@ -396,7 +396,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public List buildListOfDeletionAwareLists() {
-        List managedLists = new ArrayList();
+        final List managedLists = new ArrayList();
         managedLists.add(getSourceAccountingLines());
         return managedLists;
     }
@@ -407,8 +407,8 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setNewSourceLine(PurApAccountingLine newAccountingLine) {
-        this.newSourceLine = newAccountingLine;
+    public void setNewSourceLine(final PurApAccountingLine newAccountingLine) {
+        newSourceLine = newAccountingLine;
     }
 
     @Override
@@ -417,7 +417,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setPurapDocumentIdentifier(Integer purapDocumentIdentifier) {
+    public void setPurapDocumentIdentifier(final Integer purapDocumentIdentifier) {
         this.purapDocumentIdentifier = purapDocumentIdentifier;
     }
 
@@ -427,7 +427,7 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setUseTaxItems(List<PurApItemUseTax> useTaxItems) {
+    public void setUseTaxItems(final List<PurApItemUseTax> useTaxItems) {
         this.useTaxItems = useTaxItems;
     }
 
@@ -437,14 +437,14 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public void setItemQuantity(KualiDecimal itemQuantity) {
+    public void setItemQuantity(final KualiDecimal itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
 
     public boolean isAccountListEmpty() {
-        List<PurApAccountingLine> accounts = getSourceAccountingLines();
+        final List<PurApAccountingLine> accounts = getSourceAccountingLines();
         if (ObjectUtils.isNotNull(accounts)) {
-            for (PurApAccountingLine element : accounts) {
+            for (final PurApAccountingLine element : accounts) {
                 if (!element.isEmpty()) {
                     return false;
                 }
@@ -455,9 +455,9 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
 
     @Override
     public PurApSummaryItem getSummaryItem() {
-        PurApSummaryItem summaryItem = new PurApSummaryItem();
+        final PurApSummaryItem summaryItem = new PurApSummaryItem();
         ObjectPopulationUtils.populateFromBaseClass(PurApItemBase.class, this, summaryItem, new HashMap<>());
-        summaryItem.getItemType().setItemTypeDescription(this.itemType.getItemTypeDescription());
+        summaryItem.getItemType().setItemTypeDescription(itemType.getItemTypeDescription());
         return summaryItem;
     }
 
@@ -467,14 +467,14 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     }
 
     @Override
-    public final void setPurapDocument(PurchasingAccountsPayableDocument purapDoc) {
-        this.purapDocument = purapDoc;
+    public final void setPurapDocument(final PurchasingAccountsPayableDocument purapDoc) {
+        purapDocument = purapDoc;
     }
 
     @Override
     public void fixAccountReferences() {
-        if (ObjectUtils.isNull(this.getItemIdentifier())) {
-            for (PurApAccountingLine account : this.getSourceAccountingLines()) {
+        if (ObjectUtils.isNull(getItemIdentifier())) {
+            for (final PurApAccountingLine account : getSourceAccountingLines()) {
                 account.setSequenceNumber(0);
                 account.setPurapItem(this);
             }
@@ -484,25 +484,25 @@ public abstract class PurApItemBase extends PersistableBusinessObjectBase implem
     @Override
     public void refreshNonUpdateableReferences() {
         PurchasingAccountsPayableDocument document = null;
-        PurchasingAccountsPayableDocument tempDocument = getPurapDocument();
+        final PurchasingAccountsPayableDocument tempDocument = getPurapDocument();
         if (tempDocument != null) {
-            Integer tempDocumentIdentifier = tempDocument.getPurapDocumentIdentifier();
+            final Integer tempDocumentIdentifier = tempDocument.getPurapDocumentIdentifier();
             if (tempDocumentIdentifier != null) {
-                document = this.getPurapDocument();
+                document = getPurapDocument();
             }
         }
         super.refreshNonUpdateableReferences();
         if (ObjectUtils.isNotNull(document)) {
-            this.setPurapDocument(document);
+            setPurapDocument(document);
         }
     }
 
     @Override
     public KualiDecimal getTotalRemitAmount() {
         if (!purapDocument.isUseTaxIndicator()) {
-            return this.getTotalAmount();
+            return getTotalAmount();
         }
-        return this.getExtendedPrice();
+        return getExtendedPrice();
     }
 
     @Override

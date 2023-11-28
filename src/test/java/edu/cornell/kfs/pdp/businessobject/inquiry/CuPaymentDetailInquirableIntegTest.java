@@ -82,9 +82,9 @@ public class CuPaymentDetailInquirableIntegTest {
         assertSectionStaysUnalteredWhenCountryPropertyIsNotPresent();
     }
 
-    private void assertSectionWithCountryValueIsConvertedProperly(String countryPropertyValue) {
-        String expectedConvertedCountryValue = getExpectedPostConversionCountryValue(countryPropertyValue);
-        Map<String, String> expectedPropertyValues = new HashMap<>();
+    private void assertSectionWithCountryValueIsConvertedProperly(final String countryPropertyValue) {
+        final String expectedConvertedCountryValue = getExpectedPostConversionCountryValue(countryPropertyValue);
+        final Map<String, String> expectedPropertyValues = new HashMap<>();
         expectedPropertyValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID);
         expectedPropertyValues.put(CUPdpPropertyConstants.PAYMENT_COUNTRY, expectedConvertedCountryValue);
         expectedPropertyValues.put(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_NAME, TEST_PAYEE_NAME);
@@ -93,7 +93,7 @@ public class CuPaymentDetailInquirableIntegTest {
         assertSectionIsUpdatedProperly(expectedPropertyValues, section);
     }
 
-    private String getExpectedPostConversionCountryValue(String countryPropertyValue) {
+    private String getExpectedPostConversionCountryValue(final String countryPropertyValue) {
         if (StringUtils.isBlank(countryPropertyValue)) {
             return StringUtils.EMPTY;
         } else if (StringUtils.equals(countryPropertyValue, KFSConstants.COUNTRY_CODE_UNITED_STATES)) {
@@ -104,26 +104,26 @@ public class CuPaymentDetailInquirableIntegTest {
     }
 
     private void assertSectionStaysUnalteredWhenCountryPropertyIsNotPresent() {
-        Map<String, String> expectedPropertyValues = Collections.singletonMap(
+        final Map<String, String> expectedPropertyValues = Collections.singletonMap(
                 PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID);
-        Section section = buildSection("Payment",
+        final Section section = buildSection("Payment",
                 buildRow(
                         buildField(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID)));
         
         assertSectionIsUpdatedProperly(expectedPropertyValues, section);
     }
 
-    private void assertSectionIsUpdatedProperly(Map<String, String> expectedPropertyValues, Section section) {
+    private void assertSectionIsUpdatedProperly(final Map<String, String> expectedPropertyValues, final Section section) {
         paymentDetailInquirable.convertCountryForDisplay(section);
         
-        Map<String, String> actualPropertyValues = section.getRows().stream()
+        final Map<String, String> actualPropertyValues = section.getRows().stream()
                 .flatMap((row) -> row.getFields().stream())
                 .collect(Collectors.toMap(Field::getPropertyName, Field::getPropertyValue));
         
         assertEquals("Wrong property value mappings from inquiry section", expectedPropertyValues, actualPropertyValues);
     }
 
-    private Section buildSectionWithCountryPropertyValue(String countryValue) {
+    private Section buildSectionWithCountryPropertyValue(final String countryValue) {
         return buildSection("Payee",
                 buildRow(
                         buildField(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_ID, TEST_PAYEE_ID),
@@ -132,21 +132,21 @@ public class CuPaymentDetailInquirableIntegTest {
                         buildField(PdpPropertyConstants.PaymentDetail.PAYMENT_PAYEE_NAME, TEST_PAYEE_NAME)));
     }
 
-    private Section buildSection(String title, Row... rows) {
-        Section section = new Section();
+    private Section buildSection(final String title, final Row... rows) {
+        final Section section = new Section();
         section.setSectionTitle(title);
         section.setRows(Arrays.asList(rows));
         return section;
     }
 
-    private Row buildRow(Field... fields) {
-        Row row = new Row();
+    private Row buildRow(final Field... fields) {
+        final Row row = new Row();
         row.setFields(Arrays.asList(fields));
         return row;
     }
 
-    private Field buildField(String propertyName, String propertyValue) {
-        Field field = new Field();
+    private Field buildField(final String propertyName, final String propertyValue) {
+        final Field field = new Field();
         field.setPropertyName(propertyName);
         field.setPropertyValue(propertyValue);
         return field;

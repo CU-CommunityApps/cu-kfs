@@ -2,7 +2,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2022 Kuali, Inc.
+    Copyright 2005-2023 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -186,30 +186,30 @@ if (attributeEntry == null) {
 			     <%
 			        java.lang.String selectedOptionDescription = "";
 			   	  
-			   	    javax.servlet.jsp.PageContext pageCtx = (javax.servlet.jsp.PageContext) jspContext;
+			   	    final javax.servlet.jsp.PageContext pageCtx = (javax.servlet.jsp.PageContext) jspContext;
 			   	
-			   	    org.apache.struts.taglib.TagUtils TagUtils = org.apache.struts.taglib.TagUtils.getInstance();
-			   	    java.util.List propertyValue = new java.util.ArrayList();
-			   	    Object value = TagUtils.lookup(pageCtx, "org.apache.struts.taglib.html.BEAN", property, null);
+			   	    final org.apache.struts.taglib.TagUtils TagUtils = org.apache.struts.taglib.TagUtils.getInstance();
+                                        final java.util.List propertyValue = new java.util.ArrayList();
+                                        final Object value = TagUtils.lookup(pageCtx, "org.apache.struts.taglib.html.BEAN", property, null);
 			   	    if (value instanceof String) {
 			   		    propertyValue.add(value);
 			   	    } else if (value instanceof java.util.Collection) {
 			   		    propertyValue.addAll((java.util.Collection)value);
 			   	    }
-              java.util.List collection;
+              final java.util.List collection;
               if (methodAndParms.length() > 0) {
 			   	      collection = (java.util.List) TagUtils.lookup(pageCtx, "org.apache.struts.taglib.html.BEAN", methodAndParms, null);
               } else {
                 collection = new ArrayList<org.kuali.kfs.core.api.util.KeyValue>();
-                for (Map.Entry<String, String> entry : (java.util.Set<Map.Entry<String, String>>)keyLabelMapEntries) {
+                for (final Map.Entry<String, String> entry : (java.util.Set<Map.Entry<String, String>>)keyLabelMapEntries) {
                   collection.add(new org.kuali.kfs.core.api.util.ConcreteKeyValue(entry));
                 }
               }
 
 			   	    if(collection != null && collection.size() > 0) {
-				   	  for (Object val : propertyValue) {
-                for (Object obj : collection) {
-                  org.kuali.kfs.core.api.util.KeyValue pair = (org.kuali.kfs.core.api.util.KeyValue) obj;
+				   	  for (final Object val : propertyValue) {
+                for (final Object obj : collection) {
+                  final org.kuali.kfs.core.api.util.KeyValue pair = (org.kuali.kfs.core.api.util.KeyValue) obj;
 					   	    if(pair.getKey() != null && pair.getKey().equals(val)) {
 					   	      if (!selectedOptionDescription.trim().equals("")) {
 					   	        selectedOptionDescription += "<br />";

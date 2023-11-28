@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -25,7 +25,13 @@ import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.kns.datadictionary.BusinessObjectEntry;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
@@ -50,9 +56,6 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.FlexibleOffsetAccountService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
@@ -87,56 +90,60 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     }
 
     @Override
-    public void generatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_PROCESS_ACH,
-                PdpConstants.FDOC_TYP_CD_PROCESS_CHECK, false, false);
+    public void generatePaymentGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forProcess());
     }
 
     @Override
-    public void generateCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH,
-                PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true, false);
+    public void generateCancellationGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forCancel());
     }
 
     @Override
-    public void generateCancelReissueGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_REISSUE_ACH,
-                PdpConstants.FDOC_TYP_CD_CANCEL_REISSUE_CHECK, true, false);
+    public void generateCancelReissueGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forCancelReissue());
     }
 
     @Override
-    public void generateReissueGeneralLedgerPendingEntries(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, null, null, false, true);
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, null, null, true, true);
+    public void generateReissueGeneralLedgerPendingEntries(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forReissue());
+        populatePaymentGeneralLedgerPendingEntry(
+                paymentGroup,
+                GeneratePdpGlpeState.forReissueReverse());
     }
 
     /**
      * Populates and stores a new GLPE for each account detail in the payment group.
      *
      * @param paymentGroup     payment group to generate entries for
-     * @param achFdocTypeCode  doc type for ach disbursements
-     * @param checkFdocTypeCod doc type for check disbursements
-     * @param reversal         boolean indicating if this is a reversal
-     * @param expenseOrLiability boolean indicating if these should be expense (reversal=false) or liability
-     *                           (reversal=true) entries
      */
-    protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode,
-            String checkFdocTypeCod, boolean reversal, boolean expenseOrLiability) {
-        List<PaymentAccountDetail> accountListings = new ArrayList<>();
-        for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+    private void populatePaymentGeneralLedgerPendingEntry(
+            final PaymentGroup paymentGroup,
+            final GeneratePdpGlpeState state
+    ) {
+        final List<PaymentAccountDetail> accountListings = new ArrayList<>();
+        for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
             accountListings.addAll(paymentDetail.getAccountDetail());
         }
 
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
-        for (PaymentAccountDetail paymentAccountDetail : accountListings) {
-            GlPendingTransaction glPendingTransaction = new GlPendingTransaction();
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
+        for (final PaymentAccountDetail paymentAccountDetail : accountListings) {
+            final GlPendingTransaction glPendingTransaction = new GlPendingTransaction();
             glPendingTransaction.setSequenceNbr(new KualiInteger(sequenceHelper.getSequenceCounter()));
 
             glPendingTransaction.setFinancialBalanceTypeCode(KFSConstants.BALANCE_TYPE_ACTUAL);
 
-            Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
+            final Date transactionTimestamp = new Date(dateTimeService.getCurrentDate().getTime());
             glPendingTransaction.setTransactionDt(transactionTimestamp);
-            AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+            final AccountingPeriod fiscalPeriod = accountingPeriodService.getByDate(new java.sql.Date(transactionTimestamp.getTime()));
             glPendingTransaction.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
             glPendingTransaction.setUnivFiscalPrdCd(fiscalPeriod.getUniversityFiscalPeriodCode());
 
@@ -145,37 +152,37 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
             glPendingTransaction.setChartOfAccountsCode(paymentAccountDetail.getFinChartCode());
 
             glPendingTransaction.setProjectCd(paymentAccountDetail.getProjectCode());
-            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ?
+            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, state.isReversal()) ?
                     KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
             glPendingTransaction.setAmount(paymentAccountDetail.getAccountNetAmount().abs());
 
             //Changes for Research Participant Upload
             String trnDesc = StringUtils.EMPTY;
-            CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
+            final CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
 
             if (researchParticipantPaymentValidationService.isResearchParticipantPayment(customerProfile)) {
-                BusinessObjectEntry businessObjectEntry = businessObjectDictionaryService.getBusinessObjectEntry(
+                final BusinessObjectEntry businessObjectEntry = businessObjectDictionaryService.getBusinessObjectEntry(
                         PaymentDetail.class.getName());
-                AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition(
+                final AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition(
                         "paymentGroup.payeeName");
-                AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
+                final AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
                 //This is a temporary work around for an issue introduced with KFSCNTRB-705.
                 if (ObjectUtils.isNotNull(originalPayeeNameAttributeSecurity)) {
                     trnDesc = ((MaskFormatterLiteral) originalPayeeNameAttributeSecurity.getMaskFormatter()).getLiteral();
                 }
             } else {
-                String payeeName = paymentGroup.getPayeeName();
+                final String payeeName = paymentGroup.getPayeeName();
                 if (StringUtils.isNotBlank(payeeName)) {
                     trnDesc = payeeName.length() > 40 ? payeeName.substring(0, 40) : StringUtils.rightPad(payeeName, 40);
                 }
 
-                if (reversal) {
-                    String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
+                if (state.isReversal()) {
+                    final String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
                     if (StringUtils.isNotBlank(poNbr)) {
                         trnDesc += " " + (poNbr.length() > 9 ? poNbr.substring(0, 9) : StringUtils.rightPad(poNbr, 9));
                     }
 
-                    String invoiceNbr = paymentAccountDetail.getPaymentDetail().getInvoiceNbr();
+                    final String invoiceNbr = paymentAccountDetail.getPaymentDetail().getInvoiceNbr();
                     if (StringUtils.isNotBlank(invoiceNbr)) {
                         trnDesc += " " + (invoiceNbr.length() > 14 ? invoiceNbr.substring(0, 14) :
                                 StringUtils.rightPad(invoiceNbr, 14));
@@ -186,21 +193,31 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
                     }
                 }
             }
+            state.setTransactionDescription(trnDesc);
+
             glPendingTransaction.setOrgDocNbr(paymentAccountDetail.getPaymentDetail().getOrganizationDocNbr());
             glPendingTransaction.setOrgReferenceId(paymentAccountDetail.getOrgReferenceId());
 
-            final boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
-            final OffsetDefinition offsetDefinition = offsetDefinitionService.getByPrimaryId(
-                    glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(),
-                    paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(),
-                    glPendingTransaction.getFinancialBalanceTypeCode());
-            if (expenseOrLiability && relieveLiabilities) {
-                updateGeneralLedgerPendingEntryAsExpenseOrLiability(reversal, paymentAccountDetail, trnDesc,
-                    offsetDefinition, glPendingTransaction);
+            state.setRelieveLiabilities(paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities());
+            state.setOffsetDefinitionObjectCode(offsetDefinitionService.getActiveByPrimaryId(
+                        glPendingTransaction.getUniversityFiscalYear(),
+                        glPendingTransaction.getChartOfAccountsCode(),
+                        paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(),
+                        glPendingTransaction.getFinancialBalanceTypeCode())
+                    .map(OffsetDefinition::getFinancialObjectCode)
+                    .orElse(paymentAccountDetail.getFinObjectCode()));
+            if (state.isExpenseOrLiability() && state.isRelieveLiabilities()) {
+                updateGeneralLedgerPendingEntryAsExpenseOrLiability(
+                        state,
+                        paymentAccountDetail,
+                        glPendingTransaction);
             } else {
-                updateGeneralLedgerPendingEntryAsCheck(relieveLiabilities, paymentGroup.getDisbursementType().getCode(),
-                    paymentGroup.getDisbursementNbr(), achFdocTypeCode, checkFdocTypeCod, paymentAccountDetail, trnDesc,
-                    offsetDefinition, glPendingTransaction);
+                updateGeneralLedgerPendingEntryAsPayment(
+                        paymentGroup.getDisbursementType().getCode(),
+                        paymentGroup.getDisbursementNbr(),
+                        state,
+                        paymentAccountDetail,
+                        glPendingTransaction);
             }
 
             // update the offset account if necessary
@@ -210,7 +227,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
 
             sequenceHelper.increment();
 
-            if (bankService.isBankSpecificationEnabled() && !expenseOrLiability) {
+            if (bankService.isBankSpecificationEnabled() && !state.isExpenseOrLiability()) {
                 populateBankOffsetEntry(paymentGroup, glPendingTransaction, sequenceHelper);
             }
         }
@@ -221,26 +238,24 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      * However, functional requirement is that reference fields are set, the scrubber would not do that. So we create
      * liabilities here.
      *
-     * @param reversal boolean indicating if this is a reversal
      * @param paymentAccountDetail current payment detail used to update the GLPE
-     * @param trnDesc transaction description used to update the GLPE
-     * @param offsetDefinition offset definition used to update the GLPE
      * @param glPendingTransaction to be updated
      */
-    private void updateGeneralLedgerPendingEntryAsExpenseOrLiability(boolean reversal,
-            PaymentAccountDetail paymentAccountDetail, String trnDesc, OffsetDefinition offsetDefinition,
-            GlPendingTransaction glPendingTransaction) {
-        if (reversal) {
+    private void updateGeneralLedgerPendingEntryAsExpenseOrLiability(
+            final GeneratePdpGlpeState state,
+            final PaymentAccountDetail paymentAccountDetail,
+            final GlPendingTransaction glPendingTransaction
+    ) {
+        if (state.isReversal()) {
             glPendingTransaction.setFinObjTypCd(KFSConstants.BasicAccountingCategoryCodes.LIABILITIES);
-            glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ?
-                    offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
+            glPendingTransaction.setFinancialObjectCode(state.getOffsetDefinitionObjectCode());
             glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             glPendingTransaction.setDescription(KFSConstants.GL_PE_OFFSET_STRING);
         } else {
             glPendingTransaction.setFinObjTypCd(KFSConstants.BasicAccountingCategoryCodes.EXPENSES);
             glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());
             glPendingTransaction.setFinancialSubObjectCode(paymentAccountDetail.getFinSubObjectCode());
-            glPendingTransaction.setDescription(trnDesc);
+            glPendingTransaction.setDescription(state.getTransactionDescription());
         }
 
         glPendingTransaction.setFinancialDocumentTypeCode(paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode());
@@ -257,38 +272,34 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     }
 
     /**
-     * Helper to update the GLPE as a check entry.
+     * Helper to update the GLPE as a payment entry.
      *
-     * @param relieveLiabilities indicator from CustomerProfile. Determines how object code and sub object code are set
      * @param disbursementType payment group's disbursement type used to update the GLPE
      * @param disbursementNbr payment group's disbursement number used to update the GLPE
-     * @param achFdocTypeCode doc type for ach disbursements used to update the GLPE
-     * @param checkFdocTypeCod doc type for check disbursements used to update the GLPE
      * @param paymentAccountDetail current payment detail used to update the GLPE
-     * @param trnDesc transaction description used to update the GLPE
-     * @param offsetDefinition offset definition used to update the GLPE
      * @param glPendingTransaction to be updated
      */
-    private void updateGeneralLedgerPendingEntryAsCheck(boolean relieveLiabilities, String disbursementType,
-            KualiInteger disbursementNbr, String achFdocTypeCode, String checkFdocTypeCod,
-            PaymentAccountDetail paymentAccountDetail, String trnDesc, OffsetDefinition offsetDefinition,
-            GlPendingTransaction glPendingTransaction) {
-        if (relieveLiabilities && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
-            glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ?
-                    offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
+    private void updateGeneralLedgerPendingEntryAsPayment(
+            final String disbursementType,
+            final KualiInteger disbursementNbr,
+            final GeneratePdpGlpeState state,
+            final PaymentAccountDetail paymentAccountDetail,
+            final GlPendingTransaction glPendingTransaction
+    ) {
+        if (state.isRelieveLiabilities()
+                && isAchCheckDisbursementType(disbursementType)
+                && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
+            glPendingTransaction.setFinancialObjectCode(state.getOffsetDefinitionObjectCode());
             glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
         } else {
             glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());
             glPendingTransaction.setFinancialSubObjectCode(paymentAccountDetail.getFinSubObjectCode());
         }
 
-        glPendingTransaction.setDescription(trnDesc);
+        glPendingTransaction.setDescription(state.getTransactionDescription());
 
-        if (disbursementType.equals(PdpConstants.DisbursementTypeCodes.ACH)) {
-            glPendingTransaction.setFinancialDocumentTypeCode(achFdocTypeCode);
-        } else if (disbursementType.equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
-            glPendingTransaction.setFinancialDocumentTypeCode(checkFdocTypeCod);
-        }
+        glPendingTransaction.setFinancialDocumentTypeCode(
+                state.documentTypeForDisbursementType(disbursementType));
 
         glPendingTransaction.setFdocNbr(disbursementNbr.toString());
         glPendingTransaction.setFsOriginCd(PdpConstants.PDP_FDOC_ORIGIN_CODE);
@@ -304,6 +315,11 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         glPendingTransaction.setFdocRefNbr(paymentAccountDetail.getPaymentDetail().getCustPaymentDocNbr());
     }
 
+    private static boolean isAchCheckDisbursementType(final String disbursementType) {
+        return PdpConstants.DisbursementTypeCodes.ACH.equals(disbursementType)
+                || PdpConstants.DisbursementTypeCodes.CHECK.equals(disbursementType);
+    }
+
     /**
      * Generates the bank offset for an entry (when enabled in the system)
      *
@@ -312,8 +328,8 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
      * @param sequenceHelper       holds current entry sequence value
      */
     @Override
-    public void populateBankOffsetEntry(PaymentGroup paymentGroup, GlPendingTransaction glPendingTransaction, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
-        GlPendingTransaction bankPendingTransaction = new GlPendingTransaction();
+    public void populateBankOffsetEntry(final PaymentGroup paymentGroup, final GlPendingTransaction glPendingTransaction, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+        final GlPendingTransaction bankPendingTransaction = new GlPendingTransaction();
 
         bankPendingTransaction.setSequenceNbr(new KualiInteger(sequenceHelper.getSequenceCounter()));
         bankPendingTransaction.setFdocRefTypCd(null);
@@ -326,7 +342,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         bankPendingTransaction.setFsOriginCd(glPendingTransaction.getFsOriginCd());
         bankPendingTransaction.setFdocNbr(glPendingTransaction.getFdocNbr());
 
-        Bank bank = paymentGroup.getBank();
+        final Bank bank = paymentGroup.getBank();
         bankPendingTransaction.setChartOfAccountsCode(bank.getCashOffsetFinancialChartOfAccountCode());
         bankPendingTransaction.setAccountNumber(bank.getCashOffsetAccountNumber());
         if (StringUtils.isBlank(bank.getCashOffsetSubAccountNumber())) {
@@ -350,22 +366,22 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         }
         bankPendingTransaction.setAmount(glPendingTransaction.getAmount());
 
-        String description = kualiConfigurationService.getPropertyValueAsString(FPKeyConstants.DESCRIPTION_GLPE_BANK_OFFSET);
+        final String description = kualiConfigurationService.getPropertyValueAsString(FPKeyConstants.DESCRIPTION_GLPE_BANK_OFFSET);
         bankPendingTransaction.setDescription(description);
         bankPendingTransaction.setOrgDocNbr(glPendingTransaction.getOrgDocNbr());
         bankPendingTransaction.setOrgReferenceId(null);
         bankPendingTransaction.setFdocRefNbr(null);
 
-        this.businessObjectService.save(bankPendingTransaction);
+        businessObjectService.save(bankPendingTransaction);
 
         sequenceHelper.increment();
     }
 
     @Override
-    public void save(GlPendingTransaction tran) {
+    public void save(final GlPendingTransaction tran) {
         LOG.debug("save() started");
 
-        this.businessObjectService.save(tran);
+        businessObjectService.save(tran);
     }
 
     @Override
@@ -384,11 +400,11 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         return bankService;
     }
 
-    public void setBankService(BankService bankService) {
+    public void setBankService(final BankService bankService) {
         this.bankService = bankService;
     }
 
-    public void setGlPendingTransactionDao(PendingTransactionDao glPendingTransactionDao) {
+    public void setGlPendingTransactionDao(final PendingTransactionDao glPendingTransactionDao) {
         this.glPendingTransactionDao = glPendingTransactionDao;
     }
 
@@ -397,7 +413,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         return accountingPeriodService;
     }
 
-    public void setAccountingPeriodService(AccountingPeriodService accountingPeriodService) {
+    public void setAccountingPeriodService(final AccountingPeriodService accountingPeriodService) {
         this.accountingPeriodService = accountingPeriodService;
     }
 
@@ -406,11 +422,11 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         return dateTimeService;
     }
 
-    public void setDateTimeService(DateTimeService dateTimeService) {
+    public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setConfigurationService(ConfigurationService kualiConfigurationService) {
+    public void setConfigurationService(final ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
@@ -420,7 +436,7 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     }
 
     public void setBusinessObjectDictionaryService(
-            BusinessObjectDictionaryService businessObjectDictionaryService) {
+            final BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
@@ -429,19 +445,19 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
         return businessObjectService;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    public void setKualiConfigurationService(ConfigurationService kualiConfigurationService) {
+    public void setKualiConfigurationService(final ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
     }
 
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 
@@ -450,19 +466,19 @@ public class PendingTransactionServiceImpl implements PendingTransactionService 
     }
 
     public void setResearchParticipantPaymentValidationService(
-            ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService) {
+            final ResearchParticipantPaymentValidationService researchParticipantPaymentValidationService) {
         this.researchParticipantPaymentValidationService = researchParticipantPaymentValidationService;
     }
 
-    public void setPdpUtilService(PdpUtilService pdpUtilService) {
+    public void setPdpUtilService(final PdpUtilService pdpUtilService) {
         this.pdpUtilService = pdpUtilService;
     }
 
-    public void setOffsetDefinitionService(OffsetDefinitionService offsetDefinitionService) {
+    public void setOffsetDefinitionService(final OffsetDefinitionService offsetDefinitionService) {
         this.offsetDefinitionService = offsetDefinitionService;
     }
 
-    public void setFlexibleOffsetAccountService(FlexibleOffsetAccountService flexibleOffsetAccountService) {
+    public void setFlexibleOffsetAccountService(final FlexibleOffsetAccountService flexibleOffsetAccountService) {
         this.flexibleOffsetAccountService = flexibleOffsetAccountService;
     }
 }

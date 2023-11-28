@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -58,18 +58,20 @@ import java.util.List;
 public class ActionListFilterAction extends KualiAction {
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward execute(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        request.setAttribute("preferences", this.getUserSession().retrieveObject(KewApiConstants.PREFERENCES));
+        request.setAttribute("preferences", getUserSession().retrieveObject(KewApiConstants.PREFERENCES));
         initForm(request, form);
         return super.execute(mapping, form, request, response);
     }
 
-    public ActionForward start(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws
+    public ActionForward start(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws
             Exception {
-        ActionListFilterForm filterForm = (ActionListFilterForm) form;
+        final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         final UserSession uSession = getUserSession();
         final ActionListFilter filter =
                 (ActionListFilter) uSession.retrieveObject(KewApiConstants.ACTION_LIST_FILTER_ATTR_NAME);
@@ -86,10 +88,11 @@ public class ActionListFilterAction extends KualiAction {
         return mapping.findForward("viewFilter");
     }
 
-    public ActionForward filter(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws
+    public ActionForward filter(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws
             Exception {
-        ActionListFilterForm filterForm = (ActionListFilterForm) form;
+        final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         //validate the filter through the actionitem/actionlist service (I'm thinking actionlistservice)
         final UserSession uSession = getUserSession();
         ActionListFilter alFilter = filterForm.getLoadedFilter();
@@ -104,8 +107,8 @@ public class ActionListFilterAction extends KualiAction {
         uSession.addObject(KewApiConstants.ACTION_LIST_FILTER_ATTR_NAME, alFilter);
         if (GlobalVariables.getMessageMap().hasNoErrors()) {
             request.getSession().setAttribute(KewApiConstants.REQUERY_ACTION_LIST_KEY, "true");
-            ActionForward forward = mapping.findForward("viewActionList");
-            ActionRedirect redirect = new ActionRedirect(forward);
+            final ActionForward forward = mapping.findForward("viewActionList");
+            final ActionRedirect redirect = new ActionRedirect(forward);
             return redirect;
         }
         return mapping.findForward("viewFilter");
@@ -114,10 +117,11 @@ public class ActionListFilterAction extends KualiAction {
     /**
      * CU Customization: Changes required for last modified date from and to values.
      */
-    public ActionForward clear(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws
+    public ActionForward clear(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws
             Exception {
-        ActionListFilterForm filterForm = (ActionListFilterForm) form;
+        final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         filterForm.setFilter(new ActionListFilter());
         filterForm.setCreateDateFrom("");
         filterForm.setCreateDateTo("");
@@ -126,18 +130,18 @@ public class ActionListFilterAction extends KualiAction {
         filterForm.setLastModifiedDateFrom("");
         filterForm.setLastModifiedDateTo("");
         filterForm.setDocTypeFullName("");
-        UserSession session = getUserSession();
+        final UserSession session = getUserSession();
         session.removeObject(KewApiConstants.ACTION_LIST_FILTER_ATTR_NAME);
         return mapping.findForward("viewFilter");
     }
 
-    public void initForm(HttpServletRequest request, ActionForm form) throws Exception {
-        ActionListFilterForm filterForm = (ActionListFilterForm) form;
+    public void initForm(final HttpServletRequest request, final ActionForm form) throws Exception {
+        final ActionListFilterForm filterForm = (ActionListFilterForm) form;
         filterForm.setUserWorkgroups(getUserWorkgroupsDropDownList(getUserSession().getPrincipalId()));
-        PreferencesService prefSrv = KewApiServiceLocator.getPreferencesService();
-        Preferences preferences = prefSrv.getPreferences(getUserSession().getPrincipalId());
+        final PreferencesService prefSrv = KewApiServiceLocator.getPreferencesService();
+        final Preferences preferences = prefSrv.getPreferences(getUserSession().getPrincipalId());
         request.setAttribute("preferences", preferences);
-        ActionListService actionListSrv = KEWServiceLocator.getActionListService();
+        final ActionListService actionListSrv = KEWServiceLocator.getActionListService();
         request.setAttribute("delegators", ActionListUtil.getWebFriendlyRecipients(
                 actionListSrv.findUserSecondaryDelegators(getUserSession().getPrincipalId())));
         request.setAttribute("primaryDelegates", ActionListUtil.getWebFriendlyRecipients(
@@ -146,20 +150,20 @@ public class ActionListFilterAction extends KualiAction {
             filterForm.validateDates();
         }
         if (StringUtils.isNotBlank(filterForm.getBackLocation())) {
-            String actionListUrl = SpringContext.getBean(ConfigurationService.class)
+            final String actionListUrl = SpringContext.getBean(ConfigurationService.class)
                     .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/ActionList.do";
             filterForm.setBackLocation(actionListUrl);
         }
     }
 
     private List<? extends KeyValue> getUserWorkgroupsDropDownList(String principalId) {
-        List<String> userWorkgroups =
+        final List<String> userWorkgroups =
                 KimApiServiceLocator.getGroupService().getGroupIdsByPrincipalId(principalId);
 
         //note that userWorkgroups is unmodifiable so we need to create a new list that we can sort
-        List<String> userGroupsToSort = new ArrayList<>(userWorkgroups);
+        final List<String> userGroupsToSort = new ArrayList<>(userWorkgroups);
 
-        List<KeyValue> sortedUserWorkgroups = new ArrayList<>();
+        final List<KeyValue> sortedUserWorkgroups = new ArrayList<>();
         KeyValue keyValue;
         keyValue = new ConcreteKeyValue(KewApiConstants.NO_FILTERING, KewApiConstants.NO_FILTERING);
         sortedUserWorkgroups.add(keyValue);
@@ -167,7 +171,7 @@ public class ActionListFilterAction extends KualiAction {
             Collections.sort(userGroupsToSort);
 
             Group group;
-            for (String groupId : userGroupsToSort) {
+            for (final String groupId : userGroupsToSort) {
                 group = KimApiServiceLocator.getGroupService().getGroup(groupId);
                 keyValue = new ConcreteKeyValue(groupId, group.getName());
                 sortedUserWorkgroups.add(keyValue);

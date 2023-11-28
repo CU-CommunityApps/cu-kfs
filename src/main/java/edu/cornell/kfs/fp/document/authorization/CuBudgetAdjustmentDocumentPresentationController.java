@@ -12,13 +12,13 @@ import org.kuali.kfs.sys.KFSConstants;
 public class CuBudgetAdjustmentDocumentPresentationController extends BudgetAdjustmentDocumentPresentationController {
     @Override
     public Set<String> getDocumentActions(Document document) {
-        Set<String> documentActions = super.getDocumentActions(document);
+        final Set<String> documentActions = super.getDocumentActions(document);
 
-        BudgetAdjustmentDocument budgetAdjustmentDocument = (BudgetAdjustmentDocument) document;
-        String docInError = budgetAdjustmentDocument.getDocumentHeader().getFinancialDocumentInErrorNumber();
+        final BudgetAdjustmentDocument budgetAdjustmentDocument = (BudgetAdjustmentDocument) document;
+        final String docInError = budgetAdjustmentDocument.getDocumentHeader().getFinancialDocumentInErrorNumber();
         
         if (StringUtils.isNotBlank(docInError)) {
-            Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(
+            final Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(
                     KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
                     KRADConstants.SystemGroupParameterNames.ALLOW_ENROUTE_BLANKET_APPROVE_WITHOUT_APPROVAL_REQUEST_IND);
             if (allowBlanketApproveNoRequest != null && allowBlanketApproveNoRequest.booleanValue()) {

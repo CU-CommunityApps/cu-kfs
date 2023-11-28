@@ -13,7 +13,7 @@ public class YesNoValuesFinder extends KeyValuesBase {
 
 	@Override
     public List<KeyValue> getKeyValues() {
-        List<KeyValue> keyValues = new ArrayList<>();
+        final List<KeyValue> keyValues = new ArrayList<>();
         
         keyValues.add(new ConcreteKeyValue("N", "No"));
         keyValues.add(new ConcreteKeyValue("Y", "Yes"));

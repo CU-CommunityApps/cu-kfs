@@ -12,8 +12,9 @@ import edu.cornell.kfs.kew.routeheader.service.CuRouteHeaderService;
 public class CuRouteHeaderServiceImpl extends RouteHeaderServiceImpl implements CuRouteHeaderService {
 
     @Override
-    public Map<String, Timestamp> getFinalizedDatesForDocumentType(String documentTypeName, Timestamp startDate,
-            Timestamp endDate) {
+    public Map<String, Timestamp> getFinalizedDatesForDocumentType(
+            final String documentTypeName, final Timestamp startDate,
+            final Timestamp endDate) {
         if (StringUtils.isBlank(documentTypeName)) {
             throw new IllegalArgumentException("documentTypeName cannot be blank");
         } else if (startDate == null) {

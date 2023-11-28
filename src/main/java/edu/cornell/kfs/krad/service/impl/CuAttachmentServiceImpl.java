@@ -39,7 +39,7 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
      * Overridden to get attachment by attachment ID if necessary.
      */
     @Override
-    public InputStream retrieveAttachmentContents(Attachment attachment) throws IOException {
+    public InputStream retrieveAttachmentContents(final Attachment attachment) throws IOException {
         if (attachment.getNoteIdentifier() != null) {
             attachment.refreshNonUpdateableReferences();
         }
@@ -50,9 +50,9 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
         }
 
         if (StringUtils.isEmpty(parentDirectory)) {
-            Attachment attachmentTemp = getAttachmentByAttachmentId(attachment.getAttachmentIdentifier());
+            final Attachment attachmentTemp = getAttachmentByAttachmentId(attachment.getAttachmentIdentifier());
             if (attachmentTemp != null) {
-                Note nte = noteService.getNoteByNoteId(attachmentTemp.getNoteIdentifier());
+                final Note nte = noteService.getNoteByNoteId(attachmentTemp.getNoteIdentifier());
                 if (nte != null) {
                     parentDirectory = nte.getRemoteObjectIdentifier();
                 }
@@ -68,7 +68,10 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
      * @see org.kuali.kfs.krad.service.impl.AttachmentServiceImpl#createAttachment(GloballyUnique, String, String, int, InputStream, String)
      */
     @Override
-    public Attachment createAttachment(GloballyUnique parent, String uploadedFileName, String mimeType, int fileSize, InputStream fileContents, String attachmentTypeCode) throws IOException {
+    public Attachment createAttachment(
+            final GloballyUnique parent, final String uploadedFileName, 
+            final String mimeType, final int fileSize, 
+            final InputStream fileContents, final String attachmentTypeCode) throws IOException {
         if(parent == null) {
             throw new IllegalArgumentException("invalid (null or uninitialized) document");
         } else if(StringUtils.isBlank(uploadedFileName)) {
@@ -81,22 +84,22 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
             throw new IllegalArgumentException("invalid (null) inputStream");
         } else {
             byte[] fileContentsAsByteArray = IOUtils.toByteArray(fileContents);
-            InputStream fileContentsToScan = new ByteArrayInputStream(fileContentsAsByteArray);
+            final InputStream fileContentsToScan = new ByteArrayInputStream(fileContentsAsByteArray);
 
-            ScanResult virusScanResults = antiVirusService.scan(fileContentsToScan);
+            final ScanResult virusScanResults = antiVirusService.scan(fileContentsToScan);
             if (!ScanResult.Status.PASSED.equals(virusScanResults.getStatus())) {
                 LOG.error("createAttachment, virus protection failure!  uploadedFileName: " + uploadedFileName 
                         + ", mimeType: " + mimeType + ", attachmentTypeCode: " + attachmentTypeCode + ", scan result: " + 
                                 virusScanResults.getStatus() + ", parent object: " + parent);
                 throw new IllegalArgumentException(CUKFSConstants.ANTIVIRUS_FAILED_MESSAGE);
             } else {
-                InputStream fileContentsForAttachment = new ByteArrayInputStream(fileContentsAsByteArray);
+                final InputStream fileContentsForAttachment = new ByteArrayInputStream(fileContentsAsByteArray);
                 return super.createAttachment(parent, uploadedFileName, mimeType, fileSize, fileContentsForAttachment, attachmentTypeCode);
             }
         }
     }
 
-    public Attachment getAttachmentByAttachmentId(String attachmentIdentifier) {
+    public Attachment getAttachmentByAttachmentId(final String attachmentIdentifier) {
         if (attachmentIdentifier == null) {
             return null;
         }
@@ -108,7 +111,7 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
         return antiVirusService;
     }
 
-    public void setAntiVirusService(AntiVirusService antiVirusService) {
+    public void setAntiVirusService(final AntiVirusService antiVirusService) {
         this.antiVirusService = antiVirusService;
     }
 
@@ -116,7 +119,7 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
         return noteService;
     }
 
-    public void setNoteService(NoteService noteService) {
+    public void setNoteService(final NoteService noteService) {
         this.noteService = noteService;
     }
 }

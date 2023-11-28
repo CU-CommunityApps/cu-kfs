@@ -45,17 +45,17 @@ public class CUBankServiceImpl implements CUBankService {
     }
 
     private Bank getByPrimaryId(final String bankCode) {
-        Map primaryKeys = new HashMap();
+        final Map primaryKeys = new HashMap();
         primaryKeys.put(KFSPropertyConstants.BANK_CODE, bankCode);
 
         return (Bank) businessObjectService.findByPrimaryKey(Bank.class, primaryKeys);
     }
 
-	public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+	public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
 		this.businessObjectService = businessObjectService;
 	}
 
-	public void setParameterService(ParameterService parameterService) {
+	public void setParameterService(final ParameterService parameterService) {
 		this.parameterService = parameterService;
 	}
 

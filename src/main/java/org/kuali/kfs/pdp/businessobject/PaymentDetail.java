@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,6 +55,8 @@ import edu.cornell.kfs.pdp.businessobject.PaymentDetailExtendedAttribute;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -115,7 +117,7 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     @XmlTransient
     private static final Logger LOG = LogManager.getLogger();
     @XmlTransient
-    private static KualiDecimal zero = KualiDecimal.ZERO;
+    private static final KualiDecimal zero = KualiDecimal.ZERO;
 
     @XmlTransient
     private KualiInteger id;
@@ -238,23 +240,17 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
                 .getParameterValueAsString(PaymentDetail.class, PdpParameterConstants.DISBURSEMENT_CANCELLATION_DAYS);
         final int days = Integer.parseInt(daysStr);
 
-        final Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, days * -1);
-        c.set(Calendar.HOUR, 12);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        c.set(Calendar.AM_PM, Calendar.AM);
-        final Timestamp lastDisbursementActionDate = new Timestamp(c.getTimeInMillis());
+        final ZonedDateTime lastDisbursementActionDateTime = getDateTimeService()
+                .getLocalDateTimeAtStartOfDay(getDateTimeService().getLocalDateNow().minusDays(days))
+                .atZone(ZoneId.systemDefault());
+        final Timestamp lastDisbursementActionDate =
+                new Timestamp(lastDisbursementActionDateTime.toInstant().toEpochMilli());
 
-        final Calendar c2 = Calendar.getInstance();
-        c2.setTime(paymentGroup.getDisbursementDate());
-        c2.set(Calendar.HOUR, 11);
-        c2.set(Calendar.MINUTE, 59);
-        c2.set(Calendar.SECOND, 59);
-        c2.set(Calendar.MILLISECOND, 59);
-        c2.set(Calendar.AM_PM, Calendar.PM);
-        final Timestamp disbursementDate = new Timestamp(c2.getTimeInMillis());
+        final ZonedDateTime disbursementDateTime = getDateTimeService()
+                .getLocalDateTimeAtEndOfDay(getDateTimeService().getLocalDate(paymentGroup.getDisbursementDate()))
+                .atZone(ZoneId.systemDefault());
+        final Timestamp disbursementDate =
+                new Timestamp(disbursementDateTime.toInstant().toEpochMilli());
 
         // date is equal to or after lastActionDate Allowed
         return disbursementDate.compareTo(lastDisbursementActionDate) >= 0;

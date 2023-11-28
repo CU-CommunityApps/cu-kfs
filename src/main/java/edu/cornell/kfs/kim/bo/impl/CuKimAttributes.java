@@ -15,7 +15,7 @@ public class CuKimAttributes extends KimAttributes {
         return fundGroupCode;
     }
 
-    public void setFundGroupCode(String fundGroupCode) {
+    public void setFundGroupCode(final String fundGroupCode) {
         this.fundGroupCode = fundGroupCode;
     }
 
@@ -23,7 +23,7 @@ public class CuKimAttributes extends KimAttributes {
         return fundGroup;
     }
 
-    public void setFundGroup(FundGroup fundGroup) {
+    public void setFundGroup(final FundGroup fundGroup) {
         this.fundGroup = fundGroup;
     }
 
