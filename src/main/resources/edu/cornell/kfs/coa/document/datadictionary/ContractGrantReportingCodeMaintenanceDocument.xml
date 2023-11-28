@@ -31,7 +31,7 @@
     <property name="title" value="Edit CG Reporting Code"/>
     <property name="maintainableItems">
       <list>
-        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:newLookup="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="code" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="name" p:required="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
