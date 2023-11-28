@@ -3,16 +3,20 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import edu.cornell.kfs.sys.util.LoadSpringFile;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @LoadSpringFile("edu/cornell/kfs/module/purap/jaggaer/xml/cu-spring-jaggaer-test.xml")
 public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
     private static final String EXPECTED_FILE_EXTENSION_XML = "xml";
+    private static final String EXPECTED_AUTHOR_NAME_AJD299 = "ajd299";
+    private static final String EXAMPLE_FILENAME = "jaggaerSupplierUploadFile_ajd299_20231025_092052250.xml";
     private static final String JAGGAER_STAGING_RELATIVE_PATH = "purap/jaggaer/xml";
 
     private JaggaerXMLInputFileType jaggaerXMLInputFileType;
@@ -32,7 +36,7 @@ public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
 
     @Test
     public void testJaggaerXMLInputFileTypeExtension() {
-        assertTrue(jaggaerXMLInputFileType.getFileExtension().equals(EXPECTED_FILE_EXTENSION_XML));
+        assertEquals(jaggaerXMLInputFileType.getFileExtension(), EXPECTED_FILE_EXTENSION_XML);
     }
 
     @Test
@@ -42,7 +46,11 @@ public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
 
     @Test
     public void testJaggaerXMLInputFileTypeGetAuthor() {
-        File exampleFile = new File("staging/purap/jaggaer/xml/jaggaerSupplierUploadFileajd299_20231025_092052250.xml");
-        assertTrue(jaggaerXMLInputFileType.getAuthorPrincipalName(exampleFile).equals("ajd299"));
+        String relativeFilepath = jaggaerXMLInputFileType.getDirectoryPath() + "/" + EXAMPLE_FILENAME;
+        File exampleFile = new File(relativeFilepath);
+
+        String authorName = jaggaerXMLInputFileType.getAuthorPrincipalName(exampleFile);
+        assertEquals(authorName, EXPECTED_AUTHOR_NAME_AJD299);
     }
+
 }

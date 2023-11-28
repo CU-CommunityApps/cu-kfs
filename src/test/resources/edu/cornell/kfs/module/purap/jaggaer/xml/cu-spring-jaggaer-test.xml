@@ -7,7 +7,7 @@
     <bean id="jaggaerXMLInputFileType"
           class="edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType"
           p:directoryPath="${staging.directory}/purap/jaggaer/xml"
-          p:fileNamePrefix="jaggaerSupplierUploadFile"
+          p:fileNamePrefix="jaggaerSupplierUploadFile_"
           p:fileExtension="xml" />
 
 </beans>
