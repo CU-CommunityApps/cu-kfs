@@ -53,7 +53,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     
     @Override
     public void saveBusinessObject() {
-        VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
+        final VendorDetail vendorDetail = (VendorDetail) super.getBusinessObject();
 
             // a  workaround for now.  headerextension's pk is not linked
         populateGeneratedHerderId(vendorDetail.getVendorHeader());
@@ -64,8 +64,8 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
 
     @Override
-    protected boolean answerSplitNodeQuestion(String nodeName) {
-        Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+    protected boolean answerSplitNodeQuestion(final String nodeName) {
+        final Document document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
          
         if (nodeName.equals(VENDOR_REQUIRES_APPROVAL_SPLIT_NODE)) {
             return true;
@@ -73,14 +73,14 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         return super.answerSplitNodeQuestion(nodeName);
     }
 
-    private void populateGeneratedHerderId(VendorHeader vendorHeader) {
+    private void populateGeneratedHerderId(final VendorHeader vendorHeader) {
         if (vendorHeader.getVendorHeaderGeneratedIdentifier() == null) {
-            Integer generatedHeaderId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(HEADER_ID_SEQ).intValue();
+            final Integer generatedHeaderId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(HEADER_ID_SEQ).intValue();
             vendorHeader.setVendorHeaderGeneratedIdentifier(generatedHeaderId.intValue());
             ((CuVendorHeaderExtension) vendorHeader.getExtension()).setVendorHeaderGeneratedIdentifier(generatedHeaderId);
         }
         if (CollectionUtils.isNotEmpty(vendorHeader.getVendorSupplierDiversities())) {
-            for (VendorSupplierDiversity supplierDiversity : vendorHeader.getVendorSupplierDiversities()) {
+            for (final VendorSupplierDiversity supplierDiversity : vendorHeader.getVendorSupplierDiversities()) {
                 supplierDiversity.setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
                 ((CuVendorSupplierDiversityExtension)supplierDiversity.getExtension()).setVendorHeaderGeneratedIdentifier(vendorHeader.getVendorHeaderGeneratedIdentifier());
                 ((CuVendorSupplierDiversityExtension)supplierDiversity.getExtension()).setVendorSupplierDiversityCode(supplierDiversity.getVendorSupplierDiversityCode());
@@ -88,11 +88,11 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
     }
 
-    private void populateGeneratedAddressId(VendorDetail vendorDetail) {
+    private void populateGeneratedAddressId(final VendorDetail vendorDetail) {
         if (CollectionUtils.isNotEmpty(vendorDetail.getVendorAddresses())) {
-            for (VendorAddress vendorAddress : vendorDetail.getVendorAddresses()) {
+            for (final VendorAddress vendorAddress : vendorDetail.getVendorAddresses()) {
                 if (vendorAddress.getVendorAddressGeneratedIdentifier() == null) {
-                    Integer generatedHeaderId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(ADDRESS_HEADER_ID_SEQ).intValue();
+                    final Integer generatedHeaderId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber(ADDRESS_HEADER_ID_SEQ).intValue();
                     vendorAddress.setVendorAddressGeneratedIdentifier(generatedHeaderId);
                     ((CuVendorAddressExtension)vendorAddress.getExtension()).setVendorAddressGeneratedIdentifier(generatedHeaderId);
                 }
@@ -109,19 +109,19 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             return new ArrayList<>();
         }
 
-        List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
+        final List<MaintenanceLock> maintenanceLocks = new ArrayList<MaintenanceLock>();
         
-        Class dataObjectClass = this.getDataObjectClass();
-        StringBuffer lockRepresentation = new StringBuffer(dataObjectClass.getName());
+        final Class dataObjectClass = this.getDataObjectClass();
+        final StringBuffer lockRepresentation = new StringBuffer(dataObjectClass.getName());
         lockRepresentation.append(KRADConstants.Maintenance.LOCK_AFTER_CLASS_DELIM);
 
-        Object bo = getDataObject();
-        List keyFieldNames = getDocumentDictionaryService().getLockingKeys(getDocumentTypeName());
+        final Object bo = getDataObject();
+        final List keyFieldNames = getDocumentDictionaryService().getLockingKeys(getDocumentTypeName());
 
-        StringBuffer old = new StringBuffer();
+        final StringBuffer old = new StringBuffer();
         old.append(lockRepresentation);
         for (Iterator i = keyFieldNames.iterator(); i.hasNext(); ) {
-            String fieldName = (String) i.next();
+            final String fieldName = (String) i.next();
             Object fieldValue = ObjectUtils.getPropertyValue(bo, fieldName);
             if (fieldValue == null) {
                 fieldValue = "";
@@ -139,7 +139,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
             }
         }
         
-        MaintenanceLock maintenanceLock = new MaintenanceLock();
+        final MaintenanceLock maintenanceLock = new MaintenanceLock();
         maintenanceLock.setDocumentNumber(this.getDocumentNumber());
         maintenanceLock.setLockingRepresentation(lockRepresentation.toString());
         maintenanceLocks.add(maintenanceLock);
@@ -166,24 +166,24 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List getSections(MaintenanceDocument document, Maintainable oldMaintainable) {
+    public List getSections(final MaintenanceDocument document, final Maintainable oldMaintainable) {
         @SuppressWarnings("unchecked")
-        List<Section> sections = super.getSections(document, oldMaintainable);
-        MaintenanceDocumentRestrictions restrictions = KNSServiceLocator.getBusinessObjectAuthorizationService().getMaintenanceDocumentRestrictions(
+        final List<Section> sections = super.getSections(document, oldMaintainable);
+        final MaintenanceDocumentRestrictions restrictions = KNSServiceLocator.getBusinessObjectAuthorizationService().getMaintenanceDocumentRestrictions(
                 document, GlobalVariables.getUserSession().getPerson());
         
         // Perform the forcible updates on the generated sections.
         boolean doneWithSections = false;
         for (int i = 0; !doneWithSections && i < sections.size(); i++) {
-            Section section = sections.get(i);
+            final Section section = sections.get(i);
             if (VENDOR_SECTION_ID.equals(section.getSectionId())) {
                 // Find and update the appropriate fields/rows.
-                List<Row> rows = section.getRows();
+                final List<Row> rows = section.getRows();
                 int fieldsDone = 0;
                 for (int j = 0; fieldsDone < 2 && j < rows.size(); j++) {
-                    List<Field> fields = rows.get(j).getFields();
+                    final List<Field> fields = rows.get(j).getFields();
                     for (int k = 0; fieldsDone < 2 && k < fields.size(); k++) {
-                        String fieldName = fields.get(k).getPropertyName();
+                        final String fieldName = fields.get(k).getPropertyName();
                         if (PROC_METHODS_MULTISELECT_FIELD_NAME.equals(fieldName)) {
                             // Update the property values and security on the multiselect field.
                             setupMultiselectField(document, restrictions, fields.get(k), MULTISELECT_FIELD_PATH_PREFIX + fieldName);
@@ -209,14 +209,14 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
      * Thus, this method will forcibly update the multiselect's property values from the BO,
      * as well as configure the field's read-only/hidden restrictions.
      */
-    private void setupMultiselectField(MaintenanceDocument document, MaintenanceDocumentRestrictions restrictions, Field field, String propertyPath) {
+    private void setupMultiselectField(final MaintenanceDocument document, final MaintenanceDocumentRestrictions restrictions, final Field field, final String propertyPath) {
         // Manually update the property values.
-        Object val = ObjectPropertyUtils.getPropertyValue(this, propertyPath);
+        final Object val = ObjectPropertyUtils.getPropertyValue(this, propertyPath);
         field.setPropertyValues((String[]) val);
         
         // Update the read-only and hidden restrictions accordingly, similar to the setup in the FieldUtils.applyAuthorization() method.
         if (document.getNewMaintainableObject() == this && restrictions.hasRestriction(field.getPropertyName())) {
-            FieldRestriction restriction = restrictions.getFieldRestriction(field.getPropertyName());
+            final FieldRestriction restriction = restrictions.getFieldRestriction(field.getPropertyName());
             // Copied and tweaked the code below from the FieldUtils.applyAuthorization() method.
             if (restriction.isReadOnly()) {
                 if (!field.isReadOnly() && !restriction.isMasked() && !restriction.isPartiallyMasked()) {
@@ -236,11 +236,11 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
     }
     
     @Override
-    public void doRouteStatusChange(DocumentHeader header) {
+    public void doRouteStatusChange(final DocumentHeader header) {
         LOG.debug("doRouteStatusChange: entering");
         super.doRouteStatusChange(header);
-        VendorDetail vendorDetail = (VendorDetail) getBusinessObject();
-        WorkflowDocument workflowDoc = header.getWorkflowDocument();
+        final VendorDetail vendorDetail = (VendorDetail) getBusinessObject();
+        final WorkflowDocument workflowDoc = header.getWorkflowDocument();
         
         if (workflowDoc.isProcessed()) {
             LOG.debug("doRouteStatusChange: workflow is processed");
@@ -256,7 +256,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
     }
     
-    private void performPaymentWorksApprovalProcessingForVendor(VendorDetail vendorDetail, String kfsDocumentNumber, String maintenanceAction) {
+    private void performPaymentWorksApprovalProcessingForVendor(final VendorDetail vendorDetail, final String kfsDocumentNumber, final String maintenanceAction) {
         if (isExistingPaymentWorksVendor(kfsDocumentNumber) && isMaintenanceActionNewOrNewWithExisting(maintenanceAction)) {
             LOG.debug("performPaymentWorksApprovalProcessingForVendor: isExistingPaymentWorksVendor");
             this.saveBusinessObject();
@@ -276,12 +276,12 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         }
     }
     
-    private boolean isMaintenanceActionNewOrNewWithExisting(String maintenanceAction) {
+    private boolean isMaintenanceActionNewOrNewWithExisting(final String maintenanceAction) {
         return (StringUtils.equals(KRADConstants.MAINTENANCE_NEW_ACTION, maintenanceAction)
                 || StringUtils.equals(KRADConstants.MAINTENANCE_NEWWITHEXISTING_ACTION, maintenanceAction));
     }
     
-    private boolean isExistingPaymentWorksVendor(String kfsDocumentNumber) {
+    private boolean isExistingPaymentWorksVendor(final String kfsDocumentNumber) {
         return getPaymentWorksBatchUtilityService().foundExistingPaymentWorksVendorByKfsDocumentNumber(kfsDocumentNumber);
     }
     
@@ -289,19 +289,19 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         return getPaymentWorksBatchUtilityService().isPaymentWorksIntegrationProcessingEnabled();
     }
     
-    private void processExistingPaymentWorksVendorApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
+    private void processExistingPaymentWorksVendorApproval(final String kfsDocumentNumber, final VendorDetail vendorDetail) {
         getPaymentWorksBatchUtilityService().registerKfsPvenApprovalForExistingPaymentWorksVendor(kfsDocumentNumber, vendorDetail);
     }
     
-    private void processKfsVendorNewActionApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
+    private void processKfsVendorNewActionApproval(final String kfsDocumentNumber, final VendorDetail vendorDetail) {
         getPaymentWorksBatchUtilityService().registerKfsPvenApprovalForKfsEnteredVendor(kfsDocumentNumber, vendorDetail);
     }
     
-    private void processKfsVendorEditActionApproval(String kfsDocumentNumber, VendorDetail vendorDetail) {
+    private void processKfsVendorEditActionApproval(final String kfsDocumentNumber, final VendorDetail vendorDetail) {
         getPaymentWorksBatchUtilityService().registerKfsPvenApprovalForKfsEditedVendor(kfsDocumentNumber, vendorDetail);
     }
     
-    private void performPaymentWorksDisapprovalCancelProcessingForVendor(VendorDetail vendorDetail, String kfsDocumentNumber, String maintenanceAction) {
+    private void performPaymentWorksDisapprovalCancelProcessingForVendor(final VendorDetail vendorDetail, final String kfsDocumentNumber, final String maintenanceAction) {
         if (isExistingPaymentWorksVendor(kfsDocumentNumber) && (isMaintenanceActionNewOrNewWithExisting(maintenanceAction))) {
             getPaymentWorksBatchUtilityService().registerKfsPvenDisapprovalForExistingPaymentWorksVendor(kfsDocumentNumber, vendorDetail);
         }
@@ -317,7 +317,7 @@ public class CuVendorMaintainableImpl extends VendorMaintainableImpl {
         return paymentWorksBatchUtilityService;
     }
 
-    public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
+    public void setPaymentWorksBatchUtilityService(final PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
         this.paymentWorksBatchUtilityService = paymentWorksBatchUtilityService;
     }
 }

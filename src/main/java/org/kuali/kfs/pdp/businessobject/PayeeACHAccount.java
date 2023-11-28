@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -80,7 +80,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param achAccountGeneratedIdentifier The achAccountGeneratedIdentifier to set.
      */
-    public void setAchAccountGeneratedIdentifier(KualiInteger achAccountGeneratedIdentifier) {
+    public void setAchAccountGeneratedIdentifier(final KualiInteger achAccountGeneratedIdentifier) {
         this.achAccountGeneratedIdentifier = achAccountGeneratedIdentifier;
     }
 
@@ -98,7 +98,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param bankRoutingNumber The bankRoutingNumber to set.
      */
-    public void setBankRoutingNumber(String bankRoutingNumber) {
+    public void setBankRoutingNumber(final String bankRoutingNumber) {
         this.bankRoutingNumber = bankRoutingNumber;
     }
 
@@ -116,7 +116,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param bankAccountNumber The bankAccountNumber to set.
      */
-    public void setBankAccountNumber(String bankAccountNumber) {
+    public void setBankAccountNumber(final String bankAccountNumber) {
         this.bankAccountNumber = bankAccountNumber;
     }
 
@@ -130,7 +130,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         // for Employee, retrieves from Person table by employee ID
         if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                String name = SpringContext.getBean(FinancialSystemUserService.class).getPersonNameByEmployeeId(payeeIdNumber);
+                final String name = SpringContext.getBean(FinancialSystemUserService.class).getPersonNameByEmployeeId(payeeIdNumber);
 
                 // Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
                 if (ObjectUtils.isNotNull(name)) {
@@ -140,14 +140,14 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
             // for Entity, retrieve from Entity table by entity ID
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
+                final Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
                 if (ObjectUtils.isNotNull(entity) && ObjectUtils.isNotNull(entity.getDefaultName())) {
                     return entity.getDefaultName().getCompositeName();
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.VENDOR_ID)) {
             // for Vendor, retrieves from Vendor table by vendor number
-            VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(payeeIdNumber);
+            final VendorDetail vendor = SpringContext.getBean(VendorService.class).getVendorDetail(payeeIdNumber);
             if (ObjectUtils.isNotNull(vendor)) {
                 return vendor.getVendorName();
             }
@@ -162,7 +162,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param payeeName The payeeName to set.
      */
-    public void setPayeeName(String payeeName) {
+    public void setPayeeName(final String payeeName) {
         this.payeeName = payeeName;
     }
 
@@ -285,7 +285,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param payeeEmailAddress The payeeEmailAddress to set.
      */
-    public void setPayeeEmailAddress(String payeeEmailAddress) {
+    public void setPayeeEmailAddress(final String payeeEmailAddress) {
         this.payeeEmailAddress = payeeEmailAddress;
     }
 
@@ -303,7 +303,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param payeeIdentifierTypeCode The payeeIdentifierTypeCode to set.
      */
-    public void setPayeeIdentifierTypeCode(String payeeIdentifierTypeCode) {
+    public void setPayeeIdentifierTypeCode(final String payeeIdentifierTypeCode) {
         this.payeeIdentifierTypeCode = payeeIdentifierTypeCode;
     }
 
@@ -321,7 +321,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param achTransactionType The achTransactionType to set.
      */
-    public void setAchTransactionType(String achTransactionType) {
+    public void setAchTransactionType(final String achTransactionType) {
         this.achTransactionType = achTransactionType;
     }
 
@@ -339,7 +339,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param transactionType The transactionType to set.
      */
-    public void setTransactionType(ACHTransactionType transactionType) {
+    public void setTransactionType(final ACHTransactionType transactionType) {
         this.transactionType = transactionType;
     }
 
@@ -359,7 +359,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      * @param active The active to set.
      */
     @Override
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -367,7 +367,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         return autoInactivationIndicator;
     }
 
-    public void setAutoInactivationIndicator(boolean autoInactivationIndicator) {
+    public void setAutoInactivationIndicator(final boolean autoInactivationIndicator) {
         this.autoInactivationIndicator = autoInactivationIndicator;
     }
 
@@ -385,7 +385,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param bankAccountTypeCode The bankAccountTypeCode to set.
      */
-    public void setBankAccountTypeCode(String bankAccountTypeCode) {
+    public void setBankAccountTypeCode(final String bankAccountTypeCode) {
         this.bankAccountTypeCode = bankAccountTypeCode;
     }
 
@@ -405,7 +405,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      * @deprecated
      */
     @Deprecated
-    public void setBankRouting(ACHBank bankRouting) {
+    public void setBankRouting(final ACHBank bankRouting) {
         this.bankRouting = bankRouting;
     }
 
@@ -423,7 +423,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param payeeIdNumber The payeeIdNumber to set.
      */
-    public void setPayeeIdNumber(String payeeIdNumber) {
+    public void setPayeeIdNumber(final String payeeIdNumber) {
         this.payeeIdNumber = payeeIdNumber;
     }
 
@@ -449,7 +449,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
      *
      * @param achPayee The achPayee to set.
      */
-    public void setAchPayee(ACHPayee achPayee) {
+    public void setAchPayee(final ACHPayee achPayee) {
         this.achPayee = achPayee;
     }
 
@@ -459,17 +459,17 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     @Override
     public String toString() {
         final class PayeeACHAccountToStringBuilder extends ReflectionToStringBuilder {
-            private PayeeACHAccountToStringBuilder(Object object) {
+            private PayeeACHAccountToStringBuilder(final Object object) {
                 super(object);
             }
 
             @Override
-            public boolean accept(Field field) {
+            public boolean accept(final Field field) {
                 if (BusinessObject.class.isAssignableFrom(field.getType())) {
                     return false;
                 }
 
-                AttributeSecurity attributeSecurity = getDataDictionaryService()
+                final AttributeSecurity attributeSecurity = getDataDictionaryService()
                         .getAttributeSecurity(PayeeACHAccount.class.getName(), field.getName());
                 if (ObjectUtils.isNotNull(attributeSecurity)
                     && (attributeSecurity.isHide() || attributeSecurity.isMask()
@@ -481,7 +481,7 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
             }
         }
 
-        ReflectionToStringBuilder toStringBuilder = new PayeeACHAccountToStringBuilder(this);
+        final ReflectionToStringBuilder toStringBuilder = new PayeeACHAccountToStringBuilder(this);
         return toStringBuilder.toString();
     }
 }

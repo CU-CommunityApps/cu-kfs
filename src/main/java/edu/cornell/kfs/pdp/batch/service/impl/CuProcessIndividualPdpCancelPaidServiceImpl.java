@@ -21,17 +21,17 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void processPdpCancel(Date processDate, PaymentDetail paymentDetail) {
-        String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
-        String documentNumber = paymentDetail.getCustPaymentDocNbr();
+    public void processPdpCancel(final Date processDate, final PaymentDetail paymentDetail) {
+        final String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
+        final String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
-        boolean primaryCancel = paymentDetail.getPrimaryCancelledPayment();
-        boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(
+        final boolean primaryCancel = paymentDetail.getPrimaryCancelledPayment();
+        final boolean disbursedPayment = PdpConstants.PaymentStatusCodes.CANCEL_PAYMENT.equals(
                 paymentDetail.getPaymentGroup().getPaymentStatusCode());
 
         //KFSPTS-2719
         boolean crCancel = false;
-        PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
+        final PaymentDetailExtendedAttribute paymentDetailExtendedAttribute = (PaymentDetailExtendedAttribute) paymentDetail.getExtension();
         if (ObjectUtils.isNotNull(paymentDetailExtendedAttribute)) {
             crCancel = paymentDetailExtendedAttribute.getCrCancelledPayment();
         }
@@ -40,9 +40,9 @@ public class CuProcessIndividualPdpCancelPaidServiceImpl extends ProcessIndividu
             ((CuPurchasingAccountsPayableModuleService) purchasingAccountsPayableModuleService).handlePurchasingBatchCancels(
                     documentNumber, documentTypeCode, primaryCancel, disbursedPayment, crCancel);
         } else {
-            PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
+            final PaymentSourceToExtractService<PaymentSource> extractService = getPaymentSourceToExtractService(paymentDetail);
             if (extractService != null) {
-                PaymentSource dv = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
+                final PaymentSource dv = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
                 if (dv != null) {
                     if (disbursedPayment || primaryCancel || crCancel) {
                         if (!crCancel) {

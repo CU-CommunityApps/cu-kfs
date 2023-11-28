@@ -25,15 +25,15 @@ public class CuPotentiallySensitiveDocumentRoleTypeServiceImpl extends Potential
      * @see org.kuali.kfs.kns.kim.type.DataDictionaryTypeServiceBase#performMatch(java.util.Map, java.util.Map)
      */
     @Override
-    protected boolean performMatch(Map<String, String> inputAttributes, Map<String, String> storedAttributes) {
+    protected boolean performMatch(final Map<String, String> inputAttributes, final Map<String, String> storedAttributes) {
         // Copied the superclass's literal matching, and tweaked it to do custom matching for the document sensitivity attribute.
         if (storedAttributes == null || inputAttributes == null) {
             return true;
         }
-        for (Map.Entry<String, String> entry : storedAttributes.entrySet()) {
+        for (final Map.Entry<String, String> entry : storedAttributes.entrySet()) {
             if (PurapKimAttributes.DOCUMENT_SENSITIVE.equals(entry.getKey())) {
                 if (inputAttributes.containsKey(entry.getKey())) {
-                    String inputValue = inputAttributes.get(entry.getKey());
+                    final String inputValue = inputAttributes.get(entry.getKey());
                     // For matching to succeed, the sensitive-doc attributes have to be both true or both false. (We assume null means false.)
                     if (TRUE_VALUES.contains(inputValue == null ? DOCUMENT_SENSITIVE_FALSE_VALUE : inputValue.toLowerCase(Locale.US))
                             != TRUE_VALUES.contains(entry.getValue() == null ? DOCUMENT_SENSITIVE_FALSE_VALUE : entry.getValue().toLowerCase(Locale.US))) {

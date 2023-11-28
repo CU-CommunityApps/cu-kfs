@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -135,7 +135,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorHeaderGeneratedIdentifier;
     }
 
-    public void setVendorHeaderGeneratedIdentifier(Integer vendorHeaderGeneratedIdentifier) {
+    public void setVendorHeaderGeneratedIdentifier(final Integer vendorHeaderGeneratedIdentifier) {
         this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
     }
 
@@ -143,7 +143,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorDetailAssignedIdentifier;
     }
 
-    public void setVendorDetailAssignedIdentifier(Integer vendorDetailAssignedIdentifier) {
+    public void setVendorDetailAssignedIdentifier(final Integer vendorDetailAssignedIdentifier) {
         this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
     }
 
@@ -156,11 +156,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         String headerId = "";
         String detailId = "";
         String vendorNumber = "";
-        if (ObjectUtils.isNotNull(this.vendorHeaderGeneratedIdentifier)) {
-            headerId = this.vendorHeaderGeneratedIdentifier.toString();
+        if (ObjectUtils.isNotNull(vendorHeaderGeneratedIdentifier)) {
+            headerId = vendorHeaderGeneratedIdentifier.toString();
         }
-        if (ObjectUtils.isNotNull(this.vendorDetailAssignedIdentifier)) {
-            detailId = this.vendorDetailAssignedIdentifier.toString();
+        if (ObjectUtils.isNotNull(vendorDetailAssignedIdentifier)) {
+            detailId = vendorDetailAssignedIdentifier.toString();
         }
         if (StringUtils.isNotEmpty(headerId) && StringUtils.isNotEmpty(detailId)) {
             vendorNumber = headerId + "-" + detailId;
@@ -176,7 +176,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      *
      * @param vendorNumber The vendorNumber to set.
      */
-    public void setVendorNumber(String vendorNumber) {
+    public void setVendorNumber(final String vendorNumber) {
         this.vendorNumber = vendorNumber;
 
         if (StringUtils.isEmpty(vendorNumber)) {
@@ -185,13 +185,13 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
             return;
         }
 
-        int dashInd = vendorNumber.indexOf('-');
+        final int dashInd = vendorNumber.indexOf('-');
         // make sure there's at least one char before and after '-'
         if (dashInd > 0 && dashInd < vendorNumber.length() - 1) {
             try {
                 vendorHeaderGeneratedIdentifier = new Integer(vendorNumber.substring(0, dashInd));
                 vendorDetailAssignedIdentifier = new Integer(vendorNumber.substring(dashInd + 1));
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 // in case of invalid number format
             }
         }
@@ -201,7 +201,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorName;
     }
 
-    public void setVendorName(String vendorName) {
+    public void setVendorName(final String vendorName) {
         this.vendorName = vendorName;
     }
 
@@ -209,7 +209,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorSoldToGeneratedIdentifier;
     }
 
-    public void setVendorSoldToGeneratedIdentifier(Integer vendorSoldToGeneratedIdentifier) {
+    public void setVendorSoldToGeneratedIdentifier(final Integer vendorSoldToGeneratedIdentifier) {
         this.vendorSoldToGeneratedIdentifier = vendorSoldToGeneratedIdentifier;
     }
 
@@ -217,7 +217,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorSoldToAssignedIdentifier;
     }
 
-    public void setVendorSoldToAssignedIdentifier(Integer vendorSoldToAssignedIdentifier) {
+    public void setVendorSoldToAssignedIdentifier(final Integer vendorSoldToAssignedIdentifier) {
         this.vendorSoldToAssignedIdentifier = vendorSoldToAssignedIdentifier;
     }
 
@@ -226,11 +226,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         String detailId = "";
         String vendorSoldToNumber = "";
 
-        if (this.vendorSoldToGeneratedIdentifier != null) {
-            headerId = this.vendorSoldToGeneratedIdentifier.toString();
+        if (vendorSoldToGeneratedIdentifier != null) {
+            headerId = vendorSoldToGeneratedIdentifier.toString();
         }
-        if (this.vendorSoldToAssignedIdentifier != null) {
-            detailId = this.vendorSoldToAssignedIdentifier.toString();
+        if (vendorSoldToAssignedIdentifier != null) {
+            detailId = vendorSoldToAssignedIdentifier.toString();
         }
         if (StringUtils.isNotEmpty(headerId) && StringUtils.isNotEmpty(detailId)) {
             vendorSoldToNumber = headerId + "-" + detailId;
@@ -246,7 +246,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      *
      * @param vendorSoldToNumber The vendorSoldToNumber to set.
      */
-    public void setVendorSoldToNumber(String vendorSoldToNumber) {
+    public void setVendorSoldToNumber(final String vendorSoldToNumber) {
         this.vendorSoldToNumber = vendorSoldToNumber;
 
         if (StringUtils.isEmpty(vendorSoldToNumber)) {
@@ -255,23 +255,23 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
             return;
         }
 
-        int dashInd = vendorSoldToNumber.indexOf('-');
+        final int dashInd = vendorSoldToNumber.indexOf('-');
         // make sure there's at least one char before and after '-'
         if (dashInd > 0 && dashInd < vendorSoldToNumber.length() - 1) {
             try {
                 vendorSoldToGeneratedIdentifier = new Integer(vendorSoldToNumber.substring(0, dashInd));
                 vendorSoldToAssignedIdentifier = new Integer(vendorSoldToNumber.substring(dashInd + 1));
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 // in case of invalid number format
             }
         }
     }
 
     public String getVendorSoldToName() {
-        return this.vendorSoldToName;
+        return vendorSoldToName;
     }
 
-    public void setVendorSoldToName(String vendorSoldToName) {
+    public void setVendorSoldToName(final String vendorSoldToName) {
         this.vendorSoldToName = vendorSoldToName;
     }
 
@@ -279,15 +279,15 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorName;
     }
 
-    public void setAltVendorName(String altVendorName) {
-        this.vendorName = altVendorName;
+    public void setAltVendorName(final String altVendorName) {
+        vendorName = altVendorName;
     }
 
     public String getVendorRemitName() {
         return vendorRemitName;
     }
 
-    public void setVendorRemitName(String vendorRemitName) {
+    public void setVendorRemitName(final String vendorRemitName) {
         this.vendorRemitName = vendorRemitName;
     }
 
@@ -295,7 +295,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorParentIndicator;
     }
 
-    public void setVendorParentIndicator(boolean vendorParentIndicator) {
+    public void setVendorParentIndicator(final boolean vendorParentIndicator) {
         this.vendorParentIndicator = vendorParentIndicator;
     }
 
@@ -303,7 +303,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return taxableIndicator;
     }
 
-    public void setTaxableIndicator(boolean taxableIndicator) {
+    public void setTaxableIndicator(final boolean taxableIndicator) {
         this.taxableIndicator = taxableIndicator;
     }
 
@@ -316,7 +316,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return activeIndicator;
     }
 
-    public void setActiveIndicator(boolean activeIndicator) {
+    public void setActiveIndicator(final boolean activeIndicator) {
         this.activeIndicator = activeIndicator;
     }
 
@@ -324,7 +324,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorInactiveReasonCode;
     }
 
-    public void setVendorInactiveReasonCode(String vendorInactiveReasonCode) {
+    public void setVendorInactiveReasonCode(final String vendorInactiveReasonCode) {
         this.vendorInactiveReasonCode = vendorInactiveReasonCode;
     }
 
@@ -332,7 +332,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorPaymentTermsCode;
     }
 
-    public void setVendorPaymentTermsCode(String vendorPaymentTermsCode) {
+    public void setVendorPaymentTermsCode(final String vendorPaymentTermsCode) {
         this.vendorPaymentTermsCode = vendorPaymentTermsCode;
     }
 
@@ -340,7 +340,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorShippingTitleCode;
     }
 
-    public void setVendorShippingTitleCode(String vendorShippingTitleCode) {
+    public void setVendorShippingTitleCode(final String vendorShippingTitleCode) {
         this.vendorShippingTitleCode = vendorShippingTitleCode;
     }
 
@@ -348,7 +348,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorShippingPaymentTermsCode;
     }
 
-    public void setVendorShippingPaymentTermsCode(String vendorShippingPaymentTermsCode) {
+    public void setVendorShippingPaymentTermsCode(final String vendorShippingPaymentTermsCode) {
         this.vendorShippingPaymentTermsCode = vendorShippingPaymentTermsCode;
     }
 
@@ -356,7 +356,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorConfirmationIndicator;
     }
 
-    public void setVendorConfirmationIndicator(Boolean vendorConfirmationIndicator) {
+    public void setVendorConfirmationIndicator(final Boolean vendorConfirmationIndicator) {
         this.vendorConfirmationIndicator = vendorConfirmationIndicator;
     }
 
@@ -364,7 +364,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorPrepaymentIndicator;
     }
 
-    public void setVendorPrepaymentIndicator(Boolean vendorPrepaymentIndicator) {
+    public void setVendorPrepaymentIndicator(final Boolean vendorPrepaymentIndicator) {
         this.vendorPrepaymentIndicator = vendorPrepaymentIndicator;
     }
 
@@ -372,7 +372,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorCreditCardIndicator;
     }
 
-    public void setVendorCreditCardIndicator(Boolean vendorCreditCardIndicator) {
+    public void setVendorCreditCardIndicator(final Boolean vendorCreditCardIndicator) {
         this.vendorCreditCardIndicator = vendorCreditCardIndicator;
     }
 
@@ -380,7 +380,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorMinimumOrderAmount;
     }
 
-    public void setVendorMinimumOrderAmount(KualiDecimal vendorMinimumOrderAmount) {
+    public void setVendorMinimumOrderAmount(final KualiDecimal vendorMinimumOrderAmount) {
         this.vendorMinimumOrderAmount = vendorMinimumOrderAmount;
     }
 
@@ -388,7 +388,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorUrlAddress;
     }
 
-    public void setVendorUrlAddress(String vendorUrlAddress) {
+    public void setVendorUrlAddress(final String vendorUrlAddress) {
         this.vendorUrlAddress = vendorUrlAddress;
     }
 
@@ -396,7 +396,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorRestrictedIndicator;
     }
 
-    public void setVendorRestrictedIndicator(Boolean vendorRestrictedIndicator) {
+    public void setVendorRestrictedIndicator(final Boolean vendorRestrictedIndicator) {
         this.vendorRestrictedIndicator = vendorRestrictedIndicator;
     }
 
@@ -404,7 +404,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorRestrictedReasonText;
     }
 
-    public void setVendorRestrictedReasonText(String vendorRestrictedReasonText) {
+    public void setVendorRestrictedReasonText(final String vendorRestrictedReasonText) {
         this.vendorRestrictedReasonText = vendorRestrictedReasonText;
     }
 
@@ -412,7 +412,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorRestrictedDate;
     }
 
-    public void setVendorRestrictedDate(Date vendorRestrictedDate) {
+    public void setVendorRestrictedDate(final Date vendorRestrictedDate) {
         this.vendorRestrictedDate = vendorRestrictedDate;
     }
 
@@ -420,7 +420,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorRestrictedPersonIdentifier;
     }
 
-    public void setVendorRestrictedPersonIdentifier(String vendorRestrictedPersonIdentifier) {
+    public void setVendorRestrictedPersonIdentifier(final String vendorRestrictedPersonIdentifier) {
         this.vendorRestrictedPersonIdentifier = vendorRestrictedPersonIdentifier;
     }
 
@@ -428,7 +428,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorDunsNumber;
     }
 
-    public void setVendorDunsNumber(String vendorDunsNumber) {
+    public void setVendorDunsNumber(final String vendorDunsNumber) {
         this.vendorDunsNumber = vendorDunsNumber;
     }
 
@@ -436,7 +436,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorHeader;
     }
 
-    public void setVendorHeader(VendorHeader vendorHeader) {
+    public void setVendorHeader(final VendorHeader vendorHeader) {
         this.vendorHeader = vendorHeader;
     }
 
@@ -448,7 +448,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      * @deprecated
      */
     @Deprecated
-    public void setVendorPaymentTerms(PaymentTermType vendorPaymentTerms) {
+    public void setVendorPaymentTerms(final PaymentTermType vendorPaymentTerms) {
         this.vendorPaymentTerms = vendorPaymentTerms;
     }
 
@@ -460,7 +460,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      * @deprecated
      */
     @Deprecated
-    public void setVendorShippingTitle(ShippingTitle vendorShippingTitle) {
+    public void setVendorShippingTitle(final ShippingTitle vendorShippingTitle) {
         this.vendorShippingTitle = vendorShippingTitle;
     }
 
@@ -472,7 +472,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      * @deprecated
      */
     @Deprecated
-    public void setVendorShippingPaymentTerms(ShippingPaymentTerms vendorShippingPaymentTerms) {
+    public void setVendorShippingPaymentTerms(final ShippingPaymentTerms vendorShippingPaymentTerms) {
         this.vendorShippingPaymentTerms = vendorShippingPaymentTerms;
     }
 
@@ -484,7 +484,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      * @deprecated
      */
     @Deprecated
-    public void setVendorInactiveReason(VendorInactiveReason vendorInactiveReason) {
+    public void setVendorInactiveReason(final VendorInactiveReason vendorInactiveReason) {
         this.vendorInactiveReason = vendorInactiveReason;
     }
 
@@ -492,7 +492,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorAddresses;
     }
 
-    public void setVendorAddresses(List<VendorAddress> vendorAddresses) {
+    public void setVendorAddresses(final List<VendorAddress> vendorAddresses) {
         this.vendorAddresses = vendorAddresses;
     }
 
@@ -500,7 +500,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorContacts;
     }
 
-    public void setVendorContacts(List<VendorContact> vendorContacts) {
+    public void setVendorContacts(final List<VendorContact> vendorContacts) {
         this.vendorContacts = vendorContacts;
     }
 
@@ -508,7 +508,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorContracts;
     }
 
-    public void setVendorContracts(List<VendorContract> vendorContracts) {
+    public void setVendorContracts(final List<VendorContract> vendorContracts) {
         this.vendorContracts = vendorContracts;
     }
 
@@ -516,7 +516,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorCustomerNumbers;
     }
 
-    public void setVendorCustomerNumbers(List<VendorCustomerNumber> vendorCustomerNumbers) {
+    public void setVendorCustomerNumbers(final List<VendorCustomerNumber> vendorCustomerNumbers) {
         this.vendorCustomerNumbers = vendorCustomerNumbers;
     }
 
@@ -524,7 +524,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorShippingSpecialConditions;
     }
 
-    public void setVendorShippingSpecialConditions(List<VendorShippingSpecialCondition> vendorShippingSpecialConditions) {
+    public void setVendorShippingSpecialConditions(final List<VendorShippingSpecialCondition> vendorShippingSpecialConditions) {
         this.vendorShippingSpecialConditions = vendorShippingSpecialConditions;
     }
 
@@ -533,10 +533,10 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public String getVendorCommoditiesAsString() {
-        StringBuilder sb = new StringBuilder("[");
+        final StringBuilder sb = new StringBuilder("[");
 
         boolean first = true;
-        for (VendorCommodityCode vcc : this.getVendorCommodities()) {
+        for (final VendorCommodityCode vcc : getVendorCommodities()) {
             if (!first) {
                 sb.append(", ");
             } else {
@@ -549,7 +549,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return sb.toString();
     }
 
-    public void setVendorCommodities(List<VendorCommodityCode> vendorCommodities) {
+    public void setVendorCommodities(final List<VendorCommodityCode> vendorCommodities) {
         this.vendorCommodities = vendorCommodities;
     }
 
@@ -557,7 +557,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorAliases;
     }
 
-    public void setVendorAliases(List<VendorAlias> vendorAliases) {
+    public void setVendorAliases(final List<VendorAlias> vendorAliases) {
         this.vendorAliases = vendorAliases;
     }
 
@@ -565,7 +565,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorPhoneNumbers;
     }
 
-    public void setVendorPhoneNumbers(List<VendorPhoneNumber> vendorPhoneNumbers) {
+    public void setVendorPhoneNumbers(final List<VendorPhoneNumber> vendorPhoneNumbers) {
         this.vendorPhoneNumbers = vendorPhoneNumbers;
     }
 
@@ -573,7 +573,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorFirstName;
     }
 
-    public void setVendorFirstName(String vendorFirstName) {
+    public void setVendorFirstName(final String vendorFirstName) {
         this.vendorFirstName = vendorFirstName;
     }
 
@@ -581,7 +581,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorLastName;
     }
 
-    public void setVendorLastName(String vendorLastName) {
+    public void setVendorLastName(final String vendorLastName) {
         this.vendorLastName = vendorLastName;
     }
 
@@ -589,7 +589,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return soldToVendorDetail;
     }
 
-    public void setSoldToVendorDetail(VendorDetail soldToVendorDetail) {
+    public void setSoldToVendorDetail(final VendorDetail soldToVendorDetail) {
         this.soldToVendorDetail = soldToVendorDetail;
     }
 
@@ -597,7 +597,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorFirstLastNameIndicator;
     }
 
-    public void setVendorFirstLastNameIndicator(boolean vendorFirstLastNameIndicator) {
+    public void setVendorFirstLastNameIndicator(final boolean vendorFirstLastNameIndicator) {
         this.vendorFirstLastNameIndicator = vendorFirstLastNameIndicator;
     }
 
@@ -605,7 +605,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return vendorStateForLookup;
     }
 
-    public void setVendorStateForLookup(String vendorStateForLookup) {
+    public void setVendorStateForLookup(final String vendorStateForLookup) {
         this.vendorStateForLookup = vendorStateForLookup;
     }
 
@@ -619,7 +619,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      * @deprecated
      */
     @Deprecated
-    public void setVendorRestrictedPerson(Person vendorRestrictedPerson) {
+    public void setVendorRestrictedPerson(final Person vendorRestrictedPerson) {
         this.vendorRestrictedPerson = vendorRestrictedPerson;
     }
 
@@ -627,7 +627,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressLine1;
     }
 
-    public void setDefaultAddressLine1(String defaultAddressLine1) {
+    public void setDefaultAddressLine1(final String defaultAddressLine1) {
         this.defaultAddressLine1 = defaultAddressLine1;
     }
 
@@ -635,7 +635,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressCity;
     }
 
-    public void setDefaultAddressCity(String defaultAddressCity) {
+    public void setDefaultAddressCity(final String defaultAddressCity) {
         this.defaultAddressCity = defaultAddressCity;
     }
 
@@ -643,7 +643,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressLine2;
     }
 
-    public void setDefaultAddressLine2(String defaultAddressLine2) {
+    public void setDefaultAddressLine2(final String defaultAddressLine2) {
         this.defaultAddressLine2 = defaultAddressLine2;
     }
 
@@ -651,7 +651,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressPostalCode;
     }
 
-    public void setDefaultAddressPostalCode(String defaultAddressPostalCode) {
+    public void setDefaultAddressPostalCode(final String defaultAddressPostalCode) {
         this.defaultAddressPostalCode = defaultAddressPostalCode;
     }
 
@@ -659,7 +659,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressStateCode;
     }
 
-    public void setDefaultAddressStateCode(String defaultAddressStateCode) {
+    public void setDefaultAddressStateCode(final String defaultAddressStateCode) {
         this.defaultAddressStateCode = defaultAddressStateCode;
     }
 
@@ -667,7 +667,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressInternationalProvince;
     }
 
-    public void setDefaultAddressInternationalProvince(String defaultAddressInternationalProvince) {
+    public void setDefaultAddressInternationalProvince(final String defaultAddressInternationalProvince) {
         this.defaultAddressInternationalProvince = defaultAddressInternationalProvince;
     }
 
@@ -675,7 +675,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultAddressCountryCode;
     }
 
-    public void setDefaultAddressCountryCode(String defaultAddressCountryCode) {
+    public void setDefaultAddressCountryCode(final String defaultAddressCountryCode) {
         this.defaultAddressCountryCode = defaultAddressCountryCode;
     }
 
@@ -683,61 +683,61 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
         return defaultFaxNumber;
     }
 
-    public void setDefaultFaxNumber(String defaultFaxNumber) {
+    public void setDefaultFaxNumber(final String defaultFaxNumber) {
         this.defaultFaxNumber = defaultFaxNumber;
     }
 
     @Override
-    public boolean isEqualForRouting(Object toCompare) {
+    public boolean isEqualForRouting(final Object toCompare) {
         LOG.debug("Entering isEqualForRouting.");
         if (ObjectUtils.isNull(toCompare) || !(toCompare instanceof VendorDetail)) {
             return false;
         } else {
-            VendorDetail detail = (VendorDetail) toCompare;
+            final VendorDetail detail = (VendorDetail) toCompare;
             return new EqualsBuilder().append(
-                    this.getVendorHeaderGeneratedIdentifier(), detail.getVendorHeaderGeneratedIdentifier()).append(
-                    this.getVendorDetailAssignedIdentifier(), detail.getVendorDetailAssignedIdentifier()).append(
-                    this.isVendorParentIndicator(), detail.isVendorParentIndicator()).append(
-                    this.getVendorName(), detail.getVendorName()).append(
-                    this.getVendorLastName(), detail.getVendorLastName()).append(
-                    this.getVendorFirstName(), detail.getVendorFirstName()).append(
-                    this.isActiveIndicator(), detail.isActiveIndicator()).append(
-                    this.getVendorInactiveReasonCode(), detail.getVendorInactiveReasonCode()).append(
-                    this.getVendorDunsNumber(), detail.getVendorDunsNumber()).append(
-                    this.getVendorPaymentTermsCode(), detail.getVendorPaymentTermsCode()).append(
-                    this.getVendorShippingTitleCode(), detail.getVendorShippingTitleCode()).append(
-                    this.getVendorShippingPaymentTermsCode(), detail.getVendorShippingPaymentTermsCode()).append(
-                    this.getVendorConfirmationIndicator(), detail.getVendorConfirmationIndicator()).append(
-                    this.getVendorPrepaymentIndicator(), detail.getVendorPrepaymentIndicator()).append(
-                    this.getVendorCreditCardIndicator(), detail.getVendorCreditCardIndicator()).append(
-                    this.getVendorMinimumOrderAmount(), detail.getVendorMinimumOrderAmount()).append(
-                    this.getVendorUrlAddress(), detail.getVendorUrlAddress()).append(
-                    this.getVendorRemitName(), detail.getVendorRemitName()).append(
-                    this.getVendorRestrictedIndicator(), detail.getVendorRestrictedIndicator()).append(
-                    this.getVendorRestrictedReasonText(), detail.getVendorRestrictedReasonText()).append(
-                    this.getVendorRestrictedDate(), detail.getVendorRestrictedDate()).append(
-                    this.getVendorRestrictedPersonIdentifier(), detail.getVendorRestrictedPersonIdentifier()).append(
-                    this.getVendorSoldToGeneratedIdentifier(), detail.getVendorSoldToGeneratedIdentifier()).append(
-                    this.getVendorSoldToAssignedIdentifier(), detail.getVendorSoldToAssignedIdentifier()).append(
-                    this.getVendorSoldToName(), detail.getVendorSoldToName()).append( // KFSUPGRADE-779
-                    this.isTaxableIndicator(), detail.isTaxableIndicator()).append( 
-                    ((VendorDetailExtension)this.getExtension()).isInsuranceRequiredIndicator(),((VendorDetailExtension)detail.getExtension()).isInsuranceRequiredIndicator()).append(
-                    ((VendorDetailExtension)this.getExtension()).getInsuranceRequirementsCompleteIndicator(),((VendorDetailExtension)detail.getExtension()).getInsuranceRequirementsCompleteIndicator()).append(
-                    ((VendorDetailExtension)this.getExtension()).getCornellAdditionalInsuredIndicator(),((VendorDetailExtension)detail.getExtension()).getCornellAdditionalInsuredIndicator()).append(
-                    ((VendorDetailExtension)this.getExtension()).getGeneralLiabilityCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getGeneralLiabilityCoverageAmount()).append(
-                    ((VendorDetailExtension)this.getExtension()).getGeneralLiabilityExpiration(),((VendorDetailExtension)detail.getExtension()).getGeneralLiabilityExpiration()).append(
-                    ((VendorDetailExtension)this.getExtension()).getAutomobileLiabilityCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getAutomobileLiabilityCoverageAmount()).append(
-                    ((VendorDetailExtension)this.getExtension()).getAutomobileLiabilityExpiration(),((VendorDetailExtension)detail.getExtension()).getAutomobileLiabilityExpiration()).append(
-                    ((VendorDetailExtension)this.getExtension()).getWorkmansCompCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getWorkmansCompCoverageAmount()).append(
-                    ((VendorDetailExtension)this.getExtension()).getWorkmansCompExpiration(),((VendorDetailExtension)detail.getExtension()).getWorkmansCompExpiration()).append(
-                    ((VendorDetailExtension)this.getExtension()).getExcessLiabilityUmbExpiration(),((VendorDetailExtension)detail.getExtension()).getExcessLiabilityUmbExpiration()).append(
-                    ((VendorDetailExtension)this.getExtension()).getExcessLiabilityUmbrellaAmount(),((VendorDetailExtension)detail.getExtension()).getExcessLiabilityUmbrellaAmount()).append(
-                    ((VendorDetailExtension)this.getExtension()).getHealthOffSiteCateringLicenseReq(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteCateringLicenseReq()).append(
-                    ((VendorDetailExtension)this.getExtension()).getHealthOffSiteLicenseExpirationDate(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteLicenseExpirationDate()).append(
-                    ((VendorDetailExtension)this.getExtension()).getInsuranceNotes(),((VendorDetailExtension)detail.getExtension()).getInsuranceNotes()).append(
-                    ((VendorDetailExtension)this.getExtension()).getMerchantNotes(),((VendorDetailExtension)detail.getExtension()).getMerchantNotes()).append( 
-                    ((VendorDetailExtension)this.getExtension()).getDefaultB2BPaymentMethodCode(),((VendorDetailExtension)detail.getExtension()).getDefaultB2BPaymentMethodCode()).append( // end KFSUPGRADE-779
-                    this.isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
+                    getVendorHeaderGeneratedIdentifier(), detail.getVendorHeaderGeneratedIdentifier()).append(
+                    getVendorDetailAssignedIdentifier(), detail.getVendorDetailAssignedIdentifier()).append(
+                    isVendorParentIndicator(), detail.isVendorParentIndicator()).append(
+                    getVendorName(), detail.getVendorName()).append(
+                    getVendorLastName(), detail.getVendorLastName()).append(
+                    getVendorFirstName(), detail.getVendorFirstName()).append(
+                    isActiveIndicator(), detail.isActiveIndicator()).append(
+                    getVendorInactiveReasonCode(), detail.getVendorInactiveReasonCode()).append(
+                    getVendorDunsNumber(), detail.getVendorDunsNumber()).append(
+                    getVendorPaymentTermsCode(), detail.getVendorPaymentTermsCode()).append(
+                    getVendorShippingTitleCode(), detail.getVendorShippingTitleCode()).append(
+                    getVendorShippingPaymentTermsCode(), detail.getVendorShippingPaymentTermsCode()).append(
+                    getVendorConfirmationIndicator(), detail.getVendorConfirmationIndicator()).append(
+                    getVendorPrepaymentIndicator(), detail.getVendorPrepaymentIndicator()).append(
+                    getVendorCreditCardIndicator(), detail.getVendorCreditCardIndicator()).append(
+                    getVendorMinimumOrderAmount(), detail.getVendorMinimumOrderAmount()).append(
+                    getVendorUrlAddress(), detail.getVendorUrlAddress()).append(
+                    getVendorRemitName(), detail.getVendorRemitName()).append(
+                    getVendorRestrictedIndicator(), detail.getVendorRestrictedIndicator()).append(
+                    getVendorRestrictedReasonText(), detail.getVendorRestrictedReasonText()).append(
+                    getVendorRestrictedDate(), detail.getVendorRestrictedDate()).append(
+                    getVendorRestrictedPersonIdentifier(), detail.getVendorRestrictedPersonIdentifier()).append(
+                    getVendorSoldToGeneratedIdentifier(), detail.getVendorSoldToGeneratedIdentifier()).append(
+                    getVendorSoldToAssignedIdentifier(), detail.getVendorSoldToAssignedIdentifier()).append(
+                    getVendorSoldToName(), detail.getVendorSoldToName()).append( // KFSUPGRADE-779
+                    isTaxableIndicator(), detail.isTaxableIndicator()).append( 
+                    ((VendorDetailExtension)getExtension()).isInsuranceRequiredIndicator(),((VendorDetailExtension)detail.getExtension()).isInsuranceRequiredIndicator()).append(
+                    ((VendorDetailExtension)getExtension()).getInsuranceRequirementsCompleteIndicator(),((VendorDetailExtension)detail.getExtension()).getInsuranceRequirementsCompleteIndicator()).append(
+                    ((VendorDetailExtension)getExtension()).getCornellAdditionalInsuredIndicator(),((VendorDetailExtension)detail.getExtension()).getCornellAdditionalInsuredIndicator()).append(
+                    ((VendorDetailExtension)getExtension()).getGeneralLiabilityCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getGeneralLiabilityCoverageAmount()).append(
+                    ((VendorDetailExtension)getExtension()).getGeneralLiabilityExpiration(),((VendorDetailExtension)detail.getExtension()).getGeneralLiabilityExpiration()).append(
+                    ((VendorDetailExtension)getExtension()).getAutomobileLiabilityCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getAutomobileLiabilityCoverageAmount()).append(
+                    ((VendorDetailExtension)getExtension()).getAutomobileLiabilityExpiration(),((VendorDetailExtension)detail.getExtension()).getAutomobileLiabilityExpiration()).append(
+                    ((VendorDetailExtension)getExtension()).getWorkmansCompCoverageAmount(),((VendorDetailExtension)detail.getExtension()).getWorkmansCompCoverageAmount()).append(
+                    ((VendorDetailExtension)getExtension()).getWorkmansCompExpiration(),((VendorDetailExtension)detail.getExtension()).getWorkmansCompExpiration()).append(
+                    ((VendorDetailExtension)getExtension()).getExcessLiabilityUmbExpiration(),((VendorDetailExtension)detail.getExtension()).getExcessLiabilityUmbExpiration()).append(
+                    ((VendorDetailExtension)getExtension()).getExcessLiabilityUmbrellaAmount(),((VendorDetailExtension)detail.getExtension()).getExcessLiabilityUmbrellaAmount()).append(
+                    ((VendorDetailExtension)getExtension()).getHealthOffSiteCateringLicenseReq(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteCateringLicenseReq()).append(
+                    ((VendorDetailExtension)getExtension()).getHealthOffSiteLicenseExpirationDate(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteLicenseExpirationDate()).append(
+                    ((VendorDetailExtension)getExtension()).getInsuranceNotes(),((VendorDetailExtension)detail.getExtension()).getInsuranceNotes()).append(
+                    ((VendorDetailExtension)getExtension()).getMerchantNotes(),((VendorDetailExtension)detail.getExtension()).getMerchantNotes()).append( 
+                    ((VendorDetailExtension)getExtension()).getDefaultB2BPaymentMethodCode(),((VendorDetailExtension)detail.getExtension()).getDefaultB2BPaymentMethodCode()).append( // end KFSUPGRADE-779
+                    isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
         }
     }
 
@@ -748,7 +748,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
      * @return true if this vendor is a B2B vendor and false otherwise.
      */
     public boolean isB2BVendor() {
-        for (VendorContract contract : this.getVendorContracts()) {
+        for (final VendorContract contract : getVendorContracts()) {
             if (contract.getVendorB2bIndicator()) {
                 return true;
             }
@@ -758,7 +758,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
 
     @JsonIgnore
     public VendorDetail getVendorParent() {
-        Map<String, String> tmpValues = new HashMap<>();
+        final Map<String, String> tmpValues = new HashMap<>();
         tmpValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
                 getVendorHeaderGeneratedIdentifier().toString());
         tmpValues.put(VendorPropertyConstants.VENDOR_PARENT_INDICATOR, "Y");
@@ -766,26 +766,26 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public String getVendorParentName() {
-        if (StringUtils.isNotBlank(this.vendorParentName)) {
+        if (StringUtils.isNotBlank(vendorParentName)) {
             return vendorParentName;
         } else if (isVendorParentIndicator()) {
-            setVendorParentName(this.getVendorName());
+            setVendorParentName(getVendorName());
             return vendorParentName;
         } else {
-            this.setVendorParentName(getVendorParent().getVendorName());
+            setVendorParentName(getVendorParent().getVendorName());
             return vendorParentName;
         }
     }
 
-    public void setVendorParentName(String vendorParentName) {
+    public void setVendorParentName(final String vendorParentName) {
         this.vendorParentName = vendorParentName;
     }
 
     public String getVendorAliasesAsString() {
-        StringBuilder sb = new StringBuilder("[");
+        final StringBuilder sb = new StringBuilder("[");
 
         boolean first = true;
-        for (VendorAlias vsd : this.getVendorAliases()) {
+        for (final VendorAlias vsd : getVendorAliases()) {
             if (vsd.isActive()) {
                 if (!first) {
                     sb.append(", ");
@@ -800,11 +800,11 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public List<Note> getBoNotes() {
-        VendorService vendorService = SpringContext.getBean(VendorService.class);
+        final VendorService vendorService = SpringContext.getBean(VendorService.class);
         return vendorService.getVendorNotes(this);
     }
 
-    public void setBoNotes(List boNotes) {
+    public void setBoNotes(final List boNotes) {
         this.boNotes = boNotes;
     }
 

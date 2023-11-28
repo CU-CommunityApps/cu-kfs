@@ -14,12 +14,12 @@ public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory exten
     private static final Logger LOG = LogManager.getLogger(CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory.class);
     
     @Override
-    public boolean shouldSuspend(ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
+    public boolean shouldSuspend(final ContractsGrantsInvoiceDocument contractsGrantsInvoiceDocument) {
         LOG.debug("shouldSuspend, validating based on award budget total");
-        KualiDecimal totalAmountBilledToDate = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getTotalAmountBilledToDate();
+        final KualiDecimal totalAmountBilledToDate = contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getTotalAmountBilledToDate();
         
-        Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
-        AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
+        final Award award = (Award) contractsGrantsInvoiceDocument.getInvoiceGeneralDetail().getAward();
+        final AwardExtendedAttribute awardExtension = (AwardExtendedAttribute) award.getExtension();
         KualiDecimal budgetTotalAmount = awardExtension.getBudgetTotalAmount();
         if (ObjectUtils.isNull(budgetTotalAmount)) {
             LOG.error("shouldSuspend, no budget amount set, setting budget amount to 0, which will cause a suspension.");

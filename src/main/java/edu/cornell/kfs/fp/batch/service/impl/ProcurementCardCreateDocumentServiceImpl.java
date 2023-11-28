@@ -49,21 +49,21 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
      */
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Override
-    public ProcurementCardDocument createProcurementCardDocument(List transactions) {
+    public ProcurementCardDocument createProcurementCardDocument(final List transactions) {
         ProcurementCardDocument pcardDocument = null;
         
         try {
             // get new document from doc service
             pcardDocument = buildNewProcurementCardDocument();
             
-            List<CapitalAssetInformation> capitalAssets = pcardDocument.getCapitalAssetInformation();
-            for (CapitalAssetInformation capitalAsset : capitalAssets) {
+            final List<CapitalAssetInformation> capitalAssets = pcardDocument.getCapitalAssetInformation();
+            for (final CapitalAssetInformation capitalAsset : capitalAssets) {
                 if (ObjectUtils.isNotNull(capitalAsset) && ObjectUtils.isNotNull(capitalAsset.getCapitalAssetInformationDetails())) {
                     capitalAsset.setDocumentNumber(pcardDocument.getDocumentNumber());
                 }
             }
 
-            ProcurementCardTransaction trans = (ProcurementCardTransaction) transactions.get(0);
+            final ProcurementCardTransaction trans = (ProcurementCardTransaction) transactions.get(0);
             String errorText = validateTransaction(trans);
             createCardHolderRecord(pcardDocument, trans);
 
@@ -71,7 +71,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             int transactionLineNumber = 1;
             KualiDecimal documentTotalAmount = KualiDecimal.ZERO;
             ProcurementCardTransaction transaction = null;
-            for (Object transactionObj : transactions) {
+            for (final Object transactionObj : transactions) {
                 transaction = (ProcurementCardTransaction) transactionObj;
                 
                 // create transaction detail record with accounting lines
@@ -140,16 +140,16 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
             pcardDocument.getDocumentHeader().setDocumentDescription(docDesc);
             
             // Remove duplicate messages from errorText
-            String[] messages = StringUtils.split(errorText, ".");
-            for (String message : messages) {
-                int countMatches = StringUtils.countMatches(errorText, message) - 1;
+            final String[] messages = StringUtils.split(errorText, ".");
+            for (final String message : messages) {
+                final int countMatches = StringUtils.countMatches(errorText, message) - 1;
                 errorText = StringUtils.replace(errorText, message + ".", "", countMatches);
             }
             // In case errorText is still too long, truncate it and indicate so.
-            Integer documentExplanationMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class.getName(),
+            final Integer documentExplanationMaxLength = dataDictionaryService.getAttributeMaxLength(DocumentHeader.class.getName(),
                     KFSPropertyConstants.EXPLANATION);
             if (documentExplanationMaxLength != null && errorText.length() > documentExplanationMaxLength.intValue()) {
-                String truncatedMessage = " ... TRUNCATED.";
+                final String truncatedMessage = " ... TRUNCATED.";
                 errorText = errorText.substring(0, documentExplanationMaxLength - truncatedMessage.length()) + truncatedMessage;
             }
             pcardDocument.getDocumentHeader().setExplanation(errorText);
@@ -171,7 +171,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
      * @see org.kuali.kfs.fp.batch.service.impl.ProcurementCardCreateDocumentServiceImpl#createTransactionDetailRecord(org.kuali.kfs.fp.document.ProcurementCardDocument, org.kuali.kfs.fp.businessobject.ProcurementCardTransaction, java.lang.Integer)
      */
     @Override
-    protected String createTransactionDetailRecord(ProcurementCardDocument pcardDocument, ProcurementCardTransaction transaction, Integer transactionLineNumber) {
+    protected String createTransactionDetailRecord(final ProcurementCardDocument pcardDocument, final ProcurementCardTransaction transaction, final Integer transactionLineNumber) {
       String errorText = super.createTransactionDetailRecord(pcardDocument, transaction, transactionLineNumber);
       
       // create the Extension object, which contains the Level 3 info
@@ -223,7 +223,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     }
     
     @Override
-    protected String validateTargetAccountingLine(ProcurementCardTargetAccountingLine targetLine) {
+    protected String validateTargetAccountingLine(final ProcurementCardTargetAccountingLine targetLine) {
         targetLine.refresh();
         final String lineNumber = targetLine.getSequenceNumber() == null ? "new" :
             targetLine.getSequenceNumber().toString();
@@ -231,9 +231,9 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
         String errorText = "";
         
         if (!accountingLineRuleUtil.isValidObjectCode("", targetLine.getObjectCode())) {
-            String tempErrorText = "Target Accounting Line " + lineNumber + " Chart " 
-                    + targetLine.getChartOfAccountsCode() + " Object Code " + targetLine.getFinancialObjectCode() 
-                    + " is invalid; using default Object Code.";
+            final String tempErrorText = "Target Accounting Line " + lineNumber + " Chart " 
+                                         + targetLine.getChartOfAccountsCode() + " Object Code " + targetLine.getFinancialObjectCode() 
+                                         + " is invalid; using default Object Code.";
             
             LOG.info(tempErrorText);
             
@@ -249,7 +249,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     }
     
     @Override
-    protected String validateTransaction(ProcurementCardTransaction transaction) {
+    protected String validateTransaction(final ProcurementCardTransaction transaction) {
         
         String errorText = "";
         
@@ -259,8 +259,8 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
                 transaction.getChartOfAccountsCode(), transaction.getFinancialObjectCode());
         
         if (ObjectUtils.isNull(objectCode)) {
-            String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Object Code " 
-                    + transaction.getFinancialObjectCode() + " is invalid; using default error Object Code.";
+            final String tempErrorText = "Chart " + transaction.getChartOfAccountsCode() + " Object Code " 
+                                         + transaction.getFinancialObjectCode() + " is invalid; using default error Object Code.";
             
             LOG.info(tempErrorText);
             errorText += " " + tempErrorText;
@@ -279,7 +279,7 @@ public class ProcurementCardCreateDocumentServiceImpl extends org.kuali.kfs.fp.b
     }
     
     @Override
-    public List<ProcurementCardReportType> getSortedReportSummaryList(List<ProcurementCardDocument> documents) {
+    public List<ProcurementCardReportType> getSortedReportSummaryList(final List<ProcurementCardDocument> documents) {
         return super.getSortedReportSummaryList(documents);
     }
 }

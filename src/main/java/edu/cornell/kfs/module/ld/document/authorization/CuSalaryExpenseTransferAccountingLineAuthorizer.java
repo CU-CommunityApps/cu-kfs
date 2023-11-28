@@ -13,8 +13,9 @@ import org.kuali.kfs.kim.impl.identity.Person;
 public class CuSalaryExpenseTransferAccountingLineAuthorizer extends
     SalaryExpenseTransferAccountingLineAuthorizer {
   @Override
-  public boolean determineEditPermissionOnField(AccountingDocument accountingDocument, AccountingLine accountingLine,
-          String accountingLineCollectionProperty, String fieldName, boolean editablePage) {
+  public boolean determineEditPermissionOnField(
+          final AccountingDocument accountingDocument, final AccountingLine accountingLine,
+          final String accountingLineCollectionProperty, final String fieldName, final boolean editablePage) {
 
     // No matter what, we can't edit the line when the doc is FINAL. Duh.
     if (accountingDocument.isDocumentFinalOrProcessed()) {
@@ -26,8 +27,9 @@ public class CuSalaryExpenseTransferAccountingLineAuthorizer extends
   }
 
   @Override
-  public List<AccountingLineViewAction> getActions(AccountingDocument accountingDocument, AccountingLineRenderingContext accountingLineRenderingContext,
-                                                   String accountingLinePropertyName, Integer accountingLineIndex, Person currentUser, String groupTitle) {
+  public List<AccountingLineViewAction> getActions(
+          final AccountingDocument accountingDocument, final AccountingLineRenderingContext accountingLineRenderingContext,
+          final String accountingLinePropertyName, final Integer accountingLineIndex, final Person currentUser, final String groupTitle) {
 
       // No matter what, we can't edit the line when the doc is FINAL. Duh.
       if (accountingDocument.isDocumentFinalOrProcessed()) {

@@ -27,36 +27,38 @@ public class CuSalaryExpenseTransferDocument extends SalaryExpenseTransferDocume
     private static final long serialVersionUID = 1L;
 
     @Override
-    public boolean generateLaborLedgerPendingEntries(AccountingLine accountingLine, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateLaborLedgerPendingEntries(
+            final AccountingLine accountingLine, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerPendingEntries()");
 
         boolean isSuccessful = true;
-        ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
+        final ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator.generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
+        final List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator.generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
+            isSuccessful &= getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }
 
-        List<LaborLedgerPendingEntry> benefitPendingEntries = CuLaborPendingEntryGenerator.generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
+        final List<LaborLedgerPendingEntry> benefitPendingEntries = CuLaborPendingEntryGenerator.generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (benefitPendingEntries != null && !benefitPendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
+            isSuccessful &= getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
         }
         
         return isSuccessful;
     }
     
     @Override
-    public boolean generateLaborLedgerBenefitClearingPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateLaborLedgerBenefitClearingPendingEntries(
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerBenefitClearingPendingEntries()");
 
-        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_CHART);
-        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
+        final String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_CHART);
+        final String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(SalaryExpenseTransferDocument.class, LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
-        List<LaborLedgerPendingEntry> benefitClearingPendingEntries = CuLaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber, chartOfAccountsCode);
+        final List<LaborLedgerPendingEntry> benefitClearingPendingEntries = CuLaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber, chartOfAccountsCode);
 
         if (benefitClearingPendingEntries != null && !benefitClearingPendingEntries.isEmpty()) {
-            return this.getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
+            return getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
         }
 
         return true;

@@ -20,21 +20,21 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
      * org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent)
      */
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = true;
-        PurchaseOrderDocument poaDocument = (PurchaseOrderDocument) event.getDocument();
-        List<PurApItem> items = poaDocument.getItemsActiveOnly();
+        final PurchaseOrderDocument poaDocument = (PurchaseOrderDocument) event.getDocument();
+        final List<PurApItem> items = poaDocument.getItemsActiveOnly();
 
-        PurchaseOrderDocument po = getPurchaseOrderService().getCurrentPurchaseOrder(poaDocument.getPurapDocumentIdentifier());
-        List<PurApItem> poItems = po.getItems();
+        final PurchaseOrderDocument po = getPurchaseOrderService().getCurrentPurchaseOrder(poaDocument.getPurapDocumentIdentifier());
+        final List<PurApItem> poItems = po.getItems();
 
-        for (PurApItem item : items) {
+        for (final PurApItem item : items) {
             if (item.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE)
                     && item.getSourceAccountingLines() != null && item.getSourceAccountingLines().size() > 0) {
 
                 if (isItemChanged(item, poItems)) {
-                    List<PurApAccountingLine> accountingLines = item.getSourceAccountingLines();
-                    for (PurApAccountingLine accountingLine : accountingLines) {
+                    final List<PurApAccountingLine> accountingLines = item.getSourceAccountingLines();
+                    for (final PurApAccountingLine accountingLine : accountingLines) {
                         if (!accountingLine.getAccount().isActive()) {
                             valid = false;
 							GlobalVariables.getMessageMap().putError(PurapConstants.ITEM_TAB_ERROR_PROPERTY,
@@ -51,12 +51,12 @@ public class CuPurchaseOrderAmendmentAccountValidation extends PurchaseOrderAmen
     }
 
     // Copied and tweaked this superclass method, and increased its visibility.
-    protected boolean isItemChanged(PurApItem poaItem, List<PurApItem> poItems) {
+    protected boolean isItemChanged(final PurApItem poaItem, final List<PurApItem> poItems) {
         boolean changed = false;
 
-        int poaItemId = poaItem.getItemLineNumber().intValue();
+        final int poaItemId = poaItem.getItemLineNumber().intValue();
 
-        for (PurApItem poItem : poItems) {
+        for (final PurApItem poItem : poItems) {
 
 			if (poItem.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE)
 					&& poaItemId == poItem.getItemLineNumber().intValue()) {

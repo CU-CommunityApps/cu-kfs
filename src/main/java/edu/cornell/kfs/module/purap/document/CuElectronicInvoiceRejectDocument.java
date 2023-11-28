@@ -36,41 +36,41 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
 
     public void sanitizeRejectReasons() {
 
-    	List<ElectronicInvoiceRejectReason> sanitized = new ArrayList<ElectronicInvoiceRejectReason>();
-    	int maxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(ElectronicInvoiceRejectReason.class, "invoiceRejectReasonDescription");
-    	for (ElectronicInvoiceRejectReason rejectReason : invoiceRejectReasons) {
-    		if (rejectReason.getInvoiceRejectReasonDescription().length() > maxLength) {
-    			String reason = rejectReason.getInvoiceRejectReasonDescription();
-    			String type = rejectReason.getInvoiceRejectReasonTypeCode();
-    			String fileName = rejectReason.getInvoiceFileName();    			
-    			while (reason.length() > maxLength) {
-    				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason.substring(0,maxLength));
-    				reason = reason.substring(maxLength);
-    				sanitized.add(split);
-    			}
-				ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason);
-				sanitized.add(split);
-    		}
-    		else {
-    			sanitized.add(rejectReason);
-    		}
-    	}
-    	invoiceRejectReasons = sanitized;
+        final List<ElectronicInvoiceRejectReason> sanitized = new ArrayList<ElectronicInvoiceRejectReason>();
+        final int maxLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(ElectronicInvoiceRejectReason.class, "invoiceRejectReasonDescription");
+        for (final ElectronicInvoiceRejectReason rejectReason : invoiceRejectReasons) {
+            if (rejectReason.getInvoiceRejectReasonDescription().length() > maxLength) {
+                String reason = rejectReason.getInvoiceRejectReasonDescription();
+                final String type = rejectReason.getInvoiceRejectReasonTypeCode();
+                final String fileName = rejectReason.getInvoiceFileName();    			
+                while (reason.length() > maxLength) {
+                    final ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason.substring(0,maxLength));
+                    reason = reason.substring(maxLength);
+                    sanitized.add(split);
+                }
+                ElectronicInvoiceRejectReason split = new ElectronicInvoiceRejectReason(type, fileName, reason);
+                sanitized.add(split);
+        }
+            else {
+                sanitized.add(rejectReason);
+            }
+        }
+        invoiceRejectReasons = sanitized;
     }
     
 	public List<CuElectronicInvoiceItemHolder> getNonMatchItems() {
 		return nonMatchItems;
 	}
 
-	public void setNonMatchItems(List<CuElectronicInvoiceItemHolder> nonMatchItems) {
+	public void setNonMatchItems(final List<CuElectronicInvoiceItemHolder> nonMatchItems) {
 		this.nonMatchItems = nonMatchItems;
 	}
 
     public KualiDecimal getGrandTotalAmount() {
         KualiDecimal returnValue = new KualiDecimal(zero);
         try {
-            for (ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
-                KualiDecimal toAddAmount = new KualiDecimal(eiri.getInvoiceItemNetAmount());
+            for (final ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
+                final KualiDecimal toAddAmount = new KualiDecimal(eiri.getInvoiceItemNetAmount());
                 LOG.debug(
                         "getGrandTotalAmount() setting returnValue with arithmetic => '{}' + '{}'",
                         returnValue::doubleValue,
@@ -96,7 +96,7 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
             LOG.debug("getGrandTotalAmount() returning amount {}", returnValue::doubleValue);
             return returnValue;
         }
-        catch (NumberFormatException n) {
+        catch (final NumberFormatException n) {
             // do nothing this is already rejected
             LOG.error(
                     "getGrandTotalAmount() Error attempting to calculate total amount for invoice with filename {}",
@@ -108,13 +108,13 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
 
     public BigDecimal getInvoiceItemTaxAmount() {
         BigDecimal returnValue = zero;
-        boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+        final boolean enableSalesTaxInd = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
 
         try {
             //if sales tax enabled, calculate total by totaling items
             if(enableSalesTaxInd){
-                for (ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
-                    BigDecimal toAddAmount = eiri.getInvoiceItemTaxAmount();
+                for (final ElectronicInvoiceRejectItem eiri : this.invoiceRejectItems) {
+                    final BigDecimal toAddAmount = eiri.getInvoiceItemTaxAmount();
                     LOG.debug(
                             "getInvoiceItemTaxAmount() setting returnValue with arithmetic => '{}' + '{}'",
                             returnValue::doubleValue,
@@ -130,7 +130,7 @@ public class CuElectronicInvoiceRejectDocument extends ElectronicInvoiceRejectDo
             LOG.debug("getInvoiceItemTaxAmount() returning amount {}", returnValue::doubleValue);
 //            return returnValue;
         }
-        catch (NumberFormatException n) {
+        catch (final NumberFormatException n) {
             // do nothing this is already rejected
             LOG.error(
                     "getInvoiceItemTaxAmount() Error attempting to calculate total amount for invoice with filename {}",

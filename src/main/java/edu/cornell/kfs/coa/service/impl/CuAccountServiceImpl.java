@@ -17,7 +17,7 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
     
     protected NoteService noteService;
 
-    public String getDefaultLaborBenefitRateCategoryCodeForAccountType(String accountTypeCode) {
+    public String getDefaultLaborBenefitRateCategoryCodeForAccountType(final String accountTypeCode) {
         String value = "";
         
         //TODO rewrite to use parameter evaluator service
@@ -25,16 +25,16 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
         // make sure the parameter exists
         if (parameterService.parameterExists(Account.class, COAParameterConstants.ACCOUNT_TYPE_BENEFIT_RATE)) {
             // retrieve the value(s) for the parameter
-            String paramValues = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.ACCOUNT_TYPE_BENEFIT_RATE);
+            final String paramValues = parameterService.getParameterValueAsString(Account.class, COAParameterConstants.ACCOUNT_TYPE_BENEFIT_RATE);
 
             // split the values of the parameter on the semi colon
-            String[] paramValuesArray = paramValues.split(";");
+            final String[] paramValuesArray = paramValues.split(";");
 
             // load the array into a HashMap
-            HashMap<String, String> paramValuesMap = new HashMap<String, String>();
+            final HashMap<String, String> paramValuesMap = new HashMap<String, String>();
             for (int i = 0; i < paramValuesArray.length; i++) {
                 // create a new array to split on equals sign
-                String[] tempArray = paramValuesArray[i].split("=");
+                final String[] tempArray = paramValuesArray[i].split("=");
                 paramValuesMap.put(tempArray[0], tempArray[1]);
             }
 
@@ -52,7 +52,7 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
     }
 
 	@Override
-	public List<Note> getAccountNotes(Account account) {
+	public List<Note> getAccountNotes(final Account account) {
 		List<Note> notes = new ArrayList<Note>();
 		if (ObjectUtils.isNotNull(account)&& ObjectUtils.isNotNull(account.getObjectId())) {
 			notes = noteService.getByRemoteObjectId(account.getObjectId());
@@ -64,7 +64,7 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
 		return noteService;
 	}
 
-	public void setNoteService(NoteService noteService) {
+	public void setNoteService(final NoteService noteService) {
 		this.noteService = noteService;
 	}
 

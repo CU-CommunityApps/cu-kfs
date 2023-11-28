@@ -20,9 +20,9 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
     private CuCheckStubService cuCheckStubService;
 
 	@Override
-	public boolean doPrompts(Document document) {
+	public boolean doPrompts(final Document document) {
 		boolean preRulesOK = true;
-		PaymentRequestDocument preq = (PaymentRequestDocument) document;
+		final PaymentRequestDocument preq = (PaymentRequestDocument) document;
 		
 		preRulesOK &= checkWireTransferTabState(preq);
 		preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
@@ -30,19 +30,19 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 		return preRulesOK;
 	}
 	
-	 protected boolean checkWireTransferTabState(PaymentRequestDocument preqDocument) {
+	 protected boolean checkWireTransferTabState(final PaymentRequestDocument preqDocument) {
 	        boolean tabStatesOK = true;
 
-	        PaymentRequestWireTransfer preqWireTransfer = ((CuPaymentRequestDocument)preqDocument).getPreqWireTransfer();
+	        final PaymentRequestWireTransfer preqWireTransfer = ((CuPaymentRequestDocument)preqDocument).getPreqWireTransfer();
 
 	        // if payment method is CHECK and wire tab contains data, ask user to clear tab
 	        if (!StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, ((CuPaymentRequestDocument)preqDocument).getPaymentMethodCode()) && hasWireTransferValues(preqWireTransfer)) {
 	            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRW_TAB);
 
-	            Object[] args = { "payment method", ((CuPaymentRequestDocument)preqDocument).getPaymentMethodCode(), "Wire Transfer", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE };
+	            final Object[] args = { "payment method", ((CuPaymentRequestDocument)preqDocument).getPaymentMethodCode(), "Wire Transfer", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE };
 	            questionText = MessageFormat.format(questionText, args);
 
-	            boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
+	            final boolean clearTab = super.askOrAnalyzeYesNoQuestion(KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID, questionText);
 	            if (clearTab) {
 	                // NOTE: Can't replace with new instance because Foreign Draft uses same object
 	                clearWireTransferValues(preqWireTransfer);
@@ -57,7 +57,7 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 	        return tabStatesOK;
 	    }
 
-	    protected boolean hasWireTransferValues(PaymentRequestWireTransfer preqWireTransfer) {
+	    protected boolean hasWireTransferValues(final PaymentRequestWireTransfer preqWireTransfer) {
 	        boolean hasValues = false;
 
 	        // Checks each explicit field in the tab for user entered values
@@ -75,7 +75,7 @@ public class CuPaymentRequestDocumentPreRules extends PaymentRequestDocumentPreR
 
 	        return hasValues;
 	    }
-	    protected void clearWireTransferValues(PaymentRequestWireTransfer preqWireTransfer) {
+	    protected void clearWireTransferValues(final PaymentRequestWireTransfer preqWireTransfer) {
 	        preqWireTransfer.setPreqAutomatedClearingHouseProfileNumber(null);
 	        preqWireTransfer.setPreqBankName(null);
 	        preqWireTransfer.setPreqBankRoutingNumber(null);

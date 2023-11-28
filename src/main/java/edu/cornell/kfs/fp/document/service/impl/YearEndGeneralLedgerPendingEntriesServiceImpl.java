@@ -337,7 +337,7 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
             Collection<String> cumulativeBalanceForwardBalanceTypesArray = getParameterService().getParameterValuesAsString(
                     BalanceForwardStep.class, GLParameterConstants.INCEPTION_TO_DATE_BALANCE_TYPES);
             Collection<String> subFundGroupsForCumulativeBalanceForwardingArray = getParameterService().getParameterValuesAsString(
-                    BalanceForwardStep.class, CuBalanceServiceImpl.INCEPTION_TO_DATE_SUB_FUNDS);
+                    BalanceForwardStep.class, GLParameterConstants.INCEPTION_TO_DATE_SUB_FUNDS);
             Boolean fundGroupDenotesCGInd = getParameterService().getParameterValueAsBoolean(
                     Account.class, COAParameterConstants.CG_FUND_IND);
             /*

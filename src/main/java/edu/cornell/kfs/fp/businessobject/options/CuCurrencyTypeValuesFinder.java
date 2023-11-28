@@ -13,7 +13,7 @@ public class CuCurrencyTypeValuesFinder extends KeyValuesBase {
 
     @Override
     public List<KeyValue> getKeyValues() {
-        List<KeyValue> keyValues= new ArrayList();
+        final List<KeyValue> keyValues= new ArrayList();
         keyValues.add(new ConcreteKeyValue(CuFPConstants.CURRENCY_CODE_U, CuFPConstants.CURRENCY_US_DOLLAR));
         keyValues.add(new ConcreteKeyValue(CuFPConstants.CURRENCY_CODE_C, CuFPConstants.CURRENCY_US_DOLLAR_TO_FOREIGN));
         keyValues.add(new ConcreteKeyValue(CuFPConstants.CURRENCY_CODE_F, CuFPConstants.CURRENCY_FOREIGN));

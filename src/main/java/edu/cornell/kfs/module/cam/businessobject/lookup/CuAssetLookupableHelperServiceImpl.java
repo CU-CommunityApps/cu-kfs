@@ -21,11 +21,11 @@ public class CuAssetLookupableHelperServiceImpl extends AssetLookupableHelperSer
     private static final Logger LOG = LogManager.getLogger(CuAssetLookupableHelperServiceImpl.class);
 
     @Override
-    protected List<? extends BusinessObject> getSearchResultsHelper(Map<String, String> fieldValues, boolean unbounded) {
+    protected List<? extends BusinessObject> getSearchResultsHelper(final Map<String, String> fieldValues, boolean unbounded) {
         // perform the lookup on the asset representative first
-        String principalName = fieldValues.get(CamsPropertyConstants.Asset.REP_USER_AUTH_ID);
+        final String principalName = fieldValues.get(CamsPropertyConstants.Asset.REP_USER_AUTH_ID);
         if (StringUtils.isNotBlank(principalName)) {
-            Principal principal = identityService.getPrincipalByPrincipalName(principalName);
+            final Principal principal = identityService.getPrincipalByPrincipalName(principalName);
 
             if (principal == null) {
                 return Collections.EMPTY_LIST;
@@ -46,22 +46,22 @@ public class CuAssetLookupableHelperServiceImpl extends AssetLookupableHelperSer
         return results;
     }
 
-    protected List<? extends BusinessObject> excludeBlankOffCampusLocations(List<? extends BusinessObject> results) {
-        List<Asset> resultsModified = new ArrayList<Asset>();
+    protected List<? extends BusinessObject> excludeBlankOffCampusLocations(final List<? extends BusinessObject> results) {
+        final List<Asset> resultsModified = new ArrayList<Asset>();
         int count = 0;
         LOG.info("Asset count: " + results.size());
-        for (BusinessObject boAsset : results) {
+        for (final BusinessObject boAsset : results) {
             Asset asset;
             if (boAsset instanceof Asset) {
                 count++;
                 boolean remove = false;
                 asset = (Asset) boAsset;
-                List<AssetLocation> locs = asset.getAssetLocations();
+                final List<AssetLocation> locs = asset.getAssetLocations();
                 if (locs.isEmpty()) {
                     resultsModified.add(asset);
                 }
                 LOG.info("Asset location counts: " + locs.size());
-                for (AssetLocation assetLoc : locs) {
+                for (final AssetLocation assetLoc : locs) {
                     if (StringUtils.equalsIgnoreCase(assetLoc.getAssetLocationTypeCode(), "O")) {
                         remove |= StringUtils.isBlank(assetLoc.getAssetLocationStreetAddress());
                     }

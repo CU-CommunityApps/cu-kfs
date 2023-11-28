@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -70,16 +70,16 @@ public final class CreditMemoStatuses {
         // End CU Customization
         COMPLETE(CreditMemoStatuses.APPDOC_COMPLETE, false);
 
-        private String statusCode;
-        private boolean fullEntryAllowed;
+        private final String statusCode;
+        private final boolean fullEntryAllowed;
 
-        STATUS_ORDER(String statusCode, boolean fullEntry) {
+        STATUS_ORDER(final String statusCode, final boolean fullEntry) {
             this.statusCode = statusCode;
-            this.fullEntryAllowed = fullEntry;
+            fullEntryAllowed = fullEntry;
         }
 
-        public static STATUS_ORDER getByStatusCode(String statusCode) {
-            for (STATUS_ORDER status : STATUS_ORDER.values()) {
+        public static STATUS_ORDER getByStatusCode(final String statusCode) {
+            for (final STATUS_ORDER status : STATUS_ORDER.values()) {
                 if (StringUtils.equals(status.statusCode, statusCode)) {
                     return status;
                 }
@@ -87,19 +87,19 @@ public final class CreditMemoStatuses {
             return null;
         }
 
-        public static boolean isFullDocumentEntryCompleted(String status) {
+        public static boolean isFullDocumentEntryCompleted(final String status) {
             return !getByStatusCode(status).fullEntryAllowed;
         }
 
-        public static STATUS_ORDER getPreviousStatus(String statusCode) {
-            STATUS_ORDER statusOrder = STATUS_ORDER.getByStatusCode(statusCode);
+        public static STATUS_ORDER getPreviousStatus(final String statusCode) {
+            final STATUS_ORDER statusOrder = STATUS_ORDER.getByStatusCode(statusCode);
             if (statusOrder.ordinal() > 0) {
                 return STATUS_ORDER.values()[statusOrder.ordinal() - 1];
             }
             return null;
         }
 
-        public static boolean isFirstFullEntryStatus(String statusCode) {
+        public static boolean isFirstFullEntryStatus(final String statusCode) {
             // NOTE this won't work if there endsup being two ways to get to the first full entry status
             // (i.e. like AUTO/DEPT for final)
             return getByStatusCode(statusCode).fullEntryAllowed && !getPreviousStatus(statusCode).fullEntryAllowed;
@@ -123,7 +123,7 @@ public final class CreditMemoStatuses {
     }
 
     public static HashMap<String, String> getCreditMemoAppDocDisapproveStatuses() {
-        HashMap<String, String> appDocStatusMap = new HashMap<>();
+        final HashMap<String, String> appDocStatusMap = new HashMap<>();
 
         appDocStatusMap.put(NODE_ADHOC_REVIEW, APPDOC_CANCELLED_IN_PROCESS);
         appDocStatusMap.put(PurapConstants.AccountsPayableStatuses.NODE_ACCOUNT_PAYABLE_REVIEW,

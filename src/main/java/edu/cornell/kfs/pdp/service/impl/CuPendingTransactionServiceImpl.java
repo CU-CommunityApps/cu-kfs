@@ -57,6 +57,7 @@ import org.kuali.kfs.pdp.businessobject.GlPendingTransaction;
 import org.kuali.kfs.pdp.businessobject.PaymentAccountDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
+import org.kuali.kfs.pdp.service.impl.GeneratePdpGlpeState;
 import org.kuali.kfs.pdp.service.impl.PendingTransactionServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
@@ -93,30 +94,30 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCRCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
     @Override
-    public void generateCRCancellationGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
-        for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+    public void generateCRCancellationGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
+        for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
 
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, 
-                PdpConstants.FDOC_TYP_CD_CANCEL_CHECK, true);
+        populatePaymentGeneralLedgerPendingEntry(
+                                 paymentGroup,
+                                 GeneratePdpGlpeState.forCancel());
     }
 
     /**
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
     @Override
-    public void generateStopGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
-        for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+    public void generateStopGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
+        for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
 
             // Need to reverse the payment document's GL entries if the check is stopped or cancelled
             reverseSourceDocumentsEntries(paymentDetail, sequenceHelper);
         }
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, PdpConstants.FDOC_TYP_CD_CANCEL_ACH, 
-                CUPdpConstants.FDOC_TYP_CD_STOP_CHECK, true);
+        populatePaymentGeneralLedgerPendingEntry(paymentGroup, GeneratePdpGlpeState.forStop());
     }
     
     
@@ -125,9 +126,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @see org.kuali.kfs.pdp.service.PendingTransactionService#generateCancellationGeneralLedgerPendingEntry(org.kuali.kfs.pdp.businessobject.PaymentGroup)
      */
     @Override
-    public void generateStaleGeneralLedgerPendingEntry(PaymentGroup paymentGroup) {
-        this.populatePaymentGeneralLedgerPendingEntry(paymentGroup, CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, 
-                CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, true);
+    public void generateStaleGeneralLedgerPendingEntry(final PaymentGroup paymentGroup) {
+        populatePaymentGeneralLedgerPendingEntry(paymentGroup, GeneratePdpGlpeState.forStale());
     }
     
     /**
@@ -138,17 +138,21 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param checkFdocTypeCod doc type for check disbursements
      * @param reversal boolean indicating if this is a reversal
      */
-    protected void populatePaymentGeneralLedgerPendingEntry(PaymentGroup paymentGroup, String achFdocTypeCode, String checkFdocTypeCod, boolean reversal) {
-        List<PaymentAccountDetail> accountListings = new ArrayList<PaymentAccountDetail>();
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
+     // CU customization: This method is Cornell specific and it is distinct and not an override 
+     // of the method with the same name and arguments from base code 
+     private void populatePaymentGeneralLedgerPendingEntry(
+             final PaymentGroup paymentGroup,
+             final GeneratePdpGlpeState state
+     ) {
+        final List<PaymentAccountDetail> accountListings = new ArrayList<PaymentAccountDetail>();
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
         
-        for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+        for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
             accountListings.addAll(paymentDetail.getAccountDetail());
         }
 
-        //GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper();
-        for (PaymentAccountDetail paymentAccountDetail : accountListings) {
-            GlPendingTransaction glPendingTransaction = new GlPendingTransaction();
+        for (final PaymentAccountDetail paymentAccountDetail : accountListings) {
+            final GlPendingTransaction glPendingTransaction = new GlPendingTransaction();
             glPendingTransaction.setSequenceNbr(new KualiInteger(sequenceHelper.getSequenceCounter()));
 
             if (StringUtils.isNotBlank(paymentAccountDetail.getPaymentDetail().getFinancialSystemOriginCode()) && StringUtils.isNotBlank(paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode())) {
@@ -162,9 +166,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             glPendingTransaction.setFinancialBalanceTypeCode(org.kuali.kfs.sys.KFSConstants.BALANCE_TYPE_ACTUAL);
 
-            Date transactionTimestamp = new Date(getDateTimeService().getCurrentDate().getTime());
+            final Date transactionTimestamp = new Date(getDateTimeService().getCurrentDate().getTime());
             glPendingTransaction.setTransactionDt(transactionTimestamp);
-            AccountingPeriod fiscalPeriod = getAccountingPeriodService().getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+            final AccountingPeriod fiscalPeriod = getAccountingPeriodService().getByDate(new java.sql.Date(transactionTimestamp.getTime()));
             glPendingTransaction.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
             glPendingTransaction.setUnivFiscalPrdCd(fiscalPeriod.getUniversityFiscalPeriodCode());
 
@@ -172,23 +176,18 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             glPendingTransaction.setSubAccountNumber(paymentAccountDetail.getSubAccountNbr());
             glPendingTransaction.setChartOfAccountsCode(paymentAccountDetail.getFinChartCode());
 
-            if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.ACH)) {
-                glPendingTransaction.setFinancialDocumentTypeCode(achFdocTypeCode);
-            }
-            else if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
-                glPendingTransaction.setFinancialDocumentTypeCode(checkFdocTypeCod);
-            }
+            glPendingTransaction.setFinancialDocumentTypeCode(paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode());
 
             glPendingTransaction.setFsOriginCd(PdpConstants.PDP_FDOC_ORIGIN_CODE);
             glPendingTransaction.setFdocNbr(paymentGroup.getDisbursementNbr().toString());
             
             // if stale
-            if (StringUtils.equals(CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, checkFdocTypeCod)) {
-                ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+            if (StringUtils.equals(CUPdpConstants.FDOC_TYP_CD_STALE_CHECK, state.documentTypeForDisbursementType(PdpConstants.DisbursementTypeCodes.CHECK))) {
+                final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
 
-                String clAcct = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_ACCOUNT);
-                String obCode = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_OBJECT_CODE);
-                String coaCode = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_COA);
+                final String clAcct = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_ACCOUNT);
+                final String obCode = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_OBJECT_CODE);
+                final String coaCode = parameterService.getParameterValueAsString(CheckReconciliationImportStep.class, CRConstants.CLEARING_COA);
 
                 // Use clearing parameters if stale
                 glPendingTransaction.setAccountNumber(clAcct);
@@ -199,9 +198,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 glPendingTransaction.setSubAccountNumber(getCheckYear(paymentGroup));
             } else {
 
-                Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
+                final Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
                 if ((relieveLiabilities != null) && (relieveLiabilities.booleanValue()) && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
-                    OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode());
+                    final OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode());
                     glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ? offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
                     glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
                 } else {
@@ -213,38 +212,38 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             }
 
 
-            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, reversal) ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
+            glPendingTransaction.setDebitCrdtCd(pdpUtilService.isDebit(paymentAccountDetail, state.isReversal()) ? KFSConstants.GL_DEBIT_CODE : KFSConstants.GL_CREDIT_CODE);
             
             glPendingTransaction.setAmount(paymentAccountDetail.getAccountNetAmount().abs());
 
             //Changes for Research Participant Upload
             String trnDesc = StringUtils.EMPTY;
-            CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
+            final CustomerProfile customerProfile = paymentGroup.getBatch().getCustomerProfile();
 
             // KFSUPGRADE-973 
             if (getResearchParticipantPaymentValidationService().isResearchParticipantPayment(customerProfile)) {
-                BusinessObjectEntry businessObjectEntry = getBusinessObjectDictionaryService().getBusinessObjectEntry(PaymentDetail.class.getName());
-                AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition("paymentGroup.payeeName");
-                AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
+                final BusinessObjectEntry businessObjectEntry = getBusinessObjectDictionaryService().getBusinessObjectEntry(PaymentDetail.class.getName());
+                final AttributeDefinition attributeDefinition = businessObjectEntry.getAttributeDefinition("paymentGroup.payeeName");
+                final AttributeSecurity originalPayeeNameAttributeSecurity = attributeDefinition.getAttributeSecurity();
                 //This is a temporary work around for an issue introduced with KFSCNTRB-705.
                 if (ObjectUtils.isNotNull(originalPayeeNameAttributeSecurity)) {
-                    String maskLiteral = ((MaskFormatterLiteral) originalPayeeNameAttributeSecurity.getMaskFormatter()).getLiteral();
+                    final String maskLiteral = ((MaskFormatterLiteral) originalPayeeNameAttributeSecurity.getMaskFormatter()).getLiteral();
                     trnDesc = maskLiteral;
                 }
             }
             else {
-                String payeeName = paymentGroup.getPayeeName();
+                final String payeeName = paymentGroup.getPayeeName();
                 if (StringUtils.isNotBlank(payeeName)) {
                     trnDesc = payeeName.length() > 40 ? payeeName.substring(0, 40) : StringUtils.rightPad(payeeName, 40);
                 }
 
-                if (reversal) {
-                    String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
+                if (state.isReversal()) {
+                    final String poNbr = paymentAccountDetail.getPaymentDetail().getPurchaseOrderNbr();
                     if (StringUtils.isNotBlank(poNbr)) {
                         trnDesc += " " + (poNbr.length() > 9 ? poNbr.substring(0, 9) : StringUtils.rightPad(poNbr, 9));
                     }
 
-                    String invoiceNbr = paymentAccountDetail.getPaymentDetail().getInvoiceNbr();
+                    final String invoiceNbr = paymentAccountDetail.getPaymentDetail().getInvoiceNbr();
                     if (StringUtils.isNotBlank(invoiceNbr)) {
                         trnDesc += " " + (invoiceNbr.length() > 14 ? invoiceNbr.substring(0, 14) : StringUtils.rightPad(invoiceNbr, 14));
                     }
@@ -263,28 +262,28 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             // update the offset account if necessary
             SpringContext.getBean(FlexibleOffsetAccountService.class).updateOffset(glPendingTransaction);
 
-            this.getBusinessObjectService().save(glPendingTransaction);
+            getBusinessObjectService().save(glPendingTransaction);
 
             sequenceHelper.increment();
 
             if (getBankService().isBankSpecificationEnabled()) {
-                this.populateBankOffsetEntry(paymentGroup, glPendingTransaction, sequenceHelper);
+                populateBankOffsetEntry(paymentGroup, glPendingTransaction, sequenceHelper);
             }
         }
     }
     
-    private String getCheckYear(PaymentGroup paymentGroup) {
+    private String getCheckYear(final PaymentGroup paymentGroup) {
         String checkYear = KFSConstants.getDashSubAccountNumber();
         try {
-            CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(paymentGroup.getDisbursementNbr().toString(), paymentGroup.getBankCode());
-            Calendar calendar = Calendar.getInstance();
+            final CheckReconciliation checkReconciliation = checkReconciliationDao.findByCheckNumber(paymentGroup.getDisbursementNbr().toString(), paymentGroup.getBankCode());
+            final Calendar calendar = Calendar.getInstance();
             if (ObjectUtils.isNotNull(checkReconciliation) && ObjectUtils.isNotNull(checkReconciliation.getCheckDate())) {
                 calendar.setTime(checkReconciliation.getCheckDate());
                 checkYear = Integer.toString(calendar.get(Calendar.YEAR));
             } else {
                 LOG.error("getCheckYear: Failed getting year check was issued, defaulting clearing subaccount to dashes.");
             }
-        } catch(Exception ex) {
+        } catch(final Exception ex) {
             LOG.error("getCheckYear", ex);
         }
         return checkYear;
@@ -296,7 +295,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param paymentDetail
      * @param sequenceHelper
      */
-    protected void reverseSourceDocumentsEntries(PaymentDetail paymentDetail, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    protected void reverseSourceDocumentsEntries(final PaymentDetail paymentDetail, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
 
         // Need to reverse the payment document's GL entries if the check is stopped or cancelled
         if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || CUPdpConstants.PdpDocumentTypes.DISBURSEMENT_VOUCHER.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode()) || CUPdpConstants.PdpDocumentTypes.CREDIT_MEMO.equalsIgnoreCase(paymentDetail.getFinancialDocumentTypeCode())) {
@@ -309,33 +308,33 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             if (sourceDocumentNumber != null && StringUtils.isNotBlank(sourceDocumentNumber)) {
 
-                Document doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
+                final Document doc = (AccountingDocumentBase) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(paymentDetail.getCustPaymentDocNbr());
 
                 if (ObjectUtils.isNotNull(doc)) {
                     if (doc instanceof DisbursementVoucherDocument) {
                     	//KFSUPGRADE-775
-                        DisbursementVoucherDocument dv = (DisbursementVoucherDocument) doc;
+                        final DisbursementVoucherDocument dv = (DisbursementVoucherDocument) doc;
                         generateDisbursementVoucherReversalEntries(dv, sequenceHelper);
                         //end KFSUPGRADE-775
 
                     } else if (doc instanceof VendorCreditMemoDocument) {
                         // KFSPTS-2719
                         String crCmCancelNote = parameterService.getParameterValueAsString(VendorCreditMemoDocument.class, CUPurapParameterConstants.PURAP_CR_CM_CANCEL_NOTE);
-                        VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) doc;
-                        String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
+                        final VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument) doc;
+                        final String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
                         crCmCancelNote = crCmCancelNote + crCancelMaintDocNbr;
 
                         try {
-                            Note noteObj = documentService.createNoteFromDocument(cmDocument, crCmCancelNote);
+                            final Note noteObj = documentService.createNoteFromDocument(cmDocument, crCmCancelNote);
                             cmDocument.addNote(noteObj);
                             noteService.save(noteObj);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new RuntimeException(e.getMessage());
                         }
                         
                         //KFSUPGRADE-775
-                        VendorCreditMemoDocument cm = (VendorCreditMemoDocument) doc;
-                        AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = cm.getDocumentSpecificService();
+                        final VendorCreditMemoDocument cm = (VendorCreditMemoDocument) doc;
+                        final AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = cm.getDocumentSpecificService();
                         accountsPayableDocumentSpecificService.updateStatusByNode("", cm);
                         //end KFSUPGRADE-775
 
@@ -344,17 +343,17 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     } else if (doc instanceof PaymentRequestDocument) {
                         // KFSPTS-2719
                         String crPreqCancelNote = parameterService.getParameterValueAsString(PaymentRequestDocument.class, CUPurapParameterConstants.PURAP_CR_PREQ_CANCEL_NOTE);
-                        PaymentRequestDocument paymentRequest = (PaymentRequestDocument) doc;
-                        String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
+                        final PaymentRequestDocument paymentRequest = (PaymentRequestDocument) doc;
+                        final String crCancelMaintDocNbr = getCrCancelMaintenancedocumentNumber(paymentDetail);
 
                         crPreqCancelNote = crPreqCancelNote + crCancelMaintDocNbr;
 
                         try {
 
-                            Note cancelNote = documentService.createNoteFromDocument(paymentRequest, crPreqCancelNote);
+                            final Note cancelNote = documentService.createNoteFromDocument(paymentRequest, crPreqCancelNote);
                             paymentRequest.addNote(cancelNote);
                             noteService.save(cancelNote);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new RuntimeException(PurapConstants.REQ_UNABLE_TO_CREATE_NOTE + " " + e);
                         }
 
@@ -362,7 +361,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                         paymentRequest.setReopenPurchaseOrderIndicator(false);
                         
                         //KFSUPGRADE-775
-                        AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = paymentRequest.getDocumentSpecificService();
+                        final AccountsPayableDocumentSpecificService accountsPayableDocumentSpecificService = paymentRequest.getDocumentSpecificService();
                         accountsPayableDocumentSpecificService.updateStatusByNode("", paymentRequest);
 
                         //end KFSUPGRADE-775
@@ -377,16 +376,16 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
     }
     
     
-    private String getCrCancelMaintenancedocumentNumber(PaymentDetail paymentDetail){
+    private String getCrCancelMaintenancedocumentNumber(final PaymentDetail paymentDetail){
         String crCancelMaintDocNbr = KFSConstants.EMPTY_STRING;
 
-        KualiInteger crCheckNbr = paymentDetail.getPaymentGroup().getDisbursementNbr();
-        Map<String, KualiInteger> fieldValues = new HashMap<String, KualiInteger>();
+        final KualiInteger crCheckNbr = paymentDetail.getPaymentGroup().getDisbursementNbr();
+        final Map<String, KualiInteger> fieldValues = new HashMap<String, KualiInteger>();
         fieldValues.put("checkNumber", crCheckNbr);
 
-        Collection<CheckReconciliation> crEntries = getBusinessObjectService().findMatching(CheckReconciliation.class, fieldValues);
+        final Collection<CheckReconciliation> crEntries = getBusinessObjectService().findMatching(CheckReconciliation.class, fieldValues);
         if (crEntries != null && crEntries.size() > 0) {
-            CheckReconciliation crEntry = crEntries.iterator().next();
+            final CheckReconciliation crEntry = crEntries.iterator().next();
             crCancelMaintDocNbr = crEntry.getCancelDocHdrId();
         }
         
@@ -401,15 +400,15 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      *            the DisbursementVoucherDocument for which we generate the reversal entries
      * @param sequenceHelper
      */
-    protected void generateDisbursementVoucherReversalEntries(DisbursementVoucherDocument doc, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    protected void generateDisbursementVoucherReversalEntries(final DisbursementVoucherDocument doc, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         // generate all the pending entries for the document
         SpringContext.getBean(GeneralLedgerPendingEntryService.class).generateGeneralLedgerPendingEntries(doc);
         // for each pending entry, opposite-ify it and reattach it to the document
 
-        List<GeneralLedgerPendingEntry> glpes = doc.getGeneralLedgerPendingEntries();
+        final List<GeneralLedgerPendingEntry> glpes = doc.getGeneralLedgerPendingEntries();
 
         if (glpes != null && glpes.size() > 0) {
-            for (GeneralLedgerPendingEntry glpe : glpes) {
+            for (final GeneralLedgerPendingEntry glpe : glpes) {
 
                 if (KFSConstants.GL_CREDIT_CODE.equalsIgnoreCase(glpe.getTransactionDebitCreditCode())) {
                     glpe.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
@@ -418,9 +417,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 }
                 glpe.setTransactionLedgerEntrySequenceNumber(sequenceHelper.getSequenceCounter());
                 sequenceHelper.increment();
-                Date transactionTimestamp = new Date(getDateTimeService().getCurrentDate().getTime());
+                final Date transactionTimestamp = new Date(getDateTimeService().getCurrentDate().getTime());
 
-                AccountingPeriod fiscalPeriod = getAccountingPeriodService().getByDate(new java.sql.Date(transactionTimestamp.getTime()));
+                final AccountingPeriod fiscalPeriod = getAccountingPeriodService().getByDate(new java.sql.Date(transactionTimestamp.getTime()));
                 glpe.setFinancialDocumentApprovedCode(KFSConstants.PENDING_ENTRY_APPROVED_STATUS_CODE.APPROVED);
                 glpe.setUniversityFiscalYear(fiscalPeriod.getUniversityFiscalYear());
                 glpe.setUniversityFiscalPeriodCode(fiscalPeriod.getUniversityFiscalPeriodCode());
@@ -438,12 +437,12 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      *            the VendorCreditMemoDocument for which we generate the reversal entries
      * @param sequenceHelper
      */
-    protected void generateCreditMemoReversalEntries(VendorCreditMemoDocument cm) {
+    protected void generateCreditMemoReversalEntries(final VendorCreditMemoDocument cm) {
 
         cm.setGeneralLedgerPendingEntries(new ArrayList());
 
         boolean success = true;
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(cm.getDocumentNumber()));
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(cm.getDocumentNumber()));
 
         if (!cm.isSourceVendor()) {
             LOG.debug("generateEntriesCreditMemo() create encumbrance entries for CM against a PO or PREQ (not vendor)");
@@ -458,7 +457,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             }
 
             // for CM cancel or create, do not book encumbrances if PO is CLOSED, but do update the amounts on the PO
-            List encumbrances = getCreditMemoEncumbrance(cm, po);
+            final List encumbrances = getCreditMemoEncumbrance(cm, po);
             if (!(PurchaseOrderStatuses.APPDOC_CLOSED.equals(po.getApplicationDocumentStatus()))) {
                 if (encumbrances != null) {
                     cm.setGenerateEncumbranceEntries(true);
@@ -469,7 +468,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     cm.setDebitCreditCodeForGLEntries(GL_DEBIT_CODE);
 
                     for (Iterator iter = encumbrances.iterator(); iter.hasNext();) {
-                        AccountingLine accountingLine = (AccountingLine) iter.next();
+                        final AccountingLine accountingLine = (AccountingLine) iter.next();
                         if (accountingLine.getAmount().compareTo(ZERO) != 0) {
                             cm.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
                             sequenceHelper.increment(); // increment for the next line
@@ -479,7 +478,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             }
         }
 
-        List<SummaryAccount> summaryAccounts = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax(cm);
+        final List<SummaryAccount> summaryAccounts = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax(cm);
         if (summaryAccounts != null) {
             LOG.debug("generateEntriesCreditMemo() now book the actuals");
             cm.setGenerateEncumbranceEntries(false);
@@ -488,16 +487,16 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
 
             for (Iterator iter = summaryAccounts.iterator(); iter.hasNext();) {
-                SummaryAccount summaryAccount = (SummaryAccount) iter.next();
+                final SummaryAccount summaryAccount = (SummaryAccount) iter.next();
                 cm.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
                 sequenceHelper.increment(); // increment for the next line
             }
             // generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax document)
-            List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(cm);
-            for (UseTaxContainer useTaxContainer : useTaxContainers) {
-                PurApItemUseTax offset = useTaxContainer.getUseTax();
-                List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
-                for (SourceAccountingLine sourceAccountingLine : accounts) {
+            final List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(cm);
+            for (final UseTaxContainer useTaxContainer : useTaxContainers) {
+                final PurApItemUseTax offset = useTaxContainer.getUseTax();
+                final List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
+                for (final SourceAccountingLine sourceAccountingLine : accounts) {
                     cm.generateGeneralLedgerPendingEntries(sourceAccountingLine, sequenceHelper, useTaxContainer.getUseTax());
                     sequenceHelper.increment(); // increment for the next line
                 }
@@ -522,7 +521,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param po Purchase Order document modify encumbrances
      * @return List of accounting lines to use to create the pending general ledger entries
      */
-    protected List<SourceAccountingLine> getCreditMemoEncumbrance(VendorCreditMemoDocument cm, PurchaseOrderDocument po) {
+    protected List<SourceAccountingLine> getCreditMemoEncumbrance(final VendorCreditMemoDocument cm, final PurchaseOrderDocument po) {
         LOG.debug("getCreditMemoEncumbrance() started");
 
         if (ObjectUtils.isNull(po)) {
@@ -532,7 +531,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             LOG.debug("getCreditMemoEncumbrance() Receiving items back from vendor (cancelled CM)");
        
 
-        Map encumbranceAccountMap = new HashMap();
+        final Map encumbranceAccountMap = new HashMap();
 
         // Get each item one by one
         for (Iterator items = cm.getItems().iterator(); items.hasNext();) {
@@ -542,7 +541,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             KualiDecimal itemDisEncumber = null; // Amount to disencumber for this item
             KualiDecimal itemAlterInvoiceAmt = null; // Amount to alter the invoicedAmt on the PO item
 
-            String logItmNbr = "Item # " + cmItem.getItemLineNumber();
+            final String logItmNbr = "Item # " + cmItem.getItemLineNumber();
             LOG.debug("getCreditMemoEncumbrance() " + logItmNbr);
 
             final KualiDecimal cmItemTotalAmount = (cmItem.getTotalAmount() == null) ? KualiDecimal.ZERO : cmItem.getTotalAmount();
@@ -559,17 +558,17 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     LOG.debug("getCreditMemoEncumbrance() " + logItmNbr + " Calculate encumbrance based on quantity");
 
                     // Do encumbrance calculations based on quantity                    
-                    KualiDecimal cmQuantity = cmItem.getItemQuantity() == null ? ZERO : cmItem.getItemQuantity();                    
+                    final KualiDecimal cmQuantity = cmItem.getItemQuantity() == null ? ZERO : cmItem.getItemQuantity();                    
                     
-                    KualiDecimal encumbranceQuantityChange = calculateQuantityChange(poItem, cmQuantity);
+                    final KualiDecimal encumbranceQuantityChange = calculateQuantityChange(poItem, cmQuantity);
 
                     LOG.debug("getCreditMemoEncumbrance() " + logItmNbr + " encumbranceQtyChange " + encumbranceQuantityChange + " outstandingEncumberedQty " + poItem.getItemOutstandingEncumberedQuantity() + " invoicedTotalQuantity " + poItem.getItemInvoicedTotalQuantity());
                     
                     itemDisEncumber = encumbranceQuantityChange.multiply(new KualiDecimal(poItem.getItemUnitPrice()));
                     
                     //add tax for encumbrance
-                    KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
-                    KualiDecimal encumbranceTaxAmount = encumbranceQuantityChange.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
+                    final KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
+                    final KualiDecimal encumbranceTaxAmount = encumbranceQuantityChange.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
                     itemDisEncumber = itemDisEncumber.add(encumbranceTaxAmount);
                     
                     itemAlterInvoiceAmt = cmItemTotalAmount;
@@ -614,11 +613,11 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 KualiDecimal accountTotal = ZERO;
                 // Collections.sort((List)poItem.getSourceAccountingLines());
                 for (Iterator accountIter = poItem.getSourceAccountingLines().iterator(); accountIter.hasNext();) {
-                    PurchaseOrderAccount account = (PurchaseOrderAccount) accountIter.next();
+                    final PurchaseOrderAccount account = (PurchaseOrderAccount) accountIter.next();
                     if (!account.isEmpty()) {
                         KualiDecimal encumbranceAmount = null;
 
-                        SourceAccountingLine acctString = account.generateSourceAccountingLine();
+                        final SourceAccountingLine acctString = account.generateSourceAccountingLine();
                         // amount = item disencumber * account percent / 100
                         encumbranceAmount = itemDisEncumber.multiply(new KualiDecimal(account.getAccountLinePercent().toString())).divide(new KualiDecimal(100));
 
@@ -635,7 +634,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                             encumbranceAccountMap.put(acctString, encumbranceAmount);
                         }
                         else {
-                            KualiDecimal amt = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                            final KualiDecimal amt = (KualiDecimal) encumbranceAccountMap.get(acctString);
                             encumbranceAccountMap.put(acctString, amt.add(encumbranceAmount));
                         }
                     }
@@ -643,11 +642,11 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                 // account for rounding by adjusting last account as needed
                 if (lastAccount != null) {
-                    KualiDecimal difference = itemDisEncumber.subtract(accountTotal);
+                    final KualiDecimal difference = itemDisEncumber.subtract(accountTotal);
                     LOG.debug("getCreditMemoEncumbrance() difference: " + logItmNbr + " " + difference);
 
-                    SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
-                    KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                    final SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
+                    final KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
                     if (amount == null) {
                         encumbranceAccountMap.put(acctString, difference);
                     }
@@ -659,10 +658,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             }
         }
 
-        List<SourceAccountingLine> encumbranceAccounts = new ArrayList();
+        final List<SourceAccountingLine> encumbranceAccounts = new ArrayList();
         for (Iterator iter = encumbranceAccountMap.keySet().iterator(); iter.hasNext();) {
-            SourceAccountingLine acctString = (SourceAccountingLine) iter.next();
-            KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+            final SourceAccountingLine acctString = (SourceAccountingLine) iter.next();
+            final KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
             if (amount.doubleValue() != 0) {
                 acctString.setAmount(amount);
                 encumbranceAccounts.add(acctString);
@@ -680,13 +679,13 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param cmQuantity Quantity on credit memo item
      * @return Calculated change
      */
-    protected KualiDecimal calculateQuantityChange( PurchaseOrderItem poItem, KualiDecimal cmQuantity) {
+    protected KualiDecimal calculateQuantityChange( final PurchaseOrderItem poItem, final KualiDecimal cmQuantity) {
         LOG.debug("calculateQuantityChange() started");
 
         // Calculate quantity change & adjust invoiced quantity & outstanding encumbered quantity
         KualiDecimal encumbranceQuantityChange = null;
     
-            encumbranceQuantityChange = cmQuantity.multiply(new KualiDecimal("-1"));
+        encumbranceQuantityChange = cmQuantity.multiply(new KualiDecimal("-1"));
         
         poItem.setItemInvoicedTotalQuantity(poItem.getItemInvoicedTotalQuantity().subtract(encumbranceQuantityChange));
         poItem.setItemOutstandingEncumberedQuantity(poItem.getItemOutstandingEncumberedQuantity().add(encumbranceQuantityChange));
@@ -694,7 +693,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
         // Check for overflows
             if (poItem.getItemOutstandingEncumberedQuantity().doubleValue() < 0) {
                 LOG.debug("calculateQuantityChange() Cancel overflow");
-                KualiDecimal difference = poItem.getItemOutstandingEncumberedQuantity().abs();
+                final KualiDecimal difference = poItem.getItemOutstandingEncumberedQuantity().abs();
                 poItem.setItemOutstandingEncumberedQuantity(ZERO);
                 poItem.setItemInvoicedTotalQuantity(poItem.getItemQuantity());
                 encumbranceQuantityChange = encumbranceQuantityChange.add(difference);
@@ -709,10 +708,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * 
      * @param preq
      */
-    protected void generatePaymentRequestReversalEntries(PaymentRequestDocument preq) {
+    protected void generatePaymentRequestReversalEntries(final PaymentRequestDocument preq) {
 
-        List<SourceAccountingLine> encumbrances = reencumberEncumbrance(preq);
-        List<SummaryAccount> summaryAccounts = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax( preq);
+        final List<SourceAccountingLine> encumbrances = reencumberEncumbrance(preq);
+        final List<SummaryAccount> summaryAccounts = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax( preq);
         generateEntriesPaymentRequest(preq, encumbrances, summaryAccounts);
 
     }
@@ -725,20 +724,20 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param preq PREQ for invoice
      * @return List of accounting lines to use to create the pending general ledger entries
      */
-    protected List<SourceAccountingLine> reencumberEncumbrance(PaymentRequestDocument preq) {
+    protected List<SourceAccountingLine> reencumberEncumbrance(final PaymentRequestDocument preq) {
         LOG.debug("reencumberEncumbrance() started");
 
-        PurchaseOrderDocument po = SpringContext.getBean(PurchaseOrderService.class).getCurrentPurchaseOrder(preq.getPurchaseOrderIdentifier());
-        Map encumbranceAccountMap = new HashMap();
+        final PurchaseOrderDocument po = SpringContext.getBean(PurchaseOrderService.class).getCurrentPurchaseOrder(preq.getPurchaseOrderIdentifier());
+        final Map encumbranceAccountMap = new HashMap();
 
         // Get each item one by one
         for (Iterator items = preq.getItems().iterator(); items.hasNext();) {
-            PaymentRequestItem payRequestItem = (PaymentRequestItem) items.next();
-            PurchaseOrderItem poItem = getPoItem(po, payRequestItem.getItemLineNumber(), payRequestItem.getItemType());
+            final PaymentRequestItem payRequestItem = (PaymentRequestItem) items.next();
+            final PurchaseOrderItem poItem = getPoItem(po, payRequestItem.getItemLineNumber(), payRequestItem.getItemType());
 
             KualiDecimal itemReEncumber = null; // Amount to reencumber for this item
 
-            String logItmNbr = "Item # " + payRequestItem.getItemLineNumber();
+            final String logItmNbr = "Item # " + payRequestItem.getItemLineNumber();
             LOG.debug("reencumberEncumbrance() " + logItmNbr);
 
             // If there isn't a PO item or the total amount is 0, we don't need encumbrances
@@ -754,9 +753,9 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     LOG.debug("reencumberEncumbrance() " + logItmNbr + " Calculate encumbrance based on quantity");
 
                     // Do disencumbrance calculations based on quantity
-                    KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
-                    KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
-                    KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
+                    final KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
+                    final KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
+                    final KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
 
                     poItem.setItemInvoicedTotalQuantity(invoicedTotal.subtract(preqQuantity));
                     poItem.setItemOutstandingEncumberedQuantity(outstandingEncumberedQuantity.add(preqQuantity));
@@ -764,8 +763,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                     itemReEncumber = preqQuantity.multiply(new KualiDecimal(poItem.getItemUnitPrice()));
 
                     //add tax for encumbrance
-                    KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
-                    KualiDecimal encumbranceTaxAmount = preqQuantity.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
+                    final KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
+                    final KualiDecimal encumbranceTaxAmount = preqQuantity.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
                     itemReEncumber = itemReEncumber.add(encumbranceTaxAmount);
 
                 }
@@ -791,15 +790,15 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                 LOG.debug("reencumberEncumbrance() " + logItmNbr + " Amount to reencumber: " + itemReEncumber);
 
-                KualiDecimal outstandingEncumberedAmount = poItem.getItemOutstandingEncumberedAmount() == null ? ZERO : poItem.getItemOutstandingEncumberedAmount();
+                final KualiDecimal outstandingEncumberedAmount = poItem.getItemOutstandingEncumberedAmount() == null ? ZERO : poItem.getItemOutstandingEncumberedAmount();
                 LOG.debug("reencumberEncumbrance() " + logItmNbr + " PO Item Outstanding Encumbrance Amount set to: " + outstandingEncumberedAmount);
-                KualiDecimal newOutstandingEncumberedAmount = outstandingEncumberedAmount.add(itemReEncumber);
+                final KualiDecimal newOutstandingEncumberedAmount = outstandingEncumberedAmount.add(itemReEncumber);
                 LOG.debug("reencumberEncumbrance() " + logItmNbr + " New PO Item Outstanding Encumbrance Amount to set: " + newOutstandingEncumberedAmount);
                 poItem.setItemOutstandingEncumberedAmount(newOutstandingEncumberedAmount);
 
-                KualiDecimal invoicedTotalAmount = poItem.getItemInvoicedTotalAmount() == null ? ZERO : poItem.getItemInvoicedTotalAmount();
+                final KualiDecimal invoicedTotalAmount = poItem.getItemInvoicedTotalAmount() == null ? ZERO : poItem.getItemInvoicedTotalAmount();
                 LOG.debug("reencumberEncumbrance() " + logItmNbr + " PO Item Invoiced Total Amount set to: " + invoicedTotalAmount);
-                KualiDecimal newInvoicedTotalAmount = invoicedTotalAmount.subtract(preqItemTotalAmount);
+                final KualiDecimal newInvoicedTotalAmount = invoicedTotalAmount.subtract(preqItemTotalAmount);
                 LOG.debug("reencumberEncumbrance() " + logItmNbr + " New PO Item Invoiced Total Amount to set: " + newInvoicedTotalAmount);
                 poItem.setItemInvoicedTotalAmount(newInvoicedTotalAmount);
 
@@ -811,12 +810,12 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
                 Collections.sort((List) poItem.getSourceAccountingLines());
 
                 for (Iterator accountIter = poItem.getSourceAccountingLines().iterator(); accountIter.hasNext();) {
-                    PurchaseOrderAccount account = (PurchaseOrderAccount) accountIter.next();
+                    final PurchaseOrderAccount account = (PurchaseOrderAccount) accountIter.next();
                     if (!account.isEmpty()) {
-                        SourceAccountingLine acctString = account.generateSourceAccountingLine();
+                        final SourceAccountingLine acctString = account.generateSourceAccountingLine();
 
                         // amount = item reencumber * account percent / 100
-                        KualiDecimal reencumbranceAmount = itemReEncumber.multiply(new KualiDecimal(account.getAccountLinePercent().toString())).divide(HUNDRED);
+                        final KualiDecimal reencumbranceAmount = itemReEncumber.multiply(new KualiDecimal(account.getAccountLinePercent().toString())).divide(HUNDRED);
 
                         account.setItemAccountOutstandingEncumbranceAmount(account.getItemAccountOutstandingEncumbranceAmount().add(reencumbranceAmount));
 
@@ -827,7 +826,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                         LOG.debug("reencumberEncumbrance() " + logItmNbr + " " + acctString + " = " + reencumbranceAmount);
                         if (encumbranceAccountMap.containsKey(acctString)) {
-                            KualiDecimal currentAmount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                            final KualiDecimal currentAmount = (KualiDecimal) encumbranceAccountMap.get(acctString);
                             encumbranceAccountMap.put(acctString, reencumbranceAmount.add(currentAmount));
                         }
                         else {
@@ -838,11 +837,11 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                 // account for rounding by adjusting last account as needed
                 if (lastAccount != null) {
-                    KualiDecimal difference = itemReEncumber.subtract(accountTotal);
+                    final KualiDecimal difference = itemReEncumber.subtract(accountTotal);
                     LOG.debug("reencumberEncumbrance() difference: " + logItmNbr + " " + difference);
 
-                    SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
-                    KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                    final SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
+                    final KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
                     if (amount == null) {
                         encumbranceAccountMap.put(acctString, difference);
                     }
@@ -854,10 +853,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             }
         }
 
-        List<SourceAccountingLine> encumbranceAccounts = new ArrayList<SourceAccountingLine>();
+        final List<SourceAccountingLine> encumbranceAccounts = new ArrayList<SourceAccountingLine>();
         for (Iterator<SourceAccountingLine> iter = encumbranceAccountMap.keySet().iterator(); iter.hasNext();) {
-            SourceAccountingLine acctString = (SourceAccountingLine) iter.next();
-            KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+            final SourceAccountingLine acctString = (SourceAccountingLine) iter.next();
+            final KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
             if (amount.doubleValue() != 0) {
                 acctString.setAmount(amount);
                 encumbranceAccounts.add(acctString);
@@ -875,10 +874,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param itemType Item type of desired item
      * @return PurcahseOrderItem found matching given criteria
      */
-    protected PurchaseOrderItem getPoItem(PurchaseOrderDocument po, Integer nbr, ItemType itemType) {
+    protected PurchaseOrderItem getPoItem(final PurchaseOrderDocument po, final Integer nbr, final ItemType itemType) {
         LOG.debug("getPoItem() started");
         for (Iterator iter = po.getItems().iterator(); iter.hasNext();) {
-            PurchaseOrderItem element = (PurchaseOrderItem) iter.next();
+            final PurchaseOrderItem element = (PurchaseOrderItem) iter.next();
             if (itemType.isLineItemIndicator()) {
                 if (ObjectUtils.isNotNull(nbr) && ObjectUtils.isNotNull(element.getItemLineNumber()) && (nbr.compareTo(element.getItemLineNumber()) == 0)) {
                     return element;
@@ -902,7 +901,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param processType Type of process (create, modify, cancel)
      * @return Boolean returned indicating whether entry creation succeeded
      */
-    protected boolean generateEntriesPaymentRequest(PaymentRequestDocument preq, List encumbrances, List summaryAccounts) {
+    protected boolean generateEntriesPaymentRequest(final PaymentRequestDocument preq, final List encumbrances, final List summaryAccounts) {
         LOG.debug("generateEntriesPaymentRequest() started");
         boolean success = true;
         preq.setGeneralLedgerPendingEntries(new ArrayList());
@@ -912,7 +911,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
          * from the encumbrances to the actuals and also because we need to tell the PaymentRequestDocumentRule customize entry
          * method how to customize differently based on if creating an encumbrance or actual.
          */
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(preq.getDocumentNumber()));
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(preq.getDocumentNumber()));
 
         // when cancelling a PREQ, do not book encumbrances if PO is CLOSED
         if (encumbrances != null) {
@@ -923,7 +922,7 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
             preq.setGenerateEncumbranceEntries(true);
             for (Iterator iter = encumbrances.iterator(); iter.hasNext();) {
-                AccountingLine accountingLine = (AccountingLine) iter.next();
+                final AccountingLine accountingLine = (AccountingLine) iter.next();
                 preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
                 sequenceHelper.increment(); // increment for the next line
             }
@@ -939,17 +938,17 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
 
             for (Iterator iter = summaryAccounts.iterator(); iter.hasNext();) {
-                SummaryAccount summaryAccount = (SummaryAccount) iter.next();
+                final SummaryAccount summaryAccount = (SummaryAccount) iter.next();
                 preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
                 sequenceHelper.increment(); // increment for the next line
             }
 
             // generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax document)
-            List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(preq);
+            final List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(preq);
             for (UseTaxContainer useTaxContainer : useTaxContainers) {
-                PurApItemUseTax offset = useTaxContainer.getUseTax();
-                List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
-                for (SourceAccountingLine sourceAccountingLine : accounts) {
+                final PurApItemUseTax offset = useTaxContainer.getUseTax();
+                final List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
+                for (final SourceAccountingLine sourceAccountingLine : accounts) {
                     preq.generateGeneralLedgerPendingEntries(sourceAccountingLine, sequenceHelper, useTaxContainer.getUseTax());
                     sequenceHelper.increment(); // increment for the next line
                 }
@@ -978,28 +977,28 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
      * @param documentNumber Document number to find next sequence number
      * @return Next available sequence number
      */
-    protected int getNextAvailableSequence(String documentNumber) {
+    protected int getNextAvailableSequence(final String documentNumber) {
         LOG.debug("getNextAvailableSequence() started");
-        Map fieldValues = new HashMap();
+        final Map fieldValues = new HashMap();
         fieldValues.put("financialSystemOriginationCode", PURAP_ORIGIN_CODE);
         fieldValues.put("documentNumber", documentNumber);
         int count = getBusinessObjectService().countMatching(GeneralLedgerPendingEntry.class, fieldValues);
         return count + 1;
     }
     
-	public void setCheckReconciliationDao(CheckReconciliationDao checkReconciliationDao) {
+	public void setCheckReconciliationDao(final CheckReconciliationDao checkReconciliationDao) {
 		this.checkReconciliationDao = checkReconciliationDao;
 	}
 
-	public void setDocumentService(DocumentService documentService) {
+	public void setDocumentService(final DocumentService documentService) {
 		this.documentService = documentService;
 	}
 
-	public void setNoteService(NoteService noteService) {
+	public void setNoteService(final NoteService noteService) {
 		this.noteService = noteService;
 	}
 
-    public void setPurapAccountRevisionService(PurapAccountRevisionService purapAccountRevisionService) {
+    public void setPurapAccountRevisionService(final PurapAccountRevisionService purapAccountRevisionService) {
         this.purapAccountRevisionService = purapAccountRevisionService;
     }
 

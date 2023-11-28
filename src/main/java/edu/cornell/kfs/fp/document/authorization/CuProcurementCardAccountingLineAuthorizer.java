@@ -17,16 +17,16 @@ import org.kuali.kfs.kim.impl.identity.Person;
 public class CuProcurementCardAccountingLineAuthorizer extends ProcurementCardAccountingLineAuthorizer {
 
     @Override
-    protected boolean determineEditPermissionByFieldName(AccountingDocument accountingDocument,
-            AccountingLine accountingLine, String fieldName, Person currentUser, Set<String> currentNodes) {
-        WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
+    protected boolean determineEditPermissionByFieldName(final AccountingDocument accountingDocument,
+            final AccountingLine accountingLine, final String fieldName, final Person currentUser, final Set<String> currentNodes) {
+       final WorkflowDocument workflowDocument = accountingDocument.getDocumentHeader().getWorkflowDocument();
 
-        List<ActionRequest> actionRequests = workflowDocument.getRootActionRequests();
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+       final List<ActionRequest> actionRequests = workflowDocument.getRootActionRequests();
+       final Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
        boolean isAddHocRoute = CollectionUtils.isNotEmpty(nodeNames) 
                 && nodeNames.contains(PurapWorkflowConstants.DOC_ADHOC_NODE_NAME);
         if (!isAddHocRoute) {
-            for (ActionRequest actionRequest : actionRequests) {
+            for (final ActionRequest actionRequest : actionRequests) {
                 isAddHocRoute = actionRequest.getActionTaken() == null && StringUtils.startsWith(actionRequest.getAnnotation(), "Ad Hoc Routed by")
                         && StringUtils.equals(actionRequest.getPrincipalId(), currentUser.getPrincipalId());
                 if (isAddHocRoute) {

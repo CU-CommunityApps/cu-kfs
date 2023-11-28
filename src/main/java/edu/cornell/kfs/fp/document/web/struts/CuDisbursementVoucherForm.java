@@ -20,8 +20,8 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      * determine whether the selected payee is a student
      */
     public boolean isStudent() {
-        CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument) this.getDocument();
-        CuDisbursementVoucherPayeeDetail dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) disbursementVoucherDocument.getDvPayeeDetail();
+        final CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument) this.getDocument();
+        final CuDisbursementVoucherPayeeDetail dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) disbursementVoucherDocument.getDvPayeeDetail();
         return dvPayeeDetail.isStudent();
     }
 
@@ -29,18 +29,18 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      * determine whether the selected payee is an alumni
      */
     public boolean isAlumni() {
-        CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument) this.getDocument();
-        CuDisbursementVoucherPayeeDetail dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) disbursementVoucherDocument.getDvPayeeDetail();
+        final CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument) this.getDocument();
+        final CuDisbursementVoucherPayeeDetail dvPayeeDetail = (CuDisbursementVoucherPayeeDetail) disbursementVoucherDocument.getDvPayeeDetail();
         return dvPayeeDetail.isAlumni();
     }
 
     public boolean getCanViewTrip() {
-        CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument)this.getDocument();
+        final CuDisbursementVoucherDocument disbursementVoucherDocument = (CuDisbursementVoucherDocument)this.getDocument();
         return disbursementVoucherDocument.isLegacyTrip();
     }
 
     public String getTripID() {
-        CuDisbursementVoucherDocument dvd = (CuDisbursementVoucherDocument) this.getDocument();
+        final CuDisbursementVoucherDocument dvd = (CuDisbursementVoucherDocument) this.getDocument();
         return dvd.isLegacyTrip() ? dvd.getTripId() : StringUtils.EMPTY;
     }
     
@@ -61,9 +61,9 @@ public class CuDisbursementVoucherForm extends DisbursementVoucherForm {
      * @return IwantDocUrl
      */
     public String getIwantDocUrl() {
-        String tripID = getIwantDocID();
+        final String tripID = getIwantDocID();
         LOG.info("getIWantDocUrl() called");
-        StringBuffer url = new StringBuffer();
+        final StringBuffer url = new StringBuffer();
         url.append(SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/DocHandler.do?docId=").append(tripID).append("&command=displayDocSearchView");
         return url.toString();
     }

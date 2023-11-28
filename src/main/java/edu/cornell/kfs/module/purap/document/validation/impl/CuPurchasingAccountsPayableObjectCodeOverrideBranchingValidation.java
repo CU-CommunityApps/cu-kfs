@@ -12,7 +12,7 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 public class CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation extends PurchasingAccountsPayableObjectCodeOverrideBranchingValidation {
 
     @Override
-    protected String determineBranch(AttributedDocumentEvent event) {
+    protected String determineBranch(final AttributedDocumentEvent event) {
         if (!StringUtils.isBlank(propertyPath)) {
             refreshByPath(accountingLineForValidation);
         }
@@ -23,9 +23,9 @@ public class CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation ex
         //if payment request, skip object code check when this is a tax approval, 
         // or if this accounting line is from a Tax Charge line.
         if (accountingDocumentForValidation instanceof PaymentRequestDocument) {
-            PaymentRequestDocument preq = (PaymentRequestDocument)accountingDocumentForValidation;
-            PurApAccountingLine purapAccountingLine = (PurApAccountingLine)accountingLineForValidation;
-            PurApItem item = purapAccountingLine.getPurapItem();
+            final PaymentRequestDocument preq = (PaymentRequestDocument)accountingDocumentForValidation;
+            final PurApAccountingLine purapAccountingLine = (PurApAccountingLine)accountingLineForValidation;
+            final PurApItem item = purapAccountingLine.getPurapItem();
             
             if (StringUtils.equals(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW,
                     preq.getApplicationDocumentStatus())) {

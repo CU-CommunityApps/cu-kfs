@@ -16,9 +16,9 @@ public class CuPurchasingAccountsPayableAccountPercentBetween0And100Validation e
 private PurApAccountingLine accountingLine;
     
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = true;
-        double pct = accountingLine.getAccountLinePercent().doubleValue();
+        final double pct = accountingLine.getAccountLinePercent().doubleValue();
         
         if (pct <= 0 || pct > 100) {
             if (CollectionUtils.isEmpty(GlobalVariables.getMessageMap().getErrorPath())) {
@@ -38,7 +38,7 @@ private PurApAccountingLine accountingLine;
         return accountingLine;
     }
 
-    public void setAccountingLine(PurApAccountingLine accountingLine) {
+    public void setAccountingLine(final PurApAccountingLine accountingLine) {
         this.accountingLine = accountingLine;
     }
 

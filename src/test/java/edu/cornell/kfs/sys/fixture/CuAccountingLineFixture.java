@@ -37,7 +37,7 @@ public enum CuAccountingLineFixture {
 
     CuAccountingLineFixture(Integer sequenceNumber, String chartOfAccountsCode, String accountNumber, String balanceTypeCode, String subAccountNumber, String financialObjectCode, String financialSubObjectCode, String projectCode, String encumbranceUpdateCode, String organizationReferenceId, String referenceOriginCode, String referenceNumber, String referenceTypeCode, String debitCreditCode, String amount) {
 
-        this.postingYear = IntegTestUtils.getFiscalYearForTesting();
+        postingYear = IntegTestUtils.getFiscalYearForTesting();
         this.sequenceNumber = sequenceNumber;
         this.accountNumber = accountNumber;
         this.balanceTypeCode = balanceTypeCode;
@@ -55,18 +55,18 @@ public enum CuAccountingLineFixture {
         this.amount = new KualiDecimal(amount);
     }
 
-    private <T extends AccountingLine> T createAccountingLine(Class<T> lineClass) throws InstantiationException, IllegalAccessException {
+    private <T extends AccountingLine> T createAccountingLine(final Class<T> lineClass) throws InstantiationException, IllegalAccessException {
         return createAccountingLine(lineClass, "", this.postingYear, this.sequenceNumber);
     }
 
-    public <T extends AccountingLine> T createAccountingLine(Class<T> lineClass, String debitCreditCode) throws InstantiationException, IllegalAccessException {
+    public <T extends AccountingLine> T createAccountingLine(final Class<T> lineClass, final String debitCreditCode) throws InstantiationException, IllegalAccessException {
         T line = createAccountingLine(lineClass, "", this.postingYear, this.sequenceNumber);
         line.setDebitCreditCode(debitCreditCode);
         return line;
     }
 
-    public <T extends AccountingLine> T createAccountingLine(Class<T> lineClass, String documentNumber, Integer postingYear, Integer sequenceNumber) throws InstantiationException, IllegalAccessException {
-        T line = createLine(lineClass);
+    public <T extends AccountingLine> T createAccountingLine(final Class<T> lineClass, final String documentNumber, final Integer postingYear, final Integer sequenceNumber) throws InstantiationException, IllegalAccessException {
+        final T line = createLine(lineClass);
 
         line.setDocumentNumber(documentNumber);
         line.setPostingYear(postingYear);
@@ -76,8 +76,8 @@ public enum CuAccountingLineFixture {
         return line;
     }
 
-    private <T extends AccountingLine> T createLine(Class<T> lineClass) throws InstantiationException, IllegalAccessException {
-        T line = (T) lineClass.newInstance();
+    private <T extends AccountingLine> T createLine(final Class<T> lineClass) throws InstantiationException, IllegalAccessException {
+        final T line = (T) lineClass.newInstance();
         line.setAccountNumber(this.accountNumber);
         line.setAmount(this.amount);
         line.setBalanceTypeCode(this.balanceTypeCode);
@@ -101,7 +101,7 @@ public enum CuAccountingLineFixture {
     }
     
     public VoucherSourceAccountingLine createVoucherSourceAccountingLine() throws InstantiationException, IllegalAccessException {
-        VoucherSourceAccountingLine line = createAccountingLine(VoucherSourceAccountingLine.class);
+        final VoucherSourceAccountingLine line = createAccountingLine(VoucherSourceAccountingLine.class);
         line.refreshReferenceObject("objectCode");
         line.setObjectTypeCode(line.getObjectCode().getFinancialObjectTypeCode());
         return line;
@@ -111,18 +111,18 @@ public enum CuAccountingLineFixture {
         return createAccountingLine(TargetAccountingLine.class);
     }
 
-    public void addAsSourceTo(AccountingDocument document) throws IllegalAccessException, InstantiationException {
+    public void addAsSourceTo(final AccountingDocument document) throws IllegalAccessException, InstantiationException {
         document.addSourceAccountingLine(createAccountingLine(SourceAccountingLine.class, document.getDocumentNumber(), document.getPostingYear(), document.getNextSourceLineNumber()));
     }
     
-    public void addAsVoucherSourceTo(AccountingDocument document) throws IllegalAccessException, InstantiationException {
-        VoucherSourceAccountingLine line = createAccountingLine(VoucherSourceAccountingLine.class, document.getDocumentNumber(), document.getPostingYear(), document.getNextSourceLineNumber());
+    public void addAsVoucherSourceTo(final AccountingDocument document) throws IllegalAccessException, InstantiationException {
+        final VoucherSourceAccountingLine line = createAccountingLine(VoucherSourceAccountingLine.class, document.getDocumentNumber(), document.getPostingYear(), document.getNextSourceLineNumber());
         line.refreshReferenceObject("objectCode");
         line.setObjectTypeCode(line.getObjectCode().getFinancialObjectTypeCode());
         document.addSourceAccountingLine(line);
     }
 
-    public void addAsTargetTo(AccountingDocument document) throws IllegalAccessException, InstantiationException {
+    public void addAsTargetTo(final AccountingDocument document) throws IllegalAccessException, InstantiationException {
         document.addTargetAccountingLine(createAccountingLine(TargetAccountingLine.class, document.getDocumentNumber(), document.getPostingYear(), document.getNextTargetLineNumber()));
     }
 }

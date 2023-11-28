@@ -30,13 +30,13 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
     private PermissionService permissionService;
 
     @Override
-    public InquiryRestrictions getInquiryRestrictions(BusinessObject businessObject, Person user) {
-        InquiryRestrictions inquiryRestrictions = super.getInquiryRestrictions(businessObject, user);
+    public InquiryRestrictions getInquiryRestrictions(final BusinessObject businessObject, final Person user) {
+        final InquiryRestrictions inquiryRestrictions = super.getInquiryRestrictions(businessObject, user);
         if (inquiredObjectIsVendorDetail(businessObject) && shouldHideAttachmentLinkOnVendorInquiry(user)) {
-            VendorDetail vendorDetail = (VendorDetail) businessObject;
-            List<Note> boNotes = vendorDetail.getBoNotes();
+            final VendorDetail vendorDetail = (VendorDetail) businessObject;
+            final List<Note> boNotes = vendorDetail.getBoNotes();
             for (int i = 0; i < boNotes.size(); i++) {
-                String attachmentLinkPropertyPath = MessageFormat.format(COLLECTION_ITEM_PROPERTY_PATH_FORMAT,
+                final String attachmentLinkPropertyPath = MessageFormat.format(COLLECTION_ITEM_PROPERTY_PATH_FORMAT,
                         CUKRADPropertyConstants.BO_NOTES, i, CUKRADPropertyConstants.ATTACHMENT_LINK);
                 inquiryRestrictions.addHiddenField(attachmentLinkPropertyPath);
             }
@@ -44,12 +44,12 @@ public class CuBusinessObjectAuthorizationServiceImpl extends BusinessObjectAuth
         return inquiryRestrictions;
     }
 
-    private boolean inquiredObjectIsVendorDetail(BusinessObject businessObject) {
+    private boolean inquiredObjectIsVendorDetail(final BusinessObject businessObject) {
         return businessObject instanceof VendorDetail;
     }
 
-    private boolean shouldHideAttachmentLinkOnVendorInquiry(Person user) {
-        Map<String, String> permissionDetails = Collections.singletonMap(
+    private boolean shouldHideAttachmentLinkOnVendorInquiry(final Person user) {
+        final Map<String, String> permissionDetails = Collections.singletonMap(
                 KewApiConstants.DOCUMENT_TYPE_NAME_DETAIL, CUVendorConstants.VENDOR_DOCUMENT_TYPE_NAME);
         return !permissionService.hasPermissionByTemplate(user.getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.VIEW_NOTE_ATTACHMENT, permissionDetails);

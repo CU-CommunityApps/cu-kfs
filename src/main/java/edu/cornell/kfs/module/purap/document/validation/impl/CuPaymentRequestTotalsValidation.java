@@ -14,9 +14,9 @@ import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 
 public class CuPaymentRequestTotalsValidation extends PaymentRequestTotalsValidation {
 
-    protected void flagLineItemTotals(List<PurApItem> itemList) {
-        for (PurApItem purApItem : itemList) {
-            PaymentRequestItem item = (PaymentRequestItem) purApItem;
+    protected void flagLineItemTotals(final List<PurApItem> itemList) {
+        for (final PurApItem purApItem : itemList) {
+            final PaymentRequestItem item = (PaymentRequestItem) purApItem;
             // KITI-2549 : Added check to confirm extended price doesn't equal 0.00 since unit prices of $0.00 are now allowed in KFS.
             // KFSPTS-1719 if po is no qty, inv is qty. 
             if (item.getItemQuantity() != null && (item.getExtendedPrice()!=null && KualiDecimal.ZERO.compareTo(item.getExtendedPrice())!=0)) {

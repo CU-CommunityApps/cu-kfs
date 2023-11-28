@@ -20,9 +20,9 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 public class CUVendorCreditMemoTotalMatchesVendorAmountValidation extends GenericValidation {
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = true;
-        VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument)event.getDocument();
+        final VendorCreditMemoDocument cmDocument = (VendorCreditMemoDocument)event.getDocument();
         GlobalVariables.getMessageMap().clearErrorPath();
         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.DOCUMENT);
         

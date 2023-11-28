@@ -14,6 +14,9 @@ public interface CuBalanceService extends BalanceService {
      *        beginning of year (after the fiscal year change over)
      * @return an iterator of balances to put through the strenuous reversion process
      */
-    Iterator<Balance> findReversionBalancesForFiscalYear(Integer year, boolean endOfYear);
+    Iterator<Balance> findReversionBalancesForFiscalYear(
+            final Integer year, 
+            final boolean endOfYear
+            );
 
 }

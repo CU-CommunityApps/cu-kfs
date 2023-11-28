@@ -9,12 +9,12 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 public class CuPhoneNumberServiceImpl extends PhoneNumberServiceImpl {
 
     @Override
-    public String formatNumberIfPossible(String unformattedNumber) {
+    public String formatNumberIfPossible(final String unformattedNumber) {
         if (ObjectUtils.isNull(unformattedNumber)) {
             return unformattedNumber;
         }
-        String formattedNumber = unformattedNumber.replaceAll("\\D", "");
-        Integer defaultPhoneNumberDigits = new Integer(parameterService.getParameterValueAsString(VendorDetail.class,
+        final String formattedNumber = unformattedNumber.replaceAll("\\D", "");
+        final Integer defaultPhoneNumberDigits = new Integer(parameterService.getParameterValueAsString(VendorDetail.class,
                 VendorParameterConstants.DEFAULT_PHONE_NUMBER_DIGITS));
         if (formattedNumber.length() < defaultPhoneNumberDigits) {
             return unformattedNumber;

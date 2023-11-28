@@ -13,7 +13,9 @@ public class CuElectronicInvoiceRejectItem extends ElectronicInvoiceRejectItem {
         super();
     }
 
-    public CuElectronicInvoiceRejectItem(ElectronicInvoiceRejectDocument electronicInvoiceRejectDocument, ElectronicInvoiceItem eii) {
+    public CuElectronicInvoiceRejectItem(
+            final ElectronicInvoiceRejectDocument electronicInvoiceRejectDocument, 
+            final ElectronicInvoiceItem eii) {
         super();
         // KFSUPGRADE-478 : change unitprice compare to "!=-1"
        // setup the sub total amount so that the reject prints to the files correctly
@@ -37,7 +39,7 @@ public class CuElectronicInvoiceRejectItem extends ElectronicInvoiceRejectItem {
 
     public BigDecimal getInvoiceItemSubTotalAmount() {
         // this needs to be calculated when read
-        BigDecimal returnValue;
+        final BigDecimal returnValue;
         if (getInvoiceItemQuantity() != null && BigDecimal.ZERO.compareTo(getInvoiceItemQuantity()) != 0
                 && getInvoiceItemUnitPrice() != null) {
             // unit price and quantity are valid... calculate subtotal

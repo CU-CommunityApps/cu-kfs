@@ -30,6 +30,7 @@ import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
 import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -50,6 +51,7 @@ import edu.cornell.kfs.sys.service.impl.UserProcurementProfileValidationServiceI
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuRequisitionDocument.class, PurchaseOrderDocument.class, IWantDocument.class})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"})
 public class FavoriteAccountLineBuilderTest {
     private static UserProcurementProfileValidationService userProcurementProfileValidationService;
     private static UserFavoriteAccountService userFavoriteAccountService;

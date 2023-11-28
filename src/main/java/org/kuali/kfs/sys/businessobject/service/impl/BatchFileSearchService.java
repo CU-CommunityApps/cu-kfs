@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -34,15 +34,15 @@ import org.kuali.kfs.datadictionary.legacy.BusinessObjectDictionaryService;
 import org.kuali.kfs.kns.datadictionary.EntityNotFoundException;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
 import org.kuali.kfs.krad.exception.AuthorizationException;
-import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.sys.businessobject.service.impl.BusinessObjectSorter;
 import org.kuali.kfs.sys.batch.BatchFile;
 import org.kuali.kfs.sys.batch.BatchFileUtils;
+import org.kuali.kfs.sys.businessobject.service.SearchService;
 import org.kuali.kfs.sys.util.DateRangeUtil;
+import org.springframework.util.MultiValueMap;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.NotAllowedException;
-import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,22 +60,22 @@ public class BatchFileSearchService extends SearchService {
 
     @Override
     public Pair<Collection<? extends BusinessObjectBase>, Integer> getSearchResults(
-            Class<? extends BusinessObjectBase> businessObjectClass,
-            MultivaluedMap<String, String> fieldValues, int skip, int limit, String sortField, boolean sortAscending) {
+            final Class<? extends BusinessObjectBase> businessObjectClass,
+            final MultiValueMap<String, String> fieldValues, final int skip, final int limit, final String sortField, final boolean sortAscending) {
 
-        List<BatchFile> allFiles = getFiles(fieldValues);
-        Stream<BatchFile> stream = allFiles.parallelStream();
+        final List<BatchFile> allFiles = getFiles(fieldValues);
+        final Stream<BatchFile> stream = allFiles.stream();
 
-        BusinessObjectSorter boSorter = new BusinessObjectSorter();
-        List<BusinessObjectBase> sortedAndSliced = boSorter.sort(businessObjectClass, skip, limit, sortField,
+        final BusinessObjectSorter boSorter = new BusinessObjectSorter();
+        final List<BusinessObjectBase> sortedAndSliced = boSorter.sort(businessObjectClass, skip, limit, sortField,
                 sortAscending, stream);
 
         return Pair.of(sortedAndSliced, allFiles.size());
     }
 
     @Override
-    public Object find(Class<? extends BusinessObjectBase> businessObjectClass, String id) {
-        BusinessObjectAdminService batchFileAdminService = businessObjectDictionaryService
+    public Object find(final Class<? extends BusinessObjectBase> businessObjectClass, final String id) {
+        final BusinessObjectAdminService batchFileAdminService = businessObjectDictionaryService
                 .getBusinessObjectAdminService(businessObjectClass);
 
         if (!batchFileAdminService.allowsDownload(null, null)) {
@@ -90,51 +90,51 @@ public class BatchFileSearchService extends SearchService {
 
         try {
             return batchFileAdminService.download(id);
-        } catch (AuthorizationException ae) {
+        } catch (final AuthorizationException ae) {
             throw new ForbiddenException();
-        } catch (EntityNotFoundException e) {
+        } catch (final EntityNotFoundException e) {
             return null;
         }
     }
 
-    private List<BatchFile> getFiles(MultivaluedMap<String, String> fieldValues) {
-        List<BatchFile> results = new ArrayList<>();
+    private List<BatchFile> getFiles(final MultiValueMap<String, String> fieldValues) {
+        final List<BatchFile> results = new ArrayList<>();
 
         IOFileFilter filter = FileFilterUtils.fileFileFilter();
 
-        String fileNamePattern = fieldValues.getFirst("fileName");
-        IOFileFilter fileNameBasedFilter = getFileNameBasedFilter(fileNamePattern);
+        final String fileNamePattern = fieldValues.getFirst("fileName");
+        final IOFileFilter fileNameBasedFilter = getFileNameBasedFilter(fileNamePattern);
         if (fileNameBasedFilter != null) {
             filter = FileFilterUtils.and(filter, fileNameBasedFilter);
         }
 
-        String lastModifiedDate = fieldValues.getFirst("lastModifiedDate");
-        IOFileFilter lastModifiedDateBasedFilter = getLastModifiedDateBasedFilter(lastModifiedDate);
+        final String lastModifiedDate = fieldValues.getFirst("lastModifiedDate");
+        final IOFileFilter lastModifiedDateBasedFilter = getLastModifiedDateBasedFilter(lastModifiedDate);
         if (lastModifiedDateBasedFilter != null) {
             filter = FileFilterUtils.and(filter, lastModifiedDateBasedFilter);
         }
 
-        List<String> pathPatterns = fieldValues.get("path");
-        List<File> directories = getDirectoriesToSearch(pathPatterns);
-        BatchFileSearchService.BatchFileFinder finder = new BatchFileSearchService.BatchFileFinder(
+        final List<String> pathPatterns = fieldValues.get("path");
+        final List<File> directories = getDirectoriesToSearch(pathPatterns);
+        final BatchFileSearchService.BatchFileFinder finder = new BatchFileSearchService.BatchFileFinder(
                 results, filter);
         finder.find(directories);
         return results;
     }
 
-    private IOFileFilter getFileNameBasedFilter(String fileNamePattern) {
+    private IOFileFilter getFileNameBasedFilter(final String fileNamePattern) {
         if (StringUtils.isNotBlank(fileNamePattern)) {
             return new WildcardFileFilter(fileNamePattern, IOCase.INSENSITIVE);
         }
         return null;
     }
 
-    private IOFileFilter getLastModifiedDateBasedFilter(String lastModifiedDatePattern) {
+    private IOFileFilter getLastModifiedDateBasedFilter(final String lastModifiedDatePattern) {
         if (StringUtils.isBlank(lastModifiedDatePattern)) {
             return null;
         }
 
-        DateRangeUtil dateRange = new DateRangeUtil();
+        final DateRangeUtil dateRange = new DateRangeUtil();
         dateRange.setDateStringWithLongValues(lastModifiedDatePattern);
         if (!dateRange.isEmpty()) {
             return new BatchFileSearchService.LastModifiedDateFileFilter(dateRange.getLowerDate(),
@@ -149,13 +149,13 @@ public class BatchFileSearchService extends SearchService {
      * that it can be overridden in unit test
      * 
      */
-    protected List<File> getDirectoriesToSearch(List<String> selectedPaths) {
-        List<String> searchPaths = getPathsToSearch(selectedPaths);
+    protected List<File> getDirectoriesToSearch(final List<String> selectedPaths) {
+        final List<String> searchPaths = getPathsToSearch(selectedPaths);
 
         List<File> directories = new ArrayList<>();
         if (selectedPaths != null) {
-            for (String searchPath : searchPaths) {
-                File directory = new File(BatchFileUtils.resolvePathToAbsolutePath(searchPath));
+            for (final String searchPath : searchPaths) {
+                final File directory = new File(BatchFileUtils.resolvePathToAbsolutePath(searchPath));
                 if (directory.exists()) {
                     directories.add(directory);
                 }
@@ -167,15 +167,15 @@ public class BatchFileSearchService extends SearchService {
         return directories;
     }
 
-    private List<String> getPathsToSearch(List<String> selectedPaths) {
+    private List<String> getPathsToSearch(final List<String> selectedPaths) {
         if (CollectionUtils.isEmpty(selectedPaths)) {
             return selectedPaths;
         }
 
         // Ignore redundant child paths
-        List<String> searchPaths = new ArrayList<>();
+        final List<String> searchPaths = new ArrayList<>();
         selectedPaths.stream().sorted(Comparator.comparingInt(String::length)).forEach(selectedPath -> {
-            String[] searchPathsStringArray = searchPaths.toArray(new String[searchPaths.size()]);
+            final String[] searchPathsStringArray = searchPaths.toArray(new String[searchPaths.size()]);
             if (!StringUtils.startsWithAny(selectedPath, searchPathsStringArray)) {
                 searchPaths.add(selectedPath);
             }
@@ -185,24 +185,24 @@ public class BatchFileSearchService extends SearchService {
     }
 
     public void setBusinessObjectDictionaryService(
-            BusinessObjectDictionaryService businessObjectDictionaryService) {
+            final BusinessObjectDictionaryService businessObjectDictionaryService) {
         this.businessObjectDictionaryService = businessObjectDictionaryService;
     }
 
     protected class BatchFileFinder extends DirectoryWalker {
-        private List<BatchFile> results;
+        private final List<BatchFile> results;
 
-        BatchFileFinder(List<BatchFile> results, IOFileFilter fileFilter) {
+        BatchFileFinder(final List<BatchFile> results, final IOFileFilter fileFilter) {
             super(null, fileFilter, -1);
             this.results = results;
         }
 
-        public void find(Collection<File> rootDirectories) {
+        public void find(final Collection<File> rootDirectories) {
             try {
-                for (File rootDirectory : rootDirectories) {
+                for (final File rootDirectory : rootDirectories) {
                     walk(rootDirectory, null);
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Error performing lookup", e);
             }
         }
@@ -211,25 +211,25 @@ public class BatchFileSearchService extends SearchService {
          * @see org.apache.commons.io.DirectoryWalker#handleFile(java.io.File, int, java.util.Collection)
          */
         @Override
-        protected void handleFile(File file, int depth, Collection results) throws IOException {
+        protected void handleFile(final File file, final int depth, final Collection results) throws IOException {
             super.handleFile(file, depth, results);
-            BatchFile batchFile = new BatchFile(file);
+            final BatchFile batchFile = new BatchFile(file);
             this.results.add(batchFile);
         }
     }
 
     protected class LastModifiedDateFileFilter extends AbstractFileFilter {
-        private Date fromDate;
-        private Date toDate;
+        private final Date fromDate;
+        private final Date toDate;
 
-        LastModifiedDateFileFilter(Date fromDate, Date toDate) {
+        LastModifiedDateFileFilter(final Date fromDate, final Date toDate) {
             this.fromDate = fromDate;
             this.toDate = toDate;
         }
 
         @Override
-        public boolean accept(File file) {
-            Date lastModifiedDate = new Date(file.lastModified());
+        public boolean accept(final File file) {
+            final Date lastModifiedDate = new Date(file.lastModified());
             if (fromDate != null && fromDate.after(lastModifiedDate)) {
                 return false;
             }

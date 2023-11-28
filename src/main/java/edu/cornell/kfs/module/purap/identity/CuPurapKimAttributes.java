@@ -13,7 +13,7 @@ public class CuPurapKimAttributes extends PurapKimAttributes {
         return jaggaerRole;
     }
 
-    public void setJaggaerRole(String jaggaerRole) {
+    public void setJaggaerRole(final String jaggaerRole) {
         this.jaggaerRole = jaggaerRole;
     }
 

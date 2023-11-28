@@ -15,17 +15,17 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 public class CuLineItemQuantityNotZero extends LineItemQuantityNotZero {
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) 
+    public boolean validate(final AttributedDocumentEvent event) 
     {
         boolean valid = true;
         
-        PaymentRequestDocument document = (PaymentRequestDocument)event.getDocument();
+        final PaymentRequestDocument document = (PaymentRequestDocument)event.getDocument();
         GlobalVariables.getMessageMap().clearErrorPath();
         GlobalVariables.getMessageMap().addToErrorPath(KFSPropertyConstants.DOCUMENT);
         
         int i = 0;
-        for (PurApItem item : (List<PurApItem>)document.getItems()) {
-            KualiDecimal itemQuantity = item.getItemQuantity();
+        for (final PurApItem item : (List<PurApItem>)document.getItems()) {
+            final KualiDecimal itemQuantity = item.getItemQuantity();
             if (!((PaymentRequestItem)item).isNoQtyItem() && itemQuantity != null) {
                 if (!itemQuantity.isNonZero()) {
                     GlobalVariables.getMessageMap().putError("item[" + i + "].itemQuantity",

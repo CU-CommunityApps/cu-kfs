@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -61,7 +61,7 @@ public class PreferencesForm extends KualiForm {
         return returnMapping;
     }
 
-    public void setReturnMapping(String returnMapping) {
+    public void setReturnMapping(final String returnMapping) {
         this.returnMapping = returnMapping;
     }
 
@@ -71,10 +71,10 @@ public class PreferencesForm extends KualiForm {
     }
 
     @Override
-    public void setMethodToCall(String methodToCall) {
-        Pattern p = Pattern.compile("\\w");
+    public void setMethodToCall(final String methodToCall) {
+        final Pattern p = Pattern.compile("\\w");
         if (StringUtils.isNotBlank(methodToCall)) {
-            Matcher m = p.matcher(methodToCall);
+            final Matcher m = p.matcher(methodToCall);
             if (m.find()) {
                 this.methodToCall = methodToCall;
             } else {
@@ -89,25 +89,25 @@ public class PreferencesForm extends KualiForm {
         return preferences;
     }
 
-    public void setPreferences(Preferences.Builder preferences) {
+    public void setPreferences(final Preferences.Builder preferences) {
         this.preferences = preferences;
     }
 
     public boolean isShowOutbox() {
-        return this.showOutbox;
+        return showOutbox;
     }
 
-    public void setShowOutbox(boolean showOutbox) {
+    public void setShowOutbox(final boolean showOutbox) {
         this.showOutbox = showOutbox;
     }
 
     @Override
     public String getBackLocation() {
-        return WebUtils.sanitizeBackLocation(this.backLocation);
+        return WebUtils.sanitizeBackLocation(backLocation);
     }
 
     @Override
-    public void setBackLocation(String backLocation) {
+    public void setBackLocation(final String backLocation) {
         this.backLocation = backLocation;
     }
 
@@ -115,7 +115,7 @@ public class PreferencesForm extends KualiForm {
         return documentTypePreferenceName;
     }
 
-    public void setDocumentTypePreferenceName(String documentTypePreferenceName) {
+    public void setDocumentTypePreferenceName(final String documentTypePreferenceName) {
         this.documentTypePreferenceName = documentTypePreferenceName;
     }
 
@@ -123,15 +123,15 @@ public class PreferencesForm extends KualiForm {
         return documentTypePreferenceValue;
     }
 
-    public void setDocumentTypePreferenceValue(String documentTypePreferenceValue) {
+    public void setDocumentTypePreferenceValue(final String documentTypePreferenceValue) {
         this.documentTypePreferenceValue = documentTypePreferenceValue;
     }
 
-    public Object getDocumentTypeNotificationPreference(String documentType) {
+    public Object getDocumentTypeNotificationPreference(final String documentType) {
         return preferences.getDocumentTypeNotificationPreference(documentType);
     }
 
-    public void setDocumentTypeNotificationPreference(String documentType, String preferenceValue) {
+    public void setDocumentTypeNotificationPreference(final String documentType, final String preferenceValue) {
         preferences.addDocumentTypeNotificationPreference(documentType, preferenceValue);
     }
 
@@ -139,7 +139,7 @@ public class PreferencesForm extends KualiForm {
      * Retrieves the "returnLocation" parameter after calling "populate" on the superclass.
      */
     @Override
-    public void populate(HttpServletRequest request) {
+    public void populate(final HttpServletRequest request) {
         super.populate(request);
 
         if (getParameter(request, KRADConstants.RETURN_LOCATION_PARAMETER) != null) {

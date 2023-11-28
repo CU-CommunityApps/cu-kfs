@@ -2,7 +2,7 @@
 
     The Kuali Financial System, a comprehensive financial management system for higher education.
 
-    Copyright 2005-2022 Kuali, Inc.
+    Copyright 2005-2023 Kuali, Inc.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -204,5 +204,10 @@
     </c:if>
     
     <kul:modernLookupSupport />
+    <script type="application/javascript">
+      document.addEventListener('DOMContentLoaded', () => {
+        wireReplaceInvalidCharacters();
+      });
+    </script>
 
 </kul:documentPage>

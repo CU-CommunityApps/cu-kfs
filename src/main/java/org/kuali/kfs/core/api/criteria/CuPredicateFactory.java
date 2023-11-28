@@ -32,7 +32,7 @@ public final class CuPredicateFactory {
      * @throws IllegalArgumentException if the propertyPath is null
      * @throws IllegalArgumentException if the value is null or of an invalid type
      */
-    public static Predicate notEqual(String propertyPath, Object value) {
+    public static Predicate notEqual(final String propertyPath, final Object value) {
         return new NotEqualPredicate(propertyPath, CriteriaSupportUtils.determineCriteriaValue(value));
     }
 

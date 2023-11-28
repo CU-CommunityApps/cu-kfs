@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -41,7 +41,7 @@ public class TransactionalDocumentEntry extends DocumentEntry {
     protected List<String> webScriptFiles = new ArrayList<>(3);
     protected List<HeaderNavigation> headerNavigationList = new ArrayList<>();
 
-    protected boolean sessionDocument = false;
+    protected boolean sessionDocument;
 
     public TransactionalDocumentEntry() {
         super();
@@ -70,8 +70,8 @@ public class TransactionalDocumentEntry extends DocumentEntry {
      * user should be asked any questions prior to running validation.
      */
     @Override
-    public void setPromptBeforeValidationClass(Class<? extends PromptBeforeValidation> preRulesCheckClass) {
-        this.promptBeforeValidationClass = preRulesCheckClass;
+    public void setPromptBeforeValidationClass(final Class<? extends PromptBeforeValidation> preRulesCheckClass) {
+        promptBeforeValidationClass = preRulesCheckClass;
     }
 
     /**
@@ -79,7 +79,7 @@ public class TransactionalDocumentEntry extends DocumentEntry {
      * The specified javascript files will be included in the generated html.
      */
     @Override
-    public void setWebScriptFiles(List<String> webScriptFiles) {
+    public void setWebScriptFiles(final List<String> webScriptFiles) {
         this.webScriptFiles = webScriptFiles;
     }
 
@@ -87,28 +87,28 @@ public class TransactionalDocumentEntry extends DocumentEntry {
      * The headerNavigation element defines a set of additional tabs which will appear on the document.
      */
     @Override
-    public void setHeaderNavigationList(List<HeaderNavigation> headerNavigationList) {
+    public void setHeaderNavigationList(final List<HeaderNavigation> headerNavigationList) {
         this.headerNavigationList = headerNavigationList;
     }
 
     @Override
     public boolean isSessionDocument() {
-        return this.sessionDocument;
+        return sessionDocument;
     }
 
     @Override
-    public void setSessionDocument(boolean sessionDocument) {
+    public void setSessionDocument(final boolean sessionDocument) {
         this.sessionDocument = sessionDocument;
     }
 
     @Override
     public Class<? extends DerivedValuesSetter> getDerivedValuesSetterClass() {
-        return this.derivedValuesSetterClass;
+        return derivedValuesSetterClass;
     }
 
     @Override
-    public void setDerivedValuesSetterClass(Class<? extends DerivedValuesSetter> derivedValuesSetter) {
-        this.derivedValuesSetterClass = derivedValuesSetter;
+    public void setDerivedValuesSetterClass(final Class<? extends DerivedValuesSetter> derivedValuesSetter) {
+        derivedValuesSetterClass = derivedValuesSetter;
     }
 
     /**
@@ -130,7 +130,7 @@ public class TransactionalDocumentEntry extends DocumentEntry {
     @Override
     public void completeValidation() {
         super.completeValidation();
-        for (ReferenceDefinition reference : defaultExistenceChecks) {
+        for (final ReferenceDefinition reference : defaultExistenceChecks) {
             reference.completeValidation(documentClass, null);
         }
     }

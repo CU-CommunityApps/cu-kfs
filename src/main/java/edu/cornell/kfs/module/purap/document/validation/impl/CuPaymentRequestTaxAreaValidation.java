@@ -13,12 +13,12 @@ import org.kuali.kfs.krad.util.MessageMap;
 
 public class CuPaymentRequestTaxAreaValidation extends PaymentRequestTaxAreaValidation {
 	
-    protected boolean validateTaxRates(PaymentRequestDocument preq) {
+    protected boolean validateTaxRates(final PaymentRequestDocument preq) {
         boolean valid = true;
-        String code = preq.getTaxClassificationCode();
-        BigDecimal fedrate = preq.getTaxFederalPercent();
-        BigDecimal strate = preq.getTaxStatePercent();
-        MessageMap errorMap = GlobalVariables.getMessageMap();
+        final String code = preq.getTaxClassificationCode();
+        final BigDecimal fedrate = preq.getTaxFederalPercent();
+        final BigDecimal strate = preq.getTaxStatePercent();
+        final MessageMap errorMap = GlobalVariables.getMessageMap();
 
         // only test the cases when income class and tax rates aren't empty/N
         if (StringUtils.isEmpty(code) || StringUtils.equalsIgnoreCase(code, "N") || fedrate == null || strate == null) {
@@ -26,12 +26,12 @@ public class CuPaymentRequestTaxAreaValidation extends PaymentRequestTaxAreaVali
         }
 
         // validate that the federal and state tax rates are among the allowed set
-        ArrayList<BigDecimal> fedrates = retrieveTaxRates(code, "F"); //(ArrayList<BigDecimal>) federalTaxRates.get(code);
+        final ArrayList<BigDecimal> fedrates = retrieveTaxRates(code, "F"); //(ArrayList<BigDecimal>) federalTaxRates.get(code);
         if (!listContainsValue(fedrates, fedrate)) {
             valid = false;
             errorMap.putError(PurapPropertyConstants.TAX_FEDERAL_PERCENT, PurapKeyConstants.ERROR_PAYMENT_REQUEST_TAX_FIELD_VALUE_INVALID_IF, PurapPropertyConstants.TAX_CLASSIFICATION_CODE, PurapPropertyConstants.TAX_FEDERAL_PERCENT);
         }
-        ArrayList<BigDecimal> strates = retrieveTaxRates(code, "S"); //(ArrayList<BigDecimal>) stateTaxRates.get(code);
+        final ArrayList<BigDecimal> strates = retrieveTaxRates(code, "S"); //(ArrayList<BigDecimal>) stateTaxRates.get(code);
         if (!listContainsValue(strates, strate)) {
             valid = false;
             errorMap.putError(PurapPropertyConstants.TAX_STATE_PERCENT, PurapKeyConstants.ERROR_PAYMENT_REQUEST_TAX_FIELD_VALUE_INVALID_IF, PurapPropertyConstants.TAX_CLASSIFICATION_CODE, PurapPropertyConstants.TAX_STATE_PERCENT);

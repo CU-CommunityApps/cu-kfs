@@ -52,7 +52,7 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
     
     @Override
     public void saveBusinessObject() {
-        boolean isClosingAccount = isClosingAccount();
+        final boolean isClosingAccount = isClosingAccount();
         
         Account account = (Account) getBusinessObject();
         AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
@@ -185,27 +185,27 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
     }
     
     @Override
-    public void processAfterCopy(MaintenanceDocument document, Map<String, String[]> parameters) {
+    public void processAfterCopy(final MaintenanceDocument document, final Map<String, String[]> parameters) {
     	document.getNotes().add(getNewBoNote(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.ADD));
     	super.processAfterCopy(document, parameters);
     }
     
     @Override
-    public void processAfterNew(MaintenanceDocument document, Map<String, String[]> requestParameters) {
+    public void processAfterNew(final MaintenanceDocument document, final Map<String, String[]> requestParameters) {
     	document.getNotes().add(getNewBoNote(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.ADD));
     	super.processAfterNew(document, requestParameters);
     }
     
     @Override
-	public void processAfterPost(MaintenanceDocument document, Map<String, String[]> requestParameters) {
+	public void processAfterPost(final MaintenanceDocument document, final Map<String, String[]> requestParameters) {
 		super.processAfterPost(document, requestParameters);
-		String statusCode = document.getDocumentHeader().getWorkflowDocument().getStatus().getCode();
-		boolean isPreRoute = DocumentStatus.INITIATED.getCode().equals(statusCode)
+		final String statusCode = document.getDocumentHeader().getWorkflowDocument().getStatus().getCode();
+		final boolean isPreRoute = DocumentStatus.INITIATED.getCode().equals(statusCode)
 				|| DocumentStatus.SAVED.getCode().equals(statusCode);
 
 		if (isPreRoute) {
 			// Search for edit note and update it to include the doc description
-			for (Note note : document.getNotes()) {
+			for (final Note note : document.getNotes()) {
 				if (note.getNoteText().startsWith(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.EDIT + CUKFSConstants.ACCOUNT_NOTE_TEXT + getDocumentNumber())) {
 					note.setNoteText(CUKFSConstants.AccountCreateAndUpdateNotePrefixes.EDIT + CUKFSConstants.ACCOUNT_NOTE_TEXT + getDocumentNumber() + " " + document.getDocumentHeader().getDocumentDescription());
 				}
@@ -214,7 +214,7 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
 	}
     
     @Override
-    public void doRouteStatusChange(DocumentHeader documentHeader) {
+    public void doRouteStatusChange(final DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
         if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
             MaintenanceUtils.clearBlockingCache();
@@ -226,7 +226,7 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
      *
      * @return a newly created note
      */
-    protected Note getNewBoNote(String prefix){
+    protected Note getNewBoNote(final String prefix){
         Note newBoNote = new Note();
         newBoNote.setNoteText(prefix + CUKFSConstants.ACCOUNT_NOTE_TEXT + getDocumentNumber());
         newBoNote.setNotePostedTimestampToCurrent();
@@ -248,7 +248,7 @@ public class CUAccountMaintainableImpl extends AccountMaintainableImpl {
 		return noteService;
 	}
 
-	public void setNoteService(NoteService noteService) {
+	public void setNoteService(final NoteService noteService) {
 		this.noteService = noteService;
 	}
 

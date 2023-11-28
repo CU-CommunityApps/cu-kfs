@@ -8,12 +8,12 @@ import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 public class CuDistributionOfIncomeAndExpenseForm extends DistributionOfIncomeAndExpenseForm{
 
     public boolean getCanViewTrip() {
-        CuDistributionOfIncomeAndExpenseDocument diDocument = (CuDistributionOfIncomeAndExpenseDocument)this.getDocument();
+        final CuDistributionOfIncomeAndExpenseDocument diDocument = (CuDistributionOfIncomeAndExpenseDocument)this.getDocument();
         return diDocument.isLegacyTrip();
     }
 
     public String getTripID() {
-        CuDistributionOfIncomeAndExpenseDocument diDocument = (CuDistributionOfIncomeAndExpenseDocument)this.getDocument();
+        final CuDistributionOfIncomeAndExpenseDocument diDocument = (CuDistributionOfIncomeAndExpenseDocument)this.getDocument();
         return diDocument.isLegacyTrip() ? diDocument.getTripId() : StringUtils.EMPTY;
     }
 

@@ -75,65 +75,65 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     public void initialize() {
         LOG.info("initialize, Initializing jobs");
         initializeKfsJobListener();
-        for (ModuleService moduleService : kualiModuleService.getInstalledModuleServices()) {
+        for (final ModuleService moduleService : kualiModuleService.getInstalledModuleServices()) {
             loadJobsForModule(moduleService);
         }
     }
 
     private void initializeKfsJobListener() {
-        for (JobListener jobListener : jobListeners) {
+        for (final JobListener jobListener : jobListeners) {
             if (jobListener instanceof org.kuali.kfs.sys.batch.JobListener) {
                 ((org.kuali.kfs.sys.batch.JobListener) jobListener).setSchedulerService(this);
             }
         }
     }
 
-    private void loadJobsForModule(ModuleService moduleService) {
-        ModuleConfiguration moduleConfiguration = moduleService.getModuleConfiguration();
+    private void loadJobsForModule(final ModuleService moduleService) {
+        final ModuleConfiguration moduleConfiguration = moduleService.getModuleConfiguration();
         LOG.info("loadJobsForModule, Loading jobs for module: " + moduleConfiguration.getNamespaceCode());
         if (CollectionUtils.isEmpty(moduleConfiguration.getJobNames())) {
             LOG.info("loadJobsForModule, No jobs found for module: " + moduleConfiguration.getNamespaceCode());
             return;
         }
         
-        BatchModuleService batchModuleService = (moduleService instanceof BatchModuleService)
+        final BatchModuleService batchModuleService = (moduleService instanceof BatchModuleService)
                 ? (BatchModuleService) moduleService : null;
-        Predicate<String> externalJobChecker = ObjectUtils.isNotNull(batchModuleService)
+        final Predicate<String> externalJobChecker = ObjectUtils.isNotNull(batchModuleService)
                 ? batchModuleService::isExternalJob
                 : jobName -> false;
         
-        for (String jobName : moduleConfiguration.getJobNames()) {
+        for (final String jobName : moduleConfiguration.getJobNames()) {
             try {
                 if (externalJobChecker.test(jobName)) {
                     LOG.warn("loadJobsForModule, Skipping setup of external job "
                             + jobName + " because this class does not support external jobs");
                     continue;
                 }
-                JobDescriptor jobDescriptor = getJobDescriptorBean(jobName);
+                final JobDescriptor jobDescriptor = getJobDescriptorBean(jobName);
                 jobDescriptor.setNamespaceCode(moduleConfiguration.getNamespaceCode());
                 addJobToGroup(jobDescriptor, UNSCHEDULED_GROUP);
-            } catch (NoSuchBeanDefinitionException e) {
+            } catch (final NoSuchBeanDefinitionException e) {
                 LOG.error("loadJobsForModule, Could not find job descriptor bean: " + jobName, e);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.error("loadJobsForModule, Could not prepare job: " + jobName, e);
             }
         }
     }
 
-    private JobDescriptor getJobDescriptorBean(String jobName) {
+    private JobDescriptor getJobDescriptorBean(final String jobName) {
         return BatchSpringContext.getJobDescriptor(jobName);
     }
 
-    private boolean addJobToGroup(JobDescriptor jobDescriptor, String groupName) {
-        String jobLabel = jobDescriptor.getNamespaceCode() + CUKFSConstants.PADDED_HYPHEN + jobDescriptor.getName();
+    private boolean addJobToGroup(final JobDescriptor jobDescriptor, final String groupName) {
+       final  String jobLabel = jobDescriptor.getNamespaceCode() + CUKFSConstants.PADDED_HYPHEN + jobDescriptor.getName();
         LOG.info("addJobToGroup, Adding job '" + jobLabel + "' to group: " + groupName);
         if (!StringUtils.equals(jobDescriptor.getGroup(), groupName)) {
             LOG.info("addJobToGroup, Overriding group name to '" + groupName + "' for job: " + jobLabel);
             jobDescriptor.setGroup(groupName);
         }
-        JobDetail jobDetail = jobDescriptor.getJobDetail();
-        JobKey jobKey = jobDetail.getKey();
-        CuJobEntry jobEntry = new CuJobEntry(jobDescriptor, jobDetail);
+        final JobDetail jobDetail = jobDescriptor.getJobDetail();
+        final JobKey jobKey = jobDetail.getKey();
+        final CuJobEntry jobEntry = new CuJobEntry(jobDescriptor, jobDetail);
         if (jobs.putIfAbsent(jobKey, jobEntry) != null) {
             LOG.warn("addJobToGroup, Skipping detected duplicate insert of job (which may have been defined "
                     + "with separate scheduled and unscheduled bean variants): " + jobLabel);
@@ -143,25 +143,25 @@ public class CuSchedulerServiceImpl implements CuSchedulerService {
     }
 
     @Override
-    public void addScheduled(JobDetail jobDetail) {
+    public void addScheduled(final JobDetail jobDetail) {
         LOG.warn("addScheduled, This class does not support adding scheduled jobs");
     }
 
     @Override
-    public void addUnscheduled(JobDetail jobDetail) {
+    public void addUnscheduled(final JobDetail jobDetail) {
         LOG.warn("addScheduled, This class does not support adding unscheduled jobs through this method");
     }
 
     @Override
-    public boolean cronConditionMet(String cronExpressionString) {
+    public boolean cronConditionMet(final String cronExpressionString) {
         LOG.warn("cronConditionMet, This class does not support checking cron conditions");
         return false;
     }
 
     @Override
-    public BatchJobStatus getJob(String groupName, String jobName) {
-        JobKey jobKey = new JobKey(jobName, groupName);
-        CuJobEntry jobEntry = jobs.get(jobKey);
+    public BatchJobStatus getJob(final String groupName, final String jobName) {
+        final JobKey jobKey = new JobKey(jobName, groupName);
+        final CuJobEntry jobEntry = jobs.get(jobKey);
         return ObjectUtils.isNotNull(jobEntry) ? jobEntry.toBatchJobStatusInstance() : null;
     }
 

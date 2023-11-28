@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -62,12 +62,12 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     private AccountingLineGroupDefinition accountingLineGroupDefinition;
     private AccountingDocument accountingDocument;
     private String lineCollectionProperty;
-    private KNSFileTag scriptFileTag = new KNSFileTag();
-    private KNSFileTag noscriptFileTag = new KNSFileTag();
-    private KNSSubmitTag uploadButtonTag = new KNSSubmitTag();
-    private KNSSubmitTag showHideTag = new KNSSubmitTag();
-    private HiddenTag hideStateTag = new HiddenTag();
-    private KNSSubmitTag cancelButtonTag = new KNSSubmitTag();
+    private final KNSFileTag scriptFileTag = new KNSFileTag();
+    private final KNSFileTag noscriptFileTag = new KNSFileTag();
+    private final KNSSubmitTag uploadButtonTag = new KNSSubmitTag();
+    private final KNSSubmitTag showHideTag = new KNSSubmitTag();
+    private final HiddenTag hideStateTag = new HiddenTag();
+    private final KNSSubmitTag cancelButtonTag = new KNSSubmitTag();
     private boolean shouldUpload = true;
     private boolean canEdit = false;
 
@@ -143,7 +143,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     @Override
-    public void render(PageContext pageContext, Tag parentTag) throws JspException {
+    public void render(final PageContext pageContext, final Tag parentTag) throws JspException {
         try {
             //KFSPTS-985 : add favorite account selection
             // setdistribution does not have accountPrefix
@@ -162,11 +162,11 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
             pageContext.getOut().write(buildBlankCell());
             pageContext.getOut().write(buildTitleCell());
-            this.renderGroupLevelActions(pageContext, parentTag);
+            renderGroupLevelActions(pageContext, parentTag);
 
             pageContext.getOut().write(buildRowEnding());
         }
-        catch (IOException ioe) {
+        catch (final IOException ioe) {
             throw new JspException("Difficulty in rendering import/group header line", ioe);
         }
     }
@@ -176,8 +176,8 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      *
      * @return the String with the HTML for the row opening
      */
-    protected String buildRowBeginning(String additionalClass) {
-        StringBuilder rowBeginning = new StringBuilder();
+    protected String buildRowBeginning(final String additionalClass) {
+        final StringBuilder rowBeginning = new StringBuilder();
         rowBeginning.append("<tr class=\"title");
         if (StringUtils.isNotBlank(additionalClass)) {
             rowBeginning.append(" ");
@@ -196,21 +196,21 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         return "</tr>";
     }
 
-    protected void renderGroupLevelActions(PageContext pageContext, Tag parentTag) throws JspException {
-        JspWriter out = pageContext.getOut();
+    protected void renderGroupLevelActions(final PageContext pageContext, final Tag parentTag) throws JspException {
+        final JspWriter out = pageContext.getOut();
 
         try {
-            out.write(this.buildGroupActionsBeginning());
+            out.write(buildGroupActionsBeginning());
 
-            this.renderGroupActions(pageContext, parentTag);
+            renderGroupActions(pageContext, parentTag);
 
-            this.renderHideDetails(pageContext, parentTag);
+            renderHideDetails(pageContext, parentTag);
 
-            this.renderUploadCell(pageContext, parentTag);
+            renderUploadCell(pageContext, parentTag);
 
-            out.write(this.buildGroupActionsColumnEnding());
+            out.write(buildGroupActionsColumnEnding());
         }
-        catch (IOException ioe) {
+        catch (final IOException ioe) {
             throw new JspException("Difficulty rendering group level actions", ioe);
         }
     }
@@ -221,7 +221,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @return the String with the HTML for the row opening
      */
     protected String buildGroupActionsBeginning() {
-        StringBuilder groupActionsBeginning = new StringBuilder();
+        final StringBuilder groupActionsBeginning = new StringBuilder();
         final int width = cellCount - titleCellSpan;
 
         groupActionsBeginning.append("<td ");
@@ -244,7 +244,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @return the String with the HTML for the row beginning
      */
     protected String buildGroupActionsColumnEnding() {
-        return this.canUpload() || this.isGroupActionsRendered() ? "</td>" : StringUtils.EMPTY;
+        return canUpload() || isGroupActionsRendered() ? "</td>" : StringUtils.EMPTY;
     }
 
     /**
@@ -253,7 +253,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @return the String with the HTML for the title cell
      */
     protected String buildTitleCell() throws JspException{
-        StringBuilder titleCell = new StringBuilder();
+        final StringBuilder titleCell = new StringBuilder();
         int colSpan = titleCellSpan;
 
         // subtract one for the blank cell before the title
@@ -287,7 +287,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     protected String buildBlankCell() throws JspException{
-        StringBuilder titleCell = new StringBuilder();
+        final StringBuilder titleCell = new StringBuilder();
         titleCell.append("<th style=\"visibility:hidden;\"></th>");
         return titleCell.toString();
     }
@@ -299,20 +299,20 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         return "<a name=\"accounting" + getGroupInfix() + "Anchor\"></a>";
     }
 
-    protected void renderGroupActions(PageContext pageContext, Tag parentTag) throws JspException {
-        List<? extends AccountingLineViewActionDefinition> accountingLineGroupActions = accountingLineGroupDefinition.
+    protected void renderGroupActions(final PageContext pageContext, final Tag parentTag) throws JspException {
+        final List<? extends AccountingLineViewActionDefinition> accountingLineGroupActions = accountingLineGroupDefinition.
                 getAccountingLineGroupActions();
         if (!this.isGroupActionsRendered() || accountingLineGroupActions == null || accountingLineGroupActions.
                 isEmpty()) {
             return;
         }
 
-        List<AccountingLineViewAction> viewActions = new ArrayList<>();
-        for (AccountingLineViewActionDefinition action : accountingLineGroupActions) {
-            String actionMethod = action.getActionMethod();
-            String actionLabel = action.getActionLabel();
+        final List<AccountingLineViewAction> viewActions = new ArrayList<>();
+        for (final AccountingLineViewActionDefinition action : accountingLineGroupActions) {
+            final String actionMethod = action.getActionMethod();
+            final String actionLabel = action.getActionLabel();
 
-            AccountingLineViewAction viewAction = new AccountingLineViewAction(actionMethod, actionLabel, 
+            final AccountingLineViewAction viewAction = new AccountingLineViewAction(actionMethod, actionLabel, 
                     action.getButtonStyle(), action.getButtonLabel(), action.getButtonIcon());
             viewActions.add(viewAction);
         }
@@ -331,7 +331,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @return the String "source" or "target" to populate the buildGroupAnchor
      */
     protected String getGroupInfix() {
-        Class accountingLineClass = accountingLineGroupDefinition.getAccountingLineClass();
+        final Class accountingLineClass = accountingLineGroupDefinition.getAccountingLineClass();
         return accountingLineClass.isAssignableFrom(SourceAccountingLine.class) ? "source" : "target";
     }
 
@@ -343,15 +343,15 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @throws JspException thrown under terrible circumstances when the rendering failed and had to be left behind like 
      *                      so much refuse
      */
-    protected void renderHideDetails(PageContext pageContext, Tag parentTag) throws JspException {
+    protected void renderHideDetails(final PageContext pageContext, final Tag parentTag) throws JspException {
         hideStateTag.setPageContext(pageContext);
         hideStateTag.setParent(parentTag);
 
         hideStateTag.doStartTag();
         hideStateTag.doEndTag();
 
-        String toggle = hideDetails ? "show" : "hide";
-        String displayToggle = hideDetails ? "Show" : "Hide";
+        final String toggle = hideDetails ? "show" : "hide";
+        final String displayToggle = hideDetails ? "Show" : "Hide";
 
         showHideTag.setPageContext(pageContext);
         showHideTag.setParent(parentTag);
@@ -373,15 +373,15 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @param parentTag the tag that is requesting all the rendering
      * @throws JspException thrown if something goes wrong
      */
-    protected void renderUploadCell(PageContext pageContext, Tag parentTag) throws JspException {
-        JspWriter out = pageContext.getOut();
+    protected void renderUploadCell(final PageContext pageContext, final Tag parentTag) throws JspException {
+        final JspWriter out = pageContext.getOut();
 
         if (canUpload()) {
             try {
-                String hideImport = getHideImportName();
-                String showImport = getShowImportName();
-                String showLink = getShowLinkName();
-                String uploadDiv = getUploadDivName();
+                final String hideImport = getHideImportName();
+                final String showImport = getShowImportName();
+                final String showLink = getShowLinkName();
+                final String uploadDiv = getUploadDivName();
 
                 out.write("\n<SCRIPT type=\"text/javascript\">\n");
                 out.write("<!--\n");
@@ -404,7 +404,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
                 scriptFileTag.setPageContext(pageContext);
                 scriptFileTag.setParent(parentTag);
-                String index = StringUtils.substringBetween(getLineCollectionProperty(), "[", "]");
+                final String index = StringUtils.substringBetween(getLineCollectionProperty(), "[", "]");
                 if (StringUtils.isNotBlank(index) && getLineCollectionProperty().contains("transactionEntries")) {
                     scriptFileTag.setProperty(StringUtils
                             .substringBeforeLast(getLineCollectionProperty(), ".") + "." + accountingLineGroupDefinition
@@ -518,7 +518,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      *
      * @param allowUpload should we be allowed to upload?
      */
-    public void overrideCanUpload(boolean allowUpload) {
+    public void overrideCanUpload(final boolean allowUpload) {
         this.shouldUpload = allowUpload;
     }
 
@@ -533,7 +533,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
      * @param cellCount The cellCount value to set.
      */
     @Override
-    public void setCellCount(int cellCount) {
+    public void setCellCount(final int cellCount) {
         this.cellCount = cellCount;
     }
 
@@ -547,7 +547,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param accountingDocument The accountingDocument to set.
      */
-    public void setAccountingDocument(AccountingDocument accountingDocument) {
+    public void setAccountingDocument(final AccountingDocument accountingDocument) {
         this.accountingDocument = accountingDocument;
     }
 
@@ -561,7 +561,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param accountingLineGroupDefinition The accountingLineGroupDefinition to set.
      */
-    public void setAccountingLineGroupDefinition(AccountingLineGroupDefinition accountingLineGroupDefinition) {
+    public void setAccountingLineGroupDefinition(final AccountingLineGroupDefinition accountingLineGroupDefinition) {
         this.accountingLineGroupDefinition = accountingLineGroupDefinition;
     }
 
@@ -575,7 +575,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param titleCellSpan The titleCellSpan value to set.
      */
-    public void setTitleCellSpan(int titleCellSpan) {
+    public void setTitleCellSpan(final int titleCellSpan) {
         this.titleCellSpan = titleCellSpan;
     }
 
@@ -589,7 +589,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param lineCollectionProperty The lineCollectionProperty value to set.
      */
-    public void setLineCollectionProperty(String lineCollectionProperty) {
+    public void setLineCollectionProperty(final String lineCollectionProperty) {
         this.lineCollectionProperty = lineCollectionProperty;
     }
 
@@ -603,7 +603,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param groupActionsRenderred The groupActionsRendered value to set.
      */
-    public void setGroupActionsRendered(boolean groupActionsRenderred) {
+    public void setGroupActionsRendered(final boolean groupActionsRenderred) {
         this.groupActionsRendered = groupActionsRenderred;
     }
 
@@ -624,7 +624,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     /**
      * @param hideDetails The hideDetails value to set.
      */
-    public void setHideDetails(boolean hideDetails) {
+    public void setHideDetails(final boolean hideDetails) {
         this.hideDetails = hideDetails;
     }
 
@@ -638,16 +638,16 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
     }
 
     private String buildFavoriteAccounts(String accountPrefix) {
-        int itemIdx = getItemIdx(accountPrefix);
+        final int itemIdx = getItemIdx(accountPrefix);
         Integer accountLineId = null;
         if (isDocumentIntegratedFavoriteAccount()) {
             if (itemIdx >= 0) {
-                accountLineId = ((PurchasingItemBase)((PurchasingDocumentBase)this.getAccountingDocument()).getItem(itemIdx)).getFavoriteAccountLineIdentifier();
+                accountLineId = ((PurchasingItemBase)((PurchasingDocumentBase)getAccountingDocument()).getItem(itemIdx)).getFavoriteAccountLineIdentifier();
             } else {
-                accountLineId = ((PurchasingDocumentBase)this.getAccountingDocument()).getFavoriteAccountLineIdentifier();
+                accountLineId = ((PurchasingDocumentBase)getAccountingDocument()).getFavoriteAccountLineIdentifier();
             }
         }
-        StringBuffer favoriteAccountLine = new StringBuffer();
+        final StringBuffer favoriteAccountLine = new StringBuffer();
         favoriteAccountLine.append("<tr>");
 
         favoriteAccountLine.append("<th colspan=\"2\" align=\"right\" valign=\"middle\" class=\"bord-l-b\">");
@@ -661,9 +661,9 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         }
         favoriteAccountLine.append("<td colspan=\"7\" class=\"infoline\">");
         favoriteAccountLine.append("<select name=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" id=\"").append(accountPrefix).append("favoriteAccountLineIdentifier\" title=\"* Favorite Account\">");
-        FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
+        final FavoriteAccountValuesFinder accounts = new FavoriteAccountValuesFinder();
         accounts.setBusinessObjectService(getBusinessObjectService());
-        for (KeyValue keyValue : (List<KeyValue>)accounts.getKeyValues()) {
+        for (final KeyValue keyValue : (List<KeyValue>)accounts.getKeyValues()) {
             favoriteAccountLine.append("<option value=\"").append(keyValue.getKey());
             if (checkToAddError(accountPrefix + "favoriteAccountLineIdentifier")) {
                 favoriteAccountLine.append(getSelected(accountLineId, keyValue.getKey()));
@@ -691,7 +691,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
         return favoriteAccountLine.toString();
     }
 
-    private String getSelected(Object propertyValue, Object keyValue) {
+    private String getSelected(final Object propertyValue, final Object keyValue) {
         if (propertyValue != null) {
             if (propertyValue.toString().equalsIgnoreCase(keyValue.toString())) {
                 return "\" selected=\"selected\" >";
@@ -701,7 +701,7 @@ public class GroupTitleLineRenderer implements Renderer, CellCountCurious {
 
     }
 
-    private boolean checkToAddError(String errorKey) {
+    private boolean checkToAddError(final String errorKey) {
         if (CollectionUtils.isNotEmpty(GlobalVariables.getMessageMap().getErrorMessagesForProperty(errorKey))) {
             return true;
         }

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -88,16 +88,17 @@ public class RequisitionAction extends PurchasingActionBase {
      * save the document without any validations.....
      */
     @Override
-    public ActionForward save(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward save(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         //call the super save to save the document without validations...
         super.save(mapping, form, request, response);
 
         // we need to make "calculated" to false so that the "below lines" can be edited until calculated button is
         // clicked.
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        PurchasingFormBase baseForm = (PurchasingFormBase) form;
-        PurchasingAccountsPayableDocument purapDocument =
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final PurchasingFormBase baseForm = (PurchasingFormBase) form;
+        final PurchasingAccountsPayableDocument purapDocument =
                 (PurchasingAccountsPayableDocument) kualiDocumentFormBase.getDocument();
 
         baseForm.setCalculated(false);
@@ -110,20 +111,21 @@ public class RequisitionAction extends PurchasingActionBase {
      * Does initialization for a new requisition.
      */
     @Override
-    protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.createDocument(kualiDocumentFormBase);
         ((RequisitionDocument) kualiDocumentFormBase.getDocument()).initiateDocument();
     }
 
-    public ActionForward setAsDefaultBuilding(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                              HttpServletResponse response) throws Exception {
-        RequisitionDocument req = (RequisitionDocument) ((RequisitionForm) form).getDocument();
+    public ActionForward setAsDefaultBuilding(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                              final HttpServletResponse response) throws Exception {
+        final RequisitionDocument req = (RequisitionDocument) ((RequisitionForm) form).getDocument();
 
         if (ObjectUtils.isNotNull(req.getDeliveryCampusCode())
                 && ObjectUtils.isNotNull(req.getDeliveryBuildingCode())) {
             DefaultPrincipalAddress defaultPrincipalAddress = new DefaultPrincipalAddress(
                     GlobalVariables.getUserSession().getPerson().getPrincipalId());
-            Map addressKeys = SpringContext.getBean(PersistenceService.class)
+            final Map addressKeys = SpringContext.getBean(PersistenceService.class)
                     .getPrimaryKeyFieldValues(defaultPrincipalAddress);
             defaultPrincipalAddress = SpringContext.getBean(BusinessObjectService.class)
                     .findByPrimaryKey(DefaultPrincipalAddress.class, addressKeys);
@@ -143,11 +145,12 @@ public class RequisitionAction extends PurchasingActionBase {
     }
 
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
-        ActionForward forward = super.refresh(mapping, form, request, response);
-        RequisitionForm rqForm = (RequisitionForm) form;
-        RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
+    public ActionForward refresh(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                 final HttpServletResponse response) throws Exception {
+        final ActionForward forward = super.refresh(mapping, form, request, response);
+        final RequisitionForm rqForm = (RequisitionForm) form;
+        final RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
 
         // super.refresh() must occur before this line to get the correct APO limit
         document.setOrganizationAutomaticPurchaseOrderLimit(SpringContext.getBean(PurapService.class)
@@ -157,10 +160,11 @@ public class RequisitionAction extends PurchasingActionBase {
     }
 
     @Override
-    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
-        RequisitionForm rqForm = (RequisitionForm) form;
-        RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
+    public ActionForward approve(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                 final HttpServletResponse response) throws Exception {
+        final RequisitionForm rqForm = (RequisitionForm) form;
+        final RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
         if (document.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames()
                 .contains(RequisitionStatuses.NODE_CONTENT_REVIEW)) {
 
@@ -194,9 +198,9 @@ public class RequisitionAction extends PurchasingActionBase {
                 //Org was updated at the content review node, so it needs to reroute to the new approver.
                 //we will attempt to swallow that action here and just reload the document at the end.
                 getDocumentService().saveDocument(document);
-                DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService()
+                final DocumentRouteHeaderValue routeHeader = KEWServiceLocator.getRouteHeaderService()
                         .getRouteHeader(document.getDocumentNumber());
-                DocumentRefreshQueue docRequeue = KewApiServiceLocator
+                final DocumentRefreshQueue docRequeue = KewApiServiceLocator
                         .getDocumentRequeuerService(routeHeader.getDocumentId(), 0L);
                 docRequeue.refreshDocument(
                         routeHeader.getDocumentId(),
@@ -229,19 +233,21 @@ public class RequisitionAction extends PurchasingActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward addAsset(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response) throws Exception {
-        RequisitionForm rqForm = (RequisitionForm) form;
-        RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
+    public ActionForward addAsset(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                  final HttpServletResponse response) throws Exception {
+        final RequisitionForm rqForm = (RequisitionForm) form;
+        final RequisitionDocument document = (RequisitionDocument) rqForm.getDocument();
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    public ActionForward displayB2BRequisition(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                               HttpServletResponse response) throws Exception {
-        RequisitionForm reqForm = (RequisitionForm) form;
+    public ActionForward displayB2BRequisition(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                               final HttpServletResponse response) throws Exception {
+        final RequisitionForm reqForm = (RequisitionForm) form;
         reqForm.setDocId((String) request.getSession().getAttribute("docId"));
         loadDocument(reqForm);
-        String multipleB2BReqs = (String) request.getSession().getAttribute("multipleB2BRequisitions");
+        final String multipleB2BReqs = (String) request.getSession().getAttribute("multipleB2BRequisitions");
         if (StringUtils.isNotEmpty(multipleB2BReqs)) {
             KNSGlobalVariables.getMessageList().add(PurapKeyConstants.B2B_MULTIPLE_REQUISITIONS);
         }
@@ -250,7 +256,7 @@ public class RequisitionAction extends PurchasingActionBase {
 
         // attach any extra JS from the data dictionary
         if (reqForm.getAdditionalScriptFiles().isEmpty()) {
-            DocumentEntry docEntry = getDocumentDictionaryService().getDocumentEntry(
+            final DocumentEntry docEntry = getDocumentDictionaryService().getDocumentEntry(
                     reqForm.getDocument().getDocumentHeader().getWorkflowDocument().getDocumentTypeName());
             reqForm.getAdditionalScriptFiles().addAll(docEntry.getWebScriptFiles());
         }
@@ -269,10 +275,11 @@ public class RequisitionAction extends PurchasingActionBase {
      * @return An ActionForward
      * @throws Exception
      */
-    public ActionForward clearVendor(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response) throws Exception {
-        PurchasingFormBase baseForm = (PurchasingFormBase) form;
-        RequisitionDocument document = (RequisitionDocument) baseForm.getDocument();
+    public ActionForward clearVendor(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                     final HttpServletResponse response) throws Exception {
+        final PurchasingFormBase baseForm = (PurchasingFormBase) form;
+        final RequisitionDocument document = (RequisitionDocument) baseForm.getDocument();
 
         document.setVendorHeaderGeneratedIdentifier(null);
         document.setVendorDetailAssignedIdentifier(null);
@@ -298,9 +305,10 @@ public class RequisitionAction extends PurchasingActionBase {
      * time of blanket approve.
      */
     @Override
-    public ActionForward blanketApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response) throws Exception {
-        RequisitionDocument document = (RequisitionDocument) ((PurchasingFormBase) form).getDocument();
+    public ActionForward blanketApprove(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                        final HttpServletResponse response) throws Exception {
+        final RequisitionDocument document = (RequisitionDocument) ((PurchasingFormBase) form).getDocument();
         document.setBlanketApproveRequest(true);
         return super.blanketApprove(mapping, form, request, response);
     }
@@ -316,23 +324,24 @@ public class RequisitionAction extends PurchasingActionBase {
      * @throws Exception
      */
     @Override
-    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response) throws Exception {
-        PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
+    public ActionForward addItem(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                                 final HttpServletResponse response) throws Exception {
+        final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
-        RequisitionItem requisitionItem = (RequisitionItem) item;
-        PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
+        final RequisitionItem requisitionItem = (RequisitionItem) item;
+        final PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
 
         if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
-            boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+            final boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
                     RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
             if (commCodeParam && purchasingForm instanceof RequisitionForm) {
-                RequisitionDocument reqs = (RequisitionDocument) purchasingForm.getDocument();
-                VendorDetail dtl = reqs.getVendorDetail();
+                final RequisitionDocument reqs = (RequisitionDocument) purchasingForm.getDocument();
+                final VendorDetail dtl = reqs.getVendorDetail();
                 if (ObjectUtils.isNotNull(dtl)) {
-                    List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
-                    for (VendorCommodityCode commodity : vcc) {
+                    final List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
+                    for (final VendorCommodityCode commodity : vcc) {
                         if (commodity.isCommodityDefaultIndicator()) {
                             requisitionItem.setPurchasingCommodityCode(commodity.getPurchasingCommodityCode());
                         }
@@ -341,7 +350,7 @@ public class RequisitionAction extends PurchasingActionBase {
             }
         }
 
-        boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
+        final boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
                 .applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
 
         if (rulePassed) {
@@ -353,13 +362,14 @@ public class RequisitionAction extends PurchasingActionBase {
     }
 
     @Override
-    public ActionForward route(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                               HttpServletResponse response) throws Exception {
+    public ActionForward route(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+                               final HttpServletResponse response) throws Exception {
         if (shouldWarnIfNoAccountingLines(form)) {
-            String question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
+            final String question = request.getParameter(KRADConstants.QUESTION_INST_ATTRIBUTE_NAME);
             if (StringUtils.equals(question, PurapConstants.REQUISITION_ACCOUNTING_LINES_QUESTION)) {
                 // We're getting an answer from our question
-                String answer = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
+                final String answer = request.getParameter(KRADConstants.QUESTION_CLICKED_BUTTON);
                 // if the answer is "yes"- continue routing, but if it isn't...
                 if (!StringUtils.equals(answer, ConfirmationQuestion.YES)) {
                     // answer is "no, don't continue." so we'll just add a warning and refresh the page
@@ -371,7 +381,7 @@ public class RequisitionAction extends PurchasingActionBase {
             } else {
                 // We have an empty item and we have a content reviewer. We will now ask the user if he wants to
                 // ignore the empty item (and let the content reviewer take care of it later).
-                return this.performQuestionWithoutInput(mapping, form, request, response,
+                return performQuestionWithoutInput(mapping, form, request, response,
                         PurapConstants.REQUISITION_ACCOUNTING_LINES_QUESTION,
                         PurapConstants.QUESTION_REQUISITON_ROUTE_WITHOUT_ACCOUNTING_LINES,
                         KRADConstants.CONFIRMATION_QUESTION, KFSConstants.ROUTE_METHOD, "1");
@@ -380,18 +390,18 @@ public class RequisitionAction extends PurchasingActionBase {
         return super.route(mapping, form, request, response);
     }
 
-    protected boolean shouldWarnIfNoAccountingLines(ActionForm form) {
-        RequisitionDocument doc = (RequisitionDocument) ((PurchasingFormBase) form).getDocument();
-        RequisitionService reqs = getRequisitionService();
+    protected boolean shouldWarnIfNoAccountingLines(final ActionForm form) {
+        final RequisitionDocument doc = (RequisitionDocument) ((PurchasingFormBase) form).getDocument();
+        final RequisitionService reqs = getRequisitionService();
         return doc.isMissingAccountingLines() && !reqs.getContentReviewers(doc.getOrganizationCode(),
                 doc.getChartOfAccountsCode()).isEmpty();
     }
 
     protected synchronized RequisitionService getRequisitionService() {
-        if (this.requisitionService == null) {
-            this.requisitionService = SpringContext.getBean(RequisitionService.class);
+        if (requisitionService == null) {
+            requisitionService = SpringContext.getBean(RequisitionService.class);
         }
-        return this.requisitionService;
+        return requisitionService;
     }
 
     protected synchronized FinancialSystemWorkflowHelperService getFinancialSystemWorkflowHelperService() {

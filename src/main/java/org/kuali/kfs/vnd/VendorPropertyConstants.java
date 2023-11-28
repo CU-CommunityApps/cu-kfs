@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -110,7 +110,7 @@ public final class VendorPropertyConstants {
     public static final String VENDOR_COMMODITIES_CODE = "vendorCommodities";
     public static final String PURCHASING_COMMODITY_CODE = "purchasingCommodityCode";
     public static final String CAMPUS_CODE = "campusCode";
-    public static final String VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE = "vendorCommodities." + 
+    public static final String VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE = "vendorCommodities." +
             PURCHASING_COMMODITY_CODE;
     public static final String VENDOR_COMMODITIES_DEFAULT_INDICATOR = "commodityDefaultIndicator";
 

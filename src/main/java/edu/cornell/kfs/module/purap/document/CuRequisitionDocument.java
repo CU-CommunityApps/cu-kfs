@@ -72,10 +72,10 @@ public class CuRequisitionDocument extends RequisitionDocument {
     }
 
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(PurapWorkflowConstants.AWARD_REVIEW_REQUIRED)) return isAwardReviewRequired();
         if (nodeName.equals(CUPurapWorkflowConstants.B2B_AUTO_PURCHASE_ORDER)) { 
-            boolean isB2BAutoPurchaseOrder =  isB2BAutoPurchaseOrder();
+            final boolean isB2BAutoPurchaseOrder =  isB2BAutoPurchaseOrder();
             if(isB2BAutoPurchaseOrder) this.paymentRequestPositiveApprovalIndicator=true;
             return isB2BAutoPurchaseOrder;
         }
@@ -95,19 +95,19 @@ public class CuRequisitionDocument extends RequisitionDocument {
     public void initiateDocument() {
         super.initiateDocument();
 
-        Person currentUser = GlobalVariables.getUserSession().getPerson();
-        this.setDeliveryToName(currentUser.getNameUnmasked());
-        this.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
-        this.setRequestorPersonName(currentUser.getNameUnmasked());
-        this.setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
+        final Person currentUser = GlobalVariables.getUserSession().getPerson();
+        setDeliveryToName(currentUser.getNameUnmasked());
+        setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
+        setRequestorPersonName(currentUser.getNameUnmasked());
+        setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
         
-        this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
+        setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
     }
 
     protected boolean isB2BAutoPurchaseOrder() {
         boolean returnValue = false;
  
-        VendorDetail vendorDetail = SpringContext.getBean(VendorService.class)
+        final VendorDetail vendorDetail = SpringContext.getBean(VendorService.class)
                 .getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
         if (vendorDetail != null) {
             if (vendorDetail.isB2BVendor()) {                                                   
@@ -123,8 +123,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
     protected boolean isB2BTotalAmountForAutoPO() {
         boolean returnValue = false;
         
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        String autoPOAmountString = new String(parameterService.getParameterValueAsString(RequisitionDocument.class,
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        final String autoPOAmountString = new String(parameterService.getParameterValueAsString(RequisitionDocument.class,
                 CUPurapParameterConstants.B2B_TOTAL_AMOUNT_FOR_AUTO_PO));
         KualiDecimal autoPOAmount = new KualiDecimal(autoPOAmountString);
         // KFSPTS-1625
@@ -142,8 +142,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
                 autoPOAmount = new KualiDecimal(paramVal);
             }
         }
-        RequisitionDocument document = (RequisitionDocument) (SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(this.getDocumentNumber()));
-        KualiDecimal totalAmount = document.getDocumentHeader().getFinancialDocumentTotalAmount();
+        final RequisitionDocument document = (RequisitionDocument) (SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(this.getDocumentNumber()));
+        final KualiDecimal totalAmount = document.getDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(autoPOAmount) && ObjectUtils.isNotNull(totalAmount) && (autoPOAmount.compareTo(totalAmount) >= 0)) {  
             returnValue = true;
                
@@ -154,9 +154,9 @@ public class CuRequisitionDocument extends RequisitionDocument {
     }
     
     public String getRoutedByPrincipalId() {
-        DocumentService documentService = SpringContext.getBean(DocumentService.class);
-        RequisitionDocument document = (RequisitionDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
-        String principalId = document.getDocumentHeader().getWorkflowDocument().getRoutedByPrincipalId();
+        final DocumentService documentService = SpringContext.getBean(DocumentService.class);
+        final RequisitionDocument document = (RequisitionDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
+        final String principalId = document.getDocumentHeader().getWorkflowDocument().getRoutedByPrincipalId();
 
         return principalId;
     }
@@ -175,7 +175,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
     public void toCopyFromGateway() throws WorkflowException, ValidationException {
         //no validation for the KFS copy requisition rules:
         
-        String sourceDocumentHeaderId = getDocumentNumber();
+        final String sourceDocumentHeaderId = getDocumentNumber();
         setNewDocumentHeader();
         
         getDocumentHeader().setDocumentTemplateNumber(sourceDocumentHeaderId);
@@ -196,16 +196,16 @@ public class CuRequisitionDocument extends RequisitionDocument {
         updatePostingYearForAccountingLines(getTargetAccountingLines());
         
         //--RequisitionDocument:
-        this.setObjectId(null);
+        setObjectId(null);
         
         // Clear related views
-        this.setAccountsPayablePurchasingDocumentLinkIdentifier(null);
-        this.setRelatedViews(null);
+        setAccountsPayablePurchasingDocumentLinkIdentifier(null);
+        setRelatedViews(null);
         
-        Person currentUser = GlobalVariables.getUserSession().getPerson();
-        ChartOrgHolder purapChartOrg = SpringContext.getBean(FinancialSystemUserService.class)
+        final Person currentUser = GlobalVariables.getUserSession().getPerson();
+        final ChartOrgHolder purapChartOrg = SpringContext.getBean(FinancialSystemUserService.class)
                 .getPrimaryOrganization(currentUser, PurapConstants.PURAP_NAMESPACE);
-        this.setPurapDocumentIdentifier(null);
+        setPurapDocumentIdentifier(null);
 
         // Set req status to INPR.
         //for app doc status
@@ -213,24 +213,24 @@ public class CuRequisitionDocument extends RequisitionDocument {
 
         // Set fields from the user.
         if (ObjectUtils.isNotNull(purapChartOrg)) {
-            this.setChartOfAccountsCode(purapChartOrg.getChartOfAccountsCode());
-            this.setOrganizationCode(purapChartOrg.getOrganizationCode());
+            setChartOfAccountsCode(purapChartOrg.getChartOfAccountsCode());
+            setOrganizationCode(purapChartOrg.getOrganizationCode());
         }
-        this.setPostingYear(SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear());
+        setPostingYear(SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear());
 
         boolean activeVendor = true;
         boolean activeContract = true;
-        Date today =  SpringContext.getBean(DateTimeService.class).getCurrentDate();
+        final Date today =  SpringContext.getBean(DateTimeService.class).getCurrentDate();
         VendorContract vendorContract = new VendorContract();
         vendorContract.setVendorContractGeneratedIdentifier(this.getVendorContractGeneratedIdentifier());
-        Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(vendorContract);
+        final Map keys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(vendorContract);
         vendorContract = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(VendorContract.class, keys);
         if (!(vendorContract != null && today.after(vendorContract.getVendorContractBeginningDate())
                 && today.before(vendorContract.getVendorContractEndDate()))) {
             activeContract = false;
         }
 
-        VendorDetail vendorDetail = SpringContext.getBean(VendorService.class)
+        final VendorDetail vendorDetail = SpringContext.getBean(VendorService.class)
                 .getVendorDetail(this.getVendorHeaderGeneratedIdentifier(), this.getVendorDetailAssignedIdentifier());
         if (!(vendorDetail != null && vendorDetail.isActiveIndicator())) {
             activeVendor = false;
@@ -238,8 +238,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
 
         //KFSPTS-916 : need vendor address key for business rules and only way to get it is to retrieve the default PO address for the vendor.
         if (vendorDetail != null) {         
-            VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(this.getVendorHeaderGeneratedIdentifier(),
-                    this.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, "");
+            final VendorAddress vendorAddress = SpringContext.getBean(VendorService.class).getVendorDefaultAddress(getVendorHeaderGeneratedIdentifier(),
+                    getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, "");
             if (vendorAddress != null) {
                 super.templateVendorAddress(vendorAddress);   
             }
@@ -256,18 +256,18 @@ public class CuRequisitionDocument extends RequisitionDocument {
         }
 
         if (!activeVendor) {
-            this.setVendorContractGeneratedIdentifier(null);
+            setVendorContractGeneratedIdentifier(null);
         }
         if (!activeContract) {
-            this.setVendorContractGeneratedIdentifier(null);
+            setVendorContractGeneratedIdentifier(null);
         }
 
         // These fields should not be set in this method; force to be null
-        this.setOrganizationAutomaticPurchaseOrderLimit(null);
-        this.setPurchaseOrderAutomaticIndicator(false);
+        setOrganizationAutomaticPurchaseOrderLimit(null);
+        setPurchaseOrderAutomaticIndicator(false);
 
-        for (Iterator iter = this.getItems().iterator(); iter.hasNext();) {
-            RequisitionItem item = (RequisitionItem) iter.next();
+        for (final Iterator iter = this.getItems().iterator(); iter.hasNext();) {
+            final RequisitionItem item = (RequisitionItem) iter.next();
             item.setPurapDocumentIdentifier(null);
             item.setItemIdentifier(null);
             for (Iterator acctIter = item.getSourceAccountingLines().iterator(); acctIter.hasNext();) {
@@ -280,18 +280,18 @@ public class CuRequisitionDocument extends RequisitionDocument {
         if (!PurapConstants.RequisitionSources.B2B.equals(this.getRequisitionSourceCode())) {
             SpringContext.getBean(PurapService.class).addBelowLineItems(this);
         }
-        this.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
+        setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
         clearCapitalAssetFields();
         SpringContext.getBean(PurapService.class).clearTax(this, this.isUseTaxIndicator());
         
-        this.refreshNonUpdateableReferences();
+        refreshNonUpdateableReferences();
     }
     
     @Override
     public boolean isSensitive() {
         boolean isSensitive =  super.isSensitive();
 
-        for (PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
+        for (final PurchasingItemBase item : (List<PurchasingItemBase>)this.getItems()) {
             if (item.getCommodityCode() != null 
                     && item.getCommodityCode().getSensitiveDataCode() != null 
                     && item.getCommodityCode().getSensitiveDataCode().length() != 0) {
@@ -306,16 +306,16 @@ public class CuRequisitionDocument extends RequisitionDocument {
     protected boolean isAwardReviewRequired() {
         boolean requiresAwardReview = false;
         
-        this.getAccountsForRouting();
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        getAccountsForRouting();
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
         
         // If the award amount is less than the threshold, then there's no reason to review the object codes, return false
         if (!isAwardAmountGreaterThanThreshold()) {
             return requiresAwardReview;
         }
         
-        for (PurApItem item : (List<PurApItem>) this.getItems()) {
-            for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+        for (final PurApItem item : (List<PurApItem>) this.getItems()) {
+            for (final PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
                 
                 requiresAwardReview = isObjectCodeAllowedForAwardRouting(accountingLine, parameterService);
                 // We should return true as soon as we have at least one objectCodeAllowed=true so that the PO will stop at Award
@@ -329,7 +329,8 @@ public class CuRequisitionDocument extends RequisitionDocument {
         return requiresAwardReview;        
     }
 
-    protected boolean isObjectCodeAllowedForAwardRouting(PurApAccountingLine accountingLine, ParameterService parameterService) {
+    protected boolean isObjectCodeAllowedForAwardRouting(
+            final PurApAccountingLine accountingLine, final ParameterService parameterService) {
         if (ObjectUtils.isNull(accountingLine.getObjectCode())) {
             return false;
         }
@@ -339,7 +340,7 @@ public class CuRequisitionDocument extends RequisitionDocument {
             return false;
         }
 
-        String chartCode = accountingLine.getChartOfAccountsCode();
+        final String chartCode = accountingLine.getChartOfAccountsCode();
         // check object level is in permitted list for award routing
         boolean objectCodeAllowed = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(PurchaseOrderDocument.class,
                 PurapParameterConstants.CG_ROUTE_OBJECT_LEVELS_BY_CHART, PurapParameterConstants.NO_CG_ROUTE_OBJECT_LEVELS_BY_CHART,
@@ -356,9 +357,9 @@ public class CuRequisitionDocument extends RequisitionDocument {
     }
 
     protected boolean isAwardAmountGreaterThanThreshold() {
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        String dollarThreshold = parameterService.getParameterValueAsString("KFS-PURAP", "Requisition", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
-        KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        final String dollarThreshold = parameterService.getParameterValueAsString("KFS-PURAP", "Requisition", DOLLAR_THRESHOLD_REQUIRING_AWARD_REVIEW);
+        final KualiDecimal dollarThresholdDecimal = new KualiDecimal(dollarThreshold);
         if (this.getTotalPreTaxDollarAmount().isGreaterEqual(dollarThresholdDecimal)) {
             return true;
         }               
@@ -366,11 +367,11 @@ public class CuRequisitionDocument extends RequisitionDocument {
     }
     
     public List<Account> getAccountsForAwardRouting() {
-        List<Account> accounts = new ArrayList<Account>();
+        final List<Account> accounts = new ArrayList<Account>();
         
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        for (PurApItem item : (List<PurApItem>) this.getItems()) {
-            for (PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        for (final PurApItem item : (List<PurApItem>) this.getItems()) {
+            for (final PurApAccountingLine accountingLine : item.getSourceAccountingLines()) {
                 if (isObjectCodeAllowedForAwardRouting(accountingLine, parameterService)) {
                     if (ObjectUtils.isNull(accountingLine.getAccount())) {
                         accountingLine.refreshReferenceObject("account");
@@ -388,11 +389,11 @@ public class CuRequisitionDocument extends RequisitionDocument {
      * @see org.kuali.kfs.module.purap.document.RequisitionDocument#doRouteLevelChange(org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange)
      */
     @Override
-    public void doRouteLevelChange(DocumentRouteLevelChange change) {
+    public void doRouteLevelChange(final DocumentRouteLevelChange change) {
     	super.doRouteLevelChange(change);
     	
     	// if route node is CommodityAPO change to app doc status Awaiting Commodity Review
-		String nodeName = change.getNewNodeName();
+		final String nodeName = change.getNewNodeName();
 		
 		if (RequisitionStatuses.NODE_COMMODITY_CODE_APO_REVIEW.equalsIgnoreCase(nodeName)) {
 			if (!RequisitionStatuses.APPDOC_AWAIT_COMMODITY_CODE_REVIEW.equals(this.getApplicationDocumentStatus())) {
@@ -411,13 +412,13 @@ public class CuRequisitionDocument extends RequisitionDocument {
      * @see org.kuali.kfs.module.purap.document.PurchasingDocumentBase#prepareForSave(org.kuali.kfs.krad.rules.rule.event.KualiDocumentEvent)
      */
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
         super.prepareForSave(event);
-        SequenceAccessorService sequenceAccessorService = SpringContext.getBean(SequenceAccessorService.class);
-        for (Note note : getNotes()) {
+        final SequenceAccessorService sequenceAccessorService = SpringContext.getBean(SequenceAccessorService.class);
+        for (final Note note : getNotes()) {
             if (note.getNoteIdentifier() == null && ObjectUtils.isNull(note.getAttachment())) {
                 // Pre-populate IDs on unsaved notes without attachments, as well as their extended attributes.
-                Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
+                final Long newNoteId = sequenceAccessorService.getNextAvailableSequenceNumber(CUKFSConstants.NOTE_SEQUENCE_NAME);
                 note.setNoteIdentifier(newNoteId);
                 ((NoteExtendedAttribute) note.getExtension()).setNoteIdentifier(newNoteId);
             }

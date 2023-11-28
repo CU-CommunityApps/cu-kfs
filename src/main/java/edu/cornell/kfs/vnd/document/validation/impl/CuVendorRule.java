@@ -39,7 +39,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 public class CuVendorRule extends CuVendorRuleBase {
     private CommodityCodeService commodityCodeService = (CommodityCodeService)  GlobalResourceLoader.getService("commodityCodeService");
 
-    protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
+    protected boolean processCustomRouteDocumentBusinessRules(final MaintenanceDocument document) {
         boolean valid = super.processCustomRouteDocumentBusinessRules(document);
         if (ObjectUtils.isNotNull(((VendorDetail)getNewBo()).getVendorHeader().getVendorType())) {
         	// in vendorrule newVendor is set to newBo
@@ -58,17 +58,17 @@ public class CuVendorRule extends CuVendorRuleBase {
         return valid;
     }
 
-    public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
+    public boolean processCustomAddCollectionLineBusinessRules(final MaintenanceDocument document, String collectionName,
             PersistableBusinessObject bo) {
         boolean success = super.processCustomAddCollectionLineBusinessRules(document, collectionName, bo);
 
 
         if (bo instanceof VendorAddress) {
-             VendorAddress address = (VendorAddress) bo;           
-            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-            VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+            final VendorAddress address = (VendorAddress) bo;           
+            final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+            final VendorHeader vendorHeader = vendorDetail.getVendorHeader();
 //            String propertyConstant = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
-            String propertyConstant = "add.vendorAddresses.";
+            final String propertyConstant = "add.vendorAddresses.";
 			if (StringUtils.isBlank(vendorHeader.getVendorTypeCode())) {
 				success = false;
 				putFieldError(VendorPropertyConstants.VENDOR_TYPE_CODE,CUVendorKeyConstants.ERROR_DOCUMENT_VENDOR_TYPE_IS_REQUIRED_FOR_ADD_VENDORADRESS);
@@ -80,29 +80,29 @@ public class CuVendorRule extends CuVendorRuleBase {
         
         }
         if (bo instanceof CuVendorCreditCardMerchant) {
-        	CuVendorCreditCardMerchant vendorMerchant = (CuVendorCreditCardMerchant) bo;
-            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+            final CuVendorCreditCardMerchant vendorMerchant = (CuVendorCreditCardMerchant) bo;
+            final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
             success &=validateCreditCardMerchantAddition(vendorDetail, vendorMerchant);
         }
         if (bo instanceof VendorSupplierDiversity) {
-        	VendorSupplierDiversity vendorSupplierDiversity = (VendorSupplierDiversity) bo;
+            final VendorSupplierDiversity vendorSupplierDiversity = (VendorSupplierDiversity) bo;
             success &=validateSupplierDiversityAddition( vendorSupplierDiversity);
         }
 
         return success;
     }
 
-    public boolean processAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
-            PersistableBusinessObject bo) {
+    public boolean processAddCollectionLineBusinessRules(final MaintenanceDocument document, final String collectionName,
+            final PersistableBusinessObject bo) {
         boolean success = super.processAddCollectionLineBusinessRules(document, collectionName, bo);
         if (collectionName.equals(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES)) {
-            VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
-    		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
-    		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
+            final VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
+            final VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+            final List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
     		if (vendorSupplierDiversities.size() > 0)
     		{
     			int i = 0;
-    			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
+    			for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
     				if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate() == null ) {
     					success = false;
     					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);
@@ -122,20 +122,20 @@ public class CuVendorRule extends CuVendorRuleBase {
     		}
         }
         if (collectionName.equals("vendorCommodities")) {
-        	VendorCommodityCode codeToBeValidated = (VendorCommodityCode) bo;
-			CommodityCode persistedCommodity = commodityCodeService.getByPrimaryId(codeToBeValidated.getPurchasingCommodityCode());			
+            final VendorCommodityCode codeToBeValidated = (VendorCommodityCode) bo;
+            final CommodityCode persistedCommodity = commodityCodeService.getByPrimaryId(codeToBeValidated.getPurchasingCommodityCode());			
 			if (persistedCommodity == null) {
 				// a commodity code entered by a user does not exist
 				putFieldError("add.vendorCommodities.purchasingCommodityCode", CUVendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_DOES_NOT_EXIST, codeToBeValidated.getPurchasingCommodityCode());
 				success = false;
 			}
 			if (codeToBeValidated.isCommodityDefaultIndicator()) {
-				VendorDetail vendorDetail = (VendorDetail) document.getDocumentBusinessObject();
-				List<VendorCommodityCode> vendorCommodities = vendorDetail.getVendorCommodities();
-				Iterator<VendorCommodityCode> commodities = vendorCommodities.iterator();
+			    final VendorDetail vendorDetail = (VendorDetail) document.getDocumentBusinessObject();
+			    final List<VendorCommodityCode> vendorCommodities = vendorDetail.getVendorCommodities();
+			    final Iterator<VendorCommodityCode> commodities = vendorCommodities.iterator();
 				int indice = 0;
 				while (commodities.hasNext()) {
-					VendorCommodityCode commodity = (VendorCommodityCode) commodities.next();
+				    final VendorCommodityCode commodity = (VendorCommodityCode) commodities.next();
 					if (commodity.isCommodityDefaultIndicator()){
 						// more than one "default" commodity code has been specified
 						putFieldError("add.vendorCommodities.commodityDefaultIndicator", CUVendorKeyConstants.ERROR_DEFAULT_VENDOR_COMMODITY_CODE_ALREADY_EXISTS, Integer.toString(indice));
@@ -144,11 +144,11 @@ public class CuVendorRule extends CuVendorRuleBase {
 					indice++;
 				}
 			}
-            VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
+            final VendorDetail vendorDetail = (VendorDetail)document.getDocumentBusinessObject();
             boolean commodityAlreadyAssignedToThisVendor = false;
-            Iterator<VendorCommodityCode> codes = vendorDetail.getVendorCommodities().iterator();
+            final Iterator<VendorCommodityCode> codes = vendorDetail.getVendorCommodities().iterator();
             while (codes.hasNext()){
-            	VendorCommodityCode vcc = codes.next();
+                final VendorCommodityCode vcc = codes.next();
             	if (vcc.getPurchasingCommodityCode().equals(codeToBeValidated.getPurchasingCommodityCode())){
             		commodityAlreadyAssignedToThisVendor = true;
             		break;
@@ -165,21 +165,21 @@ public class CuVendorRule extends CuVendorRuleBase {
 
     // CU enhancement related po transmission KFSUPGRADE-348
     // can't override processAddressValidation because it has no modifier, so only class/package can access it.
-    boolean processCuAddressValidation(MaintenanceDocument document) {
+    boolean processCuAddressValidation(final MaintenanceDocument document) {
     	boolean valid = true;
-        VendorDetail newVendor = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+        final VendorDetail newVendor = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 
-        List<VendorAddress> addresses = newVendor.getVendorAddresses();
-        String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
-        String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType()
+        final List<VendorAddress> addresses = newVendor.getVendorAddresses();
+        final String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
+        final String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType()
                 .getVendorAddressTypeRequiredCode();
         verifyPOTransmissionTypeAllowedForVendorType(vendorTypeCode, addresses);
         for (int i = 0; i < addresses.size(); i++) {
-            VendorAddress address = addresses.get(i);
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
+            final VendorAddress address = addresses.get(i);
+            final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
             GlobalVariables.getMessageMap().clearErrorPath();
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-            String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "].";
+            final String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "].";
             valid &= checkAddressMethodOfPOTransmissionAndData(vendorTypeCode, vendorAddressTypeRequiredCode, address, propertyName);
 
             GlobalVariables.getMessageMap().clearErrorPath();
@@ -189,11 +189,11 @@ public class CuVendorRule extends CuVendorRuleBase {
         return valid;
     }
 
-	protected boolean checkGeneralLiabilityAmountAndExpiration(MaintenanceDocument document) {
+	protected boolean checkGeneralLiabilityAmountAndExpiration(final MaintenanceDocument document) {
 		boolean success = true;
 		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 		
 		if (vendorDetailExt.getGeneralLiabilityCoverageAmount()!=null && vendorDetailExt.getGeneralLiabilityExpiration()==null) {
 			success = false;
@@ -213,11 +213,11 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
     
-	protected boolean checkAutoLiabilityAmountAndExpiration(MaintenanceDocument document) {
+	protected boolean checkAutoLiabilityAmountAndExpiration(final MaintenanceDocument document) {
 		boolean success = true;
 		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 
 		if (vendorDetailExt.getAutomobileLiabilityCoverageAmount()!=null && vendorDetailExt.getAutomobileLiabilityExpiration()==null) {
 			success = false;
@@ -237,11 +237,11 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
 
-	protected boolean checkWorkmansCompAmountAndExpiration(MaintenanceDocument document) {
+	protected boolean checkWorkmansCompAmountAndExpiration(final MaintenanceDocument document) {
 		boolean success = true;
 
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 
 		if (vendorDetailExt.getWorkmansCompCoverageAmount()!=null && vendorDetailExt.getWorkmansCompExpiration()==null) {
 			success = false;
@@ -262,11 +262,11 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
 
-	protected boolean checkUmbrellaPolicyAmountAndExpiration(MaintenanceDocument document) {
+	protected boolean checkUmbrellaPolicyAmountAndExpiration(final MaintenanceDocument document) {
 		boolean success = true;
 		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 
 		if (vendorDetailExt.getExcessLiabilityUmbrellaAmount()!=null && vendorDetailExt.getExcessLiabilityUmbExpiration()==null) {
 			success = false;
@@ -287,10 +287,10 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
 
-	protected boolean checkHealthLicenseAndExpiration(MaintenanceDocument document) {
+	protected boolean checkHealthLicenseAndExpiration(final MaintenanceDocument document) {
 		boolean success = true;
 		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 
 		Boolean offSiteCateringLicenseRequired = ((VendorDetailExtension)vendorDetail.getExtension()).getHealthOffSiteCateringLicenseReq();
 		
@@ -317,17 +317,17 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
 
-	protected boolean checkSupplierDiversityExpirationDate(MaintenanceDocument document) {
+	protected boolean checkSupplierDiversityExpirationDate(final MaintenanceDocument document) {
 		boolean success = true;
 		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		VendorHeader vendorHeader = vendorDetail.getVendorHeader();
-		List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+		final List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
 				
 		if (vendorSupplierDiversities.size() > 0)
 		{
 			int i = 0;
-			for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
+			for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
 				if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate() == null ) {
 					success = false;
 					putFieldError(VendorConstants.VENDOR_HEADER_ATTR+"."+VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES+"[" + i + "]."+CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_SUPPLIER_DIVERSITY_DATE_BLANK);				
@@ -346,12 +346,12 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
 	
-	protected boolean checkInsuranceRequired(MaintenanceDocument document) {
+	protected boolean checkInsuranceRequired(final MaintenanceDocument document) {
 		boolean success = true;
 		boolean dataEntered = false;
 		
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-		VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+		final VendorDetailExtension vendorDetailExt = ((VendorDetailExtension)vendorDetail.getExtension());
 		if (vendorDetailExt.isInsuranceRequiredIndicator())
 		{
 			dataEntered |= (vendorDetailExt.getAutomobileLiabilityCoverageAmount()==null?false:true);
@@ -376,13 +376,13 @@ public class CuVendorRule extends CuVendorRuleBase {
 		return success;
 	}
 	
-	protected boolean checkMerchantNameUniqueness(MaintenanceDocument document) {
-	    boolean success = true;
-	    VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-       List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = ((VendorDetailExtension)vendorDetail.getExtension()).getVendorCreditCardMerchants();
-       ArrayList<String> merchantNames = new ArrayList<String>();
+	protected boolean checkMerchantNameUniqueness(final MaintenanceDocument document) {
+	   boolean success = true;
+	   final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+       final List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = ((VendorDetailExtension)vendorDetail.getExtension()).getVendorCreditCardMerchants();
+       final ArrayList<String> merchantNames = new ArrayList<String>();
        int i = 0;
-       for (CuVendorCreditCardMerchant vendorCreditCardMerchant : vendorCreditCardMerchants) {
+       for (final CuVendorCreditCardMerchant vendorCreditCardMerchant : vendorCreditCardMerchants) {
            if (merchantNames.contains(vendorCreditCardMerchant.getCreditMerchantName())) {
                putFieldError("vendorCreditCardMerchants[" + i + "].creditMerchantName", CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_DUPLICATE);
                //can't have duplicate merchant names, part of the primary key for the table in the db
@@ -400,10 +400,10 @@ public class CuVendorRule extends CuVendorRuleBase {
 	   return success;
 	}
 	
-	protected boolean validateCreditCardMerchantAddition(VendorDetail vendorDetail, CuVendorCreditCardMerchant vendorCreditCardMerchant) {
+	protected boolean validateCreditCardMerchantAddition(final VendorDetail vendorDetail, final CuVendorCreditCardMerchant vendorCreditCardMerchant) {
 	    boolean success = true;
-	    List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = ((VendorDetailExtension)vendorDetail.getExtension()).getVendorCreditCardMerchants();
-	    for (CuVendorCreditCardMerchant existingMerchant : vendorCreditCardMerchants) {
+	    final List<CuVendorCreditCardMerchant> vendorCreditCardMerchants = ((VendorDetailExtension)vendorDetail.getExtension()).getVendorCreditCardMerchants();
+	    for (final CuVendorCreditCardMerchant existingMerchant : vendorCreditCardMerchants) {
 	        if (existingMerchant.getCreditMerchantName().equals(vendorCreditCardMerchant.getCreditMerchantName())) {
 	               putFieldError("add.vendorCreditCardMerchants.creditMerchantName", CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_CREDIT_MERCHANT_NAME_DUPLICATE);
 	               //can't have duplicate merchant names, part of the primary key for the table in the db
@@ -413,7 +413,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 	    return success;
 	}
 	
-	protected boolean validateSupplierDiversityAddition(VendorSupplierDiversity vendorSupplierDiversity) {
+	protected boolean validateSupplierDiversityAddition(final VendorSupplierDiversity vendorSupplierDiversity) {
 	    boolean success = true;
 	    if (((CuVendorSupplierDiversityExtension)vendorSupplierDiversity.getExtension()).getVendorSupplierDiversityExpirationDate() == null) {
 	    	success = false;
@@ -429,15 +429,15 @@ public class CuVendorRule extends CuVendorRuleBase {
 	    return success;
 	}
 	
-	protected boolean validateB2BDefaultCommodityCode(MaintenanceDocument document) {
-		VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+	protected boolean validateB2BDefaultCommodityCode(final MaintenanceDocument document) {
+		final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 		boolean success = true;
-		List<VendorContract> vendorContracts = vendorDetail.getVendorContracts();
-		List<VendorCommodityCode> vendorCommodities = vendorDetail.getVendorCommodities();
-		Iterator<VendorContract> it = vendorContracts.iterator();
+		final List<VendorContract> vendorContracts = vendorDetail.getVendorContracts();
+		final List<VendorCommodityCode> vendorCommodities = vendorDetail.getVendorCommodities();
+		final Iterator<VendorContract> it = vendorContracts.iterator();
 		boolean isB2b = false;
 		while (it.hasNext()) {
-			VendorContract contract = (VendorContract) it.next();
+		    final VendorContract contract = (VendorContract) it.next();
 			if (contract.getVendorB2bIndicator()) {
 				isB2b = true;
 				break;
@@ -451,10 +451,10 @@ public class CuVendorRule extends CuVendorRuleBase {
 				return success;
 			}
 			boolean defaultCommodityCodeSpecified = false;
-			Iterator<VendorCommodityCode> commodities = vendorCommodities.iterator();
+			final Iterator<VendorCommodityCode> commodities = vendorCommodities.iterator();
 			int indice = 0;
 			while (commodities.hasNext()) {
-				VendorCommodityCode commodity = (VendorCommodityCode) commodities.next();
+			    final VendorCommodityCode commodity = (VendorCommodityCode) commodities.next();
 				if (commodity.isCommodityDefaultIndicator() && !defaultCommodityCodeSpecified) {
 					defaultCommodityCodeSpecified = true;
 				} else if (commodity.isCommodityDefaultIndicator()){
@@ -462,7 +462,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 					putFieldError("vendorCommodities[" + indice + "].commodityDefaultIndicator", CUVendorKeyConstants.ERROR_DEFAULT_VENDOR_COMMODITY_CODE_ALREADY_EXISTS);
 					success = false;
 				}
-				CommodityCode persistedCommodity = commodityCodeService.getByPrimaryId(commodity.getPurchasingCommodityCode());
+				final CommodityCode persistedCommodity = commodityCodeService.getByPrimaryId(commodity.getPurchasingCommodityCode());
 				if (persistedCommodity == null) {
 					// a commodity code entered by a user does not exist
 					putFieldError("vendorCommodities[" + indice + "].purchasingCommodityCode", CUVendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_DOES_NOT_EXIST, commodity.getPurchasingCommodityCode());
@@ -484,14 +484,14 @@ public class CuVendorRule extends CuVendorRuleBase {
 	/**
 	 * Method verifies that only vendors of type purchase order have method of PO transmission set for their address type.
 	 */
-	private void verifyPOTransmissionTypeAllowedForVendorType(String vendorTypeCode, List <VendorAddress> addresses) {
+	private void verifyPOTransmissionTypeAllowedForVendorType(final String vendorTypeCode, final List <VendorAddress> addresses) {
 		
         //Check that there is at least one PO Address Type specified when the Vendor Type is PO               
         if ( (!StringUtils.isBlank(vendorTypeCode)) && StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) {        
         	boolean poAddressExistsForPOVendor = false;
         	int i = 0;
         	while ( (i < addresses.size()) && !poAddressExistsForPOVendor) {        		
-            	VendorAddress address = addresses.get(i);
+        	    final VendorAddress address = addresses.get(i);
             	if ( (!StringUtils.isBlank(address.getVendorAddressTypeCode())) && (StringUtils.equals(address.getVendorAddressTypeCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
             		poAddressExistsForPOVendor = true;
             	}
@@ -508,7 +508,7 @@ public class CuVendorRule extends CuVendorRuleBase {
         	boolean poTransmissionMethodExistsForVendor = false;
         	int i = 0;
         	while ( (i < addresses.size()) && !poTransmissionMethodExistsForVendor) {        		
-            	VendorAddress address = addresses.get(i);           	
+        	    final VendorAddress address = addresses.get(i);           	
             	if ( (!StringUtils.isBlank(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode())) && (!StringUtils.equals(((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode(), KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) ){
             		poTransmissionMethodExistsForVendor = true;
             	}
@@ -526,10 +526,10 @@ public class CuVendorRule extends CuVendorRuleBase {
 	 * Method verifies that the vendor data is valid for the association between vendor type, required vendor address type, address type,
 	 * method of PO transmission assigned to an address, and all of the data required for the method of PO transmission selected.
 	 */
-	private boolean checkAddressMethodOfPOTransmissionAndData (String vendorTypeCode, String vendorAddressTypeRequiredCode, VendorAddress address, String propertyConstant) {
+	private boolean checkAddressMethodOfPOTransmissionAndData (final String vendorTypeCode, final String vendorAddressTypeRequiredCode, final VendorAddress address, final String propertyConstant) {
 		boolean success = true;
 		
-        String methodOfPOTransmission = ((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode();
+		final String methodOfPOTransmission = ((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode();
 		
 		success &= validateVendorTypeToAddressType(methodOfPOTransmission, vendorTypeCode, vendorAddressTypeRequiredCode, address.getVendorAddressTypeCode(), propertyConstant);
 		
@@ -547,7 +547,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 	/**
 	 * This routine ensures that there is a Method of PO Transmission selected for a Vendor Address when an Address Type of PO is specified for a Vendor Type of PO.
 	 */
-	private boolean validateVendorTypeToAddressType(String methodOfPOTransmission, String vendorTypeCode, String vendorAddressTypeRequiredCode, String addressTypeCode, String propertyScope){
+	private boolean validateVendorTypeToAddressType(final String methodOfPOTransmission, final String vendorTypeCode, final String vendorAddressTypeRequiredCode, final String addressTypeCode, final String propertyScope){
 		 boolean valid = true;		
 	     //(vendorTypeCode = PO) && (vendorAddressTypeRequiredCode = PO) && (addressTypeCode = PO) && (methodOfPOTransmission is blank ) == error
 		 if ( (StringUtils.equals(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
@@ -556,15 +556,15 @@ public class CuVendorRule extends CuVendorRuleBase {
 		      ((methodOfPOTransmission == null) || (StringUtils.isBlank(methodOfPOTransmission))) ) {
 			 
 				 //User selected address type of PO but left method of PO transmission blank
-				 String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;
-				 String[] parameters = new String[] { addressTypeCode };         
+				 final String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;
+				 final String[] parameters = new String[] { addressTypeCode };         
 		         putFieldError(propertyName, CUVendorKeyConstants.ERROR_PO_TRANSMISSION_REQUIRES_PO_ADDRESS, parameters);
 				 valid &= false;
 		 }
 		 else if ( (!StringUtils.equals(addressTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER)) && 
 				   (StringUtils.isNotBlank(methodOfPOTransmission)) ) {
 			     //User selected address type of not PO and a Method of PO transmission value is selected
-				 String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;         
+				 final String propertyName = propertyScope + CUVendorPropertyConstants.VENDOR_ADDRESS_METHOD_OF_PO_TRANSMISSION;         
 		         putFieldError(propertyName, CUVendorKeyConstants.ERROR_NO_PO_TRANSMISSION_WITH_NON_PO_ADDRESS);
 				 valid &= false;
 		 }
@@ -577,11 +577,11 @@ public class CuVendorRule extends CuVendorRuleBase {
 	/**
 	 * This routine ensures that there is a Payment Terms value set when the Vendor is a PO type
 	 */
-	private boolean checkPOHasPaymentTerms(MaintenanceDocument document) {
+	private boolean checkPOHasPaymentTerms(final MaintenanceDocument document) {
 		 boolean valid = true;
-         VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-         String paymentTermsCode = vendorDetail.getVendorPaymentTermsCode();
-         String vendorTypeCode = vendorDetail.getVendorHeader().getVendorTypeCode();
+         final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+         final String paymentTermsCode = vendorDetail.getVendorPaymentTermsCode();
+         final String vendorTypeCode = vendorDetail.getVendorHeader().getVendorTypeCode();
 
 	     //(vendorTypeCode = PO) && (payment terms is blank ) == error
 		 if ( StringUtils.equalsIgnoreCase(vendorTypeCode, KFSConstants.FinancialDocumentTypeCodes.PURCHASE_ORDER) &&
@@ -603,13 +603,13 @@ public class CuVendorRule extends CuVendorRuleBase {
 	 * for each data element on this maintenance document as the REQ, PO, and POA.  
 	 * 
 	 */
-	private boolean validateVendorAddressForMethodOfPOTransmission(VendorAddress address, String propertyScope){
+	private boolean validateVendorAddressForMethodOfPOTransmission(final VendorAddress address, String propertyScope){
 		boolean valid = true;
 		String propertyName;	
 		String [] parameters;
-		String transmissionMethod = ((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode();
-		String addressTypeCode = address.getVendorAddressTypeCode();
-		PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesService.class);
+		final String transmissionMethod = ((CuVendorAddressExtension)address.getExtension()).getPurchaseOrderTransmissionMethodCode();
+		final String addressTypeCode = address.getVendorAddressTypeCode();
+		final PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService = SpringContext.getBean(PurchaseOrderTransmissionMethodDataRulesService.class);
 		
 		if  ( (transmissionMethod == null) || (StringUtils.isBlank(transmissionMethod)) ) {
 		//no-op, nothing to verify, default return value is valid
@@ -681,7 +681,7 @@ public class CuVendorRule extends CuVendorRuleBase {
 
 	@Override
 	protected boolean processCustomApproveDocumentBusinessRules(
-			MaintenanceDocument document) {
+			final MaintenanceDocument document) {
         boolean valid = super.processCustomApproveDocumentBusinessRules(document);
         valid &= processCuAddressValidation(document);
         valid &= checkPOHasPaymentTerms(document);

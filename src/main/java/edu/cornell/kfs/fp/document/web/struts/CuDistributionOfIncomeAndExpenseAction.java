@@ -22,9 +22,9 @@ public class CuDistributionOfIncomeAndExpenseAction extends DistributionOfIncome
      */
     @SuppressWarnings("deprecation")
     @Override
-    public ActionForward insertBONote(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        DistributionOfIncomeAndExpenseForm diForm = (DistributionOfIncomeAndExpenseForm) form;
-        Note newNote = diForm.getNewNote();
+    public ActionForward insertBONote(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final DistributionOfIncomeAndExpenseForm diForm = (DistributionOfIncomeAndExpenseForm) form;
+        final Note newNote = diForm.getNewNote();
         
          if (!ConfidentialAttachmentUtil.attachmentIsNonConfidentialOrCanAddConfAttachment(newNote, diForm.getDocument(), diForm.getAttachmentFile(),
                 getDocumentHelperService().getDocumentAuthorizer(diForm.getDocument()))) {

@@ -9,9 +9,10 @@ import org.kuali.kfs.krad.util.KRADConstants;
 
 public class CuVendorDocumentAuthorizer extends VendorDocumentAuthorizer {
 	@Override
-	public Set<String> getDocumentActions(Document document, Person user,
-			Set<String> documentActions) {
-		Set<String> documentActions1 = super.getDocumentActions(document, user, documentActions);
+	public Set<String> getDocumentActions(
+	        final Document document, final Person user,
+	        final Set<String> documentActions) {
+	    final Set<String> documentActions1 = super.getDocumentActions(document, user, documentActions);
 		// KFSPTS-2055
 		if (documentActions1.contains(KRADConstants.KUALI_ACTION_CAN_APPROVE)
 				&& !documentActions1.contains(KRADConstants.KUALI_ACTION_CAN_SAVE)) {

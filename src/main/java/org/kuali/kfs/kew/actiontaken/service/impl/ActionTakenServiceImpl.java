@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -46,39 +46,39 @@ public class ActionTakenServiceImpl implements ActionTakenService {
     private GroupService groupService;
 
     @Override
-    public ActionTaken findByActionTakenId(String actionTakenId) {
+    public ActionTaken findByActionTakenId(final String actionTakenId) {
         return getActionTakenDAO().findByActionTakenId(actionTakenId);
     }
 
     @Override
-    public ActionTaken getPreviousAction(ActionRequest actionRequest) {
+    public ActionTaken getPreviousAction(final ActionRequest actionRequest) {
         return getPreviousAction(actionRequest, null);
     }
 
     @Override
     public ActionTaken getPreviousAction(
-            ActionRequest actionRequest, List<ActionTaken> simulatedActionsTaken) {
-        GroupService ims = groupService;
+            final ActionRequest actionRequest, final List<ActionTaken> simulatedActionsTaken) {
+        final GroupService ims = groupService;
         ActionTaken foundActionTaken = null;
-        List<String> principalIds = new ArrayList<>();
+        final List<String> principalIds = new ArrayList<>();
         if (actionRequest.isGroupRequest()) {
             principalIds.addAll(ims.getMemberPrincipalIds(actionRequest.getGroup().getId()));
         } else if (actionRequest.isUserRequest()) {
             principalIds.add(actionRequest.getPrincipalId());
         }
 
-        for (String id : principalIds) {
-            List<ActionTaken> actionsTakenByUser =
+        for (final String id : principalIds) {
+            final List<ActionTaken> actionsTakenByUser =
                     getActionTakenDAO().findByDocumentIdWorkflowId(actionRequest.getDocumentId(), id);
             if (simulatedActionsTaken != null) {
-                for (ActionTaken simulatedAction : simulatedActionsTaken) {
+                for (final ActionTaken simulatedAction : simulatedActionsTaken) {
                     if (id.equals(simulatedAction.getPrincipalId())) {
                         actionsTakenByUser.add(simulatedAction);
                     }
                 }
             }
 
-            for (ActionTaken actionTaken : actionsTakenByUser) {
+            for (final ActionTaken actionTaken : actionsTakenByUser) {
                 if (ActionRequest.compareActionCode(actionTaken.getActionTaken(),
                         actionRequest.getActionRequested(), true) >= 0) {
                     foundActionTaken = actionTaken;
@@ -90,27 +90,27 @@ public class ActionTakenServiceImpl implements ActionTakenService {
     }
 
     @Override
-    public Collection<ActionTaken> findByDocumentId(String documentId) {
+    public Collection<ActionTaken> findByDocumentId(final String documentId) {
         return getActionTakenDAO().findByDocumentId(documentId);
     }
 
     @Override
-    public List<ActionTaken> findByDocumentIdWorkflowId(String documentId, String workflowId) {
+    public List<ActionTaken> findByDocumentIdWorkflowId(final String documentId, final String workflowId) {
         return getActionTakenDAO().findByDocumentIdWorkflowId(documentId, workflowId);
     }
 
     @Override
-    public List findByDocumentIdIgnoreCurrentInd(String documentId) {
+    public List findByDocumentIdIgnoreCurrentInd(final String documentId) {
         return getActionTakenDAO().findByDocumentIdIgnoreCurrentInd(documentId);
     }
 
     @Override
-    public void saveActionTaken(ActionTaken actionTaken) {
-        this.getActionTakenDAO().saveActionTaken(actionTaken);
+    public void saveActionTaken(final ActionTaken actionTaken) {
+        getActionTakenDAO().saveActionTaken(actionTaken);
     }
 
     @Override
-    public void delete(ActionTaken actionTaken) {
+    public void delete(final ActionTaken actionTaken) {
         getActionTakenDAO().deleteActionTaken(actionTaken);
     }
 
@@ -118,17 +118,17 @@ public class ActionTakenServiceImpl implements ActionTakenService {
         return actionTakenDAO;
     }
 
-    public void setActionTakenDAO(ActionTakenDAO actionTakenDAO) {
+    public void setActionTakenDAO(final ActionTakenDAO actionTakenDAO) {
         this.actionTakenDAO = actionTakenDAO;
     }
 
     @Override
-    public boolean hasUserTakenAction(String principalId, String documentId) {
+    public boolean hasUserTakenAction(final String principalId, final String documentId) {
         return getActionTakenDAO().hasUserTakenAction(principalId, documentId);
     }
 
     @Override
-    public Timestamp getLastApprovedDate(String documentId) {
+    public Timestamp getLastApprovedDate(final String documentId) {
         return getActionTakenDAO().getLastActionTakenDate(documentId, WorkflowAction.APPROVE);
     }
     

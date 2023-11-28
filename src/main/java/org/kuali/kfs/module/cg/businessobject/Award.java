@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -189,7 +189,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param proposal The associated proposal that the award will be linked to.
      */
-    public Award(Proposal proposal) {
+    public Award(final Proposal proposal) {
         this();
         populateFromProposal(proposal);
     }
@@ -204,11 +204,11 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return stateTransferIndicator;
     }
 
-    public void setStateTransferIndicator(boolean stateTransferIndicator) {
+    public void setStateTransferIndicator(final boolean stateTransferIndicator) {
         this.stateTransferIndicator = stateTransferIndicator;
     }
 
-    public void setExcludedFromInvoicingReason(String excludedFromInvoicingReason) {
+    public void setExcludedFromInvoicingReason(final String excludedFromInvoicingReason) {
         this.excludedFromInvoicingReason = excludedFromInvoicingReason;
     }
 
@@ -219,7 +219,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      */
     @Override
     public List<Collection<PersistableBusinessObject>> buildListOfDeletionAwareLists() {
-        List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
+        final List<Collection<PersistableBusinessObject>> managedLists = super.buildListOfDeletionAwareLists();
         managedLists.add(ObjectUtils.isNull(getAwardAccounts()) ? new ArrayList() : new ArrayList(getAwardAccounts()));
         managedLists.add(ObjectUtils.isNull(getAwardOrganizations()) ? new ArrayList() :
             new ArrayList(getAwardOrganizations()));
@@ -239,7 +239,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param proposal The associated proposal that the award will be linked to.
      */
-    public void populateFromProposal(Proposal proposal) {
+    public void populateFromProposal(final Proposal proposal) {
         if (ObjectUtils.isNotNull(proposal)) {
             setProposalNumber(proposal.getProposalNumber());
             setAgencyNumber(proposal.getAgencyNumber());
@@ -253,8 +253,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
             // copy proposal organizations to award organizations
             getAwardOrganizations().clear();
-            for (ProposalOrganization pOrg : proposal.getProposalOrganizations()) {
-                AwardOrganization awardOrg = new AwardOrganization();
+            for (final ProposalOrganization pOrg : proposal.getProposalOrganizations()) {
+                final AwardOrganization awardOrg = new AwardOrganization();
                 // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal
                 awardOrg.setNewCollectionRecord(true);
                 awardOrg.setProposalNumber(pOrg.getProposalNumber());
@@ -269,8 +269,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
             // copy proposal subcontractors to award subcontractors
             getAwardSubcontractors().clear();
             int awardSubcontractAmendment = 1;
-            for (ProposalSubcontractor pSubcontractor : proposal.getProposalSubcontractors()) {
-                AwardSubcontractor awardSubcontractor = new AwardSubcontractor();
+            for (final ProposalSubcontractor pSubcontractor : proposal.getProposalSubcontractors()) {
+                final AwardSubcontractor awardSubcontractor = new AwardSubcontractor();
                 // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal
                 awardSubcontractor.setNewCollectionRecord(true);
                 awardSubcontractor.setProposalNumber(pSubcontractor.getProposalNumber());
@@ -290,10 +290,10 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
             // copy proposal project directors to award project directors
             getAwardProjectDirectors().clear();
-            Set<String> directors = new HashSet<String>(); // use this to filter out duplicate projectdirectors
-            for (ProposalProjectDirector pDirector : proposal.getProposalProjectDirectors()) {
+            final Set<String> directors = new HashSet<String>(); // use this to filter out duplicate projectdirectors
+            for (final ProposalProjectDirector pDirector : proposal.getProposalProjectDirectors()) {
                 if (directors.add(pDirector.getPrincipalId())) {
-                    AwardProjectDirector awardDirector = new AwardProjectDirector();
+                    final AwardProjectDirector awardDirector = new AwardProjectDirector();
                     // newCollectionRecord is set to true to allow deletion of this record after being populated from proposal
                     awardDirector.setNewCollectionRecord(true);
                     awardDirector.setProposalNumber(pDirector.getProposalNumber());
@@ -314,7 +314,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return proposalNumber;
     }
 
-    public void setProposalNumber(String proposalNumber) {
+    public void setProposalNumber(final String proposalNumber) {
         this.proposalNumber = proposalNumber;
     }
 
@@ -323,7 +323,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardBeginningDate;
     }
 
-    public void setAwardBeginningDate(Date awardBeginningDate) {
+    public void setAwardBeginningDate(final Date awardBeginningDate) {
         this.awardBeginningDate = awardBeginningDate;
     }
 
@@ -337,11 +337,11 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return kimGroupNames;
     }
 
-    public void setKimGroupNames(String kimGroupNames) {
+    public void setKimGroupNames(final String kimGroupNames) {
         this.kimGroupNames = kimGroupNames;
     }
 
-    public void setAwardEndingDate(Date awardEndingDate) {
+    public void setAwardEndingDate(final Date awardEndingDate) {
         this.awardEndingDate = awardEndingDate;
     }
 
@@ -357,8 +357,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     @Override
     public KualiDecimal getAwardTotalAmount() {
-        KualiDecimal direct = getAwardDirectCostAmount();
-        KualiDecimal indirect = getAwardIndirectCostAmount();
+        final KualiDecimal direct = getAwardDirectCostAmount();
+        final KualiDecimal indirect = getAwardIndirectCostAmount();
         return ObjectUtils.isNull(direct) || ObjectUtils.isNull(indirect) ? null : direct.add(indirect);
     }
 
@@ -370,7 +370,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * @deprecated Should not be used. See method description above.
      */
     @Deprecated
-    public void setAwardTotalAmount(KualiDecimal awardTotalAmount) {
+    public void setAwardTotalAmount(final KualiDecimal awardTotalAmount) {
         // do nothing
     }
 
@@ -401,7 +401,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardAddendumNumber;
     }
 
-    public void setAwardAddendumNumber(String awardAddendumNumber) {
+    public void setAwardAddendumNumber(final String awardAddendumNumber) {
         this.awardAddendumNumber = awardAddendumNumber;
     }
 
@@ -410,7 +410,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardAllocatedUniversityComputingServicesAmount;
     }
 
-    public void setAwardAllocatedUniversityComputingServicesAmount(KualiDecimal awardAllocatedUniversityComputingServicesAmount) {
+    public void setAwardAllocatedUniversityComputingServicesAmount(final KualiDecimal awardAllocatedUniversityComputingServicesAmount) {
         this.awardAllocatedUniversityComputingServicesAmount = awardAllocatedUniversityComputingServicesAmount;
     }
 
@@ -419,7 +419,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return federalPassThroughFundedAmount;
     }
 
-    public void setFederalPassThroughFundedAmount(KualiDecimal federalPassThroughFundedAmount) {
+    public void setFederalPassThroughFundedAmount(final KualiDecimal federalPassThroughFundedAmount) {
         this.federalPassThroughFundedAmount = federalPassThroughFundedAmount;
     }
 
@@ -428,7 +428,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardEntryDate;
     }
 
-    public void setAwardEntryDate(Date awardEntryDate) {
+    public void setAwardEntryDate(final Date awardEntryDate) {
         this.awardEntryDate = awardEntryDate;
     }
 
@@ -437,7 +437,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return agencyFuture1Amount;
     }
 
-    public void setAgencyFuture1Amount(KualiDecimal agencyFuture1Amount) {
+    public void setAgencyFuture1Amount(final KualiDecimal agencyFuture1Amount) {
         this.agencyFuture1Amount = agencyFuture1Amount;
     }
 
@@ -446,7 +446,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return agencyFuture2Amount;
     }
 
-    public void setAgencyFuture2Amount(KualiDecimal agencyFuture2Amount) {
+    public void setAgencyFuture2Amount(final KualiDecimal agencyFuture2Amount) {
         this.agencyFuture2Amount = agencyFuture2Amount;
     }
 
@@ -455,7 +455,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return agencyFuture3Amount;
     }
 
-    public void setAgencyFuture3Amount(KualiDecimal agencyFuture3Amount) {
+    public void setAgencyFuture3Amount(final KualiDecimal agencyFuture3Amount) {
         this.agencyFuture3Amount = agencyFuture3Amount;
     }
 
@@ -464,7 +464,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardDocumentNumber;
     }
 
-    public void setAwardDocumentNumber(String awardDocumentNumber) {
+    public void setAwardDocumentNumber(final String awardDocumentNumber) {
         this.awardDocumentNumber = awardDocumentNumber;
     }
 
@@ -473,7 +473,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardLastUpdateDate;
     }
 
-    public void setAwardLastUpdateDate(Timestamp awardLastUpdateDate) {
+    public void setAwardLastUpdateDate(final Timestamp awardLastUpdateDate) {
         this.awardLastUpdateDate = awardLastUpdateDate;
     }
 
@@ -482,7 +482,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return federalPassThroughIndicator;
     }
 
-    public void setFederalPassThroughIndicator(boolean federalPassThroughIndicator) {
+    public void setFederalPassThroughIndicator(final boolean federalPassThroughIndicator) {
         this.federalPassThroughIndicator = federalPassThroughIndicator;
     }
 
@@ -491,7 +491,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return oldProposalNumber;
     }
 
-    public void setOldProposalNumber(String oldProposalNumber) {
+    public void setOldProposalNumber(final String oldProposalNumber) {
         this.oldProposalNumber = oldProposalNumber;
     }
 
@@ -500,7 +500,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardDirectCostAmount;
     }
 
-    public void setAwardDirectCostAmount(KualiDecimal awardDirectCostAmount) {
+    public void setAwardDirectCostAmount(final KualiDecimal awardDirectCostAmount) {
         this.awardDirectCostAmount = awardDirectCostAmount;
     }
 
@@ -509,7 +509,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardIndirectCostAmount;
     }
 
-    public void setAwardIndirectCostAmount(KualiDecimal awardIndirectCostAmount) {
+    public void setAwardIndirectCostAmount(final KualiDecimal awardIndirectCostAmount) {
         this.awardIndirectCostAmount = awardIndirectCostAmount;
     }
 
@@ -518,7 +518,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return federalFundedAmount;
     }
 
-    public void setFederalFundedAmount(KualiDecimal federalFundedAmount) {
+    public void setFederalFundedAmount(final KualiDecimal federalFundedAmount) {
         this.federalFundedAmount = federalFundedAmount;
     }
 
@@ -527,7 +527,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardCreateTimestamp;
     }
 
-    public void setAwardCreateTimestamp(Timestamp awardCreateTimestamp) {
+    public void setAwardCreateTimestamp(final Timestamp awardCreateTimestamp) {
         this.awardCreateTimestamp = awardCreateTimestamp;
     }
 
@@ -536,7 +536,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardClosingDate;
     }
 
-    public void setAwardClosingDate(Date awardClosingDate) {
+    public void setAwardClosingDate(final Date awardClosingDate) {
         this.awardClosingDate = awardClosingDate;
     }
 
@@ -545,7 +545,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return proposalAwardTypeCode;
     }
 
-    public void setProposalAwardTypeCode(String proposalAwardTypeCode) {
+    public void setProposalAwardTypeCode(final String proposalAwardTypeCode) {
         this.proposalAwardTypeCode = proposalAwardTypeCode;
     }
 
@@ -554,7 +554,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardStatusCode;
     }
 
-    public void setAwardStatusCode(String awardStatusCode) {
+    public void setAwardStatusCode(final String awardStatusCode) {
         this.awardStatusCode = awardStatusCode;
     }
 
@@ -563,7 +563,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return letterOfCreditFundCode;
     }
 
-    public void setLetterOfCreditFundCode(String letterOfCreditFundCode) {
+    public void setLetterOfCreditFundCode(final String letterOfCreditFundCode) {
         this.letterOfCreditFundCode = letterOfCreditFundCode;
     }
 
@@ -572,7 +572,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return grantDescriptionCode;
     }
 
-    public void setGrantDescriptionCode(String grantDescriptionCode) {
+    public void setGrantDescriptionCode(final String grantDescriptionCode) {
         this.grantDescriptionCode = grantDescriptionCode;
     }
 
@@ -581,7 +581,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return agencyNumber;
     }
 
-    public void setAgencyNumber(String agencyNumber) {
+    public void setAgencyNumber(final String agencyNumber) {
         this.agencyNumber = agencyNumber;
     }
 
@@ -590,7 +590,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return federalPassThroughAgencyNumber;
     }
 
-    public void setFederalPassThroughAgencyNumber(String federalPassThroughAgencyNumber) {
+    public void setFederalPassThroughAgencyNumber(final String federalPassThroughAgencyNumber) {
         this.federalPassThroughAgencyNumber = federalPassThroughAgencyNumber;
     }
 
@@ -599,7 +599,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return agencyAnalystName;
     }
 
-    public void setAgencyAnalystName(String agencyAnalystName) {
+    public void setAgencyAnalystName(final String agencyAnalystName) {
         this.agencyAnalystName = agencyAnalystName;
     }
 
@@ -608,7 +608,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return analystTelephoneNumber;
     }
 
-    public void setAnalystTelephoneNumber(String analystTelephoneNumber) {
+    public void setAnalystTelephoneNumber(final String analystTelephoneNumber) {
         this.analystTelephoneNumber = analystTelephoneNumber;
     }
 
@@ -617,7 +617,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardProjectTitle;
     }
 
-    public void setAwardProjectTitle(String awardProjectTitle) {
+    public void setAwardProjectTitle(final String awardProjectTitle) {
         this.awardProjectTitle = awardProjectTitle;
     }
 
@@ -626,7 +626,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardPurposeCode;
     }
 
-    public void setAwardPurposeCode(String awardPurposeCode) {
+    public void setAwardPurposeCode(final String awardPurposeCode) {
         this.awardPurposeCode = awardPurposeCode;
     }
 
@@ -636,7 +636,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     @Override
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -653,7 +653,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param proposal The proposal to set.
      */
-    public void setProposal(Proposal proposal) {
+    public void setProposal(final Proposal proposal) {
         this.proposal = proposal;
     }
 
@@ -669,7 +669,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param proposalAwardType The proposalAwardType to set.
      */
-    public void setProposalAwardType(ProposalAwardType proposalAwardType) {
+    public void setProposalAwardType(final ProposalAwardType proposalAwardType) {
         this.proposalAwardType = proposalAwardType;
     }
 
@@ -685,7 +685,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param awardStatus The awardStatus to set.
      */
-    public void setAwardStatus(AwardStatus awardStatus) {
+    public void setAwardStatus(final AwardStatus awardStatus) {
         this.awardStatus = awardStatus;
     }
 
@@ -703,7 +703,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      * @param letterOfCreditFund The letterOfCreditFund to set.
      */
     @Override
-    public void setLetterOfCreditFund(ContractsAndGrantsLetterOfCreditFund letterOfCreditFund) {
+    public void setLetterOfCreditFund(final ContractsAndGrantsLetterOfCreditFund letterOfCreditFund) {
         this.letterOfCreditFund = letterOfCreditFund;
     }
 
@@ -719,7 +719,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param grantDescription The grantDescription to set.
      */
-    public void setGrantDescription(GrantDescription grantDescription) {
+    public void setGrantDescription(final GrantDescription grantDescription) {
         this.grantDescription = grantDescription;
     }
 
@@ -736,7 +736,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param agency The agency to set.
      */
-    public void setAgency(Agency agency) {
+    public void setAgency(final Agency agency) {
         this.agency = agency;
     }
 
@@ -752,7 +752,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param federalPassThroughAgency The federalPassThroughAgency to set.
      */
-    public void setFederalPassThroughAgency(Agency federalPassThroughAgency) {
+    public void setFederalPassThroughAgency(final Agency federalPassThroughAgency) {
         this.federalPassThroughAgency = federalPassThroughAgency;
     }
 
@@ -768,7 +768,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      *
      * @param awardPurpose The awardPurpose to set.
      */
-    public void setAwardPurpose(ProposalPurpose awardPurpose) {
+    public void setAwardPurpose(final ProposalPurpose awardPurpose) {
         this.awardPurpose = awardPurpose;
     }
 
@@ -776,7 +776,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardProjectDirectors;
     }
 
-    public void setAwardProjectDirectors(List<AwardProjectDirector> awardProjectDirectors) {
+    public void setAwardProjectDirectors(final List<AwardProjectDirector> awardProjectDirectors) {
         this.awardProjectDirectors = awardProjectDirectors;
     }
 
@@ -784,7 +784,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardFundManagers;
     }
 
-    public void setAwardFundManagers(List<AwardFundManager> awardFundManagers) {
+    public void setAwardFundManagers(final List<AwardFundManager> awardFundManagers) {
         this.awardFundManagers = awardFundManagers;
     }
 
@@ -810,7 +810,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
                 .collect(Collectors.toList());
     }
 
-    public void setAwardAccounts(List<AwardAccount> awardAccounts) {
+    public void setAwardAccounts(final List<AwardAccount> awardAccounts) {
         this.awardAccounts = awardAccounts;
     }
 
@@ -818,7 +818,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardOrganizations;
     }
 
-    public void setAwardOrganizations(List<AwardOrganization> awardOrganizations) {
+    public void setAwardOrganizations(final List<AwardOrganization> awardOrganizations) {
         this.awardOrganizations = awardOrganizations;
     }
 
@@ -826,7 +826,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardSubcontractors;
     }
 
-    public void setAwardSubcontractors(List<AwardSubcontractor> awardSubcontractors) {
+    public void setAwardSubcontractors(final List<AwardSubcontractor> awardSubcontractors) {
         this.awardSubcontractors = awardSubcontractors;
     }
 
@@ -837,7 +837,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      */
     @Override
     public AwardOrganization getPrimaryAwardOrganization() {
-        for (AwardOrganization ao : awardOrganizations) {
+        for (final AwardOrganization ao : awardOrganizations) {
             if (ao != null && ao.isAwardPrimaryOrganizationIndicator()) {
                 setPrimaryAwardOrganization(ao);
                 break;
@@ -847,10 +847,10 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return primaryAwardOrganization;
     }
 
-    public void setPrimaryAwardOrganization(AwardOrganization primaryAwardOrganization) {
+    public void setPrimaryAwardOrganization(final AwardOrganization primaryAwardOrganization) {
         this.primaryAwardOrganization = primaryAwardOrganization;
-        this.routingChart = primaryAwardOrganization.getChartOfAccountsCode();
-        this.routingOrg = primaryAwardOrganization.getOrganizationCode();
+        routingChart = primaryAwardOrganization.getChartOfAccountsCode();
+        routingOrg = primaryAwardOrganization.getOrganizationCode();
     }
 
     @Override
@@ -858,7 +858,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return instrumentType;
     }
 
-    public void setInstrumentType(InstrumentType instrumentType) {
+    public void setInstrumentType(final InstrumentType instrumentType) {
         this.instrumentType = instrumentType;
     }
 
@@ -869,8 +869,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      */
     public KualiDecimal getAwardSubcontractorsTotalAmount() {
         KualiDecimal total = KualiDecimal.ZERO;
-        for (AwardSubcontractor subcontractor : getAwardSubcontractors()) {
-            KualiDecimal amount = subcontractor.getSubcontractorAmount();
+        for (final AwardSubcontractor subcontractor : getAwardSubcontractors()) {
+            final KualiDecimal amount = subcontractor.getSubcontractorAmount();
             if (ObjectUtils.isNotNull(amount)) {
                 total = total.add(amount);
             }
@@ -883,7 +883,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return routingChart;
     }
 
-    public void setRoutingChart(String routingChart) {
+    public void setRoutingChart(final String routingChart) {
         this.routingChart = routingChart;
     }
 
@@ -892,7 +892,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return routingOrg;
     }
 
-    public void setRoutingOrg(String routingOrg) {
+    public void setRoutingOrg(final String routingOrg) {
         this.routingOrg = routingOrg;
     }
 
@@ -901,7 +901,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return lookupProjectDirector;
     }
 
-    public void setLookupProjectDirector(Person lookupProjectDirector) {
+    public void setLookupProjectDirector(final Person lookupProjectDirector) {
         this.lookupProjectDirector = lookupProjectDirector;
     }
 
@@ -910,7 +910,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return selectedAccounts;
     }
 
-    public void setSelectedAccounts(List<String> selectedAccounts) {
+    public void setSelectedAccounts(final List<String> selectedAccounts) {
         this.selectedAccounts = selectedAccounts;
     }
 
@@ -921,8 +921,8 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return lookupProjectDirectorUniversalIdentifier;
     }
 
-    public void setLookupProjectDirectorUniversalIdentifier(String lookupPersonId) {
-        this.lookupProjectDirectorUniversalIdentifier = lookupPersonId;
+    public void setLookupProjectDirectorUniversalIdentifier(final String lookupPersonId) {
+        lookupProjectDirectorUniversalIdentifier = lookupPersonId;
     }
 
     @Override
@@ -946,7 +946,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     /**
      * Pretends to set the inquiry title
      */
-    public void setAwardInquiryTitle(String inquiryTitle) {
+    public void setAwardInquiryTitle(final String inquiryTitle) {
         // ain't nothing to do
     }
 
@@ -955,7 +955,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return billingFrequencyCode;
     }
 
-    public void setBillingFrequencyCode(String billingFrequencyCode) {
+    public void setBillingFrequencyCode(final String billingFrequencyCode) {
         this.billingFrequencyCode = billingFrequencyCode;
     }
 
@@ -964,7 +964,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return excludedFromInvoicing;
     }
 
-    public void setExcludedFromInvoicing(boolean excludedFromInvoicing) {
+    public void setExcludedFromInvoicing(final boolean excludedFromInvoicing) {
         this.excludedFromInvoicing = excludedFromInvoicing;
     }
 
@@ -973,7 +973,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return additionalFormsRequiredIndicator;
     }
 
-    public void setAdditionalFormsRequiredIndicator(boolean additionalFormsRequiredIndicator) {
+    public void setAdditionalFormsRequiredIndicator(final boolean additionalFormsRequiredIndicator) {
         this.additionalFormsRequiredIndicator = additionalFormsRequiredIndicator;
     }
 
@@ -982,7 +982,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return additionalFormsDescription;
     }
 
-    public void setAdditionalFormsDescription(String additionalFormsDescription) {
+    public void setAdditionalFormsDescription(final String additionalFormsDescription) {
         this.additionalFormsDescription = additionalFormsDescription;
     }
 
@@ -991,7 +991,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return instrumentTypeCode;
     }
 
-    public void setInstrumentTypeCode(String instrumentTypeCode) {
+    public void setInstrumentTypeCode(final String instrumentTypeCode) {
         this.instrumentTypeCode = instrumentTypeCode;
     }
 
@@ -1006,7 +1006,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return billingFrequency;
     }
 
-    public void setBillingFrequency(AccountsReceivableBillingFrequency billingFrequency) {
+    public void setBillingFrequency(final AccountsReceivableBillingFrequency billingFrequency) {
         this.billingFrequency = billingFrequency;
     }
 
@@ -1015,7 +1015,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return autoApproveIndicator;
     }
 
-    public void setAutoApproveIndicator(boolean autoApproveIndicator) {
+    public void setAutoApproveIndicator(final boolean autoApproveIndicator) {
         this.autoApproveIndicator = autoApproveIndicator;
     }
 
@@ -1024,7 +1024,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return minInvoiceAmount;
     }
 
-    public void setMinInvoiceAmount(KualiDecimal minInvoiceAmount) {
+    public void setMinInvoiceAmount(final KualiDecimal minInvoiceAmount) {
         this.minInvoiceAmount = minInvoiceAmount;
     }
 
@@ -1043,7 +1043,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return customerNumber;
     }
 
-    public void setCustomerNumber(String customerNumber) {
+    public void setCustomerNumber(final String customerNumber) {
         this.customerNumber = customerNumber;
     }
 
@@ -1052,7 +1052,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return customerAddressIdentifier;
     }
 
-    public void setCustomerAddressIdentifier(Integer customerAddressIdentifier) {
+    public void setCustomerAddressIdentifier(final Integer customerAddressIdentifier) {
         this.customerAddressIdentifier = customerAddressIdentifier;
     }
 
@@ -1061,7 +1061,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return CGIntegrationConstants.AwardInvoicingOption.Types.get(invoicingOptionCode);
     }
 
-    public void setInvoicingOptionCode(String invoicingOptionCode) {
+    public void setInvoicingOptionCode(final String invoicingOptionCode) {
         this.invoicingOptionCode = invoicingOptionCode;
     }
 
@@ -1076,7 +1076,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return customerAddress;
     }
 
-    public void setCustomerAddress(AccountsReceivableCustomerAddress customerAddress) {
+    public void setCustomerAddress(final AccountsReceivableCustomerAddress customerAddress) {
         this.customerAddress = customerAddress;
     }
 
@@ -1084,7 +1084,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return milestoneSchedule;
     }
 
-    public void setMilestoneSchedule(AccountsReceivableMilestoneSchedule milestoneSchedule) {
+    public void setMilestoneSchedule(final AccountsReceivableMilestoneSchedule milestoneSchedule) {
         this.milestoneSchedule = milestoneSchedule;
     }
 
@@ -1093,13 +1093,13 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
     }
 
     public void setPredeterminedBillingSchedule(
-            AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule) {
+            final AccountsReceivablePredeterminedBillingSchedule predeterminedBillingSchedule) {
         this.predeterminedBillingSchedule = predeterminedBillingSchedule;
     }
 
     @Override
     public AwardProjectDirector getAwardPrimaryProjectDirector() {
-        for (AwardProjectDirector awardProjectDirector : awardProjectDirectors) {
+        for (final AwardProjectDirector awardProjectDirector : awardProjectDirectors) {
             if (awardProjectDirector != null && awardProjectDirector.isAwardPrimaryProjectDirectorIndicator()) {
                 return awardProjectDirector;
             }
@@ -1110,7 +1110,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardPrimaryProjectDirector;
     }
 
-    public void setAwardPrimaryProjectDirector(AwardProjectDirector awardPrimaryProjectDirector) {
+    public void setAwardPrimaryProjectDirector(final AwardProjectDirector awardPrimaryProjectDirector) {
         this.awardPrimaryProjectDirector = awardPrimaryProjectDirector;
     }
 
@@ -1120,7 +1120,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
      */
     @Override
     public AwardFundManager getAwardPrimaryFundManager() {
-        for (AwardFundManager awdFundMgr : awardFundManagers) {
+        for (final AwardFundManager awdFundMgr : awardFundManagers) {
             if (awdFundMgr != null && awdFundMgr.isPrimaryFundManagerIndicator()) {
                 return awdFundMgr;
             }
@@ -1131,7 +1131,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return awardPrimaryFundManager;
     }
 
-    public void setAwardPrimaryFundManager(AwardFundManager awardPrimaryFundManager) {
+    public void setAwardPrimaryFundManager(final AwardFundManager awardPrimaryFundManager) {
         this.awardPrimaryFundManager = awardPrimaryFundManager;
     }
 
@@ -1140,7 +1140,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return lookupFundMgrPersonUniversalIdentifier;
     }
 
-    public void setLookupFundMgrPersonUniversalIdentifier(String lookupFundMgrPersonUniversalIdentifier) {
+    public void setLookupFundMgrPersonUniversalIdentifier(final String lookupFundMgrPersonUniversalIdentifier) {
         this.lookupFundMgrPersonUniversalIdentifier = lookupFundMgrPersonUniversalIdentifier;
     }
 
@@ -1149,7 +1149,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return lookupFundMgrPerson;
     }
 
-    public void setLookupFundMgrPerson(Person lookupFundMgrPerson) {
+    public void setLookupFundMgrPerson(final Person lookupFundMgrPerson) {
         this.lookupFundMgrPerson = lookupFundMgrPerson;
     }
 
@@ -1158,7 +1158,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return fundingExpirationDate;
     }
 
-    public void setFundingExpirationDate(Date fundingExpirationDate) {
+    public void setFundingExpirationDate(final Date fundingExpirationDate) {
         this.fundingExpirationDate = fundingExpirationDate;
     }
 
@@ -1167,7 +1167,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return dunningCampaign;
     }
 
-    public void setDunningCampaign(String dunningCampaign) {
+    public void setDunningCampaign(final String dunningCampaign) {
         this.dunningCampaign = dunningCampaign;
     }
 
@@ -1176,7 +1176,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return stopWorkIndicator;
     }
 
-    public void setStopWorkIndicator(boolean stopWorkIndicator) {
+    public void setStopWorkIndicator(final boolean stopWorkIndicator) {
         this.stopWorkIndicator = stopWorkIndicator;
     }
 
@@ -1185,7 +1185,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return stopWorkReason;
     }
 
-    public void setStopWorkReason(String stopWorkReason) {
+    public void setStopWorkReason(final String stopWorkReason) {
         this.stopWorkReason = stopWorkReason;
     }
 
@@ -1199,7 +1199,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return boNotes;
     }
 
-    public void setBoNotes(List boNotes) {
+    public void setBoNotes(final List boNotes) {
         this.boNotes = boNotes;
     }
 
@@ -1207,7 +1207,7 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return scheduleInquiryTitle;
     }
 
-    public void setScheduleInquiryTitle(String scheduleInquiryTitle) {
+    public void setScheduleInquiryTitle(final String scheduleInquiryTitle) {
         this.scheduleInquiryTitle = scheduleInquiryTitle;
     }
 
@@ -1215,12 +1215,12 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
         return removeAddressButton;
     }
 
-    public void setRemoveAddressButton(String removeAddressButton) {
+    public void setRemoveAddressButton(final String removeAddressButton) {
         this.removeAddressButton = removeAddressButton;
     }
 
     public void clearCustomerAddressIfNecessary() {
-        String originalAgencyNumber = ObjectUtils.isNull(agency) ? null : getAgency().getAgencyNumber();
+        final String originalAgencyNumber = ObjectUtils.isNull(agency) ? null : getAgency().getAgencyNumber();
 
         if (!StringUtils.equals(agencyNumber, originalAgencyNumber)) {
             customerAddressIdentifier = null;

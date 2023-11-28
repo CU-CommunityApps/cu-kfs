@@ -52,23 +52,24 @@ public class CuRequisitionAction extends RequisitionAction {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ActionForward addItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
-            HttpServletResponse response) throws Exception {
-        PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
+    public ActionForward addItem(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final PurchasingFormBase purchasingForm = (PurchasingFormBase) form;
         PurApItem item = purchasingForm.getNewPurchasingItemLine();
-        RequisitionItem requisitionItem = (RequisitionItem) item;
-        PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
+        final RequisitionItem requisitionItem = (RequisitionItem) item;
+        final PurchasingDocument purDocument = (PurchasingDocument) purchasingForm.getDocument();
         
         if (StringUtils.isBlank(requisitionItem.getPurchasingCommodityCode())) {
-            boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
+            final boolean commCodeParam = SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
                     CuRequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
             if (commCodeParam && purchasingForm instanceof RequisitionForm) {
-                CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
-                VendorDetail dtl = reqs.getVendorDetail();
+                final CuRequisitionDocument reqs = (CuRequisitionDocument) purchasingForm.getDocument();
+                final VendorDetail dtl = reqs.getVendorDetail();
                 if (ObjectUtils.isNotNull(dtl)) {
-                    List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
-                    for (VendorCommodityCode commodity : vcc) {
+                    final List<VendorCommodityCode> vcc = dtl.getVendorCommodities();
+                    for (final VendorCommodityCode commodity : vcc) {
                         if (commodity.isCommodityDefaultIndicator()) {
                             requisitionItem.setPurchasingCommodityCode(commodity.getPurchasingCommodityCode());
                         }
@@ -77,7 +78,7 @@ public class CuRequisitionAction extends RequisitionAction {
             }
         }
         
-        boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
+        final boolean rulePassed = SpringContext.getBean(KualiRuleService.class)
                 .applyRules(new AttributedAddPurchasingAccountsPayableItemEvent("", purDocument, item));
 
         if (rulePassed) {
@@ -92,10 +93,11 @@ public class CuRequisitionAction extends RequisitionAction {
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
-    public ActionForward clearVendor(ActionMapping mapping, ActionForm form, HttpServletRequest request, 
-            HttpServletResponse response) throws Exception {
-        PurchasingFormBase baseForm = (PurchasingFormBase) form;
-        CuRequisitionDocument document = (CuRequisitionDocument) baseForm.getDocument();
+    public ActionForward clearVendor(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final PurchasingFormBase baseForm = (PurchasingFormBase) form;
+        final CuRequisitionDocument document = (CuRequisitionDocument) baseForm.getDocument();
 
         document.setVendorHeaderGeneratedIdentifier(null);
         document.setVendorDetailAssignedIdentifier(null);
@@ -127,7 +129,9 @@ public class CuRequisitionAction extends RequisitionAction {
      * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public ActionForward copy(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward copy(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
         ActionForward forward = null;
         String docID = "docId";
         if (request.getParameter(docID) == null) {
@@ -135,15 +139,15 @@ public class CuRequisitionAction extends RequisitionAction {
         } else {
             // this is copy document from Procurement Gateway:
             // use this url to call: http://localhost:8080/kfs-dev/purapRequisition.do?methodToCall=copy&docId=xxxx
-            String docId = request.getParameter(docID);
-            KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+            final String docId = request.getParameter(docID);
+            final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
                
             CuRequisitionDocument document = null;
             document = (CuRequisitionDocument)getDocumentService().getByDocumentHeaderId(docId);
             document.toCopyFromGateway();
            
             kualiDocumentFormBase.setDocument(document);
-            WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+            final WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
             kualiDocumentFormBase.setDocTypeName(workflowDocument.getDocumentTypeName());
             SpringContext.getBean(SessionDocumentService.class).addDocumentToUserSession(GlobalVariables.getUserSession(), workflowDocument);
                      
@@ -163,22 +167,23 @@ public class CuRequisitionAction extends RequisitionAction {
     * @throws Exception
     */
     @SuppressWarnings("deprecation")
-    public ActionForward createReqFromIWantDoc(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward createReqFromIWantDoc(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
 
-        String iWantDocumentNumber = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
-        RequisitionForm requisitionForm = (RequisitionForm) form;
+        final String iWantDocumentNumber = request.getParameter(KRADConstants.PARAMETER_DOC_ID);
+        final RequisitionForm requisitionForm = (RequisitionForm) form;
 
-        IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
+        final IWantDocument iWantDocument = (IWantDocument) getDocumentService().getByDocumentHeaderId(iWantDocumentNumber);
         if (iWantDocument == null) {
             throw new WorkflowException("Could not find IWantDocument with ID '" + iWantDocumentNumber + "'");
         }
 
         // Make sure the user is authorized to create the req in this manner.
-        TransactionalDocumentPresentationController pControl =
+        final TransactionalDocumentPresentationController pControl =
                 (TransactionalDocumentPresentationController) getDocumentHelperService().getDocumentPresentationController(iWantDocument);
-        TransactionalDocumentAuthorizer authorizer = (TransactionalDocumentAuthorizer) getDocumentHelperService().getDocumentAuthorizer(iWantDocument);
-        Set<String> iwntEditModes = authorizer.getEditModes(iWantDocument, GlobalVariables.getUserSession().getPerson(), pControl.getEditModes(iWantDocument));
+        final TransactionalDocumentAuthorizer authorizer = (TransactionalDocumentAuthorizer) getDocumentHelperService().getDocumentAuthorizer(iWantDocument);
+        final Set<String> iwntEditModes = authorizer.getEditModes(iWantDocument, GlobalVariables.getUserSession().getPerson(), pControl.getEditModes(iWantDocument));
         if (!iwntEditModes.contains(CUPurapConstants.IWNT_DOC_CREATE_REQ)) {
             throw new AuthorizationException(GlobalVariables.getUserSession().getPrincipalId(), CUPurapConstants.IWNT_DOC_CREATE_REQ,
                     CuRequisitionDocument.class.getSimpleName(), "user is not authorized to create requisitions from IWantDocument '"
@@ -191,11 +196,11 @@ public class CuRequisitionAction extends RequisitionAction {
                     "' because a DV or Requisition has already been created from that document");
         }
 
-        IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+        final IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
 
         createDocument(requisitionForm);
 
-        RequisitionDocument requisitionDocument = requisitionForm.getRequisitionDocument();
+        final RequisitionDocument requisitionDocument = requisitionForm.getRequisitionDocument();
 
         iWantDocumentService.setUpRequisitionDetailsFromIWantDoc(iWantDocument, requisitionDocument, requisitionForm);
 
@@ -207,16 +212,17 @@ public class CuRequisitionAction extends RequisitionAction {
     }
 
     @Override
-    public ActionForward insertBONote(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
-        Note newNote = kualiDocumentFormBase.getNewNote();
-        NoteExtendedAttribute extendedAttribute = (NoteExtendedAttribute) newNote.getExtension();
+    public ActionForward insertBONote(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        final Note newNote = kualiDocumentFormBase.getNewNote();
+        final NoteExtendedAttribute extendedAttribute = (NoteExtendedAttribute) newNote.getExtension();
 
-        ActionForward forward = super.insertBONote(mapping, form, request, response);
+        final ActionForward forward = super.insertBONote(mapping, form, request, response);
 
         if (newNote != kualiDocumentFormBase.getNewNote()) {
-            Note addedNote = kualiDocumentFormBase.getDocument().getNotes().get(kualiDocumentFormBase.getDocument().getNotes().size() - 1);
+            final Note addedNote = kualiDocumentFormBase.getDocument().getNotes().get(kualiDocumentFormBase.getDocument().getNotes().size() - 1);
             extendedAttribute.setNoteIdentifier(addedNote.getNoteIdentifier());
             addedNote.setExtension(extendedAttribute);
             SpringContext.getBean(BusinessObjectService.class).save(extendedAttribute);
@@ -227,11 +233,13 @@ public class CuRequisitionAction extends RequisitionAction {
     }
 
     @Override
-    public ActionForward refresh(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ActionForward forward = super.refresh(mapping, form, request, response);
+    public ActionForward refresh(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final ActionForward forward = super.refresh(mapping, form, request, response);
         
-        RequisitionForm requisitionForm = (RequisitionForm) form;
-        RequisitionDocument document = requisitionForm.getRequisitionDocument();
+        final RequisitionForm requisitionForm = (RequisitionForm) form;
+        final RequisitionDocument document = requisitionForm.getRequisitionDocument();
         document.setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(document));
         
         return forward;

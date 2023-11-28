@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -19,9 +19,11 @@
 package org.kuali.kfs.sys.context;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kns.bo.Step;
 import org.kuali.kfs.kns.web.struts.form.pojo.PojoPlugin;
@@ -47,7 +49,7 @@ public final class BatchStepRunner {
     private BatchStepRunner() {
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         if (args.length < 1) {
             System.err.println("ERROR: You must pass the name of the step to run on the command line.");
             System.exit(8);
@@ -60,45 +62,37 @@ public final class BatchStepRunner {
              */
             PojoPlugin.initBeanUtils();
             
-            String[] stepNames;
+            final String[] stepNames;
             if (args[0].indexOf(",") > 0) {
                 stepNames = StringUtils.split(args[0], ",");
             } else {
                 stepNames = new String[]{args[0]};
             }
-            ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-            DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+            final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+            final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
 
-            String jobName = args.length >= 2 ? args[1] : KFSConstants.BATCH_STEP_RUNNER_JOB_NAME;
-            Date jobRunDate = dateTimeService.getCurrentDate();
+            final String jobName = args.length >= 2 ? args[1] : KFSConstants.BATCH_STEP_RUNNER_JOB_NAME;
+            final Date jobRunDate = dateTimeService.getCurrentDate();
             LOG.info("Executing job: {} steps: {}", () -> jobName, () -> Arrays.toString(stepNames));
             for (int i = 0; i < stepNames.length; ++i) {
-                Step step = BatchSpringContext.getStep(stepNames[i]);
+                final Step step = BatchSpringContext.getStep(stepNames[i]);
                 if (step != null) {
-                    Step unProxiedStep = (Step) ProxyUtils.getTargetIfProxied(step);
-                    Class<?> stepClass = unProxiedStep.getClass();
+                    final Step unProxiedStep = (Step) ProxyUtils.getTargetIfProxied(step);
+                    final Class<?> stepClass = unProxiedStep.getClass();
 
-                    ModuleService module = getModuleService(stepClass);
-                    String nestedDiagnosticContext =
+                    final ModuleService module = getModuleService(stepClass);
+                    final String nestedDiagnosticContext =
                         getReportsDirectory() + File.separator +
                         StringUtils.substringAfter(module.getModuleConfiguration().getNamespaceCode(), "-").toLowerCase(
                                 Locale.US)
                             + File.separator + step.getName()
                             + "-" + dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate());
-                    boolean ndcSet = false;
-                    try {
-                        ThreadContext.put(KFSConstants.BATCH_LOGGER_THREAD_CONTEXT_KEY, nestedDiagnosticContext);
-                        ndcSet = true;
-                    } catch (Exception ex) {
-                        LOG.warn("Could not initialize custom logging for step: {}", step::getName, () -> ex);
-                    }
-                    try {
+                    try (CloseableThreadContext.Instance ignored = CloseableThreadContext.put(
+                            KFSConstants.BATCH_LOGGER_THREAD_CONTEXT_KEY,
+                            nestedDiagnosticContext)
+                    ) {
                         if (!Job.runStep(parameterService, jobName, i, step, jobRunDate)) {
                             System.exit(4);
-                        }
-                    } finally {
-                        if (ndcSet) {
-                            ThreadContext.remove(KFSConstants.BATCH_LOGGER_THREAD_CONTEXT_KEY);
                         }
                     }
                 } else {
@@ -107,14 +101,14 @@ public final class BatchStepRunner {
             }
             LOG.info("Finished executing job: {} steps: {}", () -> jobName, () -> Arrays.toString(stepNames));
             System.exit(0);
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             System.err.println("ERROR: Exception caught: ");
             t.printStackTrace(System.err);
             System.exit(8);
         }
     }
 
-    protected static ModuleService getModuleService(Class<?> stepClass) {
+    protected static ModuleService getModuleService(final Class<?> stepClass) {
         return SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(stepClass);
     }
 

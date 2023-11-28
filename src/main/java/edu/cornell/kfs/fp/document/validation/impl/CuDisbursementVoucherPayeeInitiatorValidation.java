@@ -26,30 +26,30 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
     protected AccountingDocument accountingDocumentForValidation;
     
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         LOG.debug("validate start");        
         boolean isValid = true;
         
-        CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) accountingDocumentForValidation;
-        CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) document.getDvPayeeDetail();
+        final CuDisbursementVoucherDocument document = (CuDisbursementVoucherDocument) accountingDocumentForValidation;
+        final CuDisbursementVoucherPayeeDetail payeeDetail = (CuDisbursementVoucherPayeeDetail) document.getDvPayeeDetail();
         
-        MessageMap errors = GlobalVariables.getMessageMap();
+        final MessageMap errors = GlobalVariables.getMessageMap();
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
 
         String uuid = null;
         // If payee is a vendor, then look up SSN and look for SSN in the employee table
         if (payeeDetail.isVendor() && StringUtils.isNotBlank(payeeDetail.getDisbVchrVendorHeaderIdNumber())) {
-            VendorDetail dvVendor = retrieveVendorDetail(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), payeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
+            final VendorDetail dvVendor = retrieveVendorDetail(payeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger(), payeeDetail.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
             // if the vendor tax type is SSN, then check the tax number
             if (dvVendor != null && DisbursementVoucherConstants.TAX_TYPE_SSN.equals(dvVendor.getVendorHeader().getVendorTaxTypeCode())) {
                 // check ssn against employee table
-                Person user = retrieveEmployeeBySSN(dvVendor.getVendorHeader().getVendorTaxNumber());
+                final Person user = retrieveEmployeeBySSN(dvVendor.getVendorHeader().getVendorTaxNumber());
                 if (user != null) {
                     uuid = user.getPrincipalId();
                 }
             }
         } else if (payeeDetail.isEmployee()) {
-            Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeDetail.getDisbVchrEmployeeIdNumber());
+            final Person employee = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeDetail.getDisbVchrEmployeeIdNumber());
             uuid = employee.getPrincipalId();
         } else if (payeeDetail.isStudent() || payeeDetail.isAlumni()) {
             uuid = payeeDetail.getDisbVchrPayeeIdNumber();
@@ -57,7 +57,7 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
 
         // If a uuid was found for payee, check it against the initiator uuid
         if (StringUtils.isNotBlank(uuid)) {
-            Person initUser = getInitiator(document);
+            final Person initUser = getInitiator(document);
             if (uuid.equals(initUser.getPrincipalId())) {
                 errors.putError(DV_PAYEE_ID_NUMBER_PROPERTY_PATH, FPKeyConstants.ERROR_PAYEE_INITIATOR);
                 isValid = false;
@@ -69,7 +69,7 @@ public class CuDisbursementVoucherPayeeInitiatorValidation extends DisbursementV
         return isValid;
     }
 
-    public void setAccountingDocumentForValidation(AccountingDocument accountingDocumentForValidation) {
+    public void setAccountingDocumentForValidation(final AccountingDocument accountingDocumentForValidation) {
         this.accountingDocumentForValidation = accountingDocumentForValidation;
     }
 

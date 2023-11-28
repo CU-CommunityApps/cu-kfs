@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -80,37 +80,37 @@ public final class Preferences implements PreferencesContract, Serializable {
 
     private final Map<String, String> documentTypeNotificationPreferenceMap;
 
-    public Preferences(Builder builder) {
-        this.emailNotification = builder.getEmailNotification();
-        this.notifyPrimaryDelegation = builder.getNotifyPrimaryDelegation();
-        this.notifySecondaryDelegation = builder.getNotifySecondaryDelegation();
-        this.openNewWindow = builder.getOpenNewWindow();
-        this.showActionRequested = builder.getShowActionRequested();
-        this.showDateCreated = builder.getShowDateCreated();
-        this.showDocumentStatus = builder.getShowDocumentStatus();
-        this.showAppDocStatus = builder.getShowAppDocStatus();
-        this.showDocType = builder.getShowDocType();
-        this.showInitiator = builder.getShowInitiator();
-        this.showDocTitle = builder.getShowDocTitle();
-        this.showWorkgroupRequest = builder.getShowWorkgroupRequest();
-        this.showDelegator = builder.getShowDelegator();
-        this.showClearFyi = builder.getShowClearFyi();
-        this.pageSize = builder.getPageSize();
-        this.refreshRate = builder.getRefreshRate();
-        this.delegatorFilter = builder.getDelegatorFilter();
-        this.useOutbox = builder.getUseOutbox();
-        this.showDateApproved = builder.getShowDateApproved();
-        this.showCurrentNode = builder.getShowCurrentNode();
-        this.primaryDelegateFilter = builder.getPrimaryDelegateFilter();
-        this.requiresSave = builder.isRequiresSave();
-        this.notifyAcknowledge = builder.getNotifyAcknowledge();
-        this.notifyApprove = builder.getNotifyApprove();
-        this.notifyComplete = builder.getNotifyComplete();
-        this.notifyFYI = builder.getNotifyFYI();
-        this.showNotes = builder.getShowNotes();
-        this.showLastModifiedDate = builder.getShowLastModifiedDate();
-        this.documentTypeNotificationPreferences = null;
-        this.documentTypeNotificationPreferenceMap = builder.getDocumentTypeNotificationPreferences();
+    public Preferences(final Builder builder) {
+        emailNotification = builder.getEmailNotification();
+        notifyPrimaryDelegation = builder.getNotifyPrimaryDelegation();
+        notifySecondaryDelegation = builder.getNotifySecondaryDelegation();
+        openNewWindow = builder.getOpenNewWindow();
+        showActionRequested = builder.getShowActionRequested();
+        showDateCreated = builder.getShowDateCreated();
+        showDocumentStatus = builder.getShowDocumentStatus();
+        showAppDocStatus = builder.getShowAppDocStatus();
+        showDocType = builder.getShowDocType();
+        showInitiator = builder.getShowInitiator();
+        showDocTitle = builder.getShowDocTitle();
+        showWorkgroupRequest = builder.getShowWorkgroupRequest();
+        showDelegator = builder.getShowDelegator();
+        showClearFyi = builder.getShowClearFyi();
+        pageSize = builder.getPageSize();
+        refreshRate = builder.getRefreshRate();
+        delegatorFilter = builder.getDelegatorFilter();
+        useOutbox = builder.getUseOutbox();
+        showDateApproved = builder.getShowDateApproved();
+        showCurrentNode = builder.getShowCurrentNode();
+        primaryDelegateFilter = builder.getPrimaryDelegateFilter();
+        requiresSave = builder.isRequiresSave();
+        notifyAcknowledge = builder.getNotifyAcknowledge();
+        notifyApprove = builder.getNotifyApprove();
+        notifyComplete = builder.getNotifyComplete();
+        notifyFYI = builder.getNotifyFYI();
+        showNotes = builder.getShowNotes();
+        showLastModifiedDate = builder.getShowLastModifiedDate();
+        documentTypeNotificationPreferences = null;
+        documentTypeNotificationPreferenceMap = builder.getDocumentTypeNotificationPreferences();
     }
 
     @Override
@@ -225,22 +225,22 @@ public final class Preferences implements PreferencesContract, Serializable {
 
     @Override
     public String getNotifyComplete() {
-        return this.notifyComplete;
+        return notifyComplete;
     }
 
     @Override
     public String getNotifyApprove() {
-        return this.notifyApprove;
+        return notifyApprove;
     }
 
     @Override
     public String getNotifyAcknowledge() {
-        return this.notifyAcknowledge;
+        return notifyAcknowledge;
     }
 
     @Override
     public String getNotifyFYI() {
-        return this.notifyFYI;
+        return notifyFYI;
     }
 
     @Override
@@ -252,9 +252,9 @@ public final class Preferences implements PreferencesContract, Serializable {
         return this.showLastModifiedDate;
     }
 
-    public String getDocumentTypeNotificationPreference(String documentType) {
-        String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
-        String preferenceValue = getDocumentTypeNotificationPreferences().get(preferenceName);
+    public String getDocumentTypeNotificationPreference(final String documentType) {
+        final String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
+        final String preferenceValue = getDocumentTypeNotificationPreferences().get(preferenceName);
         if (StringUtils.isNotBlank(preferenceValue)) {
             return preferenceValue;
         }
@@ -273,7 +273,7 @@ public final class Preferences implements PreferencesContract, Serializable {
 
     public static final class Builder implements Serializable, ModelBuilder, PreferencesContract {
 
-        private boolean requiresSave = false;
+        private boolean requiresSave;
 
         private String emailNotification;
         private String notifyPrimaryDelegation;
@@ -305,19 +305,20 @@ public final class Preferences implements PreferencesContract, Serializable {
         private Map<String, String> documentTypeNotificationPreferences;
 
         private Builder() {
-            this.documentTypeNotificationPreferences = new HashMap<>();
+            documentTypeNotificationPreferences = new HashMap<>();
         }
 
-        private Builder(String emailNotification, String notifyPrimaryDelegation, String notifySecondaryDelegation,
-                String openNewWindow, String showActionRequested, String showDateCreated, String showDocumentStatus,
-                String showAppDocStatus, String showDocType, String showInitiator, String showDocTitle,
-                String showWorkgroupRequest, String showDelegator, String showClearFyi, String pageSize,
-                String refreshRate, String delegatorFilter, String useOutbox,
-                String showDateApproved, String showCurrentNode, String primaryDelegateFilter,
-                String notifyAcknowledge,
-                String notifyApprove, String notifyComplete, String notifyFYI, String showNotes, String showLastModifiedDate,
-                Map<String, String> documentTypeNotificationPreferences,
-                boolean requiresSave) {
+        private Builder(
+                final String emailNotification, final String notifyPrimaryDelegation, final String notifySecondaryDelegation,
+                final String openNewWindow, final String showActionRequested, final String showDateCreated, final String showDocumentStatus,
+                final String showAppDocStatus, final String showDocType, final String showInitiator, final String showDocTitle,
+                final String showWorkgroupRequest, final String showDelegator, final String showClearFyi, final String pageSize,
+                final String refreshRate, final String delegatorFilter, final String useOutbox,
+                final String showDateApproved, final String showCurrentNode, final String primaryDelegateFilter,
+                final String notifyAcknowledge,
+                final String notifyApprove, final String notifyComplete,final String notifyFYI, final String showNotes, final String showLastModifiedDate,
+                final Map<String, String> documentTypeNotificationPreferences,
+                final boolean requiresSave) {
             this.emailNotification = emailNotification;
             this.notifyPrimaryDelegation = notifyPrimaryDelegation;
             this.notifySecondaryDelegation = notifySecondaryDelegation;
@@ -359,16 +360,16 @@ public final class Preferences implements PreferencesContract, Serializable {
         }
 
         public static Builder create(
-                String emailNotification, String notifyPrimaryDelegation, String notifySecondaryDelegation,
-                String openNewWindow, String showActionRequested, String showDateCreated, String showDocumentStatus,
-                String showAppDocStatus, String showDocType, String showInitiator, String showDocTitle,
-                String showWorkgroupRequest, String showDelegator, String showClearFyi, String pageSize,
-                String refreshRate, String delegatorFilter, String useOutbox,
-                String showDateApproved, String showCurrentNode, String primaryDelegateFilter,
-                String notifyAcknowledge,
-                String notifyApprove, String notifyComplete, String notifyFYI, String showNotes, String showLastModifiedDate,
-                Map<String, String> documentTypeNotificationPreferences,
-                boolean requiresSave) {
+                final String emailNotification, final String notifyPrimaryDelegation, final String notifySecondaryDelegation,
+                final String openNewWindow, final String showActionRequested, final String showDateCreated, final String showDocumentStatus,
+                final String showAppDocStatus, final String showDocType, final String showInitiator, final String showDocTitle,
+                final String showWorkgroupRequest, final String showDelegator, final String showClearFyi, final String pageSize,
+                final String refreshRate, final String delegatorFilter, final String useOutbox,
+                final String showDateApproved, final String showCurrentNode, final String primaryDelegateFilter,
+                final String notifyAcknowledge,
+                final String notifyApprove, final String notifyComplete, final String notifyFYI, final String showNotes, final String showLastModifiedDate,
+                final Map<String, String> documentTypeNotificationPreferences,
+                final boolean requiresSave) {
             return new Builder(emailNotification, notifyPrimaryDelegation, notifySecondaryDelegation, openNewWindow,
                     showActionRequested, showDateCreated,
                     showDocumentStatus, showAppDocStatus, showDocType, showInitiator, showDocTitle,
@@ -379,7 +380,7 @@ public final class Preferences implements PreferencesContract, Serializable {
                     documentTypeNotificationPreferences, requiresSave);
         }
 
-        public static Builder create(PreferencesContract contract) {
+        public static Builder create(final PreferencesContract contract) {
             if (contract == null) {
                 throw new IllegalArgumentException("contract was null");
             }
@@ -397,8 +398,9 @@ public final class Preferences implements PreferencesContract, Serializable {
                     contract.getDocumentTypeNotificationPreferences(), contract.isRequiresSave());
         }
 
-        public static Builder create(Map<String, String> map, Map<String, String> documentTypeNotificationPreferences,
-                boolean requiresSave) {
+        public static Builder create(
+                final Map<String, String> map, final Map<String, String> documentTypeNotificationPreferences,
+                final boolean requiresSave) {
             return create(map.get(KEYS.EMAIL_NOTIFICATION), map.get(KEYS.NOTIFY_PRIMARY_DELEGATION), map.get(
                     KEYS.NOTIFY_SECONDARY_DELEGATION), map.get(KEYS.OPEN_NEW_WINDOW),
                     map.get(KEYS.SHOW_ACTION_REQUESTED), map.get(KEYS.SHOW_DATE_CREATED),
@@ -422,7 +424,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return requiresSave;
         }
 
-        public synchronized void setRequiresSave(boolean requiresSave) {
+        public synchronized void setRequiresSave(final boolean requiresSave) {
             this.requiresSave = requiresSave;
         }
 
@@ -431,7 +433,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return emailNotification;
         }
 
-        public synchronized void setEmailNotification(String emailNotification) {
+        public synchronized void setEmailNotification(final String emailNotification) {
             this.emailNotification = emailNotification;
         }
 
@@ -440,7 +442,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return notifyPrimaryDelegation;
         }
 
-        public synchronized void setNotifyPrimaryDelegation(String notifyPrimaryDelegation) {
+        public synchronized void setNotifyPrimaryDelegation(final String notifyPrimaryDelegation) {
             this.notifyPrimaryDelegation = notifyPrimaryDelegation;
         }
 
@@ -449,7 +451,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return notifySecondaryDelegation;
         }
 
-        public synchronized void setNotifySecondaryDelegation(String notifySecondaryDelegation) {
+        public synchronized void setNotifySecondaryDelegation(final String notifySecondaryDelegation) {
             this.notifySecondaryDelegation = notifySecondaryDelegation;
         }
 
@@ -458,7 +460,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return openNewWindow;
         }
 
-        public synchronized void setOpenNewWindow(String openNewWindow) {
+        public synchronized void setOpenNewWindow(final String openNewWindow) {
             this.openNewWindow = openNewWindow;
         }
 
@@ -467,7 +469,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showActionRequested;
         }
 
-        public synchronized void setShowActionRequested(String showActionRequested) {
+        public synchronized void setShowActionRequested(final String showActionRequested) {
             this.showActionRequested = showActionRequested;
         }
 
@@ -476,7 +478,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showDateCreated;
         }
 
-        public synchronized void setShowDateCreated(String showDateCreated) {
+        public synchronized void setShowDateCreated(final String showDateCreated) {
             this.showDateCreated = showDateCreated;
         }
 
@@ -485,7 +487,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showDocumentStatus;
         }
 
-        public synchronized void setShowDocumentStatus(String showDocumentStatus) {
+        public synchronized void setShowDocumentStatus(final String showDocumentStatus) {
             this.showDocumentStatus = showDocumentStatus;
         }
 
@@ -494,7 +496,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showAppDocStatus;
         }
 
-        public synchronized void setShowAppDocStatus(String showAppDocStatus) {
+        public synchronized void setShowAppDocStatus(final String showAppDocStatus) {
             this.showAppDocStatus = showAppDocStatus;
         }
 
@@ -503,7 +505,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showDocType;
         }
 
-        public synchronized void setShowDocType(String showDocType) {
+        public synchronized void setShowDocType(final String showDocType) {
             this.showDocType = showDocType;
         }
 
@@ -512,7 +514,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showInitiator;
         }
 
-        public synchronized void setShowInitiator(String showInitiator) {
+        public synchronized void setShowInitiator(final String showInitiator) {
             this.showInitiator = showInitiator;
         }
 
@@ -521,7 +523,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showDocTitle;
         }
 
-        public synchronized void setShowDocTitle(String showDocTitle) {
+        public synchronized void setShowDocTitle(final String showDocTitle) {
             this.showDocTitle = showDocTitle;
         }
 
@@ -530,7 +532,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showWorkgroupRequest;
         }
 
-        public synchronized void setShowWorkgroupRequest(String showWorkgroupRequest) {
+        public synchronized void setShowWorkgroupRequest(final String showWorkgroupRequest) {
             this.showWorkgroupRequest = showWorkgroupRequest;
         }
 
@@ -539,7 +541,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showDelegator;
         }
 
-        public synchronized void setShowDelegator(String showDelegator) {
+        public synchronized void setShowDelegator(final String showDelegator) {
             this.showDelegator = showDelegator;
         }
 
@@ -548,7 +550,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showClearFyi;
         }
 
-        public synchronized void setShowClearFyi(String showClearFyi) {
+        public synchronized void setShowClearFyi(final String showClearFyi) {
             this.showClearFyi = showClearFyi;
         }
 
@@ -557,7 +559,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return pageSize;
         }
 
-        public synchronized void setPageSize(String pageSize) {
+        public synchronized void setPageSize(final String pageSize) {
             this.pageSize = pageSize;
         }
 
@@ -566,7 +568,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return refreshRate;
         }
 
-        public synchronized void setRefreshRate(String refreshRate) {
+        public synchronized void setRefreshRate(final String refreshRate) {
             this.refreshRate = refreshRate;
         }
 
@@ -575,7 +577,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return delegatorFilter;
         }
 
-        public synchronized void setDelegatorFilter(String delegatorFilter) {
+        public synchronized void setDelegatorFilter(final String delegatorFilter) {
             this.delegatorFilter = delegatorFilter;
         }
 
@@ -584,7 +586,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return useOutbox;
         }
 
-        public synchronized void setUseOutbox(String useOutbox) {
+        public synchronized void setUseOutbox(final String useOutbox) {
             this.useOutbox = useOutbox;
         }
 
@@ -593,7 +595,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showDateApproved;
         }
 
-        public synchronized void setShowDateApproved(String showDateApproved) {
+        public synchronized void setShowDateApproved(final String showDateApproved) {
             this.showDateApproved = showDateApproved;
         }
 
@@ -602,7 +604,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return showCurrentNode;
         }
 
-        public synchronized void setShowCurrentNode(String showCurrentNode) {
+        public synchronized void setShowCurrentNode(final String showCurrentNode) {
             this.showCurrentNode = showCurrentNode;
         }
 
@@ -611,43 +613,43 @@ public final class Preferences implements PreferencesContract, Serializable {
             return primaryDelegateFilter;
         }
 
-        public synchronized void setPrimaryDelegateFilter(String primaryDelegateFilter) {
+        public synchronized void setPrimaryDelegateFilter(final String primaryDelegateFilter) {
             this.primaryDelegateFilter = primaryDelegateFilter;
         }
 
         @Override
         public synchronized String getNotifyAcknowledge() {
-            return this.notifyAcknowledge;
+            return notifyAcknowledge;
         }
 
-        public synchronized void setNotifyAcknowledge(String notifyAcknowledge) {
+        public synchronized void setNotifyAcknowledge(final String notifyAcknowledge) {
             this.notifyAcknowledge = notifyAcknowledge;
         }
 
         @Override
         public synchronized String getNotifyApprove() {
-            return this.notifyApprove;
+            return notifyApprove;
         }
 
-        public synchronized void setNotifyApprove(String notifyApprove) {
+        public synchronized void setNotifyApprove(final String notifyApprove) {
             this.notifyApprove = notifyApprove;
         }
 
         @Override
         public synchronized String getNotifyComplete() {
-            return this.notifyComplete;
+            return notifyComplete;
         }
 
-        public synchronized void setNotifyComplete(String notifyComplete) {
+        public synchronized void setNotifyComplete(final String notifyComplete) {
             this.notifyComplete = notifyComplete;
         }
 
         @Override
         public synchronized String getNotifyFYI() {
-            return this.notifyFYI;
+            return notifyFYI;
         }
 
-        public synchronized void setNotifyFYI(String notifyFYI) {
+        public synchronized void setNotifyFYI(final String notifyFYI) {
             this.notifyFYI = notifyFYI;
         }
 
@@ -656,7 +658,7 @@ public final class Preferences implements PreferencesContract, Serializable {
             return this.showNotes;
         }
 
-        public synchronized void setShowNotes(String showNotes) {
+        public synchronized void setShowNotes(final String showNotes) {
             this.showNotes = showNotes;
         }
         
@@ -665,43 +667,43 @@ public final class Preferences implements PreferencesContract, Serializable {
             return this.showLastModifiedDate;
         }
 
-        public synchronized void setShowLastModifiedDate(String showLastModifiedDate) {
+        public synchronized void setShowLastModifiedDate(final String showLastModifiedDate) {
             this.showLastModifiedDate = showLastModifiedDate;
         }
 
-        public synchronized String getDocumentTypeNotificationPreference(String documentType) {
-            String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
-            String preferenceValue = this.documentTypeNotificationPreferences.get(preferenceName);
+        public synchronized String getDocumentTypeNotificationPreference(final String documentType) {
+            final String preferenceName = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
+            final String preferenceValue = documentTypeNotificationPreferences.get(preferenceName);
             if (StringUtils.isNotBlank(preferenceValue)) {
                 return preferenceValue;
             }
             return null;
         }
 
-        public synchronized void setDocumentTypeNotificationPreference(String documentType, String preference) {
+        public synchronized void setDocumentTypeNotificationPreference(String documentType, final String preference) {
             documentType = documentType.replace(KewApiConstants.DOCUMENT_TYPE_NOTIFICATION_DELIMITER, ".");
-            this.documentTypeNotificationPreferences.put(documentType, preference);
+            documentTypeNotificationPreferences.put(documentType, preference);
         }
 
         @Override
         public synchronized Map<String, String> getDocumentTypeNotificationPreferences() {
-            if (this.documentTypeNotificationPreferences == null) {
-                this.documentTypeNotificationPreferences = new HashMap<>();
+            if (documentTypeNotificationPreferences == null) {
+                documentTypeNotificationPreferences = new HashMap<>();
             }
-            return this.documentTypeNotificationPreferences;
+            return documentTypeNotificationPreferences;
         }
 
         public synchronized void setDocumentTypeNotificationPreferences(
-                Map<String, String> documentTypeNotificationPreferences) {
+                final Map<String, String> documentTypeNotificationPreferences) {
             this.documentTypeNotificationPreferences = documentTypeNotificationPreferences;
         }
 
-        public synchronized void addDocumentTypeNotificationPreference(String documentType, String preference) {
-            this.getDocumentTypeNotificationPreferences().put(documentType, preference);
+        public synchronized void addDocumentTypeNotificationPreference(final String documentType, final String preference) {
+            getDocumentTypeNotificationPreferences().put(documentType, preference);
         }
 
-        public synchronized void removeDocumentTypeNotificationPreference(String documentType) {
-            this.getDocumentTypeNotificationPreferences().remove(documentType);
+        public synchronized void removeDocumentTypeNotificationPreference(final String documentType) {
+            getDocumentTypeNotificationPreferences().remove(documentType);
         }
     }
 

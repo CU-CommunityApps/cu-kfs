@@ -30,7 +30,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
      * @see org.kuali.kfs.kns.rules.PromptBeforeValidationBase#doRules(org.kuali.kfs.kns.document.MaintenanceDocument)
      */
     @Override
-    public boolean doPrompts(Document document) {
+    public boolean doPrompts(final Document document) {
         boolean preRulesOK = super.doPrompts(document);
         
         preRulesOK &= getCuCheckStubService().performPreRulesValidationOfIso20022CheckStubLength(document, this);
@@ -40,13 +40,13 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         return preRulesOK;
     }
 
-	private void setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(Document document) {
-		DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) document;
-		DisbursementVoucherPayeeDetail dvPayeeDetail = dvDoc.getDvPayeeDetail();
+	private void setIncomeClassNonReportableForForeignVendorWithNoTaxReviewRequired(final Document document) {
+		final DisbursementVoucherDocument dvDoc = (DisbursementVoucherDocument) document;
+		final DisbursementVoucherPayeeDetail dvPayeeDetail = dvDoc.getDvPayeeDetail();
 
-		String payeeTypeCode = dvPayeeDetail.getDisbursementVoucherPayeeTypeCode();
-		String paymentReasonCode = dvPayeeDetail.getDisbVchrPaymentReasonCode();
-		Integer vendorHeaderId = dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
+		final String payeeTypeCode = dvPayeeDetail.getDisbursementVoucherPayeeTypeCode();
+		final String paymentReasonCode = dvPayeeDetail.getDisbVchrPaymentReasonCode();
+		final Integer vendorHeaderId = dvPayeeDetail.getDisbVchrVendorHeaderIdNumberAsInteger();
 
 		if (getCuDisbursementVoucherTaxService().isForeignVendorAndTaxReviewNotRequired(payeeTypeCode,paymentReasonCode, vendorHeaderId)) {
 			dvDoc.getDvNonresidentTax().setIncomeClassCode(DisbursementVoucherConstants.NONRESIDENT_TAX_INCOME_CLASS_NON_REPORTABLE);
@@ -64,20 +64,20 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
      * @return Returns true if the state of all the tabs is valid, false otherwise.
      */
     @SuppressWarnings("deprecation")
-    protected boolean checkWireTransferTabState(DisbursementVoucherDocument dvDocument) {
+    protected boolean checkWireTransferTabState(final DisbursementVoucherDocument dvDocument) {
         boolean tabStatesOK = true;
 
-        PaymentSourceWireTransfer dvWireTransfer = dvDocument.getWireTransfer();
+        final PaymentSourceWireTransfer dvWireTransfer = dvDocument.getWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
         if ((StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK,
                 dvDocument.getDisbVchrPaymentMethodCode()) || StringUtils.equals(
                 KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
                 dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
-            String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+            final String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
                     CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
             
-            boolean clearTab = super.askOrAnalyzeYesNoQuestion(
+            final boolean clearTab = super.askOrAnalyzeYesNoQuestion(
                     KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID,
                     questionText);
             if (clearTab) {

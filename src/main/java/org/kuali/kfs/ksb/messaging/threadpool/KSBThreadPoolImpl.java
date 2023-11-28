@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -134,9 +134,9 @@ public class KSBThreadPoolImpl extends ThreadPoolExecutor implements KSBThreadPo
      * the factory.
      */
     private static class KSBThreadFactory implements ThreadFactory {
-        private static int factorySequence = 0;
+        private static int factorySequence;
 
-        private static int threadSequence = 0;
+        private static int threadSequence;
 
         private final ThreadFactory defaultThreadFactory = Executors.defaultThreadFactory();
 

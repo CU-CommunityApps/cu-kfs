@@ -90,7 +90,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return financialDocumentInitiator;
     }
 
-    public void setFinancialDocumentInitiator(Person financialDocumentInitiator) {
+    public void setFinancialDocumentInitiator(final Person financialDocumentInitiator) {
         this.financialDocumentInitiator = financialDocumentInitiator;
     }
 
@@ -100,7 +100,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Override
-    public void setUniversityFiscalYear(Integer universityFiscalYear) {
+    public void setUniversityFiscalYear(final Integer universityFiscalYear) {
         this.universityFiscalYear = universityFiscalYear;
     }
 
@@ -109,7 +109,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return processingChartOfAccountCode;
     }
 
-    public void setProcessingChartOfAccountCode(String processingChartOfAccountCode) {
+    public void setProcessingChartOfAccountCode(final String processingChartOfAccountCode) {
         this.processingChartOfAccountCode = processingChartOfAccountCode;
     }
 
@@ -118,7 +118,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return processingOrganizationCode;
     }
 
-    public void setProcessingOrganizationCode(String processingOrganizationCode) {
+    public void setProcessingOrganizationCode(final String processingOrganizationCode) {
         this.processingOrganizationCode = processingOrganizationCode;
     }
 
@@ -126,7 +126,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return universityFederalEmployerIdentificationNumber;
     }
 
-    public void setUniversityFederalEmployerIdentificationNumber(String universityFederalEmployerIdentificationNumber) {
+    public void setUniversityFederalEmployerIdentificationNumber(final String universityFederalEmployerIdentificationNumber) {
         this.universityFederalEmployerIdentificationNumber = universityFederalEmployerIdentificationNumber;
     }
 
@@ -134,7 +134,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return discountObjectCode;
     }
 
-    public void setDiscountObjectCode(String refundFinancialObjectCode) {
+    public void setDiscountObjectCode(final String refundFinancialObjectCode) {
         this.discountObjectCode = refundFinancialObjectCode;
     }
 
@@ -142,7 +142,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return universityClearingChartOfAccountsCode;
     }
 
-    public void setUniversityClearingChartOfAccountsCode(String universityClearingChartOfAccountsCode) {
+    public void setUniversityClearingChartOfAccountsCode(final String universityClearingChartOfAccountsCode) {
         this.universityClearingChartOfAccountsCode = universityClearingChartOfAccountsCode;
     }
 
@@ -150,7 +150,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return universityClearingAccountNumber;
     }
 
-    public void setUniversityClearingAccountNumber(String universityClearingAccountNumber) {
+    public void setUniversityClearingAccountNumber(final String universityClearingAccountNumber) {
         this.universityClearingAccountNumber = universityClearingAccountNumber;
     }
 
@@ -158,7 +158,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return universityClearingSubAccountNumber;
     }
 
-    public void setUniversityClearingSubAccountNumber(String universityClearingSubAccountNumber) {
+    public void setUniversityClearingSubAccountNumber(final String universityClearingSubAccountNumber) {
         this.universityClearingSubAccountNumber = universityClearingSubAccountNumber;
     }
 
@@ -166,7 +166,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return universityClearingObjectCode;
     }
 
-    public void setUniversityClearingObjectCode(String universityClearingObjectCode) {
+    public void setUniversityClearingObjectCode(final String universityClearingObjectCode) {
         this.universityClearingObjectCode = universityClearingObjectCode;
     }
 
@@ -174,7 +174,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return universityClearingSubObjectCode;
     }
 
-    public void setUniversityClearingSubObjectCode(String universityClearingSubObjectCode) {
+    public void setUniversityClearingSubObjectCode(final String universityClearingSubObjectCode) {
         this.universityClearingSubObjectCode = universityClearingSubObjectCode;
     }
 
@@ -182,7 +182,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return creditCardObjectCode;
     }
 
-    public void setCreditCardObjectCode(String creditCardObjectCode) {
+    public void setCreditCardObjectCode(final String creditCardObjectCode) {
         this.creditCardObjectCode = creditCardObjectCode;
     }
 
@@ -190,7 +190,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return lockboxNumber;
     }
 
-    public void setLockboxNumber(String lockboxNumber) {
+    public void setLockboxNumber(final String lockboxNumber) {
         this.lockboxNumber = lockboxNumber;
     }
 
@@ -204,7 +204,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Override
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -212,7 +212,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return financialDocumentInitiatorIdentifier;
     }
 
-    public void setFinancialDocumentInitiatorIdentifier(String financialDocumentInitiatorIdentifier) {
+    public void setFinancialDocumentInitiatorIdentifier(final String financialDocumentInitiatorIdentifier) {
         this.financialDocumentInitiatorIdentifier = financialDocumentInitiatorIdentifier;
     }
 
@@ -236,7 +236,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationCheckPayableToName;
     }
 
-    public void setOrganizationCheckPayableToName(String organizationCheckPayableToName) {
+    public void setOrganizationCheckPayableToName(final String organizationCheckPayableToName) {
         this.organizationCheckPayableToName = organizationCheckPayableToName;
     }
 
@@ -244,7 +244,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToAddressName;
     }
 
-    public void setOrganizationRemitToAddressName(String organizationRemitToAddressName) {
+    public void setOrganizationRemitToAddressName(final String organizationRemitToAddressName) {
         this.organizationRemitToAddressName = organizationRemitToAddressName;
     }
 
@@ -252,7 +252,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToCityName;
     }
 
-    public void setOrganizationRemitToCityName(String organizationRemitToCityName) {
+    public void setOrganizationRemitToCityName(final String organizationRemitToCityName) {
         this.organizationRemitToCityName = organizationRemitToCityName;
     }
 
@@ -260,7 +260,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToLine1StreetAddress;
     }
 
-    public void setOrganizationRemitToLine1StreetAddress(String organizationRemitToLine1StreetAddress) {
+    public void setOrganizationRemitToLine1StreetAddress(final String organizationRemitToLine1StreetAddress) {
         this.organizationRemitToLine1StreetAddress = organizationRemitToLine1StreetAddress;
     }
 
@@ -268,7 +268,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToLine2StreetAddress;
     }
 
-    public void setOrganizationRemitToLine2StreetAddress(String organizationRemitToLine2StreetAddress) {
+    public void setOrganizationRemitToLine2StreetAddress(final String organizationRemitToLine2StreetAddress) {
         this.organizationRemitToLine2StreetAddress = organizationRemitToLine2StreetAddress;
     }
 
@@ -276,7 +276,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToStateCode;
     }
 
-    public void setOrganizationRemitToStateCode(String organizationRemitToStateCode) {
+    public void setOrganizationRemitToStateCode(final String organizationRemitToStateCode) {
         this.organizationRemitToStateCode = organizationRemitToStateCode;
     }
 
@@ -284,7 +284,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToZipCode;
     }
 
-    public void setOrganizationRemitToZipCode(String organizationRemitToZipCode) {
+    public void setOrganizationRemitToZipCode(final String organizationRemitToZipCode) {
         this.organizationRemitToZipCode = organizationRemitToZipCode;
     }
 
@@ -293,7 +293,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setCreditCardFinancialObject(ObjectCode creditCardFinancialObject) {
+    public void setCreditCardFinancialObject(final ObjectCode creditCardFinancialObject) {
         this.creditCardFinancialObject = creditCardFinancialObject;
     }
 
@@ -302,7 +302,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setUniversityClearingSubObject(SubObjectCode universityClearingSubObject) {
+    public void setUniversityClearingSubObject(final SubObjectCode universityClearingSubObject) {
         this.universityClearingSubObject = universityClearingSubObject;
     }
 
@@ -311,7 +311,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setUniversityClearingObject(ObjectCode universityClearingObject) {
+    public void setUniversityClearingObject(final ObjectCode universityClearingObject) {
         this.universityClearingObject = universityClearingObject;
     }
 
@@ -320,7 +320,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setDiscountFinancialObject(ObjectCode refundFinancialObject) {
+    public void setDiscountFinancialObject(final ObjectCode refundFinancialObject) {
         this.discountFinancialObject = refundFinancialObject;
     }
 
@@ -329,7 +329,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setProcessingOrganization(Organization processingOrganization) {
+    public void setProcessingOrganization(final Organization processingOrganization) {
         this.processingOrganization = processingOrganization;
     }
 
@@ -338,7 +338,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setProcessingChartOfAccount(Chart processingChartOfAccount) {
+    public void setProcessingChartOfAccount(final Chart processingChartOfAccount) {
         this.processingChartOfAccount = processingChartOfAccount;
     }
 
@@ -347,7 +347,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setUniversityClearingAccount(Account universityClearingAccount) {
+    public void setUniversityClearingAccount(final Account universityClearingAccount) {
         this.universityClearingAccount = universityClearingAccount;
     }
 
@@ -356,7 +356,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setUniversityClearingChartOfAccounts(Chart universityClearingChartOfAccounts) {
+    public void setUniversityClearingChartOfAccounts(final Chart universityClearingChartOfAccounts) {
         this.universityClearingChartOfAccounts = universityClearingChartOfAccounts;
     }
 
@@ -365,7 +365,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setUniversityClearingSubAccount(SubAccount universityClearingSubAccount) {
+    public void setUniversityClearingSubAccount(final SubAccount universityClearingSubAccount) {
         this.universityClearingSubAccount = universityClearingSubAccount;
     }
 
@@ -374,21 +374,21 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     }
 
     @Deprecated
-    public void setOrganizationRemitToState(State organizationRemitToState) {
+    public void setOrganizationRemitToState(final State organizationRemitToState) {
         this.organizationRemitToState = organizationRemitToState;
     }
 
     @Override
     public String toString() {
-        return (this.universityFiscalYear == null ? "" : this.universityFiscalYear + "-") +
-               this.processingChartOfAccountCode + "-" + this.processingOrganizationCode;
+        return (universityFiscalYear == null ? "" : universityFiscalYear + "-") +
+               processingChartOfAccountCode + "-" + processingOrganizationCode;
     }
 
     public ObjectCode getUniversityFiscalYearObject() {
         return universityFiscalYearObject;
     }
 
-    public void setUniversityFiscalYearObject(ObjectCode universityFiscalYearObject) {
+    public void setUniversityFiscalYearObject(final ObjectCode universityFiscalYearObject) {
         this.universityFiscalYearObject = universityFiscalYearObject;
     }
 
@@ -414,7 +414,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return orgRemitToZipCode;
     }
 
-    public void setOrgRemitToZipCode(PostalCode orgRemitToZipCode) {
+    public void setOrgRemitToZipCode(final PostalCode orgRemitToZipCode) {
         this.orgRemitToZipCode = orgRemitToZipCode;
     }
 
@@ -422,7 +422,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return organizationRemitToCountryCode;
     }
 
-    public void setOrganizationRemitToCountryCode(String organizationRemitToCountryCode) {
+    public void setOrganizationRemitToCountryCode(final String organizationRemitToCountryCode) {
         this.organizationRemitToCountryCode = organizationRemitToCountryCode;
     }
 
@@ -430,7 +430,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
         return orgRemitToCountry;
     }
 
-    public void setOrgRemitToCountry(Country orgRemitToCountry) {
+    public void setOrgRemitToCountry(final Country orgRemitToCountry) {
         this.orgRemitToCountry = orgRemitToCountry;
     }
 

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -52,7 +52,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
      */
     public PurApAccountingLineBase() {
         super();
-        this.setSequenceNumber(0);
+        setSequenceNumber(0);
         setAmount(null);
     }
 
@@ -62,8 +62,8 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public void setAccountIdentifier(Integer requisitionAccountIdentifier) {
-        this.accountIdentifier = requisitionAccountIdentifier;
+    public void setAccountIdentifier(final Integer requisitionAccountIdentifier) {
+        accountIdentifier = requisitionAccountIdentifier;
     }
 
     @Override
@@ -72,8 +72,8 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public void setItemIdentifier(Integer requisitionItemIdentifier) {
-        this.itemIdentifier = requisitionItemIdentifier;
+    public void setItemIdentifier(final Integer requisitionItemIdentifier) {
+        itemIdentifier = requisitionItemIdentifier;
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public void setAccountLinePercent(BigDecimal accountLinePercent) {
+    public void setAccountLinePercent(final BigDecimal accountLinePercent) {
         this.accountLinePercent = accountLinePercent;
     }
 
@@ -105,7 +105,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
 
     @Override
     public PurApAccountingLine createBlankAmountsCopy() {
-        PurApAccountingLine newAccount = (PurApAccountingLine) ObjectUtils.deepCopy(this);
+        final PurApAccountingLine newAccount = (PurApAccountingLine) ObjectUtils.deepCopy(this);
         newAccount.setSequenceNumber(0);
         newAccount.setAccountLinePercent(null);
         newAccount.setAmount(null);
@@ -113,7 +113,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public boolean accountStringsAreEqual(SourceAccountingLine accountingLine) {
+    public boolean accountStringsAreEqual(final SourceAccountingLine accountingLine) {
         if (accountingLine == null) {
             return false;
         }
@@ -128,7 +128,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public boolean accountStringsAreEqual(PurApAccountingLine accountingLine) {
+    public boolean accountStringsAreEqual(final PurApAccountingLine accountingLine) {
         return accountStringsAreEqual((SourceAccountingLine) accountingLine);
 
     }
@@ -136,7 +136,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     @Override
     public SourceAccountingLine generateSourceAccountingLine() {
         // the fields here should probably match method 'accountStringsAreEqual' above
-        SourceAccountingLine sourceLine = new SourceAccountingLine();
+        final SourceAccountingLine sourceLine = new SourceAccountingLine();
         sourceLine.setChartOfAccountsCode(getChartOfAccountsCode());
         sourceLine.setAccountNumber(getAccountNumber());
         sourceLine.setSubAccountNumber(getSubAccountNumber());
@@ -150,10 +150,10 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public int compareTo(Object arg0) {
+    public int compareTo(final Object arg0) {
         if (arg0 instanceof PurApAccountingLine) {
-            PurApAccountingLine account = (PurApAccountingLine) arg0;
-            return this.getString().compareTo(account.getString());
+            final PurApAccountingLine account = (PurApAccountingLine) arg0;
+            return getString().compareTo(account.getString());
         }
         return -1;
     }
@@ -171,21 +171,21 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public void setAlternateAmountForGLEntryCreation(KualiDecimal alternateAmount) {
-        this.alternateAmountForGLEntryCreation = alternateAmount;
+    public void setAlternateAmountForGLEntryCreation(final KualiDecimal alternateAmount) {
+        alternateAmountForGLEntryCreation = alternateAmount;
     }
 
     @Override
     public Integer getSequenceNumber() {
-        return this.getAccountIdentifier();
+        return getAccountIdentifier();
     }
 
     @Override
-    public void copyFrom(AccountingLine other) {
+    public void copyFrom(final AccountingLine other) {
         super.copyFrom(other);
 
         if (other instanceof PurApAccountingLine) {
-            PurApAccountingLine purapOther = (PurApAccountingLine) other;
+            final PurApAccountingLine purapOther = (PurApAccountingLine) other;
 
             // Need to fix accountIdentifier and sequenceNumber since they are crossed in the getter in purap
             // i.e. getSequenceNumber() actually returns accountIdentifier, while getPurApSequenceNumber() returns
@@ -206,13 +206,13 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     public void refreshNonUpdateableReferences() {
         //hold onto item reference if there without itemId
         PurApItem item = null;
-        PurApItem tempItem = getPurapItem();
+        final PurApItem tempItem = getPurapItem();
         if (tempItem != null && tempItem.getItemIdentifier() != null) {
             item = tempItem;
         }
         super.refreshNonUpdateableReferences();
         if (ObjectUtils.isNotNull(item)) {
-            this.setPurapItem(item);
+            setPurapItem(item);
         }
     }
 
@@ -225,7 +225,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
      * @deprecated
      */
     @Override
-    public void setPurapItem(PurApItem item) {
+    public void setPurapItem(final PurApItem item) {
         purapItem = item;
     }
 
@@ -235,7 +235,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
     }
 
     @Override
-    public void setPostingPeriodCode(String postingPeriodCode) {
+    public void setPostingPeriodCode(final String postingPeriodCode) {
         this.postingPeriodCode = postingPeriodCode;
     }
 
@@ -244,7 +244,7 @@ public abstract class PurApAccountingLineBase extends SourceAccountingLine imple
      */
     @Override
     public Map getValuesMap() {
-        Map valuesMap = super.getValuesMap();
+        final Map valuesMap = super.getValuesMap();
         // remove document number
         valuesMap.remove(KFSPropertyConstants.DOCUMENT_NUMBER);
         return valuesMap;

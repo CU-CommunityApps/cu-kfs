@@ -49,7 +49,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
 	 * @param customer Pdp Customer profile for payment
 	 */
 	@Deprecated
-	public void sendAchAdviceEmail(PaymentGroup paymentGroup, PaymentDetail paymentDetail, CustomerProfile customer) {
+	public void sendAchAdviceEmail(final PaymentGroup paymentGroup, final PaymentDetail paymentDetail, final CustomerProfile customer) {
 		LOG.info("DEPRECATED method sendAchAdviceEmail() with payment details as a singleton was called.  NO ACH advices were sent.");
 		//throwing run time exception so caller does not update the database that the ACH advice was sent.
 		throw new RuntimeException("DEPRECATED method sendAchAdviceEmail() with payment details as a singleton was called.  NO ACH advices were sent.");
@@ -68,28 +68,28 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
 	 * @param paymentDetails List of all payment details to process for the single advice email being sent
 	 * @param customer Pdp customer profile for payment
 	 */
-	public void sendAchAdviceEmail(PaymentGroup paymentGroup, List<PaymentDetail> paymentDetails, CustomerProfile customer) {		
+	public void sendAchAdviceEmail(final PaymentGroup paymentGroup, final List<PaymentDetail> paymentDetails, final CustomerProfile customer) {		
         LOG.debug("sendAchAdviceEmail() with payment details list starting");	     
         Integer numPayments = 0;
-        String productionEnvironmentCode = kualiConfigurationService.getPropertyValueAsString(Config.PROD_ENVIRONMENT_CODE);
-        String environmentCode = kualiConfigurationService.getPropertyValueAsString(Config.ENVIRONMENT);
-        boolean shouldBundleAchPayments = this.getAchBundlerHelperService().shouldBundleAchPayments();
+        final String productionEnvironmentCode = kualiConfigurationService.getPropertyValueAsString(Config.PROD_ENVIRONMENT_CODE);
+        final String environmentCode = kualiConfigurationService.getPropertyValueAsString(Config.ENVIRONMENT);
+        final boolean shouldBundleAchPayments = getAchBundlerHelperService().shouldBundleAchPayments();
         if (shouldBundleAchPayments) {
         	//Send out one email to the payee listing all the payment details for the specified payment group
         	
-                BodyMailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+            final BodyMailMessage bundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
         	
         	//create the formatted body
    			// this seems wasteful, but since the total net amount is needed in the message body before the payment details...it's needed
         	KualiDecimal totalNetAmount = new KualiDecimal(0);
-        	Iterator<PaymentDetail> pdToNetAmountIter = paymentDetails.iterator();
+        	final Iterator<PaymentDetail> pdToNetAmountIter = paymentDetails.iterator();
         	while (pdToNetAmountIter.hasNext()){
         		numPayments = numPayments + 1;
-        		PaymentDetail pd = pdToNetAmountIter.next();
+        		final PaymentDetail pd = pdToNetAmountIter.next();
         		totalNetAmount = totalNetAmount.add(pd.getNetPaymentAmount());
         	}     
-            int maxNumDetailsForBody = 10; //max # of payment detail records to include in email body as well as in the attachment, only used for non-DV advices
-        	StringBuffer bundledBody = createAdviceMessageBody(paymentGroup, customer, totalNetAmount, numPayments);
+            final int maxNumDetailsForBody = 10; //max # of payment detail records to include in email body as well as in the attachment, only used for non-DV advices
+        	final StringBuffer bundledBody = createAdviceMessageBody(paymentGroup, customer, totalNetAmount, numPayments);
         	
         	//format payment details based on the whether it is a DV or a PREQ
         	boolean adviceIsForDV = false;    //formatting of payment details for DV is different than for PREQ
@@ -97,7 +97,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	StringBuffer bundledAtachmentData = new StringBuffer(); 
         	        	    
         	for (Iterator <PaymentDetail> payDetailsIter = paymentDetails.iterator(); payDetailsIter.hasNext();) {
-        		PaymentDetail paymentDetail = payDetailsIter.next();
+        		final PaymentDetail paymentDetail = payDetailsIter.next();
         		
         		//initialize data the first time through the loop 
         		if (firstPass){
@@ -161,14 +161,14 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	//Maintain original spec of sending the payee an email for each payment detail in the payment group
         	//PdpMailMessage extends the MailMessage class.  Type casting is used in sendFormattedAchAdviceEmail
         	//so that the appropriate mail "send" is invoked based on the message type that we created and passed.
-        	for (PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+        	for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
         		numPayments = paymentGroup.getPaymentDetails().size();
-        		BodyMailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
-        		StringBuffer nonBundledBody =  createAdviceMessageBody(paymentGroup, customer, paymentDetail.getNetPaymentAmount(), numPayments);
+        		final BodyMailMessage nonBundledMessage = createAdviceMessageAndPopulateHeader(paymentGroup, customer, productionEnvironmentCode, environmentCode);
+        		final StringBuffer nonBundledBody =  createAdviceMessageBody(paymentGroup, customer, paymentDetail.getNetPaymentAmount(), numPayments);
         		nonBundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_HEADER_LINE_ONE));
         		nonBundledBody.append(customer.getAdviceHeaderText());
         		nonBundledBody.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_SEPARATOR));
-        		boolean adviceIsForDV = (paymentDetail.getFinancialDocumentTypeCode().equalsIgnoreCase(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH))?true:false;
+        		final boolean adviceIsForDV = (paymentDetail.getFinancialDocumentTypeCode().equalsIgnoreCase(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH))?true:false;
         		nonBundledBody.append(createAdviceMessagePaymentDetail(paymentGroup, paymentDetail, adviceIsForDV, shouldBundleAchPayments));
         		nonBundledMessage.setMessage(nonBundledBody.toString());
          		sendFormattedAchAdviceEmail(nonBundledMessage, customer, paymentGroup, productionEnvironmentCode, environmentCode);
@@ -181,9 +181,9 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     * KFSPTS-1460: New method. created from code in sendAchAdviceEmail.
     * @return
     */
-    private BodyMailMessage createAdviceMessageAndPopulateHeader(PaymentGroup paymentGroup, CustomerProfile customer, String productionEnvironmentCode, String environmentCode) {
+    private BodyMailMessage createAdviceMessageAndPopulateHeader(final PaymentGroup paymentGroup, final CustomerProfile customer, final String productionEnvironmentCode, final String environmentCode) {
     	LOG.debug("createAdviceMessageAndPopulateHeader() starting");
-    	BodyMailMessage message = new BodyMailMessage();
+    	final BodyMailMessage message = new BodyMailMessage();
         	
     	String fromAddress = customer.getAdviceReturnEmailAddr();	
 		if ((fromAddress == null) || (fromAddress.isEmpty())) {
@@ -216,12 +216,12 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
      * All content in the body of the email message is created in this method regardless 
      * of the number of payment details for the payment group.
      */
-    private StringBuffer createAdviceMessageBody(PaymentGroup paymentGroup, CustomerProfile customer, KualiDecimal netPaymentAmount, Integer numPayments) {
+    private StringBuffer createAdviceMessageBody(final PaymentGroup paymentGroup, final CustomerProfile customer, final KualiDecimal netPaymentAmount, final Integer numPayments) {
     	LOG.debug("createAdviceMessageBody() starting");  	
     	
         // formatter for payment amounts
-        Formatter moneyFormatter = new CurrencyFormatter();
-        Formatter integerFormatter = new IntegerFormatter();
+        final Formatter moneyFormatter = new CurrencyFormatter();
+        final Formatter integerFormatter = new IntegerFormatter();
     	
         String payeeName = "";
         if (paymentGroup.getPayeeName() != null) {
@@ -233,13 +233,13 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	paymentDescription = customer.getAchPaymentDescription();
         }
         
-        StringBuffer body = new StringBuffer();
+        final StringBuffer body = new StringBuffer();
         body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_TO, payeeName));
         body.append(getMessage(CUPdpKeyConstants.MESSAGE_PDP_ACH_ADVICE_EMAIL_BODY_PAYMENT_FROM, paymentDescription));
 
         // get bank name to which the payment is being transferred
         String bankName = "";
-        ACHBank achBank = achBankService.getByPrimaryId(paymentGroup.getAchBankRoutingNbr());
+        final ACHBank achBank = achBankService.getByPrimaryId(paymentGroup.getAchBankRoutingNbr());
         if (achBank == null) {
             LOG.error("Bank could not be found for routing number " + paymentGroup.getAchBankRoutingNbr());
         } else {
@@ -268,12 +268,12 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     /**
      * KFSPTS-1460: New method. Create a formatted payment detail line for the ACH advice.
      */
-    private String createAdviceMessagePaymentDetail(PaymentGroup paymentGroup, PaymentDetail paymentDetail, boolean adviceIsForDV, boolean shouldBundleAchPayments) {
+    private String createAdviceMessagePaymentDetail(final PaymentGroup paymentGroup, final PaymentDetail paymentDetail, final boolean adviceIsForDV, final boolean shouldBundleAchPayments) {
     	LOG.debug("createAdviceMessagePaymentDetail() starting");  
     
-        Formatter moneyFormatter = new CurrencyFormatter();
-        Formatter dateFormatter = new DateFormatter();
-        Formatter integerFormatter = new IntegerFormatter();
+        final Formatter moneyFormatter = new CurrencyFormatter();
+        final Formatter dateFormatter = new DateFormatter();
+        final Formatter integerFormatter = new IntegerFormatter();
         
 		String invoiceNbr =  "";
         if (StringUtils.isNotBlank(paymentDetail.getInvoiceNbr())) {
@@ -312,19 +312,19 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         
 		String originalInvoiceAmount = "";
         if (paymentDetail.getOrigInvoiceAmount() != null) {
-        	String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getOrigInvoiceAmount());
+        	final String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getOrigInvoiceAmount());
         	originalInvoiceAmount = StringUtils.remove(amount, KFSConstants.COMMA);
         }
         
 		String invoiceTotalDiscount = "";
         if (paymentDetail.getInvTotDiscountAmount() != null) {
-        	String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getInvTotDiscountAmount());
+        	final String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getInvTotDiscountAmount());
         	invoiceTotalDiscount = StringUtils.remove(amount, KFSConstants.COMMA);
         }
         
 		String netPayAmount = "";
         if (paymentDetail.getNetPaymentAmount() != null) {
-        	 String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getNetPaymentAmount());
+        	 final String amount = (String)moneyFormatter.formatForPresentation(paymentDetail.getNetPaymentAmount());
         	 netPayAmount = StringUtils.remove(amount, KFSConstants.COMMA);
         }          
         
@@ -343,7 +343,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	
             // print payment notes
         	formattedPaymentDetail.append(KFSConstants.NEWLINE);
-            for (PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
+            for (final PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
             	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + KFSConstants.NEWLINE);
             }
 
@@ -369,7 +369,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
         	
             // print payment notes
         	formattedPaymentDetail.append(KFSConstants.NEWLINE);
-            for (PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
+            for (final PaymentNoteText paymentNoteText : paymentDetail.getNotes()) {
             	formattedPaymentDetail.append(paymentNoteText.getCustomerNoteText() + KFSConstants.NEWLINE);
             }
 
@@ -388,7 +388,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
      * KFSPTS-1460: broke this logic out of sendAchAdviceEmail
      * 
      */
-    private void sendFormattedAchAdviceEmail(BodyMailMessage message, CustomerProfile customer, PaymentGroup paymentGroup, String productionEnvironmentCode, String environmentCode) {
+    private void sendFormattedAchAdviceEmail(final BodyMailMessage message, final CustomerProfile customer, final PaymentGroup paymentGroup, final String productionEnvironmentCode, final String environmentCode) {
     	LOG.debug("sendFormattedAchAdviceEmail() starting");
     	emailService.sendMessage(message, false);
     }
@@ -403,7 +403,7 @@ public class CuPdpEmailServiceImpl extends PdpEmailServiceImpl implements CuPdpE
     /**
      * KFSPTS-1460: New method
      */
-    public void setAchBundlerHelperService(AchBundlerHelperService achBundlerHelperService) {
+    public void setAchBundlerHelperService(final AchBundlerHelperService achBundlerHelperService) {
         this.achBundlerHelperService = achBundlerHelperService;
     }  
 

@@ -31,11 +31,12 @@ import com.rsmart.kuali.kfs.module.ld.LdConstants;
 
 public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryConverterServiceImpl {
 
-    public LaborLedgerPendingEntry getBenefitClearingPendingEntry(LaborLedgerPostingDocument document, 
-                                                GeneralLedgerPendingEntrySequenceHelper sequenceHelper, String accountNumber, 
-                                                String chartOfAccountsCode, String benefitTypeCode, KualiDecimal clearingAmount, String objectCode) {
+    public LaborLedgerPendingEntry getBenefitClearingPendingEntry(
+            final LaborLedgerPostingDocument document, 
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper, final String accountNumber, 
+            final String chartOfAccountsCode, final String benefitTypeCode, final KualiDecimal clearingAmount, final String objectCode) {
                
-        LaborLedgerPendingEntry pendingEntry = super.getBenefitClearingPendingEntry(
+        final LaborLedgerPendingEntry pendingEntry = super.getBenefitClearingPendingEntry(
                                                        document, sequenceHelper,  accountNumber, chartOfAccountsCode,  benefitTypeCode,  clearingAmount); 
         
         pendingEntry.setPositionNumber(document.getLaborLedgerPendingEntry(0).getPositionNumber());
@@ -47,10 +48,11 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
     }
     
     @Override
-    public LaborLedgerPendingEntry getBenefitPendingEntry(LaborLedgerPostingDocument document, ExpenseTransferAccountingLine accountingLine, 
-            GeneralLedgerPendingEntrySequenceHelper sequenceHelper, KualiDecimal benefitAmount, String fringeBenefitObjectCode) {
+    public LaborLedgerPendingEntry getBenefitPendingEntry(
+            final LaborLedgerPostingDocument document, final ExpenseTransferAccountingLine accountingLine, 
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper, final KualiDecimal benefitAmount, final String fringeBenefitObjectCode) {
         
-        LaborLedgerPendingEntry pendingEntry = super.getBenefitPendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
+        final LaborLedgerPendingEntry pendingEntry = super.getBenefitPendingEntry(document, accountingLine, sequenceHelper, benefitAmount, fringeBenefitObjectCode);
         
         pendingEntry.setPositionNumber(accountingLine.getPositionNumber());
         pendingEntry.setEmplid(accountingLine.getEmplid());
@@ -69,30 +71,31 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
      * @param fringeBenefitObjectCode the given fringe benefit object code
      * @return a set of benefit pending entries
      */
-    public List<LaborLedgerPendingEntry> getOffsetPendingEntries(LaborLedgerPendingEntry pendingEntry, GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
-        List<LaborLedgerPendingEntry> offsetEntries = new ArrayList<LaborLedgerPendingEntry>();
-        String benefitRateCategoryCode = SpringContext.getBean(LaborBenefitsCalculationService.class).getBenefitRateCategoryCode(pendingEntry.getChartOfAccountsCode(), pendingEntry.getAccountNumber(), pendingEntry.getSubAccountNumber());
-        Collection<PositionObjectBenefit> positionObjectBenefits = SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(pendingEntry.getUniversityFiscalYear(), pendingEntry.getChartOfAccountsCode(), pendingEntry.getFinancialObjectCode());
+    public List<LaborLedgerPendingEntry> getOffsetPendingEntries(
+            final LaborLedgerPendingEntry pendingEntry, final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+        final List<LaborLedgerPendingEntry> offsetEntries = new ArrayList<LaborLedgerPendingEntry>();
+        final String benefitRateCategoryCode = SpringContext.getBean(LaborBenefitsCalculationService.class).getBenefitRateCategoryCode(pendingEntry.getChartOfAccountsCode(), pendingEntry.getAccountNumber(), pendingEntry.getSubAccountNumber());
+        final Collection<PositionObjectBenefit> positionObjectBenefits = SpringContext.getBean(LaborPositionObjectBenefitService.class).getActivePositionObjectBenefits(pendingEntry.getUniversityFiscalYear(), pendingEntry.getChartOfAccountsCode(), pendingEntry.getFinancialObjectCode());
         
         if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
             return offsetEntries;
         }
 
-        for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
-            Map<String, Object> fieldValues = new HashMap<String, Object>();
+        for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
+            final Map<String, Object> fieldValues = new HashMap<String, Object>();
             fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, pendingEntry.getUniversityFiscalYear());
             fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, pendingEntry.getChartOfAccountsCode());
             fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
             fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
             
-            BenefitsCalculation benefitsCalculation =  SpringContext.getBean(BusinessObjectService.class).
+            final BenefitsCalculation benefitsCalculation =  SpringContext.getBean(BusinessObjectService.class).
                     findByPrimaryKey(BenefitsCalculation.class, fieldValues);
 
             if (ObjectUtils.isNull(benefitsCalculation)) { 
                 continue;
             }
 
-            LaborLedgerPendingEntry offsetEntry = new LaborLedgerPendingEntry();
+            final LaborLedgerPendingEntry offsetEntry = new LaborLedgerPendingEntry();
 
             // Copy values from pending entry
             offsetEntry.setReferenceFinancialDocumentNumber(pendingEntry.getReferenceFinancialDocumentNumber());
@@ -134,7 +137,7 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
             offsetEntry.setTransactionLedgerEntrySequenceNumber(getNextSequenceNumber(sequenceHelper));
 
             // calculate the offsetAmount amount (ledger amt * (benfit pct/100) )
-            KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
+            final KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
             KualiDecimal offsetAmount = fringeBenefitPercent.multiply(
                     pendingEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
             offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
@@ -154,12 +157,12 @@ public class CuLaborPendingEntryConverterServiceImpl extends LaborPendingEntryCo
             
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
-            ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+            final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
             
-            String originCode = parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
+            final String originCode = parameterService.getParameterValueAsString(LaborEnterpriseFeedStep.class, LdConstants.LABOR_BENEFIT_OFFSET_ORIGIN_CODE);
             
             offsetEntry.setFinancialSystemOriginationCode(originCode);
-            DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+            final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
             offsetEntry.setDocumentNumber(dateTimeService.toString(dateTimeService.getCurrentDate(), "yyyyMMddhhmmssSSS"));
 
 

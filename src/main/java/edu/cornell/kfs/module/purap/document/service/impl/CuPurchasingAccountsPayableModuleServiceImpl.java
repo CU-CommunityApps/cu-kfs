@@ -17,7 +17,9 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
     * @see org.kuali.kfs.integration.pdp.service.PurchasingAccountsPayableModuleService#handlePurchasingBatchCancels(java.lang.String)
     */
     @Override
-   public void handlePurchasingBatchCancels(String documentNumber, String documentTypeCode, boolean primaryCancel, boolean disbursedPayment, boolean crCancel) {
+   public void handlePurchasingBatchCancels(
+           final String documentNumber, final String documentTypeCode, 
+           final boolean primaryCancel, final boolean disbursedPayment, final boolean crCancel) {
        LOG.info(
                "Begin handlePurchasingBatchCancels(documentNumber={}, documentTypeCode={}, primaryCancel={}, "
                + "disbursedPayment={}",
@@ -26,17 +28,17 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
                primaryCancel,
                disbursedPayment
        );
-       String preqCancelNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
+       final String preqCancelNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
                PurapParameterConstants.PURAP_PDP_PREQ_CANCEL_NOTE);
-       String preqResetNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
+       final String preqResetNote = getParameterService().getParameterValueAsString(PaymentRequestDocument.class,
                PurapParameterConstants.PURAP_PDP_PREQ_RESET_NOTE);
-       String cmCancelNote = getParameterService().getParameterValueAsString(VendorCreditMemoDocument.class,
+       final String cmCancelNote = getParameterService().getParameterValueAsString(VendorCreditMemoDocument.class,
                PurapParameterConstants.PURAP_PDP_CM_CANCEL_NOTE);
-       String cmResetNote = getParameterService().getParameterValueAsString(VendorCreditMemoDocument.class,
+       final String cmResetNote = getParameterService().getParameterValueAsString(VendorCreditMemoDocument.class,
                PurapParameterConstants.PURAP_PDP_CM_RESET_NOTE);
        
        if (PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(documentTypeCode)) {
-           PaymentRequestDocument pr = paymentRequestService.getPaymentRequestByDocumentNumber(documentNumber);
+           final PaymentRequestDocument pr = paymentRequestService.getPaymentRequestByDocumentNumber(documentNumber);
            if (pr != null) {
                if (disbursedPayment || primaryCancel || crCancel) {
                    if (!crCancel) {
@@ -57,7 +59,7 @@ public class CuPurchasingAccountsPayableModuleServiceImpl extends PurchasingAcco
            }
        }
        else if (PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT.equals(documentTypeCode)) {
-           VendorCreditMemoDocument cm = getCreditMemoService().getCreditMemoByDocumentNumber(documentNumber);
+           final VendorCreditMemoDocument cm = getCreditMemoService().getCreditMemoByDocumentNumber(documentNumber);
            if (cm != null) {
                if (disbursedPayment || primaryCancel || crCancel) {
                    if (!crCancel) {

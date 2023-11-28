@@ -48,36 +48,36 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
 
     // ==== CU Customization (KFSPTS-1656): Save IWantDocument routing data. ====
     @Override
-    public void saveRoutingDataForRelatedDocuments(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+    public void saveRoutingDataForRelatedDocuments(final Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         super.saveRoutingDataForRelatedDocuments(accountsPayablePurchasingDocumentLinkIdentifier);
         
         // Save IWNT routing data.
         @SuppressWarnings("unchecked")
-        List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
-        for (Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
-            IWantView view = (IWantView) iterator.next();
-            Document doc = documentService.getByDocumentHeaderId(view.getDocumentNumber());
+        final List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
+        for (final Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
+            final IWantView view = (IWantView) iterator.next();
+            final Document doc = documentService.getByDocumentHeaderId(view.getDocumentNumber());
             doc.getDocumentHeader().getWorkflowDocument().saveDocumentData();
         }
     }
 
     // ==== CU Customization (KFSPTS-1656): Get IWantDocument views. ====
     @Override
-    public List<String> getRelatedDocumentIds(Integer accountsPayablePurchasingDocumentLinkIdentifier) {
-        List<String> documentIdList = super.getRelatedDocumentIds(accountsPayablePurchasingDocumentLinkIdentifier);
+    public List<String> getRelatedDocumentIds(final Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+        final List<String> documentIdList = super.getRelatedDocumentIds(accountsPayablePurchasingDocumentLinkIdentifier);
 
         // Get IWNT views.
         @SuppressWarnings("unchecked")
-        List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
-        for (Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
-            IWantView view = (IWantView) iterator.next();
+        final List<IWantView> iWantViews = getRelatedViews(IWantView.class, accountsPayablePurchasingDocumentLinkIdentifier);
+        for (final Iterator<IWantView> iterator = iWantViews.iterator(); iterator.hasNext();) {
+            final IWantView view = (IWantView) iterator.next();
             documentIdList.add(view.getDocumentNumber());
         }
 
         return documentIdList;
     }
     
-    public void prorateForTradeInAndFullOrderDiscount(PurchasingAccountsPayableDocument purDoc) {
+    public void prorateForTradeInAndFullOrderDiscount(final PurchasingAccountsPayableDocument purDoc) {
 
         if (purDoc instanceof VendorCreditMemoDocument){
             throw new RuntimeException("This method not applicable for VCM documents");
@@ -93,7 +93,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         List<SourceAccountingLine> summaryAccounts = null;
 
         // iterate through below the line and grab FoD and TrdIn.
-        for (PurApItem item : purDoc.getItems()) {
+        for (final PurApItem item : purDoc.getItems()) {
             if (item.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE)) {
                 fullOrderDiscount = item;
             }
@@ -117,12 +117,12 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             purapAccountingService.updateAccountAmounts(purDoc);
 
             //calculate tax
-            boolean salesTaxInd = parameterService.getParameterValueAsBoolean( KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
-            boolean useTaxIndicator = purDoc.isUseTaxIndicator();
+            final boolean salesTaxInd = parameterService.getParameterValueAsBoolean( KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_SALES_TAX_IND);
+            final boolean useTaxIndicator = purDoc.isUseTaxIndicator();
 
             if (salesTaxInd && ObjectUtils.isNull(fullOrderDiscount.getItemTaxAmount()) && !useTaxIndicator) {
-                KualiDecimal discountAmount = fullOrderDiscount.getExtendedPrice();
-                KualiDecimal discountTaxAmount = discountAmount.divide(totalAmount).multiply(totalTaxAmount);
+                final KualiDecimal discountAmount = fullOrderDiscount.getExtendedPrice();
+                final KualiDecimal discountTaxAmount = discountAmount.divide(totalAmount).multiply(totalTaxAmount);
 
                 fullOrderDiscount.setItemTaxAmount(discountTaxAmount);
             }
@@ -138,13 +138,13 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 //prorate accounts
                 distributedAccounts = purapAccountingService.generateAccountDistributionForProration(summaryAccounts, totalAmount.add(totalTaxAmount), 2, fullOrderDiscount.getAccountingLineClass());
 
-                for (PurApAccountingLine distributedAccount : distributedAccounts) {
+                for (final PurApAccountingLine distributedAccount : distributedAccounts) {
                     // KFSPTS-2200 : set item, so it can be verified as discount when validating
                     if (distributedAccount instanceof PurApAccountingLineBase) {
                         ((PurApAccountingLineBase)distributedAccount).setDiscountTradeIn(true);
                     }
-                   BigDecimal percent = distributedAccount.getAccountLinePercent();
-                    BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
+                    final BigDecimal percent = distributedAccount.getAccountLinePercent();
+                    final BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
                     distributedAccount.setAccountLinePercent(roundedPercent);
                 }
 
@@ -164,23 +164,23 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             tradeIn.getSourceAccountingLines().clear();
 
             totalAmount = purDoc.getTotalDollarAmountForTradeIn();
-            KualiDecimal tradeInTotalAmount = tradeIn.getTotalAmount();
+            final KualiDecimal tradeInTotalAmount = tradeIn.getTotalAmount();
             //Before we generate account summary, we should update the account amounts first.
             purapAccountingService.updateAccountAmounts(purDoc);
 
             //Before generating the summary, lets replace the object code in a cloned accounts collection so that we can
             //consolidate all the modified object codes during summary generation.
-            List<PurApItem> clonedTradeInItems = new ArrayList<PurApItem>();
-            Collection<String> objectSubTypesRequiringQty = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.OBJECT_SUB_TYPES_REQUIRING_QUANTITY) );
-            Collection<String> purchasingObjectSubTypes = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSETS_DOCUMENT.class, PurapParameterConstants.PURCHASING_OBJECT_SUB_TYPES) );
+            final List<PurApItem> clonedTradeInItems = new ArrayList<PurApItem>();
+            final Collection<String> objectSubTypesRequiringQty = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.OBJECT_SUB_TYPES_REQUIRING_QUANTITY) );
+            final Collection<String> purchasingObjectSubTypes = new ArrayList<String>( parameterService.getParameterValuesAsString(KfsParameterConstants.CAPITAL_ASSETS_DOCUMENT.class, PurapParameterConstants.PURCHASING_OBJECT_SUB_TYPES) );
 
-             String tradeInCapitalObjectCode = parameterService.getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_ASSET");
-             String tradeInCapitalLeaseObjCd = parameterService.getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_LEASE");
+            final String tradeInCapitalObjectCode = parameterService.getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_ASSET");
+            final String tradeInCapitalLeaseObjCd = parameterService.getParameterValueAsString(PurapConstants.PURAP_NAMESPACE, "Document", "TRADE_IN_OBJECT_CODE_FOR_CAPITAL_LEASE");
 
-            for(PurApItem item : purDoc.getTradeInItems()){
-               PurApItem cloneItem = (PurApItem)ObjectUtils.deepCopy(item);
-               List<PurApAccountingLine> sourceAccountingLines = cloneItem.getSourceAccountingLines();
-               for(PurApAccountingLine accountingLine : sourceAccountingLines){
+            for(final PurApItem item : purDoc.getTradeInItems()){
+               final PurApItem cloneItem = (PurApItem)ObjectUtils.deepCopy(item);
+               final List<PurApAccountingLine> sourceAccountingLines = cloneItem.getSourceAccountingLines();
+               for(final PurApAccountingLine accountingLine : sourceAccountingLines){
                   if(objectSubTypesRequiringQty.contains(accountingLine.getObjectCode().getFinancialObjectSubTypeCode())){
                          accountingLine.setFinancialObjectCode(tradeInCapitalObjectCode);
                   }else if(purchasingObjectSubTypes.contains(accountingLine.getObjectCode().getFinancialObjectSubTypeCode())){
@@ -199,13 +199,13 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
             }
             else {
                 distributedAccounts = purapAccountingService.generateAccountDistributionForProration(summaryAccounts, totalAmount, 2, tradeIn.getAccountingLineClass());
-                for (PurApAccountingLine distributedAccount : distributedAccounts) {
+                for (final PurApAccountingLine distributedAccount : distributedAccounts) {
                     // KFSPTS-2200 : set item, so it can be verified as discount when validating
                     if (distributedAccount instanceof PurApAccountingLineBase) {
                         ((PurApAccountingLineBase)distributedAccount).setDiscountTradeIn(true);
                     }
-                    BigDecimal percent = distributedAccount.getAccountLinePercent();
-                    BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
+                    final BigDecimal percent = distributedAccount.getAccountLinePercent();
+                    final BigDecimal roundedPercent = new BigDecimal(Math.round(percent.doubleValue()));
                     distributedAccount.setAccountLinePercent(roundedPercent);
                     // set the accountAmount same as tradeIn amount not line item's amount
                     resetAccountAmount(distributedAccount, tradeInTotalAmount);
@@ -215,9 +215,10 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         }
     }
 
-    private void resetAccountAmount(PurApAccountingLine distributedAccount, KualiDecimal tradeInTotalAmount) {
-        BigDecimal pct = distributedAccount.getAccountLinePercent();
-        BigDecimal amount = tradeInTotalAmount.bigDecimalValue().multiply(pct).divide(new BigDecimal(100));
+    private void resetAccountAmount(
+            final PurApAccountingLine distributedAccount, final KualiDecimal tradeInTotalAmount) {
+        final BigDecimal pct = distributedAccount.getAccountLinePercent();
+        final BigDecimal amount = tradeInTotalAmount.bigDecimalValue().multiply(pct).divide(new BigDecimal(100));
         distributedAccount.setAmount(new KualiDecimal(amount));
     }
 
@@ -230,10 +231,10 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public KualiDecimal getApoLimit(PurchasingDocument purchasingDocument) {
-        Integer vendorContractGeneratedIdentifier = purchasingDocument.getVendorContractGeneratedIdentifier();
-        String chart = purchasingDocument.getChartOfAccountsCode();
-        String org = purchasingDocument.getOrganizationCode();
+    public KualiDecimal getApoLimit(final PurchasingDocument purchasingDocument) {
+        final Integer vendorContractGeneratedIdentifier = purchasingDocument.getVendorContractGeneratedIdentifier();
+        final String chart = purchasingDocument.getChartOfAccountsCode();
+        final String org = purchasingDocument.getOrganizationCode();
         KualiDecimal purchaseOrderTotalLimit = null;
         
         if (canUseApoLimitFromOrganizationOrContract(purchasingDocument)) {
@@ -243,7 +244,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 OrganizationParameter organizationParameter = new OrganizationParameter();
                 organizationParameter.setChartOfAccountsCode(chart);
                 organizationParameter.setOrganizationCode(org);
-                Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
+                final Map orgParamKeys = persistenceService.getPrimaryKeyFieldValues(organizationParameter);
                 orgParamKeys.put(KRADPropertyConstants.ACTIVE_INDICATOR, true);
                 organizationParameter = businessObjectService.findByPrimaryKey(OrganizationParameter.class, orgParamKeys);
                 purchaseOrderTotalLimit = organizationParameter == null ? null :
@@ -256,40 +257,40 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                     ? CUPurapParameterConstants.AUTOMATIC_FEDERAL_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT
                     : PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT;
             
-            String defaultLimit = parameterService.getParameterValueAsString(RequisitionDocument.class, defaultLimitParameterName);
+            final String defaultLimit = parameterService.getParameterValueAsString(RequisitionDocument.class, defaultLimitParameterName);
             purchaseOrderTotalLimit = new KualiDecimal(defaultLimit);
         }
 
         return purchaseOrderTotalLimit;
     }
 
-    protected boolean canUseApoLimitFromOrganizationOrContract(PurchasingDocument purchasingDocument) {
+    protected boolean canUseApoLimitFromOrganizationOrContract(final PurchasingDocument purchasingDocument) {
         return purchaseOrderCostSourceIsEligibleForOverridingFederalApoLimit(purchasingDocument)
                 || !allAccountsOnDocumentHaveCfdaNumber(purchasingDocument);
     }
 
-    protected boolean shouldUseFederalApoLimit(PurchasingDocument purchasingDocument) {
+    protected boolean shouldUseFederalApoLimit(final PurchasingDocument purchasingDocument) {
         return purchaseOrderCostSourceIsEligibleForFederalApoLimit(purchasingDocument)
                 && documentHasAtLeastOneAccountWithCfdaNumber(purchasingDocument);
     }
 
-    protected boolean purchaseOrderCostSourceIsEligibleForOverridingFederalApoLimit(PurchasingDocument purchasingDocument) {
+    protected boolean purchaseOrderCostSourceIsEligibleForOverridingFederalApoLimit(final PurchasingDocument purchasingDocument) {
         return evaluateCostSourceAgainstParameter(purchasingDocument.getPurchaseOrderCostSourceCode(),
                 CUPurapParameterConstants.CONTRACTING_SOURCES_ALLOWED_OVERRIDE_OF_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT);
     }
 
-    protected boolean purchaseOrderCostSourceIsEligibleForFederalApoLimit(PurchasingDocument purchasingDocument) {
+    protected boolean purchaseOrderCostSourceIsEligibleForFederalApoLimit(final PurchasingDocument purchasingDocument) {
         return evaluateCostSourceAgainstParameter(purchasingDocument.getPurchaseOrderCostSourceCode(),
                 CUPurapParameterConstants.CONTRACTING_SOURCES_EXCLUDED_FROM_FEDERAL_PO_DEFAULT_LIMIT_AMOUNT);
     }
 
-    protected boolean evaluateCostSourceAgainstParameter(String purchaseOrderCostSourceCode, String parameterName) {
-        ParameterEvaluator evaluator = getParameterEvaluatorService().getParameterEvaluator(
+    protected boolean evaluateCostSourceAgainstParameter(final String purchaseOrderCostSourceCode, final String parameterName) {
+        final ParameterEvaluator evaluator = getParameterEvaluatorService().getParameterEvaluator(
                 RequisitionDocument.class, parameterName, purchaseOrderCostSourceCode);
         return evaluator.evaluationSucceeds();
     }
 
-    protected boolean allAccountsOnDocumentHaveCfdaNumber(PurchasingDocument purchasingDocument) {
+    protected boolean allAccountsOnDocumentHaveCfdaNumber(final PurchasingDocument purchasingDocument) {
         if (CollectionUtils.isEmpty(purchasingDocument.getSourceAccountingLines())
                 && CollectionUtils.isEmpty(purchasingDocument.getTargetAccountingLines())) {
             return false;
@@ -298,22 +299,22 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 && allExistingAccountingLinesInListHaveAccountWithCfdaNumber(purchasingDocument.getTargetAccountingLines());
     }
 
-    protected boolean documentHasAtLeastOneAccountWithCfdaNumber(PurchasingDocument purchasingDocument) {
+    protected boolean documentHasAtLeastOneAccountWithCfdaNumber(final PurchasingDocument purchasingDocument) {
         return accountingLineListHasAtLeastOneAccountWithCfdaNumber(purchasingDocument.getSourceAccountingLines())
                 || accountingLineListHasAtLeastOneAccountWithCfdaNumber(purchasingDocument.getTargetAccountingLines());
     }
 
-    protected boolean allExistingAccountingLinesInListHaveAccountWithCfdaNumber(List<?> accountingLines) {
+    protected boolean allExistingAccountingLinesInListHaveAccountWithCfdaNumber(final List<?> accountingLines) {
         return getPotentiallyBlankAccountCfdaNumbersAsStream(accountingLines)
                 .allMatch(StringUtils::isNotBlank);
     }
 
-    protected boolean accountingLineListHasAtLeastOneAccountWithCfdaNumber(List<?> accountingLines) {
+    protected boolean accountingLineListHasAtLeastOneAccountWithCfdaNumber(final List<?> accountingLines) {
         return getPotentiallyBlankAccountCfdaNumbersAsStream(accountingLines)
                 .anyMatch(StringUtils::isNotBlank);
     }
 
-    protected Stream<String> getPotentiallyBlankAccountCfdaNumbersAsStream(List<?> accountingLines) {
+    protected Stream<String> getPotentiallyBlankAccountCfdaNumbersAsStream(final List<?> accountingLines) {
         return accountingLines.stream()
                 .map((line) -> (AccountingLine) line)
                 .peek(this::refreshAccountReferenceIfNecessary)
@@ -321,14 +322,14 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
                 .map(this::getPotentiallyBlankAccountCfdaNumber);
     }
 
-    protected void refreshAccountReferenceIfNecessary(AccountingLine accountingLine) {
+    protected void refreshAccountReferenceIfNecessary(final AccountingLine accountingLine) {
         if (StringUtils.isNotBlank(accountingLine.getChartOfAccountsCode()) && StringUtils.isNotBlank(accountingLine.getAccountNumber())
                 && ObjectUtils.isNull(accountingLine.getAccount())) {
             accountingLine.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
         }
     }
 
-    protected String getPotentiallyBlankAccountCfdaNumber(Account account) {
+    protected String getPotentiallyBlankAccountCfdaNumber(final Account account) {
         if (ObjectUtils.isNotNull(account)) {
             return StringUtils.defaultIfBlank(account.getAccountCfdaNumber(), StringUtils.EMPTY);
         } else {

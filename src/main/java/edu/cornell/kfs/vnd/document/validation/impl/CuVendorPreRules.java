@@ -25,7 +25,7 @@ import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 public class CuVendorPreRules extends VendorPreRules {
 
     @Override
-    protected boolean doCustomPreRules(MaintenanceDocument document) {
+    protected boolean doCustomPreRules(final MaintenanceDocument document) {
         setupConvenienceObjects(document);
         setVendorNamesAndIndicator(document);
         setVendorRestriction(document);
@@ -46,13 +46,13 @@ public class CuVendorPreRules extends VendorPreRules {
         return true;
     }
 
-    protected void detectAndConfirmExpirationDates(MaintenanceDocument document) {
+    protected void detectAndConfirmExpirationDates(final MaintenanceDocument document) {
         boolean proceed = true;
         
-        ArrayList<String> expired = new ArrayList<String>();
+        final ArrayList<String> expired = new ArrayList<String>();
         
-        VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
-        VendorDetailExtension vendorDetailext = (VendorDetailExtension)vendorDetail.getExtension();
+        final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+        final VendorDetailExtension vendorDetailext = (VendorDetailExtension)vendorDetail.getExtension();
 		if (vendorDetailext.getGeneralLiabilityExpiration()!= null && vendorDetailext.getGeneralLiabilityExpiration().before(new Date())) {
 			expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.GENERAL_LIABILITY_COVERAGE);
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.GENERAL_LIABILITY_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_GENERAL_LIABILITY_EXPR_DATE_IN_PAST);
@@ -78,12 +78,12 @@ public class CuVendorPreRules extends VendorPreRules {
 	        GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+CUVendorPropertyConstants.HEALTH_OFFSITE_LICENSE_EXPIRATION, CUVendorKeyConstants.ERROR_DOCUMENT_VNDMAINT_HEALTH_LICENSE_EXPR_IN_PAST);
 		}
 		
-        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
-        List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
+		final VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+		final List<VendorSupplierDiversity> vendorSupplierDiversities = vendorHeader.getVendorSupplierDiversities();
                 
         if (vendorSupplierDiversities.size() > 0) {
             int i = 0;
-            for(VendorSupplierDiversity vendor : vendorSupplierDiversities) {
+            for(final VendorSupplierDiversity vendor : vendorSupplierDiversities) {
                 if (((CuVendorSupplierDiversityExtension)vendor.getExtension()).getVendorSupplierDiversityExpirationDate().before( new Date() ) ) {
                 	expired.add(CUVendorConstants.EXPIRABLE_COVERAGES.SUPPLIER_DIVERSITY_CERTIFICATION);
                     GlobalVariables.getMessageMap().putError(KFSConstants.MAINTENANCE_NEW_MAINTAINABLE+VendorConstants.VENDOR_HEADER_ATTR+"."+
@@ -98,7 +98,7 @@ public class CuVendorPreRules extends VendorPreRules {
 		
 		if(!expired.isEmpty()) {
 			String expiredNames = "";
-			for(String name : expired) {
+			for(final String name : expired) {
 				expiredNames = expiredNames + "[br] - " + name;
 			}
 	        proceed &= askOrAnalyzeYesNoQuestion(CUVendorConstants.EXPIRED_DATE_QUESTION_ID, VendorUtils.buildMessageText(CUVendorKeyConstants.CONFIRM_VENDOR_DATE_EXPIRED, expiredNames));

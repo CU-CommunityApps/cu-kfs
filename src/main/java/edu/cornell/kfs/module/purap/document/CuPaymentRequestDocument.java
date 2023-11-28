@@ -72,7 +72,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         	preqWireTransfer.setDocumentNumber(getDocumentNumber());
 //            }
 //        }
-        } catch (Exception e) {
+        } catch (final Exception e) {
           LOG.info("preqWireTransfer is null" );
           preqWireTransfer = new PaymentRequestWireTransfer();  
       	  preqWireTransfer.setDocumentNumber(getDocumentNumber());
@@ -80,9 +80,9 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
         
     	super.prepareForSave(event);
-        for (PaymentRequestItem item : (List<PaymentRequestItem>) getItems()) {
+        for (final PaymentRequestItem item : (List<PaymentRequestItem>) getItems()) {
             if (item.getItemIdentifier() == null) {
-                Integer generatedItemId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber("PMT_RQST_ITM_ID").intValue();
+                final Integer generatedItemId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber("PMT_RQST_ITM_ID").intValue();
                 item.setItemIdentifier(generatedItemId);
             	if (item.getExtension() == null) {
             		item.setExtension(new CuPaymentRequestItemExtension());
@@ -99,7 +99,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
             // was entered by the user or not.
-            DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
+            final DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(this);
             if ( !docAuth.isAuthorizedByTemplate(this, 
                     KFSConstants.CoreModuleNamespaces.KFS, 
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 
@@ -113,7 +113,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
         if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) {
             return requiresAccountsPayableReviewRouting();
         }
@@ -143,7 +143,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
      * @see org.kuali.kfs.module.purap.document.PaymentRequestDocument#populatePaymentRequestFromPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument, java.util.HashMap)
      */
     @Override
-    public void populatePaymentRequestFromPurchaseOrder(final PurchaseOrderDocument po, final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
+    public void populatePaymentRequestFromPurchaseOrder(
+            final PurchaseOrderDocument po, final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
     	super.populatePaymentRequestFromPurchaseOrder(po, expiredOrClosedAccountList);
     	
     	 // KFSPTS-1891
@@ -190,7 +191,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     	if (this.getDocumentHeader().getWorkflowDocument().isProcessed() && !PaymentRequestStatuses.APPDOC_AUTO_APPROVED.equals(getApplicationDocumentStatus())) {
 
     		//generate bank offsets for payment method wire or foreign draft, reverse 2900 to 1000
-    		String paymentMethodCode = getPaymentMethodCode();
+    		final String paymentMethodCode = getPaymentMethodCode();
     		if(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT.equalsIgnoreCase(paymentMethodCode) || KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE.equalsIgnoreCase(paymentMethodCode) || CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING.equalsIgnoreCase(paymentMethodCode)){
     			getPaymentMethodGeneralLedgerPendingEntryService().generateFinalEntriesForPRNC(this);
     		}
@@ -203,14 +204,14 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     
     protected void saveGeneralLedgerPendingEntries() {
     	// All the approve cd is set to 'A' by glpepostingdocument
-        for (GeneralLedgerPendingEntry glpe : getGeneralLedgerPendingEntries()) {
+        for (final GeneralLedgerPendingEntry glpe : getGeneralLedgerPendingEntries()) {
         	
             SpringContext.getBean(GeneralLedgerPendingEntryService.class).save(glpe);
         }
     }
     
     protected void synchronizeBankCodeWithPaymentMethod() {
-        Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getPaymentMethodCode() );
+        final Bank bank = getPaymentMethodGeneralLedgerPendingEntryService().getBankForPaymentMethod( getPaymentMethodCode() );
         if ( bank != null ) {
             setBankCode(bank.getBankCode());
             setBank(bank);
@@ -228,7 +229,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         return paymentMethodGeneralLedgerPendingEntryService;
     }
 
-    public boolean generateDocumentGeneralLedgerPendingEntries(GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateDocumentGeneralLedgerPendingEntries(final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         if (getGeneralLedgerPendingEntries() == null || getGeneralLedgerPendingEntries().size() < 2) {
             LOG.warn("No gl entries for accounting lines.");
             return true;
@@ -241,7 +242,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     }
     
     @Override
-    public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
+    public void customizeExplicitGeneralLedgerPendingEntry(
+            final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
     	super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
         // KFSPTS-1891
         // if the document is not processed using PDP, then the cash entries need to be created instead of liability
@@ -281,10 +283,10 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 
     @Override
     public List<String> getWorkflowEngineDocumentIdsToLock() {
-        Stream<String> otherDocIdsToLock = Stream.of(super.getWorkflowEngineDocumentIdsToLock())
+        final Stream<String> otherDocIdsToLock = Stream.of(super.getWorkflowEngineDocumentIdsToLock())
                 .flatMap(idList -> (idList != null) ? idList.stream() : Stream.empty());
         
-        Stream<String> poDocIdsToLock = getRelatedViews().getRelatedPurchaseOrderViews().stream()
+        final Stream<String> poDocIdsToLock = getRelatedViews().getRelatedPurchaseOrderViews().stream()
                 .filter(PurchaseOrderView::isPurchaseOrderCurrentIndicator)
                 .map(PurchaseOrderView::getDocumentNumber);
         
@@ -300,7 +302,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
 		return preqWireTransfer;
 	}
 
-	public void setPreqWireTransfer(PaymentRequestWireTransfer preqWireTransfer) {
+	public void setPreqWireTransfer(final PaymentRequestWireTransfer preqWireTransfer) {
 		this.preqWireTransfer = preqWireTransfer;
 	}
 

@@ -45,12 +45,12 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
 		return spawnPoa;
 	}
 
-	public void setSpawnPoa(boolean spawnPoa) {
+	public void setSpawnPoa(final boolean spawnPoa) {
 		this.spawnPoa = spawnPoa;
 	}
 
 
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
 //      if (nodeName.equals("ReplicateRequisitionRouting")) return 
 //
 //		I think the "isMissingAccountingLines" method will cause document to route to account node
@@ -66,8 +66,8 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
   } 
 
     protected boolean isMissingAccountingLines() {
-        for (Iterator iterator = getItems().iterator(); iterator.hasNext();) {
-            PurchaseOrderItem item = (PurchaseOrderItem) iterator.next();
+        for (final Iterator iterator = getItems().iterator(); iterator.hasNext();) {
+            final PurchaseOrderItem item = (PurchaseOrderItem) iterator.next();
             if (item.isConsideredEntered() && item.isAccountListEmpty()) {
                 return true;
             }
@@ -87,10 +87,10 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
         }catch (WorkflowException we) {
             LOG.error("Exception while attempting to retrieve all prior approvers from workflow: " + we);
         }
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        KualiDecimal maxAllowedAmount = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.SEPARATION_OF_DUTIES_DOLLAR_AMOUNT));
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        final KualiDecimal maxAllowedAmount = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.SEPARATION_OF_DUTIES_DOLLAR_AMOUNT));
         // if app param amount is greater than or equal to documentTotalAmount... no need for separation of duties
-        KualiDecimal totalAmount = getDocumentHeader().getFinancialDocumentTotalAmount();
+        final KualiDecimal totalAmount = getDocumentHeader().getFinancialDocumentTotalAmount();
         if (ObjectUtils.isNotNull(maxAllowedAmount) && ObjectUtils.isNotNull(totalAmount) && (maxAllowedAmount.compareTo(totalAmount) >= 0)) {
             return false;
         }
@@ -101,14 +101,14 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
 
 
     public Set<Person> getAllPriorApprovers() throws WorkflowException {
-        PersonService personService = KimApiServiceLocator.getPersonService();
+        final PersonService personService = KimApiServiceLocator.getPersonService();
          List<ActionTaken> actionsTaken = this.getDocumentHeader().getWorkflowDocument().getActionsTaken();
-        Set<String> principalIds = new HashSet<String>();
-        Set<Person> persons = new HashSet<Person>();
+        final Set<String> principalIds = new HashSet<String>();
+        final Set<Person> persons = new HashSet<Person>();
 
-        for (ActionTaken actionTaken : actionsTaken) {
+        for (final ActionTaken actionTaken : actionsTaken) {
             if (KewApiConstants.ACTION_TAKEN_APPROVED_CD.equals(actionTaken.getActionTaken())) {
-                String principalId = actionTaken.getPrincipalId();
+                final String principalId = actionTaken.getPrincipalId();
                 if (!principalIds.contains(principalId)) {
                     principalIds.add(principalId);
                     persons.add(personService.getPerson(principalId));
@@ -120,8 +120,8 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
 
     // KFSUPGRADE-339
     protected boolean isContractManagementReviewRequired() {
-        ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT));
+        final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
+        final KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT));
         return ((ObjectUtils.isNull(automaticPurchaseOrderDefaultLimit)) || (automaticPurchaseOrderDefaultLimit.compareTo(this.getTotalDollarAmount()) < 0));
 
     }
@@ -149,9 +149,9 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
     @Override
     public void doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
-        if (this.getDocumentHeader().getWorkflowDocument().isDisapproved()) {
-            String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getDocumentHeader().getWorkflowDocument());
-            String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
+        if (getDocumentHeader().getWorkflowDocument().isDisapproved()) {
+            final String nodeName = SpringContext.getBean(WorkflowDocumentService.class).getCurrentRouteLevelName(this.getDocumentHeader().getWorkflowDocument());
+            final String disapprovalStatus = PurchaseOrderStatuses.getPurchaseOrderAppDocDisapproveStatuses().get(nodeName);
             updateAndSaveAppDocStatus(disapprovalStatus);
         }
     }

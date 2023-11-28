@@ -96,15 +96,15 @@ public class CuSimpleChartValuesFinder extends KeyValuesBase {
         return chartKeyLabels;
     }
 
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 
-    public void setKeyValuesService(KeyValuesService keyValuesService) {
+    public void setKeyValuesService(final KeyValuesService keyValuesService) {
         this.keyValuesService = keyValuesService;
     }
 
-    public void setFinancialSystemUserService(FinancialSystemUserService financialSystemUserService) {
+    public void setFinancialSystemUserService(final FinancialSystemUserService financialSystemUserService) {
         this.financialSystemUserService = financialSystemUserService;
     }
 
