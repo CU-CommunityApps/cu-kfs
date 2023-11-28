@@ -5,13 +5,12 @@ import edu.cornell.kfs.sys.util.LoadSpringFile;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.kuali.kfs.sys.context.SpringContext;
 
 import java.io.File;
 
 import static org.junit.Assert.assertTrue;
 
-@LoadSpringFile("edu/cornell/kfs/rass/batch/cu-spring-rass-report-test.xml")
+@LoadSpringFile("edu/cornell/kfs/module/purap/jaggaer/xml/cu-spring-jaggaer-test.xml")
 public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
     private static final String EXPECTED_FILE_EXTENSION_XML = "xml";
     private static final String JAGGAER_STAGING_RELATIVE_PATH = "purap/jaggaer/xml";
@@ -23,7 +22,7 @@ public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
     public void setUp() throws Exception {
         super.setUp();
 
-        jaggaerXMLInputFileType = SpringContext.getBean(JaggaerXMLInputFileType.class);
+        jaggaerXMLInputFileType = springContext.getBean(JaggaerXMLInputFileType.class);
     }
 
     @Test
@@ -43,6 +42,7 @@ public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
 
     @Test
     public void testJaggaerXMLInputFileTypeGetAuthor() {
-        assertTrue(jaggaerXMLInputFileType.getAuthorPrincipalName(new File("")).endsWith(JAGGAER_STAGING_RELATIVE_PATH));
+        File exampleFile = new File("staging/purap/jaggaer/xml/jaggaerSupplierUploadFileajd299_20231025_092052250.xml");
+        assertTrue(jaggaerXMLInputFileType.getAuthorPrincipalName(exampleFile).equals("ajd299"));
     }
 }

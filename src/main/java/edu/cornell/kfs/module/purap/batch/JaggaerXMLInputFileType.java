@@ -39,9 +39,7 @@ public class JaggaerXMLInputFileType extends XmlBatchInputFileTypeBase<SupplierS
             return StringUtils.EMPTY;
         }
 
-        String authorPrincipalName = filename.substring(filename.indexOf(fileNamePrefix + fileNamePrefix.length() + 1));
-        authorPrincipalName = filename.substring(0, authorPrincipalName.indexOf(FILE_NAME_PART_DELIMITER));
-        return authorPrincipalName;
+        return StringUtils.substringBetween(filename, fileNamePrefix, FILE_NAME_PART_DELIMITER);
     }
 
     @Override

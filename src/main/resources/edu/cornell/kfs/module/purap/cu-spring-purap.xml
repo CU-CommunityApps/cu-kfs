@@ -372,6 +372,7 @@
 		  class="edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType"
 		  p:directoryPath="${staging.directory}/purap/jaggaer/xml"
 		  p:fileExtension="xml"
+		  p:fileNamePrefix=""
 		  p:dateTimeService-ref="dateTimeService" />
         
     <bean id="jaggaerGenerateSupplierXmlReportService" parent="jaggaerGenerateSupplierXmlReportService-parentBean" />
