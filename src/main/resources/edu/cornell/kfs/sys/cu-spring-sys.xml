@@ -73,10 +73,6 @@
 	
 	<bean id="jobListener" class="edu.cornell.kfs.sys.batch.CuJobListener" parent="jobListener-parentBean"/>
 
-    <bean id="documentMaintenanceService" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl"
-          p:documentMaintenanceDao-ref="documentMaintenanceDao"
-          p:businessObjectService-ref="businessObjectService"/>
-
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
 
     <bean id="documentReindexFlatFileInputFileType-parentBean" class="edu.cornell.kfs.sys.batch.DocumentReindexFlatFileInputType">
