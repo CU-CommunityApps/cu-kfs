@@ -15,10 +15,8 @@ import org.kuali.kfs.kew.actionlist.dao.impl.ActionListPriorityComparator;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.kew.actionitem.ActionItemExtension;
-import edu.cornell.kfs.kew.api.document.CuDocumentRefreshQueue;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.dataaccess.ActionItemNoteDetailDto;
 import edu.cornell.kfs.sys.dataaccess.DocumentMaintenanceDao;
@@ -28,7 +26,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     private static final Logger LOG = LogManager.getLogger();
 
     private DocumentMaintenanceDao documentMaintenanceDao;
-    private CuDocumentRefreshQueue documentRefreshQueue;
     private BusinessObjectService businessObjectService;
 
     @Override
@@ -115,10 +112,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
 
     public void setDocumentMaintenanceDao(DocumentMaintenanceDao documentMaintenanceDao) {
         this.documentMaintenanceDao = documentMaintenanceDao;
-    }
-
-    public void setDocumentRefreshQueue(CuDocumentRefreshQueue documentRefreshQueue) {
-        this.documentRefreshQueue = documentRefreshQueue;
     }
 
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {

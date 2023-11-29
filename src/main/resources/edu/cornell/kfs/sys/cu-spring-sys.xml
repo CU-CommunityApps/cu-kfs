@@ -75,7 +75,6 @@
 
     <bean id="documentMaintenanceService" class="edu.cornell.kfs.sys.service.impl.DocumentMaintenanceServiceImpl"
           p:documentMaintenanceDao-ref="documentMaintenanceDao"
-          p:documentRefreshQueue-ref="documentRefreshQueue"
           p:businessObjectService-ref="businessObjectService"/>
 
     <bean id="documentReindexFlatFileInputFileType" parent="documentReindexFlatFileInputFileType-parentBean"/>
