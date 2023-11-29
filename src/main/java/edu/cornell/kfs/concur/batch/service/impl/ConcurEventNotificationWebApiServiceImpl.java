@@ -40,7 +40,7 @@ public class ConcurEventNotificationWebApiServiceImpl implements ConcurEventNoti
     protected ConcurBatchUtilityService concurBatchUtilityService;
 
     @Override
-    public <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType, String logMessageDetail) {
+    public <T> T buildConcurDTOFromEndpoint(String accessToken, String concurEndPoint, Class<T> dtoType, String logMessageDetail) throws ConcurWebserviceException {
         ConcurWebRequest<T> webRequest = ConcurWebRequestBuilder.forRequestExpectingResponseOfType(dtoType)
                 .withUrl(concurEndPoint)
                 .withHttpMethod(HttpMethod.GET)
@@ -50,7 +50,7 @@ public class ConcurEventNotificationWebApiServiceImpl implements ConcurEventNoti
     }
 
     @Override
-    public <T> T callConcurEndpoint(String accessToken, ConcurWebRequest<T> webRequest, String logMessageDetail) {
+    public <T> T callConcurEndpoint(String accessToken, ConcurWebRequest<T> webRequest, String logMessageDetail) throws ConcurWebserviceException {
         LOG.info("buildConcurDTOFromEndpoint, " + logMessageDetail + " about to call endpoint: " + webRequest.getUrl());
         String callPurpose = webRequest.expectsEmptyResponse()
                 ? "run no-response-content operation"

@@ -260,13 +260,14 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         String requestId = resultsDTO.getReportNumber();
         String logMessageDetail = buildLogMessageDetailForRequestApproveAction(requestId, requestUuid);
         
+        LOG.debug("updateRequestStatusInConcur, processing request id {}, with log message detail {}", requestId, logMessageDetail);
+        
         ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
                 requestUuid, resultsDTO);
         
-        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(
-                accessToken, webRequest, logMessageDetail);
-        
         try {
+            ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(
+                    accessToken, webRequest, logMessageDetail);
             checkStatusOfUpdatedRequest(updatedTravelRequest, requestUuid);
         } catch (Exception e) {
             LOG.error("updateRequestStatusInConcur, Could not process workflow response from Concur "
