@@ -95,11 +95,6 @@
 	    </property>
 	</bean>
 
- 	<bean id="documentMaintenanceDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.sys.dataaccess.impl.DocumentMaintenanceDaoJdbc" >
-	    <property name="dataSource" ref="dataSource" />
-		<property name="parameterService" ref="parameterService" />
-	</bean>
-
 	<bean id="autoCancelBatchDao" parent="autoCancelBatchDao-parentBean"/>
 
     <bean id="autoCancelBatchDao-parentBean" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.sys.dataaccess.impl.AutoCancelBatchDaoJdbc">
