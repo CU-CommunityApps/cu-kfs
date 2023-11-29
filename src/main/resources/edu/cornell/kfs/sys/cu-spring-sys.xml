@@ -32,7 +32,6 @@
         </property>
 		<property name="jobNames">
             <list merge="true">
-				<value>documentRequeuerJob</value>
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
@@ -57,18 +56,6 @@
 				<entry key="CUKFSConstants" value-ref="CUKFSConstants" />
 			</map>
 		</property>
-	</bean>
- 	
- 	<bean id="documentRequeuerJob" parent="unscheduledJobDescriptor">
-		<property name="steps">
-			<list>
-				<ref bean="documentRequeuerStep" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="documentRequeuerStep" class="edu.cornell.kfs.sys.batch.DocumentRequeueStep" parent="step">
-		<property name="documentMaintenanceService" ref="documentMaintenanceService" />
 	</bean>
 	
 	<bean id="documentReindexerJob" parent="unscheduledJobDescriptor">
