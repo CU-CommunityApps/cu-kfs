@@ -35,29 +35,6 @@ public class DocumentMaintenanceServiceImpl implements DocumentMaintenanceServic
     public List<ActionItemNoteDetailDto> getActionNotesToBeRequeuedForDocument(String documentId) {
         return documentMaintenanceDao.getActionNotesToBeRequeuedForDocument(documentId);
     }
-
-    @Override
-    public boolean requeueDocuments() {
-        Collection<String> docIds = documentMaintenanceDao.getDocumentRequeueValues();
-        LOG.info("requeueDocuments: Total number of documents flagged for requeuing: " + docIds.size());
-
-        List<ActionItemNoteDetailDto> noteDetails = documentMaintenanceDao.getActionNotesToBeRequeued();
-        LOG.info("requeueDocuments: Total number of action note details: " + noteDetails.size());
-        
-        for (String docId : docIds) {
-            requeueDocumentByDocumentId(noteDetails, docId);
-        }
-        return true;
-    }
-    
-    @Transactional
-    private void requeueDocumentByDocumentId(List<ActionItemNoteDetailDto> noteDetails, String docId) {
-        LOG.info("requeueDocumentByDocumentId: Requesting requeue for document: " + docId);
-        documentRefreshQueue.refreshDocumentWithoutRestoringActionNotes(docId);
-        
-        List<ActionItemNoteDetailDto> noteDetailsForDocument = findNoteDetailsForDocument(noteDetails, docId);
-        restoreActionNotesForRequeuedDocument(docId, noteDetailsForDocument);
-    }
     
     @Override
     public void restoreActionNotesForRequeuedDocument(String documentId, List<ActionItemNoteDetailDto> actionNotes) {
