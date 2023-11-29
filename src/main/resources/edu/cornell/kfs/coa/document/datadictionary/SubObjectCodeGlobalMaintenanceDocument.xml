@@ -20,6 +20,61 @@
 
 -->
 
+    <bean id="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode"
+          parent="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode-parentBean"/>
+    <bean id="SubObjectCodeGlobalMaintenanceDocument-EditGlobalSubObjectCode-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="Edit Global Sub Object Code"
+          p:title="Edit Global Sub Object Code">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="universityFiscalYear" p:required="true"
+                      p:defaultValueFinder-ref="fiscalYearFinder"/>
+                <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:required="true" p:newLookup="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCode" p:required="true" p:newLookup="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCodeName" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="financialSubObjectCodeShortName"
+                      p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:defaultValue="true"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="SubObjectCodeGlobalMaintenanceDocument-EditObjectCodes"
+          parent="SubObjectCodeGlobalMaintenanceDocument-EditObjectCodes-parentBean">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition" p:name="subObjCdGlobalDetails"
+                      p:businessObjectClass="org.kuali.kfs.coa.businessobject.SubObjectCodeGlobalDetail"
+                      p:sourceClassName="org.kuali.kfs.coa.businessobject.ObjectCode" p:summaryTitle="Object Code"
+                      p:newLookup="true">
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:newLookup="true"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="universityFiscalYear" p:required="true"
+                                  p:defaultValueFinder-ref="fiscalYearFinder" p:readOnlyAfterAdd="true"
+                                  p:template="universityFiscalYear"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"
+                                  p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode" p:newLookup="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:required="true"
+                                  p:template="financialObjectCode" p:newLookup="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="newCollectionRecord"/>
+                        </list>
+                    </property>
+                    <property name="duplicateIdentificationFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
   <bean id="SubObjectCodeGlobalMaintenanceDocument-EditAccounts" parent="SubObjectCodeGlobalMaintenanceDocument-EditAccounts-parentBean">
     <property name="id" value="Edit Accounts"/>
     <property name="title" value="Edit Accounts"/>
@@ -36,7 +91,7 @@
           </property>
           <property name="maintainableFields">
             <list>
-              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode"/>
+              <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:readOnlyAfterAdd="true" p:template="chartOfAccountsCode" p:newLookup="true"/>
               <bean parent="MaintainableFieldDefinition" p:name="accountNumber" p:required="true" p:template="accountNumber" p:webUILeaveFieldFunction="onblur_accountNumber">
                 <property name="webUILeaveFieldFunctionParameters">
                     <list>
@@ -50,7 +105,7 @@
           </property>
           <property name="duplicateIdentificationFields">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode"/>
+                <bean parent="MaintainableFieldDefinition" p:name="chartOfAccountsCode" p:newLookup="true"/>
                 <bean parent="MaintainableFieldDefinition" p:name="accountNumber"/>
             </list>
           </property>
