@@ -77,6 +77,22 @@
     
     <!-- Business Object Inquiry Definition -->
     
+    <bean id="ContractGrantReportingCode-inquirySectionDefinition" parent="ContractGrantReportingCode-inquirySectionDefinition-parentBean"/>     
+    <bean id="ContractGrantReportingCode-inquirySectionDefinition-parentBean" abstract="true" parent="InquirySectionDefinition" p:title="Contract Grant Reporting Code Inquiry">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition"
+                      p:attributeName="chartOfAccountsCode"/>
+                <bean parent="FieldDefinition"
+                      p:attributeName="code"/>
+                <bean parent="FieldDefinition"
+                      p:attributeName="name"/>
+                <bean parent="FieldDefinition"
+                      p:attributeName="active"/>
+            </list>
+         </property>
+     </bean>
+    
     <bean id="ContractGrantReportingCode-sectionDefinition" parent="ContractGrantReportingCode-sectionDefinition-parentBean"/>     
     <bean id="ContractGrantReportingCode-sectionDefinition-parentBean" abstract="true" parent="sectionDefinition" 
           p:title="Contract Grant Reporting Code Inquiry">
@@ -96,6 +112,11 @@
         <property name="sections">
             <list>
                 <ref bean="ContractGrantReportingCode-sectionDefinition"/>
+            </list>
+        </property>
+        <property name="inquirySections">
+            <list>
+                <ref bean="ContractGrantReportingCode-inquirySectionDefinition"/>
             </list>
         </property>
     </bean>
@@ -132,5 +153,21 @@
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
+            <property name="lookupFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="code"/>
+        <bean parent="FieldDefinition" p:attributeName="name"/>
+        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+      </list>
+    </property>
+    <property name="resultFields">
+      <list>
+        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+        <bean parent="FieldDefinition" p:attributeName="code"/>
+        <bean parent="FieldDefinition" p:attributeName="name"/>
+        <bean parent="FieldDefinition" p:attributeName="active"/>
+      </list>
+    </property>
     </bean>
 </beans>
