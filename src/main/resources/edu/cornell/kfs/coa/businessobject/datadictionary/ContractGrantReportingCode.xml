@@ -153,21 +153,21 @@
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
-            <property name="lookupFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="code"/>
-        <bean parent="FieldDefinition" p:attributeName="name"/>
-        <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
-      </list>
-    </property>
-    <property name="resultFields">
-      <list>
-        <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
-        <bean parent="FieldDefinition" p:attributeName="code"/>
-        <bean parent="FieldDefinition" p:attributeName="name"/>
-        <bean parent="FieldDefinition" p:attributeName="active"/>
-      </list>
-    </property>
+        <property name="lookupFields">
+          <list>
+            <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+            <bean parent="FieldDefinition" p:attributeName="code"/>
+            <bean parent="FieldDefinition" p:attributeName="name"/>
+            <bean parent="FieldDefinition" p:defaultValue="Y" p:attributeName="active"/>
+          </list>
+        </property>
+        <property name="resultFields">
+          <list>
+            <bean parent="FieldDefinition" p:attributeName="chartOfAccountsCode"/>
+            <bean parent="FieldDefinition" p:attributeName="code"/>
+            <bean parent="FieldDefinition" p:attributeName="name"/>
+            <bean parent="FieldDefinition" p:attributeName="active"/>
+          </list>
+        </property>
     </bean>
 </beans>
