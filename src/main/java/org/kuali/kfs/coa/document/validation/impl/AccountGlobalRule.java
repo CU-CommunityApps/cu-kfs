@@ -123,6 +123,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 */
 	@Override
 	public void setupConvenienceObjects() {
+	    newAccountGlobal = (CuAccountGlobal) super.getNewBo();
 	    today = LocalDate.now();
 	}
 
