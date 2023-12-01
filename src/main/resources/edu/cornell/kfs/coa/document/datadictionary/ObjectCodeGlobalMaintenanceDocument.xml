@@ -45,7 +45,7 @@
               p:newLookup="true"/>        
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectLevelCode" p:required="true"
               p:newLookup="true"/>
-        <bean parent="MaintainableFieldDefinition" p:name="cgReportingCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="cgReportingCode" p:required="true" p:newLookup="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="financialObjectSubTypeCode" p:required="true"
               p:newLookup="true"/>
         <bean parent="MaintainableFieldDefinition" p:name="sunyObjectCode" />
