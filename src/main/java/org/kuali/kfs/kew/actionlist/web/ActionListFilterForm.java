@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -69,7 +69,7 @@ public class ActionListFilterForm extends KualiForm {
         return test;
     }
 
-    public void setTest(String test) {
+    public void setTest(final String test) {
         this.test = test;
     }
 
@@ -131,11 +131,11 @@ public class ActionListFilterForm extends KualiForm {
     }
 
     @Override
-    public void setMethodToCall(String methodToCall) {
+    public void setMethodToCall(final String methodToCall) {
         this.methodToCall = methodToCall;
     }
 
-    public void setFilter(ActionListFilter filter) {
+    public void setFilter(final ActionListFilter filter) {
         this.filter = filter;
         if (filter.getCreateDateFrom() != null) {
             setCreateDateFrom(KFSConstants.getDefaultDateFormat().format(filter.getCreateDateFrom()));
@@ -185,7 +185,7 @@ public class ActionListFilterForm extends KualiForm {
         if (getCreateDateFrom() != null && getCreateDateFrom().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getCreateDateFrom());
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
                 GlobalVariables.getMessageMap()
                         .putError(CREATE_DATE_FROM, "general.error.fieldinvalid", "Create Date From");
             }
@@ -193,7 +193,7 @@ public class ActionListFilterForm extends KualiForm {
         if (getCreateDateTo() != null && getCreateDateTo().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getCreateDateTo());
-            } catch (ParseException e) {
+            } catch (final ParseException e) {
                 GlobalVariables.getMessageMap()
                         .putError(CREATE_DATE_TO, "general.error.fieldinvalid", "Create Date To");
             }
@@ -201,7 +201,7 @@ public class ActionListFilterForm extends KualiForm {
         if (getLastAssignedDateFrom() != null && getLastAssignedDateFrom().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getLastAssignedDateFrom());
-            } catch (ParseException e1) {
+            } catch (final ParseException e1) {
                 GlobalVariables.getMessageMap()
                         .putError(LAST_ASSIGNED_DATE_FROM, "general.error.fieldinvalid", "Last Assigned Date From");
             }
@@ -209,7 +209,7 @@ public class ActionListFilterForm extends KualiForm {
         if (getLastAssignedDateTo() != null && getLastAssignedDateTo().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getLastAssignedDateTo());
-            } catch (ParseException e1) {
+            } catch (final ParseException e1) {
                 GlobalVariables.getMessageMap()
                         .putError(LAST_ASSIGNED_DATE_TO, "general.error.fieldinvalid", "Last Assigned Date To");
             }
@@ -217,7 +217,7 @@ public class ActionListFilterForm extends KualiForm {
         if (getLastModifiedDateFrom() != null && getLastModifiedDateFrom().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getLastModifiedDateFrom());
-            } catch (ParseException e1) {
+            } catch (final ParseException e1) {
                 GlobalVariables.getMessageMap()
                         .putError(LAST_MODIFIED_DATE_FROM, "general.error.fieldinvalid", "Date Last Modified From");
             }
@@ -225,7 +225,7 @@ public class ActionListFilterForm extends KualiForm {
         if (getLastModifiedDateTo() != null && getLastModifiedDateTo().length() != 0) {
             try {
                 KFSConstants.getDefaultDateFormat().parse(getLastModifiedDateTo());
-            } catch (ParseException e1) {
+            } catch (final ParseException e1) {
                 GlobalVariables.getMessageMap()
                         .putError(LAST_MODIFIED_DATE_TO, "general.error.fieldinvalid", "Date Last Modified To");
             }
@@ -255,7 +255,7 @@ public class ActionListFilterForm extends KualiForm {
             if (StringUtils.isNotEmpty(getDocTypeFullName())) {
                 filter.setDocumentType(getDocTypeFullName());
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             //error caught and displayed in validateDates()
         }
 
@@ -266,7 +266,7 @@ public class ActionListFilterForm extends KualiForm {
         return lookupableImplServiceName;
     }
 
-    public void setLookupableImplServiceName(String lookupableImplServiceName) {
+    public void setLookupableImplServiceName(final String lookupableImplServiceName) {
         this.lookupableImplServiceName = lookupableImplServiceName;
     }
 
@@ -274,7 +274,7 @@ public class ActionListFilterForm extends KualiForm {
         return lookupType;
     }
 
-    public void setLookupType(String lookupType) {
+    public void setLookupType(final String lookupType) {
         this.lookupType = lookupType;
     }
 
@@ -282,7 +282,7 @@ public class ActionListFilterForm extends KualiForm {
         return docTypeFullName;
     }
 
-    public void setDocTypeFullName(String docTypeFullName) {
+    public void setDocTypeFullName(final String docTypeFullName) {
         this.docTypeFullName = docTypeFullName;
     }
 
@@ -290,15 +290,15 @@ public class ActionListFilterForm extends KualiForm {
         return userWorkgroups;
     }
 
-    public void setUserWorkgroups(List userWorkgroups) {
+    public void setUserWorkgroups(final List userWorkgroups) {
         this.userWorkgroups = userWorkgroups;
     }
 
     public String getCssFile() {
-        return this.cssFile;
+        return cssFile;
     }
 
-    public void setCssFile(String cssFile) {
+    public void setCssFile(final String cssFile) {
         this.cssFile = cssFile;
     }
 

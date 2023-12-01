@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -17,9 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kuali.kfs.krad.maintenance;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +38,9 @@ import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.springframework.cache.Cache;
 import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.CacheManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -70,22 +70,22 @@ public final class MaintenanceUtils {
      * @param throwExceptionIfLocked indicates if an exception should be thrown in the case of found locking document,
      *                               if false only an error will be added
      */
-    public static void checkForLockingDocument(MaintenanceDocument document, boolean throwExceptionIfLocked) {
+    public static void checkForLockingDocument(final MaintenanceDocument document, final boolean throwExceptionIfLocked) {
         LOG.info("starting checkForLockingDocument (by MaintenanceDocument)");
 
         // get the docHeaderId of the blocking docs, if any are locked and blocking
-        String blockingDocId = findLockingDocId(document);
+        final String blockingDocId = findLockingDocId(document);
         checkDocumentBlockingDocumentId(blockingDocId, throwExceptionIfLocked);
     }
 
-    public static String findLockingDocId(MaintenanceDocument document) {
+    public static String findLockingDocId(final MaintenanceDocument document) {
         if (shouldUseCache(document)) {
             LOG.debug("findLockingDocId, allow cache for this document type");
-            Cache cache = getBlockingCache();
-            String cacheKey = buildLockingDocumentCacheKey(document.getDocumentNumber());
-            ValueWrapper valueWrapper = cache.get(cacheKey);
+            final Cache cache = getBlockingCache();
+            final String cacheKey = buildLockingDocumentCacheKey(document.getDocumentNumber());
+            final ValueWrapper valueWrapper = cache.get(cacheKey);
             if (valueWrapper == null) {
-                String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+                final String lockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("findLockingDocId, locking ID not in cache, had to look it up: " + lockingDocId);
                 }
@@ -93,13 +93,13 @@ public final class MaintenanceUtils {
                 
                 return lockingDocId;
             } else {
-                String lockingDocId = (String) valueWrapper.get();
+                final String lockingDocId = (String) valueWrapper.get();
                 LOG.debug("findLockingDocId, found locking ID in cache: " + lockingDocId);
                 return lockingDocId;
             }
         } else {
             LOG.debug("findLockingDocId, DO NOT allow cache for this document type");
-            String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
+            final String blockingDocId = document.getNewMaintainableObject().getLockingDocumentId();
             return blockingDocId;
         }
     }
@@ -108,38 +108,38 @@ public final class MaintenanceUtils {
      * If additional document types are added, logic needs to be added to clear the cache when new maintenance locks are added.
      * See CuAccountGlobalMaintainableImpl.doRouteStatusChange for example
      */
-    public static boolean shouldUseCache(MaintenanceDocument document) {
-        String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();
+    public static boolean shouldUseCache(final MaintenanceDocument document) {
+        final String docType = document.getDocumentHeader().getWorkflowDocumentTypeName();
         return StringUtils.equalsIgnoreCase(docType, CUKFSConstants.FinancialDocumentTypeCodes.ACCOUNT_GLOBAL);
     }
     
-    public static String buildLockingDocumentCacheKey(String documentNumber) {
+    public static String buildLockingDocumentCacheKey(final String documentNumber) {
         return CUKFSConstants.LOCKING_DOCUMENT_CACHE_KEY + documentNumber;
     }
     
     
     public static Cache getBlockingCache() {
         if (blockingCache == null) {
-            CacheManager cm = CoreImplServiceLocator.getCacheManager();
+            final CacheManager cm = CoreImplServiceLocator.getCacheManager();
             blockingCache = cm.getCache(LOCKING_ID_CACHE_NAME);
         }
         return blockingCache;
     }
     
     public static void clearBlockingCache() {
-        Cache cache = getBlockingCache();
+        final Cache cache = getBlockingCache();
         if (LOG.isDebugEnabled()) {
             LOG.debug("clearBlockingCache, clear all blocking cache ");
         }
         cache.clear();
     }
     
-    public static boolean shouldClearCacheOnStatusChange(DocumentHeader documentHeader) {
-        WorkflowDocument wd = documentHeader.getWorkflowDocument();
+    public static boolean shouldClearCacheOnStatusChange(final DocumentHeader documentHeader) {
+        final WorkflowDocument wd = documentHeader.getWorkflowDocument();
         return wd.isEnroute() || wd.isProcessed() || wd.isCanceled() || wd.isDisapproved() || wd.isFinal();
     }
 
-    public static void checkDocumentBlockingDocumentId(String blockingDocId, boolean throwExceptionIfLocked) {
+    public static void checkDocumentBlockingDocumentId(final String blockingDocId, final boolean throwExceptionIfLocked) {
         // if we got nothing, then no docs are blocking, and we're done
         if (StringUtils.isBlank(blockingDocId)) {
             return;
@@ -160,7 +160,7 @@ public final class MaintenanceUtils {
                  * Moved the getPerson to a variable to more clearly see what aspect is causing the NPE
                  */
                 try {
-                    Person person = GlobalVariables.getUserSession().getPerson();
+                    final Person person = GlobalVariables.getUserSession().getPerson();
                     lockedDocument = KewApiServiceLocator.getWorkflowDocumentService()
                         .loadWorkflowDocument(blockingDocId, person);
                 } catch (NullPointerException npe) {
@@ -171,7 +171,7 @@ public final class MaintenanceUtils {
                 
                 
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             // clean up the lock and notify the admins
             MaintenanceUtils.LOG.error(
                     "Unable to retrieve locking document specified in the maintenance lock table: {}",
@@ -193,15 +193,15 @@ public final class MaintenanceUtils {
         }
 
         // build the link URL for the blocking document
-        Map<String, String> parameters = new HashMap<>();
+        final Map<String, String> parameters = new HashMap<>();
         parameters.put(KRADConstants.PARAMETER_DOC_ID, blockingDocId);
         parameters.put(KRADConstants.PARAMETER_COMMAND, KRADConstants.METHOD_DISPLAY_DOC_SEARCH_VIEW);
-        String blockingUrl = UrlFactory.parameterizeUrl(KRADServiceLocator.getKualiConfigurationService()
+        final String blockingUrl = UrlFactory.parameterizeUrl(KRADServiceLocator.getKualiConfigurationService()
                 .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) + "/" + KRADConstants.DOC_HANDLER_ACTION,
                 parameters);
         LOG.debug("blockingUrl = '{}'", blockingUrl);
         LOG.debug("Maintenance record: {}is locked.", lockedDocument::getApplicationDocumentId);
-        String[] errorParameters = {blockingUrl, blockingDocId};
+        final String[] errorParameters = {blockingUrl, blockingDocId};
 
         // If specified, add an error to the ErrorMap and throw an exception; otherwise, just add a warning to the
         // ErrorMap instead.
@@ -224,14 +224,14 @@ public final class MaintenanceUtils {
      * @param lockedDocument
      * @return
      */
-    private static boolean lockCanBeIgnored(WorkflowDocument lockedDocument) {
+    private static boolean lockCanBeIgnored(final WorkflowDocument lockedDocument) {
         // TODO: implement real authorization for Maintenance Document Save/Route - KULNRVSYS-948
         if (lockedDocument == null) {
             return true;
         }
 
         // get the user-id. if no user-id, then we can do this test, so exit
-        String userId = GlobalVariables.getUserSession().getPrincipalId().trim();
+        final String userId = GlobalVariables.getUserSession().getPrincipalId().trim();
         if (StringUtils.isBlank(userId)) {
             // dont bypass locking
             return false;
@@ -246,18 +246,18 @@ public final class MaintenanceUtils {
         return lockedDocument.isInitiated();
     }
 
-    protected static void cleanOrphanLocks(String lockingDocumentNumber) {
+    protected static void cleanOrphanLocks(final String lockingDocumentNumber) {
         // put a try/catch around the whole thing - the whole reason we are doing this is to prevent data errors
         // from stopping a document
         try {
             // delete the locks for this document since it does not seem to exist
             KRADServiceLocatorWeb.getMaintenanceDocumentService().deleteLocks(lockingDocumentNumber);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             MaintenanceUtils.LOG.error("Unable to delete and notify upon locking document retrieval failure.", ex);
         }
     }
 
-    public static boolean isMaintenanceDocumentCreatingNewRecord(String maintenanceAction) {
+    public static boolean isMaintenanceDocumentCreatingNewRecord(final String maintenanceAction) {
         return !KRADConstants.MAINTENANCE_EDIT_ACTION.equalsIgnoreCase(maintenanceAction)
                 && !KRADConstants.MAINTENANCE_NEWWITHEXISTING_ACTION.equalsIgnoreCase(maintenanceAction)
                 && !KRADConstants.MAINTENANCE_DELETE_ACTION.equalsIgnoreCase(maintenanceAction);

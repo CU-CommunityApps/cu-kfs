@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -37,24 +37,24 @@ public class GeneralLedgerTransferEntryDaoOjb extends PlatformAwareDaoBaseOjb im
 
     @Override
     public GeneralLedgerTransferEntry findSourceEntryByGeneralLedgerTransferSourceAccountingLine(
-        GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine) {
-        Criteria entryCriteria = createGeneralLedgerTransferEntryPrimaryKeyMap(gltSourceAccountingLine, true);
+        final GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine) {
+        final Criteria entryCriteria = createGeneralLedgerTransferEntryPrimaryKeyMap(gltSourceAccountingLine, true);
 
-        Query query = QueryFactory.newQuery(GeneralLedgerTransferEntry.class, entryCriteria);
+        final Query query = QueryFactory.newQuery(GeneralLedgerTransferEntry.class, entryCriteria);
         return (GeneralLedgerTransferEntry) getPersistenceBrokerTemplate().getObjectByQuery(query);
     }
 
     @Override
     public List<GeneralLedgerTransferEntry> findSourceEntriesByGeneralLedgerTransferSourceAccountingLines(
-        List<GeneralLedgerTransferSourceAccountingLine> gltSourceAccountingLines, String newDocumentNumber) {
+        final List<GeneralLedgerTransferSourceAccountingLine> gltSourceAccountingLines, final String newDocumentNumber) {
 
         if (gltSourceAccountingLines.isEmpty()) {
             return new ArrayList<>();
         }
 
-        Criteria criteria = new Criteria();
-        for (GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine : gltSourceAccountingLines) {
-            Criteria entryCriteria = createGeneralLedgerTransferEntryPrimaryKeyMap(gltSourceAccountingLine, true);
+        final Criteria criteria = new Criteria();
+        for (final GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine : gltSourceAccountingLines) {
+            final Criteria entryCriteria = createGeneralLedgerTransferEntryPrimaryKeyMap(gltSourceAccountingLine, true);
             if (newDocumentNumber == null) {
                 entryCriteria.addEqualTo(KFSPropertyConstants.GENERAL_LEDGER_TRANSFER_DOCUMENT_NUMBER,
                         gltSourceAccountingLine.getDocumentNumber());
@@ -74,9 +74,9 @@ public class GeneralLedgerTransferEntryDaoOjb extends PlatformAwareDaoBaseOjb im
             return new ArrayList<>();
         }
 
-        Criteria criteria = new Criteria();
-        for (GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine : gltSourceAccountingLines) {
-            Criteria entryCriteria = createGeneralLedgerTransferEntryPrimaryKeyMap(gltSourceAccountingLine, false);
+        final Criteria criteria = new Criteria();
+        for (final GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine : gltSourceAccountingLines) {
+            final Criteria entryCriteria = createGeneralLedgerTransferEntryPrimaryKeyMap(gltSourceAccountingLine, false);
             criteria.addOrCriteria(entryCriteria);
         }
 
@@ -85,8 +85,8 @@ public class GeneralLedgerTransferEntryDaoOjb extends PlatformAwareDaoBaseOjb im
     }
 
     private Criteria createGeneralLedgerTransferEntryPrimaryKeyMap(
-        GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine, boolean sourceEntriesMode) {
-        Criteria criteria = new Criteria();
+        final GeneralLedgerTransferSourceAccountingLine gltSourceAccountingLine, final boolean sourceEntriesMode) {
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE,
                 gltSourceAccountingLine.getChartOfAccountsCode());
         criteria.addEqualTo(KFSPropertyConstants.ACCOUNT_NUMBER, gltSourceAccountingLine.getAccountNumber());
@@ -153,8 +153,8 @@ public class GeneralLedgerTransferEntryDaoOjb extends PlatformAwareDaoBaseOjb im
     }
 
     @Override
-    public boolean hasTransferredEntries(String documentNumber) {
-        Criteria criteria = new Criteria();
+    public boolean hasTransferredEntries(final String documentNumber) {
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_NUMBER, documentNumber);
         criteria.addEqualTo(KFSPropertyConstants.FINANCIAL_SYSTEM_ORIGINATION_CODE, KFSConstants.ORIGIN_CODE_KUALI);
         criteria.addNotNull(KFSPropertyConstants.GENERAL_LEDGER_TRANSFER_DOCUMENT_NUMBER);

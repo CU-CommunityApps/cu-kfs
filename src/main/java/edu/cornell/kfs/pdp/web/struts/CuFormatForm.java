@@ -9,7 +9,7 @@ public class CuFormatForm extends FormatForm{
         return paymentDistribution;
     }
 
-    public void setPaymentDistribution(String paymentDistribution) {
+    public void setPaymentDistribution(final String paymentDistribution) {
         this.paymentDistribution = paymentDistribution;
     }
 }

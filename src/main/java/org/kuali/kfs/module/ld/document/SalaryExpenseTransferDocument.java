@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -69,7 +69,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
         return approvalObjectCodeBalances;
     }
 
-    public void setApprovalObjectCodeBalances(Map<String, KualiDecimal> approvalObjectCodeBalances) {
+    public void setApprovalObjectCodeBalances(final Map<String, KualiDecimal> approvalObjectCodeBalances) {
         this.approvalObjectCodeBalances = approvalObjectCodeBalances;
     }
 
@@ -79,28 +79,29 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
     }
 
     @Override
-    public void setLateAdjustment(LateAdjustment lateAdjustment) {
+    public void setLateAdjustment(final LateAdjustment lateAdjustment) {
         this.lateAdjustment = lateAdjustment;
     }
 
     @Override
-    public boolean generateLaborLedgerPendingEntries(AccountingLine accountingLine,
-            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+    public boolean generateLaborLedgerPendingEntries(
+            final AccountingLine accountingLine,
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerPendingEntries()");
 
         boolean isSuccessful = true;
-        ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
+        final ExpenseTransferAccountingLine expenseTransferAccountingLine = (ExpenseTransferAccountingLine) accountingLine;
 
-        List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
+        final List<LaborLedgerPendingEntry> expensePendingEntries = LaborPendingEntryGenerator
                 .generateExpensePendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (expensePendingEntries != null && !expensePendingEntries.isEmpty()) {
-            isSuccessful = this.getLaborLedgerPendingEntries().addAll(expensePendingEntries);
+            isSuccessful = getLaborLedgerPendingEntries().addAll(expensePendingEntries);
         }
 
-        List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator
+        final List<LaborLedgerPendingEntry> benefitPendingEntries = LaborPendingEntryGenerator
                 .generateBenefitPendingEntries(this, expenseTransferAccountingLine, sequenceHelper);
         if (benefitPendingEntries != null && !benefitPendingEntries.isEmpty()) {
-            isSuccessful &= this.getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
+            isSuccessful &= getLaborLedgerPendingEntries().addAll(benefitPendingEntries);
         }
 
         return isSuccessful;
@@ -108,29 +109,29 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 
     @Override
     public boolean generateLaborLedgerBenefitClearingPendingEntries(
-            GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
+            final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         LOG.debug("started generateLaborLedgerBenefitClearingPendingEntries()");
 
-        String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+        final String chartOfAccountsCode = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
                 LaborParameterConstants.BENEFIT_CLEARING_CHART);
-        String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
+        final String accountNumber = SpringContext.getBean(ParameterService.class).getParameterValueAsString(
                 SalaryExpenseTransferDocument.class,
                 LaborParameterConstants.BENEFIT_CLEARING_ACCOUNT);
 
-        List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
+        final List<LaborLedgerPendingEntry> benefitClearingPendingEntries =
                 LaborPendingEntryGenerator.generateBenefitClearingPendingEntries(this, sequenceHelper, accountNumber,
                         chartOfAccountsCode);
 
         if (benefitClearingPendingEntries != null && !benefitClearingPendingEntries.isEmpty()) {
-            return this.getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
+            return getLaborLedgerPendingEntries().addAll(benefitClearingPendingEntries);
         }
 
         return true;
     }
 
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
+    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
         // KFSMI-4606 added routeNode condition
         if (nodeName.equals(KFSConstants.REQUIRES_WORK_STUDY_REVIEW)) {
             return checkOjbectCodeForWorkstudy();
@@ -145,21 +146,21 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
      * @return boolean
      */
     protected boolean checkOjbectCodeForWorkstudy() {
-        Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
+        final Collection<String> workstudyRouteObjectcodes = SpringContext.getBean(ParameterService.class)
                 .getParameterValuesAsString(KfsParameterConstants.FINANCIAL_SYSTEM_DOCUMENT.class,
                         KFSConstants.WORK_STUDY_ROUTE_OBJECT_CODES_PARAM_NM);
 
-        List<SourceAccountingLine> sourceAccountingLines = getSourceAccountingLines();
-        List<TargetAccountingLine> targetAccountingLines = getTargetAccountingLines();
+        final List<SourceAccountingLine> sourceAccountingLines = getSourceAccountingLines();
+        final List<TargetAccountingLine> targetAccountingLines = getTargetAccountingLines();
 
         // check object code in source and target accounting lines
-        for (SourceAccountingLine sourceLine : sourceAccountingLines) {
+        for (final SourceAccountingLine sourceLine : sourceAccountingLines) {
             if (workstudyRouteObjectcodes.contains(sourceLine.getFinancialObjectCode())) {
                 return true;
             }
         }
 
-        for (TargetAccountingLine targetLine : targetAccountingLines) {
+        for (final TargetAccountingLine targetLine : targetAccountingLines) {
             if (workstudyRouteObjectcodes.contains(targetLine.getFinancialObjectCode())) {
                 return true;
             }
@@ -173,7 +174,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
      * generateLaborLedgerBenefitClearingPendingEntries.
      */
     @Override
-    public void prepareForSave(KualiDocumentEvent event) {
+    public void prepareForSave(final KualiDocumentEvent event) {
         super.prepareForSave(event);
 
 //        for (Iterator<LaborLedgerPendingEntry> iterator = this.getLaborLedgerPendingEntries().iterator(); iterator.hasNext();) {
@@ -192,7 +193,7 @@ public class SalaryExpenseTransferDocument extends LaborExpenseTransferDocumentB
 //        }
 
         if (lateAdjustment != null) {
-            lateAdjustment.setDocumentNumber(this.documentNumber);
+            lateAdjustment.setDocumentNumber(documentNumber);
         }
     }
 

@@ -43,9 +43,9 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     protected PermissionService permissionService;
     
     @Override
-    public List<HtmlData> getCustomActionUrls(BusinessObject businessObject, List pkNames) {
+    public List<HtmlData> getCustomActionUrls(final BusinessObject businessObject, final List pkNames) {
         LOG.debug("getCustomActionUrls, entering");
-        List<HtmlData> anchorHtmlDataList = new ArrayList<>();
+        final List<HtmlData> anchorHtmlDataList = new ArrayList<>();
         
         if (canInitAward() && allowsMaintenanceEditAction(businessObject)) {
             anchorHtmlDataList.add(getUrlData(businessObject, KRADConstants.MAINTENANCE_EDIT_METHOD_TO_CALL, pkNames));
@@ -55,7 +55,7 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
         }
 
         if (canViewInvoiceLink() && getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
-            AnchorHtmlData invoiceUrl = getInvoicesLookupUrl(businessObject);
+            final AnchorHtmlData invoiceUrl = getInvoicesLookupUrl(businessObject);
             anchorHtmlDataList.add(invoiceUrl);
         }
 
@@ -64,12 +64,12 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     
     @Override
     public List<Column> getColumns() {
-        List<Column> columns = super.getColumns();
+        final List<Column> columns = super.getColumns();
 
         if (canInitAward() || !canViewInvoiceLink() || !getAccountsReceivableModuleBillingService().isContractsGrantsBillingEnhancementActive()) {
             LOG.debug("getColumns, remove invoices column");
-            for (Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
-                Column column = it.next();
+            for (final Iterator<Column> it = columns.iterator(); it.hasNext(); ) {
+                final Column column = it.next();
                 if (StringUtils.equalsIgnoreCase(column.getPropertyName(), INVOICE_LINK_COLUMN_NAME)) {
                     it.remove();
                 }
@@ -80,35 +80,36 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     }
     
     @Override
-    public Collection<? extends BusinessObject> performLookup(LookupForm lookupForm, Collection<ResultRow> resultTable, boolean bounded) {
+    public Collection<? extends BusinessObject> performLookup(
+            final LookupForm lookupForm, Collection<ResultRow> resultTable, final boolean bounded) {
         LOG.debug("performLookup, entering");
-        Collection<? extends BusinessObject> results = super.performLookup(lookupForm, resultTable, bounded);
+        final Collection<? extends BusinessObject> results = super.performLookup(lookupForm, resultTable, bounded);
         if (canViewInvoiceLink() && !canInitAward()) {
             resultTable.stream().forEach(this::findAndResetInvoiceColumn);
         }
         return results;
     }
     
-    protected void findAndResetInvoiceColumn(ResultRow row) {
+    protected void findAndResetInvoiceColumn(final ResultRow row) {
         row.getColumns().stream()
             .filter(col -> StringUtils.equalsIgnoreCase(col.getPropertyName(), INVOICE_LINK_COLUMN_NAME))
             .findFirst()
             .ifPresent(col -> resetInvoiceColumn(row, col));
     }
 
-    protected void resetInvoiceColumn(ResultRow row, Column invoiceColumn) {
-        String hrefLink = parseHrefLinkFromAnchorTag(row.getActionUrls());
+    protected void resetInvoiceColumn(final ResultRow row, final Column invoiceColumn) {
+        final String hrefLink = parseHrefLinkFromAnchorTag(row.getActionUrls());
         if (StringUtils.isNotBlank(hrefLink)) {
-            AnchorHtmlData anchorHtmlData = new AnchorHtmlData(hrefLink, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
+            final AnchorHtmlData anchorHtmlData = new AnchorHtmlData(hrefLink, KFSConstants.SEARCH_METHOD, VIEW_INVOICES_LINK_VALUE);
             anchorHtmlData.setTarget(KFSConstants.NEW_WINDOW_URL_TARGET);
             invoiceColumn.setColumnAnchor(anchorHtmlData);
             invoiceColumn.setPropertyValue(VIEW_INVOICES_LINK_VALUE);
         }
     }
     
-    protected String parseHrefLinkFromAnchorTag(String anchorTag) {
+    protected String parseHrefLinkFromAnchorTag(final String anchorTag) {
         if (StringUtils.isNotBlank(anchorTag)) {
-            String link = StringUtils.substringBetween(anchorTag, "href=\"", CUKFSConstants.DOUBLE_QUOTE);
+            final String link = StringUtils.substringBetween(anchorTag, "href=\"", CUKFSConstants.DOUBLE_QUOTE);
             return link;
         } else {
             return StringUtils.EMPTY;
@@ -116,25 +117,25 @@ public class CuAwardLookupableHelperServiceImpl extends AwardLookupableHelperSer
     }
 
     private boolean canViewInvoiceLink() {
-        Map<String, String> permissionDetails = new HashMap<String, String>();
+        final Map<String, String> permissionDetails = new HashMap<String, String>();
         permissionDetails.put(KFSPropertyConstants.DOCUMENT_TYPE_NAME, ArConstants.ArDocumentTypeCodes.CONTRACTS_GRANTS_INVOICE);
-        boolean canOpenInvoices = permissionService.hasPermissionByTemplate(GlobalVariables.getUserSession().getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS, 
+        final boolean canOpenInvoices = permissionService.hasPermissionByTemplate(GlobalVariables.getUserSession().getPrincipalId(), KFSConstants.CoreModuleNamespaces.KFS, 
                 KimConstants.PermissionTemplateNames.OPEN_DOCUMENT, permissionDetails);
         LOG.debug("canViewInvoiceLink: " + canOpenInvoices);
         return canOpenInvoices;
     }
     
     private boolean canInitAward() {
-        boolean canInitAward = documentHelperService.getDocumentAuthorizer(CGConstants.AWARD).canInitiate(CGConstants.AWARD, GlobalVariables.getUserSession().getPerson());
+        final boolean canInitAward = documentHelperService.getDocumentAuthorizer(CGConstants.AWARD).canInitiate(CGConstants.AWARD, GlobalVariables.getUserSession().getPerson());
         LOG.debug("canInitAward: " + canInitAward);
         return canInitAward;
     }
 
-    public void setDocumentHelperService(DocumentHelperService documentHelperService) {
+    public void setDocumentHelperService(final DocumentHelperService documentHelperService) {
         this.documentHelperService = documentHelperService;
     }
 
-    public void setPermissionService(PermissionService permissionService) {
+    public void setPermissionService(final PermissionService permissionService) {
         this.permissionService = permissionService;
     }
     

@@ -75,32 +75,32 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     private JaggaerRoleService jaggaerRoleService;
 
     @Override
-    public List createRequisitionsFromCxml(B2BShoppingCart message, Person user) {
+    public List createRequisitionsFromCxml(final B2BShoppingCart message, Person user) {
         LOG.debug("createRequisitionsFromCxml() started");
         // for returning requisitions
-        ArrayList requisitions = new ArrayList();
+        final ArrayList requisitions = new ArrayList();
 
         // get items from the cart
-        List items = message.getItems();
+        final List items = message.getItems();
 
         // get vendor(s) for the items
-        List vendors = getAllVendors(items);
+        final List vendors = getAllVendors(items);
 
         // create requisition(s) (one per vendor)
-        for (Iterator iter = vendors.iterator(); iter.hasNext();) {
-            VendorDetail vendor = (VendorDetail) iter.next();
+        for (final Iterator iter = vendors.iterator(); iter.hasNext();) {
+            final VendorDetail vendor = (VendorDetail) iter.next();
 
             // create requisition
-            RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
-            String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
-            String businessPurpose = message.getMessage().getPunchOutOrderMessage().getPunchOutOrderMessageHeader().getQuoteStatus();
+            final RequisitionDocument req = (RequisitionDocument) documentService.getNewDocument(PurapConstants.PurapDocTypeCodes.REQUISITION_DOCUMENT_TYPE);
+            final String description = ((B2BShoppingCartItem)items.get(0)).getExtrinsic("CartName");
+            final String businessPurpose = message.getMessage().getPunchOutOrderMessage().getPunchOutOrderMessageHeader().getQuoteStatus();
 
             req.getDocumentHeader().setDocumentDescription(description);
             req.getDocumentHeader().setExplanation(businessPurpose);
 
             req.setupAccountDistributionMethod();
             // set b2b contract for vendor
-            VendorContract contract = vendorService.getVendorB2BContract(vendor, user.getCampusCode());
+            final VendorContract contract = vendorService.getVendorB2BContract(vendor, user.getCampusCode());
             if (ObjectUtils.isNotNull(contract)) {
                 req.setVendorContractGeneratedIdentifier(contract.getVendorContractGeneratedIdentifier());
                 if (ObjectUtils.isNotNull(contract.getPurchaseOrderCostSourceCode())) {
@@ -122,7 +122,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             }
 
             // get items for this vendor
-            List itemsForVendor = getAllVendorItems(items, vendor);
+            final List itemsForVendor = getAllVendorItems(items, vendor);
             // KFSPTS-985
             checkToPopulateFavoriteAccount(itemsForVendor, user);
 
@@ -133,7 +133,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             req.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(user.getPhoneNumber()));
 
             DefaultPrincipalAddress defaultPrincipalAddress = new DefaultPrincipalAddress(user.getPrincipalId());
-            Map addressKeys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(defaultPrincipalAddress);
+            final Map addressKeys = SpringContext.getBean(PersistenceService.class).getPrimaryKeyFieldValues(defaultPrincipalAddress);
             defaultPrincipalAddress = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(DefaultPrincipalAddress.class, addressKeys);
             if (ObjectUtils.isNotNull(defaultPrincipalAddress) && ObjectUtils.isNotNull(defaultPrincipalAddress.getBuilding())) {
                 if (defaultPrincipalAddress.getBuilding().isActive()) {
@@ -147,7 +147,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
                 }
             }
 
-            ChartOrgHolder purapChartOrg = SpringContext.getBean(FinancialSystemUserService.class).getPrimaryOrganization(user, PurapConstants.PURAP_NAMESPACE);
+            final ChartOrgHolder purapChartOrg = SpringContext.getBean(FinancialSystemUserService.class).getPrimaryOrganization(user, PurapConstants.PURAP_NAMESPACE);
             if (ObjectUtils.isNotNull(purapChartOrg)) {
                 req.setChartOfAccountsCode(purapChartOrg.getChartOfAccountsCode());
                 req.setOrganizationCode(purapChartOrg.getOrganizationCode());
@@ -176,7 +176,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             req.setExternalOrganizationB2bSupplierIdentifier(getSupplierIdFromFirstItem(itemsForVendor));
 
             // retrieve default PO address and set address
-            VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, user.getCampusCode());
+            final VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(vendor.getVendorHeaderGeneratedIdentifier(), vendor.getVendorDetailAssignedIdentifier(), VendorConstants.AddressTypes.PURCHASE_ORDER, user.getCampusCode());
             if (ObjectUtils.isNotNull(vendorAddress)) {
                 req.templateVendorAddress(vendorAddress);
             }
@@ -186,7 +186,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             // retrieve billing address based on delivery campus and populate REQ with retrieved billing address
             BillingAddress billingAddress = new BillingAddress();
             billingAddress.setBillingCampusCode(req.getDeliveryCampusCode());
-            Map keys = persistenceService.getPrimaryKeyFieldValues(billingAddress);
+            final Map keys = persistenceService.getPrimaryKeyFieldValues(billingAddress);
             billingAddress = businessObjectService.findByPrimaryKey(BillingAddress.class, keys);
             req.templateBillingAddress(billingAddress);
 
@@ -205,16 +205,16 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
     }
 
     // KFSPTS-985
-    private void checkToPopulateFavoriteAccount(List itemsForVendor, Person user) {
-    	FavoriteAccount account = userFavoriteAccountService.getFavoriteAccount(user.getPrincipalId());
-    	if (account != null && CollectionUtils.isNotEmpty(itemsForVendor)) {
-    		for (RequisitionItem item : (List<RequisitionItem>)itemsForVendor) {  
-    			if (item.getSourceAccountingLines() == null) {
-    				item.setSourceAccountingLines(new ArrayList<PurApAccountingLine>());
-    			}
-    			item.getSourceAccountingLines().add(userFavoriteAccountService.getPopulatedNewAccount(account, RequisitionAccount.class));
-    		}
-    	}
+    private void checkToPopulateFavoriteAccount(final List itemsForVendor, final Person user) {
+        final FavoriteAccount account = userFavoriteAccountService.getFavoriteAccount(user.getPrincipalId());
+        if (account != null && CollectionUtils.isNotEmpty(itemsForVendor)) {
+            for (RequisitionItem item : (List<RequisitionItem>)itemsForVendor) {  
+                if (item.getSourceAccountingLines() == null) {
+                    item.setSourceAccountingLines(new ArrayList<PurApAccountingLine>());
+                }
+                item.getSourceAccountingLines().add(userFavoriteAccountService.getPopulatedNewAccount(account, RequisitionAccount.class));
+            }
+        }
     }
 
 	public UserFavoriteAccountService getUserFavoriteAccountService() {
@@ -226,93 +226,94 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
 		this.userFavoriteAccountService = userFavoriteAccountService;
 	}
 
-    public void setJaggaerRoleService(JaggaerRoleService jaggaerRoleService) {
+    public void setJaggaerRoleService(final JaggaerRoleService jaggaerRoleService) {
         this.jaggaerRoleService = jaggaerRoleService;
     }
 
     @Override
-    public void setB2bDao(B2BDao b2bDao) {
+    public void setB2bDao(final B2BDao b2bDao) {
         super.setB2bDao(b2bDao);
         this.b2bDao = b2bDao;
     }
 
     @Override
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         super.setBusinessObjectService(businessObjectService);
         this.businessObjectService = businessObjectService;
     }
 
     @Override
-    public void setDocumentService(DocumentService documentService) {
+    public void setDocumentService(final DocumentService documentService) {
         super.setDocumentService(documentService);
         this.documentService = documentService;
     }
 
     @Override
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         super.setParameterService(parameterService);
         this.parameterService = parameterService;
     }
 
     @Override
-    public void setPersistenceService(PersistenceService persistenceService) {
+    public void setPersistenceService(final PersistenceService persistenceService) {
         super.setPersistenceService(persistenceService);
         this.persistenceService = persistenceService;
     }
 
     @Override
-    public void setPhoneNumberService(PhoneNumberService phoneNumberService) {
+    public void setPhoneNumberService(final PhoneNumberService phoneNumberService) {
         super.setPhoneNumberService(phoneNumberService);
         this.phoneNumberService = phoneNumberService;
     }
 
     @Override
-    public void setPurchasingService(PurchasingService purchasingService) {
+    public void setPurchasingService(final PurchasingService purchasingService) {
         super.setPurchasingService(purchasingService);
         this.purchasingService = purchasingService;
     }
 
     @Override
-    public void setPurapService(PurapService purapService) {
+    public void setPurapService(final PurapService purapService) {
         super.setPurapService(purapService);
         this.purapService = (CuPurapService) purapService;
     }
 
     @Override
-    public void setVendorService(VendorService vendorService) {
+    public void setVendorService(final VendorService vendorService) {
         super.setVendorService(vendorService);
         this.vendorService = vendorService;
     }
 
     @Override
-    public String getPunchOutUrlForRoleSet(Person user, JaggaerRoleSet roleSet) {
+    public String getPunchOutUrlForRoleSet(final Person user, final JaggaerRoleSet roleSet) {
     	if (LOG.isDebugEnabled()) {
     		LOG.debug("getPunchOutUrlForRoleSet, creating punchout URL for role: " + roleSet);
     	}
-        B2BInformation b2b = getB2bShoppingConfigurationInformation();
-        String cxml = getPunchOutSetupRequestMessage(user, b2b, roleSet);
-        String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
-        PunchOutSetupResponse posr = B2BParserHelper.getInstance().parsePunchOutSetupResponse(response);
+        final B2BInformation b2b = getB2bShoppingConfigurationInformation();
+        final String cxml = getPunchOutSetupRequestMessage(user, b2b, roleSet);
+        final String response = b2bDao.sendPunchOutRequest(cxml, b2b.getPunchoutURL());
+        final PunchOutSetupResponse posr = B2BParserHelper.getInstance().parsePunchOutSetupResponse(response);
         return posr.getPunchOutUrl();
     }
     
     @Override
-    public String getPunchOutUrl(Person user) {
+    public String getPunchOutUrl(final Person user) {
     	LOG.debug("getPunchOutUrl, overriding to use custom link generating code.");
     	return getPunchOutUrlForRoleSet(user, JaggaerRoleSet.ESHOP);
     }
 
     @Override
-    public String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation) {
+    public String getPunchOutSetupRequestMessage(final Person user, final B2BInformation b2bInformation) {
         return getPunchOutSetupRequestMessage(user, b2bInformation, JaggaerRoleSet.ESHOP);
     }
 
-    protected String getPunchOutSetupRequestMessage(Person user, B2BInformation b2bInformation,
-            JaggaerRoleSet roleSet) {
-        StringBuffer cxml = new StringBuffer();
-        Date currentDate = getDateTimeService().getCurrentDate();
-        SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
-        SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
+    protected String getPunchOutSetupRequestMessage(
+            final Person user, final B2BInformation b2bInformation,
+            final JaggaerRoleSet roleSet) {
+        final StringBuffer cxml = new StringBuffer();
+        final Date currentDate = getDateTimeService().getCurrentDate();
+        final SimpleDateFormat date = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
+        final SimpleDateFormat time = PurApDateFormatUtils.getSimpleDateFormat(PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
 
         // doing as two parts b/c they want a T instead of space
         // between them, and SimpleDateFormat doesn't allow putting the
@@ -364,7 +365,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
         cxml.append("      <Extrinsic name=\"FirstName\">").append(user.getFirstName()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"LastName\">").append(user.getLastName()).append("</Extrinsic>\n");
         
-        for (String role : jaggaerRoleService.getJaggaerRoles(user, roleSet)) {
+        for (final String role : jaggaerRoleService.getJaggaerRoles(user, roleSet)) {
             cxml.append("      <Extrinsic name=\"Role\">").append(role).append("</Extrinsic>\n");
         }
 
@@ -390,17 +391,18 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
      * @see org.kuali.kfs.module.purap.document.service.impl.B2BShoppingServiceImpl#createRequisitionItem(org.kuali.kfs.module.purap.businessobject.B2BShoppingCartItem, java.lang.Integer, java.lang.String)
      */
     @Override
-    protected RequisitionItem createRequisitionItem(B2BShoppingCartItem item,
-    		Integer itemLine, String defaultCommodityCode) {
-    	 RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
+    protected RequisitionItem createRequisitionItem(
+            final B2BShoppingCartItem item,
+            final Integer itemLine, String defaultCommodityCode) {
+        final RequisitionItem reqItem = super.createRequisitionItem(item, itemLine, defaultCommodityCode);
 
-        Integer requisitionItemDescriptionMaxLength = KNSServiceLocator.getDataDictionaryService().getAttributeMaxLength(RequisitionItem.class, PurapPropertyConstants.ITEM_DESCRIPTION);
+        final Integer requisitionItemDescriptionMaxLength = KNSServiceLocator.getDataDictionaryService().getAttributeMaxLength(RequisitionItem.class, PurapPropertyConstants.ITEM_DESCRIPTION);
         if (StringUtils.isNotBlank(reqItem.getItemDescription()) && reqItem.getItemDescription().length() > requisitionItemDescriptionMaxLength) {
             LOG.info("createRequisitionItem: Truncating RequisitionItem Description to " + requisitionItemDescriptionMaxLength + " characters");
             reqItem.setItemDescription(reqItem.getItemDescription().substring(0, requisitionItemDescriptionMaxLength));
         }
 
-         boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
+         final boolean commCodeParam = parameterService.getParameterValueAsBoolean(RequisitionDocument.class, PurapParameterConstants.ENABLE_DEFAULT_VENDOR_COMMODITY_CODE_IND);
 
          if (commCodeParam) {
              if (reqItem.getCommodityCode() != null && !reqItem.getCommodityCode().isActive() && StringUtils.isNotBlank(defaultCommodityCode)) {
@@ -409,7 +411,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
          }
   	 
     	 // KFSPTS-2257 : eshopflag
-         Map<String, String> classification = item.getClassification();
+         final Map<String, String> classification = item.getClassification();
          reqItem.setControlled(StringUtils.equals(TRUE,classification.get("Controlled")));
          reqItem.setRadioactiveMinor(StringUtils.equals(TRUE,classification.get("RadioactiveMinor")));
          reqItem.setGreen(StringUtils.equals(TRUE,classification.get("GreenProduct")));

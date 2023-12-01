@@ -18,11 +18,11 @@ public class CuAgencyRule extends AgencyRule {
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    protected boolean validateAgencyReportingName(MaintenanceDocument document) {
+    protected boolean validateAgencyReportingName(final MaintenanceDocument document) {
         LOG.debug("entering validateAgencyReportingName");
         
-        String agencyReportingName = newAgency.getReportingName();
-        String agencyExistsValue = newAgency.getCustomerCreationOptionCode();
+        final String agencyReportingName = newAgency.getReportingName();
+        final String agencyExistsValue = newAgency.getCustomerCreationOptionCode();
         if (CGConstants.AGENCY_CREATE_NEW_CUSTOMER_CODE.equalsIgnoreCase(agencyExistsValue)) {
             if (StringUtils.isBlank(agencyReportingName)
                     || ((agencyReportingName.length() > 0) 
@@ -35,7 +35,7 @@ public class CuAgencyRule extends AgencyRule {
     }
     
     @Override
-    protected boolean checkAgencyReportsTo(MaintenanceDocument document) {
+    protected boolean checkAgencyReportsTo(final MaintenanceDocument document) {
         LOG.debug("entering checkAgencyReportsTo");
         
         if (StringUtils.isNotBlank(newAgency.getReportsToAgencyNumber())) {

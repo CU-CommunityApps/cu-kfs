@@ -50,18 +50,18 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected List<? extends BusinessObject> getSearchResultsHelper(Map<String,String> fieldValues, boolean unbounded) {
+    protected List<? extends BusinessObject> getSearchResultsHelper(final Map<String,String> fieldValues, final boolean unbounded) {
         if (StringUtils.isNotBlank(fieldValues.get(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME))) {
             List<PayeeACHAccount> results = null;
             
             // Search for people with the given principal name(s), in a manner that respects lookup criteria Strings.
-            List<Person> people = personService.findPeople(Collections.singletonMap(
+            final List<Person> people = personService.findPeople(Collections.singletonMap(
                     KIMPropertyConstants.Principal.PRINCIPAL_NAME, fieldValues.get(CUPdpPropertyConstants.PAYEE_PRINCIPAL_NAME)));
             if (!people.isEmpty()) {
                 // Get the users' entity IDs and employee IDs for searching.
-                List<String> entityIds = new ArrayList<String>();
-                List<String> employeeIds = new ArrayList<String>();
-                for (Person person : people) {
+                final List<String> entityIds = new ArrayList<String>();
+                final List<String> employeeIds = new ArrayList<String>();
+                for (final Person person : people) {
                     entityIds.add(person.getEntityId());
                     if (StringUtils.isNotBlank(person.getEmployeeId())) {
                         employeeIds.add(person.getEmployeeId());
@@ -69,8 +69,8 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
                 }
                 
                 // Create a map without blank values and with all encrypted values decrypted, similar to the ancestor class's logic.
-                Map<String,String> finalFieldValues = new HashMap<String,String>();
-                for (Map.Entry<String,String> entry : fieldValues.entrySet()) {
+                final Map<String,String> finalFieldValues = new HashMap<String,String>();
+                for (final Map.Entry<String,String> entry : fieldValues.entrySet()) {
                     // Only add non-blank values.
                     if (StringUtils.isBlank(entry.getValue())) {
                         // Do nothing.
@@ -80,7 +80,7 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
                         if (getEncryptionService().isEnabled()) {
                             try {
                                 newValue = getEncryptionService().decrypt(newValue);
-                            } catch (GeneralSecurityException e) {
+                            } catch (final GeneralSecurityException e) {
                                 throw new RuntimeException("Error decrypting Payee ACH Account attribute value", e);
                             }
                         }
@@ -98,7 +98,7 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
                 finalFieldValues.remove(KRADConstants.REFERENCES_TO_REFRESH);
                 
                 // Build the sub-predicate to limit by the entity or employee IDs for the given principal names.
-                Predicate principalNameEquivalentPredicate;
+                final Predicate principalNameEquivalentPredicate;
                 if (employeeIds.isEmpty()) {
                     principalNameEquivalentPredicate = PredicateFactory.and(
                             PredicateFactory.equal(PdpPropertyConstants.PAYEE_IDENTIFIER_TYPE_CODE, PayeeIdTypeCodes.ENTITY),
@@ -133,7 +133,7 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
                 results = new ArrayList<PayeeACHAccount>(results);
                 
                 // Sort results accordingly using code from the ancestor class's version of the method.
-                List<String> defaultSortColumns = getDefaultSortColumns();
+                final List<String> defaultSortColumns = getDefaultSortColumns();
                 if (defaultSortColumns.size() > 0) {
                     Collections.sort(results, new BeanPropertyComparator(defaultSortColumns, true));
                 }
@@ -148,7 +148,7 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
     }
     
     @Override
-    protected boolean isInquiryRestricted(BusinessObject bo, String propertyName) {
+    protected boolean isInquiryRestricted(final BusinessObject bo, final String propertyName) {
         return false;
     }
 
@@ -156,7 +156,7 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
         return personService;
     }
 
-    public void setPersonService(PersonService personService) {
+    public void setPersonService(final PersonService personService) {
         this.personService = personService;
     }
 
@@ -164,7 +164,7 @@ public class CuPayeeACHAccountLookupableHelperServiceImpl extends PayeeACHAccoun
         return criteriaLookupService;
     }
 
-    public void setCriteriaLookupService(CriteriaLookupService criteriaLookupService) {
+    public void setCriteriaLookupService(final CriteriaLookupService criteriaLookupService) {
         this.criteriaLookupService = criteriaLookupService;
     }
 

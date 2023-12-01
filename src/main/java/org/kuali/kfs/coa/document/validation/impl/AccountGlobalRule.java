@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +44,9 @@ import org.kuali.kfs.coa.businessobject.SubFundGroup;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.coa.service.OrganizationService;
 import org.kuali.kfs.coa.service.SubFundGroupService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+
 import org.kuali.kfs.gl.service.BalanceService;
 import org.kuali.kfs.gl.service.EncumbranceService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsCfda;
@@ -75,6 +77,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -95,7 +98,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	private static final String AND_SUB_FUND = " and Sub-Fund Group Code is ";
 
 	protected CuAccountGlobal newAccountGlobal;
-	protected Timestamp today;
+	private DateTimeService dateTimeService;
+	private LocalDate today;
+	
 	protected EncumbranceService encumbranceService;
 
 	protected GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
@@ -118,10 +123,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 */
 	@Override
 	public void setupConvenienceObjects() {
-		newAccountGlobal = (CuAccountGlobal) super.getNewBo();
-		today = getDateTimeService().getCurrentTimestamp();
-		// remove any time components
-		today.setTime(DateUtils.truncate(today, Calendar.DAY_OF_MONTH).getTime());
+	    newAccountGlobal = (CuAccountGlobal) super.getNewBo();
+	    today = LocalDate.now();
 	}
 
     /**
@@ -130,7 +133,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
      * routing)
      */
     @Override
-    protected boolean processCustomSaveDocumentBusinessRules(MaintenanceDocument document) {
+    protected boolean processCustomSaveDocumentBusinessRules(final MaintenanceDocument document) {
 
 		LOG.info("processCustomSaveDocumentBusinessRules called");
 		setupConvenienceObjects();
@@ -160,7 +163,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
      * checkOnlyOneChartErrorWrapper checkFiscalOfficerIsValidKualiUser but does fail if any of these rule checks fail
      */
     @Override
-    protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
+    protected boolean processCustomRouteDocumentBusinessRules(final MaintenanceDocument document) {
 
 		LOG.info("processCustomRouteDocumentBusinessRules called");
 		setupConvenienceObjects();
@@ -193,7 +196,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param details
 	 * @return true if the collection of {@link AccountGlobalDetail}s passes the sub-rules
 	 */
-	public boolean checkAccountDetails(MaintenanceDocument document, List<AccountGlobalDetail> details) {
+	public boolean checkAccountDetails(final MaintenanceDocument document, final List<AccountGlobalDetail> details) {
 		boolean success = true;
 
 		// check if there are any accounts
@@ -206,8 +209,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		else {
 			// check each account
 			int index = 0;
-			for (AccountGlobalDetail dtl : details) {
-				String errorPath = MAINTAINABLE_ERROR_PREFIX + KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + index + "]";
+			for (final AccountGlobalDetail dtl : details) {
+				final String errorPath = MAINTAINABLE_ERROR_PREFIX + KFSPropertyConstants.ACCOUNT_CHANGE_DETAILS + "[" + index + "]";
 				GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 				success &= checkAccountDetails(dtl);
 				success &= checkAccountExtensions(dtl);
@@ -226,7 +229,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param dtl
 	 * @return true if the detail object contains a valid account
 	 */
-	public boolean checkAccountDetails(AccountGlobalDetail dtl) {
+	public boolean checkAccountDetails(final AccountGlobalDetail dtl) {
 		int originalErrorCount = GlobalVariables.getMessageMap().getErrorCount();
 		getDictionaryValidationService().validateBusinessObject(dtl);
 		if (StringUtils.isNotBlank(dtl.getAccountNumber()) && StringUtils.isNotBlank(dtl.getChartOfAccountsCode())) {
@@ -268,11 +271,11 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param maintenanceDocument
 	 * @return false on rules violation
 	 */
-	protected boolean checkGeneralRules(MaintenanceDocument maintenanceDocument) {
+	protected boolean checkGeneralRules(final MaintenanceDocument maintenanceDocument) {
 		LOG.info("checkGeneralRules called");
-		Person fiscalOfficer = newAccountGlobal.getAccountFiscalOfficerUser();
-		Person accountManager = newAccountGlobal.getAccountManagerUser();
-		Person accountSupervisor = newAccountGlobal.getAccountSupervisoryUser();
+		final Person fiscalOfficer = newAccountGlobal.getAccountFiscalOfficerUser();
+		final Person accountManager = newAccountGlobal.getAccountManagerUser();
+		final Person accountSupervisor = newAccountGlobal.getAccountSupervisoryUser();
 
 		boolean success = true;
 
@@ -352,13 +355,13 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
         return false;
     }
 
-	private boolean checkCfda(String accountCfdaNumber) {
+	private boolean checkCfda(final String accountCfdaNumber) {
 		boolean success = true;
-		ContractsAndGrantsCfda cfda;
+		final ContractsAndGrantsCfda cfda;
 		if (! StringUtils.isEmpty(accountCfdaNumber)) {
-			ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(ContractsAndGrantsCfda.class);
+			final ModuleService moduleService = SpringContext.getBean(KualiModuleService.class).getResponsibleModuleService(ContractsAndGrantsCfda.class);
 			if ( moduleService != null ) {
-				Map<String, Object> keys = new HashMap<>(1);
+				final Map<String, Object> keys = new HashMap<>(1);
 				keys.put(KFSPropertyConstants.CFDA_NUMBER, accountCfdaNumber);
 				cfda = moduleService.getExternalizableBusinessObject(ContractsAndGrantsCfda.class, keys);
 			} else {
@@ -383,7 +386,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param newSupervisor
 	 * @return true if the users are either not changed or pass the sub-rules
 	 */
-	protected boolean checkAllAccountUsers(AccountGlobal doc, Person newFiscalOfficer, Person newManager, Person newSupervisor) {
+	protected boolean checkAllAccountUsers(final AccountGlobal doc, final Person newFiscalOfficer, final Person newManager, final Person newSupervisor) {
 		boolean success = true;
 
 		LOG.debug("newSupervisor: {}", newSupervisor);
@@ -393,7 +396,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (newSupervisor != null || newFiscalOfficer != null || newManager != null) {
 			// loop over all AccountGlobalDetail records
 			int index = 0;
-			for (AccountGlobalDetail detail : doc.getAccountGlobalDetails()) {
+			for (final AccountGlobalDetail detail : doc.getAccountGlobalDetails()) {
 				success &= checkAccountUsers(detail, newFiscalOfficer, newManager, newSupervisor, index);
 				index++;
 			}
@@ -413,15 +416,15 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param index            for storing the error line
 	 * @return true if the new users pass this sub-rule
 	 */
-	protected boolean checkAccountUsers(AccountGlobalDetail detail, Person newFiscalOfficer, Person newManager,
-	        Person newSupervisor, int index) {
+	protected boolean checkAccountUsers(final AccountGlobalDetail detail, final Person newFiscalOfficer, final Person newManager,
+	        final Person newSupervisor, final int index) {
 		boolean success = true;
 
 		// only need to do this check if at least one of the user fields is non null
 		if (newSupervisor != null || newFiscalOfficer != null || newManager != null) {
 			// loop over all AccountGlobalDetail records
 			detail.refreshReferenceObject("account");
-			Account account = detail.getAccount();
+			final Account account = detail.getAccount();
             if (ObjectUtils.isNotNull(account)) {
                 LOG.debug("old-Supervisor: {}", account::getAccountSupervisoryUser);
                 LOG.debug("old-FiscalOfficer: {}", account::getAccountFiscalOfficerUser);
@@ -484,7 +487,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param accountGlobals
 	 * @return true if the two users are the same
 	 */
-	protected boolean isSupervisorSameAsFiscalOfficer(AccountGlobal accountGlobals) {
+	protected boolean isSupervisorSameAsFiscalOfficer(final AccountGlobal accountGlobals) {
 		return areTwoUsersTheSame(accountGlobals.getAccountSupervisoryUser(), accountGlobals.getAccountFiscalOfficerUser());
 	}
 
@@ -495,7 +498,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param accountGlobals
 	 * @return true if the two users are the same
 	 */
-	protected boolean isSupervisorSameAsManager(AccountGlobal accountGlobals) {
+	protected boolean isSupervisorSameAsManager(final AccountGlobal accountGlobals) {
 		return areTwoUsersTheSame(accountGlobals.getAccountSupervisoryUser(), accountGlobals.getAccountManagerUser());
 	}
 
@@ -506,7 +509,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param user2
 	 * @return true if these two users are the same
 	 */
-	protected boolean areTwoUsersTheSame(Person user1, Person user2) {
+	protected boolean areTwoUsersTheSame(final Person user1, final Person user2) {
 		if (ObjectUtils.isNull(user1) || user1.getPrincipalId() == null ) {
 			return false;
 		}
@@ -523,25 +526,25 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param maintenanceDocument
 	 * @return false on rules violation
 	 */
-	protected boolean checkExpirationDate(MaintenanceDocument maintenanceDocument) {
+	protected boolean checkExpirationDate(final MaintenanceDocument maintenanceDocument) {
 		LOG.info("checkExpirationDate called");
 
 		boolean success = true;
-		Date newExpDate = newAccountGlobal.getAccountExpirationDate();
+		final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
 
 		// If creating a new account if acct_expiration_dt is set then
 		// the acct_expiration_dt must be changed to a date that is today or later
 		// unless the date was valid upon submission, this is an approval action
 		// and the approver hasn't changed the value
 		if (maintenanceDocument.isNew() && ObjectUtils.isNotNull(newExpDate)) {
-			Date oldExpDate = null;
+		    LocalDate oldExpDate = null;
 
 			if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-				MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+				final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
                         .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-				AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
+				final AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
 				if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-					oldExpDate = oldAccountGlobal.getAccountExpirationDate();
+				    oldExpDate = getDateTimeService().getLocalDate(oldAccountGlobal.getAccountExpirationDate());
 				}
 			}
 
@@ -549,7 +552,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
             	// KFSUPGRADE-925 check parameter to see if back date is allowed
             	Collection<String> fundGroups = SpringContext.getBean(ParameterService.class).getParameterValuesAsString(COAConstants.COA_NAMESPACE_CODE, COAParameterConstants.Components.ACCOUNT_CMPNT, COAParameterConstants.EXPIRATION_BACKDATING_FUNDS);
                 if (fundGroups == null || (ObjectUtils.isNotNull(newAccountGlobal.getSubFundGroup()) && !fundGroups.contains(newAccountGlobal.getSubFundGroup().getFundGroupCode()))) {
-                	if (!newExpDate.after(today) && !newExpDate.equals(today)) {
+                    if (newExpDate.isBefore(today)) {
                 		putFieldError("accountExpirationDate", COAKeyConstants.ERROR_DOCUMENT_ACCMAINT_EXP_DATE_TODAY_LATER);
                 		success = false;
                 	}
@@ -558,9 +561,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
         }
 
 		// a continuation account is required if the expiration date is completed.
-		success &= checkContinuationAccount(maintenanceDocument, newExpDate);
+		success &= checkContinuationAccount(maintenanceDocument, getDateTimeService().getSqlDate(newExpDate));
 
-		for (AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
+		for (final AccountGlobalDetail detail : newAccountGlobal.getAccountGlobalDetails()) {
 			success &= checkExpirationDate(maintenanceDocument, detail);
 		}
 		return success;
@@ -573,27 +576,27 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param detail              the account detail we are investigating
 	 * @return false on rules violation
 	 */
-	protected boolean checkExpirationDate(MaintenanceDocument maintenanceDocument, AccountGlobalDetail detail) {
+	protected boolean checkExpirationDate(final MaintenanceDocument maintenanceDocument, final AccountGlobalDetail detail) {
 		boolean success = true;
-		Date newExpDate = newAccountGlobal.getAccountExpirationDate();
+		final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
 
-		Date prevExpDate = null;
+		LocalDate prevExpDate = null;
 
 		// get previous expiration date for possible check later
 		if (maintenanceDocument.getDocumentHeader().getWorkflowDocument().isApprovalRequested()) {
-			MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
+			final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class)
                     .getByDocumentHeaderId(maintenanceDocument.getDocumentNumber());
-			AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
+			final AccountGlobal oldAccountGlobal = (AccountGlobal)oldMaintDoc.getDocumentBusinessObject();
 			if (ObjectUtils.isNotNull(oldAccountGlobal)) {
-				prevExpDate = oldAccountGlobal.getAccountExpirationDate();
+			    prevExpDate = getDateTimeService().getLocalDate(oldAccountGlobal.getAccountExpirationDate());
 			}
 		}
 
 
 		// load the object by keys
-		Account account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, detail.getPrimaryKeys());
+		final Account account = SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(Account.class, detail.getPrimaryKeys());
 		if (ObjectUtils.isNotNull(account)) {
-			Date oldExpDate = account.getAccountExpirationDate();
+		    LocalDate oldExpDate = getDateTimeService().getLocalDate(account.getAccountExpirationDate());
 
 			// When updating an account expiration date, the date must be today or later
 			// (except for C&G accounts). Only run this test if this maint doc is an edit doc
@@ -615,15 +618,15 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 			}
 
 			// acct_expiration_dt can not be before acct_effect_dt
-			Date effectiveDate = null;
+			LocalDate effectiveDate = null;
 			if (ObjectUtils.isNotNull(newAccountGlobal.getAccountEffectiveDate())) {
-				effectiveDate = newAccountGlobal.getAccountEffectiveDate();
+				effectiveDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountEffectiveDate());
 			} else {
-				effectiveDate = account.getAccountEffectiveDate();
+				effectiveDate = getDateTimeService().getLocalDate(account.getAccountEffectiveDate());
 			}
 
 			if (ObjectUtils.isNotNull(effectiveDate) && ObjectUtils.isNotNull(newExpDate)) {
-				if (newExpDate.before(effectiveDate)) {
+				if (newExpDate.isBefore(effectiveDate)) {
 					putFieldError(KFSPropertyConstants.ACCOUNT_EXPIRATION_DATE, CUKFSKeyConstants.ERROR_DOCUMENT_ACCT_GLB_MAINT_EXP_DATE_CANNOT_BE_BEFORE_EFFECTIVE_DATE, new String[] { detail.getAccountNumber() });
 					success = false;
 				}
@@ -640,10 +643,10 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param newAccountGlobal
 	 * @return true if date has changed and is invalid
 	 */
-	protected boolean isUpdatedExpirationDateInvalid(Account oldAccount, AccountGlobal newAccountGlobal) {
+	protected boolean isUpdatedExpirationDateInvalid(final Account oldAccount, final AccountGlobal newAccountGlobal) {
 
-		Date oldExpDate = oldAccount.getAccountExpirationDate();
-		Date newExpDate = newAccountGlobal.getAccountExpirationDate();
+	    final LocalDate oldExpDate = getDateTimeService().getLocalDate(oldAccount.getAccountExpirationDate());
+	    final LocalDate newExpDate = getDateTimeService().getLocalDate(newAccountGlobal.getAccountExpirationDate());
 
 		// When updating an account expiration date, the date must be today or later
 		boolean expDateHasChanged = false;
@@ -664,7 +667,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		}
 
 		// if a subFundGroup isn't present, we cannot continue the testing
-		SubFundGroup subFundGroup = newAccountGlobal.getSubFundGroup();
+		final SubFundGroup subFundGroup = newAccountGlobal.getSubFundGroup();
 		if (ObjectUtils.isNull(subFundGroup)) {
 			return false;
 		}
@@ -684,7 +687,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
         }
 
         // expirationDate must be today or later than today (cannot be before today)
-        return newExpDate.before(today);
+        return newExpDate.isBefore(today);
     }
 
 
@@ -694,9 +697,9 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param accountGlobals
 	 * @return true if the continuation account has expired
 	 */
-	protected boolean isContinuationAccountExpired(AccountGlobal accountGlobals) {
-		String chartCode = accountGlobals.getContinuationFinChrtOfAcctCd();
-		String accountNumber = accountGlobals.getContinuationAccountNumber();
+	protected boolean isContinuationAccountExpired(final AccountGlobal accountGlobals) {
+		final String chartCode = accountGlobals.getContinuationFinChrtOfAcctCd();
+		final String accountNumber = accountGlobals.getContinuationAccountNumber();
 
 		// if either chartCode or accountNumber is not entered, then we cant continue, so exit
 		if (StringUtils.isBlank(chartCode) || StringUtils.isBlank(accountNumber)) {
@@ -704,8 +707,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		}
 
 		// attempt to retrieve the continuation account from the DB
-		Account continuation;
-		Map<String, String> pkMap = new HashMap<>();
+		final Account continuation;
+		final Map<String, String> pkMap = new HashMap<>();
 		pkMap.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartCode);
 		pkMap.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
 		continuation = super.getBoService().findByPrimaryKey(Account.class, pkMap);
@@ -756,7 +759,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param accountGlobals
 	 * @return false if it is required (and not entered) or invalid/inactive
 	 */
-	protected boolean checkCgIncomeStreamRequired(AccountGlobal accountGlobals) {
+	protected boolean checkCgIncomeStreamRequired(final AccountGlobal accountGlobals) {
 		boolean required = false;
 
 		// if the subFundGroup object is null, we cant test, so exit
@@ -765,8 +768,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		}
 
 		// retrieve the subfundcode and fundgroupcode
-		String subFundGroupCode = accountGlobals.getSubFundGroupCode().trim();
-		String fundGroupCode = accountGlobals.getSubFundGroup().getFundGroupCode().trim();
+		final String subFundGroupCode = accountGlobals.getSubFundGroupCode().trim();
+		final String fundGroupCode = accountGlobals.getSubFundGroup().getFundGroupCode().trim();
 
 		// changed foundation code.  Now, it is using similar 'income stream account' validation rule for 'Account'
 		if (isIncomeStreamAccountRequired(fundGroupCode, subFundGroupCode)) {
@@ -793,8 +796,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		}
 
 		// do an existence/active test
-		DictionaryValidationService dvService = super.getDictionaryValidationService();
-		boolean referenceExists = dvService.validateReferenceExists(accountGlobals, KFSPropertyConstants.INCOME_STREAM_ACCOUNT);
+		final DictionaryValidationService dvService = super.getDictionaryValidationService();
+		final boolean referenceExists = dvService.validateReferenceExists(accountGlobals, KFSPropertyConstants.INCOME_STREAM_ACCOUNT);
 		if (!referenceExists) {
 			putFieldError("incomeStreamAccount", KFSKeyConstants.ERROR_EXISTENCE, "Income Stream Account: " +
 			        accountGlobals.getIncomeStreamFinancialCoaCode() + "-" + accountGlobals.getIncomeStreamAccountNumber());
@@ -809,15 +812,15 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * {@link AccountGlobalDetail} is added to this global
 	 */
 	@Override
-	public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
-	        PersistableBusinessObject bo) {
+	public boolean processCustomAddCollectionLineBusinessRules(final MaintenanceDocument document, final String collectionName,
+	        final PersistableBusinessObject bo) {
 		boolean success = super.processCustomAddCollectionLineBusinessRules(document, collectionName, bo);
 
 		// this incoming bo needs to be refreshed because it doesn't have its subobjects setup
 		bo.refreshNonUpdateableReferences();
 
 		if(bo instanceof AccountGlobalDetail){
-			AccountGlobalDetail detail = (AccountGlobalDetail) bo;
+			final AccountGlobalDetail detail = (AccountGlobalDetail) bo;
 
 			success &= checkAccountDetails(detail);
 			success &= checkExpirationDate(document, detail);
@@ -834,7 +837,7 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param newExpDate The expiration date assigned to the account being validated for submission.
 	 * @return True if the continuation account values are valid for the associated account, false otherwise.
 	 */
-	protected boolean checkContinuationAccount(MaintenanceDocument document, Date newExpDate) {
+	protected boolean checkContinuationAccount(final MaintenanceDocument document, final Date newExpDate) {
 		LOG.info("checkContinuationAccount called");
 
 		boolean continuationAccountIsValid = true;
@@ -857,8 +860,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 		if (continuationAccountIsValid && ObjectUtils.isNotNull(newAccountGlobal.getContinuationAccountNumber())
 		        && ObjectUtils.isNotNull(newAccountGlobal.getContinuationFinChrtOfAcctCd())) {
 			// do an existence/active test
-			DictionaryValidationService dvService = super.getDictionaryValidationService();
-			boolean referenceExists = dvService.validateReferenceExists(newAccountGlobal, "continuationAccount");
+			final DictionaryValidationService dvService = super.getDictionaryValidationService();
+			final boolean referenceExists = dvService.validateReferenceExists(newAccountGlobal, "continuationAccount");
 			if (!referenceExists) {
 				putFieldError("continuationAccountNumber", KFSKeyConstants.ERROR_EXISTENCE,
 				        "Continuation Account: " + newAccountGlobal.getContinuationFinChrtOfAcctCd() + "-" +
@@ -869,8 +872,8 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 
 		boolean result = true;
 		if (!continuationAccountIsValid) {
-			List<AccountGlobalDetail> gAcctDetails = newAccountGlobal.getAccountGlobalDetails();
-			for (AccountGlobalDetail detail : gAcctDetails) {
+			final List<AccountGlobalDetail> gAcctDetails = newAccountGlobal.getAccountGlobalDetails();
+			for (final AccountGlobalDetail detail : gAcctDetails) {
 				if (null != detail.getAccountNumber() && null != newAccountGlobal.getContinuationAccountNumber()) {
 					result &= detail.getAccountNumber().equals(newAccountGlobal.getContinuationAccountNumber());
 					result &= detail.getChartOfAccountsCode().equals(newAccountGlobal.getContinuationFinChrtOfAcctCd());
@@ -887,21 +890,21 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 * @param acctGlobal
 	 * @return
 	 */
-	protected boolean checkOrganizationValidity( AccountGlobal acctGlobal ) {
+	protected boolean checkOrganizationValidity(final AccountGlobal acctGlobal ) {
 		boolean result = true;
 
 		// check that an org has been entered
 		if ( StringUtils.isNotBlank( acctGlobal.getOrganizationCode() ) ) {
 			// get all distinct charts
-			HashSet<String> charts = new HashSet<>(10);
-			for ( AccountGlobalDetail acct : acctGlobal.getAccountGlobalDetails() ) {
+			final HashSet<String> charts = new HashSet<>(10);
+			for ( final AccountGlobalDetail acct : acctGlobal.getAccountGlobalDetails() ) {
 				charts.add( acct.getChartOfAccountsCode() );
 			}
-			OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
+			final OrganizationService orgService = SpringContext.getBean(OrganizationService.class);
 			// test for an invalid organization
-			for ( String chartCode : charts ) {
+			for ( final String chartCode : charts ) {
 				if ( StringUtils.isNotBlank(chartCode) ) {
-					if ( null == orgService.getByPrimaryIdWithCaching( chartCode, acctGlobal.getOrganizationCode() ) ) {
+				    if (orgService.getByPrimaryIdWithCaching(chartCode, acctGlobal.getOrganizationCode()) == null) {
 						result = false;
 						putFieldError("organizationCode",
 						        COAKeyConstants.ERROR_DOCUMENT_GLOBAL_ACCOUNT_INVALID_ORG,
@@ -1777,6 +1780,14 @@ public class AccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule {
 	 public void setContractsAndGrantsModuleService(ContractsAndGrantsModuleService contractsAndGrantsModuleService) {
 		 this.contractsAndGrantsModuleService = contractsAndGrantsModuleService;
 	 }
+	 
+	@Override
+	public DateTimeService getDateTimeService() {
+	    if (dateTimeService == null) {
+	        dateTimeService = SpringContext.getBean(DateTimeService.class);
+	    }
+	    return dateTimeService;
+	}
 
 }
 

@@ -9,11 +9,11 @@ import org.kuali.kfs.fp.document.service.impl.DisbursementVoucherPaymentReasonSe
 public class CuDisbursementVoucherPaymentReasonServiceImpl extends DisbursementVoucherPaymentReasonServiceImpl {
     
     @Override
-    protected String getDescriptivePayeeTypesAsString(Collection<String> payeeTypeCodes) {
-        List<String> payeeTypeDescriptions = new ArrayList<>();
+    protected String getDescriptivePayeeTypesAsString(final Collection<String> payeeTypeCodes) {
+        final List<String> payeeTypeDescriptions = new ArrayList<>();
 
-        for (String payeeTypeCode : payeeTypeCodes) {
-            String description = disbursementVoucherPayeeService.getPayeeTypeDescription(payeeTypeCode);
+        for (final String payeeTypeCode : payeeTypeCodes) {
+            final String description = disbursementVoucherPayeeService.getPayeeTypeDescription(payeeTypeCode);
             if (payeeTypeDescriptions.indexOf(description) == -1) {
                 payeeTypeDescriptions.add(description);
             }

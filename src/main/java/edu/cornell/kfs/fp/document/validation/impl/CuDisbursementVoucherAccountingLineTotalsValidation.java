@@ -33,23 +33,23 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
 	protected transient ScheduledAccountingLineService scheduledAccountingLineService;
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         LOG.debug("validate start");
 
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) event.getDocument();
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) event.getDocument();
 
 
-        Person financialSystemUser = GlobalVariables.getUserSession().getPerson();
+        final Person financialSystemUser = GlobalVariables.getUserSession().getPerson();
         final Set<String> currentEditModes = getEditModesFromDocument(dvDocument, financialSystemUser);
 
         // amounts can only decrease
-        List<String> candidateEditModes = this.getCandidateEditModes();
-        if (this.hasRequiredEditMode(currentEditModes, candidateEditModes)) {
+        final List<String> candidateEditModes = getCandidateEditModes();
+        if (hasRequiredEditMode(currentEditModes, candidateEditModes)) {
 
             //users in foreign or wire workgroup can increase or decrease amounts because of currency conversion
-            List<String> foreignDraftAndWireTransferEditModes = this.getForeignDraftAndWireTransferEditModes(dvDocument);
-            if (!this.hasRequiredEditMode(currentEditModes, foreignDraftAndWireTransferEditModes)) {
-                DisbursementVoucherDocument persistedDocument = (DisbursementVoucherDocument) retrievePersistedDocument(dvDocument);
+            final List<String> foreignDraftAndWireTransferEditModes = getForeignDraftAndWireTransferEditModes(dvDocument);
+            if (!hasRequiredEditMode(currentEditModes, foreignDraftAndWireTransferEditModes)) {
+                final DisbursementVoucherDocument persistedDocument = (DisbursementVoucherDocument) retrievePersistedDocument(dvDocument);
                 if (persistedDocument == null) {
                     handleNonExistentDocumentWhenApproving(dvDocument);
                     return true;
@@ -101,22 +101,22 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
        return super.validate(event);
     }
     
-    private boolean doesAccountingLineTotalEqualDVTotalDollarAmount(RecurringDisbursementVoucherDocument recurringDV) {
+    private boolean doesAccountingLineTotalEqualDVTotalDollarAmount(final RecurringDisbursementVoucherDocument recurringDV) {
         KualiDecimal calculatedTotal = KualiDecimal.ZERO;
-        for (Object accountingLine : recurringDV.getSourceAccountingLines()) {
-            ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;	
+        for (final Object accountingLine : recurringDV.getSourceAccountingLines()) {
+            final ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;	
             calculatedTotal = calculatedTotal.add(scheduledAccountingLine.getAmount());
         }
         return  calculatedTotal.equals(recurringDV.getTotalDollarAmount());
     }
 
-    private boolean isAccountingLineEndDateValid(RecurringDisbursementVoucherDocument recurringDV) {
+    private boolean isAccountingLineEndDateValid(final RecurringDisbursementVoucherDocument recurringDV) {
         boolean valid = true;
         int counter = 0;
-        Date maximumScheduledAccountingLineEndDate = getScheduledAccountingLineService().getMaximumScheduledAccountingLineEndDate();
-        SimpleDateFormat dateFormater = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
-        for (Object accountingLine : recurringDV.getSourceAccountingLines()) {
-            ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;
+        final Date maximumScheduledAccountingLineEndDate = getScheduledAccountingLineService().getMaximumScheduledAccountingLineEndDate();
+        final SimpleDateFormat dateFormater = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
+        for (final Object accountingLine : recurringDV.getSourceAccountingLines()) {
+            final ScheduledSourceAccountingLine scheduledAccountingLine = (ScheduledSourceAccountingLine)accountingLine;
             scheduledAccountingLine.setEndDate(getScheduledAccountingLineService().generateEndDate(scheduledAccountingLine));
             if (maximumScheduledAccountingLineEndDate.before(scheduledAccountingLine.getEndDate())) {
                 valid = false;
@@ -129,7 +129,7 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
 
     }
 
-    private String buildTransactionCountFieldName(int sourceAccountingLineListElement) {
+    private String buildTransactionCountFieldName(final int sourceAccountingLineListElement) {
         return AccountingDocumentRuleBaseConstants.ERROR_PATH.DOCUMENT_ERROR_PREFIX + KFSConstants.EXISTING_SOURCE_ACCT_LINE_PROPERTY_NAME + 
                 KFSConstants.SQUARE_BRACKET_LEFT + sourceAccountingLineListElement + KFSConstants.SQUARE_BRACKET_RIGHT + 
                 AccountingDocumentRuleBaseConstants.ERROR_PATH.DELIMITER + CUKFSPropertyConstants.RECURRING_DV_PARTIAL_TRANSACTION_COUNT_FIELD_NAME;
@@ -142,7 +142,7 @@ public class CuDisbursementVoucherAccountingLineTotalsValidation extends Disburs
         return scheduledAccountingLineService;
     }
 
-    public void setScheduledAccountingLineService(ScheduledAccountingLineService scheduledAccountingLineService) {
+    public void setScheduledAccountingLineService(final ScheduledAccountingLineService scheduledAccountingLineService) {
         this.scheduledAccountingLineService = scheduledAccountingLineService;
     }
 

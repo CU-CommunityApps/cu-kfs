@@ -96,7 +96,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
         List<PersistableBusinessObject> persistables = new ArrayList<>();
 
-        for (AccountGlobalDetail accountGlobalDetail : accountGlobalDetails) {
+        for (final AccountGlobalDetail accountGlobalDetail : accountGlobalDetails) {
         	updateAccountValuesAndAddToPersistablesList(persistables, accountGlobalDetail);
         }
 
@@ -104,9 +104,9 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     }
 
 	private void updateAccountValuesAndAddToPersistablesList(
-			List<PersistableBusinessObject> persistables,
-			AccountGlobalDetail accountGlobalDetail) {
-		Account account = updateAccountValuesOnAccountGlobalDetailWithNewValuesFromAccountGlobalDoc(accountGlobalDetail);
+			final List<PersistableBusinessObject> persistables,
+			final AccountGlobalDetail accountGlobalDetail) {
+		final Account account = updateAccountValuesOnAccountGlobalDetailWithNewValuesFromAccountGlobalDoc(accountGlobalDetail);
 
 		if (ObjectUtils.isNotNull(account)) {
 			persistables.add(account);
@@ -114,9 +114,9 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
     
 	private Account updateAccountValuesOnAccountGlobalDetailWithNewValuesFromAccountGlobalDoc(
-			GlobalBusinessObjectDetailBase globalDetail) {
-		AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
-		Account account = getBusinessObjectService().findByPrimaryKey(Account.class,accountGlobalDetail.getPrimaryKeys());
+			final GlobalBusinessObjectDetailBase globalDetail) {
+		final AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
+		final Account account = getBusinessObjectService().findByPrimaryKey(Account.class,accountGlobalDetail.getPrimaryKeys());
 
 		if (ObjectUtils.isNotNull(account)) {
 			updateAccountBasicFields(account);
@@ -135,11 +135,11 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	 * @param subFundGroup
 	 * @return true when a default account restricted status code set on the sub-fund; false otherwise
 	 */
-	private boolean isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(SubFundGroup subFundGroup) {
+	private boolean isDefaultAccountRestrictedStatusCodeSetOnSubFundGroup(final SubFundGroup subFundGroup) {
 		return ObjectUtils.isNotNull(subFundGroup) && StringUtils.isNotBlank(subFundGroup.getAccountRestrictedStatusCode());
 	}
 
-	private void updateAccountBasicFields(Account account) {
+	private void updateAccountBasicFields(final Account account) {
 		if (StringUtils.isNotBlank(accountFiscalOfficerSystemIdentifier)) {
 		    account.setAccountFiscalOfficerSystemIdentifier(accountFiscalOfficerSystemIdentifier);
 		}
@@ -335,8 +335,8 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		}
 	}
 
-	private void updateAccountExtendedAttribute(Account account) {
-	    AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
+	private void updateAccountExtendedAttribute(final Account account) {
+	    final AccountExtendedAttribute aea = (AccountExtendedAttribute) (account.getExtension());
 	    if (this.getClosed() != null && this.getClosed() && aea.getAccountClosedDate() == null) {
 	        aea.setAccountClosedDate(this.getDateTimeService().getCurrentSqlDate());
 	    } else if (this.getClosed() != null && !this.getClosed() && aea.getAccountClosedDate() != null) {
@@ -360,15 +360,15 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
 	@Override
 	public Map<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>> getGlobalObjectDetailsAndIcrAccountsMap() {
-		Map<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>> globalObjectDetailsAndIcrAccountsMap = new HashMap<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>>();
-		List<AccountGlobalDetail> accountGlobalDetails = getAccountGlobalDetails();
+		final Map<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>> globalObjectDetailsAndIcrAccountsMap = new HashMap<GlobalBusinessObjectDetailBase, List<IndirectCostRecoveryAccount>>();
+		final List<AccountGlobalDetail> accountGlobalDetails = getAccountGlobalDetails();
 
 		if (ObjectUtils.isNotNull(accountGlobalDetails)&& !accountGlobalDetails.isEmpty()) {
-			for (GlobalBusinessObjectDetailBase globalDetail : accountGlobalDetails) {
+			for (final GlobalBusinessObjectDetailBase globalDetail : accountGlobalDetails) {
 
-				AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
+				final AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
 				accountGlobalDetail.refreshReferenceObject(KFSPropertyConstants.ACCOUNT);
-				List<IndirectCostRecoveryAccount> icrAccounts = accountGlobalDetail.getAccount().getIndirectCostRecoveryAccounts();
+				final List<IndirectCostRecoveryAccount> icrAccounts = accountGlobalDetail.getAccount().getIndirectCostRecoveryAccounts();
 				globalObjectDetailsAndIcrAccountsMap.put(globalDetail,icrAccounts);
 			}
 
@@ -377,12 +377,12 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	@Override
-	public IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(GlobalBusinessObjectDetailBase globalDetail, IndirectCostRecoveryAccountChange newICR) {
-		AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
-		String chart = accountGlobalDetail.getChartOfAccountsCode();
-		String account = accountGlobalDetail.getAccountNumber();
+	public IndirectCostRecoveryAccount createIndirectCostRecoveryAccountFromChange(final GlobalBusinessObjectDetailBase globalDetail, final IndirectCostRecoveryAccountChange newICR) {
+		final AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
+		final String chart = accountGlobalDetail.getChartOfAccountsCode();
+		final String account = accountGlobalDetail.getAccountNumber();
 
-		IndirectCostRecoveryAccount icrAccount = new IndirectCostRecoveryAccount();
+		final IndirectCostRecoveryAccount icrAccount = new IndirectCostRecoveryAccount();
 		icrAccount.setAccountNumber(account);
 		icrAccount.setChartOfAccountsCode(chart);
 		icrAccount.setIndirectCostRecoveryAccountNumber(newICR.getIndirectCostRecoveryAccountNumber());
@@ -396,13 +396,13 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
 	@Override
 	public void updateGlobalDetailICRAccountCollection(
-			GlobalBusinessObjectDetailBase globalDetail, List<IndirectCostRecoveryAccount> updatedIcrAccounts) {
-		AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
+			final GlobalBusinessObjectDetailBase globalDetail, final List<IndirectCostRecoveryAccount> updatedIcrAccounts) {
+		final AccountGlobalDetail accountGlobalDetail = (AccountGlobalDetail) globalDetail;
 		accountGlobalDetail.getAccount().setIndirectCostRecoveryAccounts(updatedIcrAccounts);
 
 	}
 
-	public void updateIcrAccounts(GlobalBusinessObjectDetailBase globalDetail, List<IndirectCostRecoveryAccount> icrAccounts){
+	public void updateIcrAccounts(final GlobalBusinessObjectDetailBase globalDetail, final List<IndirectCostRecoveryAccount> icrAccounts){
 		getGlobalObjectWithIndirectCostRecoveryAccountsService().updateIcrAccounts(this, globalDetail, icrAccounts);
 	}
 
@@ -415,7 +415,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return majorReportingCategoryCode;
     }
 
-    public void setMajorReportingCategoryCode(String majorReportingCategoryCode) {
+    public void setMajorReportingCategoryCode(final String majorReportingCategoryCode) {
         this.majorReportingCategoryCode = majorReportingCategoryCode;
     }
     public MajorReportingCategory getMajorReportingCategory() {
@@ -423,7 +423,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
     }
 
     public void setMajorReportingCategory(
-            MajorReportingCategory majorReportingCategory) {
+            final MajorReportingCategory majorReportingCategory) {
         this.majorReportingCategory = majorReportingCategory;
     }
 
@@ -431,7 +431,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountPhysicalCampusCode;
     }
 
-    public void setAccountPhysicalCampusCode(String accountPhysicalCampusCode) {
+    public void setAccountPhysicalCampusCode(final String accountPhysicalCampusCode) {
         this.accountPhysicalCampusCode = accountPhysicalCampusCode;
     }
 
@@ -439,7 +439,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountPhysicalCampus;
     }
 
-    public void setAccountPhysicalCampus(Campus accountPhysicalCampus) {
+    public void setAccountPhysicalCampus(final Campus accountPhysicalCampus) {
         this.accountPhysicalCampus = accountPhysicalCampus;
     }
 
@@ -447,7 +447,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountEffectiveDate;
     }
 
-    public void setAccountEffectiveDate(Date accountEffectiveDate) {
+    public void setAccountEffectiveDate(final Date accountEffectiveDate) {
         this.accountEffectiveDate = accountEffectiveDate;
     }
 
@@ -455,7 +455,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountOffCampusIndicator;
     }
 
-    public void setAccountOffCampusIndicator(Boolean accountOffCampusIndicator) {
+    public void setAccountOffCampusIndicator(final Boolean accountOffCampusIndicator) {
         this.accountOffCampusIndicator = accountOffCampusIndicator;
     }
 
@@ -471,7 +471,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountTypeCode;
     }
 
-    public void setAccountTypeCode(String accountTypeCode) {
+    public void setAccountTypeCode(final String accountTypeCode) {
         this.accountTypeCode = accountTypeCode;
     }
 
@@ -479,7 +479,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return appropriationAccountNumber;
     }
 
-    public void setAppropriationAccountNumber(String appropriationAccountNumber) {
+    public void setAppropriationAccountNumber(final String appropriationAccountNumber) {
         this.appropriationAccountNumber = appropriationAccountNumber;
     }
 
@@ -487,7 +487,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountsFringesBnftIndicator;
     }
 
-    public void setAccountsFringesBnftIndicator(Boolean accountsFringesBnftIndicator) {
+    public void setAccountsFringesBnftIndicator(final Boolean accountsFringesBnftIndicator) {
         this.accountsFringesBnftIndicator = accountsFringesBnftIndicator;
     }
 
@@ -495,7 +495,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return reportsToChartOfAccountsCode;
     }
 
-    public void setReportsToChartOfAccountsCode(String reportsToChartOfAccountsCode) {
+    public void setReportsToChartOfAccountsCode(final String reportsToChartOfAccountsCode) {
         this.reportsToChartOfAccountsCode = reportsToChartOfAccountsCode;
     }
 
@@ -503,7 +503,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return reportsToAccountNumber;
     }
 
-    public void setReportsToAccountNumber(String reportsToAccountNumber) {
+    public void setReportsToAccountNumber(final String reportsToAccountNumber) {
         this.reportsToAccountNumber = reportsToAccountNumber;
     }
 
@@ -511,7 +511,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountRestrictedStatusCode;
     }
 
-    public void setAccountRestrictedStatusCode(String accountRestrictedStatusCode) {
+    public void setAccountRestrictedStatusCode(final String accountRestrictedStatusCode) {
         this.accountRestrictedStatusCode = accountRestrictedStatusCode;
     }
 
@@ -519,7 +519,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return accountRestrictedStatusDate;
     }
 
-    public void setAccountRestrictedStatusDate(Date accountRestrictedStatusDate) {
+    public void setAccountRestrictedStatusDate(final Date accountRestrictedStatusDate) {
         this.accountRestrictedStatusDate = accountRestrictedStatusDate;
     }
 
@@ -527,7 +527,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return endowmentIncomeAcctFinCoaCd;
     }
 
-    public void setEndowmentIncomeAcctFinCoaCd(String endowmentIncomeAcctFinCoaCd) {
+    public void setEndowmentIncomeAcctFinCoaCd(final String endowmentIncomeAcctFinCoaCd) {
         this.endowmentIncomeAcctFinCoaCd = endowmentIncomeAcctFinCoaCd;
     }
 
@@ -535,7 +535,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return endowmentIncomeAccountNumber;
     }
 
-    public void setEndowmentIncomeAccountNumber(String endowmentIncomeAccountNumber) {
+    public void setEndowmentIncomeAccountNumber(final String endowmentIncomeAccountNumber) {
         this.endowmentIncomeAccountNumber = endowmentIncomeAccountNumber;
     }
 
@@ -543,7 +543,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return programCode;
     }
 
-    public void setProgramCode(String programCode) {
+    public void setProgramCode(final String programCode) {
         this.programCode = programCode;
     }
 
@@ -551,7 +551,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return budgetRecordingLevelCode;
     }
 
-    public void setBudgetRecordingLevelCode(String budgetRecordingLevelCode) {
+    public void setBudgetRecordingLevelCode(final String budgetRecordingLevelCode) {
         this.budgetRecordingLevelCode = budgetRecordingLevelCode;
     }
 
@@ -559,7 +559,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return financialObjectivePrsctrlIndicator;
     }
 
-    public void setFinancialObjectivePrsctrlIndicator(Boolean financialObjectivePrsctrlIndicator) {
+    public void setFinancialObjectivePrsctrlIndicator(final Boolean financialObjectivePrsctrlIndicator) {
         this.financialObjectivePrsctrlIndicator = financialObjectivePrsctrlIndicator;
     }
 
@@ -567,7 +567,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return contractControlFinCoaCode;
     }
 
-    public void setContractControlFinCoaCode(String contractControlFinCoaCode) {
+    public void setContractControlFinCoaCode(final String contractControlFinCoaCode) {
         this.contractControlFinCoaCode = contractControlFinCoaCode;
     }
 
@@ -575,7 +575,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return contractControlAccountNumber;
     }
 
-    public void setContractControlAccountNumber(String contractControlAccountNumber) {
+    public void setContractControlAccountNumber(final String contractControlAccountNumber) {
         this.contractControlAccountNumber = contractControlAccountNumber;
     }
 
@@ -583,7 +583,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return acctIndirectCostRcvyTypeCd;
     }
 
-    public void setAcctIndirectCostRcvyTypeCd(String acctIndirectCostRcvyTypeCd) {
+    public void setAcctIndirectCostRcvyTypeCd(final String acctIndirectCostRcvyTypeCd) {
         this.acctIndirectCostRcvyTypeCd = acctIndirectCostRcvyTypeCd;
     }
 
@@ -591,7 +591,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return contractsAndGrantsAccountResponsibilityId;
     }
 
-    public void setContractsAndGrantsAccountResponsibilityId(Integer contractsAndGrantsAccountResponsibilityId) {
+    public void setContractsAndGrantsAccountResponsibilityId(final Integer contractsAndGrantsAccountResponsibilityId) {
         this.contractsAndGrantsAccountResponsibilityId = contractsAndGrantsAccountResponsibilityId;
     }
 
@@ -599,7 +599,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return invoiceFrequencyCode;
     }
 
-    public void setInvoiceFrequencyCode(String invoiceFrequencyCode) {
+    public void setInvoiceFrequencyCode(final String invoiceFrequencyCode) {
         this.invoiceFrequencyCode = invoiceFrequencyCode;
     }
 
@@ -607,7 +607,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return invoiceTypeCode;
     }
 
-    public void setInvoiceTypeCode(String invoiceTypeCode) {
+    public void setInvoiceTypeCode(final String invoiceTypeCode) {
         this.invoiceTypeCode = invoiceTypeCode;
     }
 
@@ -615,7 +615,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return costShareForProjectNumber;
     }
 
-    public void setCostShareForProjectNumber(Long costShareForProjectNumber) {
+    public void setCostShareForProjectNumber(final Long costShareForProjectNumber) {
         this.costShareForProjectNumber = costShareForProjectNumber;
     }
 
@@ -623,7 +623,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return contractControlAccount;
 	}
 
-	public void setContractControlAccount(Account contractControlAccount) {
+	public void setContractControlAccount(final Account contractControlAccount) {
 		this.contractControlAccount = contractControlAccount;
 	}
 
@@ -632,7 +632,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	public void setContractControlChartOfAccounts(
-			Chart contractControlChartOfAccounts) {
+			final Chart contractControlChartOfAccounts) {
 		this.contractControlChartOfAccounts = contractControlChartOfAccounts;
 	}
 
@@ -641,7 +641,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	public void setAcctIndirectCostRcvyType(
-			IndirectCostRecoveryType acctIndirectCostRcvyType) {
+			final IndirectCostRecoveryType acctIndirectCostRcvyType) {
 		this.acctIndirectCostRcvyType = acctIndirectCostRcvyType;
 	}
 
@@ -649,7 +649,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return invoiceFrequency;
 	}
 
-	public void setInvoiceFrequency(InvoiceFrequency invoiceFrequency) {
+	public void setInvoiceFrequency(final InvoiceFrequency invoiceFrequency) {
 		this.invoiceFrequency = invoiceFrequency;
 	}
 
@@ -657,7 +657,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return accountType;
 	}
 
-	public void setAccountType(AccountType accountType) {
+	public void setAccountType(final AccountType accountType) {
 		this.accountType = accountType;
 	}
 
@@ -665,7 +665,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return appropriationAccount;
 	}
 
-	public void setAppropriationAccount(AppropriationAccount appropriationAccount) {
+	public void setAppropriationAccount(final AppropriationAccount appropriationAccount) {
 		this.appropriationAccount = appropriationAccount;
 	}
 
@@ -673,7 +673,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return fringeBenefitsChartOfAccount;
 	}
 
-	public void setFringeBenefitsChartOfAccount(Chart fringeBenefitsChartOfAccount) {
+	public void setFringeBenefitsChartOfAccount(final Chart fringeBenefitsChartOfAccount) {
 		this.fringeBenefitsChartOfAccount = fringeBenefitsChartOfAccount;
 	}
 
@@ -681,7 +681,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return reportsToAccount;
 	}
 
-	public void setReportsToAccount(Account reportsToAccount) {
+	public void setReportsToAccount(final Account reportsToAccount) {
 		this.reportsToAccount = reportsToAccount;
 	}
 
@@ -689,7 +689,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return accountRestrictedStatus;
 	}
 
-	public void setAccountRestrictedStatus(RestrictedStatus accountRestrictedStatus) {
+	public void setAccountRestrictedStatus(final RestrictedStatus accountRestrictedStatus) {
 		this.accountRestrictedStatus = accountRestrictedStatus;
 	}
 
@@ -698,7 +698,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 	public void setEndowmentIncomeChartOfAccounts(
-			Chart endowmentIncomeChartOfAccounts) {
+			final Chart endowmentIncomeChartOfAccounts) {
 		this.endowmentIncomeChartOfAccounts = endowmentIncomeChartOfAccounts;
 	}
 
@@ -706,7 +706,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return endowmentIncomeAccount;
 	}
 
-	public void setEndowmentIncomeAccount(Account endowmentIncomeAccount) {
+	public void setEndowmentIncomeAccount(final Account endowmentIncomeAccount) {
 		this.endowmentIncomeAccount = endowmentIncomeAccount;
 	}
 
@@ -714,7 +714,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return budgetRecordingLevel;
 	}
 
-	public void setBudgetRecordingLevel(BudgetRecordingLevel budgetRecordingLevel) {
+	public void setBudgetRecordingLevel(final BudgetRecordingLevel budgetRecordingLevel) {
 		this.budgetRecordingLevel = budgetRecordingLevel;
 	}
 
@@ -722,7 +722,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return invoiceType;
 	}
 
-	public void setInvoiceType(InvoiceType invoiceType) {
+	public void setInvoiceType(final InvoiceType invoiceType) {
 		this.invoiceType = invoiceType;
 	}
 
@@ -730,7 +730,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 		return subFundProgram;
 	}
 
-	public void setSubFundProgram(SubFundProgram subFundProgram) {
+	public void setSubFundProgram(final SubFundProgram subFundProgram) {
 		this.subFundProgram = subFundProgram;
 	}
 
@@ -740,7 +740,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 
-	public void setRemoveAccountExpirationDate(boolean removeAccountExpirationDate) {
+	public void setRemoveAccountExpirationDate(final boolean removeAccountExpirationDate) {
 		this.removeAccountExpirationDate = removeAccountExpirationDate;
 	}
 
@@ -750,7 +750,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 
-	public void setRemoveContinuationChartAndAccount(boolean removeContinuationChartAndAccount) {
+	public void setRemoveContinuationChartAndAccount(final boolean removeContinuationChartAndAccount) {
 		this.removeContinuationChartAndAccount = removeContinuationChartAndAccount;
 	}
 
@@ -760,7 +760,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 
-	public void setFinancialIcrSeriesIdentifier(String financialIcrSeriesIdentifier) {
+	public void setFinancialIcrSeriesIdentifier(final String financialIcrSeriesIdentifier) {
 		this.financialIcrSeriesIdentifier = financialIcrSeriesIdentifier;
 	}
 
@@ -770,7 +770,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 	}
 
 
-	public void setEverify(Boolean everify) {
+	public void setEverify(final Boolean everify) {
 		this.everify = everify;
 	}
 
@@ -781,7 +781,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
 
 	public void setRemoveIncomeStreamChartAndAccount(
-			boolean removeIncomeStreamChartAndAccount) {
+			final boolean removeIncomeStreamChartAndAccount) {
 		this.removeIncomeStreamChartAndAccount = removeIncomeStreamChartAndAccount;
 	}
 
@@ -792,7 +792,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
 
 
 	public void setIndirectCostRecoveryAccounts(
-			List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts) {
+			final List<IndirectCostRecoveryAccountChange> indirectCostRecoveryAccounts) {
 		this.indirectCostRecoveryAccounts = indirectCostRecoveryAccounts;
 	}
 
@@ -803,7 +803,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return this.dateTimeService;
     }
 
-	public void setDateTimeService(DateTimeService dateTimeService) {
+	public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
@@ -814,7 +814,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return this.businessObjectService;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
@@ -825,7 +825,7 @@ public class CuAccountGlobal extends AccountGlobal implements GlobalObjectWithIn
         return this.globalObjectWithIndirectCostRecoveryAccountsService;
     }
 
-    public void setGlobalObjectWithIndirectCostRecoveryAccountsService(GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService) {
+    public void setGlobalObjectWithIndirectCostRecoveryAccountsService(final GlobalObjectWithIndirectCostRecoveryAccountsService globalObjectWithIndirectCostRecoveryAccountsService) {
         this.globalObjectWithIndirectCostRecoveryAccountsService = globalObjectWithIndirectCostRecoveryAccountsService;
     }
 }

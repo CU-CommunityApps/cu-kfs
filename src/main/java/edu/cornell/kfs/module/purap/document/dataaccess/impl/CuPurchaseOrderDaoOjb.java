@@ -24,9 +24,9 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public List<AutoClosePurchaseOrderView> getAllOpenPurchaseOrders(List<String> excludedVendorChoiceCodes) {
+    public List<AutoClosePurchaseOrderView> getAllOpenPurchaseOrders(final List<String> excludedVendorChoiceCodes) {
         LOG.info("getAllOpenPurchaseOrders() started");
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addIsNull(PurapPropertyConstants.RECURRING_PAYMENT_TYPE_CODE);
         criteria.addEqualTo(PurapPropertyConstants.TOTAL_ENCUMBRANCE, new KualiDecimal(0));
         criteria.addEqualTo(PurapPropertyConstants.PURCHASE_ORDER_CURRENT_INDICATOR, true);
@@ -34,12 +34,12 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
         for (String excludeCode : excludedVendorChoiceCodes) {
             criteria.addNotEqualTo(PurapPropertyConstants.VENDOR_CHOICE_CODE, excludeCode);
         }
-        QueryByCriteria qbc = new QueryByCriteria(CuAutoClosePurchaseOrderView.class, criteria);
+        final QueryByCriteria qbc = new QueryByCriteria(CuAutoClosePurchaseOrderView.class, criteria);
         LOG.info("getAllOpenPurchaseOrders() Query criteria is {}", criteria);
         
         // KFSUPGRADE-363
         limitResultSize(qbc);
-        List<AutoClosePurchaseOrderView> l = (List<AutoClosePurchaseOrderView>) getPersistenceBrokerTemplate().getCollectionByQuery(qbc);
+        final List<AutoClosePurchaseOrderView> l = (List<AutoClosePurchaseOrderView>) getPersistenceBrokerTemplate().getCollectionByQuery(qbc);
         LOG.info("getAllOpenPurchaseOrders() ended.");
 
         return l;
@@ -50,18 +50,18 @@ public class CuPurchaseOrderDaoOjb extends PurchaseOrderDaoOjb {
      * KFSUPGRADE-363
      * @param query the given query operation
      */
-    private void limitResultSize(Query query) {
+    private void limitResultSize(final Query query) {
         int startingIndex = 1;
 
         // get the result limit number from configuration
-        String limitConfig = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.AUTO_CLOSE_PO_RESULTS_LIMIT);
+        final String limitConfig = SpringContext.getBean(ParameterService.class).getParameterValueAsString(PurchaseOrderDocument.class, CUPurapParameterConstants.AUTO_CLOSE_PO_RESULTS_LIMIT);
         
         Integer limit = Integer.MAX_VALUE;
         if (limitConfig != null) {
             limit = Integer.valueOf(limitConfig);
         }
 
-        int endingIndex = limit.intValue();
+        final int endingIndex = limit.intValue();
 
         LOG.debug("getAllOpenPurchaseOrders() limiting Query results size to " + endingIndex);
 

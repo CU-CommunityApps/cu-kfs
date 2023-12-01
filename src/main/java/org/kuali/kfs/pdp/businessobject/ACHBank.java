@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -59,7 +59,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
      *
      * @param fileData line of data from the FedACH Directory file
      */
-    public ACHBank(String fileData) {
+    public ACHBank(final String fileData) {
         this();
         // 074914274O0710003011020207000000000UNITED COMMERCE BANK 211 SOUTH COLLEGE AVENUE BLOOMINGTON IN474040000812336226511
         // Routing Number 9 1-9 The institution's routing number
@@ -104,7 +104,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         setBankCountryCode(KFSConstants.COUNTRY_CODE_UNITED_STATES);
     }
 
-    protected String getField(String data, int startChar, int length) {
+    protected String getField(final String data, final int startChar, final int length) {
         return data.substring(startChar - 1, startChar + length - 1).trim();
     }
 
@@ -112,7 +112,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankRoutingNumber;
     }
 
-    public void setBankRoutingNumber(String bankRoutingNumber) {
+    public void setBankRoutingNumber(final String bankRoutingNumber) {
         this.bankRoutingNumber = bankRoutingNumber;
     }
 
@@ -120,7 +120,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankOfficeCode;
     }
 
-    public void setBankOfficeCode(String bankOfficeCode) {
+    public void setBankOfficeCode(final String bankOfficeCode) {
         this.bankOfficeCode = bankOfficeCode;
     }
 
@@ -128,7 +128,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankServiceNumber;
     }
 
-    public void setBankServiceNumber(String bankServiceNumber) {
+    public void setBankServiceNumber(final String bankServiceNumber) {
         this.bankServiceNumber = bankServiceNumber;
     }
 
@@ -136,7 +136,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankTypeCode;
     }
 
-    public void setBankTypeCode(String bankTypeCode) {
+    public void setBankTypeCode(final String bankTypeCode) {
         this.bankTypeCode = bankTypeCode;
     }
 
@@ -144,7 +144,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankNewRoutingNumber;
     }
 
-    public void setBankNewRoutingNumber(String bankNewRoutingNumber) {
+    public void setBankNewRoutingNumber(final String bankNewRoutingNumber) {
         this.bankNewRoutingNumber = bankNewRoutingNumber;
     }
 
@@ -152,7 +152,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankName;
     }
 
-    public void setBankName(String bankName) {
+    public void setBankName(final String bankName) {
         this.bankName = bankName;
     }
 
@@ -160,7 +160,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankStreetAddress;
     }
 
-    public void setBankStreetAddress(String bankStreetAddress) {
+    public void setBankStreetAddress(final String bankStreetAddress) {
         this.bankStreetAddress = bankStreetAddress;
     }
 
@@ -168,7 +168,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankCityName;
     }
 
-    public void setBankCityName(String bankCityName) {
+    public void setBankCityName(final String bankCityName) {
         this.bankCityName = bankCityName;
     }
 
@@ -176,7 +176,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankStateCode;
     }
 
-    public void setBankStateCode(String bankStateCode) {
+    public void setBankStateCode(final String bankStateCode) {
         this.bankStateCode = bankStateCode;
     }
 
@@ -184,7 +184,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankZipCode;
     }
 
-    public void setBankZipCode(String bankZipCode) {
+    public void setBankZipCode(final String bankZipCode) {
         this.bankZipCode = bankZipCode;
     }
 
@@ -192,7 +192,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankPhoneAreaCode;
     }
 
-    public void setBankPhoneAreaCode(String bankPhoneAreaCode) {
+    public void setBankPhoneAreaCode(final String bankPhoneAreaCode) {
         this.bankPhoneAreaCode = bankPhoneAreaCode;
     }
 
@@ -200,7 +200,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankPhonePrefixNumber;
     }
 
-    public void setBankPhonePrefixNumber(String bankPhonePrefixNumber) {
+    public void setBankPhonePrefixNumber(final String bankPhonePrefixNumber) {
         this.bankPhonePrefixNumber = bankPhonePrefixNumber;
     }
 
@@ -208,7 +208,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankPhoneSuffixNumber;
     }
 
-    public void setBankPhoneSuffixNumber(String bankPhoneSuffixNumber) {
+    public void setBankPhoneSuffixNumber(final String bankPhoneSuffixNumber) {
         this.bankPhoneSuffixNumber = bankPhoneSuffixNumber;
     }
 
@@ -216,7 +216,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankInstitutionStatusCode;
     }
 
-    public void setBankInstitutionStatusCode(String bankInstitutionStatusCode) {
+    public void setBankInstitutionStatusCode(final String bankInstitutionStatusCode) {
         this.bankInstitutionStatusCode = bankInstitutionStatusCode;
     }
 
@@ -224,7 +224,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
         return bankDataViewCode;
     }
 
-    public void setBankDataViewCode(String bankDataViewCode) {
+    public void setBankDataViewCode(final String bankDataViewCode) {
         this.bankDataViewCode = bankDataViewCode;
     }
 
@@ -242,7 +242,7 @@ public class ACHBank extends PersistableBusinessObjectBase implements MutableIna
     }
 
     @Override
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 

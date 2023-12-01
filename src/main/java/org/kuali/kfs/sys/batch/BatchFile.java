@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -33,7 +33,7 @@ public class BatchFile extends TransientBusinessObjectBase {
     private static final Logger LOG = LogManager.getLogger();
     public static final String CACHE_NAME = "BatchFile";
 
-    private File file;
+    private final File file;
     
 	/*
 	 * Cornell customization: add default constructor so that the old batch file
@@ -41,7 +41,7 @@ public class BatchFile extends TransientBusinessObjectBase {
 	 * once the new batch file lookup will suppport return from lookup.
 	 */
 	public BatchFile() {
-
+	    file = null;
 	}
 
     /**
@@ -49,32 +49,32 @@ public class BatchFile extends TransientBusinessObjectBase {
      * @throws FileNotFoundException if path indicated by {@code id} does not correspond to an existing file or the
      *         path does not correspond to a valid batch file location.
      */
-    public BatchFile(String id) throws FileNotFoundException {
-        String fullPath = decodeId(id);
+    public BatchFile(final String id) throws FileNotFoundException {
+        final String fullPath = decodeId(id);
         try {
             // DO NOT remove the resolvePath here. This check ensures that the path is relative to the batch file root
             // directories. It's a safety mechanism to prevent access to files outside the scope of batch file.
             file = new File(BatchFileUtils.resolvePathToAbsolutePath(fullPath));
-        } catch (UnsupportedOperationException uoe) {
-            String msg = "Unable to locate a batch file corresponding to id: " + id;
+        } catch (final UnsupportedOperationException uoe) {
+            final String msg = "Unable to locate a batch file corresponding to id: " + id;
             LOG.error(
                     "{}. Resolved path for this id: {}. This may be indicative of a location outside permitted batch "
                     + "file locations.",
                     msg,
                     fullPath
             );
-            FileNotFoundException fnfe = new FileNotFoundException(msg);
+            final FileNotFoundException fnfe = new FileNotFoundException(msg);
             fnfe.initCause(uoe);
             throw fnfe;
         }
         if (!file.exists()) {
-            String msg = "Unable to locate a batch file corresponding to id: " + id;
+            final String msg = "Unable to locate a batch file corresponding to id: " + id;
             LOG.error("{}. Resolved path for this id: {}", msg, fullPath);
             throw new FileNotFoundException(msg);
         }
     }
 
-    public BatchFile(File file) {
+    public BatchFile(final File file) {
         this.file = file;
     }
 
@@ -104,14 +104,14 @@ public class BatchFile extends TransientBusinessObjectBase {
      * @return String containing synthetic id to be associated with this Batch File instance.
      */
     public String getId() {
-        String encoded;
-        String fullPath = getPath() + File.separator + getFileName();
+        final String encoded;
+        final String fullPath = getPath() + File.separator + getFileName();
         encoded = Base64.getEncoder().encodeToString(fullPath.getBytes(StandardCharsets.UTF_8));
         return encoded;
     }
 
-    private String decodeId(String id) {
-        byte[] pathAsBytes = Base64.getDecoder().decode(id);
+    private String decodeId(final String id) {
+        final byte[] pathAsBytes = Base64.getDecoder().decode(id);
         return new String(pathAsBytes, StandardCharsets.UTF_8);
     }
 

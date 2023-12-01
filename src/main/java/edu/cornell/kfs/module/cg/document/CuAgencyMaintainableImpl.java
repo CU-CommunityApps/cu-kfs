@@ -18,8 +18,8 @@ public class CuAgencyMaintainableImpl extends AgencyMaintainableImpl {
     @Override
     public void prepareForSave() {
         super.prepareForSave();
-        Agency agency = (Agency) getDataObject();
-        AgencyExtendedAttribute agencyExtension = (AgencyExtendedAttribute) agency.getExtension();
+        final Agency agency = (Agency) getDataObject();
+        final AgencyExtendedAttribute agencyExtension = (AgencyExtendedAttribute) agency.getExtension();
         agencyExtension.setAgencyNumber(agency.getAgencyNumber());
     }
 

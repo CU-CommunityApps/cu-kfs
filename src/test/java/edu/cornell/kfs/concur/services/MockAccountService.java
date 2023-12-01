@@ -10,6 +10,8 @@ import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.kim.impl.identity.Person;
 
+import java.util.Set;
+
 public class MockAccountService implements AccountService {
 
     @Override
@@ -137,6 +139,18 @@ public class MockAccountService implements AccountService {
     @Override
     public Account getUnexpiredContinuationAccountOrNull(Account account) {
         return null;
+    }
+    
+    @Override
+    public void updateRoleAssignmentsForAccountChange(String docIdToIgnore, Set<String> accountNumbers) {
+        
+    }
+    
+    public void updateRoleAssignmentsForAccountChange(
+            String docIdToIgnore,
+            Set<String> accountNumbers,
+            Set<String> documentTypes) {
+        
     }
 
 }

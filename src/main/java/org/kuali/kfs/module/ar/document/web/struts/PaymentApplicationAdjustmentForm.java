@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -117,7 +117,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     private List<CustomerInvoiceDocument> invoices = new ArrayList<>();
 
     @Override
-    public void populate(HttpServletRequest request) {
+    public void populate(final HttpServletRequest request) {
         // Register any editable properties. See KualiDocumentFormBase.java line 733
         registerEditableProperty("methodToCall");
 
@@ -145,12 +145,12 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         // The APPA doc does not use the old approach to displaying header fields. All we want is the url and not
         // the rest of the anchor information. So once the fields are generated, we find the initiator field and
         // replace its value with a URI
-        HeaderField initiatorInquiryHeaderField = standardHeaderFields.stream()
+        final HeaderField initiatorInquiryHeaderField = standardHeaderFields.stream()
                 .filter(field -> field.getId().equals(KRADConstants.DocumentFormHeaderFieldIds.DOCUMENT_INITIATOR))
                 .findFirst()
                 .orElse(null);
         if (initiatorInquiryHeaderField != null) {
-            String initiatorUrl = getPersonInquiryUrl(getInitiator());
+            final String initiatorUrl = getPersonInquiryUrl(getInitiator());
             initiatorInquiryHeaderField.setNonLookupValue(initiatorUrl);
         }
 
@@ -197,17 +197,17 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         return (PaymentApplicationAdjustmentDocument) getDocument();
     }
 
-    private String urlForCustomer(Customer customer) {
-        DetailsUrlService detailsUrlService = SpringContext.getBean(DetailsUrlService.class);
+    private String urlForCustomer(final Customer customer) {
+        final DetailsUrlService detailsUrlService = SpringContext.getBean(DetailsUrlService.class);
         return detailsUrlService.getDetailsUrl(customer, "customerNumber");
     }
 
-    private String urlForGroup(Group group) {
-        DetailsUrlService detailsUrlService = SpringContext.getBean(DetailsUrlService.class);
+    private String urlForGroup(final Group group) {
+        final DetailsUrlService detailsUrlService = SpringContext.getBean(DetailsUrlService.class);
         return detailsUrlService.getDetailsUrl(group, "name");
     }
 
-    private String urlForPerson(Person person) {
+    private String urlForPerson(final Person person) {
         return getPersonInquiryUrl(person);
     }
 
@@ -222,15 +222,16 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         }
     }
 
-    public PaymentApplicationAdjustmentNonAppliedHolding addNonAppliedHoldingWithCustomer(Customer customer,
-            KualiDecimal amount) {
-        var nonAppliedHolding = new PaymentApplicationAdjustmentNonAppliedHolding(customer.getCustomerName(),
+    public PaymentApplicationAdjustmentNonAppliedHolding addNonAppliedHoldingWithCustomer(
+            final Customer customer,
+            final KualiDecimal amount) {
+        final var nonAppliedHolding = new PaymentApplicationAdjustmentNonAppliedHolding(customer.getCustomerName(),
                 customer.getCustomerNumber(), urlForCustomer(customer), amount);
         nonAppliedHoldings.add(nonAppliedHolding);
         return nonAppliedHolding;
     }
 
-    public AdHocRouteWorkgroupResponse createAdHocRouteWorkgroupResponse(Group group, String action) {
+    public AdHocRouteWorkgroupResponse createAdHocRouteWorkgroupResponse(final Group group, final String action) {
         return new AdHocRouteWorkgroupResponse(
                 group.getId(),
                 group.getName(),
@@ -240,8 +241,8 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         );
     }
 
-    public NoteResponse createNoteResponse(Note note) {
-        Attachment attachment = note.getAttachment();
+    public NoteResponse createNoteResponse(final Note note) {
+        final Attachment attachment = note.getAttachment();
         return new NoteResponse(
                 note.getObjectId(),
                 note.getNoteText(),
@@ -330,39 +331,39 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         );
     }
 
-    public GlpeResponse createGlpeResponse(GeneralLedgerPendingEntry glpe) {
-        String universityFiscalYearInquiryUrl = getInquiryUrl(SystemOptions.class, KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR + "=" + glpe.getUniversityFiscalYear().toString());
-        String chartCodeInquiryUrl = getInquiryUrl(Chart.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + "=" + glpe.getChartOfAccountsCode());
-        String accountNumberInquiryUrl = getInquiryUrl(Account.class,
+    public GlpeResponse createGlpeResponse(final GeneralLedgerPendingEntry glpe) {
+        final String universityFiscalYearInquiryUrl = getInquiryUrl(SystemOptions.class, KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR + "=" + glpe.getUniversityFiscalYear().toString());
+        final String chartCodeInquiryUrl = getInquiryUrl(Chart.class, KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + "=" + glpe.getChartOfAccountsCode());
+        final String accountNumberInquiryUrl = getInquiryUrl(Account.class,
                 KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + "=" + glpe.getChartOfAccountsCode()
                         + "&" + KFSPropertyConstants.ACCOUNT_NUMBER + "=" + glpe.getAccountNumber()
         );
-        String subAccountNumberInquiryUrl = getInquiryUrl(SubAccount.class,
+        final String subAccountNumberInquiryUrl = getInquiryUrl(SubAccount.class,
                 KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + "=" + glpe.getChartOfAccountsCode()
                         + "&" + KFSPropertyConstants.ACCOUNT_NUMBER + "=" + glpe.getAccountNumber()
                         + "&" + KFSPropertyConstants.SUB_ACCOUNT_NUMBER + "=" + glpe.getSubAccountNumber()
         );
-        String objectInquiryUrl = getInquiryUrl(ObjectCode.class,
+        final String objectInquiryUrl = getInquiryUrl(ObjectCode.class,
                 KFSPropertyConstants.FINANCIAL_OBJECT_CODE + "=" + glpe.getFinancialObjectCode()
                         + "&" + KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR + "=" + glpe.getUniversityFiscalYear().toString()
                         + "&" + KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + "=" + glpe.getChartOfAccountsCode()
         );
-        String subObjectInquiryUrl = getInquiryUrl(SubObjectCode.class,
+        final String subObjectInquiryUrl = getInquiryUrl(SubObjectCode.class,
                 KFSPropertyConstants.FINANCIAL_SUB_OBJECT_CODE + "=" + glpe.getFinancialSubObjectCode()
                         + "&" + KFSPropertyConstants.FINANCIAL_OBJECT_CODE + "=" + glpe.getFinancialObjectCode()
                         + "&" + KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR + "=" + glpe.getUniversityFiscalYear().toString()
                         + "&" + KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + "=" + glpe.getChartOfAccountsCode()
         );
-        String projectCodeInquiryUrl = getInquiryUrl(ProjectCode.class, KFSPropertyConstants.CODE + "=" + glpe.getProjectCode());
-        String documentTypeCodeInquiryUrl = getInquiryUrl(DocumentType.class, KFSPropertyConstants.DOCUMENT_TYPE_ID + "=" + glpe.getFinancialSystemDocumentType().getDocumentTypeId());
-        String balanceTypeInquiryUrl = getInquiryUrl(BalanceType.class, KFSPropertyConstants.CODE + "=" + glpe.getFinancialBalanceTypeCode());
-        String objectTypeInquiryUrl = getInquiryUrl(ObjectType.class, KFSPropertyConstants.CODE + "=" + glpe.getFinancialObjectTypeCode());
-        String fiscalPeriodCodeInquiryUrl = getInquiryUrl(AccountingPeriod.class,
+        final String projectCodeInquiryUrl = getInquiryUrl(ProjectCode.class, KFSPropertyConstants.CODE + "=" + glpe.getProjectCode());
+        final String documentTypeCodeInquiryUrl = getInquiryUrl(DocumentType.class, KFSPropertyConstants.DOCUMENT_TYPE_ID + "=" + glpe.getFinancialSystemDocumentType().getDocumentTypeId());
+        final String balanceTypeInquiryUrl = getInquiryUrl(BalanceType.class, KFSPropertyConstants.CODE + "=" + glpe.getFinancialBalanceTypeCode());
+        final String objectTypeInquiryUrl = getInquiryUrl(ObjectType.class, KFSPropertyConstants.CODE + "=" + glpe.getFinancialObjectTypeCode());
+        final String fiscalPeriodCodeInquiryUrl = getInquiryUrl(AccountingPeriod.class,
                 KFSPropertyConstants.UNIVERSITY_FISCAL_PERIOD_CODE + "=" + glpe.getUniversityFiscalPeriodCode()
                 + "&" + KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR + "=" + glpe.getUniversityFiscalYear().toString()
         );
-        String originCodeInquiryUrl = getInquiryUrl(OriginationCode.class, KFSPropertyConstants.FINANCIAL_SYSTEM_ORIGINATION_CODE + "=" + glpe.getFinancialSystemOriginationCode());
-        String documentNumberUrl = getDocumentUrl(glpe.getDocumentNumber());
+        final String originCodeInquiryUrl = getInquiryUrl(OriginationCode.class, KFSPropertyConstants.FINANCIAL_SYSTEM_ORIGINATION_CODE + "=" + glpe.getFinancialSystemOriginationCode());
+        final String documentNumberUrl = getDocumentUrl(glpe.getDocumentNumber());
 
         return new GlpeResponse(
                 glpe.getUniversityFiscalYear().toString(),
@@ -404,19 +405,19 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         );
     }
 
-    private String getInquiryUrl(Class boClass, String keyValues) {
-        String basePath = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+    private String getInquiryUrl(final Class boClass, final String keyValues) {
+        final String basePath = getConfigurationService().getPropertyValueAsString(
                 KFSConstants.APPLICATION_URL_KEY);
 
         return basePath + "/inquiry.do?methodToCall=start&businessObjectClassName=" + boClass.getName() + "&" + keyValues;
     }
 
-    private String getDocumentUrl(String docNumber) {
-        return SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) +
+    private String getDocumentUrl(final String docNumber) {
+        return getConfigurationService().getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY) +
                 "/DocHandler.do?docId=" + docNumber + "&command=displayDocSearchView";
     }
 
-    public AdHocRoutePersonResponse createAdHocRoutePersonResponse(Person person, String action) {
+    public AdHocRoutePersonResponse createAdHocRoutePersonResponse(final Person person, final String action) {
         return new AdHocRoutePersonResponse(
                 person.getPrincipalName(),
                 String.format("%s %s", person.getFirstName(), person.getLastName()),
@@ -425,7 +426,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         );
     }
 
-    public TakenActionResponse createTakenActionResponse(ActionTaken actionTaken) {
+    public TakenActionResponse createTakenActionResponse(final ActionTaken actionTaken) {
         final Person target = getPersonService().getPerson(actionTaken.getPrincipalId());
         final Person delegator = getPersonService().getPerson(actionTaken.getDelegatorPrincipalId());
         return new TakenActionResponse(
@@ -439,7 +440,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         );
     }
 
-    public PendingActionResponse createPendingActionResponse(ActionRequest actionRequest) {
+    public PendingActionResponse createPendingActionResponse(final ActionRequest actionRequest) {
         String targetName = StringUtils.EMPTY;
         String targetUrl = StringUtils.EMPTY;
         if (actionRequest.isGroupRequest()) {
@@ -476,12 +477,12 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         final DocumentRouteHeaderValue routeHeaderValue =
                 KEWServiceLocator.getRouteHeaderService().getRouteHeader(documentId);
 
-        List<TakenActionResponse> takenActionsResponses = routeHeaderValue.getActionsTaken()
+        final List<TakenActionResponse> takenActionsResponses = routeHeaderValue.getActionsTaken()
                 .stream()
                 .map(this::createTakenActionResponse)
                 .collect(Collectors.toList());
 
-        List<PendingActionResponse> pendingActionsResponses = KEWServiceLocator.getActionRequestService()
+        final List<PendingActionResponse> pendingActionsResponses = KEWServiceLocator.getActionRequestService()
                 .getRootRequests(routeHeaderValue.getActionRequests())
                 .stream()
                 .filter(ActionRequest::isPending)
@@ -489,7 +490,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
                 .collect(Collectors.toList());
 
         final Person initiator = getPersonService().getPerson(routeHeaderValue.getInitiatorPrincipalId());
-        final String applicationUrl = SpringContext.getBean(ConfigurationService.class)
+        final String applicationUrl = getConfigurationService()
                 .getPropertyValueAsString(KFSConstants.APPLICATION_URL_KEY);
         final DocumentType documentType = routeHeaderValue.getDocumentType();
         final String documentTypeUrl = String.format("%s/DocumentConfigurationView.do?methodToCall=start&documentTypeName=%s",
@@ -613,8 +614,8 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     }
 
     private boolean hasInvoiceAppliedsOrNonApplieds() {
-        List<InvoicePaidApplied> invoicePaidApplieds = getPaymentApplicationAdjustmentDocument().getInvoicePaidApplieds();
-        List<NonAppliedHolding> nonAppliedHoldings = getPaymentApplicationAdjustmentDocument().getNonAppliedHoldings();
+        final List<InvoicePaidApplied> invoicePaidApplieds = getPaymentApplicationAdjustmentDocument().getInvoicePaidApplieds();
+        final List<NonAppliedHolding> nonAppliedHoldings = getPaymentApplicationAdjustmentDocument().getNonAppliedHoldings();
         return !(invoicePaidApplieds.isEmpty() && nonAppliedHoldings.isEmpty());
     }
 
@@ -653,7 +654,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     }
 
     public long getAttachmentMaxFileSize() {
-        String attachmentSize = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
+        final String attachmentSize = getParameterService().getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
                 KRADConstants.ATTACHMENT_MAX_FILE_SIZE_PARM_NM);
 
@@ -672,7 +673,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
 
     public String getAdHocRouteWorkgroupJson() {
         try {
-            var workgroupResponses = new ArrayList<>();
+            final var workgroupResponses = new ArrayList<>();
             getAdHocRouteWorkgroups().forEach(workgroup -> {
                 final var group = getBusinessObjectService().findBySinglePrimaryKey(Group.class, workgroup.getId());
                 if (group != null) {
@@ -680,7 +681,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
                 }
             });
             return MAPPER.writeValueAsString(workgroupResponses);
-        } catch (JsonProcessingException jpe) {
+        } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize ad hoc route workgroups. Error {}", jpe::getMessage);
         }
         return null;
@@ -693,7 +694,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
                 return createAdHocRoutePersonResponse(person, recipient.getActionRequested());
             }).collect(Collectors.toList());
             return MAPPER.writeValueAsString(personResponses);
-        } catch (JsonProcessingException jpe) {
+        } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize ad hoc route persons. Error {}", jpe::getMessage);
         }
         return null;
@@ -702,7 +703,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     public String getAdHocActionRequestCodesJson() {
         try {
             return MAPPER.writeValueAsString(getAdHocActionRequestCodes());
-        } catch (JsonProcessingException jpe) {
+        } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize ad hoc request codes. Error {}", jpe::getMessage);
         }
         return null;
@@ -710,10 +711,10 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
 
     public String getNotesAndAttachmentsJson() {
         try {
-            List<Note> notes = getDocument().getNotes();
+            final List<Note> notes = getDocument().getNotes();
             final List<NoteResponse> noteResponses = notes.stream().map(this::createNoteResponse).collect(Collectors.toList());
             return MAPPER.writeValueAsString(noteResponses);
-        } catch (JsonProcessingException jpe) {
+        } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize notes. Error {}", jpe::getMessage);
         }
         return null;
@@ -733,8 +734,8 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         return serializeToJsonSafely(glpeResponses).orElse("{}");
     }
 
-    public PaymentApplicationAdjustmentInvoiceResponse createInvoiceResponse(CustomerInvoiceDocument invoice) {
-        List<InvoicePaidApplied> paidAppliedsForInvoice = getApplicationAdjustmentDocument().getInvoicePaidApplieds()
+    public PaymentApplicationAdjustmentInvoiceResponse createInvoiceResponse(final CustomerInvoiceDocument invoice) {
+        final List<InvoicePaidApplied> paidAppliedsForInvoice = getApplicationAdjustmentDocument().getInvoicePaidApplieds()
                 .stream()
                 .filter(invoicePaidApplied -> invoicePaidApplied.getFinancialDocumentReferenceInvoiceNumber().equals(invoice.getDocumentNumber()))
                 .collect(Collectors.toList());
@@ -779,7 +780,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         return headerFieldsJson;
     }
 
-    void setHeaderFieldsJson(String headerFieldsJson) {
+    void setHeaderFieldsJson(final String headerFieldsJson) {
         this.headerFieldsJson = headerFieldsJson;
     }
 

@@ -11,14 +11,14 @@ import org.kuali.kfs.sys.KFSConstants;
 
 public class CuDistributionOfIncomeAndExpenseDocumentPresentationController extends DistributionOfIncomeAndExpenseDocumentPresentationController {
     @Override
-    public Set<String> getDocumentActions(Document document) {
-        Set<String> documentActions = super.getDocumentActions(document);
+    public Set<String> getDocumentActions(final Document document) {
+        final Set<String> documentActions = super.getDocumentActions(document);
 
-        DistributionOfIncomeAndExpenseDocument distributionOfIncomeAndExpenseDocument = (DistributionOfIncomeAndExpenseDocument) document;
-        String docInError = distributionOfIncomeAndExpenseDocument.getDocumentHeader().getFinancialDocumentInErrorNumber();
+        final DistributionOfIncomeAndExpenseDocument distributionOfIncomeAndExpenseDocument = (DistributionOfIncomeAndExpenseDocument) document;
+        final String docInError = distributionOfIncomeAndExpenseDocument.getDocumentHeader().getFinancialDocumentInErrorNumber();
         
         if (StringUtils.isNotBlank(docInError)) {
-            Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(
+            final Boolean allowBlanketApproveNoRequest = getParameterService().getParameterValueAsBoolean(
                     KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
                     KRADConstants.SystemGroupParameterNames.ALLOW_ENROUTE_BLANKET_APPROVE_WITHOUT_APPROVAL_REQUEST_IND);
             if (allowBlanketApproveNoRequest != null && allowBlanketApproveNoRequest.booleanValue()) {

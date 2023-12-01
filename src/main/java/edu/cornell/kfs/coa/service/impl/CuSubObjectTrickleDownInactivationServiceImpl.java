@@ -15,9 +15,9 @@ public class CuSubObjectTrickleDownInactivationServiceImpl extends SubObjectTric
 	 * @see org.kuali.kfs.coa.service.impl.SubObjectTrickleDownInactivationServiceImpl#trickleDownInactivateSubObjects(org.kuali.kfs.coa.businessobject.Account, java.lang.String)
 	 */
 	@Override
-	public void trickleDownInactivateSubObjects(Account inactivatedAccount, String documentNumber) {
-        Collection<SubObjectCode> subObjects = getAssociatedSubObjects(inactivatedAccount);
-        TrickleDownInactivationStatus trickleDownInactivationStatus = trickleDownInactivate(subObjects, documentNumber);
+	public void trickleDownInactivateSubObjects(final Account inactivatedAccount, final String documentNumber) {
+        final Collection<SubObjectCode> subObjects = getAssociatedSubObjects(inactivatedAccount);
+        final TrickleDownInactivationStatus trickleDownInactivationStatus = trickleDownInactivate(subObjects, documentNumber);
         // KFSPTS-3877 add note to object level instead of document
         addNotesToAccountObject(trickleDownInactivationStatus, documentNumber, inactivatedAccount);
 	}
@@ -29,13 +29,14 @@ public class CuSubObjectTrickleDownInactivationServiceImpl extends SubObjectTric
      * @param documentNumber
      * @param inactivatedAccount
      */
-    protected void addNotesToAccountObject(TrickleDownInactivationStatus trickleDownInactivationStatus, String documentNumber, Account inactivatedAccount) {
+    protected void addNotesToAccountObject(final TrickleDownInactivationStatus trickleDownInactivationStatus,
+            final String documentNumber, final Account inactivatedAccount) {
         if (trickleDownInactivationStatus.inactivatedSubObjCds.isEmpty() && trickleDownInactivationStatus.alreadyLockedSubObjCds.isEmpty() && trickleDownInactivationStatus.errorPersistingSubObjCds.isEmpty()) {
             // if we didn't try to inactivate any sub-objects, then don't bother
             return;
         }
         
-        Note newNote = new Note();
+        final Note newNote = new Note();
         
         addNotes(documentNumber, trickleDownInactivationStatus.inactivatedSubObjCds, COAKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION, inactivatedAccount, newNote);
         addNotes(documentNumber, trickleDownInactivationStatus.errorPersistingSubObjCds, COAKeyConstants.SUB_OBJECT_TRICKLE_DOWN_INACTIVATION_ERROR_DURING_PERSISTENCE, inactivatedAccount, newNote);

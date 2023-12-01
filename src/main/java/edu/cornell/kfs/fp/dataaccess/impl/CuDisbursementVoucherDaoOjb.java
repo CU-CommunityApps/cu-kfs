@@ -17,19 +17,19 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 public class CuDisbursementVoucherDaoOjb extends DisbursementVoucherDaoOjb {
     private static final Logger LOG = LogManager.getLogger();
 	
-    public DisbursementVoucherDocument getDocument(String fdocNbr) {
+    public DisbursementVoucherDocument getDocument(final String fdocNbr) {
         LOG.debug("getDocument() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(KRADPropertyConstants.DOCUMENT_NUMBER, fdocNbr);
 
         return (DisbursementVoucherDocument) getPersistenceBrokerTemplate().getObjectByQuery(new QueryByCriteria(getDisbursementVoucherDocumentClass(), criteria));
     }
 	
-    public Collection<DisbursementVoucherDocument> getDocumentsByHeaderStatus(String statusCode, boolean immediatesOnly) {
+    public Collection<DisbursementVoucherDocument> getDocumentsByHeaderStatus(final String statusCode, final boolean immediatesOnly) {
         LOG.debug("getDocumentsByHeaderStatus() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_HEADER + KFSConstants.DELIMITER +
             KFSPropertyConstants.FINANCIAL_DOCUMENT_STATUS_CODE, statusCode);
         criteria.addEqualTo(KFSPropertyConstants.DISB_VCHR_PAYMENT_METHOD_CODE, KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);

@@ -17,18 +17,18 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToTradeInValidation {
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         
         boolean foundTradeIn = false;
         boolean valid        = true;
         
-        PurchasingAccountsPayableDocumentBase purapDoc = (PurchasingAccountsPayableDocumentBase) event.getDocument();
+        final PurchasingAccountsPayableDocumentBase purapDoc = (PurchasingAccountsPayableDocumentBase) event.getDocument();
         
         // First, get all the items from the requisition document. For each of the items, look for the ones that are
         // assigned to a trade-in value. For these trade-in items, validate that the trade-in line has a valid
         // description and amount.
-        List<PurApItem> items = (List<PurApItem>)purapDoc.getItems();
-        for (PurApItem item : items) {
+        final List<PurApItem> items = (List<PurApItem>)purapDoc.getItems();
+        for (final PurApItem item : items) {
             item.refreshReferenceObject(PurapPropertyConstants.ITEM_TYPE);
             if (item.getItemAssignedToTradeInIndicator()) {
                 foundTradeIn = true;
@@ -38,7 +38,7 @@ public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToT
         
         // Was a trade-in found for any of the above items?
         if (foundTradeIn) {
-            PurApItem tradeInItem = purapDoc.getTradeInItem();
+            final PurApItem tradeInItem = purapDoc.getTradeInItem();
             if (tradeInItem != null) {
                 if (StringUtils.isEmpty(tradeInItem.getItemDescription())) {
                     tradeInItem.getItemLineNumber();
@@ -65,9 +65,9 @@ public class CuRequisitionAssignToTradeInValidation extends RequisitionAssignToT
         return valid;
     }
 
-    private int getTradeInItemLineIndex(List<PurApItem> items) {
+    private int getTradeInItemLineIndex(final List<PurApItem> items) {
         int lineIndex = 0;
-        for (PurApItem item : items) {
+        for (final PurApItem item : items) {
             if (item.getItemTypeCode().equals(PurapConstants.ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE)) {
                 break;
             } else {

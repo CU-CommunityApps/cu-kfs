@@ -68,7 +68,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     private VendorService vendorService;
     
     @Override
-    public String sendPurchaseOrder(PurchaseOrderDocument purchaseOrder) {
+    public String sendPurchaseOrder(final PurchaseOrderDocument purchaseOrder) {
         /*
          * IMPORTANT DESIGN NOTE: We need the contract manager's name, phone number, and e-mail address. B2B orders that don't
          * qualify to become APO's will have contract managers on the PO, and the ones that DO become APO's will not. We decided to
@@ -86,13 +86,13 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         } else {
         	contractManager = purchaseOrder.getVendorContract().getContractManager();
         }
-        String contractManagerEmail = getContractManagerEmail(contractManager);
+        final String contractManagerEmail = getContractManagerEmail(contractManager);
 
-        String vendorDuns = purchaseOrder.getVendorDetail().getVendorDunsNumber();
+        final String vendorDuns = purchaseOrder.getVendorDetail().getVendorDunsNumber();
 
-        RequisitionDocument r = requisitionService.getRequisitionById(purchaseOrder.getRequisitionIdentifier());
-        WorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();
-        String requisitionInitiatorPrincipalId = getRequisitionInitiatorPrincipal(reqWorkflowDoc.getInitiatorPrincipalId());
+        final RequisitionDocument r = requisitionService.getRequisitionById(purchaseOrder.getRequisitionIdentifier());
+        final WorkflowDocument reqWorkflowDoc = r.getDocumentHeader().getWorkflowDocument();
+        final String requisitionInitiatorPrincipalId = getRequisitionInitiatorPrincipal(reqWorkflowDoc.getInitiatorPrincipalId());
 
         LOG.debug("sendPurchaseOrder(): b2bPurchaseOrderURL is {}", getB2bPurchaseOrderURL());
         
@@ -100,12 +100,12 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             prepareNonB2BPurchaseOrderForTransmission(purchaseOrder);
         }
 
-        String validateErrors = verifyCxmlPOData(purchaseOrder, requisitionInitiatorPrincipalId, getB2bPurchaseOrderPassword(), contractManager, contractManagerEmail, vendorDuns);
+        final String validateErrors = verifyCxmlPOData(purchaseOrder, requisitionInitiatorPrincipalId, getB2bPurchaseOrderPassword(), contractManager, contractManagerEmail, vendorDuns);
         if (!StringUtils.isEmpty(validateErrors)) {
             return validateErrors;
         }
 
-        StringBuffer transmitErrors = new StringBuffer();
+        final StringBuffer transmitErrors = new StringBuffer();
 
         try {
             LOG.debug("sendPurchaseOrder() Generating cxml");
@@ -113,7 +113,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 
             LOG.debug("sendPurchaseOrder() Sending cxml\n{}", cxml);
             String responseCxml = b2bDao.sendPunchOutRequest(cxml, getB2bPurchaseOrderURL());
-            String responseCxmlForLogging = responseCxml;
+            final String responseCxmlForLogging = responseCxml;
             LOG.info("b2bPurchaseOrderURL " + getB2bPurchaseOrderURL());
             
             LOG.info(
@@ -124,7 +124,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             
             // allow PO to use old form, then POA use new form for testing
             if (!responseCxml.contains("Success") && responseCxml.contains("No custom field found") && responseCxml.contains("document configuration (DeliveryEmail)")) {               
-                String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
+                final String cxml1 = cxml.substring(0, cxml.indexOf("<CustomFieldValueSet label=\"Delivery Phone")) +
                                               cxml.substring(cxml.indexOf("</POHeader>"));
                 LOG.info("sendPurchaseOrder() re-Sending cxml\n" + cxml1);
                 responseCxml = b2bDao.sendPunchOutRequest(cxml1, getB2bPurchaseOrderURL());
@@ -134,8 +134,8 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                 LOG.info("re-sendPurchaseOrder(): Response cXML for po number " + purchaseOrder.getPurapDocumentIdentifier() + ":" + responseCxml);
             }
 
-            PurchaseOrderResponse poResponse = B2BParserHelper.getInstance().parsePurchaseOrderResponse(responseCxml);
-            String statusText = poResponse.getStatusText();
+            final PurchaseOrderResponse poResponse = B2BParserHelper.getInstance().parsePurchaseOrderResponse(responseCxml);
+            final String statusText = poResponse.getStatusText();
             LOG.debug("sendPurchaseOrder(): statusText is {}", statusText);
             if (ObjectUtils.isNull(statusText) || !"success".equalsIgnoreCase(statusText.trim())) {
                 LOG.error(
@@ -146,10 +146,10 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                 transmitErrors.append("Unable to send Purchase Order: " + statusText);
 
                 // find any additional error messages that might have been sent
-                List errorMessages = poResponse.getPOResponseErrorMessages();
+                final List errorMessages = poResponse.getPOResponseErrorMessages();
                 if (ObjectUtils.isNotNull(errorMessages) && !errorMessages.isEmpty()) {
-                    for (Iterator iter = errorMessages.iterator(); iter.hasNext();) {
-                        String errorMessage = (String) iter.next();
+                    for (final Iterator iter = errorMessages.iterator(); iter.hasNext();) {
+                        final String errorMessage = (String) iter.next();
                         if (ObjectUtils.isNotNull(errorMessage)) {
                             LOG.error(
                                     "sendPurchaseOrder(): SciQuest error message for po number {}: {}",
@@ -162,15 +162,15 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
                 }
             }
         }
-        catch (B2BConnectionException e) {
+        catch (final B2BConnectionException e) {
             LOG.error("sendPurchaseOrder() Error connecting to b2b", e);
             transmitErrors.append("Connection to vendor failed.");
         }
-        catch (CxmlParseError e) {
+        catch (final CxmlParseError e) {
             LOG.error("sendPurchaseOrder() Error Parsing", e);
             transmitErrors.append("Unable to read cxml returned from vendor.");
         }
-        catch (Throwable e) {
+        catch (final Throwable e) {
             LOG.error("sendPurchaseOrder() Unknown Error", e);
             transmitErrors.append("Unexpected error occurred while attempting to transmit Purchase Order.");
         }
@@ -179,14 +179,16 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     }
 
     @Override
-    public String getCxml(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorPrincipalId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns, boolean includeNewFields) {
-    	WorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
-        String documentType = workFlowDocument.getDocumentTypeName();
-
+    public String getCxml(
+            final PurchaseOrderDocument purchaseOrder, final String requisitionInitiatorPrincipalId, 
+            final String password, final ContractManager contractManager, final String contractManagerEmail, final String vendorDuns, final boolean includeNewFields) {
+        final WorkflowDocument workFlowDocument = purchaseOrder.getDocumentHeader().getWorkflowDocument();
+        final String documentType = workFlowDocument.getDocumentTypeName();
+        
         // KFSUPGRADE-1458 complete the potransmission enhancement
         int disbMethod = 0;
         String poTransmissionCode = purchaseOrder.getPurchaseOrderTransmissionMethodCode();
-
+        
         if(PurapConstants.POTransmissionMethods.FAX.equalsIgnoreCase(poTransmissionCode)) {
             // fax
         	disbMethod = FAX;
@@ -200,9 +202,9 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             // manual
         	disbMethod = MANUAL;
         }
-        StringBuffer cxml = new StringBuffer();
+        final StringBuffer cxml = new StringBuffer();
         
-        List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
+        final List<Note> notesToSendToVendor = getNotesToSendToVendor(purchaseOrder);
         // comment out for investigation
         if (CollectionUtils.isNotEmpty(notesToSendToVendor)) {
             cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\r\n");
@@ -223,10 +225,10 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("    <MessageId>KFS_cXML_PO</MessageId>\n");
 
         // Timestamp - it doesn't matter what's in the timezone, just that it's there (need "T" space between date/time)
-        Date currentDate = getDateTimeService().getCurrentDate();
-        SimpleDateFormat dateFormat = PurApDateFormatUtils.getSimpleDateFormat(
+        final Date currentDate = getDateTimeService().getCurrentDate();
+        final SimpleDateFormat dateFormat = PurApDateFormatUtils.getSimpleDateFormat(
                 PurapConstants.NamedDateFormats.CXML_SIMPLE_DATE_FORMAT);
-        SimpleDateFormat timeFormat = PurApDateFormatUtils.getSimpleDateFormat(
+        final SimpleDateFormat timeFormat = PurApDateFormatUtils.getSimpleDateFormat(
                 PurapConstants.NamedDateFormats.CXML_SIMPLE_TIME_FORMAT);
         cxml.append("    <Timestamp>").append(dateFormat.format(currentDate)).append("T")
                 .append(timeFormat.format(currentDate)).append("+05:30")
@@ -356,7 +358,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             cxml.append("      </Supplier>\n");
 
             /** *** DISTRIBUTION SECTION *** */
-            VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
+            final VendorAddress vendorAddress = vendorService.getVendorDefaultAddress(purchaseOrder.getVendorDetail().getVendorAddresses(), VendorConstants.AddressTypes.PURCHASE_ORDER, purchaseOrder.getDeliveryCampusCode());
             cxml.append("      <OrderDistribution>\n");
 
             // first take fax from PO, if empty then get fax number for PO default vendor address
@@ -552,14 +554,14 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         if (!notesToSendToVendor.isEmpty()) {
             String allNotes = "";
             String allNotesNoAttach = "";
-            String vendorNoteText = purchaseOrder.getVendorNoteText();
+            final String vendorNoteText = purchaseOrder.getVendorNoteText();
             if (ObjectUtils.isNotNull(vendorNoteText)) {
             	allNotesNoAttach = vendorNoteText;
             }
             cxml.append("      <ExternalInfo>\n");
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
-                Note note = notesToSendToVendor.get(i);
-                Attachment attachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
+                final Note note = notesToSendToVendor.get(i);
+                final Attachment attachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
                 if (ObjectUtils.isNotNull(attachment)) {
                     allNotes = allNotes + "\n(" + (i + 1) + ") " + note.getNoteText() + "  ";
                 } else {
@@ -570,8 +572,8 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
             cxml.append("        <Attachments xmlns:xop = \"http://www.w3.org/2004/08/xop/include/\" >\n");
 
             for (int i = 0; i < notesToSendToVendor.size(); i++) {
-                Note note = notesToSendToVendor.get(i);
-                Attachment attachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
+                final Note note = notesToSendToVendor.get(i);
+                final Attachment attachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
                 if (ObjectUtils.isNotNull(attachment)) {
                     cxml.append("          <Attachment id=\"" + attachment.getAttachmentIdentifier() + "\" type=\"file\">\n");
                     cxml.append("            <AttachmentName><![CDATA[" + attachment.getAttachmentFileName() + "]]></AttachmentName>\n");
@@ -617,7 +619,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("         </CustomFieldValue>\n");
         cxml.append("      </CustomFieldValueSet>\n");
         
-        String deliveryInstructionText = purchaseOrder.getDeliveryInstructionText();
+        final String deliveryInstructionText = purchaseOrder.getDeliveryInstructionText();
         
         if (ObjectUtils.isNotNull(deliveryInstructionText)) {
 	        cxml.append("      <CustomFieldValueSet label=\"Delivery Instructions\" name=\"Delivery Instructions\">\n");
@@ -644,9 +646,9 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         cxml.append("    </POHeader>\n");
 
         /** *** Items Section **** */
-        List detailList = purchaseOrder.getItems();
-        for (Iterator iter = detailList.iterator(); iter.hasNext();) {
-            PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
+        final List detailList = purchaseOrder.getItems();
+        for (final Iterator iter = detailList.iterator(); iter.hasNext();) {
+            final PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
             if (ObjectUtils.isNotNull(poi.getItemType()) && poi.getItemType().isLineItemIndicator()) {
             	//KFSUPGRADE-406
                 String uom = poi.getItemUnitOfMeasureCode();
@@ -715,9 +717,9 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         if (!notesToSendToVendor.isEmpty()) {
         	//           cxml.append("\r\n");
         	for (int i = 0; i < notesToSendToVendor.size(); i++) {
-        		Note note = notesToSendToVendor.get(i);
+        		final Note note = notesToSendToVendor.get(i);
         		try {
-        			Attachment poAttachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
+        			final Attachment poAttachment = attachmentService.getAttachmentByNoteId(note.getNoteIdentifier());
         			if (ObjectUtils.isNotNull(poAttachment)) {
         				//        cxml.append("\r\n"); // blank line.  This extra blank line cause first word doc has format issue
         				cxml.append("--" + CUPurapConstants.MIME_BOUNDARY_FOR_ATTACHMENTS + "\r\n");
@@ -727,16 +729,16 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         				cxml.append("Content-ID: <" + poAttachment.getAttachmentIdentifier() + "@sciquest.com>\r\n");
         				cxml.append("Content-Disposition: attachment; filename=\"" + poAttachment.getAttachmentFileName() + "\"" + "\r\n\r\n");
         				
-        				InputStream attInputStream = poAttachment.getAttachmentContents();
-        				ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        				final InputStream attInputStream = poAttachment.getAttachmentContents();
+        				final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         				int c;
         				while ((c = attInputStream.read()) != -1) buffer.write(c);
         				
-        				String binaryStream = new String(buffer.toByteArray(),"ISO-8859-1");
+        				final String binaryStream = new String(buffer.toByteArray(),"ISO-8859-1");
         				
         				cxml.append(binaryStream + "\r\n");
         				}
-        			} catch (IOException e) {
+        			} catch (final IOException e) {
         				e.printStackTrace();
         				}
         		}
@@ -750,8 +752,10 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     }
 
     @Override
-    public String verifyCxmlPOData(PurchaseOrderDocument purchaseOrder, String requisitionInitiatorPrincipalId, String password, ContractManager contractManager, String contractManagerEmail, String vendorDuns) {
-        StringBuffer errors = new StringBuffer();
+    public String verifyCxmlPOData(
+            final PurchaseOrderDocument purchaseOrder, final String requisitionInitiatorPrincipalId, 
+            final String password, final ContractManager contractManager, final String contractManagerEmail, final String vendorDuns) {
+        final StringBuffer errors = new StringBuffer();
 
         if (ObjectUtils.isNull(purchaseOrder)) {
             LOG.error("verifyCxmlPOData()  The Purchase Order is null.");
@@ -858,11 +862,11 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
 		}
 
         // verify item data
-        List detailList = purchaseOrder.getItems();
-        for (Iterator iter = detailList.iterator(); iter.hasNext();) {
-            PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
+        final List detailList = purchaseOrder.getItems();
+        for (final Iterator iter = detailList.iterator(); iter.hasNext();) {
+            final PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
             // CU enhancement for non-qty to exclude from qty/uom/catalog# check
-        	boolean nonQuantityOrder = PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equals(poi.getItemTypeCode());
+        	final boolean nonQuantityOrder = PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equals(poi.getItemTypeCode());
             if (ObjectUtils.isNotNull(poi.getItemType()) && poi.getItemType().isLineItemIndicator()) {
                 if (ObjectUtils.isNull(poi.getItemLineNumber())) {
                     LOG.error("verifyCxmlPOData()  The Item Line Number is required for the cXML PO but is missing.");
@@ -927,10 +931,10 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
      * CU change
      * @param purchaseOrder document instance to prepare
      */
-    protected void prepareNonB2BPurchaseOrderForTransmission(PurchaseOrderDocument purchaseOrder) {
-        List detailList = purchaseOrder.getItems();
-        for (Iterator iter = detailList.iterator(); iter.hasNext();) {
-            PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
+    protected void prepareNonB2BPurchaseOrderForTransmission(final PurchaseOrderDocument purchaseOrder) {
+        final List detailList = purchaseOrder.getItems();
+        for (final Iterator iter = detailList.iterator(); iter.hasNext();) {
+            final PurchaseOrderItem poi = (PurchaseOrderItem) iter.next();
             
             if (poi.getItemCatalogNumber() == null) {
             	poi.setItemCatalogNumber("");
@@ -947,7 +951,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
         }    
     }
 
-    protected String getContractManagerEmail(ContractManager cm) {
+    protected String getContractManagerEmail(final ContractManager cm) {
     	// KFSUPGRADE-509 : CU apo contract manager for non-b2b order
     	// FIXME : if discontinue this fix, then contractmanagermail will be empty, and this will cause verifypocxml to have error,
     	// hence cxml will not be sent to SQ.  this is mostly for non-b2b order.
@@ -986,14 +990,14 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
      * 
      * Returns list of Note(s) that should be sent to the vendor
      */
-    private List<Note> getNotesToSendToVendor(PurchaseOrderDocument purchaseOrder) {
-        List<Note> notesToSend = new ArrayList<Note>(); // this may not work for POA because PO note is linked to oldest PO
+    private List<Note> getNotesToSendToVendor(final PurchaseOrderDocument purchaseOrder) {
+        final List<Note> notesToSend = new ArrayList<Note>(); // this may not work for POA because PO note is linked to oldest PO
         List<Note> boNotes = purchaseOrder.getNotes(); 
         if (CollectionUtils.isEmpty(boNotes)) {
         	boNotes = purchaseOrderService.getPurchaseOrderNotes(purchaseOrder.getPurapDocumentIdentifier());        	
         }
 
-        for (Note note : boNotes) {
+        for (final Note note : boNotes) {
             if (StringUtils.equalsIgnoreCase(note.getNoteTopicText(), CUPurapConstants.AttachemntToVendorIndicators.SEND_TO_VENDOR)) {
                 notesToSend.add(note);
             }
@@ -1005,9 +1009,10 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
      * helper method for repeated code
      */
     
-    private String addCustomFieldValueSet(String name, String label, String value) {
+    private String addCustomFieldValueSet(
+            final String name, final String label, final String value) {
        
-       StringBuffer customField = new StringBuffer();
+       final StringBuffer customField = new StringBuffer();
  
        customField.append("      <CustomFieldValueSet label=\"").append(label).append("\" name=\"").append(name).append("\">\n");
        customField.append("        <CustomFieldValue>\n");
@@ -1019,7 +1024,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
  
    }
     
-   private String getVendorShipTitle(PurchaseOrderDocument purchaseOrder) {
+   private String getVendorShipTitle(final PurchaseOrderDocument purchaseOrder) {
        if (purchaseOrder.getVendorShippingTitle() == null) {
            purchaseOrder.refreshReferenceObject("vendorShippingTitle");
        }
@@ -1033,7 +1038,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     /*
      * Do null check just incase.
      */
-    private String getVendorShipPayTerms(PurchaseOrderDocument purchaseOrder) {
+    private String getVendorShipPayTerms(final PurchaseOrderDocument purchaseOrder) {
     	if (purchaseOrder.getVendorShippingPaymentTerms() == null) {
     		purchaseOrder.refreshReferenceObject("vendorShippingPaymentTerms");
     	}
@@ -1045,7 +1050,7 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     	
     }
    
-    private String getVendorCountry(PurchaseOrderDocument purchaseOrder) {
+    private String getVendorCountry(final PurchaseOrderDocument purchaseOrder) {
     	// Don't need refresh vendorcountry because it is getting by service
     	if (purchaseOrder.getVendorShippingPaymentTerms() == null) {
     		purchaseOrder.refreshReferenceObject("vendorShippingPaymentTerms");
@@ -1059,12 +1064,12 @@ public class CuB2BPurchaseOrderSciquestServiceImpl extends B2BPurchaseOrderSciqu
     }
 
 
-    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
+    public void setPurchaseOrderService(final PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
     }
 
 
-    public void setVendorService(VendorService vendorService) {
+    public void setVendorService(final VendorService vendorService) {
         this.vendorService = vendorService;
     }
 

@@ -26,10 +26,12 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
 	private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public List<PaymentRequestDocument> getPaymentRequestsToExtract(boolean onlySpecialPayments, String campusCode, Date onOrBeforePaymentRequestPayDate) {
+    public List<PaymentRequestDocument> getPaymentRequestsToExtract(
+            final boolean onlySpecialPayments, 
+            final String campusCode, final Date onOrBeforePaymentRequestPayDate) {
         LOG.debug("getPaymentRequestsToExtract() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         if (campusCode != null) {
             criteria.addEqualTo("processingCampusCode", campusCode);
         }
@@ -39,15 +41,15 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
         criteria.addEqualTo("paymentMethodCode", "P");
         
         if (onlySpecialPayments) {
-            Criteria a = new Criteria();
+            final Criteria a = new Criteria();
 
-            Criteria c1 = new Criteria();
+            final Criteria c1 = new Criteria();
             c1.addNotNull("specialHandlingInstructionLine1Text");
-            Criteria c2 = new Criteria();
+            final Criteria c2 = new Criteria();
             c2.addNotNull("specialHandlingInstructionLine2Text");
-            Criteria c3 = new Criteria();
+            final Criteria c3 = new Criteria();
             c3.addNotNull("specialHandlingInstructionLine3Text");
-            Criteria c4 = new Criteria();
+            final Criteria c4 = new Criteria();
             c4.addEqualTo("paymentAttachmentIndicator", Boolean.TRUE);
 
             c1.addOrCriteria(c2);
@@ -57,16 +59,16 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
             a.addAndCriteria(c1);
             a.addLessOrEqualThan("paymentRequestPayDate", onOrBeforePaymentRequestPayDate);
 
-            Criteria c5 = new Criteria();
+            final Criteria c5 = new Criteria();
             c5.addEqualTo("immediatePaymentIndicator", Boolean.TRUE);
             c5.addOrCriteria(a);
 
             criteria.addAndCriteria(a);
         } else {
-            Criteria c1 = new Criteria();
+            final Criteria c1 = new Criteria();
             c1.addLessOrEqualThan("paymentRequestPayDate", onOrBeforePaymentRequestPayDate);
 
-            Criteria c2 = new Criteria();
+            final Criteria c2 = new Criteria();
             c2.addEqualTo("immediatePaymentIndicator", Boolean.TRUE);
 
             c1.addOrCriteria(c2);
@@ -77,20 +79,21 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
                 .getCollectionByQuery(new QueryByCriteria(CuPaymentRequestDocument.class, criteria));
     }
     
-    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractForVendor(String campusCode, VendorGroupingHelper vendor, Date onOrBeforePaymentRequestPayDate) {
+    public Collection<PaymentRequestDocument> getPaymentRequestsToExtractForVendor(
+            final String campusCode, final VendorGroupingHelper vendor, final Date onOrBeforePaymentRequestPayDate) {
         LOG.debug("getPaymentRequestsToExtract() started");
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo("processingCampusCode", campusCode);
         //criteria.addIn(PurapPropertyConstants.STATUS_CODE, statuses);
         criteria.addIsNull("extractedTimestamp");
         criteria.addEqualTo("holdIndicator", Boolean.FALSE);
         criteria.addEqualTo("paymentMethodCode", "P");
         
-        Criteria c1 = new Criteria();
+        final Criteria c1 = new Criteria();
         c1.addLessOrEqualThan("paymentRequestPayDate", onOrBeforePaymentRequestPayDate);
 
-        Criteria c2 = new Criteria();
+        final Criteria c2 = new Criteria();
         c2.addEqualTo("immediatePaymentIndicator", Boolean.TRUE);
 
         c1.addOrCriteria(c2);
@@ -110,33 +113,34 @@ public class CuPaymentRequestDaoOjb extends PaymentRequestDaoOjb implements CuPa
     }
     
     @Override
-    public int countDocumentsByPurchaseOrderId(Integer poPurApId, String applicationDocumentStatus) {
+    public int countDocumentsByPurchaseOrderId(
+            final Integer poPurApId, final String applicationDocumentStatus) {
 
-        Criteria criteria = new Criteria();
+        final Criteria criteria = new Criteria();
         criteria.addEqualTo(PurapPropertyConstants.PURCHASE_ORDER_IDENTIFIER, poPurApId);
         if (StringUtils.isNotBlank(applicationDocumentStatus)) {
             criteria.addEqualTo(KFSPropertyConstants.DOCUMENT_HEADER + "." + KFSPropertyConstants.APPLICATION_DOCUMENT_STATUS, applicationDocumentStatus);
         }
 
-        QueryByCriteria query = QueryFactory.newQuery(PaymentRequestDocument.class, criteria);
+        final QueryByCriteria query = QueryFactory.newQuery(PaymentRequestDocument.class, criteria);
 
         final int numOfPreqs = getPersistenceBrokerTemplate().getCount(query);
         return numOfPreqs;
     }
 
     @Override
-    public String getObjectIdByPaymentRequestDocumentNumber(String documentNumber) {
+    public String getObjectIdByPaymentRequestDocumentNumber(final String documentNumber) {
         // Build PREQ query that matches only on document number.
-        Criteria crit = new Criteria();
+        final Criteria crit = new Criteria();
         crit.addEqualTo("documentNumber", documentNumber);
         
         // Prepare report query that only retrieves object ID.
-        ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(PaymentRequestDocument.class, crit);
+        final ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(PaymentRequestDocument.class, crit);
         reportQuery.setAttributes(new String[] {"objectId"});
         reportQuery.setJdbcTypes(new int[] {java.sql.Types.VARCHAR});
         
         // Run query and return results.
-        Iterator<Object[]> results = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);
+        final Iterator<Object[]> results = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);
         if (results.hasNext()) {
             return (String) results.next()[0];
         }

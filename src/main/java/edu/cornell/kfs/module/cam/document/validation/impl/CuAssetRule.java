@@ -25,13 +25,13 @@ public class CuAssetRule extends AssetRule {
         
         if (!assetService.isTagNumberCheckExclude(newAsset)) {
 
-            Map<String, Object> fieldValues = new HashMap<>();
+            final Map<String, Object> fieldValues = new HashMap<>();
             if (ObjectUtils.isNotNull(newAsset.getCampusTagNumber())) {
                 fieldValues.put(CamsPropertyConstants.Asset.CAMPUS_TAG_NUMBER,
                         newAsset.getCampusTagNumber().toUpperCase(Locale.US));
-                Collection<Asset> results = getBoService().findMatching(Asset.class, fieldValues);
+                final Collection<Asset> results = getBoService().findMatching(Asset.class, fieldValues);
 
-                for (Asset asset : results) {
+                for (final Asset asset : results) {
                     if (!asset.getCapitalAssetNumber().equals(newAsset.getCapitalAssetNumber())) {
                         // KFSMI-6149 - do not invalidate if the asset from the database is retired
                         if (StringUtils.isBlank(asset.getRetirementReasonCode())

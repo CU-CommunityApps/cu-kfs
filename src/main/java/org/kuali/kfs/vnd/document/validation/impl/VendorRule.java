@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -102,7 +102,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * might have done in the vendor header with the existing values in the database.
      */
     @Override
-    public void setupBaseConvenienceObjects(MaintenanceDocument document) {
+    public void setupBaseConvenienceObjects(final MaintenanceDocument document) {
         oldVendor = (VendorDetail) document.getOldMaintainableObject().getBusinessObject();
         newVendor = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
         super.setNewBo(newVendor);
@@ -123,7 +123,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      *
      * @param vendor VendorDetail document
      */
-    protected void refreshSubObjects(VendorDetail vendor) {
+    protected void refreshSubObjects(final VendorDetail vendor) {
         if (vendor == null) {
             return;
         }
@@ -136,7 +136,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             vendor.getVendorHeader().refreshNonUpdateableReferences();
         } else {
             // Retrieve the references objects of the vendor header of this vendor.
-            List<String> headerFieldNames = getObjectReferencesListFromBOClass(VendorHeader.class);
+            final List<String> headerFieldNames = getObjectReferencesListFromBOClass(VendorHeader.class);
             vendor.getVendorHeader().refreshNonUpdateableReferences();
             getPersistenceService().retrieveReferenceObjects(vendor.getVendorHeader(), headerFieldNames);
 
@@ -144,17 +144,17 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             // vendor header. Since this is a parent vendor, whose vendor header saving is handled manually,
             // we have already retrieved references for vendor header's attributes above, so we should
             // exclude retrieving reference objects of vendor header.
-            List<String> detailFieldNames = getObjectReferencesListFromBOClass(vendor.getClass());
+            final List<String> detailFieldNames = getObjectReferencesListFromBOClass(vendor.getClass());
             detailFieldNames.remove(VendorConstants.VENDOR_HEADER_ATTR);
             getPersistenceService().retrieveReferenceObjects(vendor, detailFieldNames);
         }
 
         // refresh addresses
         if (vendor.getVendorAddresses() != null) {
-            for (VendorAddress address : vendor.getVendorAddresses()) {
+            for (final VendorAddress address : vendor.getVendorAddresses()) {
                 address.refreshNonUpdateableReferences();
                 if (address.getVendorDefaultAddresses() != null) {
-                    for (VendorDefaultAddress defaultAddress : address.getVendorDefaultAddresses()) {
+                    for (final VendorDefaultAddress defaultAddress : address.getVendorDefaultAddresses()) {
                         defaultAddress.refreshNonUpdateableReferences();
                     }
                 }
@@ -162,7 +162,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
         // refresh contacts
         if (vendor.getVendorContacts() != null) {
-            for (VendorContact contact : vendor.getVendorContacts()) {
+            for (final VendorContact contact : vendor.getVendorContacts()) {
                 contact.refreshNonUpdateableReferences();
                 // ==== CU Customization ====
                 if (contact.getVendorContactPhoneNumbers() != null) {
@@ -175,7 +175,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
         // refresh contracts
         if (vendor.getVendorContracts() != null) {
-            for (VendorContract contract : vendor.getVendorContracts()) {
+            for (final VendorContract contract : vendor.getVendorContracts()) {
                 contract.refreshNonUpdateableReferences();
             }
         }
@@ -189,9 +189,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param theClass The Class name of the object whose objects references list are extracted
      * @return a List of attributes of the class
      */
-    private List<String> getObjectReferencesListFromBOClass(Class theClass) {
-        List<String> results = new ArrayList<>();
-        for (Field theField : theClass.getDeclaredFields()) {
+    private List<String> getObjectReferencesListFromBOClass(final Class theClass) {
+        final List<String> results = new ArrayList<>();
+        for (final Field theField : theClass.getDeclaredFields()) {
             // only get persistable business object references
             if (PersistableBusinessObject.class.isAssignableFrom(theField.getType())) {
                 results.add(theField.getName());
@@ -201,14 +201,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     }
 
     @Override
-    protected boolean processCustomApproveDocumentBusinessRules(MaintenanceDocument document) {
-        boolean valid = processValidation(document);
+    protected boolean processCustomApproveDocumentBusinessRules(final MaintenanceDocument document) {
+        final boolean valid = processValidation(document);
         return valid & super.processCustomApproveDocumentBusinessRules(document);
     }
 
     @Override
-    protected boolean processCustomRouteDocumentBusinessRules(MaintenanceDocument document) {
-        boolean valid = processValidation(document);
+    protected boolean processCustomRouteDocumentBusinessRules(final MaintenanceDocument document) {
+        final boolean valid = processValidation(document);
         return valid & super.processCustomRouteDocumentBusinessRules(document);
     }
 
@@ -218,7 +218,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param document MaintenanceDocument instance
      * @return boolean false or true
      */
-    private boolean processValidation(MaintenanceDocument document) {
+    private boolean processValidation(final MaintenanceDocument document) {
         boolean valid = processVendorValidation(document);
         valid &= processContactValidation();
         if (ObjectUtils.isNotNull(newVendor.getVendorHeader().getVendorType())) {
@@ -236,8 +236,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param document MaintenanceDocument instance
      * @return boolean false or true
      */
-    protected boolean processVendorValidation(MaintenanceDocument document) {
-        VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+    protected boolean processVendorValidation(final MaintenanceDocument document) {
+        final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
 
         boolean valid = validateTaxTypeAndTaxNumberBlankness(vendorDetail);
         valid &= validateParentVendorTaxNumber(vendorDetail);
@@ -269,20 +269,20 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return valid;
     }
 
-    private boolean validateContracts(VendorDetail vendorDetail) {
+    private boolean validateContracts(final VendorDetail vendorDetail) {
         boolean success = true;
         int vendorPos = 0;
-        List<VendorContract> vendorContracts = vendorDetail.getVendorContracts();
-        for (VendorContract vendorContract : vendorContracts) {
-            List<VendorContractOrganization> organizations = vendorContract.getVendorContractOrganizations();
-            List<VendorContractOrganization> organizationCopy = new ArrayList<>(organizations);
-            for (VendorContractOrganization organization : organizations) {
-                String chartCode = organization.getChartOfAccountsCode();
-                String organizationCode = organization.getOrganizationCode();
+        final List<VendorContract> vendorContracts = vendorDetail.getVendorContracts();
+        for (final VendorContract vendorContract : vendorContracts) {
+            final List<VendorContractOrganization> organizations = vendorContract.getVendorContractOrganizations();
+            final List<VendorContractOrganization> organizationCopy = new ArrayList<>(organizations);
+            for (final VendorContractOrganization organization : organizations) {
+                final String chartCode = organization.getChartOfAccountsCode();
+                final String organizationCode = organization.getOrganizationCode();
                 if (StringUtils.isNotEmpty(chartCode) && StringUtils.isNotEmpty(organizationCode)) {
                     int counter = 0;
                     int organizationPos = 0;
-                    for (VendorContractOrganization org : organizationCopy) {
+                    for (final VendorContractOrganization org : organizationCopy) {
                         if (chartCode.equalsIgnoreCase(org.getChartOfAccountsCode())
                                 && organizationCode.equalsIgnoreCase(org.getOrganizationCode())) {
                             if (counter++ != 0) {
@@ -305,16 +305,16 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return success;
     }
 
-    private boolean validateSearchAliases(VendorDetail vendorDetail) {
+    private boolean validateSearchAliases(final VendorDetail vendorDetail) {
         boolean success = true;
-        List<VendorAlias> searchAliases = vendorDetail.getVendorAliases();
-        List<VendorAlias> aliasList = new ArrayList<>(searchAliases);
+        final List<VendorAlias> searchAliases = vendorDetail.getVendorAliases();
+        final List<VendorAlias> aliasList = new ArrayList<>(searchAliases);
         int pos = 0;
-        for (VendorAlias searchAlias : searchAliases) {
-            String aliasName = searchAlias.getVendorAliasName();
+        for (final VendorAlias searchAlias : searchAliases) {
+            final String aliasName = searchAlias.getVendorAliasName();
             if (aliasName != null) {
                 int counter = 0;
-                for (VendorAlias alias : aliasList) {
+                for (final VendorAlias alias : aliasList) {
                     if (aliasName.equals(alias.getVendorAliasName())) {
                         if (counter++ != 0) {
                             putFieldError(VendorPropertyConstants.VENDOR_SEARCH_ALIASES + "[" + pos + "]." +
@@ -339,9 +339,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @return boolean false if the vendor is inactive and the inactive reason is empty or if the vendor is active and
      *         the inactive reason is not empty
      */
-    protected boolean validateInactiveReasonRequiredness(VendorDetail vendorDetail) {
-        boolean activeIndicator = vendorDetail.isActiveIndicator();
-        boolean emptyInactiveReason = StringUtils.isEmpty(vendorDetail.getVendorInactiveReasonCode());
+    protected boolean validateInactiveReasonRequiredness(final VendorDetail vendorDetail) {
+        final boolean activeIndicator = vendorDetail.isActiveIndicator();
+        final boolean emptyInactiveReason = StringUtils.isEmpty(vendorDetail.getVendorInactiveReasonCode());
 
         // return false if the vendor is inactive and the inactive reason is empty
         if (!activeIndicator && emptyInactiveReason) {
@@ -366,7 +366,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail the VendorDetail object to be validated
      * @return boolean false if there is no tax number and the indicator is true.
      */
-    protected boolean validateTaxNumberRequiredness(VendorDetail vendorDetail) {
+    protected boolean validateTaxNumberRequiredness(final VendorDetail vendorDetail) {
         if (!vendorDetail.getVendorHeader().getVendorForeignIndicator()
                 && vendorDetail.getVendorHeader().getVendorType().isVendorTaxNumberRequiredIndicator()
                 && StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxNumber())) {
@@ -389,7 +389,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail The VendorDetail object to be validated
      * @return boolean false if the vendor is restricted and the restricted reason is empty
      */
-    protected boolean validateRestrictedReasonRequiredness(VendorDetail vendorDetail) {
+    protected boolean validateRestrictedReasonRequiredness(final VendorDetail vendorDetail) {
         if (ObjectUtils.isNotNull(vendorDetail.getVendorRestrictedIndicator())
                 && vendorDetail.getVendorRestrictedIndicator()
                 && StringUtils.isEmpty(vendorDetail.getVendorRestrictedReasonText())) {
@@ -461,9 +461,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail the VendorDetail object to be validated
      * @return boolean true if the vendor Detail passes the validation and false otherwise.
      */
-    protected boolean validateTaxTypeAndTaxNumberBlankness(VendorDetail vendorDetail) {
+    protected boolean validateTaxTypeAndTaxNumberBlankness(final VendorDetail vendorDetail) {
         boolean valid = true;
-        boolean isParent = vendorDetail.isVendorParentIndicator();
+        final boolean isParent = vendorDetail.isVendorParentIndicator();
         if (StringUtils.isNotBlank(vendorDetail.getVendorHeader().getVendorTaxNumber())
             && StringUtils.isBlank(vendorDetail.getVendorHeader().getVendorTaxTypeCode())) {
             if (isParent) {
@@ -497,7 +497,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail The VendorDetail object to be validated
      * @return boolean true if the vendorDetail passes this validation and false otherwise.
      */
-    protected boolean validateVendorNames(VendorDetail vendorDetail) {
+    protected boolean validateVendorNames(final VendorDetail vendorDetail) {
         boolean valid = true;
         if (StringUtils.isBlank(vendorDetail.getVendorName())) {
             // At least one of the three vendor name fields must be filled in.
@@ -511,8 +511,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 putFieldError(VendorPropertyConstants.VENDOR_NAME, VendorKeyConstants.ERROR_VENDOR_BOTH_NAME_REQUIRED);
                 valid = false;
             } else {
-                String vendorName = vendorDetail.getVendorLastName() + VendorConstants.NAME_DELIM +
-                        vendorDetail.getVendorFirstName();
+                final String vendorName = vendorDetail.getVendorLastName() + VendorConstants.NAME_DELIM +
+                                          vendorDetail.getVendorFirstName();
                 if (vendorName.length() > VendorConstants.MAX_VENDOR_NAME_LENGTH) {
                     putFieldError(VendorPropertyConstants.VENDOR_LAST_NAME,
                             VendorKeyConstants.ERROR_VENDOR_NAME_TOO_LONG);
@@ -538,9 +538,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail - the maintenanceDocument being evaluated
      * @return boolean true if the vendorDetail in the document contains valid vendorSoldToNumber.
      */
-    protected boolean validateVendorSoldToNumber(VendorDetail vendorDetail) {
+    protected boolean validateVendorSoldToNumber(final VendorDetail vendorDetail) {
         boolean valid = true;
-        String vendorSoldToNumber = vendorDetail.getVendorSoldToNumber();
+        final String vendorSoldToNumber = vendorDetail.getVendorSoldToNumber();
 
         // if vendor number is empty, clear all vendorSoldTo fields
         if (StringUtils.isEmpty(vendorSoldToNumber)) {
@@ -552,7 +552,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             return valid;
         }
 
-        VendorDetail vendorSoldTo = SpringContext.getBean(VendorService.class).getVendorDetail(vendorSoldToNumber);
+        final VendorDetail vendorSoldTo = SpringContext.getBean(VendorService.class).getVendorDetail(vendorSoldToNumber);
         if (vendorSoldTo != null) {
             // if vendor number is valid, set all vendorSoldTo fields
             vendorDetail.setSoldToVendorDetail(vendorSoldTo);
@@ -581,11 +581,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail The VendorDetail object to be validated
      * @return boolean true if the ownership type is allowed and FALSE otherwise.
      */
-    private boolean validateOwnershipTypeAllowed(VendorDetail vendorDetail) {
+    private boolean validateOwnershipTypeAllowed(final VendorDetail vendorDetail) {
         boolean valid = true;
-        boolean isParent = vendorDetail.isVendorParentIndicator();
-        String ownershipTypeCode = vendorDetail.getVendorHeader().getVendorOwnershipCode();
-        String taxTypeCode = vendorDetail.getVendorHeader().getVendorTaxTypeCode();
+        final boolean isParent = vendorDetail.isVendorParentIndicator();
+        final String ownershipTypeCode = vendorDetail.getVendorHeader().getVendorOwnershipCode();
+        final String taxTypeCode = vendorDetail.getVendorHeader().getVendorTaxTypeCode();
         if (StringUtils.isNotEmpty(ownershipTypeCode) && StringUtils.isNotEmpty(taxTypeCode)) {
             if (VendorConstants.TAX_TYPE_FEIN.equals(taxTypeCode)) {
                 if (!/*REFACTORME*/SpringContext.getBean(ParameterEvaluatorService.class)
@@ -621,11 +621,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail The VendorDetail object to be validated
      * @return true if the vendorMinimumOrderAmount is less than the maximum allowed amount.
      */
-    private boolean validateMinimumOrderAmount(VendorDetail vendorDetail) {
+    private boolean validateMinimumOrderAmount(final VendorDetail vendorDetail) {
         boolean valid = true;
-        KualiDecimal minimumOrderAmount = vendorDetail.getVendorMinimumOrderAmount();
+        final KualiDecimal minimumOrderAmount = vendorDetail.getVendorMinimumOrderAmount();
         if (ObjectUtils.isNotNull(minimumOrderAmount)) {
-            KualiDecimal VENDOR_MIN_ORDER_AMOUNT = new KualiDecimal(SpringContext.getBean(ParameterService.class)
+            final KualiDecimal VENDOR_MIN_ORDER_AMOUNT = new KualiDecimal(SpringContext.getBean(ParameterService.class)
                     .getParameterValueAsString(VendorDetail.class, VendorParameterConstants.VENDOR_MIN_ORDER_AMOUNT));
             if (ObjectUtils.isNotNull(VENDOR_MIN_ORDER_AMOUNT)
                 && VENDOR_MIN_ORDER_AMOUNT.compareTo(minimumOrderAmount) < 1
@@ -647,10 +647,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail The VendorDetail to be validated
      * @return boolean true if the vendor does not contain ownership category and false otherwise
      */
-    private boolean validateOwnershipCategory(VendorDetail vendorDetail) {
+    private boolean validateOwnershipCategory(final VendorDetail vendorDetail) {
         boolean valid = true;
-        boolean isParent = vendorDetail.isVendorParentIndicator();
-        OwnershipType ot = vendorDetail.getVendorHeader().getVendorOwnership();
+        final boolean isParent = vendorDetail.isVendorParentIndicator();
+        final OwnershipType ot = vendorDetail.getVendorHeader().getVendorOwnership();
         if (ot != null && !ot.getVendorOwnershipCategoryAllowedIndicator()) {
             if (ObjectUtils.isNotNull(vendorDetail.getVendorHeader().getVendorOwnershipCategory())) {
                 valid = false;
@@ -679,11 +679,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail The VendorDetail object to be validated
      * @return boolean true if the tax number is a valid tax number and false otherwise.
      */
-    private boolean validateTaxNumberFromTaxNumberService(VendorDetail vendorDetail) {
+    private boolean validateTaxNumberFromTaxNumberService(final VendorDetail vendorDetail) {
         boolean valid = true;
-        boolean isParent = vendorDetail.isVendorParentIndicator();
-        String taxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
-        String taxType = vendorDetail.getVendorHeader().getVendorTaxTypeCode();
+        final boolean isParent = vendorDetail.isVendorParentIndicator();
+        final String taxNumber = vendorDetail.getVendorHeader().getVendorTaxNumber();
+        final String taxType = vendorDetail.getVendorHeader().getVendorTaxTypeCode();
         if (StringUtils.isNotEmpty(taxType) && StringUtils.isNotEmpty(taxNumber)) {
             valid = SpringContext.getBean(TaxNumberService.class).isValidTaxNumber(taxNumber, taxType);
             if (!valid && isParent) {
@@ -709,15 +709,15 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param document MaintenanceDocument
      * @return boolean false or true
      */
-    boolean processCommodityCodeValidation(MaintenanceDocument document) {
+    boolean processCommodityCodeValidation(final MaintenanceDocument document) {
         boolean valid = true;
-        List<VendorCommodityCode> vendorCommodities = newVendor.getVendorCommodities();
-        boolean commodityCodeRequired = newVendor.getVendorHeader().getVendorType().isCommodityRequiredIndicator();
+        final List<VendorCommodityCode> vendorCommodities = newVendor.getVendorCommodities();
+        final boolean commodityCodeRequired = newVendor.getVendorHeader().getVendorType().isCommodityRequiredIndicator();
         if (commodityCodeRequired) {
             if (vendorCommodities.isEmpty()) {
                 //display error that the commodity code is required for this type of vendor.
-                String propertyName = "add." +
-                        VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE;
+                final String propertyName = "add." +
+                                            VendorPropertyConstants.VENDOR_COMMODITIES_CODE_PURCHASING_COMMODITY_CODE;
                 putFieldError(propertyName,
                         VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_IS_REQUIRED_FOR_THIS_VENDOR_TYPE);
                 valid = false;
@@ -731,13 +731,13 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             //we have to check that there is only one commodity code with default indicator = Y.
             int defaultCount = 0;
             for (int i = 0; i < vendorCommodities.size(); i++) {
-                VendorCommodityCode vcc = vendorCommodities.get(i);
+                final VendorCommodityCode vcc = vendorCommodities.get(i);
                 if (vcc.isCommodityDefaultIndicator()) {
                     defaultCount++;
                     if (defaultCount > 1) {
                         valid = false;
-                        String propertyName = VendorPropertyConstants.VENDOR_COMMODITIES_CODE + "[" + i + "]." +
-                                VendorPropertyConstants.VENDOR_COMMODITIES_DEFAULT_INDICATOR;
+                        final String propertyName = VendorPropertyConstants.VENDOR_COMMODITIES_CODE + "[" + i + "]." +
+                                                    VendorPropertyConstants.VENDOR_COMMODITIES_DEFAULT_INDICATOR;
                         putFieldError(propertyName,
                                 VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_REQUIRE_ONE_DEFAULT_IND);
                         break;
@@ -756,19 +756,19 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorCommodities the list of VendorCommodityCode to be validated
      * @return boolean true or false
      */
-    private boolean validateCommodityCodeDefaultIndicator(List<VendorCommodityCode> vendorCommodities) {
+    private boolean validateCommodityCodeDefaultIndicator(final List<VendorCommodityCode> vendorCommodities) {
         boolean valid = true;
 
         boolean foundDefaultIndicator = false;
         for (int i = 0; i < vendorCommodities.size(); i++) {
-            VendorCommodityCode vcc = vendorCommodities.get(i);
+            final VendorCommodityCode vcc = vendorCommodities.get(i);
             if (vcc.isCommodityDefaultIndicator()) {
                 if (!foundDefaultIndicator) {
                     foundDefaultIndicator = true;
                 } else {
                     // display error that there can only be 1 commodity code with default indicator = true.
-                    String propertyName = VendorPropertyConstants.VENDOR_COMMODITIES_CODE + "[" + i + "]." +
-                            VendorPropertyConstants.VENDOR_COMMODITIES_DEFAULT_INDICATOR;
+                    final String propertyName = VendorPropertyConstants.VENDOR_COMMODITIES_CODE + "[" + i + "]." +
+                                                VendorPropertyConstants.VENDOR_COMMODITIES_DEFAULT_INDICATOR;
                     putFieldError(propertyName, VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_REQUIRE_ONE_DEFAULT_IND);
                     valid = false;
                 }
@@ -776,8 +776,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
         if (!foundDefaultIndicator && vendorCommodities.size() > 0) {
             // display error that there must be one commodity code selected as the default commodity code for the vendor.
-            String propertyName = VendorPropertyConstants.VENDOR_COMMODITIES_CODE + "[0]." +
-                    VendorPropertyConstants.VENDOR_COMMODITIES_DEFAULT_INDICATOR;
+            final String propertyName = VendorPropertyConstants.VENDOR_COMMODITIES_CODE + "[0]." +
+                                        VendorPropertyConstants.VENDOR_COMMODITIES_DEFAULT_INDICATOR;
             putFieldError(propertyName, VendorKeyConstants.ERROR_VENDOR_COMMODITY_CODE_REQUIRE_ONE_DEFAULT_IND);
             valid = false;
         }
@@ -790,22 +790,22 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param document MaintenanceDocument
      * @return boolean false or true
      */
-    protected boolean processAddressValidation(MaintenanceDocument document) {
+    protected boolean processAddressValidation(final MaintenanceDocument document) {
         boolean valid = true;
         boolean validAddressType = false;
 
-        List<VendorAddress> addresses = newVendor.getVendorAddresses();
-        String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
-        String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType()
+        final List<VendorAddress> addresses = newVendor.getVendorAddresses();
+        final String vendorTypeCode = newVendor.getVendorHeader().getVendorTypeCode();
+        final String vendorAddressTypeRequiredCode = newVendor.getVendorHeader().getVendorType()
                 .getVendorAddressTypeRequiredCode();
 
         for (int i = 0; i < addresses.size(); i++) {
-            VendorAddress address = addresses.get(i);
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
+            final VendorAddress address = addresses.get(i);
+            final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
             GlobalVariables.getMessageMap().clearErrorPath();
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 
-            this.getDictionaryValidationService().validateBusinessObject(address);
+            getDictionaryValidationService().validateBusinessObject(address);
             if (GlobalVariables.getMessageMap().hasErrors()) {
                 valid = false;
             }
@@ -821,17 +821,17 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         // validate Address Type
-        String vendorAddressTabPrefix = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
+        final String vendorAddressTabPrefix = KFSConstants.ADD_PREFIX + "." + VendorPropertyConstants.VENDOR_ADDRESS + ".";
         if (StringUtils.isNotBlank(vendorTypeCode) && StringUtils.isNotBlank(vendorAddressTypeRequiredCode)
                 && !validAddressType) {
-            String[] parameters = new String[]{vendorTypeCode, vendorAddressTypeRequiredCode};
+            final String[] parameters = new String[]{vendorTypeCode, vendorAddressTypeRequiredCode};
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_TYPE_CODE,
                     VendorKeyConstants.ERROR_ADDRESS_TYPE, parameters);
-            String addressLine1Label = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
+            final String addressLine1Label = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
                     VendorPropertyConstants.VENDOR_ADDRESS_LINE_1);
-            String addressCityLabel = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
+            final String addressCityLabel = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
                     VendorPropertyConstants.VENDOR_ADDRESS_CITY);
-            String addressCountryLabel = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
+            final String addressCountryLabel = getDataDictionaryService().getAttributeLabel(VendorAddress.class,
                     VendorPropertyConstants.VENDOR_ADDRESS_COUNTRY);
             putFieldError(vendorAddressTabPrefix + VendorPropertyConstants.VENDOR_ADDRESS_LINE_1,
                     KFSKeyConstants.ERROR_REQUIRED, addressLine1Label);
@@ -845,20 +845,20 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         valid &= validateDefaultAddressCampus(newVendor);
 
         // Check to see if all divisions have one desired address for this vendor type
-        Map<String, Object> fieldValues = new HashMap<>();
+        final Map<String, Object> fieldValues = new HashMap<>();
         fieldValues.put(VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID, newVendor.getVendorHeaderGeneratedIdentifier());
         // Find all the addresses for this vendor and its divisions:
-        Collection<VendorAddress> vendorDivisionAddresses = getBusinessObjectService()
+        final Collection<VendorAddress> vendorDivisionAddresses = getBusinessObjectService()
                 .findMatchingOrderBy(VendorAddress.class, fieldValues,
                         VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, true);
 
         // This set stores the vendorDetailedAssignedIds for the vendor divisions which is
         // basically the division numbers 0, 1, 2, ...
-        HashSet<Integer> vendorDetailedIds = new HashSet<>();
+        final HashSet<Integer> vendorDetailedIds = new HashSet<>();
         // This set stores the vendor division numbers of the ones which have one address of the desired type
-        HashSet<Integer> vendorDivisionsIdsWithDesiredAddressType = new HashSet<>();
+        final HashSet<Integer> vendorDivisionsIdsWithDesiredAddressType = new HashSet<>();
 
-        for (VendorAddress vendorDivisionAddress : vendorDivisionAddresses) {
+        for (final VendorAddress vendorDivisionAddress : vendorDivisionAddresses) {
             // We need to exclude the first one Since we already checked for this in valid AddressType above.
             if (vendorDivisionAddress.getVendorDetailAssignedIdentifier() != 0) {
                 vendorDetailedIds.add(vendorDivisionAddress.getVendorDetailAssignedIdentifier());
@@ -870,7 +870,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
         // If the number of divisions with the desired address type is less than the number of divisions for his vendor
         if (vendorDivisionsIdsWithDesiredAddressType.size() < vendorDetailedIds.size()) {
-            Iterator itr = vendorDetailedIds.iterator();
+            final Iterator itr = vendorDetailedIds.iterator();
             Integer value;
             String vendorId;
 
@@ -878,7 +878,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 value = (Integer) itr.next();
                 if (!vendorDivisionsIdsWithDesiredAddressType.contains(value)) {
                     vendorId = newVendor.getVendorHeaderGeneratedIdentifier().toString() + '-' + value.toString();
-                    String[] parameters = new String[]{vendorId, vendorTypeCode, vendorAddressTypeRequiredCode};
+                    final String[] parameters = new String[]{vendorId, vendorTypeCode, vendorAddressTypeRequiredCode};
 
                     //divisions without the desired address type should only be an warning
                     GlobalVariables.getMessageMap().putWarningWithoutFullErrorPath(MAINTAINABLE_ERROR_PREFIX +
@@ -898,7 +898,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param address VendorAddress which is being validated
      * @return boolean false if the country is United States and there is no state or zip code
      */
-    protected boolean checkAddressCountryEmptyStateZip(VendorAddress address) {
+    protected boolean checkAddressCountryEmptyStateZip(final VendorAddress address) {
         return getPostalCodeValidationService().validateAddress(address.getVendorCountryCode(),
                 address.getVendorStateCode(), address.getVendorZipCode(), VendorPropertyConstants.VENDOR_ADDRESS_STATE,
                 VendorPropertyConstants.VENDOR_ADDRESS_ZIP);
@@ -910,7 +910,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param address VendorAddress being validated
      * @return boolean false if the vendor address is the default and it is not active
      */
-    protected boolean checkInactiveAllowed(VendorAddress address) {
+    protected boolean checkInactiveAllowed(final VendorAddress address) {
         if (address.isActive() || !address.isVendorDefaultAddressIndicator()) {
             return true;
         } else {
@@ -926,8 +926,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorAddress VendorAddress which is being validated
      * @return boolean false or true
      */
-    protected boolean findAllowDefaultAddressIndicatorHelper(VendorAddress vendorAddress) {
-        AddressType addressType = vendorAddress.getVendorAddressType();
+    protected boolean findAllowDefaultAddressIndicatorHelper(final VendorAddress vendorAddress) {
+        final AddressType addressType = vendorAddress.getVendorAddressType();
         if (ObjectUtils.isNull(addressType)) {
             return false;
         }
@@ -945,38 +945,39 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorAddress       The VendorAddress which we are adding a default address to it
      * @return boolean false or true
      */
-    protected boolean checkDefaultAddressCampus(VendorDetail vendorDetail, VendorDefaultAddress addedDefaultAddress,
-            VendorAddress vendorAddress) {
+    protected boolean checkDefaultAddressCampus(
+            final VendorDetail vendorDetail, final VendorDefaultAddress addedDefaultAddress,
+            final VendorAddress vendorAddress) {
         if (ObjectUtils.isNull(vendorAddress)) {
             return false;
         }
 
-        int j = vendorDetail.getVendorAddresses().indexOf(vendorAddress);
-        String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + j + "]";
+        final int j = vendorDetail.getVendorAddresses().indexOf(vendorAddress);
+        final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + j + "]";
         GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 
         // Retrieving the Default Address Indicator for this Address Type:
-        boolean allowDefaultAddressIndicator = findAllowDefaultAddressIndicatorHelper(vendorAddress);
-        String addedAddressCampusCode = addedDefaultAddress.getVendorCampusCode();
-        String addedAddressTypeCode = vendorAddress.getVendorAddressTypeCode();
+        final boolean allowDefaultAddressIndicator = findAllowDefaultAddressIndicatorHelper(vendorAddress);
+        final String addedAddressCampusCode = addedDefaultAddress.getVendorCampusCode();
+        final String addedAddressTypeCode = vendorAddress.getVendorAddressTypeCode();
 
         // if the selected address type does not allow defaults, then the user should not be allowed to
         // select the default indicator or add any campuses to the address
         if (!allowDefaultAddressIndicator) {
-            String[] parameters = new String[]{addedAddressTypeCode};
+            final String[] parameters = new String[]{addedAddressTypeCode};
             GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS +
                     "[" + 0 + "]." + VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_CAMPUS,
                     VendorKeyConstants.ERROR_ADDRESS_DEFAULT_CAMPUS_NOT_ALLOWED, parameters);
             return false;
         }
 
-        List<VendorDefaultAddress> vendorDefaultAddresses = vendorAddress.getVendorDefaultAddresses();
+        final List<VendorDefaultAddress> vendorDefaultAddresses = vendorAddress.getVendorDefaultAddresses();
         for (int i = 0; i < vendorDefaultAddresses.size(); i++) {
-            VendorDefaultAddress vendorDefaultAddress = vendorDefaultAddresses.get(i);
+            final VendorDefaultAddress vendorDefaultAddress = vendorDefaultAddresses.get(i);
             if (vendorDefaultAddress.getVendorCampusCode().equalsIgnoreCase(addedAddressCampusCode)) {
                 GlobalVariables.getMessageMap().clearErrorPath();
                 GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-                String[] parameters = new String[]{addedAddressCampusCode, addedAddressTypeCode};
+                final String[] parameters = new String[]{addedAddressCampusCode, addedAddressTypeCode};
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS +
                         "[" + i + "]." + VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_CAMPUS,
                         VendorKeyConstants.ERROR_ADDRESS_DEFAULT_CAMPUS, parameters);
@@ -995,8 +996,8 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vendorDetail VendorDetail document
      * @return boolean false or true
      */
-    protected boolean validateDefaultAddressCampus(VendorDetail vendorDetail) {
-        List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses();
+    protected boolean validateDefaultAddressCampus(final VendorDetail vendorDetail) {
+        final List<VendorAddress> vendorAddresses = vendorDetail.getVendorAddresses();
         String addressTypeCode;
         String addressTypeDesc;
         String campusCode;
@@ -1004,22 +1005,22 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         boolean previousValue = false;
 
         // This is a HashMap to store the default Address Type Codes and their associated default Indicator
-        HashMap<String, Boolean> addressTypeCodeDefaultIndicator = new HashMap<>();
+        final HashMap<String, Boolean> addressTypeCodeDefaultIndicator = new HashMap<>();
 
         // This is a HashMap to store Address Type Codes and Address Campus Codes for Default Addresses
-        HashMap<String, String> addressTypeDefaultCampus = new HashMap<>();
+        final HashMap<String, String> addressTypeDefaultCampus = new HashMap<>();
 
         // This is a HashSet for storing only the Address Type Codes which have at least one default Indicator set to
         // true
-        HashSet<String> addressTypesHavingDefaultTrue = new HashSet<>();
+        final HashSet<String> addressTypesHavingDefaultTrue = new HashSet<>();
 
         int i = 0;
-        for (VendorAddress address : vendorAddresses) {
+        for (final VendorAddress address : vendorAddresses) {
             addressTypeCode = address.getVendorAddressTypeCode();
             addressTypeDesc = address.getVendorAddressType().getVendorAddressTypeDescription();
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
+            final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_ADDRESS + "[" + i + "]";
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
-            String[] parameters = new String[]{addressTypeCode};
+            final String[] parameters = new String[]{addressTypeCode};
 
             // If "allow default indicator" is set to true/yes for address type, one address must have the default
             // indicator set (no more, no less).
@@ -1052,18 +1053,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
                 }
             }
 
-            List<VendorDefaultAddress> vendorDefaultAddresses = address.getVendorDefaultAddresses();
+            final List<VendorDefaultAddress> vendorDefaultAddresses = address.getVendorDefaultAddresses();
 
             // If "allow default indicator" is set to true/yes for address type, a campus can only be set on one of
             // each type of Address.
             // For example, Bloomington can not be included in the campus list for two PO type addresses.
             // Each campus can only have one default address.
             int j = 0;
-            for (VendorDefaultAddress defaultAddress : vendorDefaultAddresses) {
+            for (final VendorDefaultAddress defaultAddress : vendorDefaultAddresses) {
                 campusCode = addressTypeDefaultCampus.put(addressTypeCode, defaultAddress.getVendorCampusCode());
                 if (StringUtils.isNotBlank(campusCode)
                         && campusCode.equalsIgnoreCase(defaultAddress.getVendorCampusCode())) {
-                    String[] newParameters = new String[]{defaultAddress.getVendorCampusCode(), addressTypeCode};
+                    final String[] newParameters = new String[]{defaultAddress.getVendorCampusCode(), addressTypeCode};
                     GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS +
                             "[" + j + "]." + VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_CAMPUS,
                             VendorKeyConstants.ERROR_ADDRESS_DEFAULT_CAMPUS, newParameters);
@@ -1078,14 +1079,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         // If "allow default indicator" is set to true/yes for address type, one address must have the default
         // indicator set to true
         if (!addressTypeCodeDefaultIndicator.isEmpty()) {
-            Set<String> addressTypes = addressTypeCodeDefaultIndicator.keySet();
-            for (String addressType : addressTypes) {
+            final Set<String> addressTypes = addressTypeCodeDefaultIndicator.keySet();
+            for (final String addressType : addressTypes) {
                 if (!addressTypesHavingDefaultTrue.contains(addressType)) {
                     int addressIndex = 0;
-                    for (VendorAddress address : vendorAddresses) {
-                        String[] parameters = new String[]{address.getVendorAddressType().getVendorAddressTypeDescription()};
-                        String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + addressIndex + "]." +
-                                VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_INDICATOR;
+                    for (final VendorAddress address : vendorAddresses) {
+                        final String[] parameters = new String[]{address.getVendorAddressType().getVendorAddressTypeDescription()};
+                        final String propertyName = VendorPropertyConstants.VENDOR_ADDRESS + "[" + addressIndex + "]." +
+                                                    VendorPropertyConstants.VENDOR_DEFAULT_ADDRESS_INDICATOR;
                         if (address.getVendorAddressType().getVendorAddressTypeCode().equalsIgnoreCase(addressType)) {
                             putFieldError(propertyName, VendorKeyConstants.ERROR_ADDRESS_DEFAULT_INDICATOR, parameters);
                             break;
@@ -1108,22 +1109,22 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     private boolean processContactValidation() {
         boolean valid = true;
         int i = 0;
-        for (VendorContact contact : newVendor.getVendorContacts()) {
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTACT + "[" + i + "]";
+        for (final VendorContact contact : newVendor.getVendorContacts()) {
+            final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTACT + "[" + i + "]";
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 
-            this.getDictionaryValidationService().validateBusinessObject(contact);
+            getDictionaryValidationService().validateBusinessObject(contact);
             // ==== CU Customization ====
             int j = 0;
-            for (VendorContactPhoneNumber contactPhoneNumber : contact.getVendorContactPhoneNumbers()) {
-                String errorSubPath = VendorPropertyConstants.VENDOR_CONTACT_PHONE_NUMBER + "[" + j + "]";
+            for (final VendorContactPhoneNumber contactPhoneNumber : contact.getVendorContactPhoneNumbers()) {
+                final String errorSubPath = VendorPropertyConstants.VENDOR_CONTACT_PHONE_NUMBER + "[" + j + "]";
                 GlobalVariables.getMessageMap().addToErrorPath(errorSubPath);
-                this.getDictionaryValidationService().validateBusinessObject(contactPhoneNumber);
+                getDictionaryValidationService().validateBusinessObject(contactPhoneNumber);
                 GlobalVariables.getMessageMap().removeFromErrorPath(errorSubPath);
                 j++;
             }
             // ==== End CU Customization Section ====
-            Map<String, AutoPopulatingList<ErrorMessage>> errors = GlobalVariables.getMessageMap().getErrorMessages();
+            final Map<String, AutoPopulatingList<ErrorMessage>> errors = GlobalVariables.getMessageMap().getErrorMessages();
             if (errors != null && !errors.isEmpty()) {
                 valid = false;
             }
@@ -1139,14 +1140,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param customerNumber VendorCustomerNumber
      * @return boolean false or true
      */
-    protected boolean validateVendorCustomerNumber(VendorCustomerNumber customerNumber) {
+    protected boolean validateVendorCustomerNumber(final VendorCustomerNumber customerNumber) {
         boolean valid = true;
 
         // The chart and org must exist in the database.
-        String chartOfAccountsCode = customerNumber.getChartOfAccountsCode();
-        String orgCode = customerNumber.getVendorOrganizationCode();
+        final String chartOfAccountsCode = customerNumber.getChartOfAccountsCode();
+        final String orgCode = customerNumber.getVendorOrganizationCode();
         if (StringUtils.isNotBlank(chartOfAccountsCode) && StringUtils.isNotBlank(orgCode)) {
-            Map<String, String> chartOrgMap = new HashMap<>();
+            final Map<String, String> chartOrgMap = new HashMap<>();
             chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
             if (getBusinessObjectService().countMatching(Chart.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(
@@ -1172,16 +1173,16 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param document MaintenanceDocument
      * @return boolean false or true
      */
-    private boolean processContractValidation(MaintenanceDocument document) {
+    private boolean processContractValidation(final MaintenanceDocument document) {
         boolean valid = true;
-        List<VendorContract> contracts = newVendor.getVendorContracts();
+        final List<VendorContract> contracts = newVendor.getVendorContracts();
         if (ObjectUtils.isNull(contracts)) {
             return true;
         }
 
         // If the vendorContractAllowedIndicator is false, it cannot have vendor contracts, return false;
         if (contracts.size() > 0 && !newVendor.getVendorHeader().getVendorType().isVendorContractAllowedIndicator()) {
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTRACT + "[0]";
+            final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTRACT + "[0]";
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
             GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_NAME,
                     VendorKeyConstants.ERROR_VENDOR_CONTRACT_NOT_ALLOWED);
@@ -1190,17 +1191,17 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         for (int i = 0; i < contracts.size(); i++) {
-            VendorContract contract = contracts.get(i);
+            final VendorContract contract = contracts.get(i);
 
-            String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTRACT + "[" + i + "]";
+            final String errorPath = MAINTAINABLE_ERROR_PREFIX + VendorPropertyConstants.VENDOR_CONTRACT + "[" + i + "]";
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
 
             valid = validateVendorContractPOLimitAndExcludeFlagCombination(contract);
             valid &= validateVendorContractBeginEndDates(contract);
             valid &= processContractB2BValidation(contract, i);
             if (contract.getOrganizationAutomaticPurchaseOrderLimit() != null) {
-                BusinessObjectEntry entry = boDictionaryService.getBusinessObjectEntry(VendorContract.class.getName());
-                AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
+                final BusinessObjectEntry entry = boDictionaryService.getBusinessObjectEntry(VendorContract.class.getName());
+                final AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
                         VendorPropertyConstants.VENDOR_CONTRACT_DEFAULT_APO_LIMIT);
                 valid &= validateAPOAmount(contract.getOrganizationAutomaticPurchaseOrderLimit(), attributeDefinition);
             }
@@ -1218,18 +1219,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param attributeDefinition
      * @return
      */
-    protected boolean validateAPOAmount(KualiDecimal apoAmount, AttributeDefinition attributeDefinition) {
+    protected boolean validateAPOAmount(final KualiDecimal apoAmount, final AttributeDefinition attributeDefinition) {
         boolean valid = true;
 
         if (ObjectUtils.isNotNull(attributeDefinition)) {
             final ValidationPattern validationPattern = attributeDefinition.getValidationPattern();
 
             if (ObjectUtils.isNotNull(validationPattern) && validationPattern instanceof FixedPointValidationPattern) {
-                FixedPointValidationPattern fixedPointPattern = (FixedPointValidationPattern) validationPattern;
+                final FixedPointValidationPattern fixedPointPattern = (FixedPointValidationPattern) validationPattern;
                 if (!fixedPointPattern.matches(apoAmount.toString())) {
                     valid = false;
-                    String scale = Integer.toString(fixedPointPattern.getScale());
-                    String precision = Integer.toString(fixedPointPattern.getPrecision());
+                    final String scale = Integer.toString(fixedPointPattern.getScale());
+                    final String precision = Integer.toString(fixedPointPattern.getPrecision());
                     GlobalVariables.getMessageMap().putError(attributeDefinition.getName(),
                             attributeDefinition.getValidationPattern().getValidationErrorMessageKey(),
                             attributeDefinition.getLabel(), precision, scale);
@@ -1251,14 +1252,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param contract VendorContract
      * @return boolean true if the proper combination of Exclude Indicator and APO Amount is present, otherwise false.
      */
-    protected boolean validateVendorContractPOLimitAndExcludeFlagCombination(VendorContract contract) {
+    protected boolean validateVendorContractPOLimitAndExcludeFlagCombination(final VendorContract contract) {
         boolean valid = true;
         boolean NoOrgHasApoLimit = true;
 
-        List<VendorContractOrganization> organizations = contract.getVendorContractOrganizations();
+        final List<VendorContractOrganization> organizations = contract.getVendorContractOrganizations();
         if (ObjectUtils.isNotNull(organizations)) {
             int organizationCounter = 0;
-            for (VendorContractOrganization organization : organizations) {
+            for (final VendorContractOrganization organization : organizations) {
                 if (ObjectUtils.isNotNull(organization.getVendorContractPurchaseOrderLimitAmount())) {
                     NoOrgHasApoLimit = false;
                 }
@@ -1284,7 +1285,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @return boolean true if the beginning date is before the end date, false if only one date is entered or the
      *         beginning date is after the end date.
      */
-    protected boolean validateVendorContractBeginEndDates(VendorContract contract) {
+    protected boolean validateVendorContractBeginEndDates(final VendorContract contract) {
         boolean valid = true;
 
         if (ObjectUtils.isNotNull(contract.getVendorContractBeginningDate())
@@ -1320,14 +1321,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param organization VendorContractOrganization
      * @return boolean true if these three rules are passed, otherwise false.
      */
-    protected boolean validateVendorContractOrganization(VendorContractOrganization organization, int counter) {
+    protected boolean validateVendorContractOrganization(final VendorContractOrganization organization, final int counter) {
         boolean valid = true;
-        List<String> previousErrorPaths = GlobalVariables.getMessageMap().getErrorPath();
-        String errorPath = VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION + "[" + counter + "]";
+        final List<String> previousErrorPaths = GlobalVariables.getMessageMap().getErrorPath();
+        final String errorPath = VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION + "[" + counter + "]";
         boolean shouldAddToErrorPath = true;
         // if the error path already contained something like "add." then we don't need to add anything to the error
         // path anymore.
-        for (String previous : previousErrorPaths) {
+        for (final String previous : previousErrorPaths) {
             if (previous.startsWith(KRADConstants.ADD_PREFIX)) {
                 shouldAddToErrorPath = false;
                 break;
@@ -1337,7 +1338,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             GlobalVariables.getMessageMap().addToErrorPath(errorPath);
         }
 
-        boolean isExcluded = organization.isVendorContractExcludeIndicator();
+        final boolean isExcluded = organization.isVendorContractExcludeIndicator();
         if (isExcluded) {
             if (ObjectUtils.isNotNull(organization.getVendorContractPurchaseOrderLimitAmount())) {
                 // Rule #2 in the above java doc has been violated.
@@ -1356,10 +1357,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         // The chart and org must exist in the database.
-        String chartOfAccountsCode = organization.getChartOfAccountsCode();
-        String orgCode = organization.getOrganizationCode();
+        final String chartOfAccountsCode = organization.getChartOfAccountsCode();
+        final String orgCode = organization.getOrganizationCode();
         if (StringUtils.isNotBlank(chartOfAccountsCode) && StringUtils.isNotBlank(orgCode)) {
-            Map<String, String> chartOrgMap = new HashMap<>();
+            final Map<String, String> chartOrgMap = new HashMap<>();
             chartOrgMap.put("chartOfAccountsCode", chartOfAccountsCode);
             if (getBusinessObjectService().countMatching(Chart.class, chartOrgMap) < 1) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.VENDOR_CONTRACT_CHART_OF_ACCOUNTS_CODE,
@@ -1375,9 +1376,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         }
 
         if (shouldAddToErrorPath && organization.getVendorContractPurchaseOrderLimitAmount() != null) {
-            BusinessObjectEntry entry = boDictionaryService.getBusinessObjectEntry(
+            final BusinessObjectEntry entry = boDictionaryService.getBusinessObjectEntry(
                     VendorContractOrganization.class.getName());
-            AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
+            final AttributeDefinition attributeDefinition = entry.getAttributeDefinition(
                     VendorPropertyConstants.VENDOR_CONTRACT_ORGANIZATION_APO_LIMIT);
             valid &= validateAPOAmount(organization.getVendorContractPurchaseOrderLimitAmount(), attributeDefinition);
         }
@@ -1395,16 +1396,16 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      *
      * @return boolean false or true
      */
-    private boolean processContractB2BValidation(VendorContract contract, int contractPos) {
+    private boolean processContractB2BValidation(final VendorContract contract, final int contractPos) {
         boolean valid = true;
         //list of contracts already associated with vendor
-        List<VendorContract> contracts = newVendor.getVendorContracts();
+        final List<VendorContract> contracts = newVendor.getVendorContracts();
         if (ObjectUtils.isNull(contracts)) {
             return valid;
         }
         //find all b2b contracts for comparison
         if (contractPos == -1 && contract.getVendorB2bIndicator()) {
-            for (VendorContract vndrContract : contracts) {
+            for (final VendorContract vndrContract : contracts) {
                 if (vndrContract.getVendorB2bIndicator()) {
                     //check for duplicate campus; vendor is implicitly the same
                     if (contract.getVendorCampusCode().equals(vndrContract.getVendorCampusCode())) {
@@ -1417,14 +1418,14 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
             }
         } else if (contract.getVendorB2bIndicator()) {
             for (int i = 0; i < contracts.size(); i++) {
-                VendorContract vndrContract = contracts.get(i);
+                final VendorContract vndrContract = contracts.get(i);
                 if (vndrContract.getVendorB2bIndicator()) {
                     //make sure we're not checking contracts against themselves
                     if (i != contractPos) {
                         //check for duplicate campus; vendor is implicitly the same
                         if (contract.getVendorCampusCode().equals(vndrContract.getVendorCampusCode())) {
                             valid = false;
-                            String[] errorArray = new String[]{contract.getVendorContractName(),
+                            final String[] errorArray = new String[]{contract.getVendorContractName(),
                                     contract.getVendorCampusCode()};
                             GlobalVariables.getMessageMap().putError(
                                     VendorPropertyConstants.VENDOR_CONTRACT_B2B_INDICATOR,
@@ -1442,43 +1443,44 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * collections, i.e. the ones next to the "Add" button
      */
     @Override
-    public boolean processCustomAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
-            PersistableBusinessObject bo) {
+    public boolean processCustomAddCollectionLineBusinessRules(
+            final MaintenanceDocument document, final String collectionName,
+            final PersistableBusinessObject bo) {
         boolean success = true;
 
         // this incoming bo needs to be refreshed because it doesn't have its subobjects setup
         bo.refreshNonUpdateableReferences();
 
         if (bo instanceof VendorAddress) {
-            VendorAddress address = (VendorAddress) bo;
+            final VendorAddress address = (VendorAddress) bo;
             success = checkAddressCountryEmptyStateZip(address);
         }
         if (bo instanceof VendorContract) {
-            VendorContract contract = (VendorContract) bo;
+            final VendorContract contract = (VendorContract) bo;
             success &= validateVendorContractBeginEndDates(contract);
             success &= processContractB2BValidation(contract, -1);
         }
         if (bo instanceof VendorContractOrganization) {
-            VendorContractOrganization contractOrg = (VendorContractOrganization) bo;
+            final VendorContractOrganization contractOrg = (VendorContractOrganization) bo;
             success &= validateVendorContractOrganization(contractOrg, 0);
         }
         if (bo instanceof VendorCustomerNumber) {
-            VendorCustomerNumber customerNumber = (VendorCustomerNumber) bo;
+            final VendorCustomerNumber customerNumber = (VendorCustomerNumber) bo;
             success &= validateVendorCustomerNumber(customerNumber);
         }
         if (bo instanceof VendorDefaultAddress) {
-            VendorDefaultAddress defaultAddress = (VendorDefaultAddress) bo;
-            String parentName = StringUtils.substringBeforeLast(collectionName, ".");
-            VendorAddress parent = (VendorAddress) ObjectUtils.getPropertyValue(this.getNewBo(), parentName);
-            VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
+            final VendorDefaultAddress defaultAddress = (VendorDefaultAddress) bo;
+            final String parentName = StringUtils.substringBeforeLast(collectionName, ".");
+            final VendorAddress parent = (VendorAddress) ObjectUtils.getPropertyValue(getNewBo(), parentName);
+            final VendorDetail vendorDetail = (VendorDetail) document.getNewMaintainableObject().getBusinessObject();
             success &= checkDefaultAddressCampus(vendorDetail, defaultAddress, parent);
         }
 
         if (bo instanceof VendorCommodityCode) {
-            VendorCommodityCode commodityCode = (VendorCommodityCode) bo;
-            String purchasingCommodityCode = commodityCode.getPurchasingCommodityCode();
-            boolean found = ObjectUtils.isNotNull(commodityCode) && StringUtils.isNotBlank(purchasingCommodityCode)
-                    && checkVendorCommodityCode(commodityCode);
+            final VendorCommodityCode commodityCode = (VendorCommodityCode) bo;
+            final String purchasingCommodityCode = commodityCode.getPurchasingCommodityCode();
+            final boolean found = ObjectUtils.isNotNull(commodityCode) && StringUtils.isNotBlank(purchasingCommodityCode)
+                                  && checkVendorCommodityCode(commodityCode);
 
             if (!found) {
                 GlobalVariables.getMessageMap().putError(VendorPropertyConstants.PURCHASING_COMMODITY_CODE,
@@ -1498,11 +1500,11 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vdDocument VendorDetail
      * @return boolean false or true
      */
-    private boolean validateVendorWithholdingTaxDates(VendorDetail vdDocument) {
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+    private boolean validateVendorWithholdingTaxDates(final VendorDetail vdDocument) {
+        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
 
-        Date beginDate = vdDocument.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
-        Date endDate = vdDocument.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
+        final Date beginDate = vdDocument.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
+        final Date endDate = vdDocument.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
         if (ObjectUtils.isNotNull(beginDate) && ObjectUtils.isNotNull(endDate)) {
             if (dateTimeService.dateDiff(beginDate, endDate, false) <= 0) {
                 putFieldError(VendorPropertyConstants.VENDOR_FEDERAL_WITHHOLDING_TAX_BEGINNING_DATE,
@@ -1514,10 +1516,10 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
 
     }
 
-    protected boolean validateGIINCode(VendorDetail vDetail) {
+    protected boolean validateGIINCode(final VendorDetail vDetail) {
         if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorGIIN())) {
-            String giin = vDetail.getVendorHeader().getVendorGIIN();
-            String giinParm = SpringContext.getBean(ParameterService.class)
+            final String giin = vDetail.getVendorHeader().getVendorGIIN();
+            final String giinParm = SpringContext.getBean(ParameterService.class)
                     .getParameterValueAsString(VendorDetail.class, VendorParameterConstants.GIIN_NUMBER_FORMAT);
             if (!giin.matches(giinParm)) {
                 putFieldError(VendorPropertyConstants.VENDOR_GIIN_CODE, VendorKeyConstants.ERROR_VENDOR_GIIN_FORMAT_ERROR);
@@ -1528,17 +1530,17 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return true;
     }
 
-    protected boolean validateW8SignedDate(VendorDetail vDetail) {
+    protected boolean validateW8SignedDate(final VendorDetail vDetail) {
         if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW8BenReceivedIndicator())
                 && vDetail.getVendorHeader().getVendorW8BenReceivedIndicator()) {
             if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(VendorDetail.class,
                     VendorParameterConstants.W8_DATA_REQUIRED_IND)) {
 
-                DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-                Date today = dateTimeService.getCurrentDate();
+                final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+                final Date today = dateTimeService.getCurrentDate();
 
                 if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW8SignedDate())) {
-                    Date signedDate = vDetail.getVendorHeader().getVendorW8SignedDate();
+                    final Date signedDate = vDetail.getVendorHeader().getVendorW8SignedDate();
                     if (today.compareTo(signedDate) <= 0) {
                         putFieldError(VendorPropertyConstants.VENDOR_W8SIGNED_DATE,
                                 VendorKeyConstants.ERROR_VENDOR_W8ANDW9_SIGNED_AFTER_TODAY);
@@ -1554,17 +1556,17 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return true;
     }
 
-    protected boolean validateW9SignedDate(VendorDetail vDetail) {
+    protected boolean validateW9SignedDate(final VendorDetail vDetail) {
         if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW9ReceivedIndicator())
                 && vDetail.getVendorHeader().getVendorW9ReceivedIndicator()) {
             if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(VendorDetail.class,
                     VendorParameterConstants.W9_SIGNED_DATE_REQUIRED)
                     && ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW9ReceivedIndicator())) {
-                DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-                Date today = dateTimeService.getCurrentDate();
+                final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+                final Date today = dateTimeService.getCurrentDate();
 
                 if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW9SignedDate())) {
-                    Date signedDate = vDetail.getVendorHeader().getVendorW9SignedDate();
+                    final Date signedDate = vDetail.getVendorHeader().getVendorW9SignedDate();
                     if (today.compareTo(signedDate) <= 0) {
                         putFieldError(VendorPropertyConstants.VENDOR_W9SIGNED_DATE,
                                 VendorKeyConstants.ERROR_VENDOR_W8ANDW9_SIGNED_AFTER_TODAY);
@@ -1580,12 +1582,12 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return true;
     }
 
-    protected boolean validateDOBDate(VendorDetail vDetail) {
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-        Date today = dateTimeService.getCurrentDate();
+    protected boolean validateDOBDate(final VendorDetail vDetail) {
+        final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+        final Date today = dateTimeService.getCurrentDate();
 
         if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorDOB())) {
-            Date dobDate = vDetail.getVendorHeader().getVendorDOB();
+            final Date dobDate = vDetail.getVendorHeader().getVendorDOB();
             if (ObjectUtils.isNotNull(dobDate) && today.compareTo(dobDate) <= 0) {
                 putFieldError(VendorPropertyConstants.VENDOR_DOB,
                         VendorKeyConstants.ERROR_VENDOR_W8ANDW9_SIGNED_AFTER_TODAY);
@@ -1595,7 +1597,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return true;
     }
 
-    protected boolean validateCorpCitizen(VendorDetail vDetail) {
+    protected boolean validateCorpCitizen(final VendorDetail vDetail) {
         if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(VendorDetail.class,
                 VendorParameterConstants.W8_DATA_REQUIRED_IND)) {
             if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW8BenReceivedIndicator())
@@ -1609,18 +1611,18 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return true;
     }
 
-    protected boolean validateW8Type(VendorDetail vDetail) {
+    protected boolean validateW8Type(final VendorDetail vDetail) {
         boolean valid = true;
         if (SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(VendorDetail.class,
                 VendorParameterConstants.W8_DATA_REQUIRED_IND)) {
             if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorOwnershipCode())
                     && ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW8TypeCode())) {
                 valid = false;
-                Map<String, String> fieldValues = new HashMap<>();
+                final Map<String, String> fieldValues = new HashMap<>();
                 fieldValues.put("vendorOwnershipCode", vDetail.getVendorHeader().getVendorOwnershipCode());
-                Collection<W8TypeOwnershipType> vendorW8OwnershipTypes = getBusinessObjectService()
+                final Collection<W8TypeOwnershipType> vendorW8OwnershipTypes = getBusinessObjectService()
                         .findMatching(W8TypeOwnershipType.class, fieldValues);
-                for (W8TypeOwnershipType w8TypeOwnership : vendorW8OwnershipTypes) {
+                for (final W8TypeOwnershipType w8TypeOwnership : vendorW8OwnershipTypes) {
                     if (w8TypeOwnership.getW8TypeCode().equals(vDetail.getVendorHeader().getVendorW8TypeCode())) {
                         valid = true;
                         break;
@@ -1635,7 +1637,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return valid;
     }
 
-    protected boolean validateW8Received(VendorDetail vDetail) {
+    protected boolean validateW8Received(final VendorDetail vDetail) {
         boolean valid = true;
 
         if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW8BenReceivedIndicator())
@@ -1661,7 +1663,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return valid;
     }
 
-    protected boolean validateW9Received(VendorDetail vDetail) {
+    protected boolean validateW9Received(final VendorDetail vDetail) {
         boolean valid = true;
 
         if (ObjectUtils.isNotNull(vDetail.getVendorHeader().getVendorW9ReceivedIndicator())
@@ -1680,7 +1682,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * @param vdDocument VendorDetail
      * @return boolean false or true
      */
-    private boolean validateVendorW8BenOrW9ReceivedIndicator(VendorDetail vdDocument) {
+    private boolean validateVendorW8BenOrW9ReceivedIndicator(final VendorDetail vdDocument) {
         if (ObjectUtils.isNotNull(vdDocument.getVendorHeader().getVendorW9ReceivedIndicator())
                 && ObjectUtils.isNotNull(vdDocument.getVendorHeader().getVendorW8BenReceivedIndicator())
                 && vdDocument.getVendorHeader().getVendorW9ReceivedIndicator()
@@ -1697,14 +1699,15 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
      * the user tries to add a vendor contract when the vendor type of the vendor does not allow contract.
      */
     @Override
-    public boolean processAddCollectionLineBusinessRules(MaintenanceDocument document, String collectionName,
-            PersistableBusinessObject bo) {
+    public boolean processAddCollectionLineBusinessRules(
+            final MaintenanceDocument document, final String collectionName,
+            final PersistableBusinessObject bo) {
         if (collectionName.equals(VendorPropertyConstants.VENDOR_CONTRACT)) {
-            VendorDetail vendorDetail = (VendorDetail) document.getDocumentBusinessObject();
+            final VendorDetail vendorDetail = (VendorDetail) document.getDocumentBusinessObject();
             vendorDetail.getVendorHeader().refreshReferenceObject("vendorType");
-            VendorType vendorType = vendorDetail.getVendorHeader().getVendorType();
+            final VendorType vendorType = vendorDetail.getVendorHeader().getVendorType();
             if (!vendorType.isVendorContractAllowedIndicator()) {
-                String propertyName = "add." + collectionName + "." + VendorPropertyConstants.VENDOR_CONTRACT_NAME;
+                final String propertyName = "add." + collectionName + "." + VendorPropertyConstants.VENDOR_CONTRACT_NAME;
                 putFieldError(propertyName, VendorKeyConstants.ERROR_VENDOR_CONTRACT_NOT_ALLOWED);
                 return false;
             }
@@ -1712,9 +1715,9 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
         return super.processAddCollectionLineBusinessRules(document, collectionName, bo);
     }
 
-    protected boolean checkVendorCommodityCode(VendorCommodityCode commodityCode) {
-        String purchasingCommodityCode = commodityCode.getPurchasingCommodityCode();
-        CommodityCodeService commodityCodeService = SpringContext.getBean(CommodityCodeService.class);
+    protected boolean checkVendorCommodityCode(final VendorCommodityCode commodityCode) {
+        final String purchasingCommodityCode = commodityCode.getPurchasingCommodityCode();
+        final CommodityCodeService commodityCodeService = SpringContext.getBean(CommodityCodeService.class);
         return ObjectUtils.isNotNull(commodityCodeService.getByPrimaryId(purchasingCommodityCode));
     }
 
@@ -1726,7 +1729,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     }
 
     // Used by unit tests
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
@@ -1738,7 +1741,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     }
 
     // Used by unit tests
-    public void setPersistenceService(PersistenceService persistenceService) {
+    public void setPersistenceService(final PersistenceService persistenceService) {
         this.persistenceService = persistenceService;
     }
 
@@ -1751,7 +1754,7 @@ public class VendorRule extends MaintenanceDocumentRuleBase {
     }
 
     // Used by unit tests
-    public void setPostalCodeValidationService(PostalCodeValidationService postalCodeValidationService) {
+    public void setPostalCodeValidationService(final PostalCodeValidationService postalCodeValidationService) {
         this.postalCodeValidationService = postalCodeValidationService;
     }
 }

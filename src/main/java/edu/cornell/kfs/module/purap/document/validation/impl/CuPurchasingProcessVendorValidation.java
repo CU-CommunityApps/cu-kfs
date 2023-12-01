@@ -45,10 +45,10 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
     private FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService;
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         boolean valid = true;
-        PurchasingDocument purDocument = (PurchasingDocument) event.getDocument();
-        MessageMap errorMap = GlobalVariables.getMessageMap();
+        final PurchasingDocument purDocument = (PurchasingDocument) event.getDocument();
+        final MessageMap errorMap = GlobalVariables.getMessageMap();
         errorMap.clearErrorPath();
         errorMap.addToErrorPath(PurapConstants.VENDOR_ERRORS);
 
@@ -67,12 +67,12 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
                }            
         }
 
-        VendorDetail vendorDetail = vendorService.getVendorDetail(purDocument.getVendorHeaderGeneratedIdentifier(),
+        final VendorDetail vendorDetail = vendorService.getVendorDetail(purDocument.getVendorHeaderGeneratedIdentifier(),
                 purDocument.getVendorDetailAssignedIdentifier());
         if (ObjectUtils.isNull(vendorDetail)) {
             return valid;
         }
-        VendorHeader vendorHeader = vendorDetail.getVendorHeader();
+        final VendorHeader vendorHeader = vendorDetail.getVendorHeader();
 
         // make sure that the vendor is not debarred
         if (vendorDetail.isVendorDebarred()) {
@@ -90,7 +90,7 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
         }
 
         // make sure that the vendor is of allowed type
-        List<String> allowedVendorTypes = new ArrayList<>(parameterService
+        final List<String> allowedVendorTypes = new ArrayList<>(parameterService
                 .getParameterValuesAsString(KfsParameterConstants.PURCHASING_DOCUMENT.class,
                         PurapRuleConstants.PURAP_VENDOR_TYPE_ALLOWED_ON_REQ_AND_PO));
         if (allowedVendorTypes != null && !allowedVendorTypes.isEmpty()){
@@ -117,7 +117,7 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 
     }
 
-    public void setPurchaseOrderTransmissionMethodDataRulesService(PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService) {
+    public void setPurchaseOrderTransmissionMethodDataRulesService(final PurchaseOrderTransmissionMethodDataRulesService purchaseOrderTransmissionMethodDataRulesService) {
         this.purchaseOrderTransmissionMethodDataRulesService = purchaseOrderTransmissionMethodDataRulesService;
     }
 	
@@ -127,11 +127,11 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 	 * Using Route nodes to determine when data validation should occur based on functional user's requirements.
 	 * 
 	 */
-    private boolean isDocumentInNodeWhereMopotDataValidationIsBypassed (PurchasingDocument purDocument) {
+    private boolean isDocumentInNodeWhereMopotDataValidationIsBypassed (final PurchasingDocument purDocument) {
     	boolean return_value = false;
-        WorkflowDocument workflowDoc = purDocument.getDocumentHeader().getWorkflowDocument();
+        final WorkflowDocument workflowDoc = purDocument.getDocumentHeader().getWorkflowDocument();
      //   List<String>  currentRouteLevels = Arrays.asList(Strings.split(purDocument.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames(), ","));
-        Set<String> currentRouteLevels = workflowDoc.getCurrentNodeNames();
+        final Set<String> currentRouteLevels = workflowDoc.getCurrentNodeNames();
         
         if (currentRouteLevels.contains(CUPurapConstants.MethodOfPOTransmissionByPassValidationNodes.ACCOUNT_NODE) && workflowDoc.isApprovalRequested() && !workflowDoc.getDocumentTypeName().equals(PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_AMENDMENT_DOCUMENT)) {
         	//added document not being a POA to conditional check due to FO being able to change data during account node approval on the POA and needed validation being bypassed 
@@ -182,16 +182,16 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 	 * 
 	 * 	For KFSPTS-1458: This method was changed extensively to address new business rules.
 	 */ 
-	public boolean validateDataForMethodOfPOTransmissionExistsOnVendorAddress(Document document){
+	public boolean validateDataForMethodOfPOTransmissionExistsOnVendorAddress(final Document document){
 		boolean dataExists = true;		
-		MessageMap errorMap = GlobalVariables.getMessageMap();
+		final MessageMap errorMap = GlobalVariables.getMessageMap();
 		errorMap.clearErrorPath(); 
 		errorMap.addToErrorPath(PurapConstants.VENDOR_ERRORS);
 		
 		//for REQ, PO, and POA verify that data exists on form for method of PO transmission value selected
 		if ((document instanceof RequisitionDocument) || (document instanceof PurchaseOrderDocument) || (document instanceof PurchaseOrderAmendmentDocument)) {
-			PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
-			String poTransMethodCode = purapDocument.getPurchaseOrderTransmissionMethodCode();
+			final PurchasingDocumentBase purapDocument = (PurchasingDocumentBase) document;
+			final String poTransMethodCode = purapDocument.getPurchaseOrderTransmissionMethodCode();
 			if (poTransMethodCode != null && !StringUtils.isBlank(poTransMethodCode) ) {
 				if (poTransMethodCode.equals(PurapConstants.POTransmissionMethods.FAX)) {
 					dataExists = purchaseOrderTransmissionMethodDataRulesService.isFaxNumberValid(purapDocument.getVendorFaxNumber());
@@ -223,21 +223,21 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
 
 
 	public void setFinancialSystemWorkflowHelperService(
-			FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService) {
+			final FinancialSystemWorkflowHelperService financialSystemWorkflowHelperService) {
 		this.financialSystemWorkflowHelperService = financialSystemWorkflowHelperService;
 	}
 
-	public void setVendorService(VendorService vendorService) {
+	public void setVendorService(final VendorService vendorService) {
 		super.setVendorService(vendorService);
 		this.vendorService = vendorService;
 	}
 
-	public void setParameterService(ParameterService parameterService) {
+	public void setParameterService(final ParameterService parameterService) {
 		super.setParameterService(parameterService);
 		this.parameterService = parameterService;
 	}
 
-	public void setPostalCodeValidationService(PostalCodeValidationService postalCodeValidationService) {
+	public void setPostalCodeValidationService(final PostalCodeValidationService postalCodeValidationService) {
 		super.setPostalCodeValidationService(postalCodeValidationService);
 		this.postalCodeValidationService = postalCodeValidationService;
 	}

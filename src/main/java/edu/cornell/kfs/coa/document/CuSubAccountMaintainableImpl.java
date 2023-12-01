@@ -44,7 +44,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @see org.kuali.kfs.sys.document.FinancialSystemMaintainable#answerSplitNodeQuestion(java.lang.String)
      */
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) {
+    public boolean answerSplitNodeQuestion(final String nodeName) {
         
         if (nodeName.equals(REQUIRES_CG_APPROVAL_NODE)) {
             return isCAndGReviewRequired();
@@ -80,14 +80,14 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @return true when code is CS for old or new value; otherwise return false
      */
     private boolean isSubAccountTypeCodeCostShare() {
-        String maintAction = super.getMaintenanceAction();   
+        final String maintAction = super.getMaintenanceAction();   
         boolean retval = false;
         
         if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)) 
             || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
                         
             //need "new" bo for data comparisons
-            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            final SubAccount subAccount = (SubAccount) super.getBusinessObject();
                         
             if (subAccount.getA21SubAccount().getSubAccountTypeCode().equals(KFSConstants.SubAccountType.COST_SHARE)) {             
                 //retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId is
@@ -98,9 +98,9 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         } else if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) {
             
             //need "new" bo for data comparisons
-            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            final SubAccount subAccount = (SubAccount) super.getBusinessObject();
             //need "old" bo for data comparisons
-            A21SubAccount oldSubAccount = this.getA21SubAccountService().getByPrimaryKey(
+            final A21SubAccount oldSubAccount = getA21SubAccountService().getByPrimaryKey(
                     subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber(), 
                             subAccount.getSubAccountNumber());
             
@@ -126,35 +126,35 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @return true when conditions are met; otherwise return false
      */
     private boolean hasCgIcrDataChanged() {
-        String maintAction = super.getMaintenanceAction();     
+        final String maintAction = super.getMaintenanceAction();     
         boolean retval = false;
         
         if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION))
              || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
                         
             //need "new" bo for data comparisons
-            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            final SubAccount subAccount = (SubAccount) super.getBusinessObject();
             
             if (subAccount.getA21SubAccount().getSubAccountTypeCode().equals(KFSConstants.SubAccountType.EXPENSE)) { 
                 //We need to route only when the ICR data the user is submitting does NOT match the ICR data on the account
                 
                 //"new" subAccount for data comparisons
-                A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+                final A21SubAccount newSubAccount = subAccount.getA21SubAccount();
                 
                 //"existing" data that would have pre-populated
-                Account account = this.getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber());
+                final Account account = getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber());
                 
                 if (ObjectUtils.isNotNull(account) && ObjectUtils.isNotNull(newSubAccount)) {
                                                 
                     //compare each field in question    
-                    boolean hasIcrIdChanged = !areFieldValuesTheSame(
+                    final boolean hasIcrIdChanged = !areFieldValuesTheSame(
                             account.getFinancialIcrSeriesIdentifier(), 
                             newSubAccount.getFinancialIcrSeriesIdentifier());
-                    boolean hasIcrTypeCodeChanged = !areFieldValuesTheSame(
+                    final boolean hasIcrTypeCodeChanged = !areFieldValuesTheSame(
                             account.getAcctIndirectCostRcvyTypeCd(),
                             newSubAccount.getIndirectCostRecoveryTypeCode());
                     
-                    boolean hasOffCampusIndChanged = newSubAccount.getOffCampusCode() != account.isAccountOffCampusIndicator();
+                    final boolean hasOffCampusIndChanged = newSubAccount.getOffCampusCode() != account.isAccountOffCampusIndicator();
                     
                     if (hasIcrIdChanged || hasIcrTypeCodeChanged || hasOffCampusIndChanged) {
                         //retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId 
@@ -168,20 +168,20 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         } else if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) {
             
             //need "new" bo for data comparisons
-            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            final SubAccount subAccount = (SubAccount) super.getBusinessObject();
             //"new" subAccount for data comparisons
-            A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+            final A21SubAccount newSubAccount = subAccount.getA21SubAccount();
             //"old" subAccount for data comparisons
-            A21SubAccount oldSubAccount = this.getA21SubAccountService().getByPrimaryKey(
+            final A21SubAccount oldSubAccount = getA21SubAccountService().getByPrimaryKey(
                     subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber(), 
                     subAccount.getSubAccountNumber());
             //compare each field in question
-            boolean hasIcrIdChanged = isFieldValueChanged(newSubAccount.getFinancialIcrSeriesIdentifier(), 
+            final boolean hasIcrIdChanged = isFieldValueChanged(newSubAccount.getFinancialIcrSeriesIdentifier(), 
                     oldSubAccount.getFinancialIcrSeriesIdentifier());
-            boolean hasIcrTypeCodeChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryTypeCode(), 
+            final boolean hasIcrTypeCodeChanged = isFieldValueChanged(newSubAccount.getIndirectCostRecoveryTypeCode(), 
                     oldSubAccount.getIndirectCostRecoveryTypeCode());
             
-            boolean hasOffCampusIndChanged = newSubAccount.getOffCampusCode() != oldSubAccount.getOffCampusCode();
+            final boolean hasOffCampusIndChanged = newSubAccount.getOffCampusCode() != oldSubAccount.getOffCampusCode();
             
             if (hasIcrIdChanged || hasIcrTypeCodeChanged || hasOffCampusIndChanged) {
                 //retrieve data we need for split-node route to work, contractsAndGrantsAccountResponsibilityId is 
@@ -201,7 +201,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @param newValue - new value
      * @return true if the two fields are the same
      */
-    private boolean areFieldValuesTheSame(String oldValue, String newValue) {
+    private boolean areFieldValuesTheSame(final String oldValue, final String newValue) {
         boolean retVal = false;
         
         //both fields have the same string value
@@ -223,7 +223,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @param newValue - new value
      * @return true if the two fields are different from each other
      */
-    private boolean isFieldValueChanged(String oldValue, String newValue) {
+    private boolean isFieldValueChanged(final String oldValue, final String newValue) {
         return !areFieldValuesTheSame(oldValue, newValue);
     }
     
@@ -247,26 +247,26 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     
     // KFSUPGRADE-765 :  Route edits to indirect cost to CG Resp ID
     private boolean hasIcrSectionChanged() {
-        String maintAction = super.getMaintenanceAction();     
+        final String maintAction = super.getMaintenanceAction();     
         boolean retval = false;
         
         if ((maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION))
                 || (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_COPY_ACTION))) {
                         
             //need "new" bo for data comparisons
-            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            final SubAccount subAccount = (SubAccount) super.getBusinessObject();
             if (subAccount.getA21SubAccount().getSubAccountTypeCode().equals(KFSConstants.SubAccountType.EXPENSE)) { 
                 //We need to route only when the ICR data the user is submitting does NOT match the ICR data on the account
                 
                 //"new" subAccount for data comparisons
-                A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+                final A21SubAccount newSubAccount = subAccount.getA21SubAccount();
                 
                 //"existing" data that would have pre-populated
-                Account account = this.getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber());
+                final Account account = getAccountService().getByPrimaryIdWithCaching(subAccount.getChartOfAccountsCode(), subAccount.getAccountNumber());
                 
                 if (ObjectUtils.isNotNull(account) && ObjectUtils.isNotNull(newSubAccount)) {
-                    List<IndirectCostRecoveryAccount> acctIcr = account.getIndirectCostRecoveryAccounts();
-                    List<A21IndirectCostRecoveryAccount> subAcctIcr = newSubAccount.getA21ActiveIndirectCostRecoveryAccounts();
+                    final List<IndirectCostRecoveryAccount> acctIcr = account.getIndirectCostRecoveryAccounts();
+                    final List<A21IndirectCostRecoveryAccount> subAcctIcr = newSubAccount.getA21ActiveIndirectCostRecoveryAccounts();
                     if (CollectionUtils.isEmpty(subAcctIcr)) {
                         if (CollectionUtils.isEmpty(acctIcr)) {
                             retval = false;
@@ -282,7 +282,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
                         	 */
                         	
                         	int activeAcctIcrCount = 0;
-                        	for (IndirectCostRecoveryAccount acct : acctIcr) {
+                        	for (final IndirectCostRecoveryAccount acct : acctIcr) {
                         		if (acct.isActive()) {
                         			activeAcctIcrCount++;
                         		}
@@ -300,13 +300,13 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         } else if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_EDIT_ACTION)) {
             
             //need "new" bo for data comparisons
-            SubAccount subAccount = (SubAccount) super.getBusinessObject();
+            final SubAccount subAccount = (SubAccount) super.getBusinessObject();
             //"new" subAccount for data comparisons
-            A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+            final A21SubAccount newSubAccount = subAccount.getA21SubAccount();
             if (ObjectUtils.isNotNull(newSubAccount)) {
                 try {
-                    MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
-                    A21SubAccount oldSubAccount = (A21SubAccount)((SubAccount)oldMaintDoc.getOldMaintainableObject().getDataObject()).getA21SubAccount();
+                    final MaintenanceDocument oldMaintDoc = (MaintenanceDocument) SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(getDocumentNumber());
+                    final A21SubAccount oldSubAccount = (A21SubAccount)((SubAccount)oldMaintDoc.getOldMaintainableObject().getDataObject()).getA21SubAccount();
                     retval = isIcrSectionChanged(newSubAccount, oldSubAccount);
                 } catch (Exception e) {
                     LOG.error("caught exception while getting subaccount old maintainable -> documentService.getByDocumentHeaderId(" + getDocumentNumber() + "). ", e);
@@ -317,7 +317,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         return retval; 
     }
     
-    private boolean isIcrSectionChanged(A21SubAccount newSubAccount, A21SubAccount oldSubAccount) {
+    private boolean isIcrSectionChanged(final A21SubAccount newSubAccount, final A21SubAccount oldSubAccount) {
         boolean retval = false;
         if (oldSubAccount == null) {
             if (newSubAccount != null && !CollectionUtils.isEmpty(newSubAccount.getA21ActiveIndirectCostRecoveryAccounts())) {
@@ -338,11 +338,11 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         
     }
     
-    private boolean isIcrSectionDataChanged(List<A21IndirectCostRecoveryAccount> newIcrAccounts, List<? extends IndirectCostRecoveryAccount> oldIcrAccounts) {
+    private boolean isIcrSectionDataChanged(final List<A21IndirectCostRecoveryAccount> newIcrAccounts, final List<? extends IndirectCostRecoveryAccount> oldIcrAccounts) {
         boolean retval = false;
-        for (A21IndirectCostRecoveryAccount newIcrAccount : newIcrAccounts) {
+        for (final A21IndirectCostRecoveryAccount newIcrAccount : newIcrAccounts) {
             boolean icrAccountMatched = false;
-            for (IndirectCostRecoveryAccount oldIcrAccount : oldIcrAccounts) {
+            for (final IndirectCostRecoveryAccount oldIcrAccount : oldIcrAccounts) {
                 if (StringUtils.equals(newIcrAccount.getIndirectCostRecoveryFinCoaCode(), oldIcrAccount.getIndirectCostRecoveryFinCoaCode()) &&
                         StringUtils.equals(newIcrAccount.getIndirectCostRecoveryAccountNumber(), oldIcrAccount.getIndirectCostRecoveryAccountNumber()) &&
                         newIcrAccount.getAccountLinePercent().compareTo(oldIcrAccount.getAccountLinePercent()) == 0 &&
@@ -365,12 +365,12 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#processAfterCopy(MaintenanceDocument, Map)
      */
     @Override
-    public void processAfterCopy(org.kuali.kfs.kns.document.MaintenanceDocument  document, Map<String, String[]> parameters) {
+    public void processAfterCopy(final org.kuali.kfs.kns.document.MaintenanceDocument  document, final Map<String, String[]> parameters) {
         super.processAfterCopy(document, parameters);
-        SubAccount subAccount = (SubAccount) this.getBusinessObject();
+        final SubAccount subAccount = (SubAccount) getBusinessObject();
 
-        List<A21IndirectCostRecoveryAccount> copyIndirectCostRecoveryAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
-        for(A21IndirectCostRecoveryAccount indirectAccount : subAccount.getA21SubAccount().getA21ActiveIndirectCostRecoveryAccounts()) {
+        final List<A21IndirectCostRecoveryAccount> copyIndirectCostRecoveryAccounts = new ArrayList<A21IndirectCostRecoveryAccount>();
+        for(final A21IndirectCostRecoveryAccount indirectAccount : subAccount.getA21SubAccount().getA21ActiveIndirectCostRecoveryAccounts()) {
             indirectAccount.setA21IndirectCostRecoveryAccountGeneratedIdentifier(null);
             indirectAccount.setNewCollectionRecord(true);
             copyIndirectCostRecoveryAccounts.add(indirectAccount);
@@ -379,15 +379,15 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         subAccount.getA21SubAccount().setA21IndirectCostRecoveryAccounts(copyIndirectCostRecoveryAccounts);
     }
     
-    public void refresh(String refreshCaller, Map fieldValues, org.kuali.kfs.kns.document.MaintenanceDocument document) {
+    public void refresh(final String refreshCaller, final Map fieldValues, final org.kuali.kfs.kns.document.MaintenanceDocument document) {
     	super.refresh(refreshCaller, fieldValues, document);
-    	String maintAction = super.getMaintenanceAction();
+    	final String maintAction = super.getMaintenanceAction();
 
     	if (maintAction.equalsIgnoreCase(KRADConstants.MAINTENANCE_NEW_ACTION)){
-    	    SubAccount subAccount = (SubAccount) super.getBusinessObject();
-    		A21SubAccount newSubAccount = subAccount.getA21SubAccount();
+    	    final SubAccount subAccount = (SubAccount) super.getBusinessObject();
+    		final A21SubAccount newSubAccount = subAccount.getA21SubAccount();
     		if(ObjectUtils.isNotNull(newSubAccount) && ObjectUtils.isNotNull(newSubAccount.getA21IndirectCostRecoveryAccounts()) && newSubAccount.getA21IndirectCostRecoveryAccounts().size() >0){
-    		    for(A21IndirectCostRecoveryAccount recoveryAccount : newSubAccount.getA21IndirectCostRecoveryAccounts()){
+    		    for(final A21IndirectCostRecoveryAccount recoveryAccount : newSubAccount.getA21IndirectCostRecoveryAccounts()){
     			    // set the newCollectionRecord indicator to true so that the entries can be deleted
     				recoveryAccount.setNewCollectionRecord(true);
     			}
@@ -405,19 +405,19 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List getSections(org.kuali.kfs.kns.document.MaintenanceDocument document, Maintainable oldMaintainable) {
+    public List getSections(final org.kuali.kfs.kns.document.MaintenanceDocument document, final Maintainable oldMaintainable) {
         // The special handling only applies to the old maintainable.
         if (this == document.getOldMaintainableObject()) {
-            SubAccount oldAccount = (SubAccount) getDataObject();
-            SubAccount newAccount = (SubAccount) document.getNewMaintainableObject().getDataObject();
+            final SubAccount oldAccount = (SubAccount) getDataObject();
+            final SubAccount newAccount = (SubAccount) document.getNewMaintainableObject().getDataObject();
 
             if (hasA21SubAccount(newAccount) && (doesNotHaveA21SubAccount(oldAccount)
                 || (isCostShareSubAccount(oldAccount) && isExpenseSubAccount(newAccount))
                 || oldAccountHasFewerIndirectCostRecoveryAccounts(oldAccount, newAccount))) {
                 // If necessary, set up an A21 sub-account with sufficient ICR accounts on the old maintainable before generating the sections.
-                List sections;
-                A21SubAccount oldA21Account = oldAccount.getA21SubAccount();
-                A21SubAccount tempA21Account = ObjectUtils.isNull(oldA21Account) ? new A21SubAccount() : (A21SubAccount) ObjectUtils.deepCopy(oldA21Account);
+                final List sections;
+                final A21SubAccount oldA21Account = oldAccount.getA21SubAccount();
+                final A21SubAccount tempA21Account = ObjectUtils.isNull(oldA21Account) ? new A21SubAccount() : (A21SubAccount) ObjectUtils.deepCopy(oldA21Account);
                 
                 for (int i = newAccount.getA21SubAccount().getA21IndirectCostRecoveryAccounts().size()
                         - tempA21Account.getA21IndirectCostRecoveryAccounts().size() - 1; i >= 0; i--) {
@@ -456,7 +456,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
         return KFSConstants.SubAccountType.COST_SHARE.equals(oldAccount.getA21SubAccount().getSubAccountTypeCode());
     }
 
-    private boolean oldAccountHasFewerIndirectCostRecoveryAccounts(SubAccount oldAccount, SubAccount newAccount) {
+    private boolean oldAccountHasFewerIndirectCostRecoveryAccounts(final SubAccount oldAccount, final SubAccount newAccount) {
         return hasA21SubAccount(oldAccount)
             && hasA21IndirectCostRecoveryAccounts(oldAccount)
             && hasA21IndirectCostRecoveryAccounts(newAccount)
@@ -465,7 +465,7 @@ public class CuSubAccountMaintainableImpl extends SubAccountMaintainableImpl {
     }
     
     @Override
-    public void doRouteStatusChange(DocumentHeader documentHeader) {
+    public void doRouteStatusChange(final DocumentHeader documentHeader) {
         super.doRouteStatusChange(documentHeader);
         if (MaintenanceUtils.shouldClearCacheOnStatusChange(documentHeader)) {
             MaintenanceUtils.clearBlockingCache();

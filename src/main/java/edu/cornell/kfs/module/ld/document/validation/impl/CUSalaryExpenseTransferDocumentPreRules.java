@@ -20,7 +20,7 @@ public class CUSalaryExpenseTransferDocumentPreRules extends SalaryExpenseTransf
      * @see org.kuali.kfs.module.ld.document.validation.impl.SalaryExpenseTransferDocumentPreRules#doPrompts(org.kuali.kfs.kns.document.Document)
      */
     @Override
-    public boolean doPrompts(Document document) {
+    public boolean doPrompts(final Document document) {
         boolean preRulesOK = super.doPrompts(document);
 
         preRulesOK &= SpringContext.getBean(AccountingDocumentPreRuleService.class).expiredAccountOverrideQuestion((AccountingDocumentBase) document, (PromptBeforeValidationBase)this);

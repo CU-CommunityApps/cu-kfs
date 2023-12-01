@@ -13,6 +13,7 @@ import org.kuali.kfs.module.cg.businessobject.Award;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -20,6 +21,7 @@ import edu.cornell.kfs.module.cg.businessobject.AwardExtendedAttribute;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ContractsGrantsInvoiceDocument.class})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategoryTest {
     
     private CuTotalAmountBilledToDateExceedsTotalBudgetSuspensionCategory suspensionCategory;

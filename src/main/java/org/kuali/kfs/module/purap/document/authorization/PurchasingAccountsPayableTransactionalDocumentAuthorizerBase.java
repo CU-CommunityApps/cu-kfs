@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -36,17 +36,17 @@ import java.util.Map;
 public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extends AccountingDocumentAuthorizerBase {
 
     @Override
-    protected void addRoleQualification(Object businessObject, Map<String, String> attributes) {
+    protected void addRoleQualification(final Object businessObject, final Map<String, String> attributes) {
         super.addRoleQualification(businessObject, attributes);
         attributes.put(PurapKimAttributes.DOCUMENT_SENSITIVE, "false");
-        PurchasingAccountsPayableDocument purapDoc = (PurchasingAccountsPayableDocument) businessObject;
+        final PurchasingAccountsPayableDocument purapDoc = (PurchasingAccountsPayableDocument) businessObject;
         if (purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier() != null) {
-            List<SensitiveData> sensitiveDataList = SpringContext.getBean(SensitiveDataService.class)
+            final List<SensitiveData> sensitiveDataList = SpringContext.getBean(SensitiveDataService.class)
                     .getSensitiveDatasAssignedByRelatedDocId(
                             purapDoc.getAccountsPayablePurchasingDocumentLinkIdentifier());
             if (ObjectUtils.isNotNull(sensitiveDataList) && !sensitiveDataList.isEmpty()) {
-                StringBuffer sensitiveDataCodes = new StringBuffer();
-                for (SensitiveData sensitiveData : sensitiveDataList) {
+                final StringBuffer sensitiveDataCodes = new StringBuffer();
+                for (final SensitiveData sensitiveData : sensitiveDataList) {
                     if (ObjectUtils.isNotNull(sensitiveData)) {
                         sensitiveDataCodes.append(sensitiveData.getSensitiveDataCode()).append(";");
                     }
@@ -66,7 +66,7 @@ public class PurchasingAccountsPayableTransactionalDocumentAuthorizerBase extend
     }
     
     @Override
-    public boolean canEditDocumentOverview(Document document, Person user) {
+    public boolean canEditDocumentOverview(final Document document, final Person user) {
         return isAuthorizedByTemplate(document, KFSConstants.CoreModuleNamespaces.KFS,
                 KimConstants.PermissionTemplateNames.EDIT_DOCUMENT, user.getPrincipalId());
     }

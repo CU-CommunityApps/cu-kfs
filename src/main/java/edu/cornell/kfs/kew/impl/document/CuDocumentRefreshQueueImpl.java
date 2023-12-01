@@ -25,7 +25,7 @@ public class CuDocumentRefreshQueueImpl extends DocumentRefreshQueueImpl impleme
     public void refreshDocument(final String documentId) {
         Validate.isTrue(StringUtils.isNotBlank(documentId), "documentId must be supplied");
         
-        List<ActionItemNoteDetailDto> actionNotes = getDocumentMaintenanceService()
+        final List<ActionItemNoteDetailDto> actionNotes = getDocumentMaintenanceService()
                 .getActionNotesToBeRequeuedForDocument(documentId);
         super.refreshDocument(documentId);
         getAsynchronousDocumentMaintenanceService().restoreActionNotesForRequeuedDocument(documentId, actionNotes);
@@ -53,7 +53,7 @@ public class CuDocumentRefreshQueueImpl extends DocumentRefreshQueueImpl impleme
      * Once we are ready to fully remove that batch job, this helper method should be removed.
      */
     @Override
-    public void refreshDocumentWithoutRestoringActionNotes(String documentId) {
+    public void refreshDocumentWithoutRestoringActionNotes(final String documentId) {
         super.refreshDocument(documentId);
     }
 

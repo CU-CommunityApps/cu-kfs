@@ -46,26 +46,27 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
     private static final Logger LOG = LogManager.getLogger(); 
     
     @Override
-    public void feedOnFile(File doneFile, File dataFile, File reconFile, PrintStream enterpriseFeedPs,
-            String feederProcessName, String reconciliationTableId,
-            EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors, LedgerSummaryReport ledgerSummaryReport,
-            ReportWriterService errorStatisticsReport, EnterpriseFeederReportData feederReportData) {
+    public void feedOnFile(
+            final File doneFile, final File dataFile, final File reconFile, final PrintStream enterpriseFeedPs,
+            final String feederProcessName, final String reconciliationTableId,
+            final EnterpriseFeederStatusAndErrorMessagesWrapper statusAndErrors, final LedgerSummaryReport ledgerSummaryReport,
+            final ReportWriterService errorStatisticsReport, final EnterpriseFeederReportData feederReportData) {
         LOG.info("Processing done file: {}", doneFile::getAbsolutePath);
 
-        List<Message> errorMessages = statusAndErrors.getErrorMessages();
+        final List<Message> errorMessages = statusAndErrors.getErrorMessages();
 
         ReconciliationBlock reconciliationBlock = null;
         try (Reader reconReader = new FileReader(reconFile, StandardCharsets.UTF_8)) {
             reconciliationBlock = reconciliationParserService.parseReconciliationBlock(reconReader, reconciliationTableId);
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             LOG.error("IO Error occured trying to read the recon file.", e);
             errorMessages.add(new Message("IO Error occured trying to read the recon file.", Message.TYPE_FATAL));
             reconciliationBlock = null;
             statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
             throw new RuntimeException(e);
         }
-        catch (RuntimeException e) {
+        catch (final RuntimeException e) {
             LOG.error("Error occured trying to parse the recon file.", e);
             errorMessages.add(new Message("Error occured trying to parse the recon file.", Message.TYPE_FATAL));
             reconciliationBlock = null;
@@ -74,14 +75,14 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
         }
 
         try (
-                BufferedReader dataFileReader1 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
-                BufferedReader dataFileReader2 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8))
+                final BufferedReader dataFileReader1 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8));
+                final BufferedReader dataFileReader2 = new BufferedReader(new FileReader(dataFile, StandardCharsets.UTF_8))
         ) {
             if (reconciliationBlock == null) {
                 errorMessages.add(new Message("Unable to parse reconciliation file.", Message.TYPE_FATAL));
             }
             else {
-                Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader1, false);
+                final Iterator<LaborOriginEntry> fileIterator = new LaborOriginEntryFileIterator(dataFileReader1, false);
                 reconciliationService.reconcile(fileIterator, reconciliationBlock, errorMessages);
             }
 
@@ -95,7 +96,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
 
                 while ((line = dataFileReader2.readLine()) != null) {
                     try {
-                        LaborOriginEntry tempEntry = new LaborOriginEntry();
+                        final LaborOriginEntry tempEntry = new LaborOriginEntry();
                         tempEntry.setFromTextFileForBatch(line, count);
                         
                         feederReportData.incrementNumberOfRecordsRead();
@@ -107,11 +108,11 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                         feederReportData.incrementNumberOfRecordsWritten();
                         feederReportData.addToTotalAmountWritten(tempEntry.getTransactionLedgerEntryAmount());
                         
-                        List<LaborOriginEntry> benefitEntries = generateBenefits(tempEntry, errorStatisticsReport, feederReportData);
+                        final List<LaborOriginEntry> benefitEntries = generateBenefits(tempEntry, errorStatisticsReport, feederReportData);
                         KualiDecimal benefitTotal = new KualiDecimal (0);
                         KualiDecimal offsetTotal = new KualiDecimal (0);
                         
-                        for(LaborOriginEntry benefitEntry : benefitEntries) {
+                        for(final LaborOriginEntry benefitEntry : benefitEntries) {
                             benefitEntry.setTransactionLedgerEntryDescription("FRINGE EXPENSE");
                             enterpriseFeedPs.printf("%s\n", benefitEntry.getLine());
                             
@@ -123,8 +124,8 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                         }
                         
                         if(tempEntry.getFinancialBalanceTypeCode() == null || tempEntry.getFinancialBalanceTypeCode().equalsIgnoreCase("IE")) continue;
-                        List<LaborOriginEntry> offsetEntries = generateOffsets(tempEntry,offsetDocTypes);
-                        for(LaborOriginEntry offsetEntry : offsetEntries){
+                        final List<LaborOriginEntry> offsetEntries = generateOffsets(tempEntry,offsetDocTypes);
+                        for(final LaborOriginEntry offsetEntry : offsetEntries){
                             if(offsetEntry.getTransactionLedgerEntryAmount().isZero()) continue;
                             enterpriseFeedPs.printf("%s\n", offsetEntry.getLine()); 
                             offsetTotal = offsetTotal.add(offsetEntry.getTransactionLedgerEntryAmount());                           
@@ -135,10 +136,10 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                             LOG.info("** count:offsetTotal: benefitTotal="+count +":"+ offsetTotal+""+benefitTotal);
                         }
                         
-                    } catch (NullPointerException npe) {
+                    } catch (final NullPointerException npe) {
                         LOG.error("NPE encountered");
                         throw new RuntimeException(npe.toString());
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new IOException(e.toString());
                     }
                     
@@ -152,7 +153,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
                 statusAndErrors.setStatus(new FileReconBadLoadAbortedStatus());
             }
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             LOG.error("Caught exception when reconciling/loading done file: {}", doneFile, e);
             statusAndErrors.setStatus(new ExceptionCaughtStatus());
             errorMessages.add(new Message("Caught exception attempting to reconcile/load done file: " + doneFile + ".  File contents are NOT loaded", Message.TYPE_FATAL));
@@ -167,34 +168,35 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
         }
     }
     
-    protected List<LaborOriginEntry> generateOffsets(LaborOriginEntry wageEntry, Collection<String> offsetDocTypes) {
-        List<LaborOriginEntry> offsetEntries = new ArrayList<LaborOriginEntry>();
-        String benefitRateCategoryCode = laborBenefitsCalculationService.getBenefitRateCategoryCode(wageEntry.getChartOfAccountsCode(), wageEntry.getAccountNumber(), wageEntry.getSubAccountNumber());
-        Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService.getActivePositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(), wageEntry.getFinancialObjectCode());
+    protected List<LaborOriginEntry> generateOffsets(
+            final LaborOriginEntry wageEntry, final Collection<String> offsetDocTypes) {
+        final List<LaborOriginEntry> offsetEntries = new ArrayList<LaborOriginEntry>();
+        final String benefitRateCategoryCode = laborBenefitsCalculationService.getBenefitRateCategoryCode(wageEntry.getChartOfAccountsCode(), wageEntry.getAccountNumber(), wageEntry.getSubAccountNumber());
+        final Collection<PositionObjectBenefit> positionObjectBenefits = laborPositionObjectBenefitService.getActivePositionObjectBenefits(wageEntry.getUniversityFiscalYear(), wageEntry.getChartOfAccountsCode(), wageEntry.getFinancialObjectCode());
         
         if (positionObjectBenefits == null || positionObjectBenefits.isEmpty()) {
             return offsetEntries;
         }
 
-        for (PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
+        for (final PositionObjectBenefit positionObjectBenefit : positionObjectBenefits) {
 
-            Map<String, Object> fieldValues = new HashMap<String, Object>();
+            final Map<String, Object> fieldValues = new HashMap<String, Object>();
             fieldValues.put(KFSPropertyConstants.UNIVERSITY_FISCAL_YEAR, wageEntry.getUniversityFiscalYear());
             fieldValues.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, wageEntry.getChartOfAccountsCode());
             fieldValues.put(LaborPropertyConstants.POSITION_BENEFIT_TYPE_CODE, positionObjectBenefit.getFinancialObjectBenefitsTypeCode());
             fieldValues.put(LaborPropertyConstants.LABOR_BENEFIT_RATE_CATEGORY_CODE, benefitRateCategoryCode);
             
-            BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BenefitsCalculation.class, fieldValues);
+            final BenefitsCalculation benefitsCalculation = (org.kuali.kfs.module.ld.businessobject.BenefitsCalculation) SpringContext.getBean(BusinessObjectService.class).findByPrimaryKey(BenefitsCalculation.class, fieldValues);
             
             if(ObjectUtils.isNull(benefitsCalculation)) continue;
 
-            LaborOriginEntry offsetEntry = new LaborOriginEntry(wageEntry);
+            final LaborOriginEntry offsetEntry = new LaborOriginEntry(wageEntry);
             offsetEntry.setFinancialObjectCode(benefitsCalculation.getPositionFringeBenefitObjectCode());
 
 
 
             // calculate the offsetAmount amount (ledger amt * (benfit pct/100) )
-            KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
+            final KualiDecimal fringeBenefitPercent = benefitsCalculation.getPositionFringeBenefitPercent();
             KualiDecimal offsetAmount = fringeBenefitPercent.multiply(
             wageEntry.getTransactionLedgerEntryAmount()).divide(KFSConstants.ONE_HUNDRED.kualiDecimalValue());
             offsetEntry.setTransactionLedgerEntryAmount(offsetAmount.abs());
@@ -214,7 +216,7 @@ public class CuFileEnterpriseFeederHelperServiceImpl extends FileEnterpriseFeede
             
             offsetEntry.setTransactionLedgerEntryDescription("GENERATED BENEFIT OFFSET");
             
-            String originCode = parameterService.getParameterValueAsString(
+            final String originCode = parameterService.getParameterValueAsString(
                     KFSConstants.OptionalModuleNamespaces.LABOR_DISTRIBUTION, "LaborEnterpriseFeedStep",
                     LaborParameterConstants.BENEFITS_ORIGINATION_CODE);
             

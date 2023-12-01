@@ -185,7 +185,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
 
          // KFSPTS-1891
          
-         VendorDetail vendorDetail = vendorService.getVendorDetail(cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
+         final VendorDetail vendorDetail = vendorService.getVendorDetail(cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
          if ( ObjectUtils.isNotNull(vendorDetail)
                  && ObjectUtils.isNotNull(vendorDetail.getExtension()) ) {
              if ( vendorDetail.getExtension() instanceof VendorDetailExtension
@@ -213,7 +213,7 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
  	}
 
  	public void setPaymentMethodGeneralLedgerPendingEntryService(
- 			CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
+ 			final CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
  		this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
  	}
 

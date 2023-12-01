@@ -16,17 +16,17 @@ public class PurchaseOrderTransmissionMethodValuesFinder extends KeyValuesBase {
 
 	@Override
     public List<KeyValue> getKeyValues() {
-        Collection<PurchaseOrderTransmissionMethod> methods = keyValuesService.findAll(PurchaseOrderTransmissionMethod.class);
-        List<KeyValue> labels = new ArrayList<>();
+        final Collection<PurchaseOrderTransmissionMethod> methods = keyValuesService.findAll(PurchaseOrderTransmissionMethod.class);
+        final List<KeyValue> labels = new ArrayList<>();
         labels.add(new ConcreteKeyValue("", ""));
-        for (PurchaseOrderTransmissionMethod method : methods) {
+        for (final PurchaseOrderTransmissionMethod method : methods) {
             labels.add(new ConcreteKeyValue(method.getPurchaseOrderTransmissionMethodCode(),
                     method.getPurchaseOrderTransmissionMethodDescription()));
         }        
         return labels;
     }
 
-    public void setKeyValuesService(KeyValuesService keyValuesService) {
+    public void setKeyValuesService(final KeyValuesService keyValuesService) {
         this.keyValuesService = keyValuesService;
     }
 	

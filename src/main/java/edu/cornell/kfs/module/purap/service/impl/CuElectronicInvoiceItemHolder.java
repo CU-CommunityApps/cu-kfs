@@ -13,18 +13,16 @@ public class CuElectronicInvoiceItemHolder extends ElectronicInvoiceItemHolder {
     private ElectronicInvoiceRejectItem rejectItem;
     private ElectronicInvoiceItem invoiceItem;
 
-    public CuElectronicInvoiceItemHolder(ElectronicInvoiceRejectItem rejectItem,
-            Map itemTypeMappings,
-            PurchaseOrderItem poItem,
-            ElectronicInvoiceOrderHolder orderHolder){
+    public CuElectronicInvoiceItemHolder(
+            final ElectronicInvoiceRejectItem rejectItem, final Map itemTypeMappings,
+            final PurchaseOrderItem poItem, final ElectronicInvoiceOrderHolder orderHolder){
     	super(rejectItem, itemTypeMappings, poItem, orderHolder);
     	this.rejectItem = rejectItem;
     }
     
-    public CuElectronicInvoiceItemHolder(ElectronicInvoiceItem invoiceItem,
-            Map itemTypeMappings,
-            PurchaseOrderItem poItem,
-            ElectronicInvoiceOrderHolder orderHolder){
+    public CuElectronicInvoiceItemHolder(
+            final ElectronicInvoiceItem invoiceItem, final Map itemTypeMappings,
+            final PurchaseOrderItem poItem, final ElectronicInvoiceOrderHolder orderHolder){
     	super(invoiceItem, itemTypeMappings, poItem, orderHolder);
     	this.invoiceItem = invoiceItem;
 

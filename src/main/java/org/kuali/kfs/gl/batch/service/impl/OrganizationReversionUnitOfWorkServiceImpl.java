@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -47,7 +47,7 @@ public class OrganizationReversionUnitOfWorkServiceImpl extends ReversionUnitOfW
         return orgReversionUnitOfWorkDao;
     }
 
-    public void setOrgReversionUnitOfWorkDao(ReversionUnitOfWorkDao orgReversionUnitOfWorkDao) {
+    public void setOrgReversionUnitOfWorkDao(final ReversionUnitOfWorkDao orgReversionUnitOfWorkDao) {
         this.orgReversionUnitOfWorkDao = orgReversionUnitOfWorkDao;
     }
 

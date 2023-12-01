@@ -13,9 +13,9 @@ public class CuDisbursementVoucherBankCodeValidation extends DisbursementVoucher
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public boolean validate(AttributedDocumentEvent event) {
+    public boolean validate(final AttributedDocumentEvent event) {
         LOG.debug("validate start");        
-        DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) getAccountingDocumentForValidation();      
+        final DisbursementVoucherDocument dvDocument = (DisbursementVoucherDocument) getAccountingDocumentForValidation();      
 		return CuBankCodeValidation.validate(dvDocument, dvDocument.getDisbVchrBankCode(),
 				KFSPropertyConstants.DISB_VCHR_BANK_CODE, false, true);
     }

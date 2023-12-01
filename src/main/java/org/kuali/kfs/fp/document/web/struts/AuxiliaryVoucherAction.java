@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -49,8 +49,8 @@ public class AuxiliaryVoucherAction extends VoucherAction {
      * HttpServletResponse response)
      */
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuxiliaryVoucherForm avForm = (AuxiliaryVoucherForm) form;
+    public ActionForward execute(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final AuxiliaryVoucherForm avForm = (AuxiliaryVoucherForm) form;
 
         avForm.setOriginalAccountingPeriod(avForm.getSelectedAccountingPeriod());
 
@@ -58,7 +58,7 @@ public class AuxiliaryVoucherAction extends VoucherAction {
         // set the method to call so that the appropriate action can be invoked
         // did it this way b/c the changing of the type causes the page to re-submit
         // and we need to process some stuff if it's changed
-        ActionForward returnForward;
+        final ActionForward returnForward;
         if (StringUtils.isNotBlank(avForm.getOriginalVoucherType()) && !avForm.getAuxiliaryVoucherDocument().getTypeCode().equals(avForm.getOriginalVoucherType())) {
             returnForward = super.dispatchMethod(mapping, form, request, response, KFSConstants.AuxiliaryVoucher.CHANGE_VOUCHER_TYPE);
         } else {
@@ -78,10 +78,10 @@ public class AuxiliaryVoucherAction extends VoucherAction {
      * @return ActionForward
      * @throws Exception
      */
-    public ActionForward changeVoucherType(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuxiliaryVoucherForm avForm = (AuxiliaryVoucherForm) form;
+    public ActionForward changeVoucherType(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final AuxiliaryVoucherForm avForm = (AuxiliaryVoucherForm) form;
 
-        AuxiliaryVoucherDocument avDoc = avForm.getAuxiliaryVoucherDocument();
+        final AuxiliaryVoucherDocument avDoc = avForm.getAuxiliaryVoucherDocument();
 
         // clear the glpes now
         avDoc.getGeneralLedgerPendingEntries().clear();
@@ -97,13 +97,13 @@ public class AuxiliaryVoucherAction extends VoucherAction {
      * org.apache.struts.action.ActionForm, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public ActionForward docHandler(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ActionForward forward = super.docHandler(mapping, form, request, response);
+    public ActionForward docHandler(final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final ActionForward forward = super.docHandler(mapping, form, request, response);
 
         // Fix for KULEDOCS-1701, update the original voucher type so that the execute method in
         // this class will call the right block of code
-        AuxiliaryVoucherForm avForm = (AuxiliaryVoucherForm) form;
-        AuxiliaryVoucherDocument avDoc = avForm.getAuxiliaryVoucherDocument();
+        final AuxiliaryVoucherForm avForm = (AuxiliaryVoucherForm) form;
+        final AuxiliaryVoucherDocument avDoc = avForm.getAuxiliaryVoucherDocument();
         avForm.setOriginalVoucherType(avDoc.getTypeCode());
 
         return forward;

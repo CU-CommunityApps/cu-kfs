@@ -59,9 +59,9 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     
     
     
-    public void checkAccountingLinesForChanges(AccountingDocument accountingDocument) {
+    public void checkAccountingLinesForChanges(final AccountingDocument accountingDocument) {
         
-        DocumentService docService = SpringContext.getBean(DocumentService.class);
+        final DocumentService docService = SpringContext.getBean(DocumentService.class);
         AccountingDocument savedDoc = null;
         savedDoc = (AccountingDocument)docService.getByDocumentHeaderId(accountingDocument.getDocumentNumber());
 
@@ -70,21 +70,21 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         }
       
         if (!accountingDocument.getSourceAccountingLines().isEmpty()) {
-        	Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(accountingDocument.getSourceAccountingLines());
-        	Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(savedDoc.getSourceAccountingLines());
+        	final Map<Integer, AccountingLine> newSourceLines = buildAccountingLineMap(accountingDocument.getSourceAccountingLines());
+        	final Map<Integer, AccountingLine> savedSourceLines = buildAccountingLineMap(savedDoc.getSourceAccountingLines());
 
         	if (newSourceLines.isEmpty())
         		return;
         	
         	
-        	int maxSourceKey = findMinOrMaxKeyValue(newSourceLines, savedSourceLines, false); 
-        	int minSourceKey = findMinOrMaxKeyValue(newSourceLines, savedSourceLines, true); 
+        	final int maxSourceKey = findMinOrMaxKeyValue(newSourceLines, savedSourceLines, false); 
+        	final int minSourceKey = findMinOrMaxKeyValue(newSourceLines, savedSourceLines, true); 
 
         	for (int i = minSourceKey; i < maxSourceKey+1; i++) {
-        		AccountingLine newLine = newSourceLines.get(i);
-        		AccountingLine oldLine = savedSourceLines.get(i);
+        		final AccountingLine newLine = newSourceLines.get(i);
+        		final AccountingLine oldLine = savedSourceLines.get(i);
         		if ( !compareTo(newLine, oldLine) )  {
-        			String diff = buildLineChangedNoteText(newLine, oldLine);
+        			final String diff = buildLineChangedNoteText(newLine, oldLine);
         			if (StringUtils.isNotBlank(diff)) {
         				writeNote(accountingDocument, diff);
         			}
@@ -94,20 +94,20 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         
         if (!accountingDocument.getTargetAccountingLines().isEmpty()) {
 
-        	Map<Integer, AccountingLine> newTargetLines = buildAccountingLineMap(accountingDocument.getTargetAccountingLines());
-        	Map<Integer, AccountingLine> savedTargetLines = buildAccountingLineMap(savedDoc.getTargetAccountingLines());
+            final Map<Integer, AccountingLine> newTargetLines = buildAccountingLineMap(accountingDocument.getTargetAccountingLines());
+        	final Map<Integer, AccountingLine> savedTargetLines = buildAccountingLineMap(savedDoc.getTargetAccountingLines());
 
         	if (newTargetLines.isEmpty())
         		return;
         	
-        	int maxTargetKey = findMinOrMaxKeyValue(newTargetLines, savedTargetLines, false); 
-        	int minTargetKey = findMinOrMaxKeyValue(newTargetLines, savedTargetLines, true); 
+        	final int maxTargetKey = findMinOrMaxKeyValue(newTargetLines, savedTargetLines, false); 
+        	final int minTargetKey = findMinOrMaxKeyValue(newTargetLines, savedTargetLines, true); 
 
         	for (int i = minTargetKey; i < maxTargetKey+1; i++) {
-        		AccountingLine newLine = newTargetLines.get(i);
-        		AccountingLine oldLine = savedTargetLines.get(i);
+        		final AccountingLine newLine = newTargetLines.get(i);
+        		final AccountingLine oldLine = savedTargetLines.get(i);
         		if ( !compareTo(newLine, oldLine)) {
-        			String diff = buildLineChangedNoteText(newLine, oldLine);
+        			final String diff = buildLineChangedNoteText(newLine, oldLine);
         			if (StringUtils.isNotBlank(diff)) {
         				writeNote(accountingDocument, diff);
         			}
@@ -116,16 +116,16 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         }
     }
     
-	protected int findMinOrMaxKeyValue(Map<Integer, AccountingLine> newSourceLines,
-			Map<Integer, AccountingLine> savedSourceLines, boolean isMinSearch) {
-		int newSourceValue = findKeySetMaxOrMin(newSourceLines, isMinSearch);
-		int savedSourceValue = findKeySetMaxOrMin(savedSourceLines, isMinSearch);
-		int returnValue = isMinSearch ? Math.min(newSourceValue, savedSourceValue) : 
+	protected int findMinOrMaxKeyValue(final Map<Integer, AccountingLine> newSourceLines,
+			final Map<Integer, AccountingLine> savedSourceLines, final boolean isMinSearch) {
+		final int newSourceValue = findKeySetMaxOrMin(newSourceLines, isMinSearch);
+		final int savedSourceValue = findKeySetMaxOrMin(savedSourceLines, isMinSearch);
+		final int returnValue = isMinSearch ? Math.min(newSourceValue, savedSourceValue) : 
 			Math.max(newSourceValue, savedSourceValue);
 		return returnValue;
 	}
 	
-	protected Integer findKeySetMaxOrMin(Map<Integer, AccountingLine> sourceLines, boolean isMinSearch) {
+	protected Integer findKeySetMaxOrMin(final Map<Integer, AccountingLine> sourceLines, final boolean isMinSearch) {
 		if (sourceLines != null && sourceLines.keySet().size() > 0) {
 			return isMinSearch ? Collections.min(sourceLines.keySet()) : Collections.max(sourceLines.keySet());
 		} else {
@@ -140,20 +140,20 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         try {
         //    String noteText = buildLineChangedNoteText(newAccountingLine, oldAccountingLine);
 
-            int noteMaxSize = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength("Note", "noteText");
+            final int noteMaxSize = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength("Note", "noteText");
 
             // Break up the note into multiple pieces if the note is too large to fit in the database field.
             while (noteText.length() > noteMaxSize) {
                 int fromIndex = 0;
                 fromIndex = noteText.lastIndexOf(';', noteMaxSize);
 
-                String noteText1 = noteText.substring(0, fromIndex);
-                Note note1 = documentService.createNoteFromDocument(accountingDocument, noteText1);
+                final String noteText1 = noteText.substring(0, fromIndex);
+                final Note note1 = documentService.createNoteFromDocument(accountingDocument, noteText1);
                 accountingDocument.addNote(note1);
                 noteText = noteText.substring(fromIndex);
             }
 
-            Note note = documentService.createNoteFromDocument(accountingDocument, noteText);
+            final Note note = documentService.createNoteFromDocument(accountingDocument, noteText);
             accountingDocument.addNote(note);
         }
         catch (Exception e) {
@@ -162,7 +162,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     }
 	
 	
-    protected String buildLineChangedNoteText(AccountingLine newLine, AccountingLine oldLine) {
+    protected String buildLineChangedNoteText(final AccountingLine newLine, final AccountingLine oldLine) {
         
     	if (newLine == null && oldLine != null) {
     		return "Accounting Line deleted: "+toString(oldLine);
@@ -177,12 +177,12 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
      * @param accountingLines
      * @return Map containing accountingLines from the given List, indexed by their sequenceNumber
      */
-    protected Map buildAccountingLineMap(List<AccountingLine> accountingLines) {
-        Map lineMap = new HashMap();
+    protected Map buildAccountingLineMap(final List<AccountingLine> accountingLines) {
+        final Map lineMap = new HashMap();
 
         for (Iterator i = accountingLines.iterator(); i.hasNext();) {
-            AccountingLine accountingLine = (AccountingLine) i.next();
-            Integer sequenceNumber = accountingLine.getSequenceNumber();
+            final AccountingLine accountingLine = (AccountingLine) i.next();
+            final Integer sequenceNumber = accountingLine.getSequenceNumber();
             if (sequenceNumber != null) {
             	lineMap.put(sequenceNumber, accountingLine);
             } 
@@ -191,7 +191,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         return lineMap;
     }
     
-    protected boolean compareTo(AccountingLine newLine, AccountingLine oldLine) {
+    protected boolean compareTo(final AccountingLine newLine, final AccountingLine oldLine) {
         //no change; line deleted previously
     	if ((oldLine == null && newLine == null) ) {
     		return true;
@@ -209,8 +209,8 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         return new EqualsBuilder().append(newLine.getChartOfAccountsCode(), oldLine.getChartOfAccountsCode()).append(newLine.getAccountNumber(), oldLine.getAccountNumber()).append(newLine.getSubAccountNumber(), oldLine.getSubAccountNumber()).append(newLine.getFinancialObjectCode(), oldLine.getFinancialObjectCode()).append(newLine.getFinancialSubObjectCode(), oldLine.getFinancialSubObjectCode()).append(newLine.getProjectCode(), oldLine.getProjectCode()).append(newLine.getOrganizationReferenceId(), oldLine.getOrganizationReferenceId()).append(newLine.getAmount(), oldLine.getAmount()).append(newLine.getFinancialDocumentLineDescription(), oldLine.getFinancialDocumentLineDescription()).append(newLine.getReferenceNumber(),oldLine.getReferenceNumber()).isEquals();
     }
     
-    protected String toString(AccountingLine line) {
-    	StringBuilder builder = new StringBuilder();
+    protected String toString(final AccountingLine line) {
+    	final StringBuilder builder = new StringBuilder();
     	builder.append('(');
     	builder.append(line.getDocumentNumber());
     	builder.append(KFSConstants.COMMA);
@@ -249,14 +249,14 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
     	return builder.toString();
     }
 
-    protected void setupFYIs(Document doc, Set<Person> priorApprovers, String initiatorUserId) {
-        List<AdHocRoutePerson> adHocRoutePersons = doc.getAdHocRoutePersons();
+    protected void setupFYIs(final Document doc, final Set<Person> priorApprovers, final String initiatorUserId) {
+        final List<AdHocRoutePerson> adHocRoutePersons = doc.getAdHocRoutePersons();
         final FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = getDocumentAuthorizer(doc);
         
         // Add FYI for each approver who has already approved the document
-        for (Person approver : priorApprovers) {
+        for (final Person approver : priorApprovers) {
             if (documentAuthorizer.canReceiveAdHoc(doc, approver, KewApiConstants.ACTION_REQUEST_FYI_REQ)) {
-                String approverPersonUserId = approver.getPrincipalName();
+                final String approverPersonUserId = approver.getPrincipalName();
                 adHocRoutePersons.add(buildFyiRecipient(approverPersonUserId));
             }
         }
@@ -265,25 +265,25 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         adHocRoutePersons.add(buildFyiRecipient(initiatorUserId));
     }
     
-    protected AdHocRoutePerson buildFyiRecipient(String userId) {
-        AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
+    protected AdHocRoutePerson buildFyiRecipient(final String userId) {
+        final AdHocRoutePerson adHocRoutePerson = new AdHocRoutePerson();
         adHocRoutePerson.setActionRequested(KewApiConstants.ACTION_REQUEST_FYI_REQ);
         adHocRoutePerson.setId(userId);
         return adHocRoutePerson;
     }
     
-    protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(Document doc) {
-        DocumentDictionaryService documentDictionaryService = SpringContext.getBean(DocumentDictionaryService.class);
-        Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) documentDictionaryService.getDocumentEntryByClass(doc.getClass()).getDocumentAuthorizerClass();
+    protected FinancialSystemTransactionalDocumentAuthorizerBase getDocumentAuthorizer(final Document doc) {
+        final DocumentDictionaryService documentDictionaryService = SpringContext.getBean(DocumentDictionaryService.class);
+        final Class<? extends DocumentAuthorizer> documentAuthorizerClass = (Class<? extends DocumentAuthorizer>) documentDictionaryService.getDocumentEntryByClass(doc.getClass()).getDocumentAuthorizerClass();
         
         FinancialSystemTransactionalDocumentAuthorizerBase documentAuthorizer = null;
         try {
             documentAuthorizer = (FinancialSystemTransactionalDocumentAuthorizerBase)documentAuthorizerClass.newInstance();
         }
-        catch (InstantiationException ie) {
+        catch (final InstantiationException ie) {
             throw new RuntimeException("Could not construct document authorizer: "+documentAuthorizerClass.getName(), ie);
         }
-        catch (IllegalAccessException iae) {
+        catch (final IllegalAccessException iae) {
             throw new RuntimeException("Could not construct document authorizer: "+documentAuthorizerClass.getName(), iae);
         }
         
@@ -296,20 +296,20 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
      * @param criteria the criteria in which to check for a max results value
      * @return the maximum number of results that should be returned from a document search
      */
-    public int getMaxResultCap(DocumentSearchCriteria criteria) {
+    public int getMaxResultCap(final DocumentSearchCriteria criteria) {
         int systemLimit = KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP;
-        String resultCapValue = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.WORKFLOW,
+        final String resultCapValue = getParameterService().getParameterValueAsString(KFSConstants.CoreModuleNamespaces.WORKFLOW,
                 KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE, KewApiConstants.DOC_SEARCH_RESULT_CAP);
         if (StringUtils.isNotBlank(resultCapValue)) {
             try {
-                int configuredLimit = Integer.parseInt(resultCapValue);
+                final int configuredLimit = Integer.parseInt(resultCapValue);
                 if (configuredLimit <= 0) {
                     LOG.warn(KewApiConstants.DOC_SEARCH_RESULT_CAP + " was less than or equal to zero.  Please " +
                             "use a positive integer.");
                 } else {
                     systemLimit = configuredLimit;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 LOG.warn(KewApiConstants.DOC_SEARCH_RESULT_CAP + " is not a valid number.  Value was " +
                         resultCapValue + ".  Using default: " + KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
             }
@@ -332,7 +332,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
 
     public int getFetchMoreIterationLimit() {
         int fetchMoreLimit = DEFAULT_FETCH_MORE_ITERATION_LIMIT;
-        String fetchMoreLimitValue = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
+        final String fetchMoreLimitValue = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.WORKFLOW, KRADConstants.DetailTypes.DOCUMENT_SEARCH_DETAIL_TYPE,
                 KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT);
         if (StringUtils.isNotBlank(fetchMoreLimitValue)) {
@@ -343,7 +343,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
                             "Please use a value greater than or equal to zero.");
                     fetchMoreLimit = DEFAULT_FETCH_MORE_ITERATION_LIMIT;
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 LOG.warn(KewApiConstants.DOC_SEARCH_FETCH_MORE_ITERATION_LIMIT + " is not a valid number.  " +
                         "Value was " + fetchMoreLimitValue);
             }
@@ -355,7 +355,7 @@ public class CUFinancialSystemDocumentServiceImpl extends FinancialSystemDocumen
         return parameterService;
     }
 
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
     }
     

@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -55,8 +55,8 @@ import java.util.Map;
 
 public class PurApRelatedViews {
 
-    private String documentNumber;
-    private Integer accountsPayablePurchasingDocumentLinkIdentifier;
+    private final String documentNumber;
+    private final Integer accountsPayablePurchasingDocumentLinkIdentifier;
 
     private transient List<RequisitionView> relatedRequisitionViews;
     private transient List<PurchaseOrderView> relatedPurchaseOrderViews;
@@ -73,7 +73,7 @@ public class PurApRelatedViews {
     // ==== CU Customization (KFSPTS-1656): Added IWantDocument views. ====
     private transient List<IWantView> relatedIWantViews;
 
-    public PurApRelatedViews(String documentNumber, Integer accountsPayablePurchasingDocumentLinkIdentifier) {
+    public PurApRelatedViews(final String documentNumber, final Integer accountsPayablePurchasingDocumentLinkIdentifier) {
         super();
         this.documentNumber = documentNumber;
         this.accountsPayablePurchasingDocumentLinkIdentifier = accountsPayablePurchasingDocumentLinkIdentifier;
@@ -99,13 +99,14 @@ public class PurApRelatedViews {
         relatedIWantViews = null;
     }
 
-    public List updateRelatedView(Class<?> clazz, List<? extends AbstractRelatedView> relatedList,
-            boolean removeCurrentDocument) {
+    public List updateRelatedView(
+            final Class<?> clazz, List<? extends AbstractRelatedView> relatedList,
+            final boolean removeCurrentDocument) {
         if (relatedList == null) {
             relatedList = SpringContext.getBean(PurapService.class)
                     .getRelatedViews(clazz, accountsPayablePurchasingDocumentLinkIdentifier);
             if (removeCurrentDocument) {
-                for (AbstractRelatedView view : relatedList) {
+                for (final AbstractRelatedView view : relatedList) {
                     //KFSMI-4576 Mask/Unmask purapDocumentIdentifier field value
                     maskPONumberIfUnapproved(view);
                     if (documentNumber.equals(view.getDocumentNumber())) {
@@ -126,7 +127,7 @@ public class PurApRelatedViews {
      *
      * @param view
      */
-    protected void maskPONumberIfUnapproved(AbstractRelatedView view) {
+    protected void maskPONumberIfUnapproved(final AbstractRelatedView view) {
         String poIDstr = "";
 
         if (ObjectUtils.isNotNull(view.getPurapDocumentIdentifier())) {
@@ -134,30 +135,30 @@ public class PurApRelatedViews {
         }
 
         if (PurapConstants.PurapDocTypeCodes.PURCHASE_ORDER_DOCUMENT.equals(view.getDocumentTypeName())) {
-            DocumentStatus documentStatus = KewApiServiceLocator.getWorkflowDocumentService().getDocumentStatus(
+            final DocumentStatus documentStatus = KewApiServiceLocator.getWorkflowDocumentService().getDocumentStatus(
                     view.getDocumentNumber());
             if (!StringUtils.equals(documentStatus.getCode(), DocumentStatus.FINAL.getCode())) {
-                String principalId = GlobalVariables.getUserSession().getPrincipalId();
+                final String principalId = GlobalVariables.getUserSession().getPrincipalId();
 
-                String namespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
-                String permissionTemplateName = KimConstants.PermissionTemplateNames.FULL_UNMASK_FIELD;
+                final String namespaceCode = KFSConstants.CoreModuleNamespaces.KFS;
+                final String permissionTemplateName = KimConstants.PermissionTemplateNames.FULL_UNMASK_FIELD;
 
-                Map<String, String> roleQualifiers = new HashMap<>();
+                final Map<String, String> roleQualifiers = new HashMap<>();
 
-                Map<String, String> permissionDetails = new HashMap<>();
+                final Map<String, String> permissionDetails = new HashMap<>();
                 permissionDetails.put(KimConstants.AttributeConstants.COMPONENT_NAME,
                         PurchaseOrderDocument.class.getSimpleName());
                 permissionDetails.put(KimConstants.AttributeConstants.PROPERTY_NAME,
                         PurapPropertyConstants.PURAP_DOC_ID);
 
-                PermissionService permissionService =
+                final PermissionService permissionService =
                         SpringContext.getBean(PermissionService.class);
-                boolean isAuthorized = permissionService.isAuthorizedByTemplate(principalId,
+                final boolean isAuthorized = permissionService.isAuthorizedByTemplate(principalId,
                         namespaceCode, permissionTemplateName, permissionDetails, roleQualifiers);
                 if (!isAuthorized) {
                     //not authorized to see... so mask the po number string
                     poIDstr = "";
-                    int strLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(
+                    final int strLength = SpringContext.getBean(DataDictionaryService.class).getAttributeMaxLength(
                             PurApGenericAttributes.class.getName(), PurapPropertyConstants.PURAP_DOC_ID);
                     for (int i = 0; i < strLength; i++) {
                         poIDstr = poIDstr.concat("*");
@@ -169,7 +170,7 @@ public class PurApRelatedViews {
         view.setPoNumberMasked(poIDstr);
     }
 
-    public DocumentRouteHeaderValue getWorkflowDocument(String documentId) {
+    public DocumentRouteHeaderValue getWorkflowDocument(final String documentId) {
         return KewApiServiceLocator.getWorkflowDocumentService().getDocument(documentId);
     }
 
@@ -179,12 +180,12 @@ public class PurApRelatedViews {
      * @param documentHeaderId
      * @return document The document in the workflow that matches the document header id.
      */
-    protected Document findDocument(String documentHeaderId) {
+    protected Document findDocument(final String documentHeaderId) {
         Document document = null;
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        } catch (UnknownDocumentTypeException ex) {
+        } catch (final UnknownDocumentTypeException ex) {
             // don't blow up just because a document type is not installed (but don't return it either)
         }
 
@@ -255,7 +256,7 @@ public class PurApRelatedViews {
         PurchaseOrderViewGroup group = new PurchaseOrderViewGroup();
         int previousPOID = 0;
         relatedPurchaseOrderViews = getRelatedPurchaseOrderViews();
-        for (PurchaseOrderView view : relatedPurchaseOrderViews) {
+        for (final PurchaseOrderView view : relatedPurchaseOrderViews) {
             if (previousPOID == 0) {
                 previousPOID = view.getPurapDocumentIdentifier();
 
@@ -327,19 +328,19 @@ public class PurApRelatedViews {
         }
 
         groupedRelatedReceivingViews = new ArrayList<>();
-        PurapService purapService = SpringContext.getBean(PurapService.class);
-        List<LineItemReceivingView> liviews = purapService.getRelatedViews(LineItemReceivingView.class,
+        final PurapService purapService = SpringContext.getBean(PurapService.class);
+        final List<LineItemReceivingView> liviews = purapService.getRelatedViews(LineItemReceivingView.class,
                 accountsPayablePurchasingDocumentLinkIdentifier);
-        List<CorrectionReceivingView> crviews = purapService.getRelatedViews(CorrectionReceivingView.class,
+        final List<CorrectionReceivingView> crviews = purapService.getRelatedViews(CorrectionReceivingView.class,
                 accountsPayablePurchasingDocumentLinkIdentifier);
 
         // both LineItemReceivingViews and CorrectionReceivingViews are already in order with most recent first, so
         // no need to sort
-        for (LineItemReceivingView liview : liviews) {
+        for (final LineItemReceivingView liview : liviews) {
             ReceivingViewGroup group = new ReceivingViewGroup();
             // could be current document
             group.lineItemView = liview;
-            for (CorrectionReceivingView crview : crviews) {
+            for (final CorrectionReceivingView crview : crviews) {
                 if (StringUtils.equals(crview.getLineItemReceivingDocumentNumber(), liview.getDocumentNumber())
                         && !documentNumber.equals(crview.getDocumentNumber())) {
                     // exclude current document
@@ -393,7 +394,7 @@ public class PurApRelatedViews {
             return correctionViews;
         }
 
-        public void addCorrectionView(CorrectionReceivingView correctionView) {
+        public void addCorrectionView(final CorrectionReceivingView correctionView) {
             correctionViews.add(correctionView);
         }
 

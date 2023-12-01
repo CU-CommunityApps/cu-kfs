@@ -27,19 +27,19 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
-    public void refresh(String refreshCaller, Map fieldValues, MaintenanceDocument document) {
+    public void refresh(final String refreshCaller, final Map fieldValues, final MaintenanceDocument document) {
         
         super.refresh(refreshCaller, fieldValues, document);
         
         if (StringUtils.isNotEmpty(refreshCaller) && refreshCaller.equalsIgnoreCase("achPayeeLookupable")) {
-            PayeeACHAccount payeeAchAccount = (PayeeACHAccount) document.getNewMaintainableObject().getBusinessObject();
-            String payeeIdNumber = payeeAchAccount.getPayeeIdNumber();
-            String payeeIdentifierTypeCode = payeeAchAccount.getPayeeIdentifierTypeCode();
+            final PayeeACHAccount payeeAchAccount = (PayeeACHAccount) document.getNewMaintainableObject().getBusinessObject();
+            final String payeeIdNumber = payeeAchAccount.getPayeeIdNumber();
+            final String payeeIdentifierTypeCode = payeeAchAccount.getPayeeIdentifierTypeCode();
             
             if(StringUtils.isNotEmpty(payeeAchAccount.getPayeeIdNumber())){
               // for Employee, retrieve from Person table by employee ID
               if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
-                  Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
+                  final Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
                   if (ObjectUtils.isNotNull(person)) {
                       payeeAchAccount.setPayeeEmailAddress( person.getEmailAddress());
                   }
@@ -47,12 +47,12 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
               // for Entity, retrieve from Entity table by entity ID then from Person table
               else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
                   if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                      Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
+                      final Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
                       if (ObjectUtils.isNotNull(entity)) {
-                          List<Principal> principals = entity.getPrincipals();
+                          final List<Principal> principals = entity.getPrincipals();
                           if (principals.size() > 0 && ObjectUtils.isNotNull(principals.get(0))) {
-                              String principalId = principals.get(0).getPrincipalId();
-                              Person person = SpringContext.getBean(PersonService.class).getPerson(principalId);
+                              final String principalId = principals.get(0).getPrincipalId();
+                              final Person person = SpringContext.getBean(PersonService.class).getPerson(principalId);
                               if (ObjectUtils.isNotNull(person)) {
                                   payeeAchAccount.setPayeeEmailAddress( person.getEmailAddress());
                               }
@@ -65,7 +65,7 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
     }
 
     @Override
-    public boolean answerSplitNodeQuestion(String nodeName) {
+    public boolean answerSplitNodeQuestion(final String nodeName) {
         if (StringUtils.equalsIgnoreCase(CUPdpConstants.PAYEE_ACH_ACCOUNT_REQUIRES_PDP_APPROVAL_NODE, nodeName)) {
             return payeeACHAccountMaintenanceRequiresPdpApproval();
         }
@@ -78,21 +78,21 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
         }
 
         try {
-            DocumentService documentService = SpringContext.getBean(DocumentService.class);
-            FinancialSystemMaintenanceDocument document = (FinancialSystemMaintenanceDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
+            final DocumentService documentService = SpringContext.getBean(DocumentService.class);
+            final FinancialSystemMaintenanceDocument document = (FinancialSystemMaintenanceDocument) documentService.getByDocumentHeaderId(this.getDocumentNumber());
             if (isDocumentInitiatorSystemUser(document)) {
                 return false;
             }
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             LOG.error("payeeACHAccountMaintenanceRequiresPdpApproval " + exception.getMessage(), exception);
         }
 
         return true;
     }
 
-    protected boolean isDocumentInitiatorSystemUser(FinancialSystemMaintenanceDocument document) {
-        String initiatorPrincipalId = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-        Person documentInitiator = KimApiServiceLocator.getPersonService().getPerson(initiatorPrincipalId);
+    protected boolean isDocumentInitiatorSystemUser(final FinancialSystemMaintenanceDocument document) {
+        final String initiatorPrincipalId = document.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        final Person documentInitiator = KimApiServiceLocator.getPersonService().getPerson(initiatorPrincipalId);
 
         return documentInitiator != null && StringUtils.equalsIgnoreCase(documentInitiator.getPrincipalName(), KFSConstants.SYSTEM_USER);
     }

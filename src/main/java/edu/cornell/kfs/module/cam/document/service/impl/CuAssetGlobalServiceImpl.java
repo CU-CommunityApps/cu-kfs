@@ -12,9 +12,9 @@ public class CuAssetGlobalServiceImpl extends AssetGlobalServiceImpl {
     // KFSUPGRADE-535
     // if we need to implement service rate ind, then it can be populated from detail to assetext too.
     @Override
-    protected Asset setupAsset(AssetGlobal assetGlobal, AssetGlobalDetail assetGlobalDetail, boolean separate) {
-        Asset asset = super.setupAsset(assetGlobal, assetGlobalDetail, separate);
-        AssetExtension ae = (AssetExtension) asset.getExtension();
+    protected Asset setupAsset(final AssetGlobal assetGlobal, final AssetGlobalDetail assetGlobalDetail, final boolean separate) {
+        final Asset asset = super.setupAsset(assetGlobal, assetGlobalDetail, separate);
+        final AssetExtension ae = (AssetExtension) asset.getExtension();
         ae.setCapitalAssetNumber(asset.getCapitalAssetNumber());
         return asset;
 

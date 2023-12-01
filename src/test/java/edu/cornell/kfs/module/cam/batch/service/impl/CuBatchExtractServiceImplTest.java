@@ -28,6 +28,7 @@ import org.kuali.kfs.krad.bo.BusinessObject;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -40,6 +41,7 @@ import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CuVendorCreditMemoDocument.class, CuPaymentRequestDocument.class})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*"}) 
 public class CuBatchExtractServiceImplTest {
 
     private CuBatchExtractServiceImpl cuBatchExtractServiceImpl;

@@ -55,18 +55,19 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
     private XmlUtilService xmlUtilService;
 
     @Override
-    public PaymentGroup createPaymentGroup(DisbursementVoucherDocument document, Date processRunDate) {
+    public PaymentGroup createPaymentGroup(final DisbursementVoucherDocument document, final Date processRunDate) {
         LOG.debug("createPaymentGroupForDisbursementVoucher() started");
 
-        PaymentGroup pg = new PaymentGroup();
+        final PaymentGroup pg = new PaymentGroup();
         pg.setCombineGroups(Boolean.TRUE);
         pg.setCampusAddress(Boolean.FALSE);
 
-        CuDisbursementVoucherPayeeDetail pd = 
+        final CuDisbursementVoucherPayeeDetail pd = 
         		businessObjectService.findBySinglePrimaryKey(CuDisbursementVoucherPayeeDetail.class, document.getDocumentNumber());
-        String rc = pd.getDisbVchrPaymentReasonCode();
+        final String rc = pd.getDisbVchrPaymentReasonCode();
 
-        if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(document.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
+        if (KFSConstants.PaymentPayeeTypes.CUSTOMER.equals(
+                document.getDvPayeeDetail().getDisbursementVoucherPayeeTypeCode())) {
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.CUSTOMER);
             pg.setTaxablePayment(Boolean.FALSE);
         } else if ((pd.isVendor() && vendorService.isVendorInstitutionEmployee(pd.getDisbVchrVendorHeaderIdNumberAsInteger()))
@@ -96,11 +97,11 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         else {
 
             // These are taxable
-            VendorDetail vendDetail = vendorService.getVendorDetail(pd.getDisbVchrVendorHeaderIdNumberAsInteger(),
+            final VendorDetail vendDetail = vendorService.getVendorDetail(pd.getDisbVchrVendorHeaderIdNumberAsInteger(),
                     pd.getDisbVchrVendorDetailAssignedIdNumberAsInteger());
-            String vendorOwnerCode = vendDetail.getVendorHeader().getVendorOwnershipCode();
-            String vendorOwnerCategoryCode = vendDetail.getVendorHeader().getVendorOwnershipCategoryCode();
-            String payReasonCode = pd.getDisbVchrPaymentReasonCode();
+            final String vendorOwnerCode = vendDetail.getVendorHeader().getVendorOwnershipCode();
+            final String vendorOwnerCategoryCode = vendDetail.getVendorHeader().getVendorOwnershipCategoryCode();
+            final String payReasonCode = pd.getDisbVchrPaymentReasonCode();
 
             pg.setPayeeIdTypeCd(PdpConstants.PayeeIdTypeCodes.VENDOR_ID);
 
@@ -108,12 +109,12 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pg.setTaxablePayment(Boolean.FALSE);
             pg.setPayeeOwnerCd(vendorOwnerCode);
 
-            ParameterEvaluator parameterEvaluator1 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
+            final ParameterEvaluator parameterEvaluator1 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                     DvToPdpExtractStep.class,
                     FPParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES,
                     FPParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_OWNERSHIP_CODES,
                     vendorOwnerCode, payReasonCode);
-            ParameterEvaluator parameterEvaluator2 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
+            final ParameterEvaluator parameterEvaluator2 = /*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(
                     DvToPdpExtractStep.class,
                     FPParameterConstants.TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY,
                     FPParameterConstants.NON_TAXABLE_PAYMENT_REASON_CODES_BY_CORPORATION_OWNERSHIP_TYPE_CATEGORY,
@@ -161,21 +162,28 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         return pg;
     }
 
-    protected PaymentDetail buildPaymentDetail(DisbursementVoucherDocument document, Date processRunDate) {
+    protected PaymentDetail buildPaymentDetail(final DisbursementVoucherDocument document, final Date processRunDate) {
         LOG.debug("buildPaymentDetail() started");
+        
+        final String paymentDetailDocumentType = document.getPaymentDetailDocumentType();
+        if (paymentDetailDocumentType == null) {
+            throw new IllegalStateException("No payment detail document type code found for DV payment method "
+                + document.getDisbVchrPaymentMethodCode());
+        }
+        
         final String maxNoteLinesParam = parameterService.getParameterValueAsString(
                 KfsParameterConstants.PRE_DISBURSEMENT_ALL.class, PdpParameterConstants.MAX_NOTE_LINES);
 
-        int maxNoteLines;
+        final int maxNoteLines;
         try {
             maxNoteLines = Integer.parseInt(maxNoteLinesParam);
         }
-        catch (NumberFormatException nfe) {
+        catch (final NumberFormatException nfe) {
             throw new IllegalArgumentException("Invalid Max Notes Lines parameter, value: " + maxNoteLinesParam +
                     " cannot be converted to an integer");
         }
 
-        PaymentDetail pd = new PaymentDetail();
+        final PaymentDetail pd = new PaymentDetail();
         if (StringUtils.isNotEmpty(document.getDocumentHeader().getOrganizationDocumentNumber())) {
             pd.setOrganizationDocNbr(document.getDocumentHeader().getOrganizationDocumentNumber());
         }
@@ -193,12 +201,13 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         pd.setInvTotShipAmount(KualiDecimal.ZERO);
         pd.setNetPaymentAmount(document.getDisbVchrCheckTotalAmount());
         pd.setPrimaryCancelledPayment(Boolean.FALSE);
-        pd.setFinancialDocumentTypeCode(DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH);
+        pd.setFinancialDocumentTypeCode(paymentDetailDocumentType);
         pd.setFinancialSystemOriginCode(KFSConstants.ORIGIN_CODE_KUALI);
 
         // Handle accounts
-        for (SourceAccountingLine sal : (List<? extends SourceAccountingLine>)document.getSourceAccountingLines()) {
-            PaymentAccountDetail pad = new PaymentAccountDetail();
+        for (final SourceAccountingLine sal : 
+                (List<? extends SourceAccountingLine>)document.getSourceAccountingLines()) {
+            final PaymentAccountDetail pad = new PaymentAccountDetail();
             pad.setFinChartCode(sal.getChartOfAccountsCode());
             pad.setAccountNbr(sal.getAccountNumber());
             if (StringUtils.isNotEmpty(sal.getSubAccountNumber())) {
@@ -228,7 +237,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         }
 
         // Handle notes
-        DisbursementVoucherPayeeDetail dvpd = document.getDvPayeeDetail();
+        final DisbursementVoucherPayeeDetail dvpd = document.getDvPayeeDetail();
 
         int line = 0;
         PaymentNoteText pnt = new PaymentNoteText();
@@ -237,12 +246,12 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                 document.getDisbVchrContactPhoneNumber());
         pd.addNote(pnt);
 
-        String dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
-        String dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
-        String dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
-        String dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
-        String dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
-        String dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
+        final String dvSpecialHandlingPersonName = dvpd.getDisbVchrSpecialHandlingPersonName();
+        final String dvSpecialHandlingLine1Address = dvpd.getDisbVchrSpecialHandlingLine1Addr();
+        final String dvSpecialHandlingLine2Address = dvpd.getDisbVchrSpecialHandlingLine2Addr();
+        final String dvSpecialHandlingCity = dvpd.getDisbVchrSpecialHandlingCityName();
+        final String dvSpecialHandlingState = dvpd.getDisbVchrSpecialHandlingStateCode();
+        final String dvSpecialHandlingZip = dvpd.getDisbVchrSpecialHandlingZipCode();
 
         if (StringUtils.isNotEmpty(dvSpecialHandlingPersonName)) {
             pnt = new PaymentNoteText();
@@ -280,10 +289,10 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             pd.addNote(pnt);
         }
 
-        String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
+        final String paymentReasonCode = dvpd.getDisbVchrPaymentReasonCode();
         if (parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
                 FPParameterConstants.NONEMPLOYEE_TRAVEL, paymentReasonCode).evaluationSucceeds()) {
-            DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
+            final DisbursementVoucherNonEmployeeTravel dvnet = document.getDvNonEmployeeTravel();
 
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
@@ -298,7 +307,8 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
             LOG.debug("Creating non employee travel notes: {}", pnt::getCustomerNoteText);
             pd.addNote(pnt);
 
-            if (dvnet.getDisbVchrPersonalCarAmount() != null && dvnet.getDisbVchrPersonalCarAmount().compareTo(KualiDecimal.ZERO) != 0) {
+            if (dvnet.getDisbVchrPersonalCarAmount() != null 
+                    && dvnet.getDisbVchrPersonalCarAmount().compareTo(KualiDecimal.ZERO) != 0) {
                 pnt = new PaymentNoteText();
                 pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
                 pnt.setCustomerNoteText("The total dollar amount for your vehicle mileage is " +
@@ -306,32 +316,34 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
                 LOG.debug("Creating non employee travel vehicle note: {}", pnt::getCustomerNoteText);
                 pd.addNote(pnt);
 
-                for (DisbursementVoucherNonEmployeeExpense exp : (List<DisbursementVoucherNonEmployeeExpense>)dvnet.getDvNonEmployeeExpenses()) {
+                for (final DisbursementVoucherNonEmployeeExpense exp : (List<DisbursementVoucherNonEmployeeExpense>)dvnet.getDvNonEmployeeExpenses()) {
                     if (line < maxNoteLines - 8) {
                         pnt = new PaymentNoteText();
                         pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-                        pnt.setCustomerNoteText(exp.getDisbVchrExpenseCompanyName() + " " + exp.getDisbVchrExpenseAmount());
+                        pnt.setCustomerNoteText(exp.getDisbVchrExpenseCompanyName() + 
+                                " " + exp.getDisbVchrExpenseAmount());
                         LOG.debug("Creating non employee travel expense note: {}", pnt::getCustomerNoteText);
                         pd.addNote(pnt);
                     }
                 }
             }
         } else if (/*REFACTORME*/parameterEvaluatorService.getParameterEvaluator(DisbursementVoucherDocument.class,
-                FPParameterConstants.PREPAID_TRAVEL_PAYMENT_REASONS, paymentReasonCode).evaluationSucceeds()) {
+                FPParameterConstants.PREPAID_TRAVEL_PAYMENT_REASON, paymentReasonCode).evaluationSucceeds()) {
             pnt = new PaymentNoteText();
             pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
             pnt.setCustomerNoteText("Payment is for the following individuals/charges:");
             pd.addNote(pnt);
             LOG.info("Creating prepaid travel note note: {}", pnt::getCustomerNoteText);
 
-            DisbursementVoucherPreConferenceDetail dvpcd = document.getDvPreConferenceDetail();
+            final DisbursementVoucherPreConferenceDetail dvpcd = document.getDvPreConferenceDetail();
 
-            for (DisbursementVoucherPreConferenceRegistrant dvpcr : 
+            for (final DisbursementVoucherPreConferenceRegistrant dvpcr : 
                     (List<DisbursementVoucherPreConferenceRegistrant>)dvpcd.getDvPreConferenceRegistrants()) {
                 if (line < maxNoteLines - 8) {
                     pnt = new PaymentNoteText();
                     pnt.setCustomerNoteLineNbr(new KualiInteger(line++));
-                    pnt.setCustomerNoteText(dvpcr.getDvConferenceRegistrantName() + " " + dvpcr.getDisbVchrExpenseAmount());
+                    pnt.setCustomerNoteText(dvpcr.getDvConferenceRegistrantName() + " " + 
+                        dvpcr.getDisbVchrExpenseAmount());
                     LOG.debug("Creating pre-paid conference registrants note: {}", pnt::getCustomerNoteText);
                     pd.addNote(pnt);
                 }
@@ -346,30 +358,30 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         return pd;
     }
 
-    public Map<String, List<DisbursementVoucherDocument>> retrievePaymentSourcesByCampus(boolean immediatesOnly) {
+    public Map<String, List<DisbursementVoucherDocument>> retrievePaymentSourcesByCampus(final boolean immediatesOnly) {
         LOG.debug("retrievePaymentSourcesByCampus() started");
 
         if (immediatesOnly) {
-            throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal " +
-                    "document processing; immediates for DisbursementVoucher should not be run through batch.");
+            throw new UnsupportedOperationException("DisbursementVoucher PDP does immediates extraction through normal "
+                    + "document processing; immediates for DisbursementVoucher should not be run through batch.");
         }
 
-        Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<>();
+        final Map<String, List<DisbursementVoucherDocument>> documentsByCampus = new HashMap<>();
 
-        Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(
+        final Collection<DisbursementVoucherDocument> docs = disbursementVoucherDao.getDocumentsByHeaderStatus(
                 KFSConstants.DocumentStatusCodes.APPROVED, false);
-        for (DisbursementVoucherDocument element : docs) {
-            String dvdCampusCode = element.getCampusCode();
+        for (final DisbursementVoucherDocument element : docs) {
+            final String dvdCampusCode = element.getCampusCode();
             if (StringUtils.isNotBlank(dvdCampusCode)) {
                 if (documentsByCampus.containsKey(dvdCampusCode) 
                 		// KFSUPGRADE-973
                 		&& getPaymentMethodGeneralLedgerPendingEntryService().isPaymentMethodProcessedUsingPdp(element.getDisbVchrPaymentMethodCode())) {
 
-                    List<DisbursementVoucherDocument> documents = documentsByCampus.get(dvdCampusCode);
+                    final List<DisbursementVoucherDocument> documents = documentsByCampus.get(dvdCampusCode);
                     documents.add(element);
                 }
                 else {
-                    List<DisbursementVoucherDocument> documents = new ArrayList<>();
+                    final List<DisbursementVoucherDocument> documents = new ArrayList<>();
                     documents.add(element);
                     documentsByCampus.put(dvdCampusCode, documents);
                 }
@@ -407,7 +419,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	}
 	   
 	   @Override
-	   public boolean shouldExtractPayment(DisbursementVoucherDocument paymentSource) {
+	   public boolean shouldExtractPayment(final DisbursementVoucherDocument paymentSource) {
 	       LOG.debug("paymentSource: " + paymentSource.getClass());
 	       if (isRecurringDV(paymentSource)) {
 	           LOG.debug("shouldExtractPayment: found a recurring DV, returning false for " + paymentSource.getDocumentNumber());
@@ -432,7 +444,7 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
 	   }
 
     @Override
-    public void setXmlUtilService(XmlUtilService xmlUtilService) {
+    public void setXmlUtilService(final XmlUtilService xmlUtilService) {
         super.setXmlUtilService(xmlUtilService);
         this.xmlUtilService = xmlUtilService;
     }

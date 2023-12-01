@@ -36,20 +36,20 @@ public class CuPaymentRequestForm extends PaymentRequestForm {
 		return wireChargeMessage;
 	}
 
-	public void setWireChargeMessage(String wireChargeMessage) {
+	public void setWireChargeMessage(final String wireChargeMessage) {
 		this.wireChargeMessage = wireChargeMessage;
 	}
 
     @Override
     public List<ExtraButton> getExtraButtons() {
         super.getExtraButtons();
-        PaymentRequestDocument paymentRequestDocument = this.getPaymentRequestDocument();
+        final PaymentRequestDocument paymentRequestDocument = getPaymentRequestDocument();
         if (StringUtils.equalsIgnoreCase(paymentRequestDocument.getDocumentHeader().getApplicationDocumentStatus(),
                 PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED) && paymentRequestDocument.getDocumentHeader().getWorkflowDocument().isFinal()
                         && !SpringContext.getBean(CUPaymentMethodGeneralLedgerPendingEntryService.class).isPaymentMethodProcessedUsingPdp(
                                 ((CuPaymentRequestDocument) paymentRequestDocument).getPaymentMethodCode())) {
             ExtraButton cancelButton = null;
-            for (ExtraButton extraButton : extraButtons) {
+            for (final ExtraButton extraButton : extraButtons) {
                 if (StringUtils.equals("methodToCall.cancel", extraButton.getExtraButtonProperty())) {
                     cancelButton = extraButton;
                 }                

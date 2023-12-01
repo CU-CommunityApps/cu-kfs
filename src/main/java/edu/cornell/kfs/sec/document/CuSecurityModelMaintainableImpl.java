@@ -19,12 +19,12 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
     private transient SequenceAccessorService sequenceAccessorService;
 
     @Override
-    protected String buildModelRoleId(SecurityModel securityModel) {
+    protected String buildModelRoleId(final SecurityModel securityModel) {
         return null;
     }
 
     @Override
-    public void addNewLineToCollection(String collectionName) {
+    public void addNewLineToCollection(final String collectionName) {
         super.addNewLineToCollection(collectionName);
         if (StringUtils.equalsIgnoreCase(collectionName, SecPropertyConstants.MODEL_DEFINITIONS)) {
             populatePrimaryKeyOnNewModelDefinition();
@@ -32,12 +32,12 @@ public class CuSecurityModelMaintainableImpl extends SecurityModelMaintainableIm
     }
 
     protected void populatePrimaryKeyOnNewModelDefinition() {
-        SecurityModel securityModel = (SecurityModel) getBusinessObject();
-        List<SecurityModelDefinition> modelDefinitions = securityModel.getModelDefinitions();
+        final SecurityModel securityModel = (SecurityModel) getBusinessObject();
+        final List<SecurityModelDefinition> modelDefinitions = securityModel.getModelDefinitions();
         if (CollectionUtils.isNotEmpty(modelDefinitions)) {
-            int lastElementIndex = modelDefinitions.size() - 1;
-            SecurityModelDefinition newModelDefinition = modelDefinitions.get(lastElementIndex);
-            Long newModelDefinitionId = getSequenceAccessorService().getNextAvailableSequenceNumber(
+            final int lastElementIndex = modelDefinitions.size() - 1;
+            final SecurityModelDefinition newModelDefinition = modelDefinitions.get(lastElementIndex);
+            final Long newModelDefinitionId = getSequenceAccessorService().getNextAvailableSequenceNumber(
                     MODEL_DEFINITION_ID_SEQUENCE_NAME);
             newModelDefinition.setModelDefinitionId(new KualiInteger(newModelDefinitionId));
         }

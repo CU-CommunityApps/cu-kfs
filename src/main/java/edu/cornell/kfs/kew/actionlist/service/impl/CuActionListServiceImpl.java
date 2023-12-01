@@ -22,7 +22,7 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
     private ConfigurationService configurationService;
 
     @Override
-    public ActionItemExtension findActionItemExtensionByActionItemId(String actionItemId) {
+    public ActionItemExtension findActionItemExtensionByActionItemId(final String actionItemId) {
         if (StringUtils.isBlank(actionItemId)) {
             throw new IllegalArgumentException("actionItemId cannot be blank");
         }
@@ -35,12 +35,12 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
      * by JavaScript on the action list page.
      */
     @Override
-    public String saveActionItemNoteForActionItemId(String note, String actionItemId) {
+    public String saveActionItemNoteForActionItemId(String note, final String actionItemId) {
         String resultStatus = KFSConstants.EMPTY_STRING;
         
         try {
             if (StringUtils.isNotBlank(note) && !validateNoteMaxLength(note)) {
-                int maxLength = Integer.parseInt(configurationService.getPropertyValueAsString(
+                final int maxLength = Integer.parseInt(configurationService.getPropertyValueAsString(
                         CuKewKeyConstants.ACTION_LIST_RESULTS_NOTES_MAXLENGTH));
                 note = StringUtils.substring(note, 0, maxLength);
                 resultStatus = configurationService.getPropertyValueAsString(
@@ -82,8 +82,8 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
      * Part of MSU action item notes contribution; updated as needed by CU.
      * This method validates user input notes length.
      */
-    private boolean validateNoteMaxLength(String note) {
-        String maxLengthProperty = configurationService.getPropertyValueAsString(
+    private boolean validateNoteMaxLength(final String note) {
+        final String maxLengthProperty = configurationService.getPropertyValueAsString(
                 CuKewKeyConstants.ACTION_LIST_RESULTS_NOTES_MAXLENGTH);
 
         if (StringUtils.isBlank(maxLengthProperty)) {
@@ -91,7 +91,7 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
                     "for user input");
         } else {
             try {
-                int maxLength = Integer.parseInt(maxLengthProperty);
+                final int maxLength = Integer.parseInt(maxLengthProperty);
                 return StringUtils.length(note) <= maxLength;
             } catch (NumberFormatException e) {
                 LOG.error("validateNoteMaxLength, Action list note max length does not contain a valid integer. " +
@@ -102,7 +102,7 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
     }
 
     private boolean isCreatingNewNonBlankNoteOrChangingExistingNote(
-            ActionItemExtension extension, String newNoteText) {
+            final ActionItemExtension extension, final String newNoteText) {
         if (ObjectUtils.isNull(extension)) {
             return StringUtils.isNotBlank(newNoteText);
         } else if (StringUtils.isBlank(newNoteText)) {
@@ -125,7 +125,7 @@ public class CuActionListServiceImpl extends ActionListServiceImpl implements Cu
         return (CuActionItemDAO) getActionItemDAO();
     }
 
-    public void setConfigurationService(ConfigurationService configurationService) {
+    public void setConfigurationService(final ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 

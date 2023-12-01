@@ -57,7 +57,7 @@ public class CuPersonInquirableImpl extends PersonInquirableImpl {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public BusinessObject getBusinessObject(Map fieldValues) {
+    public BusinessObject getBusinessObject(final Map fieldValues) {
         // KFSPTS-19308 CU customization to allow inquiry by principalName
         Person person = null;
         if (fieldValues.containsKey("principalId")) {
@@ -65,7 +65,7 @@ public class CuPersonInquirableImpl extends PersonInquirableImpl {
         }
 
         if (person == null && fieldValues.containsKey("principalName")) {
-            String principalName = fieldValues.get("principalName").toString();
+            final String principalName = fieldValues.get("principalName").toString();
             if (StringUtils.isNotBlank(principalName)) {
                 person = getPersonService().getPersonByPrincipalName(principalName);
             }
@@ -79,10 +79,10 @@ public class CuPersonInquirableImpl extends PersonInquirableImpl {
     }
 
     @Override
-    public List<Section> getSections(BusinessObject businessObject) {
-        List<Section> sections = super.getSections(businessObject);
-        Person currentUser = GlobalVariables.getUserSession().getPerson();
-        Person person = (Person) businessObject;
+    public List<Section> getSections(final BusinessObject businessObject) {
+        final List<Section> sections = super.getSections(businessObject);
+        final Person currentUser = GlobalVariables.getUserSession().getPerson();
+        final Person person = (Person) businessObject;
         if (getUiDocumentService().canOverrideEntityPrivacyPreferences(
                 currentUser.getPrincipalId(), person.getPrincipalId())) {
             LOG.info("getSections, Current user can override privacy preferences for user " + person.getPrincipalName()
@@ -93,7 +93,8 @@ public class CuPersonInquirableImpl extends PersonInquirableImpl {
     }
 
     private void modifyInquirySectionsToUnmaskPotentiallySuppressedPersonFields(
-            List<Section> sections, BusinessObject businessObject) {
+            final List<Section> sections, 
+            final BusinessObject businessObject) {
         sections.stream()
                 .filter(section -> sectionContainsPotentiallySuppressedFields(section))
                 .flatMap(section -> section.getRows().stream())
@@ -105,22 +106,23 @@ public class CuPersonInquirableImpl extends PersonInquirableImpl {
                 .forEach(field -> modifyFieldToDisplayUnmaskedValue(field, businessObject));
     }
 
-    private boolean sectionContainsPotentiallySuppressedFields(Section section) {
+    private boolean sectionContainsPotentiallySuppressedFields(final Section section) {
         return INQUIRY_SECTIONS_WITH_SUPPRESSED_FIELDS.contains(section.getSectionTitle());
     }
 
-    private boolean shouldForciblyUnmaskField(Field field) {
-        String simplePropertyName = StringUtils.substringAfterLast(field.getPropertyName(), KFSConstants.DELIMITER);
+    private boolean shouldForciblyUnmaskField(final Field field) {
+        final String simplePropertyName = StringUtils.substringAfterLast(field.getPropertyName(), KFSConstants.DELIMITER);
         return StringUtils.isNotBlank(simplePropertyName) && UNMASKABLE_INQUIRY_FIELDS.contains(simplePropertyName);
     }
 
-    private void modifyFieldToDisplayUnmaskedValue(Field field, BusinessObject businessObject) {
+    private void modifyFieldToDisplayUnmaskedValue(
+            final Field field, final BusinessObject businessObject) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("modifyFieldToDisplayUnmaskedValue, Forcibly unmasking field: " + field.getPropertyName());
         }
-        String propertyNameForUnmaskedValue = field.getPropertyName()
+        final String propertyNameForUnmaskedValue = field.getPropertyName()
                 + CUKFSPropertyConstants.UNMASKED_PROPERTY_SUFFIX;
-        Object unmaskedValue = ObjectUtils.getPropertyValue(businessObject, propertyNameForUnmaskedValue);
+        final Object unmaskedValue = ObjectUtils.getPropertyValue(businessObject, propertyNameForUnmaskedValue);
         field.setAlternateDisplayPropertyName(propertyNameForUnmaskedValue);
         field.setAlternateDisplayPropertyValue(unmaskedValue);
     }

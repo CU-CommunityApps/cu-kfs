@@ -45,13 +45,13 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      * @return CreditMemoDocument
      */
     @Override
-    protected VendorCreditMemoDocument findCreditMemoDocument(Entry entry) {
+    protected VendorCreditMemoDocument findCreditMemoDocument(final Entry entry) {
         VendorCreditMemoDocument creditMemoDocument = null;
-        Map<String, String> keys = new LinkedHashMap<>();
+        final Map<String, String> keys = new LinkedHashMap<>();
         keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
-        Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
+        final Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.CREDIT_MEMO_DOCUMENT);
         
-        Collection<? extends Document> matchingCms = businessObjectService.findMatching(docClass, keys);
+        final Collection<? extends Document> matchingCms = businessObjectService.findMatching(docClass, keys);
         if (matchingCms != null && matchingCms.size() == 1) {
             creditMemoDocument = (VendorCreditMemoDocument) matchingCms.iterator().next();
         }
@@ -65,13 +65,13 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      * @return PaymentRequestDocument
      */
     @Override
-    protected PaymentRequestDocument findPaymentRequestDocument(Entry entry) {
+    protected PaymentRequestDocument findPaymentRequestDocument(final Entry entry) {
         PaymentRequestDocument paymentRequestDocument = null;
-        Map<String, String> keys = new LinkedHashMap<>();
+        final Map<String, String> keys = new LinkedHashMap<>();
         keys.put(CamsPropertyConstants.DOCUMENT_NUMBER, entry.getDocumentNumber());
-        Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
+        final Class<? extends Document> docClass = dataDictionaryService.getDocumentClassByTypeName(PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
         
-        Collection<? extends Document> matchingPreqs = businessObjectService.findMatching(docClass, keys);
+        final Collection<? extends Document> matchingPreqs = businessObjectService.findMatching(docClass, keys);
         if (matchingPreqs != null && matchingPreqs.size() == 1) {
             paymentRequestDocument = (PaymentRequestDocument) matchingPreqs.iterator().next();
         }
@@ -115,45 +115,45 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      */
     @Transactional
     @Override
-    public HashSet<PurchasingAccountsPayableDocument> savePOLines(List<Entry> poLines, ExtractProcessLog processLog) {
-        HashSet<PurchasingAccountsPayableDocument> purApDocuments = new HashSet<>();
+    public HashSet<PurchasingAccountsPayableDocument> savePOLines(final List<Entry> poLines, final ExtractProcessLog processLog) {
+        final HashSet<PurchasingAccountsPayableDocument> purApDocuments = new HashSet<>();
 
         // This is a list of pending GL entries created after last GL process and Cab Batch extract
         // PurAp Account Line history comes from PURAP module
-        Collection<PurApAccountingLineBase> purapAcctLines = findPurapAccountRevisions();
+        final Collection<PurApAccountingLineBase> purapAcctLines = findPurapAccountRevisions();
 
-        ReconciliationService reconciliationService = getReconciliationService();
+        final ReconciliationService reconciliationService = getReconciliationService();
         
         // Pass the records to reconciliation service method
         reconciliationService.reconcile(poLines, purapAcctLines);
 
         // for each valid GL entry there is a collection of valid PO Doc and Account Lines
-        Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
+        final Collection<GlAccountLineGroup> matchedGroups = reconciliationService.getMatchedGroups();
 
         // Keep track of unique item lines
-        HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<>();
+        final HashMap<String, PurchasingAccountsPayableItemAsset> assetItems = new HashMap<>();
 
         // Keep track of unique account lines
-        HashMap<String, PurchasingAccountsPayableLineAssetAccount> assetAcctLines = new HashMap<>();
+        final HashMap<String, PurchasingAccountsPayableLineAssetAccount> assetAcctLines = new HashMap<>();
 
         // Keep track of asset lock
-        HashMap<String, Object> assetLockMap = new HashMap<>();
+        final HashMap<String, Object> assetLockMap = new HashMap<>();
 
         // Keep track of purchaseOrderDocument
-        HashMap<Integer, PurchaseOrderDocument> poDocMap = new HashMap<>();
+        final HashMap<Integer, PurchaseOrderDocument> poDocMap = new HashMap<>();
 
         // KFSMI-7214, add document map for processing multiple items from the same AP doc
-        HashMap<String, PurchasingAccountsPayableDocument> papdMap = new HashMap<>();
+        final HashMap<String, PurchasingAccountsPayableDocument> papdMap = new HashMap<>();
 
-        for (GlAccountLineGroup group : matchedGroups) {
-            Entry entry = group.getTargetEntry();
+        for (final GlAccountLineGroup group : matchedGroups) {
+            final Entry entry = group.getTargetEntry();
             GeneralLedgerEntry generalLedgerEntry = new GeneralLedgerEntry(entry);
             GeneralLedgerEntry debitEntry = null;
             GeneralLedgerEntry creditEntry = null;
-            KualiDecimal transactionLedgerEntryAmount = generalLedgerEntry.getTransactionLedgerEntryAmount();
-            List<PurApAccountingLineBase> matchedPurApAcctLines = group.getMatchedPurApAcctLines();
-            boolean hasPositiveAndNegative = hasPositiveAndNegative(matchedPurApAcctLines);
-            boolean nonZero = ObjectUtils.isNotNull(transactionLedgerEntryAmount) 
+            final KualiDecimal transactionLedgerEntryAmount = generalLedgerEntry.getTransactionLedgerEntryAmount();
+            final List<PurApAccountingLineBase> matchedPurApAcctLines = group.getMatchedPurApAcctLines();
+            final boolean hasPositiveAndNegative = hasPositiveAndNegative(matchedPurApAcctLines);
+            final boolean nonZero = ObjectUtils.isNotNull(transactionLedgerEntryAmount) 
                     && transactionLedgerEntryAmount.isNonZero();
 
             // generally for non-zero transaction ledger amount we should create a single GL entry with that amount,
@@ -188,15 +188,15 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 papdMap.put(entry.getDocumentNumber(), cabPurapDoc);
 
                 // we only deal with PREQ or CM, so isPREQ = !isCM, isCM = !PREQ
-                boolean isPREQ = PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(entry.getFinancialDocumentTypeCode());
-                boolean hasRevisionWithMixedLines = isPREQ && hasRevisionWithMixedLines(matchedPurApAcctLines);
+                final boolean isPREQ = PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT.equals(entry.getFinancialDocumentTypeCode());
+                final boolean hasRevisionWithMixedLines = isPREQ && hasRevisionWithMixedLines(matchedPurApAcctLines);
 
-                for (PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
+                for (final PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
                     // KFSMI-7214,tracking down changes on CAB item.
                     boolean newAssetItem = false;
 
-                    PurApItem purapItem = purApAccountingLine.getPurapItem();
-                    String itemAssetKey = cabPurapDoc.getDocumentNumber() + "-" + purapItem.getItemIdentifier();
+                    final PurApItem purapItem = purApAccountingLine.getPurapItem();
+                    final String itemAssetKey = cabPurapDoc.getDocumentNumber() + "-" + purapItem.getItemIdentifier();
 
                     // KFSMI-7214, search CAB item from active object reference map first
                     PurchasingAccountsPayableItemAsset itemAsset = assetItems.get(itemAssetKey);
@@ -215,27 +215,27 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                     assetItems.put(itemAssetKey, itemAsset);
                     
                     Long generalLedgerAccountIdentifier = generalLedgerEntry.getGeneralLedgerAccountIdentifier();
-                    KualiDecimal purapAmount = purApAccountingLine.getAmount();
+                    final KualiDecimal purapAmount = purApAccountingLine.getAmount();
                     
                     // note that PurAp Doc accounting lines won't have zero amount, so !isPositive = isNegative
-                    boolean isPositive = purapAmount.isPositive();
+                    final boolean isPositive = purapAmount.isPositive();
                     // trade-in and discount items on PREQ usually have negative amount (unless it's a revision)
-                    boolean usuallyNegative = isItemTypeUsuallyOfNegativeAmount(purapItem.getItemTypeCode());
+                    final boolean usuallyNegative = isItemTypeUsuallyOfNegativeAmount(purapItem.getItemTypeCode());
 
                     // decide if current accounting line should be consolidated into debit or credit entry based 
                     // on the above criteria
-                    boolean isDebitEntry = hasRevisionWithMixedLines ?
+                    final boolean isDebitEntry = hasRevisionWithMixedLines ?
                             // case 2.2
                             usuallyNegative ? !isPositive : isPositive :
                             // case 1.1/1.2/2.1
                             isPREQ ? isPositive : !isPositive;
-                    GeneralLedgerEntry currentEntry = isDebitEntry ? debitEntry : creditEntry;
+                    final GeneralLedgerEntry currentEntry = isDebitEntry ? debitEntry : creditEntry;
                     
                     if (ObjectUtils.isNull(generalLedgerAccountIdentifier)) {
                         generalLedgerAccountIdentifier = currentEntry.getGeneralLedgerAccountIdentifier();
                     }
                     
-                    String acctLineKey = cabPurapDoc.getDocumentNumber() + "-" + itemAsset.getAccountsPayableLineItemIdentifier() + "-" + itemAsset.getCapitalAssetBuilderLineNumber() + "-" + generalLedgerAccountIdentifier;
+                    final String acctLineKey = cabPurapDoc.getDocumentNumber() + "-" + itemAsset.getAccountsPayableLineItemIdentifier() + "-" + itemAsset.getCapitalAssetBuilderLineNumber() + "-" + generalLedgerAccountIdentifier;
                     PurchasingAccountsPayableLineAssetAccount assetAccount = assetAcctLines.get(acctLineKey);
 
                     if (ObjectUtils.isNull(assetAccount) && nonZero && !hasPositiveAndNegative) {
@@ -306,7 +306,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                 // otherwise need to swap the D/C code, (see item #3 in the above KFSMI-9760 / KFSCNTRB-???(FSKD-5097) comment)
                 // since the real amount being positive/negative shall be solely indicated by the D/C code.
                 if (debitEntry != null) {
-                    KualiDecimal amount = debitEntry.getTransactionLedgerEntryAmount();
+                    final KualiDecimal amount = debitEntry.getTransactionLedgerEntryAmount();
                     if (amount.isNegative()) {
                         debitEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
                         debitEntry.setTransactionLedgerEntryAmount(amount.negated());
@@ -314,7 +314,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
                     businessObjectService.save(debitEntry);
                 }
                 if (creditEntry != null) {
-                    KualiDecimal amount = creditEntry.getTransactionLedgerEntryAmount();
+                    final KualiDecimal amount = creditEntry.getTransactionLedgerEntryAmount();
                     if (amount.isNegative()) {
                         creditEntry.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
                         creditEntry.setTransactionLedgerEntryAmount(amount.negated());
@@ -341,7 +341,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
     /**
      * Returns true if the item type code is trade-in or discount, since items with these types usually have negative amounts.
      */
-    private boolean isItemTypeUsuallyOfNegativeAmount(String itemTypeCode) {
+    private boolean isItemTypeUsuallyOfNegativeAmount(final String itemTypeCode) {
         return PurapConstants.ItemTypeCodes.ITEM_TYPE_TRADE_IN_CODE.equals(itemTypeCode) ||
         PurapConstants.ItemTypeCodes.ITEM_TYPE_ORDER_DISCOUNT_CODE.equals(itemTypeCode) ||
         //TODO remove the following logic about MISC item when bug in KFSMI-10170 is fixed
@@ -357,14 +357,14 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      * @param matchedPurApAcctLines List of matched PurAp accounting lines to check for multiple discount items
      * @return true if multiple discount items, false otherwise
      */
-    private boolean hasRevisionWithMixedLines(List<PurApAccountingLineBase> matchedPurApAcctLines) {
+    private boolean hasRevisionWithMixedLines(final List<PurApAccountingLineBase> matchedPurApAcctLines) {
         boolean hasItemsUsuallyNegative = false;
         boolean hasOthers = false;
         boolean hasRevision = false;
-        HashSet<Integer> itemIdentifiers = new HashSet<>();
+        final HashSet<Integer> itemIdentifiers = new HashSet<>();
 
-        for (PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
-            PurApItem purapItem = purApAccountingLine.getPurapItem();
+        for (final PurApAccountingLineBase purApAccountingLine : matchedPurApAcctLines) {
+            final PurApItem purapItem = purApAccountingLine.getPurapItem();
             if (isItemTypeUsuallyOfNegativeAmount(purapItem.getItemTypeCode())) {
                 hasItemsUsuallyNegative = true;
             } else {
@@ -393,11 +393,11 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
      * @param matchedPurApAcctLines
      * @return
      */
-    private boolean hasPositiveAndNegative(List<PurApAccountingLineBase> matchedPurApAcctLines) {
+    private boolean hasPositiveAndNegative(final List<PurApAccountingLineBase> matchedPurApAcctLines) {
         boolean hasPositive = false;
         boolean hasNegative = false;
 
-        for (PurApAccountingLineBase line : matchedPurApAcctLines) {
+        for (final PurApAccountingLineBase line : matchedPurApAcctLines) {
             hasPositive = hasPositive || line.getAmount().isPositive();
             hasNegative = hasNegative || line.getAmount().isNegative();
             if (hasPositive && hasNegative) {
@@ -408,7 +408,7 @@ public class CuBatchExtractServiceImpl extends BatchExtractServiceImpl {
         return false;
     }
 
-    public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
+    public void setDataDictionaryService(final DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
     }
     

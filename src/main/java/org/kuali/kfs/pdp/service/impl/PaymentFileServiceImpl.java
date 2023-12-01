@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -57,7 +57,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.List;
 
 @Transactional
@@ -80,19 +79,19 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
     }
 
     @Override
-    public void processPaymentFiles(BatchInputFileType paymentInputFileType) {
-        List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(paymentInputFileType);
+    public void processPaymentFiles(final BatchInputFileType paymentInputFileType) {
+        final List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(paymentInputFileType);
 
-        for (String incomingFileName : fileNamesToLoad) {
+        for (final String incomingFileName : fileNamesToLoad) {
             try {
                 LOG.debug("processPaymentFiles() Processing {}", incomingFileName);
 
                 // collect various information for status of load
-                LoadPaymentStatus status = new LoadPaymentStatus();
+                final LoadPaymentStatus status = new LoadPaymentStatus();
                 status.setMessageMap(new MessageMap());
 
                 // process payment file
-                PaymentFileLoad paymentFile = processPaymentFile(paymentInputFileType, incomingFileName,
+                final PaymentFileLoad paymentFile = processPaymentFile(paymentInputFileType, incomingFileName,
                         status.getMessageMap());
                 if (paymentFile != null && paymentFile.isPassedValidation()) {
                     // load payment data
@@ -108,7 +107,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
                     );
                     removeDoneFile(incomingFileName);
                 }
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 LOG.error("Caught exception trying to load payment file: {}", incomingFileName, e);
                 // swallow exception so we can continue processing files, the errors have been reported by email
             }
@@ -123,10 +122,11 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
      * @param errorMap             Map of errors
      * @return {@link LoadPaymentStatus} containing status data for load
      */
-    protected PaymentFileLoad processPaymentFile(BatchInputFileType paymentInputFileType, String incomingFileName,
-            MessageMap errorMap) {
+    protected PaymentFileLoad processPaymentFile(
+            final BatchInputFileType paymentInputFileType, final String incomingFileName,
+            final MessageMap errorMap) {
         // parse xml, if errors found return with failure
-        PaymentFileLoad paymentFile = parsePaymentFile(paymentInputFileType, incomingFileName, errorMap);
+        final PaymentFileLoad paymentFile = parsePaymentFile(paymentInputFileType, incomingFileName, errorMap);
 
         // if no parsing error, do further validation
         if (errorMap.hasNoErrors()) {
@@ -143,7 +143,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
     }
 
     @Override
-    public void doPaymentFileValidation(PaymentFileLoad paymentFile, MessageMap errorMap) {
+    public void doPaymentFileValidation(final PaymentFileLoad paymentFile, final MessageMap errorMap) {
         paymentFileValidationService.doHardEdits(paymentFile, errorMap);
 
         //TODO FSKD-5416 KFSCNTRB ???
@@ -160,7 +160,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
     }
 
     @Override
-    public void loadPayments(PaymentFileLoad paymentFile, LoadPaymentStatus status, String incomingFileName) {
+    public void loadPayments(final PaymentFileLoad paymentFile, final LoadPaymentStatus status, final String incomingFileName) {
         status.setChart(paymentFile.getCampus());
         status.setUnit(paymentFile.getUnit());
         status.setSubUnit(paymentFile.getSubUnit());
@@ -169,18 +169,18 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         status.setDetailTotal(paymentFile.getCalculatedPaymentTotalAmount());
 
         // create batch record for payment load
-        Batch batch = createNewBatch(paymentFile, getBaseFileName(incomingFileName));
+        final Batch batch = createNewBatch(paymentFile, getBaseFileName(incomingFileName));
         businessObjectService.save(batch);
 
         paymentFile.setBatchId(batch.getId());
         status.setBatchId(batch.getId());
 
         // do warnings and set defaults
-        List<String> warnings = paymentFileValidationService.doSoftEdits(paymentFile);
+        final List<String> warnings = paymentFileValidationService.doSoftEdits(paymentFile);
         status.setWarnings(warnings);
 
         // store groups
-        for (PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
+        for (final PaymentGroup paymentGroup : paymentFile.getPaymentGroups()) {
             businessObjectService.save(paymentGroup);
         }
 
@@ -204,12 +204,13 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
      * @param errorMap             any errors encountered while parsing are adding to
      * @return {@link PaymentFileLoad} containing the parsed values.
      */
-    protected PaymentFileLoad parsePaymentFile(BatchInputFileType paymentInputFileType, String incomingFileName,
-            MessageMap errorMap) {
-        FileInputStream fileContents;
+    protected PaymentFileLoad parsePaymentFile(
+            final BatchInputFileType paymentInputFileType, final String incomingFileName,
+            final MessageMap errorMap) {
+        final FileInputStream fileContents;
         try {
             fileContents = new FileInputStream(incomingFileName);
-        } catch (FileNotFoundException e1) {
+        } catch (final FileNotFoundException e1) {
             LOG.error("file to load not found {}", incomingFileName, e1);
             throw new RuntimeException("Cannot find the file requested to be loaded " + incomingFileName, e1);
         }
@@ -217,12 +218,12 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         // do the parse
         PaymentFileLoad paymentFile = null;
         try {
-            byte[] fileByteContent = IOUtils.toByteArray(fileContents);
+            final byte[] fileByteContent = IOUtils.toByteArray(fileContents);
             paymentFile = (PaymentFileLoad) batchInputFileService.parse(paymentInputFileType, fileByteContent);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("error while getting file bytes:  {}", e::getMessage, () -> e);
             throw new RuntimeException("Error encountered while attempting to get file bytes: " + e.getMessage(), e);
-        } catch (ParseException e1) {
+        } catch (final ParseException e1) {
             LOG.error("Error parsing xml {}", e1::getMessage);
             errorMap.putError(KFSConstants.GLOBAL_ERRORS, KFSKeyConstants.ERROR_BATCH_UPLOAD_PARSING,
                     e1.getMessage());
@@ -232,15 +233,15 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
     }
 
     @Override
-    public boolean createOutputFile(LoadPaymentStatus status, String inputFileName) {
+    public boolean createOutputFile(final LoadPaymentStatus status, final String inputFileName) {
         //add a step to check for directory paths
         prepareDirectories(getRequiredDirectoryNames());
 
         // construct the outgoing file name
-        String filename = outgoingDirectoryName + "/" + getBaseFileName(inputFileName);
+        final String filename = outgoingDirectoryName + "/" + getBaseFileName(inputFileName);
 
         // set code-message indicating overall load status
-        String code;
+        final String code;
         String message;
         if (LoadPaymentStatus.LoadStatus.SUCCESS.equals(status.getLoadStatus())) {
             code = "SUCCESS";
@@ -248,8 +249,8 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
         } else {
             code = "FAIL";
             message = "Load Failed: ";
-            List<ErrorMessage> errorMessages = status.getMessageMap().getMessages(KFSConstants.GLOBAL_ERRORS);
-            for (ErrorMessage errorMessage : errorMessages) {
+            final List<ErrorMessage> errorMessages = status.getMessageMap().getMessages(KFSConstants.GLOBAL_ERRORS);
+            for (final ErrorMessage errorMessage : errorMessages) {
                 String resourceMessage = kualiConfigurationService.getPropertyValueAsString(errorMessage.getErrorKey());
                 resourceMessage = MessageFormat.format(resourceMessage, errorMessage.getMessageParameters());
                 message += resourceMessage + ", ";
@@ -274,7 +275,7 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             //Cornell Mod
             if(ObjectUtils.isNotNull(status.getWarnings())) { // Warnings list may be null if file failed to load.
                 p.println("  <messages>");
-                for (String warning : status.getWarnings()) {
+                for (final String warning : status.getWarnings()) {
                     p.println("    <message>" + warning + "</message>");
                 }
                 p.println("  </messages>");
@@ -283,12 +284,12 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
             p.println("</pdp_load_status>");
 
             // creating .done file
-            File doneFile = new File(filename.substring(0, filename.lastIndexOf(".")) + ".done");
+            final File doneFile = new File(filename.substring(0, filename.lastIndexOf(".")) + ".done");
             doneFile.createNewFile();
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             LOG.error("createOutputFile() Cannot create output file", e);
             return false;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("createOutputFile() Cannot write to output file", e);
             return false;
         }
@@ -303,20 +304,12 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
      * @param fileName    payment file name (without path)
      * @return {@link Batch} object
      */
-    protected Batch createNewBatch(PaymentFileLoad paymentFile, String fileName) {
-        Timestamp now = dateTimeService.getCurrentTimestamp();
+    protected Batch createNewBatch(final PaymentFileLoad paymentFile, final String fileName) {
+        final Timestamp now = dateTimeService.getCurrentTimestamp();
 
-        Calendar nowPlus30 = Calendar.getInstance();
-        nowPlus30.setTime(now);
-        nowPlus30.add(Calendar.DATE, 30);
+        final Batch batch = new Batch();
 
-        Calendar nowMinus30 = Calendar.getInstance();
-        nowMinus30.setTime(now);
-        nowMinus30.add(Calendar.DATE, -30);
-
-        Batch batch = new Batch();
-
-        CustomerProfile customer = customerProfileService.get(paymentFile.getCampus(), paymentFile.getUnit(),
+        final CustomerProfile customer = customerProfileService.get(paymentFile.getCampus(), paymentFile.getUnit(),
                 paymentFile.getSubUnit());
         batch.setCustomerProfile(customer);
         batch.setCustomerFileCreateTimestamp(new Timestamp(paymentFile.getCreationDate().getTime()));
@@ -355,46 +348,46 @@ public class PaymentFileServiceImpl extends InitiateDirectoryBase implements Pay
      *
      * @param dataFileName the name of date file with done file to remove.
      */
-    protected void removeDoneFile(String dataFileName) {
-        File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + ".done");
+    protected void removeDoneFile(final String dataFileName) {
+        final File doneFile = new File(StringUtils.substringBeforeLast(dataFileName, ".") + ".done");
         if (doneFile.exists()) {
             doneFile.delete();
         }
     }
 
-    public void setOutgoingDirectoryName(String outgoingDirectoryName) {
+    public void setOutgoingDirectoryName(final String outgoingDirectoryName) {
         this.outgoingDirectoryName = outgoingDirectoryName;
     }
 
-    public void setParameterService(ParameterService parameterService) {
+    public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
     }
 
-    public void setCustomerProfileService(CustomerProfileService customerProfileService) {
+    public void setCustomerProfileService(final CustomerProfileService customerProfileService) {
         this.customerProfileService = customerProfileService;
     }
 
-    public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
+    public void setBatchInputFileService(final BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
     }
 
-    public void setPaymentFileValidationService(PaymentFileValidationService paymentFileValidationService) {
+    public void setPaymentFileValidationService(final PaymentFileValidationService paymentFileValidationService) {
         this.paymentFileValidationService = paymentFileValidationService;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    public void setDateTimeService(DateTimeService dateTimeService) {
+    public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setPaymentFileEmailService(PdpEmailService paymentFileEmailService) {
+    public void setPaymentFileEmailService(final PdpEmailService paymentFileEmailService) {
         this.paymentFileEmailService = paymentFileEmailService;
     }
 
-    public void setConfigurationService(ConfigurationService kualiConfigurationService) {
+    public void setConfigurationService(final ConfigurationService kualiConfigurationService) {
         this.kualiConfigurationService = kualiConfigurationService;
     }
 

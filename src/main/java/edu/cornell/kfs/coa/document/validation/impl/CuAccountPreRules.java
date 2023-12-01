@@ -12,21 +12,21 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class CuAccountPreRules extends AccountPreRules {
 
   @SuppressWarnings("deprecation")
-  protected boolean doCustomPreRules(MaintenanceDocument document) {
+  protected boolean doCustomPreRules(final MaintenanceDocument document) {
     boolean preRulesOK = super.doCustomPreRules(document);
     preRulesOK &= checkOffCampus(document);
     return preRulesOK;
   }
 
     @SuppressWarnings("deprecation")
-    protected boolean checkOffCampus(MaintenanceDocument saccDoc) {
+    protected boolean checkOffCampus(final MaintenanceDocument saccDoc) {
       boolean continueRules = true;
-      boolean accOffCampus = newAccount.isAccountOffCampusIndicator();
+      final boolean accOffCampus = newAccount.isAccountOffCampusIndicator();
 
       if (accOffCampus) {
-        String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR);
+        final String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(CUKFSKeyConstants.QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR);
 
-        boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(CUKFSConstants.AccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
+        final boolean leaveAsIs = super.askOrAnalyzeYesNoQuestion(CUKFSConstants.AccountDocumentConstants.OFF_CAMPUS_INDICATOR_QUESTION_ID, questionText);
 
         if (!leaveAsIs) {
           // return to document if the user doesn't want to clear the indicator

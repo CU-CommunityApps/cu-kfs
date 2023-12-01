@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -50,10 +50,10 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
     private PurchasingCommodityCodeValidation commodityCodeValidation;
     
     @Override
-    public boolean validate(AttributedDocumentEvent event) {     
+    public boolean validate(final AttributedDocumentEvent event) {     
         GlobalVariables.getMessageMap().addToErrorPath(PurapPropertyConstants.NEW_PURCHASING_ITEM_LINE);
         //refresh itemType
-        PurApItem refreshedItem = getItemForValidation();
+        final PurApItem refreshedItem = getItemForValidation();
         refreshedItem.refreshReferenceObject("itemType");
         super.setItemForValidation(refreshedItem);
 
@@ -81,7 +81,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
      * @param item the purchasing document to be validated
      * @return boolean false if there is any validation that fails.
      */
-    public boolean validateItemUnitPrice(PurApItem item) {
+    public boolean validateItemUnitPrice(final PurApItem item) {
         boolean valid = true;
         if (item.getItemType().isLineItemIndicator()) {
             if (ObjectUtils.isNull(item.getItemUnitPrice())) {
@@ -123,7 +123,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
      * @param item the item to be validated
      * @return boolean false if the item type is quantity based and the unit of measure is empty.
      */
-    public boolean validateUnitOfMeasure(PurApItem item) {
+    public boolean validateUnitOfMeasure(final PurApItem item) {
         boolean valid = true;
         PurchasingItemBase purItem = (PurchasingItemBase) item;
         // Validations for quantity based item type
@@ -170,11 +170,11 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
      * @param item Item to be checked
      * @return {@code true} if a description was entered for the item; {@code false} otherwise.
      */
-    public boolean validateItemDescription(PurApItem item) {
+    public boolean validateItemDescription(final PurApItem item) {
         boolean valid = true;
         if (StringUtils.isEmpty(item.getItemDescription())) {
             valid = false;
-            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+            final String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
                     .getAttributeDefinition(PurapPropertyConstants.ITEM_DESCRIPTION).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_DESCRIPTION,
                     KFSKeyConstants.ERROR_REQUIRED, attributeLabel + " in " + item.getItemIdentifierString());
@@ -189,20 +189,20 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
      * @param item the item to be validated
      * @return boolean false if there's any validation that fails.
      */
-    public boolean validateItemQuantity(PurApItem item) {
+    public boolean validateItemQuantity(final PurApItem item) {
         boolean valid = true;
-        PurchasingItemBase purItem = (PurchasingItemBase) item;
+        final PurchasingItemBase purItem = (PurchasingItemBase) item;
         if (purItem.getItemType().isQuantityBasedGeneralLedgerIndicator()
                 && ObjectUtils.isNull(purItem.getItemQuantity())) {
             valid = false;
-            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+            final String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
                     .getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.QUANTITY, KFSKeyConstants.ERROR_REQUIRED,
                     attributeLabel + " in " + item.getItemIdentifierString());
         } else if (purItem.getItemType().isAmountBasedGeneralLedgerIndicator()
                 && ObjectUtils.isNotNull(purItem.getItemQuantity())) {
             valid = false;
-            String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
+            final String attributeLabel = businessObjectDictionaryService.getBusinessObjectEntry(item.getClass().getName())
                     .getAttributeDefinition(PurapPropertyConstants.ITEM_QUANTITY).getLabel();
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.QUANTITY,
                     PurapKeyConstants.ERROR_ITEM_QUANTITY_NOT_ALLOWED, attributeLabel + " in " + item.getItemIdentifierString());
@@ -221,7 +221,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         return false;
     }
 
-    protected boolean validateThatCommodityCodeIsActive(PurApItem item) {
+    protected boolean validateThatCommodityCodeIsActive(final PurApItem item) {
         if (!((PurchasingItemBase)item).getCommodityCode().isActive()) {
             //This is the case where the commodity code on the item is not active.
             GlobalVariables.getMessageMap().putError(PurapPropertyConstants.ITEM_COMMODITY_CODE,
@@ -231,11 +231,11 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         return true;
     }
 
-    private boolean validateMixItemType(PurApItem newItem, PurchasingAccountsPayableDocument purapDocument) {
+    private boolean validateMixItemType(final PurApItem newItem, final PurchasingAccountsPayableDocument purapDocument) {
         boolean valid = true;
         if(StringUtils.isNotBlank(newItem.getItemTypeCode())) {
-            String itemTypeCode = newItem.getItemTypeCode();
-            for(PurApItem item : purapDocument.getItems()) {
+            final String itemTypeCode = newItem.getItemTypeCode();
+            for(final PurApItem item : purapDocument.getItems()) {
                 if (StringUtils.isNotBlank(item.getItemTypeCode()) && !itemTypeCode.equalsIgnoreCase(item.getItemTypeCode()) &&
                          (PurapConstants.ItemTypeCodes.ITEM_TYPE_SERVICE_CODE.equalsIgnoreCase(item.getItemTypeCode()) ||
                                 PurapConstants.ItemTypeCodes.ITEM_TYPE_ITEM_CODE.equalsIgnoreCase(item.getItemTypeCode()))) {
@@ -254,7 +254,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         return businessObjectService;
     }
 
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+    public void setBusinessObjectService(final BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
@@ -268,7 +268,7 @@ public class PurchasingAddItemValidation extends PurchasingAccountsPayableAddIte
         return commodityCodeValidation;
     }
 
-    public void setCommodityCodeValidation(PurchasingCommodityCodeValidation commodityCodeValidation) {
+    public void setCommodityCodeValidation(final PurchasingCommodityCodeValidation commodityCodeValidation) {
         this.commodityCodeValidation = commodityCodeValidation;
     }
 

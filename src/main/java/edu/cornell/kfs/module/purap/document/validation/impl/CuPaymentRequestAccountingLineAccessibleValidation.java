@@ -7,16 +7,16 @@ import org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestAccount
 import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 
 public class CuPaymentRequestAccountingLineAccessibleValidation extends PaymentRequestAccountingLineAccessibleValidation {
-	
-	@Override
-	public boolean validate(AttributedDocumentEvent event) {
-		PaymentRequestDocument preq = (PaymentRequestDocument)accountingDocumentForValidation;
-		if(StringUtils.equals(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, preq.getApplicationDocumentStatus())) {
-        	return true;
+    
+    @Override
+    public boolean validate(final AttributedDocumentEvent event) {
+        final PaymentRequestDocument preq = (PaymentRequestDocument)accountingDocumentForValidation;
+        if(StringUtils.equals(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, preq.getApplicationDocumentStatus())) {
+            return true;
         }
-		else{
-		return super.validate(event);
-		}
-	}
+        else{
+            return super.validate(event);
+        }
+    }
 
 }

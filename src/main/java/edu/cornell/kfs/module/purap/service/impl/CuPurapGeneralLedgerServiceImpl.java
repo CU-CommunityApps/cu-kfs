@@ -20,6 +20,7 @@ import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapConstants.PurapDocTypeCodes;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
 import org.kuali.kfs.module.purap.businessobject.PaymentRequestItem;
+import org.kuali.kfs.module.purap.businessobject.PurApAccountingLine;
 import org.kuali.kfs.module.purap.businessobject.PurApItemUseTax;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderAccount;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderItem;
@@ -52,9 +53,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
     // END MOD
     private PurchaseOrderService purchaseOrderService;
     
-    protected int getNextAvailableSequence(String documentNumber) {
+    protected int getNextAvailableSequence(final String documentNumber) {
         LOG.debug("getNextAvailableSequence() started");
-        Map fieldValues = new HashMap();
+        final Map<String, String>  fieldValues = new HashMap();
         fieldValues.put("financialSystemOriginationCode", PURAP_ORIGIN_CODE);
         fieldValues.put("documentNumber", documentNumber);
         List<GeneralLedgerPendingEntry> glpes = (List <GeneralLedgerPendingEntry>)SpringContext.getBean(org.kuali.kfs.krad.service.BusinessObjectService.class).findMatching(GeneralLedgerPendingEntry.class, fieldValues);
@@ -71,9 +72,11 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
         return count + 1;
     }
     
-    protected boolean generateEntriesPaymentRequest(PaymentRequestDocument preq, List encumbrances, List summaryAccounts, String processType) {
+    protected boolean generateEntriesPaymentRequest(
+            final PaymentRequestDocument preq, final List encumbrances, 
+            final List summaryAccounts, final String processType) {
         LOG.debug("generateEntriesPaymentRequest() started");
-        boolean success = true;
+        final boolean success = true;
         preq.setGeneralLedgerPendingEntries(new ArrayList());
 
         /*
@@ -81,7 +84,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
          * from the encumbrances to the actuals and also because we need to tell the PaymentRequestDocumentRule customize entry
          * method how to customize differently based on if creating an encumbrance or actual.
          */
-        GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(preq.getDocumentNumber()));
+        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(preq.getDocumentNumber()));
 
         // when cancelling a PREQ, do not book encumbrances if PO is CLOSED
 		if (encumbrances != null
@@ -98,8 +101,8 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
             }
 
             preq.setGenerateEncumbranceEntries(true);
-            for (Iterator iter = encumbrances.iterator(); iter.hasNext();) {
-                AccountingLine accountingLine = (AccountingLine) iter.next();
+            for (final Object encumbrance : encumbrances) {
+                final AccountingLine accountingLine = (AccountingLine) encumbrance;
                 preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
                 sequenceHelper.increment(); // increment for the next line
             }
@@ -118,18 +121,18 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 preq.setDebitCreditCodeForGLEntries(GL_CREDIT_CODE);
             }
 
-            for (Iterator iter = summaryAccounts.iterator(); iter.hasNext();) {
-                SummaryAccount summaryAccount = (SummaryAccount) iter.next();
+            for (final Object account : summaryAccounts) {
+                final SummaryAccount summaryAccount = (SummaryAccount) account;
                 preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
                 sequenceHelper.increment(); // increment for the next line
             }
 
             // generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax document)
-            List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(preq);
-            for (UseTaxContainer useTaxContainer : useTaxContainers) {
-                PurApItemUseTax offset = useTaxContainer.getUseTax();
-                List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
-                for (SourceAccountingLine sourceAccountingLine : accounts) {
+            final List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(preq);
+            for (final UseTaxContainer useTaxContainer : useTaxContainers) {
+                final PurApItemUseTax offset = useTaxContainer.getUseTax();
+                final List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
+                for (final SourceAccountingLine sourceAccountingLine : accounts) {
                     preq.generateGeneralLedgerPendingEntries(sourceAccountingLine, sequenceHelper, useTaxContainer.getUseTax());
                     sequenceHelper.increment(); // increment for the next line
                 }
@@ -139,7 +142,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
             // Manually save preq summary accounts
             if (MODIFY_PAYMENT_REQUEST.equals(processType)) {
                 //for modify, regenerate the summary from the doc
-                List<SummaryAccount> summaryAccountsForModify = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax(preq);
+                final List<SummaryAccount> summaryAccountsForModify = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax(preq);
                 saveAccountsPayableSummaryAccounts(summaryAccountsForModify, preq.getPurapDocumentIdentifier(), PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
             }
             else {
@@ -173,9 +176,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
             } else if ( MODIFY_PAYMENT_REQUEST.equals(processType) ) {
                 // upon modify, we need to calculate the deltas here and pass them in so the appropriate adjustments are created
                 KualiDecimal bankOffsetAmount = KualiDecimal.ZERO;
-                Map<String,KualiDecimal> changesByChart = new HashMap<String, KualiDecimal>();
+                final Map<String,KualiDecimal> changesByChart = new HashMap<String, KualiDecimal>();
                 if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
-                    for ( SummaryAccount a : (List<SummaryAccount>)summaryAccounts ) {
+                    for ( final SummaryAccount a : (List<SummaryAccount>)summaryAccounts ) {
                         bankOffsetAmount = bankOffsetAmount.add(a.getAccount().getAmount());
                         if ( changesByChart.get( a.getAccount().getChartOfAccountsCode() ) == null ) {
                             changesByChart.put( a.getAccount().getChartOfAccountsCode(), a.getAccount().getAmount() );
@@ -205,25 +208,26 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 	}
 
 	public void setPaymentMethodGeneralLedgerPendingEntryService(
-				CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
+				final CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService) {
 		this.paymentMethodGeneralLedgerPendingEntryService = paymentMethodGeneralLedgerPendingEntryService;
 	}
 		
     @Override
-    protected List<SourceAccountingLine> reencumberEncumbrance(PaymentRequestDocument preq) {
+    protected List<SourceAccountingLine> reencumberEncumbrance(final PaymentRequestDocument preq) {
         LOG.debug("reencumberEncumbrance() started");
 
-        PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(preq.getPurchaseOrderIdentifier());
-        Map encumbranceAccountMap = new HashMap();
+        final PurchaseOrderDocument po = purchaseOrderService.getCurrentPurchaseOrder(preq.getPurchaseOrderIdentifier());
+        final Map<SourceAccountingLine, KualiDecimal> encumbranceAccountMap = new HashMap();
 
         // Get each item one by one
-        for (Iterator items = preq.getItems().iterator(); items.hasNext();) {
-            PaymentRequestItem payRequestItem = (PaymentRequestItem) items.next();
-            PurchaseOrderItem poItem = getPoItem(po, payRequestItem.getItemLineNumber(), payRequestItem.getItemType());
+        for (final Object item : preq.getItems()) {
+            final PaymentRequestItem payRequestItem = (PaymentRequestItem) item;
+            final PurchaseOrderItem poItem = getPoItem(po, payRequestItem.getItemLineNumber(), payRequestItem.getItemType());
 
-            KualiDecimal itemReEncumber = null; // Amount to reencumber for this item
+            // Amount to reencumber for this item
+            KualiDecimal itemReEncumber; 
 
-            String logItmNbr = "Item # " + payRequestItem.getItemLineNumber();
+            final String logItmNbr = "Item # " + payRequestItem.getItemLineNumber();
             LOG.debug("reencumberEncumbrance() {}", logItmNbr);
 
             // If there isn't a PO item or the total amount is 0, we don't need encumbrances
@@ -235,9 +239,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                         LOG.debug("reencumberEncumbrance() {} Calculate encumbrance based on quantity", logItmNbr);
 
                         // Do disencumbrance calculations based on quantity
-                        KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
-                        KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
-                        KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
+                        final KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
+                        final KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
+                        final KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
 
                         poItem.setItemInvoicedTotalQuantity(invoicedTotal.subtract(preqQuantity));
                         poItem.setItemOutstandingEncumberedQuantity(outstandingEncumberedQuantity.add(preqQuantity));
@@ -253,9 +257,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                     LOG.debug("reencumberEncumbrance() {} Calculate encumbrance based on quantity", logItmNbr);
 
                     // Do disencumbrance calculations based on quantity
-                    KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
-                    KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
-                    KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
+                    final KualiDecimal preqQuantity = payRequestItem.getItemQuantity() == null ? ZERO : payRequestItem.getItemQuantity();
+                    final KualiDecimal outstandingEncumberedQuantity = poItem.getItemOutstandingEncumberedQuantity() == null ? ZERO : poItem.getItemOutstandingEncumberedQuantity();
+                    final KualiDecimal invoicedTotal = poItem.getItemInvoicedTotalQuantity() == null ? ZERO : poItem.getItemInvoicedTotalQuantity();
 
                     poItem.setItemInvoicedTotalQuantity(invoicedTotal.subtract(preqQuantity));
                     poItem.setItemOutstandingEncumberedQuantity(outstandingEncumberedQuantity.add(preqQuantity));
@@ -264,8 +268,8 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                     itemReEncumber = new KualiDecimal(preqQuantity.bigDecimalValue().multiply(poItem.getItemUnitPrice()));
 
                     //add tax for encumbrance
-                    KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
-                    KualiDecimal encumbranceTaxAmount = preqQuantity.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
+                    final KualiDecimal itemTaxAmount = poItem.getItemTaxAmount() == null ? ZERO : poItem.getItemTaxAmount();
+                    final KualiDecimal encumbranceTaxAmount = preqQuantity.divide(poItem.getItemQuantity()).multiply(itemTaxAmount);
                     itemReEncumber = itemReEncumber.add(encumbranceTaxAmount);
 
                 }
@@ -291,13 +295,13 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 
                 LOG.debug("reencumberEncumbrance() {} Amount to reencumber: {}", logItmNbr, itemReEncumber);
 
-                KualiDecimal outstandingEncumberedAmount = poItem.getItemOutstandingEncumberedAmount() == null ? ZERO : poItem.getItemOutstandingEncumberedAmount();
+                final KualiDecimal outstandingEncumberedAmount = poItem.getItemOutstandingEncumberedAmount() == null ? ZERO : poItem.getItemOutstandingEncumberedAmount();
                 LOG.debug(
                         "reencumberEncumbrance() {} PO Item Outstanding Encumbrance Amount set to: {}",
                         logItmNbr,
                         outstandingEncumberedAmount
                 );
-                KualiDecimal newOutstandingEncumberedAmount = outstandingEncumberedAmount.add(itemReEncumber);
+                final KualiDecimal newOutstandingEncumberedAmount = outstandingEncumberedAmount.add(itemReEncumber);
                 LOG.debug(
                         "reencumberEncumbrance() {} New PO Item Outstanding Encumbrance Amount to set: {}",
                         logItmNbr,
@@ -305,13 +309,13 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 );
                 poItem.setItemOutstandingEncumberedAmount(newOutstandingEncumberedAmount);
 
-                KualiDecimal invoicedTotalAmount = poItem.getItemInvoicedTotalAmount() == null ? ZERO : poItem.getItemInvoicedTotalAmount();
+                final KualiDecimal invoicedTotalAmount = poItem.getItemInvoicedTotalAmount() == null ? ZERO : poItem.getItemInvoicedTotalAmount();
                 LOG.debug(
                         "reencumberEncumbrance() {} PO Item Invoiced Total Amount set to: {}",
                         logItmNbr,
                         invoicedTotalAmount
                 );
-                KualiDecimal newInvoicedTotalAmount = invoicedTotalAmount.subtract(preqItemTotalAmount);
+                final KualiDecimal newInvoicedTotalAmount = invoicedTotalAmount.subtract(preqItemTotalAmount);
                 LOG.debug(
                         "reencumberEncumbrance() {} New PO Item Invoiced Total Amount to set: {}",
                         logItmNbr,
@@ -326,13 +330,13 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 // Sort accounts
                 Collections.sort((List) poItem.getSourceAccountingLines());
 
-                for (Iterator accountIter = poItem.getSourceAccountingLines().iterator(); accountIter.hasNext();) {
-                    PurchaseOrderAccount account = (PurchaseOrderAccount) accountIter.next();
+                for (final PurApAccountingLine purApAccountingLine : poItem.getSourceAccountingLines()) {
+                    final PurchaseOrderAccount account = (PurchaseOrderAccount) purApAccountingLine;
                     if (!account.isEmpty()) {
-                        SourceAccountingLine acctString = account.generateSourceAccountingLine();
+                        final SourceAccountingLine acctString = account.generateSourceAccountingLine();
 
                         // amount = item reencumber * account percent / 100
-                        KualiDecimal reencumbranceAmount = itemReEncumber.multiply(new KualiDecimal(account.getAccountLinePercent().toString())).divide(HUNDRED);
+                        final KualiDecimal reencumbranceAmount = itemReEncumber.multiply(new KualiDecimal(account.getAccountLinePercent().toString())).divide(HUNDRED);
 
                         account.setItemAccountOutstandingEncumbranceAmount(account.getItemAccountOutstandingEncumbranceAmount().add(reencumbranceAmount));
 
@@ -343,7 +347,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 
                         LOG.debug("reencumberEncumbrance() {} {} = {}", logItmNbr, acctString, reencumbranceAmount);
                         if (encumbranceAccountMap.containsKey(acctString)) {
-                            KualiDecimal currentAmount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                            final KualiDecimal currentAmount = (KualiDecimal) encumbranceAccountMap.get(acctString);
                             encumbranceAccountMap.put(acctString, reencumbranceAmount.add(currentAmount));
                         }
                         else {
@@ -354,11 +358,11 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 
                 // account for rounding by adjusting last account as needed
                 if (lastAccount != null) {
-                    KualiDecimal difference = itemReEncumber.subtract(accountTotal);
+                    final KualiDecimal difference = itemReEncumber.subtract(accountTotal);
                     LOG.debug("reencumberEncumbrance() difference: {} {}", logItmNbr, difference);
 
-                    SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
-                    KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+                    final SourceAccountingLine acctString = lastAccount.generateSourceAccountingLine();
+                    final KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
                     if (amount == null) {
                         encumbranceAccountMap.put(acctString, difference);
                     }
@@ -372,10 +376,9 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
 
         SpringContext.getBean(BusinessObjectService.class).save(po);
 
-        List<SourceAccountingLine> encumbranceAccounts = new ArrayList<SourceAccountingLine>();
-        for (Iterator<SourceAccountingLine> iter = encumbranceAccountMap.keySet().iterator(); iter.hasNext();) {
-            SourceAccountingLine acctString = iter.next();
-            KualiDecimal amount = (KualiDecimal) encumbranceAccountMap.get(acctString);
+        final List<SourceAccountingLine> encumbranceAccounts = new ArrayList<SourceAccountingLine>();
+        for (final SourceAccountingLine acctString : encumbranceAccountMap.keySet()) {
+            final KualiDecimal amount = encumbranceAccountMap.get(acctString);
             if (amount.doubleValue() != 0) {
                 acctString.setAmount(amount);
                 encumbranceAccounts.add(acctString);
@@ -385,7 +388,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
         return encumbranceAccounts;
     }
 
-    public void setPurchaseOrderService(PurchaseOrderService purchaseOrderService) {
+    public void setPurchaseOrderService(final PurchaseOrderService purchaseOrderService) {
         this.purchaseOrderService = purchaseOrderService;
         super.setPurchaseOrderService(purchaseOrderService);
     }

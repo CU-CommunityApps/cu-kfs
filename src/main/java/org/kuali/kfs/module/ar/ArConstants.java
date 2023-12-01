@@ -1,7 +1,7 @@
 /*
  * The Kuali Financial System, a comprehensive financial management system for higher education.
  *
- * Copyright 2005-2022 Kuali, Inc.
+ * Copyright 2005-2023 Kuali, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -20,11 +20,13 @@ package org.kuali.kfs.module.ar;
 
 import com.lowagie.text.Font;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.integration.ar.ArIntegrationConstants;
 import org.kuali.kfs.integration.ar.Billable;
+import org.kuali.kfs.sys.context.SpringContext;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /*
@@ -393,22 +395,22 @@ public final class ArConstants {
         LETTER_OF_CREDIT(ArIntegrationConstants.BillingFrequencyValues.LETTER_OF_CREDIT),
         MANUAL(ArIntegrationConstants.BillingFrequencyValues.MANUAL);
 
-        private String code;
+        private final String code;
 
-        BillingFrequencyValues(String code) {
+        BillingFrequencyValues(final String code) {
             this.code = code;
         }
 
         public String getCode() {
-            return this.code;
+            return code;
         }
 
-        public static BillingFrequencyValues fromCode(String code) {
+        public static BillingFrequencyValues fromCode(final String code) {
             if (code == null || code.isEmpty()) {
                 return null;
             }
 
-            for (BillingFrequencyValues billingFrequency : BillingFrequencyValues.values()) {
+            for (final BillingFrequencyValues billingFrequency : BillingFrequencyValues.values()) {
                 if (code.equals(billingFrequency.code)) {
                     return billingFrequency;
                 }
@@ -417,19 +419,19 @@ public final class ArConstants {
             return null;
         }
 
-        public static boolean isPredeterminedBilling(Billable billable) {
+        public static boolean isPredeterminedBilling(final Billable billable) {
             return StringUtils.equals(billable.getBillingFrequencyCode(), PREDETERMINED_BILLING.code);
         }
 
-        public static boolean isMilestone(Billable billable) {
+        public static boolean isMilestone(final Billable billable) {
             return StringUtils.equals(billable.getBillingFrequencyCode(), MILESTONE.code);
         }
 
-        public static boolean isLetterOfCredit(Billable billable) {
+        public static boolean isLetterOfCredit(final Billable billable) {
             return StringUtils.equals(billable.getBillingFrequencyCode(), LETTER_OF_CREDIT.code);
         }
 
-        public static boolean isTimeBased(Billable billable) {
+        public static boolean isTimeBased(final Billable billable) {
             return StringUtils.equals(MONTHLY.code, billable.getBillingFrequencyCode())
                     || StringUtils.equals(QUARTERLY.code, billable.getBillingFrequencyCode())
                     || StringUtils.equals(SEMI_ANNUALLY.code, billable.getBillingFrequencyCode())
@@ -481,24 +483,24 @@ public final class ArConstants {
     public enum ContractsAndGrantsInvoiceDocumentCreationProcessType {
         BATCH("B", "Batch"), LOC("L", "LOC"), MANUAL("M", "Manual");
 
-        private String code;
-        private String name;
+        private final String code;
+        private final String name;
 
-        ContractsAndGrantsInvoiceDocumentCreationProcessType(String code, String name) {
+        ContractsAndGrantsInvoiceDocumentCreationProcessType(final String code, final String name) {
             this.code = code;
             this.name = name;
         }
 
         public String getCode() {
-            return this.code;
+            return code;
         }
 
         public String getName() {
-            return this.name;
+            return name;
         }
 
-        public static String getName(String code) {
-            for (ContractsAndGrantsInvoiceDocumentCreationProcessType type :
+        public static String getName(final String code) {
+            for (final ContractsAndGrantsInvoiceDocumentCreationProcessType type :
                     ContractsAndGrantsInvoiceDocumentCreationProcessType.values()) {
                 if (type.getCode().equals(code)) {
                     return type.getName();
@@ -512,10 +514,11 @@ public final class ArConstants {
      * Convenience class to hold a month and day without a year
      */
     public static class MonthDay {
-        private int month;
-        private int day;
+        private final int month;
+        private final int day;
+        private DateTimeService dateTimeService;
 
-        public MonthDay(int month, int day) {
+        public MonthDay(final int month, final int day) {
             this.month = month;
             this.day = day;
         }
@@ -528,21 +531,28 @@ public final class ArConstants {
             return day;
         }
 
-        public java.util.Date getDateForYear(int year) {
-            Calendar c = Calendar.getInstance();
-            c.clear();
-            c.set(Calendar.MONTH, getMonth());
-            c.set(Calendar.DAY_OF_MONTH, getDay());
-            c.set(Calendar.YEAR, year);
-            return c.getTime();
+        public DateTimeService getDateTimeService() {
+            if (dateTimeService == null) {
+                dateTimeService = SpringContext.getBean(DateTimeService.class);
+            }
+            return dateTimeService;
+        }
+
+        public java.util.Date getDateForYear(final int year) {
+            final LocalDate localDate = LocalDate.of(getMonth(), getDay(), year);
+            return getDateTimeService().getUtilDate(localDate);
         }
     }
 
     public static class BillingQuarterLastDays {
-        public static MonthDay FIRST_QUARTER = new MonthDay(Calendar.MARCH, 31);
-        public static MonthDay SECOND_QUARTER = new MonthDay(Calendar.JUNE, 30);
-        public static MonthDay THIRD_QUARTER = new MonthDay(Calendar.SEPTEMBER, 30);
-        public static MonthDay FOURTH_QUARTER = new MonthDay(Calendar.DECEMBER, 31);
+        private static final int MARCH = 3;
+        private static final int JUNE = 6;
+        private static final int SEPTEMBER = 9;
+        private static final int DECEMBER = 12;
+        public static MonthDay FIRST_QUARTER = new MonthDay(MARCH, 31);
+        public static MonthDay SECOND_QUARTER = new MonthDay(JUNE, 30);
+        public static MonthDay THIRD_QUARTER = new MonthDay(SEPTEMBER, 30);
+        public static MonthDay FOURTH_QUARTER = new MonthDay(DECEMBER, 31);
     }
 
     public static class PdfReportFonts {

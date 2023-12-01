@@ -36,13 +36,15 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
     private static final String AREA_C0DE = "areaCode";
     private static final String PHONE_NUMBER = "phoneNumber";
 
-    public ActionForward generate(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward generate(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         checkAuthorization(form, "");
 
-        ElectronicInvoiceTestForm testForm = (ElectronicInvoiceTestForm)form;
-        String poDocNumber = testForm.getPoDocNumber();
+        final ElectronicInvoiceTestForm testForm = (ElectronicInvoiceTestForm)form;
+        final String poDocNumber = testForm.getPoDocNumber();
         LOG.info("Generating Electronic Invoice XML file for Purchase Order Document {}", poDocNumber);
-        PurchaseOrderService poService = SpringContext.getBean(PurchaseOrderService.class);
+        final PurchaseOrderService poService = SpringContext.getBean(PurchaseOrderService.class);
         PurchaseOrderDocument po = null;
         
         if (StringUtils.isBlank(poDocNumber)) {
@@ -57,21 +59,21 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         try {
             po = poService.getPurchaseOrderByDocumentNumber(poDocNumber);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             throw e;
         }
 
         response.setHeader("Cache-Control", "max-age=30");
         response.setContentType("application/xml");
-        StringBuffer sbContentDispValue = new StringBuffer();
-        String useJavascript = request.getParameter("useJavascript");
+        final StringBuffer sbContentDispValue = new StringBuffer();
+        final String useJavascript = request.getParameter("useJavascript");
         if (useJavascript == null || "false".equalsIgnoreCase(useJavascript)) {
             sbContentDispValue.append("attachment");
         }
         else {
             sbContentDispValue.append("inline");
         }
-        StringBuffer sbFilename = new StringBuffer();
+        final StringBuffer sbFilename = new StringBuffer();
         sbFilename.append("PO_");
         sbFilename.append(poDocNumber);
         sbFilename.append(".xml");
@@ -86,9 +88,9 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
                 duns = StringUtils.defaultString(po.getVendorDetail().getVendorDunsNumber());
             }
 
-            DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
-            String currDate = ElectronicInvoiceUtils.getDateDisplayText(dateTimeService.getCurrentDate()); // getting date in kfs format
-            String vendorNumber = po.getVendorDetail().getVendorNumber();
+            final DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
+            final String currDate = ElectronicInvoiceUtils.getDateDisplayText(dateTimeService.getCurrentDate()); // getting date in kfs format
+            final String vendorNumber = po.getVendorDetail().getVendorNumber();
             
             String eInvoiceFile =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -157,14 +159,14 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
                 "              <!-- No junk values in Items-->\n";
                 
                                for (int i = 0; i < po.getItems().size(); i++) {
-                                   List items = po.getItems();
-                                   PurchaseOrderItem item = (PurchaseOrderItem) items.get(i);
+                                   final List items = po.getItems();
+                                   final PurchaseOrderItem item = (PurchaseOrderItem) items.get(i);
                                   if (!item.getItemType().isAdditionalChargeIndicator()){
                                        eInvoiceFile = eInvoiceFile + getPOItemXMLChunk(item);
                                    }
                                }
                 
-                KualiDecimal totalDollarAmt = po.getTotalDollarAmount() == null ? KualiDecimal.ZERO : po.getTotalDollarAmount();
+                final KualiDecimal totalDollarAmt = po.getTotalDollarAmount() == null ? KualiDecimal.ZERO : po.getTotalDollarAmount();
                 eInvoiceFile = eInvoiceFile +
                 
                 "          </InvoiceDetailOrder>\n" +
@@ -202,10 +204,10 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
                 "  </Request>\n" +
                 "</cXML>";
 
-            ServletOutputStream sos;
+            final ServletOutputStream sos;
             sos = response.getOutputStream();
-            ByteArrayOutputStream baOutStream = new ByteArrayOutputStream();
-            StringBufferInputStream inStream = new StringBufferInputStream(eInvoiceFile);
+            final ByteArrayOutputStream baOutStream = new ByteArrayOutputStream();
+            final StringBufferInputStream inStream = new StringBufferInputStream(eInvoiceFile);
             convert(baOutStream, inStream);         
             response.setContentLength(baOutStream.size());
             baOutStream.writeTo(sos);
@@ -220,7 +222,7 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
     // modify this methods ?
     private String getPOItemXMLChunk(PurchaseOrderItem item){
         
-        String itemUnitPrice = item.getItemUnitPrice() == null ?
+        final String itemUnitPrice = item.getItemUnitPrice() == null ?
                                StringUtils.EMPTY :
                                item.getItemUnitPrice().toString();
         
@@ -255,11 +257,11 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
     }
 
     // KFSPTS-1719 : non-qty set quantity to '0'
-    private KualiDecimal getItemQuantity(PurchaseOrderItem item) {
+    private KualiDecimal getItemQuantity(final PurchaseOrderItem item) {
     	return item.getItemQuantity() == null ? new KualiDecimal(0) :  item.getItemQuantity();
     }
 
-    private String getContactXMLChunk(String addressType, PurchaseOrderDocument po){
+    private String getContactXMLChunk(final String addressType, final PurchaseOrderDocument po){
         
         String returnXML =          
         
@@ -295,7 +297,7 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         return returnXML;        
     }
     
-    private String getDeliveryAddressXMLChunk(String addressType, PurchaseOrderDocument po){
+    private String getDeliveryAddressXMLChunk(final String addressType, final PurchaseOrderDocument po){
         
         String deliveryDate = "";
         if (po.getDeliveryRequiredDate() != null){
@@ -315,7 +317,7 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         
     }
     
-    private String getPaymentTermXML(PurchaseOrderDocument po){
+    private String getPaymentTermXML(final PurchaseOrderDocument po){
         String returnXML = "";
         
         PaymentTermType paymentTerm = null;
@@ -337,7 +339,8 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         return returnXML;
     }
     
-    private String getPhoneNumber(String whichPart,String phNo){
+    private String getPhoneNumber(
+            final String whichPart, final String phNo){
 
         if (StringUtils.isEmpty(phNo)){
             return StringUtils.EMPTY;
@@ -352,14 +355,14 @@ public class CuElectronicInvoiceTestAction extends ElectronicInvoiceTestAction {
         return StringUtils.EMPTY;
     }
 
-    private boolean convert(java.io.OutputStream out, java.io.InputStream in) {
+    private boolean convert(final java.io.OutputStream out, final java.io.InputStream in) {
         try {
             int r;
             while ((r=in.read())!=-1) {
                 out.write(r);
             }
             return true;
-        }catch (java.io.IOException ioe) {
+        }catch (final java.io.IOException ioe) {
             return false;
         }
     }

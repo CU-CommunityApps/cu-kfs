@@ -18,15 +18,16 @@ public class CuElectronicInvoiceOrderHolder extends ElectronicInvoiceOrderHolder
     // KFSPTS-1719
     private List<CuElectronicInvoiceItemHolder> nonMatchItems;
     private CuElectronicInvoiceItemHolder misMatchItem;
-    private List<CuElectronicInvoiceItemHolder> items = new ArrayList<CuElectronicInvoiceItemHolder>();
+    private final List<CuElectronicInvoiceItemHolder> items = new ArrayList<CuElectronicInvoiceItemHolder>();
 
-    public CuElectronicInvoiceOrderHolder(ElectronicInvoiceRejectDocument rejectDocument,
-            Map itemTypeMappings,
-            Map itemTypes) {
+    public CuElectronicInvoiceOrderHolder(
+            final ElectronicInvoiceRejectDocument rejectDocument,
+            final Map itemTypeMappings,
+            final Map itemTypes) {
           super(rejectDocument, itemTypeMappings, itemTypes);
           for (int i = 0; i < rejectDocument.getInvoiceRejectItems().size(); i++) {
               
-              ElectronicInvoiceRejectItem invoiceRejectItem = rejectDocument.getInvoiceRejectItems().get(i);
+              final ElectronicInvoiceRejectItem invoiceRejectItem = rejectDocument.getInvoiceRejectItems().get(i);
               
               PurApItem poItem = null;
               if (rejectDocument.getCurrentPurchaseOrderDocument() != null){
@@ -43,16 +44,17 @@ public class CuElectronicInvoiceOrderHolder extends ElectronicInvoiceOrderHolder
           }
     }
     
-    public CuElectronicInvoiceOrderHolder(ElectronicInvoice eInvoice,
-            ElectronicInvoiceOrder invoiceOrder,
-            PurchaseOrderDocument poDocument,
-            Map itemTypeMappings,
-            Map itemTypes,
-            boolean validateHeader){
+    public CuElectronicInvoiceOrderHolder(
+            final ElectronicInvoice eInvoice,
+            final ElectronicInvoiceOrder invoiceOrder,
+            final PurchaseOrderDocument poDocument,
+            final Map itemTypeMappings,
+            final Map itemTypes,
+            final boolean validateHeader){
     	super(eInvoice, invoiceOrder, poDocument, itemTypeMappings, itemTypes, validateHeader);
         for (int i = 0; i < invoiceOrder.getInvoiceItems().size(); i++) {
 
-            ElectronicInvoiceItem orderItem = invoiceOrder.getInvoiceItems().get(i);
+            final ElectronicInvoiceItem orderItem = invoiceOrder.getInvoiceItems().get(i);
             
             PurApItem poItem = null;
             if (poDocument != null){
@@ -71,19 +73,19 @@ public class CuElectronicInvoiceOrderHolder extends ElectronicInvoiceOrderHolder
 
     public CuElectronicInvoiceItemHolder[] getItems() {
         if (items != null){
-        	CuElectronicInvoiceItemHolder[] returnItems = new CuElectronicInvoiceItemHolder[items.size()];
+        	final CuElectronicInvoiceItemHolder[] returnItems = new CuElectronicInvoiceItemHolder[items.size()];
             items.toArray(returnItems);
             return returnItems;
         }
         return null;
     }
     
-    public CuElectronicInvoiceItemHolder getItemByLineNumber(int lineNumber){
+    public CuElectronicInvoiceItemHolder getItemByLineNumber(final int lineNumber){
         
         if (items != null){
             for (int i = 0; i < items.size(); i++) {
-            	CuElectronicInvoiceItemHolder itemHolder = items.get(i);
-            	if (itemHolder.getInvoiceItemLineNumber() != null && itemHolder.getInvoiceItemLineNumber().intValue() == lineNumber) {
+                final CuElectronicInvoiceItemHolder itemHolder = items.get(i);
+                if (itemHolder.getInvoiceItemLineNumber() != null && itemHolder.getInvoiceItemLineNumber().intValue() == lineNumber) {
                     return itemHolder;
                 }
             }
@@ -97,7 +99,7 @@ public class CuElectronicInvoiceOrderHolder extends ElectronicInvoiceOrderHolder
 		return nonMatchItems;
 	}
 
-	public void setNonMatchItems(List<CuElectronicInvoiceItemHolder> nonMatchItems) {
+	public void setNonMatchItems(final List<CuElectronicInvoiceItemHolder> nonMatchItems) {
 		this.nonMatchItems = nonMatchItems;
 	}
 
@@ -105,7 +107,7 @@ public class CuElectronicInvoiceOrderHolder extends ElectronicInvoiceOrderHolder
 		return misMatchItem;
 	}
 
-	public void setMisMatchItem(CuElectronicInvoiceItemHolder misMatchItem) {
+	public void setMisMatchItem(final CuElectronicInvoiceItemHolder misMatchItem) {
 		this.misMatchItem = misMatchItem;
 	}
     

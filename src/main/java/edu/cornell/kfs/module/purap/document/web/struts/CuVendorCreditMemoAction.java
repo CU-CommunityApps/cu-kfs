@@ -27,14 +27,14 @@ public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
     private CuCheckStubService cuCheckStubService;
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
                 kualiDocumentFormBase.getDocument());
     }
 
 	@Override
-	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+	protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
         // set wire charge message in form
         ((CuVendorCreditMemoForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
@@ -51,18 +51,19 @@ public class CuVendorCreditMemoAction extends VendorCreditMemoAction {
         return MessageFormat.format(message, "");
     }
 
-	@Override
-	public ActionForward calculate(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-        VendorCreditMemoForm cmForm = (VendorCreditMemoForm) form;
-        CuVendorCreditMemoDocument creditMemoDocument = (CuVendorCreditMemoDocument) cmForm.getDocument();
+    @Override
+    public ActionForward calculate(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        final VendorCreditMemoForm cmForm = (VendorCreditMemoForm) form;
+        final CuVendorCreditMemoDocument creditMemoDocument = (CuVendorCreditMemoDocument) cmForm.getDocument();
         if ( creditMemoDocument.getDocumentHeader().getWorkflowDocument().isInitiated() 
                 || creditMemoDocument.getDocumentHeader().getWorkflowDocument().isSaved() ) {
             // need to check whether the user has the permission to edit the bank code
             // if so, don't synchronize since we can't tell whether the value coming in
             // was entered by the user or not.
-            DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(creditMemoDocument);
+            final DocumentAuthorizer docAuth = SpringContext.getBean(DocumentHelperService.class).getDocumentAuthorizer(creditMemoDocument);
             if ( !docAuth.isAuthorizedByTemplate(creditMemoDocument, 
                     KFSConstants.CoreModuleNamespaces.KFS, 
                     KFSConstants.PermissionTemplate.EDIT_BANK_CODE.name, 

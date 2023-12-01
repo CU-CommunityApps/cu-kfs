@@ -38,21 +38,22 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
 
     private CuCheckStubService cuCheckStubService;
 
-	@Override
-	public ActionForward docHandler(ActionMapping mapping, ActionForm form,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		ActionForward forward =  super.docHandler(mapping, form, request, response);
-        PaymentRequestForm preqForm = (PaymentRequestForm) form;
-        PaymentRequestDocument document = (PaymentRequestDocument) preqForm.getDocument();
+    @Override
+    public ActionForward docHandler(
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        final ActionForward forward =  super.docHandler(mapping, form, request, response);
+        final PaymentRequestForm preqForm = (PaymentRequestForm) form;
+        final PaymentRequestDocument document = (PaymentRequestDocument) preqForm.getDocument();
 
 		if (CollectionUtils.isNotEmpty(document.getItems())) {
 			Collections.sort(document.getItems(), new Comparator() {
                 public int compare(Object o1, Object o2) {                   
-                    PaymentRequestItem item1 = (PaymentRequestItem) o1;
-                    PaymentRequestItem item2 = (PaymentRequestItem) o2;
-                    Integer inv1 = ((CuPaymentRequestItemExtension)item1.getExtension()).getInvLineNumber();
-                    Integer inv2 = ((CuPaymentRequestItemExtension)item2.getExtension()).getInvLineNumber();
+                    final PaymentRequestItem item1 = (PaymentRequestItem) o1;
+                    final PaymentRequestItem item2 = (PaymentRequestItem) o2;
+                    final Integer inv1 = ((CuPaymentRequestItemExtension)item1.getExtension()).getInvLineNumber();
+                    final Integer inv2 = ((CuPaymentRequestItemExtension)item2.getExtension()).getInvLineNumber();
                     if (inv1 == null) {
                     	if (inv2 == null) {
                     		return -1;
@@ -74,14 +75,14 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     }
 
     @Override
-    protected void loadDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+    protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
         getCuCheckStubService().addIso20022CheckStubLengthWarningToDocumentIfNecessary(
                 kualiDocumentFormBase.getDocument());
     }
 
 	@Override
-	protected void createDocument(KualiDocumentFormBase kualiDocumentFormBase) {
+	protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
 		super.createDocument(kualiDocumentFormBase);
         // set wire charge message in form
         ((CuPaymentRequestForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
@@ -100,9 +101,9 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     }
     
     @Override
-    protected void customCalculate(PurchasingAccountsPayableDocument apDoc) {
+    protected void customCalculate(final PurchasingAccountsPayableDocument apDoc) {
     	super.customCalculate(apDoc);
-    	PaymentRequestDocument preqDoc = (PaymentRequestDocument) apDoc;
+    	final PaymentRequestDocument preqDoc = (PaymentRequestDocument) apDoc;
         // KFSPTS-2578
         if (PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
         		&& StringUtils.isNotBlank(preqDoc.getTaxClassificationCode()) && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
@@ -113,8 +114,10 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     }
     
     @Override
-    public ActionForward approve(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        PaymentRequestDocument preq = ((PaymentRequestForm)form).getPaymentRequestDocument();
+    public ActionForward approve(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final PaymentRequestDocument preq = ((PaymentRequestForm)form).getPaymentRequestDocument();
 
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(preq);
         // if tax is required but not yet calculated, return and prompt user to calculate
@@ -128,7 +131,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
         // and thus system wouldn't know it's not re-calculated after tax data are changed
         if (SpringContext.getBean(KualiRuleService.class).applyRules(new AttributedPreCalculateAccountsPayableEvent(preq))) {
             
-            ActionForward forward =  super.approve(mapping, form, request, response);
+            final ActionForward forward =  super.approve(mapping, form, request, response);
             // need to wait after new item generated itemid
             // preqacctrevision is saved separately
             // TODO : this preqacctrevision is new.  need to validate with existing system to see if '0' is normal ?
@@ -146,11 +149,13 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     /**
      * Calls service to clear tax info.
      */
-    public ActionForward clearTaxInfo(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        PaymentRequestForm prForm = (PaymentRequestForm) form;
-        PaymentRequestDocument document = (PaymentRequestDocument) prForm.getDocument();
+    public ActionForward clearTaxInfo(
+            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
+            final HttpServletResponse response) throws Exception {
+        final PaymentRequestForm prForm = (PaymentRequestForm) form;
+        final PaymentRequestDocument document = (PaymentRequestDocument) prForm.getDocument();
 
-        PaymentRequestService taxService = SpringContext.getBean(PaymentRequestService.class);
+        final PaymentRequestService taxService = SpringContext.getBean(PaymentRequestService.class);
 
         /* call service to clear previous lines */
         taxService.clearTax(document);

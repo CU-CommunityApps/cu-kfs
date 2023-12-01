@@ -14,15 +14,15 @@ public class CuAccountDelegateServiceImpl extends AccountDelegateServiceImpl {
     private AccountDelegateGlobalLockDao accountDelegateGlobalLockDao;
 
     @Override
-    public String getLockingDocumentId(AccountDelegateGlobalMaintainableImpl global, String docNumber) {
-        List<MaintenanceLock> maintenanceLocks = global.generateMaintenanceLocks();
-        List<String> lockingRepresentations = maintenanceLocks.stream()
+    public String getLockingDocumentId(final AccountDelegateGlobalMaintainableImpl global, final String docNumber) {
+        final List<MaintenanceLock> maintenanceLocks = global.generateMaintenanceLocks();
+        final List<String> lockingRepresentations = maintenanceLocks.stream()
                 .map(MaintenanceLock::getLockingRepresentation)
                 .collect(Collectors.toUnmodifiableList());
         return accountDelegateGlobalLockDao.getAnyLockingDocumentNumber(lockingRepresentations, docNumber);
     }
 
-    public void setAccountDelegateGlobalLockDao(AccountDelegateGlobalLockDao accountDelegateGlobalLockDao) {
+    public void setAccountDelegateGlobalLockDao(final AccountDelegateGlobalLockDao accountDelegateGlobalLockDao) {
         this.accountDelegateGlobalLockDao = accountDelegateGlobalLockDao;
     }
 
