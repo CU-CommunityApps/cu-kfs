@@ -4,6 +4,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -22,7 +24,7 @@ public abstract class SpringEnabledMicroTestBase {
 
     protected ClassPathXmlApplicationContext springContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         LoadSpringFile springFileAnnotation = getClass().getAnnotation(LoadSpringFile.class);
         if (springFileAnnotation == null) {
@@ -35,7 +37,7 @@ public abstract class SpringEnabledMicroTestBase {
         springContext = new ClassPathXmlApplicationContext(springFileAnnotation.value());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOUtils.closeQuietly(springContext);
     }
