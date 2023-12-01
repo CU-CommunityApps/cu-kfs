@@ -9,5 +9,23 @@
 
     <bean id="SubObjectCodeMaintenanceDocument" parent="SubObjectCodeMaintenanceDocument-parentBean">
       <property name="maintainableClass" value="edu.cornell.kfs.coa.document.CuSubObjectCodeMaintainableImpl"/>
+    </bean>
+    
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="SubObjectCodeMaintenanceDocument-EditSubObjectCode" />
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementReplace" >
+                    <property name="propertyName" value="maintainableItems" />
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode" p:required="true"/>
+                    </property>
+                    <property name="replaceWith">
+                        <bean parent="MaintainableFieldDefinition" p:name="financialObjectCode"
+                              p:required="true" p:newLookup="true"/>
+                    </property>
+                </bean>
+            </list>
+        </property>
     </bean>    
 </beans>
