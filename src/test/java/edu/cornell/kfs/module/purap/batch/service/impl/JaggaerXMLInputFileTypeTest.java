@@ -8,8 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @LoadSpringFile("edu/cornell/kfs/module/purap/jaggaer/xml/cu-spring-jaggaer-test.xml")
 public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
@@ -31,33 +30,25 @@ public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
     }
 
     @Test
-    public void testJaggaerXMLInputFileTypeExists() {
-        assertTrue(jaggaerXMLInputFileType != null);
-    }
+    public void testJaggaerXMLInputFileType() {
+        assertNotNull(jaggaerXMLInputFileType);
 
-    @Test
-    public void testJaggaerXMLInputFileTypeExtension() {
         assertEquals(jaggaerXMLInputFileType.getFileExtension(), EXPECTED_FILE_EXTENSION_XML);
-    }
 
-    @Test
-    public void testJaggaerXMLInputFileTypeDirectoryPath() {
         assertTrue(jaggaerXMLInputFileType.getDirectoryPath().endsWith(JAGGAER_STAGING_RELATIVE_PATH));
-    }
 
-    @Test
-    public void testJaggaerXMLInputFileTypeGetAuthor() {
-        String relativeFilepath = jaggaerXMLInputFileType.getDirectoryPath() + "/" + EXAMPLE_FILENAME;
-        File exampleFile = new File(relativeFilepath);
-
+        File exampleFile = getExampleFile();
         String authorName = jaggaerXMLInputFileType.getAuthorPrincipalName(exampleFile);
         assertEquals(authorName, EXPECTED_AUTHOR_NAME_AJD299);
-    }
 
-    @Test
-    public void testJaggaerXMLInputFileTypeGetFilename() {
         String filename = jaggaerXMLInputFileType.getFileName(PRINCIPAL_NAME_AJD299, null, "");
         assertEquals(filename.indexOf(EXPECTED_FILENAME_PREFIX), 0);
+    }
+
+    private File getExampleFile() {
+        String relativeFilepath = jaggaerXMLInputFileType.getDirectoryPath() + "/" + EXAMPLE_FILENAME;
+        File exampleFile = new File(relativeFilepath);
+        return exampleFile;
     }
 
 }
