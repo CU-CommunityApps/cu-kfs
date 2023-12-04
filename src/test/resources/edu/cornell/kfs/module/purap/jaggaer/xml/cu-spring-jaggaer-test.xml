@@ -4,13 +4,25 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean id="dateTimeService" class="edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
+    <import resource="classpath:edu/cornell/kfs/module/purap/cu-spring-purap.xml"/>
 
-    <bean id="jaggaerXMLInputFileType"
-          class="edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType"
-          p:directoryPath="${staging.directory}/purap/jaggaer/xml"
-          p:fileNamePrefix="jaggaerSupplierUploadFile_"
-          p:fileExtension="xml"
-          p:dateTimeService-ref="dateTimeService" />
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="staging.directory">test</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="jaggaerXMLInputFileType"/>
+                <idref bean="dateTimeService"/>
+            </set>
+        </property>
+    </bean>
 
 </beans>
