@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @LoadSpringFile("edu/cornell/kfs/module/purap/jaggaer/xml/cu-spring-jaggaer-test.xml")
 public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
