@@ -24,13 +24,13 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.service.FileStorageService;
 
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.batch.JaggaerUploadSupplierXmlStep;
+import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import edu.cornell.kfs.module.purap.batch.service.JaggaerUploadFileService;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.ErrorMessage;
 import edu.cornell.kfs.module.purap.jaggaer.supplier.xml.SupplierResponseMessage;
@@ -44,7 +44,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     private static final Logger LOG = LogManager.getLogger();
 
     protected BatchInputFileService batchInputFileService;
-    protected BatchInputFileType jaggaerUploadFileType;
+    protected JaggaerXMLInputFileType jaggaerXMLInputFileType;
     protected FileStorageService fileStorageService;
     protected CUMarshalService cuMarshalService;
     protected ParameterService parameterService;
@@ -58,7 +58,7 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
     @Override
     public void uploadSupplierXMLFiles() {
         List<String> jaggaerUploadXmlFileNames = batchInputFileService
-                .listInputFileNamesWithDoneFile(jaggaerUploadFileType);
+                .listInputFileNamesWithDoneFile(jaggaerXMLInputFileType);
         LOG.info("uploadSupplierXMLFiles, found {} files to upload", jaggaerUploadXmlFileNames.size());
 
         List<JaggaerUploadFileResultsDTO> resultsList = new ArrayList<JaggaerUploadFileResultsDTO>();
@@ -217,8 +217,8 @@ public class JaggaerUploadFileServiceImpl extends DisposableClientServiceImplBas
         this.batchInputFileService = batchInputFileService;
     }
 
-    public void setJaggaerUploadFileType(BatchInputFileType jaggaerUploadFileType) {
-        this.jaggaerUploadFileType = jaggaerUploadFileType;
+    public void setJaggaerXMLInputFileType(JaggaerXMLInputFileType jaggaerXMLInputFileType) {
+        this.jaggaerXMLInputFileType = jaggaerXMLInputFileType;
     }
 
     public void setFileStorageService(FileStorageService fileStorageService) {

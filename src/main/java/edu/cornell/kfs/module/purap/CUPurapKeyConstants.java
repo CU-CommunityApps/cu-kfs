@@ -54,5 +54,6 @@ public class CUPurapKeyConstants {
     public static final String JAGGAER_XML_REPORT_SUMMARY_ACTIVE_INACTIVE_NOTE_TOTAL = "jaggaer.xml.report.summary.active.inactive.note.total";
     public static final String JAGGAER_XML_REPORT_DETAIL_LINE = "jaggaer.xml.report.detail.line";
     public static final String JAGGAER_XML_REPORT_DETAIL_NOTE_LINE = "jaggaer.xml.report.detail.note.line";
+    public static final String MESSAGE_BATCH_UPLOAD_TITLE_JAGGAER = "jaggaer.xml.upload.title";
 
 }
