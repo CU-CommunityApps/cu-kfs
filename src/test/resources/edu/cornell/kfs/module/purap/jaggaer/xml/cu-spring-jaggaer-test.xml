@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <import resource="classpath:edu/cornell/kfs/module/purap/cu-spring-purap.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="staging.directory">test</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="jaggaerXMLInputFileType"/>
+                <idref bean="dateTimeService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
