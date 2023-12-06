@@ -1,6 +1,6 @@
 package edu.cornell.kfs.sys.batch;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;

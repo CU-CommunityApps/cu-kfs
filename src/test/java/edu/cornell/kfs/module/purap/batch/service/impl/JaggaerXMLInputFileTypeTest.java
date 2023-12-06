@@ -3,8 +3,8 @@ package edu.cornell.kfs.module.purap.batch.service.impl;
 import edu.cornell.kfs.module.purap.batch.JaggaerXMLInputFileType;
 import edu.cornell.kfs.sys.util.LoadSpringFile;
 import edu.cornell.kfs.sys.util.SpringEnabledMicroTestBase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 
@@ -24,7 +24,7 @@ public class JaggaerXMLInputFileTypeTest extends SpringEnabledMicroTestBase {
     private JaggaerXMLInputFileType jaggaerXMLInputFileType;
 
     @Override
-    @BeforeEach
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

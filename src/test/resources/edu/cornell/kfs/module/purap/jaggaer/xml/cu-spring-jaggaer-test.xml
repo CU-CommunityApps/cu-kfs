@@ -4,9 +4,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
+    <import resource="classpath:edu/cornell/kfs/module/purap/cu-spring-purap.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
     <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys-test.xml"/>
-    <import resource="classpath:edu/cornell/kfs/module/purap/cu-spring-purap.xml"/>
 
     <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
         <property name="properties">
