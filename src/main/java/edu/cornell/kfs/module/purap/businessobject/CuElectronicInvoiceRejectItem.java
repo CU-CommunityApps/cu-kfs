@@ -37,33 +37,4 @@ public class CuElectronicInvoiceRejectItem extends ElectronicInvoiceRejectItem {
         }
     }
 
-    public BigDecimal getInvoiceItemSubTotalAmount() {
-        // this needs to be calculated when read
-        final BigDecimal returnValue;
-        if (getInvoiceItemQuantity() != null && BigDecimal.ZERO.compareTo(getInvoiceItemQuantity()) != 0
-                && getInvoiceItemUnitPrice() != null) {
-            // unit price and quantity are valid... calculate subtotal
-            returnValue = getInvoiceItemQuantity().multiply(getInvoiceItemUnitPrice());
-        }
-        // KFSPTS-1719 - add "0"
-        else if ((getInvoiceItemQuantity() == null || BigDecimal.ZERO.compareTo(getInvoiceItemQuantity()) == 0)
-                && getInvoiceItemUnitPrice() != null) {
-            // quantity is empty but unit cost exists... use it
-            returnValue = getInvoiceItemUnitPrice();
-        }
-        else {
-            returnValue = null;
-        }
- 
-        if (returnValue != null) {
-        	setInvoiceItemSubTotalAmount(returnValue.setScale(4, BigDecimal.ROUND_HALF_UP));
-        	return returnValue.setScale(4, BigDecimal.ROUND_HALF_UP);
-        }
-        else {
-        	setInvoiceItemSubTotalAmount(null);
-        	return null;
-        }
-
-    }
-
 }
