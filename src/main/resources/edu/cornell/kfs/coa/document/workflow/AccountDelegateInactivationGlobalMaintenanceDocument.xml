@@ -19,6 +19,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
+<!-- Cornell customization added to remove routing for GADI docs-->
 <data xmlns="ns:workflow" xsi:schemaLocation="ns:workflow resource:WorkflowData"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <documentTypes xmlns="ns:workflow/DocumentType"
