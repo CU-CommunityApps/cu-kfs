@@ -121,7 +121,7 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
     // KFSUPGRADE-339
     protected boolean isContractManagementReviewRequired() {
         final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        final KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT));
+        final KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.APO_LIMIT));
         return ((ObjectUtils.isNull(automaticPurchaseOrderDefaultLimit)) || (automaticPurchaseOrderDefaultLimit.compareTo(this.getTotalDollarAmount()) < 0));
 
     }

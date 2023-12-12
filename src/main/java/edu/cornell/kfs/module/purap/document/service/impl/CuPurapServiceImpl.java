@@ -255,7 +255,7 @@ public class CuPurapServiceImpl extends PurapServiceImpl implements CuPurapServi
         if (ObjectUtils.isNull(purchaseOrderTotalLimit)) {
             String defaultLimitParameterName = shouldUseFederalApoLimit(purchasingDocument)
                     ? CUPurapParameterConstants.AUTOMATIC_FEDERAL_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT
-                    : PurapParameterConstants.AUTOMATIC_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT;
+                    : PurapParameterConstants.APO_LIMIT;
             
             final String defaultLimit = parameterService.getParameterValueAsString(RequisitionDocument.class, defaultLimitParameterName);
             purchaseOrderTotalLimit = new KualiDecimal(defaultLimit);
