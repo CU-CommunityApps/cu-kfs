@@ -36,7 +36,12 @@
 	<bean id="DisbursementVoucher-bankCodeValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherBankCodeValidation" abstract="true" />
 	<bean id="DisbursementVoucher-payeeStateAndCountryValidation" class="edu.cornell.kfs.fp.document.validation.impl.CuDisbursementVoucherPayeeStateAndCountryValidation" abstract="true">
 		<property name="recurringDisbursementVoucherForeignVendorValidation" ref="RecurringDisbursementVoucherForeignVendorValidation" />
-	</bean>
+     </bean>
+     <bean id="DisbursementVoucher-accountingLineAccessibleValidation"
+          class="org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherAccountingLineAccessibleValidation"
+          abstract="true" p:dataDictionaryService-ref="dataDictionaryService"
+          p:disbursementVoucherValidationService-ref="disbursementVoucherValidationService"
+          p:documentDictionaryService-ref="documentDictionaryService"/>
 	<bean id="RecurringDisbursementVoucherForeignVendorValidation" class="edu.cornell.kfs.fp.document.validation.impl.RecurringDisbursementVoucherForeignVendorValidation" 
 		abstract="false" scope="prototype">
 		<property name="cuDisbursementVoucherTaxService" ref="disbursementVoucherTaxService" />
