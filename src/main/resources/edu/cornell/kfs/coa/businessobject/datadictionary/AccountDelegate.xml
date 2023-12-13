@@ -7,5 +7,5 @@
 
     <bean id="AccountDelegate-lookupDefinition"
         parent="AccountDelegate-lookupDefinition-parentBean"
-        p:multipleValuesResultSetLimit="5000" />
+        p:multipleValuesResultSetLimit="1000" />
 </beans>
