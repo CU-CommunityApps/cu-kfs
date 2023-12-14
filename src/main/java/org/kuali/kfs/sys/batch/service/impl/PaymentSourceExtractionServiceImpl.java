@@ -368,6 +368,14 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         return paymentGroup;
     }
 
+    @Override
+    public void reextractForReissue(final String documentNumber) {
+        LOG.debug("reextractForReissue(String) - started; documentNumber={}", documentNumber);
+        final PaymentSource paymentSource = (PaymentSource) documentService.getByDocumentHeaderId(documentNumber);
+        paymentSourceToExtractService.reextractForReissue(paymentSource);
+        LOG.debug("reextractForReissue(String) - finished; documentNumber={}", documentNumber);
+    }
+
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
