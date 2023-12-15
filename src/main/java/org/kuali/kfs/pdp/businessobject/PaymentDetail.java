@@ -110,7 +110,8 @@ import java.util.List;
     "invTotOtherCreditAmount",
     "financialSystemOriginCode",
     "financialDocumentTypeCode",
-    "accountDetail"})
+    "accountDetail",
+    "paymentText"})
 @XmlRootElement(name = "detail", namespace = XmlConstants.PAYMENT_NAMESPACE)
 public class PaymentDetail extends PersistableBusinessObjectBase {
 
@@ -194,6 +195,11 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
 
     @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "accounting")
     private List<PaymentAccountDetail> accountDetail = new ArrayList<>();
+
+    @XmlElement(name = "payment_text", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    protected List<String> paymentText;
 
     @XmlTransient
     private List<PaymentNoteText> notes = new ArrayList<>();

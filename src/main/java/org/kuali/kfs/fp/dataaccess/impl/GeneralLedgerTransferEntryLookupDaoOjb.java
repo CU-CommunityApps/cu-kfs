@@ -206,6 +206,7 @@ public class GeneralLedgerTransferEntryLookupDaoOjb extends PlatformAwareDaoBase
                     PdpConstants.FinancialDocumentTypeCodes.CANCEL_ACH,
                     PdpConstants.FinancialDocumentTypeCodes.CANCEL_CHECK,
                     PdpConstants.FinancialDocumentTypeCodes.CANCEL_DRAFT,
+                    PdpConstants.FinancialDocumentTypeCodes.CANCEL_EXTERNAL,
                     PdpConstants.FinancialDocumentTypeCodes.CANCEL_WIRE
             ));
 
