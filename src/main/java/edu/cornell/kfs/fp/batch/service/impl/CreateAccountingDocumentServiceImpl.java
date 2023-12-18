@@ -1,31 +1,38 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
+import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
+import javax.mail.internet.InternetAddress;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.service.FileStorageService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -39,6 +46,9 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
+import edu.cornell.kfs.fp.businessobject.CreateAccountingDocumentFileEntry;
+import edu.cornell.kfs.fp.exception.DuplicateCreateAccountingDocumentFileException;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocumentService {
@@ -52,6 +62,8 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     protected CreateAccountingDocumentReportService createAccountingDocumentReportService;
     protected ParameterService parameterService;
     protected CreateAccountingDocumentValidationService createAccountingDocumentValidationService;
+    protected BusinessObjectService businessObjectService;
+    protected DateTimeService dateTimeService;
 
     @Override
     public boolean createAccountingDocumentsFromXml() {
@@ -64,6 +76,8 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
         LOG.info("createAccountingDocumentsFromXml, files with non business rule errors: " + logReport.getFilesWithNonBusinessRuleFailures());
         LOG.info("createAccountingDocumentsFromXml, files successfully processed: " + logReport.getFilesSuccessfullyProcessed());
+        LOG.info("createAccountingDocumentsFromXml, files from prior runs that were marked for reprocessing but were explicitly excluded: "
+                + logReport.getExcludedDuplicateFiles());
         LOG.info("createAccountingDocumentsFromXml: Finished processing all pending accounting document XML files");
         
         return logReport.getFilesWithNonBusinessRuleFailures().isEmpty();
@@ -75,10 +89,21 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         String headerValidationErrorMessage = KFSConstants.EMPTY_STRING;
         try {
             LOG.info("processAccountingDocumentFromXml: Started processing accounting document XML file: " + fileName);
-            byte[] fileData = LoadFileUtils.safelyLoadFileBytes(fileName);
-            AccountingXmlDocumentListWrapper accountingXmlDocuments = (AccountingXmlDocumentListWrapper) batchInputFileService.parse(accountingDocumentBatchInputFileType, fileData);
+            CreateAccountingDocumentFileEntry fileEntry = findExistingFileEntry(fileName);
+            if (ObjectUtils.isNotNull(fileEntry)) {
+                reportItem.setDuplicateFile(true);
+                if (shouldExcludePreviouslyProcessedFiles()) {
+                    throw new DuplicateCreateAccountingDocumentFileException(fileEntry);
+                } else {
+                    LOG.warn("processAccountingDocumentFromXml: The file {} was already processed by a prior run, "
+                            + "but the job has been configured to reprocess it anyway.", fileEntry.getFileName());
+                }
+            }
+            
+            AccountingXmlDocumentListWrapper accountingXmlDocuments = unmarshalAccountingDocumentFile(fileName);
             reportItem.setReportEmailAddress(accountingXmlDocuments.getReportEmail());
             reportItem.setFileOverview(accountingXmlDocuments.getOverview());
+            createOrUpdateFileEntry(accountingXmlDocuments, fileEntry, fileName);
             
             if (createAccountingDocumentValidationService.isValidXmlFileHeaderData(accountingXmlDocuments, reportItem)) {
                 int documentCount = accountingXmlDocuments.getDocuments().size();
@@ -101,6 +126,16 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             }
             LOG.info("processAccountingDocumentFromXml: Finished processing accounting document XML file: " + fileName);
             
+        } catch (DuplicateCreateAccountingDocumentFileException e) {
+            reportItem.setXmlSuccessfullyLoaded(false);
+            reportItem.setNonBusinessRuleFailure(true);
+            CreateAccountingDocumentFileEntry fileEntry = e.getExistingEntry();
+            LOG.error("processAccountingDocumentFromXml: File {} was already processed by a previous run of the job; "
+                    + "it will be excluded from the current run.  File details: {}",
+                    fileEntry.getFileName(), fileEntry);
+            String duplicateFileMessage = configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_DUPLICATE_FILE_ERROR);
+            reportItem.setReportItemMessage(duplicateFileMessage);
         } catch (Exception e) {
             reportItem.setXmlSuccessfullyLoaded(false);
             reportItem.setNonBusinessRuleFailure(true);
@@ -125,7 +160,53 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         }
         LOG.info("processAccountingDocumentFromXml: Value of reportItem.isNonBusinessRuleFailure just prior to method return =" + reportItem.isNonBusinessRuleFailure());
     }
-    
+
+    protected CreateAccountingDocumentFileEntry findExistingFileEntry(String fileName) {
+        String cleanedFileName = getCleanedFileName(fileName);
+        return businessObjectService.findBySinglePrimaryKey(CreateAccountingDocumentFileEntry.class, cleanedFileName);
+    }
+
+    protected String getCleanedFileName(String fileName) {
+        String cleanedFileName = fileName;
+        if (StringUtils.contains(cleanedFileName, CUKFSConstants.BACKSLASH)) {
+            cleanedFileName = StringUtils.substringAfterLast(cleanedFileName, CUKFSConstants.BACKSLASH);
+        }
+        if (StringUtils.contains(cleanedFileName, CUKFSConstants.SLASH)) {
+            cleanedFileName = StringUtils.substringAfterLast(cleanedFileName, CUKFSConstants.SLASH);
+        }
+        cleanedFileName = StringUtils.lowerCase(cleanedFileName, Locale.US);
+        return cleanedFileName;
+    }
+
+    private boolean shouldExcludePreviouslyProcessedFiles() {
+        return parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
+                CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_CHECK_IND);
+    }
+
+    private AccountingXmlDocumentListWrapper unmarshalAccountingDocumentFile(String fileName) {
+        byte[] fileData = LoadFileUtils.safelyLoadFileBytes(fileName);
+        return (AccountingXmlDocumentListWrapper) batchInputFileService.parse(
+                accountingDocumentBatchInputFileType, fileData);
+    }
+
+    private void createOrUpdateFileEntry(AccountingXmlDocumentListWrapper accountingXmlDocuments,
+            CreateAccountingDocumentFileEntry existingEntry, String fileName) {
+        CreateAccountingDocumentFileEntry fileEntry;
+        if (ObjectUtils.isNull(existingEntry)) {
+            fileEntry = new CreateAccountingDocumentFileEntry();
+            fileEntry.setFileName(getCleanedFileName(fileName));
+        } else {
+            fileEntry = existingEntry;
+        }
+        fileEntry.setFileCreatedDate(new Timestamp(accountingXmlDocuments.getCreateDate().getTime()));
+        fileEntry.setFileProcessedDate(dateTimeService.getCurrentTimestamp());
+        fileEntry.setReportEmailAddress(accountingXmlDocuments.getReportEmail());
+        fileEntry.setFileOverview(accountingXmlDocuments.getOverview());
+        fileEntry.setDocumentCount(accountingXmlDocuments.getDocuments().size());
+        businessObjectService.save(fileEntry);
+    }
+
     private void configureReportItemDataForXmlLoadSuccess(CreateAccountingDocumentReportItem reportItem, int fileDocumentCount) {
         reportItem.setXmlSuccessfullyLoaded(true);
         reportItem.setNumberOfDocumentInFile(fileDocumentCount);
@@ -236,14 +317,28 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     
     protected void createAndEmailReport(CreateAccountingDocumentReportItem reportItem) {
         createAccountingDocumentReportService.generateReport(reportItem);
-        String toAddress;
+        String primaryToAddress;
         String fromAddress = getCreateAccountingDocumentReportEmailAddress();
         if (reportItem.isXmlSuccessfullyLoaded()) {
-            toAddress = reportItem.getReportEmailAddress();
+            primaryToAddress = reportItem.getReportEmailAddress();
         } else {
-            toAddress = fromAddress;
+            primaryToAddress = fromAddress;
         }
-        createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
+        
+        List<String> toAddresses;
+        if (!reportItem.isXmlSuccessfullyLoaded() && reportItem.isDuplicateFile()
+                && shouldExcludePreviouslyProcessedFiles()) {
+            Stream.Builder<String> addresses = Stream.builder();
+            addresses.add(primaryToAddress);
+            addresses.add(getDuplicateFileReportEmailAddress());
+            getReportEmailFromFileIfPossible(reportItem.getXmlFileName())
+                    .ifPresent(addresses::add);
+            toAddresses = addresses.build().collect(Collectors.toUnmodifiableList());
+        } else {
+            toAddresses = List.of(primaryToAddress);
+        }
+        
+        createAccountingDocumentReportService.sendReportEmail(fromAddress, toAddresses);
         LOG.info("createAndEmailReport: Report created and emailed.");
         
         if (reportItem.doWarningMessagesExist()) {
@@ -258,6 +353,29 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                 CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS);
     }
     
+    protected String getDuplicateFileReportEmailAddress() {
+        return parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
+                CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_REPORT_EMAIL_ADDRESS);
+    }
+    
+    protected Optional<String> getReportEmailFromFileIfPossible(String fileName) {
+        try {
+            AccountingXmlDocumentListWrapper accountingXmlDocuments = unmarshalAccountingDocumentFile(fileName);
+            String reportEmail = accountingXmlDocuments.getReportEmail();
+            if (StringUtils.isNotBlank(reportEmail)) {
+                InternetAddress reportInternetAddress = new InternetAddress(reportEmail);
+                reportInternetAddress.validate();
+                return Optional.of(reportEmail);
+            } else {
+                return Optional.empty();
+            }
+        } catch (Exception e) {
+            LOG.error("getReportEmailFromFileIfPossible, Could not obtain and validate report email from file", e);
+            return Optional.empty();
+        }
+    }
+    
     protected void sendWarningEmail(String docType, String fromAddress) {
         LOG.info("sendWarningEmail, send warning email for doc type " + docType);
         try {
@@ -266,13 +384,17 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
                     CuFPParameterConstants.CreateAccountingDocumentService.WARNING_EMAIL_ADDRESS, docType);
             if (StringUtils.isNotBlank(toAddress)) {
                 LOG.info("sendWarningEmail. sending report to " + toAddress);
-                createAccountingDocumentReportService.sendReportEmail(toAddress, fromAddress);
+                createAccountingDocumentReportService.sendReportEmail(fromAddress, List.of(toAddress));
             } else {
                 LOG.error("sendWarningEmail, No warning email address for " + docType);
             }
         } catch (Exception e) {
             LOG.error("sendWarningEmail, unable to send warning email for document type " + docType, e);
         }
+    }
+
+    protected void sendDuplicateFileReport(CreateAccountingDocumentFileEntry existingEntry) {
+        
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
@@ -309,13 +431,23 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         this.createAccountingDocumentValidationService = createAccountingDocumentValidationService;
     }
 
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
     protected class CreateAccountingDocumentLogReport {
         private List<String> filesWithNonBusinessRuleFailures;
         private List<String> filesSuccessfullyProcessed;
+        private List<String> excludedDuplicateFiles;
         
         public CreateAccountingDocumentLogReport() {
             filesWithNonBusinessRuleFailures = new ArrayList<String>();
             filesSuccessfullyProcessed = new ArrayList<String>();
+            excludedDuplicateFiles = new ArrayList<String>();
         }
 
         public List<String> getFilesWithNonBusinessRuleFailures() {
@@ -324,6 +456,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
         public List<String> getFilesSuccessfullyProcessed() {
             return filesSuccessfullyProcessed;
+        }
+        
+        public List<String> getExcludedDuplicateFiles() {
+            return excludedDuplicateFiles;
         }
     }
 

@@ -14,6 +14,7 @@ public class CreateAccountingDocumentReportItem {
     private String xmlFileName;
     private boolean xmlSuccessfullyLoaded;
     private boolean nonBusinessRuleFailure;
+    private boolean duplicateFile;
     private String reportEmailAddress;
     private int numberOfDocumentInFile;
     private String reportItemMessage;
@@ -98,6 +99,14 @@ public class CreateAccountingDocumentReportItem {
 
 	public void setNonBusinessRuleFailure(boolean nonBusinessRuleFailure) {
 		this.nonBusinessRuleFailure = nonBusinessRuleFailure;
+	}
+
+	public boolean isDuplicateFile() {
+		return duplicateFile;
+	}
+
+	public void setDuplicateFile(boolean duplicateFile) {
+		this.duplicateFile = duplicateFile;
 	}
 
     public String getValidationErrorMessage() {

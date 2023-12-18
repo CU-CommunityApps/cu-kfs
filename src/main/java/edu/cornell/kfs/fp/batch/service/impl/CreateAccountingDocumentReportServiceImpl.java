@@ -84,6 +84,11 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         
         writeFileName(reportItem);
         
+        if (reportItem.isDuplicateFile()) {
+            reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
+                    CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_DUPLICATE_FILE_WARNING)));
+        }
+        
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_SUMMARY_REPORT_EMAIL), reportItem.getReportEmailAddress()));
         
@@ -220,20 +225,20 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
     }
     
     @Override
-    public void sendReportEmail(String toAddress, String fromAddress) {
+    public void sendReportEmail(String fromAddress, List<String> toAddresses) {
         BodyMailMessage message = new BodyMailMessage();
         message.setFromAddress(fromAddress);
         String subject = reportWriterService.getTitle();
         message.setSubject(subject);
-        message.getToAddresses().add(toAddress);
+        message.getToAddresses().addAll(toAddresses);
         String body = concurBatchUtilityService.getFileContents(reportWriterService.getReportFile().getAbsolutePath());
         message.setMessage(body);
 
         boolean htmlMessage = false;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("sendEmail, from address: " + fromAddress + "  to address: " + toAddress);
+            LOG.debug("sendEmail, from address: " + fromAddress + "  to addresses: " + toAddresses);
             LOG.debug("sendEmail, the email subject: " + subject);
-            LOG.debug("sendEmail, the email budy: " + body);
+            LOG.debug("sendEmail, the email body: " + body);
         }
         try {
             emailService.sendMessage(message, htmlMessage);
