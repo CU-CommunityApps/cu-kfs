@@ -522,50 +522,6 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         return withoutGlpes;
     }
 
-    /*
-     * If the payment group is not a check or ACH disbursement, then it could be that the disbursement is being
-     * cancelled before the disbursement GLPEs have been processed.  In that case, we just want to delete the GLPEs, we
-     * don't need to create cancel GLPEs.
-     * @return true if the GLPEs were deleted and there is no need to create further GLPEs
-     */
-    private boolean deleteGlpesForCancelDisbursement(final PaymentGroup paymentGroup) {
-        if (isCheckAchDisbursement(paymentGroup)) {
-            return false;
-        }
-        LOG.debug(
-                "deleteGlpesForCancelDisbursement(...) - Check for GLPEs to delete: paymentGroupId={}",
-                paymentGroup::getId
-        );
-        boolean withGlpes = false;
-        boolean withoutGlpes = false;
-        for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
-            final String documentId = paymentDetail.getCustPaymentDocNbr();
-            final Map<String, Object> fieldValues = Map.of(KFSPropertyConstants.DOCUMENT_NUMBER, documentId);
-            final Collection<?> glpes = generalLedgerPendingEntryService.findPendingEntries(fieldValues, false);
-            if (glpes.isEmpty()) {
-                LOG.debug(
-                        "deleteGlpesForCancelDisbursement(...) -  No GPLEs found; documentId={}, paymentDetailId={}",
-                        paymentDetail::getCustPaymentDocNbr,
-                        paymentDetail::getId
-                );
-                withoutGlpes = true;
-            } else {
-                LOG.debug(
-                        "deleteGlpesForCancelDisbursement(...) - Delete GLPEs; documentId={}, paymentDetailId={}",
-                        paymentDetail::getCustPaymentDocNbr,
-                        paymentDetail::getId
-                );
-                generalLedgerPendingEntryService.delete(documentId);
-                withGlpes = true;
-            }
-            if (withGlpes && withoutGlpes) {
-                throw new IllegalStateException("Some payments in payment group " + paymentGroup.getId()
-                        + " have GLPEs while others have already been processed, cannot cancel payment group.");
-            }
-        }
-        return withGlpes;
-    }
-
     @Override
     public boolean reissueDisbursement(final Integer paymentGroupId, final String note, final Person user) {
         LOG.debug("reissueDisbursement() started");
@@ -687,13 +643,14 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         paymentGroup.setEpicPaymentCancelledExtractedDate(null);
 
         for (final PaymentDetail paymentDetail : paymentDetails) {
+            LOG.debug("processPdpReissue() - process payment detail; paymentDetailId={}", paymentDetail::getId);
             final String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
             final String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
             if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
                 LOG.debug(
                         "processPdpReissue() - document type is a purchasing batch document; paymentDetailId={}, "
-                                + "documentTypeCode={}",
+                            + "documentTypeCode={}",
                         paymentDetail::getId,
                         paymentDetail::getCustPaymentDocNbr
                 );

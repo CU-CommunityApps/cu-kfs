@@ -58,7 +58,7 @@ import java.text.ParseException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -575,6 +575,16 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             }
         }
         return nbrOfPaymentsInDisbursement;
+    }
+
+    /**
+    * Gets the value of the paymentText property.
+    */
+    public List<String> getXmlPaymentText() {
+        if (paymentText == null) {
+            paymentText = new ArrayList<>();
+        }
+        return Collections.unmodifiableList(this.paymentText);
     }
 
 }

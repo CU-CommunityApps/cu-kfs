@@ -42,6 +42,7 @@ public class GeneratePdpGlpeState {
             PdpConstants.DisbursementTypeCodes.ACH, PdpConstants.FinancialDocumentTypeCodes.CANCEL_ACH,
             PdpConstants.DisbursementTypeCodes.CHECK, PdpConstants.FinancialDocumentTypeCodes.CANCEL_CHECK,
             PdpConstants.DisbursementTypeCodes.DRAFT, PdpConstants.FinancialDocumentTypeCodes.CANCEL_DRAFT,
+            PdpConstants.DisbursementTypeCodes.EXTERNAL, PdpConstants.FinancialDocumentTypeCodes.CANCEL_EXTERNAL,
             PdpConstants.DisbursementTypeCodes.WIRE, PdpConstants.FinancialDocumentTypeCodes.CANCEL_WIRE
     );
 
