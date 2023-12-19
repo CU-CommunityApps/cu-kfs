@@ -54,6 +54,8 @@ import edu.cornell.kfs.sys.util.LoadFileUtils;
 public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocumentService {
 	private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentServiceImpl.class);
 
+	private static final int MAX_OVERVIEW_LENGTH_FOR_FILE_ENTRY = 250;
+
     protected BatchInputFileService batchInputFileService;
     protected BatchInputFileType accountingDocumentBatchInputFileType;
     protected DocumentService documentService;
@@ -153,7 +155,10 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             removeDoneFileQuietly(fileName);
             createAndEmailReport(reportItem);
         }
-        if (reportItem.isNonBusinessRuleFailure()) {
+        if (reportItem.isDuplicateFile() && shouldExcludePreviouslyProcessedFiles()) {
+            logReport.getExcludedDuplicateFiles().add(fileName);
+            logReport.getFilesWithNonBusinessRuleFailures().add(fileName);
+        } else if (reportItem.isNonBusinessRuleFailure()) {
             logReport.getFilesWithNonBusinessRuleFailures().add(fileName);
         } else {
             logReport.getFilesSuccessfullyProcessed().add(fileName);
@@ -202,7 +207,8 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         fileEntry.setFileCreatedDate(new Timestamp(accountingXmlDocuments.getCreateDate().getTime()));
         fileEntry.setFileProcessedDate(dateTimeService.getCurrentTimestamp());
         fileEntry.setReportEmailAddress(accountingXmlDocuments.getReportEmail());
-        fileEntry.setFileOverview(accountingXmlDocuments.getOverview());
+        fileEntry.setFileOverview(
+                StringUtils.left(accountingXmlDocuments.getOverview(), MAX_OVERVIEW_LENGTH_FOR_FILE_ENTRY));
         fileEntry.setDocumentCount(accountingXmlDocuments.getDocuments().size());
         businessObjectService.save(fileEntry);
     }
@@ -391,10 +397,6 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
         } catch (Exception e) {
             LOG.error("sendWarningEmail, unable to send warning email for document type " + docType, e);
         }
-    }
-
-    protected void sendDuplicateFileReport(CreateAccountingDocumentFileEntry existingEntry) {
-        
     }
 
     public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
