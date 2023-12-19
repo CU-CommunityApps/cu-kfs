@@ -351,6 +351,13 @@
             </pattern>
         </pattern>
         <pattern>
+            <class>org.kuali.kfs.coa.businessobject.AccountingPeriod</class>
+            <pattern>
+                <match>budgetRolloverIndicator</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>org.kuali.kfs.coa.businessobject.PriorYearAccount</class>
             <pattern>
                 <match>extrnlFinEncumSufficntFndIndicator</match>

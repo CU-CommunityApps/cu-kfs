@@ -24,9 +24,7 @@
 <c:set var="invoiceAccountDetailsAttributes" value="${DataDictionary.InvoiceAccountDetail.attributes}" />
 <c:set var="invoiceGeneralDetailAttributes" value="${DataDictionary.InvoiceGeneralDetail.attributes}" />
 <c:set var="documentAttributes" value="${DataDictionary.ContractsGrantsInvoiceDocument.attributes}" />
-<c:set var="editFinalBill"
-       value="${KualiForm.editingMode[ArAuthorizationConstants.ContractsGrantsInvoiceDocumentEditMode.EDIT_FINAL_BILL_INDICATOR]}"/>
-<c:set var="readOnlyForFinal" value="${!(editFinalBill and KualiForm.document.finalizable)}" />
+<c:set var="readOnlyForFinal" value="${readOnly or !KualiForm.document.finalizable}" />
 <c:set var="arDocHeaderAttributes" value="${DataDictionary.AccountsReceivableDocumentHeader.attributes}" />
 <kul:tab tabTitle="General" defaultOpen="true" tabErrorKey="${KFSConstants.CUSTOMER_INVOICE_DOCUMENT_GENERAL_ERRORS}">
     <div class="tab-container" align=center>
