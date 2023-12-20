@@ -32,5 +32,6 @@ public class CuFPTestConstants {
     public static final class TestEmails {
         public static final String KFS_GL_FP_AT_CORNELL_DOT_EDU = "kfs-gl_fp@cornell.edu";
         public static final String MOCK_TEST_DEVS_AT_CORNELL_DOT_EDU = "mock-test-devs@cornell.edu";
+        public static final String MOCK_TEST_FUNC_LEADS_AT_CORNELL_DOT_EDU = "mock-test-func-leads@cornell.edu";
     }
 }

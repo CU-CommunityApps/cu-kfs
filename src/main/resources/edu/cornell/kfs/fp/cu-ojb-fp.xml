@@ -1328,7 +1328,8 @@
 	</class-descriptor>
 
     <class-descriptor class="edu.cornell.kfs.fp.businessobject.CreateAccountingDocumentFileEntry" table="CU_FP_CRTE_ACCT_DOC_FIL_T">
-        <field-descriptor name="fileName" column="FIL_NM" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="fileId" column="FIL_ID" jdbc-type="VARCHAR" primarykey="true" index="true" />
+        <field-descriptor name="fileName" column="FIL_NM" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
         <field-descriptor name="fileCreatedDate" column="CRTE_DT" jdbc-type="TIMESTAMP" />

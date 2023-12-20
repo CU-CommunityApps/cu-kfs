@@ -20,7 +20,7 @@ public class CuFPParameterConstants {
         public static final String CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS = "CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS";
         public static final String WARNING_EMAIL_ADDRESS = "WARNING_EMAIL_ADDRESS";
         public static final String DUPLICATE_FILE_CHECK_IND = "DUPLICATE_FILE_CHECK_IND";
-        public static final String DUPLICATE_FILE_REPORT_EMAIL_ADDRESS = "DUPLICATE_FILE_REPORT_EMAIL_ADDRESS";
+        public static final String DUPLICATE_FILE_REPORT_EMAIL_ADDRESSES = "DUPLICATE_FILE_REPORT_EMAIL_ADDRESSES";
     }
     
     public static class ProcurementCardDocument {

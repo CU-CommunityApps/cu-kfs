@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -62,10 +62,12 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
+import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
@@ -82,6 +84,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.CuFPConstants.CreateAccountingDocumentConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
@@ -129,6 +132,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
     private Map<String, CreateAccountingDocumentFileEntry> fileEntries;
+    private AtomicLong mockFileEntryIdSequence;
     
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
@@ -141,6 +145,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         fileEntries = new HashMap<>();
+        mockFileEntryIdSequence = new AtomicLong(1000L);
         createTargetTestDirectory();
     }
     
@@ -155,6 +160,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         createAccountingDocumentService.setCreateAccountingDocumentValidationService(buildCreateAccountingDocumentValidationService(configurationService));
         createAccountingDocumentService.setBusinessObjectService(buildMockBusinessObjectService());
         createAccountingDocumentService.setDateTimeService(dateTimeService);
+        createAccountingDocumentService.setSequenceAccessorService(buildMockSequenceAccessorService());
     }
 
     @After
@@ -465,26 +471,19 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     }
 
     private ParameterService buildParameterService() {
-        Map<String, String> parameters = Map.ofEntries(
-                Map.entry(CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS,
-                        TestEmails.KFS_GL_FP_AT_CORNELL_DOT_EDU),
-                Map.entry(CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_REPORT_EMAIL_ADDRESS,
-                        TestEmails.MOCK_TEST_DEVS_AT_CORNELL_DOT_EDU),
-                Map.entry(CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_CHECK_IND,
-                        KRADConstants.YES_INDICATOR_VALUE)
-        );
-        ParameterService parameterService = Mockito.mock(ParameterService.class);
         String namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL;
         String component = CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME;
-        parameters.forEach((parameterName, parameterValue) -> {
-            if (StringUtils.equalsAny(parameterValue, KRADConstants.YES_INDICATOR_VALUE, KRADConstants.NO_INDICATOR_VALUE)) {
-                Mockito.when(parameterService.getParameterValueAsBoolean(namespace, component, parameterName))
-                        .thenReturn(StringUtils.equals(parameterValue, KRADConstants.YES_INDICATOR_VALUE));
-            } else {
-                Mockito.when(parameterService.getParameterValueAsString(namespace, component, parameterName))
-                        .thenReturn(parameterValue);
-            }
-        });
+        ParameterService parameterService = Mockito.mock(ParameterService.class);
+        Mockito.when(parameterService.getParameterValueAsString(namespace, component,
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS))
+                .thenReturn(TestEmails.KFS_GL_FP_AT_CORNELL_DOT_EDU);
+        Mockito.when(parameterService.getParameterValuesAsString(namespace, component,
+                CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_REPORT_EMAIL_ADDRESSES))
+                .thenReturn(List.of(TestEmails.MOCK_TEST_DEVS_AT_CORNELL_DOT_EDU,
+                        TestEmails.MOCK_TEST_FUNC_LEADS_AT_CORNELL_DOT_EDU));
+        Mockito.when(parameterService.getParameterValueAsBoolean(namespace, component,
+                CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_CHECK_IND))
+                .thenReturn(Boolean.TRUE);
         return parameterService;
     }
 
@@ -499,23 +498,34 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     private BusinessObjectService buildMockBusinessObjectService() {
         BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
         Mockito.when(businessObjectService
-                .findBySinglePrimaryKey(Mockito.eq(CreateAccountingDocumentFileEntry.class), Mockito.anyString()))
+                .findMatching(Mockito.eq(CreateAccountingDocumentFileEntry.class), Mockito.anyMap()))
                 .then(this::getExistingFileEntry);
         Mockito.when(businessObjectService.save(Mockito.any(CreateAccountingDocumentFileEntry.class)))
                 .then(this::saveFileEntry);
         return businessObjectService;
     }
 
-    private CreateAccountingDocumentFileEntry getExistingFileEntry(InvocationOnMock invocation) {
-        String fileName = invocation.getArgument(1);
+    private Collection<CreateAccountingDocumentFileEntry> getExistingFileEntry(InvocationOnMock invocation) {
+        Map<?, ?> criteria = (Map<?, ?>) invocation.getArgument(1);
+        String fileName = (String) criteria.get(KFSPropertyConstants.FILE_NAME);
         CreateAccountingDocumentFileEntry fileEntry = fileEntries.get(fileName);
-        return (fileEntry != null) ? (CreateAccountingDocumentFileEntry) ObjectUtils.deepCopy(fileEntry) : null;
+        return (fileEntry != null)
+                ? List.of((CreateAccountingDocumentFileEntry) ObjectUtils.deepCopy(fileEntry))
+                : List.of();
     }
 
     private CreateAccountingDocumentFileEntry saveFileEntry(InvocationOnMock invocation) {
         CreateAccountingDocumentFileEntry fileEntry = invocation.getArgument(0);
         fileEntries.put(fileEntry.getFileName(), fileEntry);
-        return fileEntry;
+        return (CreateAccountingDocumentFileEntry) ObjectUtils.deepCopy(fileEntry);
+    }
+
+    private SequenceAccessorService buildMockSequenceAccessorService() {
+        SequenceAccessorService sequenceAccessorService = Mockito.mock(SequenceAccessorService.class);
+        Mockito.when(sequenceAccessorService.getNextAvailableSequenceNumber(
+                CreateAccountingDocumentConstants.FILE_ID_SEQUENCE_NAME))
+                .then(invocation -> mockFileEntryIdSequence.incrementAndGet());
+        return sequenceAccessorService;
     }
 
     protected void overwriteFileEntry(String fileName, AccountingXmlDocumentListWrapperFixture fileFixture) {
