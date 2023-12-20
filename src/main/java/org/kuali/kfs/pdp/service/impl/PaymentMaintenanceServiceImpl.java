@@ -489,7 +489,8 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
      * cancellation GLPEs, as the existing ones will be deleted during the processPdpCancelsAndPaidJob.
      * @return true if cancellation GLPEs should be generated for the payment group
      */
-    private boolean shouldGenerateCancellationGlpes(final PaymentGroup paymentGroup) {
+    // CU customization: method changed from private to protected for use in super-class
+    protected boolean shouldGenerateCancellationGlpes(final PaymentGroup paymentGroup) {
         if (isCheckAchDisbursement(paymentGroup)) {
             return true;
         }
