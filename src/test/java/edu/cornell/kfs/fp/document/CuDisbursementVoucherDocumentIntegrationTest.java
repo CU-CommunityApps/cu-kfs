@@ -52,7 +52,7 @@ public class CuDisbursementVoucherDocumentIntegrationTest extends KualiIntegTest
         assertEquals("IT", cuDisbursementVoucherDocument.getCampusCode());
         assertEquals(cuDisbursementVoucherDefaultDueDateService.findDefaultDueDate(), cuDisbursementVoucherDocument.getDisbursementVoucherDueDate());
         assertEquals("O", cuDisbursementVoucherDocument.getDisbursementVoucherDocumentationLocationCode());
-        assertEquals("DISB", cuDisbursementVoucherDocument.getDisbVchrBankCode());
+        assertEquals("JPCD", cuDisbursementVoucherDocument.getDisbVchrBankCode());
 
         assertEquals("607-255-9466", cuDisbursementVoucherDocument.getDisbVchrContactPhoneNumber());
         assertEquals("ccs1@cornell.edu", cuDisbursementVoucherDocument.getDisbVchrContactEmailId());
