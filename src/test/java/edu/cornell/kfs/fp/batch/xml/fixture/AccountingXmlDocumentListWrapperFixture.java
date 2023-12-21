@@ -270,7 +270,7 @@ public enum AccountingXmlDocumentListWrapperFixture {
     }
 
     public AccountingXmlDocumentListWrapper toDocumentListWrapperPojo() {
-        DateTime parsedCreateDate = StringToJavaDateAdapter.parseToDateTime(createDate);
+        DateTime parsedCreateDate = getCreateDateAsDateTime();
         AccountingXmlDocumentListWrapper listWrapper = new AccountingXmlDocumentListWrapper();
         listWrapper.setCreateDate(parsedCreateDate.toDate());
         listWrapper.setReportEmail(reportEmail);
@@ -278,6 +278,10 @@ public enum AccountingXmlDocumentListWrapperFixture {
         listWrapper.setDocuments(
                 XmlDocumentFixtureUtils.convertToPojoList(documents, AccountingXmlDocumentEntryFixture::toDocumentEntryPojo));
         return listWrapper;
+    }
+
+    public DateTime getCreateDateAsDateTime() {
+        return StringToJavaDateAdapter.parseToDateTime(createDate);
     }
 
     // This method is only meant to improve the setup and readability of this enum's constants.

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -37,8 +38,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.runner.RunWith;
@@ -49,8 +50,8 @@ import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.Attachment;
@@ -58,10 +59,13 @@ import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.batch.service.impl.BatchInputFileServiceImpl;
 import org.kuali.kfs.sys.businessobject.AccountingLine;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
@@ -81,6 +85,7 @@ import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
+import edu.cornell.kfs.fp.CuFPTestConstants.TestEmails;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
@@ -92,6 +97,7 @@ import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentListWrapperFixture;
+import edu.cornell.kfs.fp.businessobject.CreateAccountingDocumentFileEntry;
 import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
@@ -122,6 +128,8 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     protected TestCreateAccountingDocumentServiceImpl createAccountingDocumentService;
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
+    private Map<String, CreateAccountingDocumentFileEntry> fileEntries;
+    private long nextFileEntryId = 1000L;
     
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
@@ -133,6 +141,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         parameterService = buildParameterService();
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
+        fileEntries = new HashMap<>();
         createTargetTestDirectory();
     }
     
@@ -145,6 +154,8 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         createAccountingDocumentService.setCreateAccountingDocumentReportService(new TestCreateAccountingDocumentReportService());
         createAccountingDocumentService.setParameterService(parameterService);
         createAccountingDocumentService.setCreateAccountingDocumentValidationService(buildCreateAccountingDocumentValidationService(configurationService));
+        createAccountingDocumentService.setBusinessObjectService(buildMockBusinessObjectService());
+        createAccountingDocumentService.setDateTimeService(dateTimeService);
     }
 
     @After
@@ -320,6 +331,29 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         }
     }
 
+    protected void renameTestAndDoneFileToUppercase(String baseFileName) throws IOException {
+        String[] extensions = {
+            CuFPConstants.XML_FILE_EXTENSION,
+            GeneralLedgerConstants.BatchFileSystem.DONE_FILE_EXTENSION
+        };
+        for (String extension : extensions) {
+            File oldFile = new File(
+                    String.format(FULL_FILE_PATH_FORMAT, TARGET_TEST_FILE_PATH, baseFileName, extension));
+            File tempFile = new File(
+                    String.format(FULL_FILE_PATH_FORMAT, TARGET_TEST_FILE_PATH, baseFileName, extension + "1"));
+            File newFile = new File(
+                    String.format(FULL_FILE_PATH_FORMAT, TARGET_TEST_FILE_PATH,
+                            StringUtils.upperCase(baseFileName, Locale.US), extension));
+            FileUtils.moveFile(oldFile, tempFile);
+            FileUtils.moveFile(tempFile, newFile);
+        }
+        int orderedNamesIndex = creationOrderedBaseFileNames.indexOf(baseFileName);
+        if (orderedNamesIndex == -1) {
+            throw new IllegalStateException("fileName was not recorded during prior setup: " + baseFileName);
+        }
+        creationOrderedBaseFileNames.set(orderedNamesIndex, StringUtils.upperCase(baseFileName, Locale.US));
+    }
+
     private void assertDoneFilesWereDeleted() {
         for (String baseFileName : creationOrderedBaseFileNames) {
             File doneFile = new File(
@@ -357,6 +391,8 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         Mockito.when(dateTimeService.getCurrentDate()).then(this::buildNewDate);
         Mockito.when(dateTimeService.getCurrentSqlDate())
                 .then(this::buildStaticSqlDate);
+        Mockito.when(dateTimeService.getCurrentTimestamp())
+                .then(this::buildStaticTimestamp);
         return dateTimeService;
     }
     
@@ -372,6 +408,11 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     private java.sql.Date buildStaticSqlDate(InvocationOnMock invocation) {
         DateTime dateTime = StringToJavaDateAdapter.parseToDateTime(CuFPTestConstants.DATE_02_21_2019);
         return new java.sql.Date(dateTime.getMillis());
+    }
+
+    private Timestamp buildStaticTimestamp(InvocationOnMock invocation) {
+        DateTime dateTime = StringToJavaDateAdapter.parseToDateTime(CuFPTestConstants.DATE_02_21_2019);
+        return new Timestamp(dateTime.getMillis());
     }
 
     private FileStorageService buildFileStorageService() throws Exception {
@@ -425,10 +466,19 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     }
 
     private ParameterService buildParameterService() {
+        String namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL;
+        String component = CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME;
         ParameterService parameterService = Mockito.mock(ParameterService.class);
-        Mockito.when(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.FINANCIAL, 
-                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCOUNTING_DOCUMENT_SERVICE_COMPONENT_NAME, 
-                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS)).thenReturn("kfs-gl_fp@cornell.edu");
+        Mockito.when(parameterService.getParameterValueAsString(namespace, component,
+                CuFPParameterConstants.CreateAccountingDocumentService.CREATE_ACCT_DOC_REPORT_EMAIL_ADDRESS))
+                .thenReturn(TestEmails.KFS_GL_FP_AT_CORNELL_DOT_EDU);
+        Mockito.when(parameterService.getParameterValuesAsString(namespace, component,
+                CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_REPORT_EMAIL_ADDRESSES))
+                .thenReturn(List.of(TestEmails.MOCK_TEST_DEVS_AT_CORNELL_DOT_EDU,
+                        TestEmails.MOCK_TEST_FUNC_LEADS_AT_CORNELL_DOT_EDU));
+        Mockito.when(parameterService.getParameterValueAsBoolean(namespace, component,
+                CuFPParameterConstants.CreateAccountingDocumentService.DUPLICATE_FILE_CHECK_IND))
+                .thenReturn(Boolean.TRUE);
         return parameterService;
     }
 
@@ -438,6 +488,44 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         validationService.setConfigurationService(configurationService);
         validationService.afterPropertiesSet();
         return validationService;
+    }
+
+    private BusinessObjectService buildMockBusinessObjectService() {
+        BusinessObjectService businessObjectService = Mockito.mock(BusinessObjectService.class);
+        Mockito.when(businessObjectService
+                .findMatching(Mockito.eq(CreateAccountingDocumentFileEntry.class), Mockito.anyMap()))
+                .then(this::getExistingFileEntry);
+        Mockito.when(businessObjectService.save(Mockito.any(CreateAccountingDocumentFileEntry.class)))
+                .then(this::saveFileEntry);
+        return businessObjectService;
+    }
+
+    private Collection<CreateAccountingDocumentFileEntry> getExistingFileEntry(InvocationOnMock invocation) {
+        Map<?, ?> criteria = (Map<?, ?>) invocation.getArgument(1);
+        String fileName = (String) criteria.get(KFSPropertyConstants.FILE_NAME);
+        CreateAccountingDocumentFileEntry fileEntry = fileEntries.get(fileName);
+        return (fileEntry != null)
+                ? List.of((CreateAccountingDocumentFileEntry) ObjectUtils.deepCopy(fileEntry))
+                : List.of();
+    }
+
+    private CreateAccountingDocumentFileEntry saveFileEntry(InvocationOnMock invocation) {
+        CreateAccountingDocumentFileEntry fileEntry = invocation.getArgument(0);
+        fileEntry.setFileId(++nextFileEntryId);
+        fileEntries.put(fileEntry.getFileName(), fileEntry);
+        return (CreateAccountingDocumentFileEntry) ObjectUtils.deepCopy(fileEntry);
+    }
+
+    protected void overwriteFileEntry(String fileName, AccountingXmlDocumentListWrapperFixture fileFixture) {
+        CreateAccountingDocumentFileEntry fileEntry = new CreateAccountingDocumentFileEntry();
+        fileEntry.setFileId(++nextFileEntryId);
+        fileEntry.setFileName(fileName);
+        fileEntry.setFileCreatedDate(new Timestamp(fileFixture.getCreateDateAsDateTime().getMillis()));
+        fileEntry.setFileProcessedDate(dateTimeService.getCurrentTimestamp());
+        fileEntry.setReportEmailAddress(fileFixture.reportEmail);
+        fileEntry.setFileOverview(fileFixture.overview);
+        fileEntry.setDocumentCount(fileFixture.documents.size());
+        fileEntries.put(fileName, fileEntry);
     }
 
     private boolean documentPassesBusinessRules(Document document) {
@@ -706,7 +794,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         }
 
         @Override
-        public void sendReportEmail(String toAddress, String fromAddress) {
+        public void sendReportEmail(String fromAddress, List<String> toAddresses) {
         }
         
     }

@@ -28,4 +28,10 @@ public class CuFPTestConstants {
     public static final String TEST_CREATE_ACCOUNT_DOCUMENT_INVALID_DATA = "Detected invalid data value {0} for element: {1}";
     public static final String TEST_CREATE_ACCOUNT_DOCUMENT_NULL_BLANK_DATA = "Detected null or blank data for element: {0}";
     public static final String TEST_CREATE_ACCOUNT_DOCUMENT_PAYEE_MISMATCH = "The payee name of the vendor is {0} and the payee name entered in the xml is {1}.  We will use the payee name from the vendor.  Please use the correct payee name.";
+
+    public static final class TestEmails {
+        public static final String KFS_GL_FP_AT_CORNELL_DOT_EDU = "kfs-gl_fp@cornell.edu";
+        public static final String MOCK_TEST_DEVS_AT_CORNELL_DOT_EDU = "mock-test-devs@cornell.edu";
+        public static final String MOCK_TEST_FUNC_LEADS_AT_CORNELL_DOT_EDU = "mock-test-func-leads@cornell.edu";
+    }
 }

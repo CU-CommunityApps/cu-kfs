@@ -1327,4 +1327,17 @@
 		<field-descriptor name="subAccountNumber" column="SUB_ACCT_NBR" jdbc-type="VARCHAR" />
 	</class-descriptor>
 
+    <class-descriptor class="edu.cornell.kfs.fp.businessobject.CreateAccountingDocumentFileEntry" table="CU_FP_CRTE_ACCT_DOC_FIL_T">
+        <field-descriptor name="fileId" column="FIL_ID" jdbc-type="BIGINT" primarykey="true" index="true"
+            autoincrement="true" sequence-name="CU_FP_CRTE_ACCT_DOC_FIL_S" />
+        <field-descriptor name="fileName" column="FIL_NM" jdbc-type="VARCHAR" index="true" />
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
+        <field-descriptor name="fileCreatedDate" column="CRTE_DT" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="fileProcessedDate" column="PROC_DT" jdbc-type="TIMESTAMP" />
+        <field-descriptor name="reportEmailAddress" column="RPT_EMAIL_ADDR" jdbc-type="VARCHAR" />
+        <field-descriptor name="fileOverview" column="FIL_OVERVIEW" jdbc-type="VARCHAR" />
+        <field-descriptor name="documentCount" column="DOC_CNT" jdbc-type="INTEGER" />
+    </class-descriptor>
+
 </descriptor-repository>
