@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -62,7 +61,6 @@ import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -84,7 +82,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.CuFPConstants.CreateAccountingDocumentConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
@@ -132,7 +129,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
     private List<AccountingDocument> routedAccountingDocuments;
     private List<String> creationOrderedBaseFileNames;
     private Map<String, CreateAccountingDocumentFileEntry> fileEntries;
-    private AtomicLong mockFileEntryIdSequence;
+    private long nextFileEntryId = 1000L;
     
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
@@ -145,7 +142,6 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         routedAccountingDocuments = new ArrayList<>();
         creationOrderedBaseFileNames = new ArrayList<>();
         fileEntries = new HashMap<>();
-        mockFileEntryIdSequence = new AtomicLong(1000L);
         createTargetTestDirectory();
     }
     
@@ -160,7 +156,6 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         createAccountingDocumentService.setCreateAccountingDocumentValidationService(buildCreateAccountingDocumentValidationService(configurationService));
         createAccountingDocumentService.setBusinessObjectService(buildMockBusinessObjectService());
         createAccountingDocumentService.setDateTimeService(dateTimeService);
-        createAccountingDocumentService.setSequenceAccessorService(buildMockSequenceAccessorService());
     }
 
     @After
@@ -516,20 +511,14 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
 
     private CreateAccountingDocumentFileEntry saveFileEntry(InvocationOnMock invocation) {
         CreateAccountingDocumentFileEntry fileEntry = invocation.getArgument(0);
+        fileEntry.setFileId(++nextFileEntryId);
         fileEntries.put(fileEntry.getFileName(), fileEntry);
         return (CreateAccountingDocumentFileEntry) ObjectUtils.deepCopy(fileEntry);
     }
 
-    private SequenceAccessorService buildMockSequenceAccessorService() {
-        SequenceAccessorService sequenceAccessorService = Mockito.mock(SequenceAccessorService.class);
-        Mockito.when(sequenceAccessorService.getNextAvailableSequenceNumber(
-                CreateAccountingDocumentConstants.FILE_ID_SEQUENCE_NAME))
-                .then(invocation -> mockFileEntryIdSequence.incrementAndGet());
-        return sequenceAccessorService;
-    }
-
     protected void overwriteFileEntry(String fileName, AccountingXmlDocumentListWrapperFixture fileFixture) {
         CreateAccountingDocumentFileEntry fileEntry = new CreateAccountingDocumentFileEntry();
+        fileEntry.setFileId(++nextFileEntryId);
         fileEntry.setFileName(fileName);
         fileEntry.setFileCreatedDate(new Timestamp(fileFixture.getCreateDateAsDateTime().getMillis()));
         fileEntry.setFileProcessedDate(dateTimeService.getCurrentTimestamp());

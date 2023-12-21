@@ -124,8 +124,6 @@ public class CuFPConstants {
     }
 
     public static final class CreateAccountingDocumentConstants {
-        public static final String FILE_ID_SEQUENCE_NAME = "CU_FP_CRTE_ACCT_DOC_FIL_S";
-        
         public static final class FileEntryFieldLengths {
             public static final int FILE_NAME = 250;
             public static final int FILE_OVERVIEW = 250;

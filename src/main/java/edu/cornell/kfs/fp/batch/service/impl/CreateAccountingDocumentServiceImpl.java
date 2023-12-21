@@ -26,7 +26,6 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
-import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.ErrorMessage;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
@@ -40,7 +39,6 @@ import org.kuali.kfs.sys.service.FileStorageService;
 import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.fp.CuFPConstants.CreateAccountingDocumentConstants;
 import edu.cornell.kfs.fp.CuFPConstants.CreateAccountingDocumentConstants.FileEntryFieldLengths;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
@@ -70,7 +68,6 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     protected CreateAccountingDocumentValidationService createAccountingDocumentValidationService;
     protected BusinessObjectService businessObjectService;
     protected DateTimeService dateTimeService;
-    protected SequenceAccessorService sequenceAccessorService;
 
     @Override
     public boolean createAccountingDocumentsFromXml() {
@@ -191,6 +188,7 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
             cleanedFileName = StringUtils.substringAfterLast(cleanedFileName, CUKFSConstants.SLASH);
         }
         cleanedFileName = StringUtils.lowerCase(cleanedFileName, Locale.US);
+        cleanedFileName = StringUtils.left(cleanedFileName, FileEntryFieldLengths.FILE_NAME);
         return cleanedFileName;
     }
 
@@ -207,12 +205,8 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
     }
 
     private void createFileEntry(AccountingXmlDocumentListWrapper accountingXmlDocuments, String fileName) {
-        String cleanedFileName = getCleanedFileName(fileName);
-        Long nextFileId = sequenceAccessorService.getNextAvailableSequenceNumber(
-                CreateAccountingDocumentConstants.FILE_ID_SEQUENCE_NAME);
         CreateAccountingDocumentFileEntry fileEntry = new CreateAccountingDocumentFileEntry();
-        fileEntry.setFileId(nextFileId.toString());
-        fileEntry.setFileName(StringUtils.left(cleanedFileName, FileEntryFieldLengths.FILE_NAME));
+        fileEntry.setFileName(getCleanedFileName(fileName));
         fileEntry.setFileCreatedDate(new Timestamp(accountingXmlDocuments.getCreateDate().getTime()));
         fileEntry.setFileProcessedDate(dateTimeService.getCurrentTimestamp());
         fileEntry.setReportEmailAddress(
@@ -450,10 +444,6 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
-    }
-
-    public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
-        this.sequenceAccessorService = sequenceAccessorService;
     }
 
     protected class CreateAccountingDocumentLogReport {

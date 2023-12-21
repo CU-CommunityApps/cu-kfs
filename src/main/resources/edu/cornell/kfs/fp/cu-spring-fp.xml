@@ -495,7 +495,6 @@
         <property name="createAccountingDocumentValidationService" ref="createAccountingDocumentValidationService"/>
         <property name="businessObjectService" ref="businessObjectService"/>
         <property name="dateTimeService" ref="dateTimeService"/>
-        <property name="sequenceAccessorService" ref="sequenceAccessorService"/>
     </bean>
 
     <bean id="accountingXmlDocumentInputFileType" class="edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase">

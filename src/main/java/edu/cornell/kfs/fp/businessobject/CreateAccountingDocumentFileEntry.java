@@ -10,7 +10,7 @@ public class CreateAccountingDocumentFileEntry extends PersistableBusinessObject
 
     private static final long serialVersionUID = 5714970318621809904L;
 
-    private String fileId;
+    private Long fileId;
     private String fileName;
     private Timestamp fileCreatedDate;
     private Timestamp fileProcessedDate;
@@ -18,11 +18,11 @@ public class CreateAccountingDocumentFileEntry extends PersistableBusinessObject
     private String fileOverview;
     private Integer documentCount;
 
-    public String getFileId() {
+    public Long getFileId() {
         return fileId;
     }
 
-    public void setFileId(String fileId) {
+    public void setFileId(Long fileId) {
         this.fileId = fileId;
     }
 
