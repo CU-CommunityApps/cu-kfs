@@ -40,6 +40,8 @@ public class CuFPKeyConstants {
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_INVALID_DATA_FOR_ELEMENT = "report.create.accounting.document.invalid.data.for.element";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_SUB_HEADER = "report.create.accounting.document.file.failure.summary.sub.header";
     public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_REPORT_ITEM_MESSAGE = "report.create.accounting.document.file.failure.summary.report.item.message";
+    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_DUPLICATE_FILE_ERROR = "report.create.accounting.document.duplicate.file.error";
+    public static final String REPORT_CREATE_ACCOUNTING_DOCUMENT_DUPLICATE_FILE_WARNING = "report.create.accounting.document.duplicate.file.warning";
 
     public static final String CREATE_ACCOUNTING_DOCUMENT_EMPLOYEE_ID_BAD = "create.accounting.document.employee.id.bad";
     public static final String CREATE_ACCOUNTING_DOCUMENT_PRINCIPLE_ID_BAD = "create.accounting.document.principle.id.bad";
