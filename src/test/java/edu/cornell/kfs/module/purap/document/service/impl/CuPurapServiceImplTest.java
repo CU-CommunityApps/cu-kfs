@@ -244,6 +244,12 @@ public class CuPurapServiceImplTest {
                 RequisitionDocument.class, PurapParameterConstants.APO_LIMIT))
                 .thenReturn(TEST_DEFAULT_REGULAR_APO_LIMIT.toString());
         when(parameterService.getParameterValueAsString(
+                RequisitionDocument.class, PurapParameterConstants.APO_LIMIT))
+                .thenReturn(TEST_DEFAULT_REGULAR_APO_LIMIT.toString());
+        when(parameterService.getParameterValueAsString(
+                PurapConstants.PURAP_NAMESPACE, PurapParameterConstants.Components.PURCHASE_ORDER, PurapParameterConstants.APO_LIMIT))
+                .thenReturn(TEST_DEFAULT_REGULAR_APO_LIMIT.toString());
+        when(parameterService.getParameterValueAsString(
                 RequisitionDocument.class, CUPurapParameterConstants.AUTOMATIC_FEDERAL_PURCHASE_ORDER_DEFAULT_LIMIT_AMOUNT))
                 .thenReturn(TEST_DEFAULT_FEDERAL_APO_LIMIT.toString());
         when(parameterService.getParameter(
