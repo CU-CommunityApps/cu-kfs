@@ -36,7 +36,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
             LOG.info("generateReport: generateFileFailureDueToHeaderValidationErrorSummary request was issued.");
             generateFileFailureDueToHeaderValidationErrorSummary(reportItem);
         } else {
-            if (reportItem.isNonBusinessRuleFailure()) {
+            if (reportItem.isNonBusinessRuleFailure() && StringUtils.isNotBlank(reportItem.getReportItemMessage())) {
                 LOG.info("generateReport: generateFileFailureSummary request was issued.");
                 generateFileFailureSummary(reportItem);
             } else {
@@ -59,13 +59,16 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         reportWriterService.writeSubTitle(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_SUB_HEADER));
 
+        writeFileName(reportItem);
+
+        reportWriterService.writeNewLines(1);
         reportWriterService.writeFormattedMessageLine(formatString(configurationService.getPropertyValueAsString(
                 CuFPKeyConstants.REPORT_CREATE_ACCOUNTING_DOCUMENT_FILE_FAILURE_SUMMARY_REPORT_ITEM_MESSAGE), reportItem.getReportItemMessage()));
-        
-        reportWriterService.writeNewLines(1);
-        writeFileName(reportItem);
-        reportWriterService.writeNewLines(1);
-        reportWriterService.writeFormattedMessageLine(reportItem.getValidationErrorMessage());
+
+        if (!StringUtils.containsIgnoreCase(reportItem.getReportItemMessage(), reportItem.getValidationErrorMessage())) {
+            reportWriterService.writeNewLines(1);
+            reportWriterService.writeFormattedMessageLine(reportItem.getValidationErrorMessage());
+        }
     }
     
     private void generateFileFailureSummary(CreateAccountingDocumentReportItem reportItem) {
