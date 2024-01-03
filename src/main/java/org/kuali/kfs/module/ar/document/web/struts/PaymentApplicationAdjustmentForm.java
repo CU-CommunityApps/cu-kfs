@@ -700,7 +700,6 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         return null;
     }
 
-
     public String getAdHocActionRequestCodesJson() {
         try {
             return getJsonMapperWithJavaTime().writeValueAsString(getAdHocActionRequestCodes());

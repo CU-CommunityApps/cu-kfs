@@ -578,8 +578,8 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
     }
 
     /**
-    * Gets the value of the paymentText property.
-    */
+     * Gets the value of the paymentText property.
+     */
     public List<String> getXmlPaymentText() {
         if (paymentText == null) {
             paymentText = new ArrayList<>();

@@ -239,13 +239,7 @@ public class CuPurapServiceImplTest {
         ParameterService parameterService = mock(ParameterService.class);
         Parameter costSourceExclusionParameter = buildParameterForCostSourceExclusions();
         Parameter costSourceApoOverrideParameter = buildParameterForCostSourceApoOverride();
-        
-        when(parameterService.getParameterValueAsString(
-                RequisitionDocument.class, PurapParameterConstants.APO_LIMIT))
-                .thenReturn(TEST_DEFAULT_REGULAR_APO_LIMIT.toString());
-        when(parameterService.getParameterValueAsString(
-                RequisitionDocument.class, PurapParameterConstants.APO_LIMIT))
-                .thenReturn(TEST_DEFAULT_REGULAR_APO_LIMIT.toString());
+
         when(parameterService.getParameterValueAsString(
                 PurapConstants.PURAP_NAMESPACE, PurapParameterConstants.Components.PURCHASE_ORDER, PurapParameterConstants.APO_LIMIT))
                 .thenReturn(TEST_DEFAULT_REGULAR_APO_LIMIT.toString());

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PurapParameterConstants;
 import org.kuali.kfs.module.purap.PurapWorkflowConstants;
 import org.kuali.kfs.module.purap.PurchaseOrderStatuses;
@@ -121,9 +122,14 @@ public class CuPurchaseOrderAmendmentDocument extends PurchaseOrderAmendmentDocu
     // KFSUPGRADE-339
     protected boolean isContractManagementReviewRequired() {
         final ParameterService parameterService = SpringContext.getBean(ParameterService.class);
-        final KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(parameterService.getParameterValueAsString(RequisitionDocument.class, PurapParameterConstants.APO_LIMIT));
-        return ((ObjectUtils.isNull(automaticPurchaseOrderDefaultLimit)) || (automaticPurchaseOrderDefaultLimit.compareTo(this.getTotalDollarAmount()) < 0));
+        final String apoLimitParameterValue = parameterService.getParameterValueAsString(
+                PurapConstants.PURAP_NAMESPACE,
+                PurapParameterConstants.Components.PURCHASE_ORDER,
+                PurapParameterConstants.APO_LIMIT
+        );
+        final KualiDecimal automaticPurchaseOrderDefaultLimit = new KualiDecimal(apoLimitParameterValue);
 
+        return ((ObjectUtils.isNull(automaticPurchaseOrderDefaultLimit)) || (automaticPurchaseOrderDefaultLimit.compareTo(this.getTotalDollarAmount()) < 0));
     }
 
     public PaymentTermType getVendorPaymentTerms() {
