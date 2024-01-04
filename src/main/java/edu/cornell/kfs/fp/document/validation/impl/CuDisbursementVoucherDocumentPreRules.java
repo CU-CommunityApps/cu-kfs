@@ -21,6 +21,7 @@ import edu.cornell.kfs.sys.CUKFSKeyConstants;
 public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDocumentPreRules {
 
     private CuCheckStubService cuCheckStubService;
+    private ConfigurationService configurationService;
 
     /**
      * Executes pre-rules for Disbursement Voucher Document
@@ -69,12 +70,13 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
 
         final PaymentSourceWireTransfer dvWireTransfer = dvDocument.getWireTransfer();
 
-        // if payment method is CHECK and wire tab contains data, ask user to clear tab
-        if ((StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK,
-                dvDocument.getDisbVchrPaymentMethodCode()) || StringUtils.equals(
-                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
-                dvDocument.getDisbVchrPaymentMethodCode())) && hasWireTransferValues(dvWireTransfer)) {
-            final String questionText = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
+        // if payment method is not WIRE and wire tab contains data, ask user to clear tab
+        final String disbVchrPaymentMethodCode = dvDocument.getDisbVchrPaymentMethodCode();
+        final boolean isWireTransfer = StringUtils.equals(
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE,
+                disbVchrPaymentMethodCode);
+        if (disbVchrPaymentMethodCode != null && !isWireTransfer && hasWireTransferValues(dvWireTransfer)) {
+            String questionText = getConfigurationService().getPropertyValueAsString(
                     CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
             
             final boolean clearTab = super.askOrAnalyzeYesNoQuestion(
@@ -100,4 +102,12 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         return cuCheckStubService;
     }
 
+    //Copied from subclass due to being private
+    private ConfigurationService getConfigurationService() {
+        if (configurationService == null) {
+            configurationService = SpringContext.getBean(ConfigurationService.class);
+        }
+        return configurationService;
+    }
+    
 }
