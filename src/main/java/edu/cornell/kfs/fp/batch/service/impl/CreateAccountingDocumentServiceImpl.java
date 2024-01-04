@@ -206,8 +206,14 @@ public class CreateAccountingDocumentServiceImpl implements CreateAccountingDocu
 
     private void createFileEntry(AccountingXmlDocumentListWrapper accountingXmlDocuments, String fileName) {
         CreateAccountingDocumentFileEntry fileEntry = new CreateAccountingDocumentFileEntry();
-        fileEntry.setFileName(getCleanedFileName(fileName));
-        fileEntry.setFileCreatedDate(new Timestamp(accountingXmlDocuments.getCreateDate().getTime()));
+        String cleanedFileName = getCleanedFileName(fileName);
+        fileEntry.setFileName(cleanedFileName);
+        if (accountingXmlDocuments.getCreateDate() != null) {
+            fileEntry.setFileCreatedDate(new Timestamp(accountingXmlDocuments.getCreateDate().getTime()));
+        } else {
+            LOG.warn("createFileEntry, File {} has a missing or malformed create date. "
+                    + "The invalid date will be ignored.", cleanedFileName);
+        }
         fileEntry.setFileProcessedDate(dateTimeService.getCurrentTimestamp());
         fileEntry.setReportEmailAddress(
                 StringUtils.left(accountingXmlDocuments.getReportEmail(), FileEntryFieldLengths.REPORT_EMAIL_ADDRESS));
