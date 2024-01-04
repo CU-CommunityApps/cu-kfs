@@ -81,6 +81,13 @@ public class CreateAccountingDocumentServiceImplTestDI extends CreateAccountingD
     }
 
     @Test
+    public void testLoadSingleFileWithSingleDIDocumentAndIgnoringOfInvalidCreateDate() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-invalid-create-date-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST);
+    }
+
+    @Test
     public void testLoadSingleFileWithSingleYEDIDocument() throws Exception {
         copyTestFilesAndCreateDoneFiles("single-yedi-document-test");
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
