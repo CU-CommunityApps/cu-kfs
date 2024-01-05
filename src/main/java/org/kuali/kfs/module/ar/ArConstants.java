@@ -20,12 +20,9 @@ package org.kuali.kfs.module.ar;
 
 import com.lowagie.text.Font;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.integration.ar.ArIntegrationConstants;
 import org.kuali.kfs.integration.ar.Billable;
-import org.kuali.kfs.sys.context.SpringContext;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -508,51 +505,6 @@ public final class ArConstants {
             }
             return null;
         }
-    }
-
-    /**
-     * Convenience class to hold a month and day without a year
-     */
-    public static class MonthDay {
-        private final int month;
-        private final int day;
-        private DateTimeService dateTimeService;
-
-        public MonthDay(final int month, final int day) {
-            this.month = month;
-            this.day = day;
-        }
-
-        public int getMonth() {
-            return month;
-        }
-
-        public int getDay() {
-            return day;
-        }
-
-        public DateTimeService getDateTimeService() {
-            if (dateTimeService == null) {
-                dateTimeService = SpringContext.getBean(DateTimeService.class);
-            }
-            return dateTimeService;
-        }
-
-        public java.util.Date getDateForYear(final int year) {
-            final LocalDate localDate = LocalDate.of(getMonth(), getDay(), year);
-            return getDateTimeService().getUtilDate(localDate);
-        }
-    }
-
-    public static class BillingQuarterLastDays {
-        private static final int MARCH = 3;
-        private static final int JUNE = 6;
-        private static final int SEPTEMBER = 9;
-        private static final int DECEMBER = 12;
-        public static MonthDay FIRST_QUARTER = new MonthDay(MARCH, 31);
-        public static MonthDay SECOND_QUARTER = new MonthDay(JUNE, 30);
-        public static MonthDay THIRD_QUARTER = new MonthDay(SEPTEMBER, 30);
-        public static MonthDay FOURTH_QUARTER = new MonthDay(DECEMBER, 31);
     }
 
     public static class PdfReportFonts {

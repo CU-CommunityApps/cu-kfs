@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -381,17 +382,17 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     public java.sql.Date calculatePayDate(final Date invoiceDate, final PaymentTermType terms) {
         LOG.debug("calculatePayDate() started");
         // calculate the invoice + processed calendar
-        final Calendar invoicedDateCalendar = dateTimeService.getCalendar(invoiceDate);
-        final Calendar processedDateCalendar = dateTimeService.getCurrentCalendar();
+        LocalDate invoicedLocalDate = dateTimeService.getLocalDate(invoiceDate);
+        LocalDate processedLocalDate = dateTimeService.getLocalDateNow();
 
         // add default number of days to processed
 		final String defaultDays = parameterService.getParameterValueAsString(PaymentRequestDocument.class,
 				PurapParameterConstants.PURAP_PREQ_PAY_DATE_DEFAULT_NUMBER_OF_DAYS);
-        processedDateCalendar.add(Calendar.DAY_OF_MONTH, Integer.parseInt(defaultDays));
+        processedLocalDate = processedLocalDate.plusDays(Integer.parseInt(defaultDays));
 
         if (ObjectUtils.isNull(terms) || StringUtils.isEmpty(terms.getVendorPaymentTermsCode())) {
-            invoicedDateCalendar.add(Calendar.DAY_OF_MONTH, PurapConstants.PREQ_PAY_DATE_EMPTY_TERMS_DEFAULT_DAYS);
-            return returnLaterDate(invoicedDateCalendar, processedDateCalendar);
+            invoicedLocalDate = invoicedLocalDate.plusDays(PurapConstants.PREQ_PAY_DATE_EMPTY_TERMS_DEFAULT_DAYS);
+            return returnLaterDate(invoicedLocalDate, processedLocalDate);
         }
 
         // Retrieve pay date variation parameter (currently defined as 2).  See parameter description for explanation
@@ -410,7 +411,11 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 discountDueNumber = 0;
             }
             final String discountDueTypeDescription = terms.getVendorDiscountDueTypeDescription();
-            paymentTermsDateCalculation(discountDueTypeDescription, invoicedDateCalendar, discountDueNumber);
+            invoicedLocalDate = paymentTermsDateCalculation(
+                    discountDueTypeDescription,
+                    invoicedLocalDate,
+                    discountDueNumber
+            );
         } else if (ObjectUtils.isNotNull(netDueNumber)) {
             // Decrease net due number by the pay date variance
             netDueNumber -= payDateVarianceInt;
@@ -418,14 +423,14 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
                 netDueNumber = 0;
             }
             final String netDueTypeDescription = terms.getVendorNetDueTypeDescription();
-            paymentTermsDateCalculation(netDueTypeDescription, invoicedDateCalendar, netDueNumber);
+            invoicedLocalDate = paymentTermsDateCalculation(netDueTypeDescription, invoicedLocalDate, netDueNumber);
         }
         else {
             throw new RuntimeException("Neither discount or net number were specified for this payment terms type");
         }
 
         // return the later date
-        return returnLaterDate(invoicedDateCalendar, processedDateCalendar);
+        return returnLaterDate(invoicedLocalDate, processedLocalDate);
     }
 
     /**

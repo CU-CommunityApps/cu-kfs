@@ -96,6 +96,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -114,6 +117,10 @@ import java.util.Set;
 public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsInvoiceReportService {
 
     private static final Logger LOG = LogManager.getLogger();
+    private static final MonthDay END_OF_Q1 = MonthDay.of(Month.MARCH, 31);
+    private static final MonthDay END_OF_Q2 = MonthDay.of(Month.JUNE, 30);
+    private static final MonthDay END_OF_Q3 = MonthDay.of(Month.SEPTEMBER, 30);
+    private static final MonthDay END_OF_Q4 = MonthDay.of(Month.DECEMBER, 31);
 
     protected DateTimeService dateTimeService;
     protected DataDictionaryService dataDictionaryService;
@@ -879,17 +886,17 @@ public class ContractsGrantsInvoiceReportServiceImpl implements ContractsGrantsI
      */
     protected String getReportingPeriodEndDate(final String reportingPeriod, final String year) {
         final int yearAsInt = Integer.parseInt(year);
-        final java.util.Date endDate;
+        final LocalDate endDate;
         if (ArConstants.QUARTER1.equals(reportingPeriod)) {
-            endDate = ArConstants.BillingQuarterLastDays.FIRST_QUARTER.getDateForYear(yearAsInt);
+            endDate = END_OF_Q1.atYear(yearAsInt);
         } else if (ArConstants.QUARTER2.equals(reportingPeriod) || ArConstants.SEMI_ANNUAL.equals(reportingPeriod)) {
-            endDate = ArConstants.BillingQuarterLastDays.SECOND_QUARTER.getDateForYear(yearAsInt);
+            endDate = END_OF_Q2.atYear(yearAsInt);
         } else if (ArConstants.QUARTER3.equals(reportingPeriod)) {
-            endDate = ArConstants.BillingQuarterLastDays.THIRD_QUARTER.getDateForYear(yearAsInt);
+            endDate = END_OF_Q3.atYear(yearAsInt);
         } else {
-            endDate = ArConstants.BillingQuarterLastDays.FOURTH_QUARTER.getDateForYear(yearAsInt);
+            endDate = END_OF_Q4.atYear(yearAsInt);
         }
-        return getDateTimeService().toDateString(endDate);
+        return getDateTimeService().toDateString(dateTimeService.getUtilDate(endDate));
     }
 
     /**

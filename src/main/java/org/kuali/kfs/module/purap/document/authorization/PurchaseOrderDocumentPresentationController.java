@@ -200,7 +200,7 @@ public class PurchaseOrderDocumentPresentationController extends
 
         // set display mode for Receiving Address section according to parameter value
         boolean displayReceivingAddress = getParameterService().getParameterValueAsBoolean(
-                KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.ENABLE_RECEIVING_ADDRESS_IND);
+                KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.RECEIVING_ADDRESS_IND);
         if (displayReceivingAddress) {
             editModes.add(PurchaseOrderEditMode.DISPLAY_RECEIVING_ADDRESS);
         }

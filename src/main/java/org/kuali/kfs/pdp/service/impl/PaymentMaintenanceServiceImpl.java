@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.integration.purap.PurchasingAccountsPayableModuleService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.KualiCode;
@@ -49,6 +50,7 @@ import org.kuali.kfs.pdp.service.PdpAuthorizationService;
 import org.kuali.kfs.pdp.service.PdpEmailService;
 import org.kuali.kfs.pdp.service.PendingTransactionService;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
@@ -80,6 +82,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
     protected PaymentGroupService paymentGroupService;
     protected PdpEmailService pdpEmailService;
     protected PdpAuthorizationService pdpAuthorizationService;
+    private PaymentSourceExtractionService disbursementVoucherExtractService;
     // CU customization to change access from private to protected
     protected GeneralLedgerPendingEntryService generalLedgerPendingEntryService;
     private PurchasingAccountsPayableModuleService purchasingAccountsPayableModuleService;
@@ -435,8 +438,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                     changeStatus(element, PdpConstants.PaymentStatusCodes.CANCEL_DISBURSEMENT,
                             PdpConstants.PaymentChangeCodes.CANCEL_DISBURSEMENT, note, user, pgh);
 
-                    final boolean wasHandled = deleteGlpesForCancelDisbursement(element);
-                    if (!wasHandled) {
+                    if (shouldGenerateCancellationGlpes(element)) {
                         glPendingTransactionService.generateCancellationGeneralLedgerPendingEntry(element);
                     }
 
@@ -480,17 +482,20 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
     }
 
     /*
-     * If the payment group is not a check or ACH disbursement, then it could be that the disbursement is being
-     * cancelled before the disbursement GLPEs have been processed.  In that case, we just want to delete the GLPEs, we
-     * don't need to create cancel GLPEs.
-     * @return true if the GLPEs were deleted and there is no need to create further GLPEs
+     * Determine if we should generate cancellation GLPEs for a payment group during cancelDisbursement().
+     * First, check/ACH disbursements always generate GLPEs as the Cancel Disbursement link only shows for them if they
+     * are already on the general ledger.
+     * For other disbursement types, we check if they have GLPEs already. If they do, there is no need to generate
+     * cancellation GLPEs, as the existing ones will be deleted during the processPdpCancelsAndPaidJob.
+     * @return true if cancellation GLPEs should be generated for the payment group
      */
-    private boolean deleteGlpesForCancelDisbursement(final PaymentGroup paymentGroup) {
+    // CU customization: method changed from private to protected for use in subclass
+    protected boolean shouldGenerateCancellationGlpes(final PaymentGroup paymentGroup) {
         if (isCheckAchDisbursement(paymentGroup)) {
-            return false;
+            return true;
         }
         LOG.debug(
-                "deleteGlpesForCancelDisbursement(...) - Check for GLPEs to delete: paymentGroupId={}",
+                "shouldGenerateCancellationGlpes(...) - Check for GLPEs to delete: paymentGroupId={}",
                 paymentGroup::getId
         );
         boolean withGlpes = false;
@@ -499,20 +504,15 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
             final String documentId = paymentDetail.getCustPaymentDocNbr();
             final Map<String, Object> fieldValues = Map.of(KFSPropertyConstants.DOCUMENT_NUMBER, documentId);
             final Collection<?> glpes = generalLedgerPendingEntryService.findPendingEntries(fieldValues, false);
+            LOG.debug(
+                    "shouldGenerateCancellationGlpes(...) -  {} GPLEs found; documentId={}, paymentDetailId={}",
+                    glpes::size,
+                    paymentDetail::getCustPaymentDocNbr,
+                    paymentDetail::getId
+            );
             if (glpes.isEmpty()) {
-                LOG.debug(
-                        "deleteGlpesForCancelDisbursement(...) -  No GPLEs found; documentId={}, paymentDetailId={}",
-                        paymentDetail::getCustPaymentDocNbr,
-                        paymentDetail::getId
-                );
                 withoutGlpes = true;
             } else {
-                LOG.debug(
-                        "deleteGlpesForCancelDisbursement(...) - Delete GLPEs; documentId={}, paymentDetailId={}",
-                        paymentDetail::getCustPaymentDocNbr,
-                        paymentDetail::getId
-                );
-                generalLedgerPendingEntryService.delete(documentId);
                 withGlpes = true;
             }
             if (withGlpes && withoutGlpes) {
@@ -520,7 +520,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                         + " have GLPEs while others have already been processed, cannot cancel payment group.");
             }
         }
-        return withGlpes;
+        return withoutGlpes;
     }
 
     @Override
@@ -562,9 +562,9 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                     final PaymentGroupHistory pgh = new PaymentGroupHistory();
 
                     if (!pg.getPaymentDetails().get(0).isDisbursementActionAllowed()) {
-                        LOG.warn("cancelDisbursement() Payment does not allow disbursement action. This should " +
+                        LOG.warn("reissueDisbursement() Payment does not allow disbursement action. This should " +
                                 "not happen unless user is URL spoofing.");
-                        throw new RuntimeException("cancelDisbursement() Payment does not allow disbursement " +
+                        throw new RuntimeException("reissueDisbursement() Payment does not allow disbursement " +
                                 "action. This should not happen unless user is URL spoofing.");
                     }
 
@@ -585,7 +585,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                     glPendingTransactionService.generateReissueGeneralLedgerPendingEntries(pg);
 
                     LOG.debug(
-                            "cancelReissueDisbursement() Status is '{}; delete row from AchAccountNumber table.",
+                            "reissueDisbursement() Status is '{}; delete row from AchAccountNumber table.",
                             paymentStatus
                     );
 
@@ -620,7 +620,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 LOG.debug("reissueDisbursement() Disbursement reissued; exit method.");
             } else {
                 LOG.debug(
-                        "cancelReissueDisbursement() Payment status is {} and disbursement date is {}; cannot cancel payment",
+                        "reissueDisbursement() Payment status is {} and disbursement date is {}; cannot cancel payment",
                         () -> paymentStatus,
                         paymentGroup::getDisbursementDate
                 );
@@ -630,7 +630,7 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
                 return false;
             }
         } else {
-            LOG.debug("cancelReissueDisbursement() Disbursement already cancelled and reissued; exit method.");
+            LOG.debug("reissueDisbursement() Disbursement already cancelled and reissued; exit method.");
         }
         return true;
     }
@@ -644,11 +644,25 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
         paymentGroup.setEpicPaymentCancelledExtractedDate(null);
 
         for (final PaymentDetail paymentDetail : paymentDetails) {
+            LOG.debug("processPdpReissue() - process payment detail; paymentDetailId={}", paymentDetail::getId);
             final String documentTypeCode = paymentDetail.getFinancialDocumentTypeCode();
             final String documentNumber = paymentDetail.getCustPaymentDocNbr();
 
             if (purchasingAccountsPayableModuleService.isPurchasingBatchDocument(documentTypeCode)) {
+                LOG.debug(
+                        "processPdpReissue() - document type is a purchasing batch document; paymentDetailId={}, "
+                            + "documentTypeCode={}",
+                        paymentDetail::getId,
+                        paymentDetail::getCustPaymentDocNbr
+                );
                 purchasingAccountsPayableModuleService.handlePurchasingBatchReissue(documentNumber, documentTypeCode);
+            } else if (DisbursementVoucherConstants.DOCUMENT_TYPE_CHECKACH.equals(documentTypeCode)) {
+                LOG.debug(
+                        "processPdpReissue() - document type is DVCA; paymentDetailId={}",
+                        paymentDetail::getId
+                );
+                disbursementVoucherExtractService.reextractForReissue(documentNumber);
+                paymentGroup.setEpicPaymentPaidExtractedDate(null);
             }
         }
     }
@@ -812,6 +826,11 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
 
     public void setPdpAuthorizationService(final PdpAuthorizationService pdpAuthorizationService) {
         this.pdpAuthorizationService = pdpAuthorizationService;
+    }
+
+    public void setDisbursementVoucherExtractService(
+            final PaymentSourceExtractionService disbursementVoucherExtractService) {
+        this.disbursementVoucherExtractService = disbursementVoucherExtractService;
     }
 
     public void setGeneralLedgerPendingEntryService(

@@ -529,7 +529,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         final List<Button> buttons = ListUtils.union(extraButtons, standardButtons);
         final ButtonGroup buttonGroup = new ButtonGroup(buttons);
 
-        final String buttonGroupJson = MAPPER.writeValueAsString(buttonGroup);
+        final String buttonGroupJson = getJsonMapperWithJavaTime().writeValueAsString(buttonGroup);
         LOG.debug("getButtonGroupJson() - Returning : buttonGroupJson={}", buttonGroupJson);
         return buttonGroupJson;
     }
@@ -680,7 +680,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
                     workgroupResponses.add(createAdHocRouteWorkgroupResponse(group, workgroup.getActionRequested()));
                 }
             });
-            return MAPPER.writeValueAsString(workgroupResponses);
+            return getJsonMapperWithJavaTime().writeValueAsString(workgroupResponses);
         } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize ad hoc route workgroups. Error {}", jpe::getMessage);
         }
@@ -693,7 +693,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
                 final var person = getPersonService().getPersonByPrincipalName(recipient.getId());
                 return createAdHocRoutePersonResponse(person, recipient.getActionRequested());
             }).collect(Collectors.toList());
-            return MAPPER.writeValueAsString(personResponses);
+            return getJsonMapperWithJavaTime().writeValueAsString(personResponses);
         } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize ad hoc route persons. Error {}", jpe::getMessage);
         }
@@ -702,7 +702,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
 
     public String getAdHocActionRequestCodesJson() {
         try {
-            return MAPPER.writeValueAsString(getAdHocActionRequestCodes());
+            return getJsonMapperWithJavaTime().writeValueAsString(getAdHocActionRequestCodes());
         } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize ad hoc request codes. Error {}", jpe::getMessage);
         }
@@ -713,7 +713,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
         try {
             final List<Note> notes = getDocument().getNotes();
             final List<NoteResponse> noteResponses = notes.stream().map(this::createNoteResponse).collect(Collectors.toList());
-            return MAPPER.writeValueAsString(noteResponses);
+            return getJsonMapperWithJavaTime().writeValueAsString(noteResponses);
         } catch (final JsonProcessingException jpe) {
             LOG.error("Unable to serialize notes. Error {}", jpe::getMessage);
         }
