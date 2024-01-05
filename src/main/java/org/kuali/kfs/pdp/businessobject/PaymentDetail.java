@@ -58,7 +58,7 @@ import java.text.ParseException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -110,7 +110,8 @@ import java.util.List;
     "invTotOtherCreditAmount",
     "financialSystemOriginCode",
     "financialDocumentTypeCode",
-    "accountDetail"})
+    "accountDetail",
+    "paymentText"})
 @XmlRootElement(name = "detail", namespace = XmlConstants.PAYMENT_NAMESPACE)
 public class PaymentDetail extends PersistableBusinessObjectBase {
 
@@ -194,6 +195,11 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
 
     @XmlElement(namespace = XmlConstants.PAYMENT_NAMESPACE, required = true, name = "accounting")
     private List<PaymentAccountDetail> accountDetail = new ArrayList<>();
+
+    @XmlElement(name = "payment_text", namespace = XmlConstants.PAYMENT_NAMESPACE)
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    @XmlSchemaType(name = "normalizedString")
+    protected List<String> paymentText;
 
     @XmlTransient
     private List<PaymentNoteText> notes = new ArrayList<>();
@@ -569,6 +575,16 @@ public class PaymentDetail extends PersistableBusinessObjectBase {
             }
         }
         return nbrOfPaymentsInDisbursement;
+    }
+
+    /**
+     * Gets the value of the paymentText property.
+     */
+    public List<String> getXmlPaymentText() {
+        if (paymentText == null) {
+            paymentText = new ArrayList<>();
+        }
+        return Collections.unmodifiableList(this.paymentText);
     }
 
 }

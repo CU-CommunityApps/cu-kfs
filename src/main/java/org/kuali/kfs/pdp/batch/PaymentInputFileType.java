@@ -179,6 +179,11 @@ public class PaymentInputFileType extends XmlBatchInputFileTypeBase<PaymentFileL
                     if(PdpConstants.PayeeIdTypeCodes.VENDOR_ID.equalsIgnoreCase(payeeIdObj.getIdType())){
                         paymentGroup.setPayeeOwnerCdFromVendor(payeeIdObj.getValue());
                     }
+
+                    // Adding to the notes this way as it calculates and increments note line numbers
+                    for (final PaymentDetail paymentDetail : paymentGroup.getPaymentDetails()) {
+                        paymentDetail.getXmlPaymentText().forEach(paymentDetail::addPaymentText);
+                    }
                 }
             }
 

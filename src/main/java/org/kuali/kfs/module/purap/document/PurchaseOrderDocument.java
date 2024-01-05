@@ -454,9 +454,8 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public void setDefaultValuesForAPO() {
         setPurchaseOrderAutomaticIndicator(Boolean.TRUE);
         if (!RequisitionSources.B2B.equals(getRequisitionSourceCode())) {
-            final String paramName = PurapParameterConstants.DEFAULT_APO_VENDOR_CHOICE;
             final String paramValue = SpringContext.getBean(ParameterService.class)
-                    .getParameterValueAsString(PurchaseOrderDocument.class, paramName);
+                    .getParameterValueAsString(PurchaseOrderDocument.class, PurapParameterConstants.APO_VENDOR_CHOICE);
             setPurchaseOrderVendorChoiceCode(paramValue);
         }
     }

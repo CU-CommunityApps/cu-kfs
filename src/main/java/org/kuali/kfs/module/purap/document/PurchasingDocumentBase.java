@@ -481,7 +481,8 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public boolean isEnableReceivingDocumentRequiredIndicator() {
         return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
                 KfsParameterConstants.PURCHASING_DOCUMENT.class,
-                PurapParameterConstants.RECEIVING_DOCUMENT_REQUIRED_IND);
+                PurapParameterConstants.RECEIVING_REQUIRED_IND
+        );
     }
 
     /**
