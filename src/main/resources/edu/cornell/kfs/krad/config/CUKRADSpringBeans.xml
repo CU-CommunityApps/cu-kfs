@@ -7,21 +7,21 @@
 
     <bean id="cuAttachmentDaoOjb" parent="platformAwareDao" class="edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb"/>
     
-    <!-- 
-        This bean is injected via properties file configuration.
-        To have dummy anti virus service mimic a passed scan, update local properties file: cu.antivirus.service=dummyAntiVirusService
+    <!--
+        This bean is injected via institutional-config.properties file configuration and can be overridden
+        by developers in their local configurtion properties.
+        
+        Developers can have a dummy anti-virus service mimic the functionality they desire in their local
+        environment by setting two properties, one specifying the service to use (actual service or dummy service)
+        as well as the scan result to mimic when the dummy service is configured for use.
+        
+        NOTE: Valid values for local development property cu.dummy.antivirus.scanResult are: PASSED, FAILED, ERROR
+        Example :
+            cu.antivirus.service=dummyAntiVirusService
+            cu.dummy.antivirus.scanResult=FAILED
      -->
-    <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl" />
-    
-    <!-- 
-        This bean is injected via properties file configuration.  
-        To have dummy anti virus service mimic a failed scan, update local properties file: cu.antivirus.service=dummyAntiVirusServiceFail
-     -->
-    <bean id="dummyAntiVirusServiceFail" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl">
-        <property name="scanResultStatus">
-            <value type="edu.cornell.kfs.krad.antivirus.service.ScanResult.Status">FAILED</value>
-        </property>
-    </bean>
+    <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl"
+          p:scanResult="${cu.dummy.antivirus.scanResult}"/>
 
     <bean id="antiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.ClamAVAntiVirusServiceImpl"
           p:host="${cu.antivirus.clamav.host}"

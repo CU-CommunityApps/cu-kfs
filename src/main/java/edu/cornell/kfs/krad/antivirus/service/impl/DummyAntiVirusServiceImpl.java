@@ -12,33 +12,30 @@ import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
 
 public class DummyAntiVirusServiceImpl implements AntiVirusService {
     private static final Logger LOG = LogManager.getLogger();
-    private Status scanResultStatus;
     
-    public DummyAntiVirusServiceImpl() {
-        this(ScanResult.Status.PASSED);
-    }
-    
-    public DummyAntiVirusServiceImpl(Status scanResultStatus) {
-        this.scanResultStatus = scanResultStatus;
-        LOG.debug("DummyAntiVirusServiceImpl, created with virus scan status of {}", scanResultStatus);
+    private String scanResult = Status.PASSED.toString();
+
+    public DummyAntiVirusServiceImpl(String scanResult) {
+        this.scanResult = scanResult;
+        LOG.debug("DummyAntiVirusServiceImpl, created with virus scanResult of {}", scanResult);
     }
 
     @Override
     public ScanResult scan(byte[] in) throws IOException {
-        return new DummyScanResult(scanResultStatus);
+        return new DummyScanResult(scanResult);
     }
 
     @Override
     public ScanResult scan(InputStream in) {
-        return new DummyScanResult(scanResultStatus);
+        return new DummyScanResult(scanResult);
     }
 
-    public Status getScanResultStatus() {
-        return scanResultStatus;
+    public String getScanResult() {
+        return scanResult;
     }
 
-    public void setScanResultStatus(Status scanResultStatus) {
-        this.scanResultStatus = scanResultStatus;
+    public void setScanResult(String scanResult) {
+        this.scanResult = scanResult;
     }
 
 }
