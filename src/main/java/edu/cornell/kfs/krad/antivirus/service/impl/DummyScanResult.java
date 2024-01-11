@@ -1,7 +1,8 @@
 package edu.cornell.kfs.krad.antivirus.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.cornell.kfs.krad.antivirus.service.ScanResult;
-import edu.cornell.kfs.krad.antivirus.util.DummyAVUtils;
 
 public class DummyScanResult implements ScanResult {
 
@@ -38,7 +39,21 @@ public class DummyScanResult implements ScanResult {
     }
 
     private void refreshStatusFromCurrentResult() {
-        status = DummyAVUtils.determineScanStatusFromScanResult(result);
+        status = determineScanStatusFromScanResult(result);
+    }
+
+    private static Status determineScanStatusFromScanResult(String result) {
+        switch (StringUtils.defaultString(result)) {
+            case "PASSED" :
+                return Status.PASSED;
+            case "FAILED" :
+                return Status.FAILED;
+            case "ERROR" :
+                return Status.ERROR;
+            default :
+                //Gracefully handle when null, empty string, or any unrecognized Status is passed to this method.
+                return Status.ERROR;
+        }
     }
 
 }
