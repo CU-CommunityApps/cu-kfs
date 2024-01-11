@@ -9,19 +9,19 @@
     
     <!--
         This bean is injected via institutional-config.properties file configuration and can be overridden
-        by developers in their local configurtion properties.
+        by developers in their local configuration properties.
         
         Developers can have a dummy anti-virus service mimic the functionality they desire in their local
         environment by setting two properties, one specifying the service to use (actual service or dummy service)
         as well as the scan result to mimic when the dummy service is configured for use.
         
-        NOTE: Valid values for local development property cu.dummy.antivirus.scanResult are: PASSED, FAILED, ERROR
+        NOTE: Valid values for local development property cu.antivirus.dummyResult are: PASSED, FAILED, ERROR
         Example :
             cu.antivirus.service=dummyAntiVirusService
-            cu.dummy.antivirus.scanResult=FAILED
+            cu.antivirus.dummyResult=FAILED
      -->
     <bean id="dummyAntiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl"
-          p:scanResult="${cu.dummy.antivirus.scanResult}"/>
+          p:dummyResult="${cu.antivirus.dummyResult}"/>
 
     <bean id="antiVirusService" class="edu.cornell.kfs.krad.antivirus.service.impl.ClamAVAntiVirusServiceImpl"
           p:host="${cu.antivirus.clamav.host}"
