@@ -67,7 +67,7 @@ public class CuAttachmentServiceImplTest {
         attachmentService.setKualiConfigurationService(buildMockConfigurationService());
         attachmentService.setAttachmentDao(buildMockAttachmentDao());
         attachmentService.setNoteService(buildMockNoteService());
-        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl());
+        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.PASSED.toString()));
 
         attachment = new Attachment();
         attachment.setObjectId(String.valueOf(new Guid()));
@@ -207,7 +207,7 @@ public class CuAttachmentServiceImplTest {
 
     @Test
     public void createAttachmentWithVirus() throws Exception {
-        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.FAILED));
+        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.FAILED.toString()));
         
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
         setupExpectedException("file contents failed virus scan");
@@ -216,7 +216,7 @@ public class CuAttachmentServiceImplTest {
     
     @Test
     public void createAttachmentWithError() throws Exception {
-        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.ERROR));
+        attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.ERROR.toString()));
         
         PersistableBusinessObject pbo = setupPersistableBusinessObject();
         setupExpectedException("file contents failed virus scan");
