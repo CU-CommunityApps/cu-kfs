@@ -176,10 +176,10 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
             glPendingTransaction.setSubAccountNumber(paymentAccountDetail.getSubAccountNbr());
             glPendingTransaction.setChartOfAccountsCode(paymentAccountDetail.getFinChartCode());
             
-            if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.ACH)) {
+            if (StringUtils.equals(paymentGroup.getDisbursementType().getCode(), PdpConstants.DisbursementTypeCodes.ACH)) {
                 glPendingTransaction.setFinancialDocumentTypeCode(state.documentTypeForDisbursementType(PdpConstants.DisbursementTypeCodes.ACH));
             }
-            else if (paymentGroup.getDisbursementType().getCode().equals(PdpConstants.DisbursementTypeCodes.CHECK)) {
+            else if (StringUtils.equals(paymentGroup.getDisbursementType().getCode(), PdpConstants.DisbursementTypeCodes.CHECK)) {
                 glPendingTransaction.setFinancialDocumentTypeCode(state.documentTypeForDisbursementType(PdpConstants.DisbursementTypeCodes.CHECK));
             }
             
