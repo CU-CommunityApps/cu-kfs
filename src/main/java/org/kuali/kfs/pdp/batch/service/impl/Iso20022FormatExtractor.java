@@ -273,10 +273,10 @@ public class Iso20022FormatExtractor {
             final PaymentStatus extractedStatus,
             final String directoryName
     ) {
-        LOG.debug("extractAchs(...) - Enter : directoryName={}", directoryName);
+        LOG.info("extractAchs(...) - Enter : directoryName={}", directoryName);
 
         final Date disbursementDate = dateTimeService.getCurrentDate();
-        LOG.debug("extractAchs(...) - : disbursementDate={}", disbursementDate);
+        LOG.info("extractAchs(...) - : disbursementDate={}", disbursementDate);
 
         final List<PaymentProcess> paymentProcessList = determineUniquePaymentProcesses();
         LOG.info(
@@ -284,7 +284,7 @@ public class Iso20022FormatExtractor {
                 paymentProcessList::size
         );
         for (final PaymentProcess paymentProcess : paymentProcessList) {
-            LOG.debug("extractAchs(...) - : paymentProcess={}", paymentProcess);
+            LOG.info("extractAchs(...) - : paymentProcess={}", paymentProcess);
 
             final AchExtractTypeContext extractTypeContext =
                     new AchExtractTypeContext(disbursementDate, extractedStatus, paymentProcess);
@@ -307,7 +307,7 @@ public class Iso20022FormatExtractor {
             createDoneFile(filename);
         }
 
-        LOG.debug("extractAchs(...) - Exit");
+        LOG.info("extractAchs(...) - Exit");
     }
 
     private List<PaymentProcess> determineUniquePaymentProcesses() {
@@ -342,10 +342,10 @@ public class Iso20022FormatExtractor {
             final PaymentStatus extractedStatus,
             final String directoryName
     ) {
-        LOG.debug("extractChecks(...) - Enter : directoryName={}", directoryName);
+        LOG.info("extractChecks(...) - Enter : directoryName={}", directoryName);
 
         final Date disbursementDate = dateTimeService.getCurrentDate();
-        LOG.debug("extractChecks(...) - : disbursementDate={}", disbursementDate);
+        LOG.info("extractChecks(...) - : disbursementDate={}", disbursementDate);
 
         // Formatted but not Extracted
         final List<PaymentProcess> paymentProcessList = processDao.getAllExtractsToRun();
@@ -354,7 +354,7 @@ public class Iso20022FormatExtractor {
                 paymentProcessList::size
         );
         for (final PaymentProcess paymentProcess : paymentProcessList) {
-            LOG.debug("extractChecks(...) - : paymentProcess={}", paymentProcess);
+            LOG.info("extractChecks(...) - : paymentProcess={}", paymentProcess);
 
             /*
              * =========
