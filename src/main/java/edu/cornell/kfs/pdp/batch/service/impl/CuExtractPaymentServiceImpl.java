@@ -222,6 +222,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
            final PaymentStatus extractedStatus, final String filename, 
            final Date processDate, final SimpleDateFormat sdf) {
        LOG.info("writeExtractBundledAchFile started.");
+       LOG.info("writeExtractBundledAchFile, writing bundled ach file name {}", filename);
        BufferedWriter os = null;
 
        try {
@@ -306,6 +307,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writeExtractCheckFile(
             final PaymentStatus extractedStatus, final PaymentProcess p, String filename,
             final Integer processId) {
+        LOG.info("writeExtractCheckFile, writing check file name {}", filename);
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         final Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
@@ -2209,6 +2211,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writeExtractAchFile(
             final PaymentStatus extractedStatus, final String filename, final Date processDate,
             final SimpleDateFormat sdf) {
+        LOG.info("writeExtractAchFile, writing ach file name {}", filename);
         BufferedWriter os = null;
         try {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
