@@ -307,7 +307,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writeExtractCheckFile(
             final PaymentStatus extractedStatus, final PaymentProcess p, String filename,
             final Integer processId) {
-        LOG.info("writeExtractCheckFile, writing check file name {}", filename);
+        LOG.info("writeExtractCheckFile, writing check file name {} and process ID {}", filename, processId);
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         final Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
