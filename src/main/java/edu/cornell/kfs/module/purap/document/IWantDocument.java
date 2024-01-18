@@ -97,6 +97,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     private String completeOption;
     private boolean completed;
+    private String sscProcessorNetId;
 
     // routing fields
     private String routingChart;
@@ -882,6 +883,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
         return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+    }
+
+    public String getSscProcessorNetId() {
+        return sscProcessorNetId;
+    }
+
+    public void setSscProcessorNetId(String sscProcessorNetId) {
+        this.sscProcessorNetId = sscProcessorNetId;
     }
 
     public String getCurrentRouteToNetId() {

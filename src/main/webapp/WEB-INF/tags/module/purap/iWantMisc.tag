@@ -24,6 +24,20 @@
             </tr>
         </table>
         <h3>Miscellaneous</h3>
+        <table cellpadding="0" cellspacing="0" class="datatable">
+            <tr>
+                <th class="right">
+                    <kul:htmlAttributeLabel attributeEntry="${documentAttributes.sscProcessorNetId}"/>
+                </th>
+                <td align="left" valign="middle" class="neutral" width="70%">
+                    <kul:htmlControlAttribute
+                            attributeEntry="${documentAttributes.sscProcessorNetId}"
+                            property="document.sscProcessorNetId"
+                            readOnly="${not fullEntryMode}"
+                            tabindexOverride="${tabindexOverrideBase + 0}"/>
+                </td>
+            </tr>
+        </table>
         <table cellpadding="0" cellspacing="0" class="datatable" summary="Instructions">
             <tr>
                 <th class="right">
