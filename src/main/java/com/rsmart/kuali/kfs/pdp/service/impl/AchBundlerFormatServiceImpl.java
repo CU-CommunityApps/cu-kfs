@@ -88,7 +88,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
     @Override
     public void performFormat(Integer processId) throws FormatException {
         LOG.info("performFormat() started - ACH Bundler Mod for processId {}", processId);
-        final String pdpFormatFailureToEmailAddress = this.getAchBundlerHelperService().getPdpFormatFailureToEmailAddress();
+        final String pdpFormatFailureToEmailAddress = getAchBundlerHelperService().getPdpFormatFailureToEmailAddress();
 
         // get the PaymentProcess for the given id
         @SuppressWarnings("rawtypes")
