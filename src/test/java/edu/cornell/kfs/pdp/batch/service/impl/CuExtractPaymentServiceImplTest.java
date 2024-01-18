@@ -294,6 +294,11 @@ public class CuExtractPaymentServiceImplTest {
             return true;
         }
         
+        @Override
+        public String getPdpFormatFailureToEmailAddress() {
+            return KFSConstants.EMPTY_STRING;
+        }
+        
     }
 
 }
