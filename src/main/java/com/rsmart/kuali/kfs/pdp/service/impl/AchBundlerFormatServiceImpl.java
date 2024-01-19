@@ -15,7 +15,6 @@
  */
 package com.rsmart.kuali.kfs.pdp.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,11 +31,9 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentProcess;
 import org.kuali.kfs.pdp.service.PaymentGroupService;
 import org.kuali.kfs.pdp.service.PendingTransactionService;
-import org.kuali.kfs.pdp.service.impl.FormatServiceImpl;
 import org.kuali.kfs.pdp.service.impl.exception.FormatException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +87,8 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
      */
     @Override
     public void performFormat(Integer processId) throws FormatException {
-        LOG.debug("performFormat() started - ACH Bundler Mod");
+        LOG.info("performFormat() started - ACH Bundler Mod for processId {}", processId);
+        final String pdpFormatFailureToEmailAddress = getAchBundlerHelperService().getPdpFormatFailureToEmailAddress();
 
         // get the PaymentProcess for the given id
         @SuppressWarnings("rawtypes")
@@ -114,6 +112,8 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
             // process payment group data
             boolean groupProcessed = processPaymentGroup(paymentGroup, paymentProcess, false);
             if (!groupProcessed) {
+                LOG.info("Sending failure email to {}", pdpFormatFailureToEmailAddress);
+                sendFailureEmail(pdpFormatFailureToEmailAddress, processId);
                 throw new FormatException("Error encountered during format");
             }
 
@@ -130,24 +130,25 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
          */
         boolean disbursementNumbersAssigned = false;
         if(getAchBundlerHelperService().shouldBundleAchPayments()) {
-            LOG.info("ACH BUNDLER MOD: ACTIVE - bundling ACH payments");
+            LOG.info("ACH BUNDLER MOD: ACTIVE - bundling ACH payments for processId {}", processId);
             disbursementNumbersAssigned = assignDisbursementNumbersAndBundle(paymentProcess, postFormatProcessSummary);
         } else {
         	//KFSPTS-1460: Our method signature for FormatServiceImpl.assignDisbursementNumbersAndCombineChecks did not
         	//match this method call: disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(paymentProcess, postFormatProcessSummary);
         	//Added parameter "processCampus" so method signatures matched.
-        	LOG.info("ACH BUNDLER MOD: NOT Active - ACH payments will NOT be bundled");
+        	LOG.info("ACH BUNDLER MOD: NOT Active - ACH payments will NOT be bundled for processId {}", processId);
             disbursementNumbersAssigned = assignDisbursementNumbersAndCombineChecks(paymentProcess, postFormatProcessSummary);
             
         }
         /** END MOD */
         
         if (!disbursementNumbersAssigned) {
-            throw new FormatException("Error encountered during format");
+            sendFailureEmail(pdpFormatFailureToEmailAddress, processId);
+            throw new FormatException("Error encountered during format for processId " + processId);
         }
 
         // step 3 save the summarizing info
-        LOG.debug("performFormat() Save summarizing information");
+        LOG.info("performFormat() Save summarizing information for processId {}", processId);
         postFormatProcessSummary.save();
 
         // step 4 set formatted indicator to true and save in the db
@@ -155,7 +156,7 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
         businessObjectService.save(paymentProcess);
 
         // step 5 end the format process for this campus
-        LOG.debug("performFormat() End the format process for this campus");
+        LOG.info("performFormat() End the format process for this campus, processId {}", processId);
         endFormatProcess(processCampus);
 
         /**
@@ -165,6 +166,9 @@ public class AchBundlerFormatServiceImpl extends CuFormatServiceImpl {
         // step 6 tell the extract batch job to start
         // LOG.debug("performFormat() Start extract");
         // extractChecks();
+
+        LOG.info("Send summary email for processId: {}", processId);
+        sendSummaryEmail(postFormatProcessSummary);
     }
     
     /**
