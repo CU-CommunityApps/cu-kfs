@@ -30,6 +30,8 @@ import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.dataaccess.PaymentDetailDao;
 import org.kuali.kfs.sys.DynamicCollectionComparator;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 
@@ -163,6 +165,10 @@ public class AchBundlerHelperServiceImpl implements AchBundlerHelperService {
         }
         
         return bundle;
+    }
+
+    public String getPdpFormatFailureToEmailAddress() {
+        return getParameterService().getParameterValueAsString(CUKFSParameterKeyConstants.KFS_PDP, KfsParameterConstants.BATCH_COMPONENT, CUKFSParameterKeyConstants.PDP_FORMAT_FAILURE_TO_EMAIL_ADDRESS, KFSConstants.EMPTY_STRING);
     }
     
     //KFSPTS-1460: Added

@@ -64,5 +64,15 @@ public interface AchBundlerHelperService {
      */
     public abstract boolean shouldBundleAchPayments(); 
     
+    /**
+     * Financials Parameter used as the To email address when Format Checks/ACH processing encounters an
+     * unexpected error. Base code is configured to send the email to the user running the format process
+     * but Cornell reqired this notification be sent to an EGA/email list instead of a single individual.
+     * 
+     * If this email address pararmeter is not setup in the system, then an empty string will be returned
+     * which will result in the KFS system default email address being used in the downstream processing.
+     */
+    public abstract String getPdpFormatFailureToEmailAddress();
+
 }
 
