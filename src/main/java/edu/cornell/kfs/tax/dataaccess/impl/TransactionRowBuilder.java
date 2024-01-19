@@ -33,10 +33,9 @@ import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
 import org.kuali.kfs.kew.docsearch.service.DocumentSearchService;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
-import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kim.impl.identity.name.EntityName;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -84,7 +83,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
 
     // The various services used by all builders.
     private DocumentSearchService documentSearchService;
-    private IdentityService identityService;
+    private PersonService personService;
     private EncryptionService encryptionService;
     private AccountService accountService;
     private OrganizationService organizationService;
@@ -235,7 +234,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
             this.nullTaxNumberReplacementsByPayeeId = builder.nullTaxNumberReplacementsByPayeeId;
             this.autoGenTaxNumFormat = builder.autoGenTaxNumFormat;
             this.documentSearchService = builder.documentSearchService;
-            this.identityService = builder.identityService;
+            this.personService = builder.personService;
             this.encryptionService = builder.encryptionService;
             this.accountService = builder.accountService;
             this.organizationService = builder.organizationService;
@@ -244,7 +243,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
             this.autoGenTaxNumFormat = new DecimalFormat("~00000000", new DecimalFormatSymbols(Locale.US));
             this.autoGenTaxNumFormat.setMaximumIntegerDigits(MAX_AUTO_TAXNUM_DIGITS);
             this.documentSearchService = KEWServiceLocator.getDocumentSearchService();
-            this.identityService = KimApiServiceLocator.getIdentityService();
+            this.personService = KimApiServiceLocator.getPersonService();
             this.encryptionService = CoreApiServiceLocator.getEncryptionService();
             this.accountService = SpringContext.getBean(AccountService.class);
             this.organizationService = SpringContext.getBean(OrganizationService.class);
@@ -408,14 +407,8 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
      */
     String checkForEntityAndAccountAndOrgExistence(String initiatorPrincipalId, String chartCode, String accountNumber, T summary) {
         Account account;
-        EntityName entityName;
-        Principal principal;
-        
-        // Check for null entity name info.
-        entityName = (StringUtils.isNotBlank(initiatorPrincipalId)) ? identityService.getDefaultNamesForPrincipalId(initiatorPrincipalId) : null;
-        if (entityName == null) {
-            numNoEntityName++;
-        }
+        boolean personHasName = true;
+        Person person;
         
         // Check for null account or null org.
         account = (StringUtils.isNotBlank(chartCode) && StringUtils.isNotBlank(accountNumber))
@@ -428,9 +421,13 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
             numNoAccount++;
         }
         
-        // Return the initiator's principal name, if found.
-        principal = (StringUtils.isNotBlank(initiatorPrincipalId)) ? identityService.getPrincipal(initiatorPrincipalId) : null;
-        return (principal != null && entityName != null) ? principal.getPrincipalName() : null;
+        // Return the initiator's principal name, if found and if the initiator has a non-blank name.
+        person = (StringUtils.isNotBlank(initiatorPrincipalId)) ? personService.getPerson(initiatorPrincipalId) : null;
+        if (person != null && StringUtils.isBlank(person.getName())) {
+            personHasName = false;
+            numNoEntityName++;
+        }
+        return (person != null && personHasName) ? person.getPrincipalName() : null;
     }
 
     /**

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.LookupService;
@@ -30,7 +31,6 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
@@ -610,8 +610,6 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     }
 
     public Person getVendorRestrictedPerson() {
-        vendorRestrictedPerson = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
-                .updatePersonIfNecessary(vendorRestrictedPersonIdentifier, vendorRestrictedPerson);
         return vendorRestrictedPerson;
     }
 
