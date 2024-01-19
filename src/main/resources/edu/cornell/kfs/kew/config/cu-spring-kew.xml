@@ -75,7 +75,7 @@
 
     <bean id="documentRouteHeaderService" class="edu.cornell.kfs.kew.routeheader.service.impl.CuRouteHeaderServiceImpl"
           lazy-init="true" 
-          p:identityService-ref="identityService"
+          p:personService-ref="personService"
           p:routeHeaderDAO-ref="documentRouteHeaderDAO"
           p:searchableAttributeDAO-ref="searchableAttributeDAO"/>
 

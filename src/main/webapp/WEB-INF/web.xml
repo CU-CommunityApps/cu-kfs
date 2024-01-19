@@ -177,6 +177,8 @@
         <url-pattern>/vnd/api/*</url-pattern>
         <url-pattern>/app/sys/*</url-pattern>
         <url-pattern>/tenant/api/*</url-pattern>
+        <!-- Force login on Ajax PersonService calls so that field masking will work properly. -->
+        <url-pattern>/dwr/*/PersonService*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

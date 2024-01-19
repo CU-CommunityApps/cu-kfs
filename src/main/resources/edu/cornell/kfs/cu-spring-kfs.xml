@@ -7,4 +7,22 @@
     <!-- Overridden to allow for parameterizing the database platform implementation classname. -->
     <bean id="dbPlatform" class="${datasource.platform}"/>
 
+    <!--
+        Added EDW datasource bean that's needed by the KIM Feed Job.
+        This is a modified copy of the "dataSource" bean from base code.
+     -->
+    <bean class="org.kuali.kfs.core.framework.persistence.jdbc.datasource.XAPoolDataSource"
+          depends-on="liquibase"
+          id="edwDataSource"
+          p:driverClassName="${kfs.datasource.driver.name}"
+          p:maxSize="${kfs.datasource.pool.maxSize}"
+          p:maxWait="${kfs.datasource.pool.maxWait}"
+          p:minSize="${kfs.datasource.pool.minSize}"
+          p:password="${edw.datasource.password}"
+          p:transactionManager-ref="jtaTransactionManager"
+          p:url="${edw.datasource.url}"
+          p:username="${edw.datasource.username}"
+          p:validationQuery="${kfs.datasource.validating.query}"
+    />
+
 </beans>

@@ -1,7 +1,6 @@
 package edu.cornell.kfs.ksr.document;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,13 +10,10 @@ import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.krad.document.TransactionalDocumentBase;
-import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
-import edu.cornell.kfs.ksr.businessobject.SecurityGroupTab;
-import edu.cornell.kfs.ksr.businessobject.SecurityProvisioningGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityRequestRole;
 import edu.cornell.kfs.ksr.service.SecurityRequestPostProcessingService;
 
@@ -88,11 +84,7 @@ public class SecurityRequestDocument extends TransactionalDocumentBase {
         PersonService personService = KimApiServiceLocator.getPersonService();
         requestPerson = personService.getPerson(principalId);
         if (requestPerson == null) {
-            try {
-                requestPerson = KimApiServiceLocator.getPersonService().getPersonImplementationClass().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            requestPerson = new Person();
         }
         return requestPerson;
     }

@@ -27,7 +27,7 @@ public class ConcurEmployeeInfoValidationServiceImplTest {
 
     @Test
     public void validPerson() {
-        assertTrue(concurEmployeeInfoValidationService.validPerson(ConcurPersonFixture.JOHN_STATE_COUNTRY.person.getEmployeeId()));
+        assertTrue(concurEmployeeInfoValidationService.validPerson(ConcurPersonFixture.JOHN_STATE_COUNTRY.employeeId));
     }
     
     @Test
@@ -37,25 +37,25 @@ public class ConcurEmployeeInfoValidationServiceImplTest {
 
     @Test
     public void validPdpAddress_bothStateAndCountry() {
-        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.JOHN_STATE_COUNTRY.person.getEmployeeId());
+        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.JOHN_STATE_COUNTRY.employeeId);
         assertTrue(results);
     }
     
     @Test
     public void validPdpAddress_justState() {
-        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.JANE_STATE.person.getEmployeeId());
+        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.JANE_STATE.employeeId);
         assertTrue(results);
     }
     
     @Test
     public void validPdpAddress_justCountry() {
-        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.TOM_COUNTRY.person.getEmployeeId());
+        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.TOM_COUNTRY.employeeId);
         assertTrue(results);
     }
     
     @Test
     public void invalidPdpAddress() {
-        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.TINA_INVALID_ADDRESS.person.getEmployeeId());
+        boolean results = concurEmployeeInfoValidationService.validPdpAddress(ConcurPersonFixture.TINA_INVALID_ADDRESS.employeeId);
         assertFalse(results);
     }
     

@@ -112,7 +112,7 @@ public class ActionTakenDAOOjbImpl extends PersistenceBrokerDaoSupport implement
         checkNull(actionTaken.getDocumentId(), "Document ID");
         checkNull(actionTaken.getActionTaken(), "action taken code");
         checkNull(actionTaken.getDocVersion(), "doc version");
-        checkNull(actionTaken.getPrincipal(), "user principalId");
+        checkNull(actionTaken.getPerson(), "user principalId");
 
         if (actionTaken.getActionDate() == null) {
             actionTaken.setActionDate(new Timestamp(System.currentTimeMillis()));

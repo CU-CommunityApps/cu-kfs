@@ -46,12 +46,12 @@ import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kew.util.FutureRequestDocumentStateManager;
 import org.kuali.kfs.kew.util.ResponsibleParty;
 import org.kuali.kfs.kim.api.group.GroupService;
-import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.Group;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleMember;
 import org.kuali.kfs.kim.impl.role.RoleResponsibility;
@@ -82,7 +82,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
 
     private ActionRequestDAO actionRequestDAO;
     private GroupService groupService;
-    private IdentityService identityService;
+    private PersonService personService;
     private ParameterService parameterService;
 
     @Override
@@ -337,7 +337,7 @@ public class ActionRequestServiceImpl implements ActionRequestService {
                         return;
                     }
                     if (responsibleParty.getPrincipalId() != null) {
-                        final Principal user = identityService.getPrincipal(responsibleParty.getPrincipalId());
+                        final Person user = personService.getPerson(responsibleParty.getPrincipalId());
                         actionRequest.setPrincipalId(user.getPrincipalId());
                     } else if (responsibleParty.getGroupId() != null) {
                         actionRequest.setGroupId(responsibleParty.getGroupId());
@@ -855,11 +855,11 @@ public class ActionRequestServiceImpl implements ActionRequestService {
         this.groupService = groupService;
     }
 
-    public void setIdentityService(final IdentityService identityService) {
-        this.identityService = identityService;
-    }
-
     public void setParameterService(final ParameterService parameterService) {
         this.parameterService = parameterService;
+    }
+
+    public void setPersonService(final PersonService personService) {
+        this.personService = personService;
     }
 }
