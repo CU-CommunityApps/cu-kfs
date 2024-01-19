@@ -23,337 +23,692 @@ import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.identity.IdentityService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.GroupMember;
-import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
-import org.kuali.kfs.kim.impl.identity.affiliation.EntityAffiliation;
-import org.kuali.kfs.kim.impl.identity.email.EntityEmail;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentStatus;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmploymentType;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.external.EntityExternalIdentifier;
-import org.kuali.kfs.kim.impl.identity.name.EntityName;
-import org.kuali.kfs.kim.impl.identity.phone.EntityPhone;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.impl.identity.type.EntityTypeContactInfo;
 import org.kuali.kfs.kim.impl.role.RoleMember;
-import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.kim.service.UiDocumentService;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /*
- * CU Customization:
- * Fixed a few areas that were not referencing the unmasked values as expected.
+ * CU Customizations:
+ * 
+ * -- Added fields related to affiliations, alternate/campus addresses and privacy preferences.
+ * -- Reintroduced masking of name/phone/etc. based on the user's privacy preferences.
+ * -- Backported the FINP-9357 changes into this file.
+ * -- Backported the FINP-9387 changes into this file.
+ * -- Backported the FINP-9360 changes into this file.
  */
-public class Person extends TransientBusinessObjectBase implements MutableInactivatable {
+public class Person extends PersistableBusinessObjectBase implements MutableInactivatable {
 
+    public static final String CACHE_NAME = "Person";
     private static final long serialVersionUID = 1L;
 
-    // principal data
-    protected String principalId;
-    protected String principalName;
-    protected String entityId;
-    protected String entityTypeCode;
-    // name data
-    protected String firstName = "";
-    protected String middleName = "";
-    protected String lastName = "";
-    protected String name = "";
-    // address data
-    protected EntityAddress address;
-    // email data
-    protected String emailAddress = "";
-    // phone data
-    protected String phoneNumber = "";
-    // privacy preferences data
-    protected boolean suppressName;
-    protected boolean suppressAddress;
-    protected boolean suppressPhone;
-    protected boolean suppressPersonal;
-    protected boolean suppressEmail;
-    // affiliation data
-    protected List<EntityAffiliation> affiliations;
-    protected String campusCode = "";
-    //protected Campus campus;
-    // external identifier data
-    protected Map<String, String> externalIdentifiers;
-    // employment data
-    protected String employeeStatusCode = "";
-    protected EntityEmploymentStatus employeeStatus;
-    protected String employeeTypeCode = "";
-    protected EntityEmploymentType employeeType;
-    protected String primaryDepartmentCode = "";
-    protected String employeeId = "";
-    protected KualiDecimal baseSalaryAmount = KualiDecimal.ZERO;
-    protected boolean primary;
-    protected boolean active = true;
+    private String principalId;
+    private String principalName;
+    private String entityId;
+    private String entityTypeCode;
+    private String firstName = "";
+    private String middleName = "";
+    private String lastName = "";
+    private String name = "";
+    private String addressTypeCode;
+    private String addressLine1;
+    private String addressLine2;
+    private String addressLine3;
+    private String addressCity;
+    private String addressStateProvinceCode;
+    private String addressPostalCode;
+    private String addressCountryCode;
+    private String emailAddress = "";
+    private String phoneNumber = "";
+    private String affiliationTypeCode = "";
+    private String campusCode = "";
+    private String taxId;
+    private String employeeStatusCode = "";
+    private String employeeTypeCode = "";
+    private String primaryDepartmentCode = "";
+    private String employeeId = "";
+    private KualiDecimal baseSalaryAmount = KualiDecimal.ZERO;
+    private boolean active = true;
     private String lookupRoleNamespaceCode;
     private String lookupRoleName;
-    protected List<EntityName> names;
-    protected List<EntityTypeContactInfo> entityTypeContactInfos;
-    protected List<EntityAddress> addresses;
-    protected List<EntityPhone> phoneNumbers;
-    protected List<EntityEmail> emailAddresses;
-    protected List<GroupMember> groupMembers;
-    protected List<RoleMember> roleMembers;
-    protected List<DelegateMember> delegateMembers;
+    private List<GroupMember> groupMembers;
+    private List<RoleMember> roleMembers;
+    private List<DelegateMember> delegateMembers;
 
-    protected static BusinessObjectService businessObjectService;
-    protected static IdentityService identityService;
-    protected static PersonService personService;
+    // ==== CU Customization: Add more fields to the Person object. ====
+    private String academicAffiliation;
+    private String affiliateAffiliation;
+    private String alumniAffiliation;
+    private String exceptionAffiliation;
+    private String facultyAffiliation;
+    private String staffAffiliation;
+    private String studentAffiliation;
+    private String altAddressTypeCode;
+    private String altAddressLine1;
+    private String altAddressLine2;
+    private String altAddressLine3;
+    private String altAddressCity;
+    private String altAddressStateProvinceCode;
+    private String altAddressPostalCode;
+    private String altAddressCountryCode;
+    private boolean suppressName;
+    private boolean suppressEmail;
+    private boolean suppressPhone;
+    private boolean suppressPersonal;
+    // ==== End CU-specific field additions ====
 
-    public Person() {
+    private static BusinessObjectService businessObjectService;
+    private static PersonService personService;
+    private static UiDocumentService uiDocumentService;
+
+    public String getPrincipalId() {
+        return principalId;
     }
 
-    public Person(final Principal principal, final String personEntityTypeCode) {
-        this(principal, null, personEntityTypeCode);
+    public void setPrincipalId(final String principalId) {
+        this.principalId = principalId;
     }
 
-    public Person(final Principal principal, final Entity entity, final String personEntityTypeCode) {
-        setPrincipal(principal, entity, personEntityTypeCode);
+    public String getPrincipalName() {
+        return principalName;
     }
 
-    public Person(final String principalId, final String personEntityTypeCode) {
-        this(getIdentityService().getPrincipal(principalId), personEntityTypeCode);
+    public void setPrincipalName(final String principalName) {
+        this.principalName = principalName;
     }
 
-    /**
-     * Sets the principal object and populates the person object from that.
-     */
-    public void setPrincipal(final Principal principal, Entity entity, final String personEntityTypeCode) {
-        populatePrincipalInfo(principal);
-        if (entity == null) {
-            entity = getIdentityService().getEntity(principal.getEntityId());
-        }
-        populateEntityInfo(entity, principal, personEntityTypeCode);
+    public String getEntityId() {
+        return entityId;
     }
 
-    protected void populatePrincipalInfo(final Principal principal) {
-        entityId = principal.getEntityId();
-        principalId = principal.getPrincipalId();
-        principalName = principal.getPrincipalName();
-        active = principal.isActive();
+    public void setEntityId(final String entityId) {
+        this.entityId = entityId;
     }
 
-    protected void populateEntityInfo(final Entity entity, final Principal principal, final String personEntityTypeCode) {
-        if (entity != null) {
-            populatePrivacyInfo(entity);
-            final EntityTypeContactInfo entityTypeContactInfoDefault =
-                    entity.getEntityTypeContactInfoByTypeCode(personEntityTypeCode);
-            entityTypeCode = personEntityTypeCode;
-            populateNameInfo(personEntityTypeCode, entity, principal);
-            populateAddressInfo(entityTypeContactInfoDefault);
-            populateEmailInfo(entityTypeContactInfoDefault);
-            populatePhoneInfo(entityTypeContactInfoDefault);
-            populateAffiliationInfo(entity);
-            populateEmploymentInfo(entity);
-            populateExternalIdentifiers(entity);
-            populateFullEntityInfo();
-        }
+    public String getEntityTypeCode() {
+        return entityTypeCode;
     }
 
-    protected void populateNameInfo(final String entityTypeCode, final Entity entity, final Principal principal) {
-        if (entity != null) {
-            final EntityName entityName = entity.getDefaultName();
-            if (entityName != null) {
-                firstName = unNullify(entityName.getFirstNameUnmasked());
-                middleName = unNullify(entityName.getMiddleNameUnmasked());
-                lastName = unNullify(entityName.getLastNameUnmasked());
-                if (entityTypeCode.equals(KimConstants.EntityTypes.SYSTEM)) {
-                    name = principal.getPrincipalName().toUpperCase(Locale.US);
-                } else {
-                    name = entityName.getCompositeNameUnmasked();
-                    if (StringUtils.isEmpty(name)) {
-                        name = lastName + ", " + firstName;
-                    }
-                }
+    public void setEntityTypeCode(final String entityTypeCode) {
+        this.entityTypeCode = entityTypeCode;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(final String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getName() {
+        if (StringUtils.isNotBlank(name)) {
+            return name;
+        } else {
+            if (StringUtils.isNotBlank(lastName)) {
+                return lastName + ", " + firstName + (StringUtils.isBlank(middleName) ? "" : " " + middleName);
             } else {
-                firstName = "";
-                middleName = "";
-                if (entityTypeCode.equals(KimConstants.EntityTypes.SYSTEM)) {
-                    name = principal.getPrincipalName().toUpperCase(Locale.US);
-                    lastName = principal.getPrincipalName().toUpperCase(Locale.US);
-                } else {
-                    name = "";
-                    lastName = "";
-                }
+                return firstName + (StringUtils.isBlank(middleName) ? "" : " " + middleName);
             }
         }
     }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    // ==== CU Customization: Added methods related to masking the person's name. ====
+
+    private boolean canViewName() {
+        return !suppressName || canOverridePrivacyPreferences();
+    }
+
+    // Convenience method that copies most of the code and logic from base code's canViewAddress() method.
+    private boolean canOverridePrivacyPreferences() {
+        final UserSession userSession = GlobalVariables.getUserSession();
+        if (userSession == null) {
+            // internal system call - no need to check permission
+            return true;
+        }
+        final String currentUserPrincipalId = userSession.getPrincipalId();
+        return StringUtils.equals(currentUserPrincipalId, principalId) ||
+               getUiDocumentService().canModifyPerson(currentUserPrincipalId, principalId);
+    }
+
+    public String getFirstNameMaskedIfNecessary() {
+        return canViewName() ? firstName : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public String getMiddleNameMaskedIfNecessary() {
+        return canViewName() ? middleName : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public String getLastNameMaskedIfNecessary() {
+        return canViewName() ? lastName : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public String getNameMaskedIfNecessary() {
+        return canViewName() ? getName() : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setNameMaskedIfNecessary(String nameMaskedIfNecessary) {
+        // Do nothing; this method is only present for UI convenience.
+    }
+
+    // ==== End CU Customization ====
+
+    public String getAddressTypeCode() {
+        return addressTypeCode;
+    }
+
+    public void setAddressTypeCode(final String addressTypeCode) {
+        this.addressTypeCode = addressTypeCode;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    // used by Person Inquiry
+    public String getAddressLine1MaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressLine1;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    private boolean canViewAddress() {
+        if (StringUtils.equals(addressTypeCode, KimConstants.AddressTypes.WORK)) {
+            return true;
+        }
+
+        final UserSession userSession = GlobalVariables.getUserSession();
+        if (userSession == null) {
+            // internal system call - no need to check permission
+            return true;
+        }
+
+        final String currentUserPrincipalId = userSession.getPrincipalId();
+        return StringUtils.equals(currentUserPrincipalId, principalId) ||
+               getUiDocumentService().canModifyPerson(currentUserPrincipalId, principalId);
+    }
+
+    public void setAddressLine1(final String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    // used by Person Inquiry
+    public String getAddressLine2MaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressLine2;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAddressLine2(final String addressLine2) {
+        this.addressLine2 = addressLine2;
+    }
+
+    public String getAddressLine3() {
+        return addressLine3;
+    }
+
+    // used by Person Inquiry
+    public String getAddressLine3MaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressLine3;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAddressLine3(final String addressLine3) {
+        this.addressLine3 = addressLine3;
+    }
+
+    public String getAddressCity() {
+        return addressCity;
+    }
+
+    // used by Person Inquiry
+    public String getAddressCityMaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressCity;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAddressCity(final String addressCity) {
+        this.addressCity = addressCity;
+    }
+
+    public String getAddressStateProvinceCode() {
+        return addressStateProvinceCode;
+    }
+
+    // used by Person Inquiry
+    public String getAddressStateProvinceCodeMaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressStateProvinceCode;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAddressStateProvinceCode(final String addressStateProvinceCode) {
+        this.addressStateProvinceCode = addressStateProvinceCode;
+    }
+
+    public String getAddressPostalCode() {
+        return addressPostalCode;
+    }
+
+    // used by Person Inquiry
+    public String getAddressPostalCodeMaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressPostalCode;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK_ZIP;
+    }
+
+    public void setAddressPostalCode(final String addressPostalCode) {
+        this.addressPostalCode = addressPostalCode;
+    }
+
+    public String getAddressCountryCode() {
+        return addressCountryCode;
+    }
+
+    // used by Person Inquiry
+    public String getAddressCountryCodeMaskedIfNecessary() {
+        if (canViewAddress()) {
+            return addressCountryCode;
+        }
+        return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAddressCountryCode(final String addressCountryCode) {
+        this.addressCountryCode = addressCountryCode;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(final String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    // ==== CU Customization: Added methods related to masking the person's email address. ====
+
+    private boolean canViewEmailAddress() {
+        return !suppressEmail || canOverridePrivacyPreferences();
+    }
+
+    public String getEmailAddressMaskedIfNecessary() {
+        return canViewEmailAddress() ? emailAddress : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    // ==== End CU Customization ====
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(final String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    // ==== CU Customization: Added methods related to masking the person's email address. ====
+
+    private boolean canViewPhoneNumber() {
+        return !suppressPhone || canOverridePrivacyPreferences();
+    }
+
+    public String getPhoneNumberMaskedIfNecessary() {
+        return canViewPhoneNumber() ? phoneNumber : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    // ==== End CU Customization ====
+
+    public String getAffiliationTypeCode() {
+        return affiliationTypeCode;
+    }
+
+    public void setAffiliationTypeCode(final String affiliationTypeCode) {
+        this.affiliationTypeCode = affiliationTypeCode;
+    }
+
+    public String getCampusCode() {
+        return campusCode;
+    }
+
+    public void setCampusCode(final String campusCode) {
+        this.campusCode = campusCode;
+    }
+
+    public String getTaxId() {
+        return taxId;
+    }
+
+    public void setTaxId(final String taxId) {
+        this.taxId = taxId;
+    }
+
+    public String getEmployeeStatusCode() {
+        return employeeStatusCode;
+    }
+
+    public void setEmployeeStatusCode(final String employeeStatusCode) {
+        this.employeeStatusCode = employeeStatusCode;
+    }
+
+    public String getEmployeeTypeCode() {
+        return employeeTypeCode;
+    }
+
+    public void setEmployeeTypeCode(final String employeeTypeCode) {
+        this.employeeTypeCode = employeeTypeCode;
+    }
+
+    public String getPrimaryDepartmentCode() {
+        return primaryDepartmentCode;
+    }
+
+    public void setPrimaryDepartmentCode(final String primaryDepartmentCode) {
+        this.primaryDepartmentCode = primaryDepartmentCode;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(final String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public KualiDecimal getBaseSalaryAmount() {
+        return baseSalaryAmount;
+    }
+
+    public void setBaseSalaryAmount(final KualiDecimal baseSalaryAmount) {
+        this.baseSalaryAmount = baseSalaryAmount;
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(final boolean active) {
+        this.active = active;
+    }
+
+    public String getLookupRoleNamespaceCode() {
+        return lookupRoleNamespaceCode;
+    }
+
+    public void setLookupRoleNamespaceCode(final String lookupRoleNamespaceCode) {
+        this.lookupRoleNamespaceCode = lookupRoleNamespaceCode;
+    }
+
+    public String getLookupRoleName() {
+        return lookupRoleName;
+    }
+
+    public void setLookupRoleName(final String lookupRoleName) {
+        this.lookupRoleName = lookupRoleName;
+    }
+
+    public List<GroupMember> getGroupMembers() {
+        return groupMembers;
+    }
+
+    public void setGroupMembers(final List<GroupMember> groupMembers) {
+        this.groupMembers = groupMembers;
+    }
+
+    public List<RoleMember> getRoleMembers() {
+        return roleMembers;
+    }
+
+    public void setRoleMembers(final List<RoleMember> roleMembers) {
+        this.roleMembers = roleMembers;
+    }
+
+    public List<DelegateMember> getDelegateMembers() {
+        return delegateMembers;
+    }
+
+    public void setDelegateMembers(final List<DelegateMember> delegateMembers) {
+        this.delegateMembers = delegateMembers;
+    }
+
+    // ==== CU Customization: Add getters and setters for CU-specific fields. ====
+
+    public String getAcademicAffiliation() {
+        return academicAffiliation;
+    }
+
+    public void setAcademicAffiliation(String academicAffiliation) {
+        this.academicAffiliation = academicAffiliation;
+    }
+
+    public String getAffiliateAffiliation() {
+        return affiliateAffiliation;
+    }
+
+    public void setAffiliateAffiliation(String affiliateAffiliation) {
+        this.affiliateAffiliation = affiliateAffiliation;
+    }
+
+    public String getAlumniAffiliation() {
+        return alumniAffiliation;
+    }
+
+    public void setAlumniAffiliation(String alumniAffiliation) {
+        this.alumniAffiliation = alumniAffiliation;
+    }
+
+    public String getExceptionAffiliation() {
+        return exceptionAffiliation;
+    }
+
+    public void setExceptionAffiliation(String exceptionAffiliation) {
+        this.exceptionAffiliation = exceptionAffiliation;
+    }
+
+    public String getFacultyAffiliation() {
+        return facultyAffiliation;
+    }
+
+    public void setFacultyAffiliation(String facultyAffiliation) {
+        this.facultyAffiliation = facultyAffiliation;
+    }
+
+    public String getStaffAffiliation() {
+        return staffAffiliation;
+    }
+
+    public void setStaffAffiliation(String staffAffiliation) {
+        this.staffAffiliation = staffAffiliation;
+    }
+
+    public String getStudentAffiliation() {
+        return studentAffiliation;
+    }
+
+    public void setStudentAffiliation(String studentAffiliation) {
+        this.studentAffiliation = studentAffiliation;
+    }
+
+    public String getAltAddressTypeCode() {
+        return altAddressTypeCode;
+    }
+
+    public void setAltAddressTypeCode(String altAddressTypeCode) {
+        this.altAddressTypeCode = altAddressTypeCode;
+    }
+
+    public String getAltAddressLine1() {
+        return altAddressLine1;
+    }
+
+    public String getAltAddressLine1MaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressLine1 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    private boolean canViewAltAddress() {
+        return StringUtils.equals(altAddressTypeCode, KimConstants.AddressTypes.WORK)
+                || canOverridePrivacyPreferences();
+    }
+
+    public void setAltAddressLine1(String altAddressLine1) {
+        this.altAddressLine1 = altAddressLine1;
+    }
+
+    public String getAltAddressLine2() {
+        return altAddressLine2;
+    }
+
+    public String getAltAddressLine2MaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressLine2 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAltAddressLine2(String altAddressLine2) {
+        this.altAddressLine2 = altAddressLine2;
+    }
+
+    public String getAltAddressLine3() {
+        return altAddressLine3;
+    }
+
+    public String getAltAddressLine3MaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressLine3 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAltAddressLine3(String altAddressLine3) {
+        this.altAddressLine3 = altAddressLine3;
+    }
+
+    public String getAltAddressCity() {
+        return altAddressCity;
+    }
+
+    public String getAltAddressCityMaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressCity : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAltAddressCity(String altAddressCity) {
+        this.altAddressCity = altAddressCity;
+    }
+
+    public String getAltAddressStateProvinceCode() {
+        return altAddressStateProvinceCode;
+    }
+
+    public String getAltAddressStateProvinceCodeMaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressStateProvinceCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAltAddressStateProvinceCode(String altAddressStateProvinceCode) {
+        this.altAddressStateProvinceCode = altAddressStateProvinceCode;
+    }
+
+    public String getAltAddressPostalCode() {
+        return altAddressPostalCode;
+    }
+
+    public String getAltAddressPostalCodeMaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressPostalCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAltAddressPostalCode(String altAddressPostalCode) {
+        this.altAddressPostalCode = altAddressPostalCode;
+    }
+
+    public String getAltAddressCountryCode() {
+        return altAddressCountryCode;
+    }
+
+    public String getAltAddressCountryCodeMaskedIfNecessary() {
+        return canViewAltAddress() ? altAddressCountryCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
+    }
+
+    public void setAltAddressCountryCode(String altAddressCountryCode) {
+        this.altAddressCountryCode = altAddressCountryCode;
+    }
+
+    public boolean isSuppressName() {
+        return suppressName;
+    }
+
+    public void setSuppressName(boolean suppressName) {
+        this.suppressName = suppressName;
+    }
+
+    public boolean isSuppressEmail() {
+        return suppressEmail;
+    }
+
+    public void setSuppressEmail(boolean suppressEmail) {
+        this.suppressEmail = suppressEmail;
+    }
+
+    public boolean isSuppressPhone() {
+        return suppressPhone;
+    }
+
+    public void setSuppressPhone(boolean suppressPhone) {
+        this.suppressPhone = suppressPhone;
+    }
+
+    public boolean isSuppressPersonal() {
+        return suppressPersonal;
+    }
+
+    public void setSuppressPersonal(boolean suppressPersonal) {
+        this.suppressPersonal = suppressPersonal;
+    }
+
+    // ==== End CU-specific getters and setters ====
 
     public void populateMembers() {
         populateGroupMembers();
         populateRoleMembers();
         populateDelegateMembers();
-    }
-
-    protected void populatePrivacyInfo(final Entity entity) {
-        if (entity != null) {
-            if (entity.getPrivacyPreferences() != null) {
-                suppressName = entity.getPrivacyPreferences().isSuppressName();
-                suppressAddress = entity.getPrivacyPreferences().isSuppressAddress();
-                suppressPhone = entity.getPrivacyPreferences().isSuppressPhone();
-                suppressPersonal = entity.getPrivacyPreferences().isSuppressPersonal();
-                suppressEmail = entity.getPrivacyPreferences().isSuppressEmail();
-            }
-        }
-    }
-
-    protected void populateAddressInfo(final EntityTypeContactInfo contactInfoDefault) {
-        if (contactInfoDefault != null) {
-            final EntityAddress defaultAddress = contactInfoDefault.getDefaultAddress();
-            if (defaultAddress != null) {
-                address = defaultAddress;
-            } else {
-                address = new EntityAddress();
-                address.setEntityId(contactInfoDefault.getEntityId());
-                address.setCity("");
-                address.setCountryCode("");
-                address.setLine1("");
-                address.setLine2("");
-                address.setLine3("");
-                address.setCity("");
-                address.setPostalCode("");
-                address.setStateProvinceCode("");
-                address.setActive(true);
-            }
-        }
-    }
-
-    protected void populateEmailInfo(final EntityTypeContactInfo contactInfoDefault) {
-        if (contactInfoDefault != null) {
-            final EntityEmail entityEmail = contactInfoDefault.getDefaultEmailAddress();
-            if (entityEmail != null) {
-                emailAddress = unNullify(entityEmail.getEmailAddressUnmasked());
-            } else {
-                emailAddress = "";
-            }
-        }
-    }
-
-    protected void populatePhoneInfo(final EntityTypeContactInfo contactInfoDefault) {
-        if (contactInfoDefault != null) {
-            final EntityPhone entityPhone = contactInfoDefault.getDefaultPhoneNumber();
-            if (entityPhone != null) {
-                phoneNumber = unNullify(entityPhone.getFormattedPhoneNumberUnmasked());
-            } else {
-                phoneNumber = "";
-            }
-        }
-    }
-
-    protected void populateAffiliationInfo(final Entity entity) {
-        if (entity != null) {
-            if (affiliations == null) {
-                affiliations = new ArrayList<>();
-            }
-            affiliations.addAll(entity.getAffiliations());
-
-            final EntityAffiliation defaultAffiliation = entity.getDefaultAffiliation();
-            if (defaultAffiliation != null) {
-                campusCode = unNullify(defaultAffiliation.getCampusCode());
-            } else {
-                campusCode = "";
-            }
-        }
-    }
-
-    protected void populateEmploymentInfo(final Entity entity) {
-        if (entity != null) {
-            final EntityEmployment employmentInformation = entity.getPrimaryEmployment();
-            if (employmentInformation != null) {
-                employeeStatusCode = unNullify(employmentInformation.getEmployeeStatus() != null ?
-                        employmentInformation.getEmployeeStatus().getCode() : null);
-                employeeTypeCode = unNullify(employmentInformation.getEmployeeType() != null ?
-                        employmentInformation.getEmployeeType().getCode() : null);
-                primaryDepartmentCode = unNullify(employmentInformation.getPrimaryDepartmentCode());
-                employeeId = unNullify(employmentInformation.getEmployeeId());
-                if (employmentInformation.getBaseSalaryAmount() != null) {
-                    baseSalaryAmount = employmentInformation.getBaseSalaryAmount();
-                } else {
-                    baseSalaryAmount = KualiDecimal.ZERO;
-                }
-                primary = employmentInformation.isPrimary();
-            } else {
-                employeeStatusCode = "";
-                employeeTypeCode = "";
-                primaryDepartmentCode = "";
-                employeeId = "";
-                baseSalaryAmount = KualiDecimal.ZERO;
-            }
-        }
-    }
-
-    protected void populateExternalIdentifiers(final Entity entity) {
-        if (entity != null) {
-            final List<? extends EntityExternalIdentifier> externalIds = entity.getExternalIdentifiers();
-            externalIdentifiers = new HashMap<>(externalIds.size());
-            for (final EntityExternalIdentifier eei : externalIds) {
-                externalIdentifiers.put(eei.getExternalIdentifierTypeCode(), eei.getExternalId());
-            }
-        }
-    }
-
-    protected void populateFullEntityInfo() {
-        final Entity entity = getIdentityService().getEntity(entityId);
-
-        if (entity != null) {
-            populateNames(entity);
-            populateEntityTypeContactInfo(entity);
-            populateAddresses(entity);
-            populatePhoneNumbers(entity);
-            populateEmailAddresses(entity);
-        }
-    }
-
-    private void populateNames(final Entity entity) {
-        if (names == null) {
-            names = new ArrayList<>();
-        }
-        names.addAll(entity.getNames());
-    }
-
-    private void populateEntityTypeContactInfo(final Entity entity) {
-        if (entityTypeContactInfos == null) {
-            entityTypeContactInfos = new ArrayList<>();
-        }
-        entityTypeContactInfos.addAll(entity.getEntityTypeContactInfos());
-    }
-
-    private void populateAddresses(final Entity entity) {
-        if (addresses == null) {
-            addresses = new ArrayList<>();
-        }
-        entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                addresses.addAll(entityTypeContactInfo.getAddresses()));
-    }
-
-    private void populatePhoneNumbers(final Entity entity) {
-        if (phoneNumbers == null) {
-            phoneNumbers = new ArrayList<>();
-        }
-        entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                phoneNumbers.addAll(entityTypeContactInfo.getPhoneNumbers()));
-    }
-
-    private void populateEmailAddresses(final Entity entity) {
-        if (emailAddresses == null) {
-            emailAddresses = new ArrayList<>();
-        }
-        entity.getEntityTypeContactInfos().forEach(entityTypeContactInfo ->
-                emailAddresses.addAll(entityTypeContactInfo.getEmailAddresses()));
     }
 
     private void populateGroupMembers() {
@@ -386,363 +741,11 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
     }
 
-    /**
-     * So users of this class don't need to program around nulls.
-     */
-    private String unNullify(final String str) {
-        if (str == null) {
-            return "";
-        }
-        return str;
-    }
-
-    public String getEntityId() {
-        return entityId;
-    }
-
-    public String getPrincipalId() {
-        return principalId;
-    }
-
-    public String getPrincipalName() {
-        return principalName;
-    }
-
-    public void setPrincipalName(final String principalName) {
-        this.principalName = principalName;
-    }
-
-    public String getFirstName() {
-        if (suppressName) {
-            return KimConstants.RESTRICTED_DATA_MASK;
-        }
-        return firstName;
-    }
-
-    public String getFirstNameUnmasked() {
-        return firstName;
-    }
-
-    public String getMiddleName() {
-        if (suppressName) {
-            return KimConstants.RESTRICTED_DATA_MASK;
-        }
-        return middleName;
-    }
-
-    public String getMiddleNameUnmasked() {
-        return middleName;
-    }
-
-    public String getLastName() {
-        if (suppressName) {
-            return KimConstants.RESTRICTED_DATA_MASK;
-        }
-        return lastName;
-    }
-
-    public String getLastNameUnmasked() {
-        return lastName;
-    }
-
-    public String getName() {
-        if (suppressName) {
-            return KimConstants.RESTRICTED_DATA_MASK;
-        }
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getNameUnmasked() {
-        return name;
-    }
-
-    public String getPhoneNumber() {
-        if (suppressPhone) {
-            return KimConstants.RESTRICTED_DATA_MASK;
-        }
-        return phoneNumber;
-    }
-
-    public String getPhoneNumberUnmasked() {
-        return phoneNumber;
-    }
-
-    public String getEmailAddress() {
-        if (suppressEmail) {
-            return KimConstants.RESTRICTED_DATA_MASK;
-        }
-        return emailAddress;
-    }
-
-    public String getEmailAddressUnmasked() {
-        return emailAddress;
-    }
-
-    public boolean isSuppressName() {
-        return suppressName;
-    }
-
-    public void setSuppressName(final boolean suppressName) {
-        this.suppressName = suppressName;
-    }
-
-    public boolean isSuppressAddress() {
-        return suppressAddress;
-    }
-
-    public void setSuppressAddress(final boolean suppressAddress) {
-        this.suppressAddress = suppressAddress;
-    }
-
-    public boolean isSuppressPhone() {
-        return suppressPhone;
-    }
-
-    public void setSuppressPhone(final boolean suppressPhone) {
-        this.suppressPhone = suppressPhone;
-    }
-
-    public boolean isSuppressPersonal() {
-        return suppressPersonal;
-    }
-
-    public void setSuppressPersonal(final boolean suppressPersonal) {
-        this.suppressPersonal = suppressPersonal;
-    }
-
-    public boolean isSuppressEmail() {
-        return suppressEmail;
-    }
-
-    public void setSuppressEmail(final boolean suppressEmail) {
-        this.suppressEmail = suppressEmail;
-    }
-
-    public List<EntityAffiliation> getAffiliations() {
-        return affiliations;
-    }
-
-    public void setAffiliations(final List<EntityAffiliation> affiliations) {
-        this.affiliations = affiliations;
-    }
-
-    public String getExternalId(final String externalIdentifierTypeCode) {
-        return externalIdentifiers.get(externalIdentifierTypeCode);
-    }
-
-    /**
-     * @return the campus code from the default affiliation for the identity; null if no default affiliation is set.
-     */
-    public String getCampusCode() {
-        return campusCode;
-    }
-
-    public Map<String, String> getExternalIdentifiers() {
-        return externalIdentifiers;
-    }
-
-    public String getAddressLine1() {
-        return address.getLine1();
-    }
-
-    public String getAddressLine1Unmasked() {
-        return address.getLine1Unmasked();
-    }
-
-    public String getAddressLine2() {
-        return address.getLine2();
-    }
-
-    public String getAddressLine2Unmasked() {
-        return address.getLine2Unmasked();
-    }
-
-    public String getAddressLine3() {
-        return address.getLine3();
-    }
-
-    public String getAddressLine3Unmasked() {
-        return address.getLine3Unmasked();
-    }
-
-    public String getAddressCity() {
-        return address.getCity();
-    }
-
-    public String getAddressCityUnmasked() {
-        return address.getCityUnmasked();
-    }
-
-    public String getAddressStateProvinceCode() {
-        return address.getStateProvinceCode();
-    }
-
-    public String getAddressStateProvinceCodeUnmasked() {
-        return address.getStateProvinceCodeUnmasked();
-    }
-
-    public String getAddressPostalCode() {
-        return address.getPostalCode();
-    }
-
-    public String getAddressPostalCodeUnmasked() {
-        return address.getPostalCodeUnmasked();
-    }
-
-    public String getAddressCountryCode() {
-        return address.getCountryCode();
-    }
-
-    public String getAddressCountryCodeUnmasked() {
-        return address.getCountryCodeUnmasked();
-    }
-
-    public String getEmployeeStatusCode() {
-        return employeeStatusCode;
-    }
-
-    public String getEmployeeTypeCode() {
-        return employeeTypeCode;
-    }
-
-    public KualiDecimal getBaseSalaryAmount() {
-        return baseSalaryAmount;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public String getPrimaryDepartmentCode() {
-        return primaryDepartmentCode;
-    }
-
-    public String getEntityTypeCode() {
-        return entityTypeCode;
-    }
-
-    public boolean isPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(final boolean primary) {
-        this.primary = primary;
-    }
-
-    @Override
-    public boolean isActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(final boolean active) {
-        this.active = active;
-    }
-
-    public String getLookupRoleNamespaceCode() {
-        return lookupRoleNamespaceCode;
-    }
-
-    public void setLookupRoleNamespaceCode(final String lookupRoleNamespaceCode) {
-        this.lookupRoleNamespaceCode = lookupRoleNamespaceCode;
-    }
-
-    public String getLookupRoleName() {
-        return lookupRoleName;
-    }
-
-    public void setLookupRoleName(final String lookupRoleName) {
-        this.lookupRoleName = lookupRoleName;
-    }
-
-    public EntityEmploymentStatus getEmployeeStatus() {
-        return employeeStatus;
-    }
-
-    public EntityEmploymentType getEmployeeType() {
-        return employeeType;
-    }
-
-    public List<EntityName> getNames() {
-        return names;
-    }
-
-    public void setNames(final List<EntityName> names) {
-        this.names = names;
-    }
-
-    public List<EntityTypeContactInfo> getEntityTypeContactInfos() {
-        return entityTypeContactInfos;
-    }
-
-    public void setEntityTypeContactInfos(final List<EntityTypeContactInfo> entityTypeContactInfos) {
-        this.entityTypeContactInfos = entityTypeContactInfos;
-    }
-
-    public List<EntityAddress> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(final List<EntityAddress> addresses) {
-        this.addresses = addresses;
-    }
-
-    public List<EntityPhone> getPhoneNumbers() {
-        return phoneNumbers;
-    }
-
-    public void setPhoneNumbers(final List<EntityPhone> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
-    }
-
-    public List<EntityEmail> getEmailAddresses() {
-        return emailAddresses;
-    }
-
-    public void setEmailAddresses(final List<EntityEmail> emailAddresses) {
-        this.emailAddresses = emailAddresses;
-    }
-
-    public List<GroupMember> getGroupMembers() {
-        return groupMembers;
-    }
-
-    public void setGroupMembers(final List<GroupMember> groupMembers) {
-        this.groupMembers = groupMembers;
-    }
-
-    public List<RoleMember> getRoleMembers() {
-        return roleMembers;
-    }
-
-    public void setRoleMembers(final List<RoleMember> roleMembers) {
-        this.roleMembers = roleMembers;
-    }
-
-    public List<DelegateMember> getDelegateMembers() {
-        return delegateMembers;
-    }
-
-    public void setDelegateMembers(final List<DelegateMember> delegateMembers) {
-        this.delegateMembers = delegateMembers;
-    }
-
     private static BusinessObjectService getBusinessObjectService() {
         if (businessObjectService == null) {
             businessObjectService = SpringContext.getBean(BusinessObjectService.class);
         }
         return businessObjectService;
-    }
-
-    public static IdentityService getIdentityService() {
-        if (identityService == null) {
-            identityService = KimApiServiceLocator.getIdentityService();
-        }
-        return identityService;
     }
 
     public static PersonService getPersonService() {
@@ -751,4 +754,12 @@ public class Person extends TransientBusinessObjectBase implements MutableInacti
         }
         return personService;
     }
+
+    private UiDocumentService getUiDocumentService() {
+        if (uiDocumentService == null) {
+            uiDocumentService = SpringContext.getBean(UiDocumentService.class);
+        }
+        return uiDocumentService;
+    }
+
 }

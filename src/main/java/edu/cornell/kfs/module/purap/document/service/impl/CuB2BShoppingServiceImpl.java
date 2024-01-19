@@ -129,7 +129,7 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
             // default data from user
             req.setDeliveryCampusCode(user.getCampusCode());
             req.setDeliveryToName(user.getName());
-            req.setDeliveryToEmailAddress(user.getEmailAddressUnmasked());
+            req.setDeliveryToEmailAddress(user.getEmailAddress());
             req.setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(user.getPhoneNumber()));
 
             DefaultPrincipalAddress defaultPrincipalAddress = new DefaultPrincipalAddress(user.getPrincipalId());
@@ -356,9 +356,9 @@ public class CuB2BShoppingServiceImpl extends B2BShoppingServiceImpl implements 
         //cxml.append(" <Extrinsic
         // name=\"UserEmail\">jdoe@TOPS.com</Extrinsic>\n"); // we can't reliably
         // get the e-mail address, so we're leaving it out
-        cxml.append("      <Extrinsic name=\"UserEmail\">").append(user.getEmailAddressUnmasked()).append("</Extrinsic>\n"); 
+        cxml.append("      <Extrinsic name=\"UserEmail\">").append(user.getEmailAddress()).append("</Extrinsic>\n"); 
         cxml.append("      <Extrinsic name=\"UniqueName\">").append(user.getPrincipalName().toUpperCase(Locale.US)).append("</Extrinsic>\n");
-        cxml.append("      <Extrinsic name=\"PhoneNumber\">").append(user.getPhoneNumberUnmasked()).append("</Extrinsic>\n");
+        cxml.append("      <Extrinsic name=\"PhoneNumber\">").append(user.getPhoneNumber()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Department\">").append(user.getCampusCode()).append(user.getPrimaryDepartmentCode()).append("</Extrinsic>\n");
         cxml.append("      <Extrinsic name=\"Campus\">").append(user.getCampusCode()).append("</Extrinsic>\n");
         // KFSPTS-1720

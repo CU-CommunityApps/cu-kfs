@@ -65,8 +65,8 @@ public class ConcurEmployeeInfoValidationServiceImpl implements ConcurEmployeeIn
         boolean validPerson = validPerson(employee);
         boolean validAddress = validPerson;
         if (validPerson) {
-            String state = employee.getAddressStateProvinceCodeUnmasked();
-            String country = employee.getAddressCountryCodeUnmasked();
+            String state = employee.getAddressStateProvinceCode();
+            String country = employee.getAddressCountryCode();
             if (StringUtils.isBlank(state) && StringUtils.isBlank(country)) {
                 validAddress = false;
                 LOG.error("validPdpAddress, " + employee.getName() + " does not have a Country Code or a State/Province code.");

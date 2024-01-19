@@ -479,6 +479,19 @@
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" > 
 			<foreignkey field-ref="laborBenefitRateCategoryCode" /> </reference-descriptor> -->
 
+        <reference-descriptor name="accountFiscalOfficerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountFiscalOfficerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountManagerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountManagerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountSupervisoryUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountsSupervisorySystemsIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+
 		<collection-descriptor name="subAccounts"
 			element-class-ref="org.kuali.kfs.coa.businessobject.SubAccount"
 			collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
@@ -804,7 +817,20 @@
             <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
             <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
         </reference-descriptor>
-		
+
+        <reference-descriptor name="accountFiscalOfficerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountFiscalOfficerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountManagerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountManagerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountSupervisoryUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountsSupervisorySystemsIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+
 		<collection-descriptor name="indirectCostRecoveryAccounts"
 			element-class-ref="edu.cornell.kfs.coa.businessobject.IndirectCostRecoveryAccountChange"
 			collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
@@ -1688,7 +1714,20 @@
             <foreignkey field-ref="accountCountryCode" target-field-ref="countryCode"/>
             <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
         </reference-descriptor>
-	
+
+        <reference-descriptor name="accountFiscalOfficerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountFiscalOfficerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountManagerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountManagerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        <reference-descriptor name="accountSupervisoryUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountsSupervisorySystemsIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+
 	    <collection-descriptor name="subAccounts" element-class-ref="org.kuali.kfs.coa.businessobject.SubAccount" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
 	        <orderby name="subAccountNumber" sort="ASC" />
 	        <inverse-foreignkey field-ref="chartOfAccountsCode" />

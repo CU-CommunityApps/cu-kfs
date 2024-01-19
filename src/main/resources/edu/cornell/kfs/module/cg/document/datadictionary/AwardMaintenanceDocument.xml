@@ -48,6 +48,11 @@
         </property>
         <property name="businessRulesClass"
                   value="edu.cornell.kfs.module.cg.document.validation.impl.AwardExtensionRule"/>
+        <property name="webScriptFiles">
+            <list merge="true">
+                <value>scripts/module/cg/cu-proposalDocument.js</value>
+            </list>
+        </property>
     </bean>
 
     <bean parent="DataDictionaryBeanOverride">

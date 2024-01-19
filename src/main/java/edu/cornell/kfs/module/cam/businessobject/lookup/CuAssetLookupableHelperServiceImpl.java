@@ -8,12 +8,12 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.module.cam.CamsPropertyConstants;
 import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.businessobject.AssetLocation;
 import org.kuali.kfs.module.cam.businessobject.lookup.AssetLookupableHelperServiceImpl;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.module.cam.CuCamsPropertyConstants;
 
@@ -25,13 +25,13 @@ public class CuAssetLookupableHelperServiceImpl extends AssetLookupableHelperSer
         // perform the lookup on the asset representative first
         final String principalName = fieldValues.get(CamsPropertyConstants.Asset.REP_USER_AUTH_ID);
         if (StringUtils.isNotBlank(principalName)) {
-            final Principal principal = identityService.getPrincipalByPrincipalName(principalName);
+            final Person person = personService.getPersonByPrincipalName(principalName);
 
-            if (principal == null) {
+            if (person == null) {
                 return Collections.EMPTY_LIST;
             }
             // place the universal ID into the fieldValues map and remove the dummy attribute
-            fieldValues.put(CamsPropertyConstants.Asset.REPRESENTATIVE_UNIVERSAL_IDENTIFIER, principal.getPrincipalId());
+            fieldValues.put(CamsPropertyConstants.Asset.REPRESENTATIVE_UNIVERSAL_IDENTIFIER, person.getPrincipalId());
             fieldValues.remove(CamsPropertyConstants.Asset.REP_USER_AUTH_ID);
         }
 
