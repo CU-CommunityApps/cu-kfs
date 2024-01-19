@@ -98,6 +98,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String completeOption;
     private boolean completed;
     private String sscProcessorNetId;
+    private String sscProcessorName;
 
     // routing fields
     private String routingChart;
@@ -893,6 +894,21 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.sscProcessorNetId = sscProcessorNetId;
     }
 
+    public String getSscProcessorNetIDForLookup() {
+        if (StringUtils.isNotBlank(sscProcessorNetId)) {
+            return KFSConstants.WILDCARD_CHARACTER + sscProcessorNetId + KFSConstants.WILDCARD_CHARACTER;
+        }
+        return sscProcessorNetId;
+    }
+
+    public String getSscProcessorName() {
+        return sscProcessorName;
+    }
+
+    public void setSscProcessorName(String sscProcessorName) {
+        this.sscProcessorName = sscProcessorName;
+    }
+    
     public String getCurrentRouteToNetId() {
         return currentRouteToNetId;
     }

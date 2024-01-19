@@ -122,6 +122,10 @@ function loadRequestorInfo(sameAsInitiatorFieldName, requestorNetIDFieldName, re
 	}
 }
 
+function loadSscProcessorInfo(sscProcessorNetIDFieldName, sscProcessorNameFieldName) {
+	IWantDocumentService.getPersonData( sscProcessorNetID, dwrReply );
+}
+
 function loadDepartments(form) {
 	// set the previously selected org
 	setRecipientValue( 'previousSelectedOrg', 'document.collegeLevelOrganization' );

@@ -634,8 +634,8 @@
 
   <bean id="IWantDocument-sscProcessorNetId" parent="IWantDocument-sscProcessorNetId-parentBean"/>
   <bean id="IWantDocument-sscProcessorNetId-parentBean" abstract="true" parent="Person-principalName">
-    <property name="shortLabel" value="SSC Processor NetID"/>
-    <property name="maxLength" value="40"/>
+    <property name="shortLabel" value="SSC NetID"/>
+    <property name="maxLength" value="30"/>
     <property name="required" value="false"/>
     <property name="control">
       <bean parent="TextControlDefinition" p:size="32"/>
@@ -643,6 +643,15 @@
     <property name="summary" value="&amp;nbsp;"/>
     <property name="name" value="sscProcessorNetId"/>
     <property name="label" value="SSC Processor NetID"/>
+  </bean>
+
+  <bean id="IWantDocument-sscProcessorName" parent="IWantDocument-sscProcessorName-parentBean"/>
+
+  <bean id="IWantDocument-sscProcessorName-parentBean" abstract="true" parent="VendorGenericAttributes-attentionName">
+    <property name="name" value="sscProcessorName"/>
+    <property name="label" value="SSC Processor's Name"/>
+    <property name="shortLabel" value="Name"/>
+    <property name="required" value="false"/>
   </bean>
 
   <bean id="IWantDocument-reqsDocId" parent="IWantDocument-reqsDocId-parentBean"/>
