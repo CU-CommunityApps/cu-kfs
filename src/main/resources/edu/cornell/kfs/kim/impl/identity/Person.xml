@@ -4,7 +4,85 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <!--
+        CU Customizations:
+        
+        * Added CU-specific Person fields.
+        
+        * Configured an alternate validation pattern for phone numbers.
+        
+        * Added masking of Base Salary Amount.
+        
+        * Backported the following KualiCo changes into this file:
+        ** FINP-9357 (can be removed from this file when we upgrade to the 2023-02-22 financials patch)
+        ** FINP-9235 (can be removed from this file when we upgrade to the 2023-03-08 financials patch)
+     -->
+
     <import resource="classpath:edu/cornell/kfs/kim/cu-kim-attribute-beans.xml"/>
+    <import resource="classpath:edu/cornell/kfs/kim/cu-kim-lookup-beans.xml"/>
+
+    <!-- NOTE: The "searchService" property override is part of the FINP-9235 backport. -->
+    <bean id="Person"
+          parent="Person-parentBean"
+          p:searchService-ref="personSearchService"
+    >
+        <property name="attributes">
+            <list merge="true">
+                <!-- Start of FINP-9357 backport section. -->
+                <ref bean="Person-addressLine1MaskedIfNecessary"/>
+                <ref bean="Person-addressLine2MaskedIfNecessary"/>
+                <ref bean="Person-addressLine3MaskedIfNecessary"/>
+                <ref bean="Person-addressCityMaskedIfNecessary"/>
+                <ref bean="Person-addressStateProvinceCodeMaskedIfNecessary"/>
+                <ref bean="Person-addressPostalCodeMaskedIfNecessary"/>
+                <ref bean="Person-addressCountryCodeMaskedIfNecessary"/>
+                <!-- End of FINP-9357 backport section. -->
+                <ref bean="Person-firstNameMaskedIfNecessary"/>
+                <ref bean="Person-lastNameMaskedIfNecessary"/>
+                <ref bean="Person-middleNameMaskedIfNecessary"/>
+                <ref bean="Person-nameMaskedIfNecessary"/>
+                <ref bean="Person-emailAddressMaskedIfNecessary"/>
+                <ref bean="Person-phoneNumberMaskedIfNecessary"/>
+                <ref bean="Person-academicAffiliation"/>
+                <ref bean="Person-affiliateAffiliation"/>
+                <ref bean="Person-alumniAffiliation"/>
+                <ref bean="Person-exceptionAffiliation"/>
+                <ref bean="Person-facultyAffiliation"/>
+                <ref bean="Person-staffAffiliation"/>
+                <ref bean="Person-studentAffiliation"/>
+                <ref bean="Person-altAddressTypeCode"/>
+                <ref bean="Person-altAddressLine1"/>
+                <ref bean="Person-altAddressLine1MaskedIfNecessary"/>
+                <ref bean="Person-altAddressLine2"/>
+                <ref bean="Person-altAddressLine2MaskedIfNecessary"/>
+                <ref bean="Person-altAddressLine3"/>
+                <ref bean="Person-altAddressLine3MaskedIfNecessary"/>
+                <ref bean="Person-altAddressCity"/>
+                <ref bean="Person-altAddressCityMaskedIfNecessary"/>
+                <ref bean="Person-altAddressStateProvinceCode"/>
+                <ref bean="Person-altAddressStateProvinceCodeMaskedIfNecessary"/>
+                <ref bean="Person-altAddressPostalCode"/>
+                <ref bean="Person-altAddressPostalCodeMaskedIfNecessary"/>
+                <ref bean="Person-altAddressCountryCode"/>
+                <ref bean="Person-altAddressCountryCodeMaskedIfNecessary"/>
+                <ref bean="Person-suppressName"/>
+                <ref bean="Person-suppressEmail"/>
+                <ref bean="Person-suppressPhone"/>
+                <ref bean="Person-suppressPersonal"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Start of FINP-9235 backport section. -->
+
+    <bean id="Person-lookupRoleNamespaceCode"
+          parent="Namespace-code"
+          p:label="Role Namespace Code"
+          p:name="lookupRoleNamespaceCode"
+          p:required="false"
+    />
+
+    <!-- End of FINP-9235 backport section. -->
 
     <bean id="Person-phoneNumber" parent="Person-phoneNumber-parentBean">
         <property name="validationPattern">
@@ -12,7 +90,807 @@
         </property>
     </bean>
 
+    <bean id="Person-baseSalaryAmount" parent="Person-baseSalaryAmount-parentBean">
+        <property name="attributeSecurity">
+            <bean parent="AttributeSecurity" p:mask="true">
+                <property name="maskFormatter">
+                    <bean parent="MaskFormatterLiteral" p:literal="*********"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Start of FINP-9357 backport section. -->
+
+    <bean id="Person-addressLine1MaskedIfNecessary"
+          parent="Person-addressLine1MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressLine1MaskedIfNecessary-parentBean"
+          parent="Person-addressLine1-parentBean"
+          p:name="addressLine1MaskedIfNecessary"
+    />
+
+    <bean id="Person-addressLine2MaskedIfNecessary"
+          parent="Person-addressLine2MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressLine2MaskedIfNecessary-parentBean"
+          parent="Person-addressLine2-parentBean"
+          p:name="addressLine2MaskedIfNecessary"
+    />
+
+    <bean id="Person-addressLine3MaskedIfNecessary"
+          parent="Person-addressLine3MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressLine3MaskedIfNecessary-parentBean"
+          parent="Person-addressLine3-parentBean"
+          p:name="addressLine3MaskedIfNecessary"
+    />
+
+    <bean id="Person-addressCityMaskedIfNecessary"
+          parent="Person-addressCityMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressCityMaskedIfNecessary-parentBean"
+          parent="Person-addressCity-parentBean"
+          p:name="addressCityMaskedIfNecessary"
+    />
+
+    <bean id="Person-addressStateProvinceCodeMaskedIfNecessary"
+          parent="Person-addressStateProvinceCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressStateProvinceCodeMaskedIfNecessary-parentBean"
+          parent="Person-addressStateProvinceCode-parentBean"
+          p:name="addressStateProvinceCodeMaskedIfNecessary"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition"
+                  p:size="10"
+            />
+        </property>
+    </bean>
+
+    <bean id="Person-addressPostalCodeMaskedIfNecessary"
+          parent="Person-addressPostalCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressPostalCodeMaskedIfNecessary-parentBean"
+          parent="Person-addressPostalCode-parentBean"
+          p:name="addressPostalCodeMaskedIfNecessary"
+    />
+
+    <bean id="Person-addressCountryCodeMaskedIfNecessary"
+          parent="Person-addressCountryCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-addressCountryCodeMaskedIfNecessary-parentBean"
+          parent="Person-addressCountryCode-parentBean"
+          p:name="addressCountryCodeMaskedIfNecessary"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition"
+                  p:size="10"
+            />
+        </property>
+    </bean>
+
+    <!-- End of FINP-9357 backport section. -->
+
+    <!-- Customize base Person Name attribute to auto-mask most child beans that are derived from it. -->
+    <bean id="Person-name"
+          parent="Person-name-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="name"
+    >
+    </bean>
+
+    <!-- Start of non-address masked fields. -->
+
+    <bean id="Person-firstNameMaskedIfNecessary"
+          parent="Person-firstNameMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-firstNameMaskedIfNecessary-parentBean"
+          parent="Person-firstName-parentBean"
+          p:name="firstNameMaskedIfNecessary"
+    />
+
+    <bean id="Person-lastNameMaskedIfNecessary"
+          parent="Person-lastNameMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-lastNameMaskedIfNecessary-parentBean"
+          parent="Person-lastName-parentBean"
+          p:name="lastNameMaskedIfNecessary"
+    />
+
+    <bean id="Person-middleNameMaskedIfNecessary"
+          parent="Person-middleNameMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-middleNameMaskedIfNecessary-parentBean"
+          parent="Person-middleName-parentBean"
+          p:name="middleNameMaskedIfNecessary"
+    />
+
+    <bean id="Person-nameMaskedIfNecessary"
+          parent="Person-nameMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-nameMaskedIfNecessary-parentBean"
+          parent="Person-name-parentBean"
+          p:name="nameMaskedIfNecessary"
+    />
+
+    <bean id="Person-emailAddressMaskedIfNecessary"
+          parent="Person-emailAddressMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-emailAddressMaskedIfNecessary-parentBean"
+          parent="Person-emailAddress-parentBean"
+          p:name="emailAddressMaskedIfNecessary"
+    />
+
+    <bean id="Person-phoneNumberMaskedIfNecessary"
+          parent="Person-phoneNumberMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-phoneNumberMaskedIfNecessary-parentBean"
+          parent="Person-phoneNumber-parentBean"
+          p:name="phoneNumberMaskedIfNecessary"
+    />
+
+    <!-- End of non-address masked fields. -->
+
+    <!-- Start of extra affiliation fields. -->
+
+    <bean abstract="true"
+          id="GenericPersonAttribute-affiliationStatus"
+          parent="AttributeDefinition"
+          p:maxLength="1"
+    >
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="affiliationStatusValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="Person-academicAffiliation"
+          parent="Person-academicAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-academicAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Academic"
+          p:name="academicAffiliation"
+          p:shortLabel="Academic"
+    />
+
+    <bean id="Person-affiliateAffiliation"
+          parent="Person-affiliateAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-affiliateAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Affiliate"
+          p:name="affiliateAffiliation"
+          p:shortLabel="Affiliate"
+    />
+
+    <bean id="Person-alumniAffiliation"
+          parent="Person-alumniAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-alumniAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Alumni"
+          p:name="alumniAffiliation"
+          p:shortLabel="Alumni"
+    />
+
+    <bean id="Person-exceptionAffiliation"
+          parent="Person-exceptionAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-exceptionAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Exception"
+          p:name="exceptionAffiliation"
+          p:shortLabel="Exception"
+    />
+
+    <bean id="Person-facultyAffiliation"
+          parent="Person-facultyAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-facultyAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Faculty"
+          p:name="facultyAffiliation"
+          p:shortLabel="Faculty"
+    />
+
+    <bean id="Person-staffAffiliation"
+          parent="Person-staffAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-staffAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Staff"
+          p:name="staffAffiliation"
+          p:shortLabel="Staff"
+    />
+
+    <bean id="Person-studentAffiliation"
+          parent="Person-studentAffiliation-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-studentAffiliation-parentBean"
+          parent="GenericPersonAttribute-affiliationStatus"
+          p:label="Student"
+          p:name="studentAffiliation"
+          p:shortLabel="Student"
+    />
+
+    <!-- End of extra affiliation fields. -->
+
+    <!-- Start of alternate address fields. -->
+
+    <bean id="Person-altAddressTypeCode"
+          parent="Person-altAddressTypeCode-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressTypeCode-parentBean"
+          parent="Person-addressTypeCode-parentBean"
+          p:label="Alt Address Type"
+          p:name="altAddressTypeCode"
+          p:shortLabel="Alt Address Type"
+    />
+
+    <bean id="Person-altAddressLine1"
+          parent="Person-altAddressLine1-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressLine1-parentBean"
+          parent="Person-addressLine1-parentBean"
+          p:label="Alt Line 1"
+          p:name="altAddressLine1"
+          p:shortLabel="Alt Line 1"
+    />
+
+    <bean id="Person-altAddressLine1MaskedIfNecessary"
+          parent="Person-altAddressLine1MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressLine1MaskedIfNecessary-parentBean"
+          parent="Person-altAddressLine1-parentBean"
+          p:name="altAddressLine1MaskedIfNecessary"
+    />
+
+    <bean id="Person-altAddressLine2"
+          parent="Person-altAddressLine2-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressLine2-parentBean"
+          parent="Person-addressLine2-parentBean"
+          p:label="Alt Line 2"
+          p:name="altAddressLine2"
+          p:shortLabel="Alt Line 2"
+    />
+
+    <bean id="Person-altAddressLine2MaskedIfNecessary"
+          parent="Person-altAddressLine2MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressLine2MaskedIfNecessary-parentBean"
+          parent="Person-altAddressLine2-parentBean"
+          p:name="altAddressLine2MaskedIfNecessary"
+    />
+
+    <bean id="Person-altAddressLine3"
+          parent="Person-altAddressLine3-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressLine3-parentBean"
+          parent="Person-addressLine3-parentBean"
+          p:label="Alt Line 3"
+          p:name="altAddressLine3"
+          p:shortLabel="Alt Line 3"
+    />
+
+    <bean id="Person-altAddressLine3MaskedIfNecessary"
+          parent="Person-altAddressLine3MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressLine3MaskedIfNecessary-parentBean"
+          parent="Person-altAddressLine3-parentBean"
+          p:name="altAddressLine3MaskedIfNecessary"
+    />
+
+    <bean id="Person-altAddressCity"
+          parent="Person-altAddressCity-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressCity-parentBean"
+          parent="Person-addressCity-parentBean"
+          p:label="Alt City"
+          p:name="altAddressCity"
+          p:shortLabel="Alt City"
+    />
+
+    <bean id="Person-altAddressCityMaskedIfNecessary"
+          parent="Person-altAddressCityMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressCityMaskedIfNecessary-parentBean"
+          parent="Person-altAddressCity-parentBean"
+          p:name="altAddressCityMaskedIfNecessary"
+    />
+
+    <bean id="Person-altAddressStateProvinceCode"
+          parent="Person-altAddressStateProvinceCode-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressStateProvinceCode-parentBean"
+          parent="Person-addressStateProvinceCode-parentBean"
+          p:label="Alt State/Province"
+          p:name="altAddressStateProvinceCode"
+          p:shortLabel="Alt State/Province"
+    />
+
+    <bean id="Person-altAddressStateProvinceCodeMaskedIfNecessary"
+          parent="Person-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+          parent="Person-altAddressStateProvinceCode-parentBean"
+          p:name="altAddressStateProvinceCodeMaskedIfNecessary"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition"
+                  p:size="10"
+            />
+        </property>
+    </bean>
+
+    <bean id="Person-altAddressPostalCode"
+          parent="Person-altAddressPostalCode-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressPostalCode-parentBean"
+          parent="Person-addressPostalCode-parentBean"
+          p:label="Alt Postal Code"
+          p:name="altAddressPostalCode"
+          p:shortLabel="Alt Postal Code"
+    />
+
+    <bean id="Person-altAddressPostalCodeMaskedIfNecessary"
+          parent="Person-altAddressPostalCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressPostalCodeMaskedIfNecessary-parentBean"
+          parent="Person-altAddressPostalCode-parentBean"
+          p:name="altAddressPostalCodeMaskedIfNecessary"
+    />
+
+    <bean id="Person-altAddressCountryCode"
+          parent="Person-altAddressCountryCode-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressCountryCode-parentBean"
+          parent="Person-addressCountryCode-parentBean"
+          p:label="Alt Country"
+          p:name="altAddressCountryCode"
+          p:shortLabel="Alt Country"
+    />
+
+    <bean id="Person-altAddressCountryCodeMaskedIfNecessary"
+          parent="Person-altAddressCountryCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-altAddressCountryCodeMaskedIfNecessary-parentBean"
+          parent="Person-altAddressCountryCode-parentBean"
+          p:name="altAddressCountryCodeMaskedIfNecessary"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition"
+                  p:size="10"
+            />
+        </property>
+    </bean>
+
+    <!-- End of alternate address fields. -->
+
+    <!-- Start of privacy preference fields. -->
+
+    <bean abstract="true"
+          id="GenericPersonAttribute-privacyPreference"
+          parent="AttributeDefinition"
+          p:forceUppercase="false"
+          p:maxLength="1"
+          p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter"
+    >
+        <property name="control">
+            <bean parent="CheckboxControlDefinition"/>
+        </property>
+    </bean>
+
+    <bean id="Person-suppressName"
+          parent="Person-suppressName-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-suppressName-parentBean"
+          parent="GenericPersonAttribute-privacyPreference"
+          p:label="Suppress Name"
+          p:name="suppressName"
+          p:shortLabel="Suppress Name"
+    />
+
+    <bean id="Person-suppressEmail"
+          parent="Person-suppressEmail-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-suppressEmail-parentBean"
+          parent="GenericPersonAttribute-privacyPreference"
+          p:label="Suppress Email"
+          p:name="suppressEmail"
+          p:shortLabel="Suppress Email"
+    />
+
+    <bean id="Person-suppressPhone"
+          parent="Person-suppressPhone-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-suppressPhone-parentBean"
+          parent="GenericPersonAttribute-privacyPreference"
+          p:label="Suppress Phone"
+          p:name="suppressPhone"
+          p:shortLabel="Suppress Phone"
+    />
+
+    <bean id="Person-suppressPersonal"
+          parent="Person-suppressPersonal-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-suppressPersonal-parentBean"
+          parent="GenericPersonAttribute-privacyPreference"
+          p:label="Suppress Personal"
+          p:name="suppressPersonal"
+          p:shortLabel="Suppress Personal"
+    />
+
+    <!-- End of privacy preference fields. -->
+
+    <!-- Start of Person Inquiry overrides. -->
+
     <bean id="Person-inquiryDefinition" parent="Person-inquiryDefinition-parentBean"
           p:inquirableClass="edu.cornell.kfs.kim.inquiry.CuPersonInquirableImpl"/>
+
+    <bean id="Person-FieldOverrideForInquirySectionInsert"
+          abstract="true"
+          parent="FieldOverrideForListElementInsert"
+          p:propertyName="inquirySections"
+          p:propertyNameForElementCompare="title"
+    >
+        <property name="element">
+            <bean parent="InquirySectionDefinition"
+                  p:title="Title"
+                  p:numberOfColumns="1"/>
+        </property>
+    </bean>
+
+    <bean id="Person-FieldOverrideForInquirySectionReplace"
+          abstract="true"
+          parent="FieldOverrideForListElementReplace"
+          p:propertyName="inquirySections"
+          p:propertyNameForElementCompare="title"
+    >
+        <property name="element">
+            <bean parent="InquirySectionDefinition"
+                  p:title="Title"
+                  p:numberOfColumns="1"/>
+        </property>
+    </bean>
+
+    <bean parent="DataDictionaryBeanOverride"
+          p:beanName="Person-inquiryDefinition">
+        <property name="fieldOverrides">
+            <list>
+                <!-- Start of FINP-9357 backport section. -->
+                <bean parent="Person-FieldOverrideForInquirySectionReplace"
+                      p:element.title="Address"
+                >
+                    <property name="replaceWith">
+                        <bean parent="InquirySectionDefinition"
+                              p:title="Address"
+                              p:numberOfColumns="1"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressTypeCode"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressLine1MaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressLine2MaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressLine3MaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressCityMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressStateProvinceCodeMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressPostalCodeMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="addressCountryCodeMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <!-- End of FINP-9357 backport section. -->
+                <bean parent="Person-FieldOverrideForInquirySectionReplace"
+                      p:element.title="Affiliation"
+                >
+                    <property name="replaceWith">
+                        <bean parent="InquirySectionDefinition"
+                              p:numberOfColumns="2"
+                              p:title="Affiliation"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="InquirySubSectionHeaderDefinition"
+                                          p:attributeName="Primary Affiliation"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="affiliationTypeCode"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="campusCode"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="InquirySubSectionHeaderDefinition"
+                                          p:attributeName="All Affiliations"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="academicAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="affiliateAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="alumniAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="exceptionAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="facultyAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="staffAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="studentAffiliation"
+                                          p:noInquiry="true"
+                                    />
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Person-FieldOverrideForInquirySectionReplace"
+                      p:element.title="Name"
+                >
+                    <property name="replaceWith">
+                        <bean parent="InquirySectionDefinition"
+                              p:numberOfColumns="3"
+                              p:title="Name"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="firstNameMaskedIfNecessary"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="middleNameMaskedIfNecessary"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="lastNameMaskedIfNecessary"
+                                          p:noInquiry="true"
+                                    />
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Person-FieldOverrideForInquirySectionInsert"
+                      p:element.title="Address"
+                >
+                    <property name="insertAfter">
+                        <bean parent="InquirySectionDefinition"
+                              p:title="Alternate Address"
+                              p:numberOfColumns="1"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressTypeCode"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressLine1MaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressLine2MaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressLine3MaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressCityMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressStateProvinceCodeMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressPostalCodeMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="altAddressCountryCodeMaskedIfNecessary"
+                                          p:noInquiry="true"/>
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Person-FieldOverrideForInquirySectionReplace"
+                      p:element.title="Phone Number"
+                >
+                    <property name="replaceWith">
+                        <bean parent="InquirySectionDefinition"
+                              p:numberOfColumns="1"
+                              p:title="Phone Number"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="phoneNumberMaskedIfNecessary"
+                                          p:noInquiry="true"
+                                    />
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Person-FieldOverrideForInquirySectionReplace"
+                      p:element.title="Email Address"
+                >
+                    <property name="replaceWith">
+                        <bean parent="InquirySectionDefinition"
+                              p:numberOfColumns="1"
+                              p:title="Email Address"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="emailAddressMaskedIfNecessary"
+                                          p:noInquiry="true"
+                                    />
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+                <bean parent="Person-FieldOverrideForInquirySectionInsert"
+                      p:element.title="Email Address"
+                >
+                    <property name="insertAfter">
+                        <bean parent="InquirySectionDefinition"
+                              p:numberOfColumns="1"
+                              p:title="Privacy Preferences"
+                        >
+                            <property name="inquiryFields">
+                                <list>
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="suppressName"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="suppressEmail"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="suppressPhone"
+                                          p:noInquiry="true"
+                                    />
+                                    <bean parent="FieldDefinition"
+                                          p:attributeName="suppressPersonal"
+                                          p:noInquiry="true"
+                                    />
+                                </list>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- End of Person Inquiry overrides. -->
+
+    <!-- Start of Person Lookup overrides. -->
+
+    <bean parent="DataDictionaryBeanOverride"
+          p:beanName="Person-lookupDefinition">
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementReplace"
+                      p:propertyName="displayAttributeDefinitions"
+                      p:propertyNameForElementCompare="name">
+                    <property name="element">
+                        <bean parent="Person-name"
+                              p:disableInquiry="true"
+                        />
+                    </property>
+                    <property name="replaceWith">
+                        <bean parent="Person-nameMaskedIfNecessary"
+                              p:disableInquiry="true"
+                        />
+                    </property>
+                </bean>
+                <bean parent="FieldOverrideForListElementReplace"
+                      p:propertyName="resultFields"
+                      p:propertyNameForElementCompare="attributeName">
+                    <property name="element">
+                        <bean parent="FieldDefinition"
+                              p:attributeName="name"
+                              p:noInquiry="true"
+                        />
+                    </property>
+                    <property name="replaceWith">
+                        <bean parent="FieldDefinition"
+                              p:attributeName="nameMaskedIfNecessary"
+                              p:noInquiry="true"
+                        />
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- End of Person Lookup overrides. -->
+
+    <!-- The following 2 beans can be reworked or removed when the FINP-9235 backport is ready to be removed. -->
+    <bean id="grl.personService" p:serviceName="personService" parent="grlBeanImporter"/>
+    <bean id="grl.roleService" p:serviceName="roleService" parent="grlBeanImporter"/>
+
+    <!-- Start of (modified) FINP-9235 backport section. -->
+
+    <bean class="org.kuali.kfs.kim.impl.identity.PersonSearchService"
+          id="personSearchService"
+          parent="defaultSearchService"
+          p:personService-ref="grl.personService"
+          p:roleService-ref="grl.roleService"
+    />
+
+    <!-- End of FINP-9235 backport section. -->
 
 </beans>

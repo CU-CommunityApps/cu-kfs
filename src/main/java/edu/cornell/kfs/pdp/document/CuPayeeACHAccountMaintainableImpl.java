@@ -16,8 +16,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
@@ -36,30 +34,18 @@ public class CuPayeeACHAccountMaintainableImpl extends PayeeACHAccountMaintainab
             final String payeeIdNumber = payeeAchAccount.getPayeeIdNumber();
             final String payeeIdentifierTypeCode = payeeAchAccount.getPayeeIdentifierTypeCode();
             
-            if(StringUtils.isNotEmpty(payeeAchAccount.getPayeeIdNumber())){
-              // for Employee, retrieve from Person table by employee ID
-              if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
-                  final Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
-                  if (ObjectUtils.isNotNull(person)) {
-                      payeeAchAccount.setPayeeEmailAddress( person.getEmailAddress());
-                  }
-              }
-              // for Entity, retrieve from Entity table by entity ID then from Person table
-              else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
-                  if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                      final Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
-                      if (ObjectUtils.isNotNull(entity)) {
-                          final List<Principal> principals = entity.getPrincipals();
-                          if (principals.size() > 0 && ObjectUtils.isNotNull(principals.get(0))) {
-                              final String principalId = principals.get(0).getPrincipalId();
-                              final Person person = SpringContext.getBean(PersonService.class).getPerson(principalId);
-                              if (ObjectUtils.isNotNull(person)) {
-                                  payeeAchAccount.setPayeeEmailAddress( person.getEmailAddress());
-                              }
-                          }
-                      }
-                  }
-              }
+            if (StringUtils.isNotEmpty(payeeIdNumber)) {
+                if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
+                    final Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
+                    if (ObjectUtils.isNotNull(person)) {
+                        payeeAchAccount.setPayeeEmailAddress(person.getEmailAddress());
+                    }
+                } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
+                    final Person person = SpringContext.getBean(PersonService.class).getPersonByEntityId(payeeIdNumber);
+                    if (ObjectUtils.isNotNull(person)) {
+                        payeeAchAccount.setPayeeEmailAddress(person.getEmailAddress());
+                    }
+                }
             }
         }
     }

@@ -20,6 +20,9 @@ package org.kuali.kfs.module.cg.businessobject;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.integration.ar.AccountsReceivableBillingFrequency;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
@@ -41,10 +44,6 @@ import org.kuali.kfs.module.ar.ArConstants.ContractsAndGrantsInvoiceDocumentCrea
 import org.kuali.kfs.module.cg.CGPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kim.api.identity.PersonService;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -916,8 +915,6 @@ public class Award extends PersistableBusinessObjectBase implements MutableInact
 
     @Override
     public String getLookupProjectDirectorUniversalIdentifier() {
-        lookupProjectDirector = (Person) SpringContext.getBean(PersonService.class).updatePersonIfNecessary(
-                lookupProjectDirectorUniversalIdentifier, lookupProjectDirector);
         return lookupProjectDirectorUniversalIdentifier;
     }
 

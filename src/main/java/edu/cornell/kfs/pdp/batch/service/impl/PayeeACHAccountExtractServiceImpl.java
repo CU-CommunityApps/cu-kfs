@@ -414,7 +414,7 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
                 failureMessage.append(" Payee has an employee ID of \"").append(achDetail.getEmployeeID()).append(
                         "\" in input file, but has an employee ID of \"").append(payee.getEmployeeId()).append("\" in KFS. ");
             }
-            if (StringUtils.isBlank(payee.getEmailAddressUnmasked())) {
+            if (StringUtils.isBlank(payee.getEmailAddress())) {
                 appendFailurePrefix(failureMessage, achDetail.getNetID(), listIndex++);
                 failureMessage.append(" Payee has no email address defined in KFS. No notification emails will be sent for this user.");
             }

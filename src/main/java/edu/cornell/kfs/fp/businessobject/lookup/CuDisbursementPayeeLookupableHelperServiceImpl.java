@@ -19,7 +19,6 @@ import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kim.impl.identity.affiliation.EntityAffiliation;
 import org.kuali.kfs.krad.bo.BusinessObject;
 
 import edu.cornell.kfs.fp.businessobject.CuDisbursementPayee;
@@ -42,7 +41,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER)) 
                 || StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.VENDOR_NAME))) {
             searchResults.addAll(getVendorsAsPayees(fieldValues));
-        } else if (StringUtils.isNotBlank(fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID)) 
+        } else if (StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID)) 
                 || StringUtils.isNotBlank(fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME))) {
             searchResults.addAll(getPersonAsPayees(fieldValues));
         } else {
@@ -169,37 +168,26 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         Map<String, String> fieldsForLookup = getPersonFieldValues(fieldValues);
         List<Person> persons = SpringContext.getBean(PersonService.class).findPeople(fieldsForLookup);
         
-       boolean warningExists = false;
+        boolean warningExists = false;
         
-        for (Person personDetail : persons) {
-            for(EntityAffiliation entityAffiliation : (personDetail).getAffiliations()) {
-                if(entityAffiliation.isDefaultValue()) {
-                    if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
-                        CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
-                        payeeList.add(payee);
-                    }
-                    else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
-                        CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
-                        payeeList.add(payee);
-                    }
-                    else if(StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
-                            StringUtils.equalsIgnoreCase(entityAffiliation.getAffiliationType().getCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
-                        if (StringUtils.isNotBlank(personDetail.getEmployeeStatusCode()) && 
-                                (personDetail.getEmployeeStatusCode().equals(ACTIVE)) || personDetail.getEmployeeStatusCode().equals(RETIRED)) {
-                            CuDisbursementPayee payee = getPayeeFromPerson(personDetail, fieldValues, KFSConstants.PaymentPayeeTypes.EMPLOYEE);
-                            payeeList.add(payee);
-                        }
-                        else {
-                            if  (GlobalVariables.getMessageMap().containsMessageKey(CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE)) {
-                                    warningExists = true;
-                                    break;
-                                }
-                            }
-                            if(!warningExists) {
-                                GlobalVariables.getMessageMap().putWarningWithoutFullErrorPath(KFSPropertyConstants.PRINCIPAL_ID, CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE);     
-                        }
-                    }
-                    break;
+        for (Person person : persons) {
+            if (StringUtils.equalsIgnoreCase(person.getAffiliationTypeCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STUDENT)) {
+                CuDisbursementPayee payee = getPayeeFromPerson(person, fieldValues, CuDisbursementVoucherConstants.DV_PAYEE_TYPE_STUDENT);
+                payeeList.add(payee);
+            } else if (StringUtils.equalsIgnoreCase(person.getAffiliationTypeCode(), CuDisbursementVoucherConstants.PayeeAffiliations.ALUMNI)) {
+                CuDisbursementPayee payee = getPayeeFromPerson(person, fieldValues, CuDisbursementVoucherConstants.DV_PAYEE_TYPE_ALUMNI);
+                payeeList.add(payee);
+            } else if (StringUtils.equalsIgnoreCase(person.getAffiliationTypeCode(), CuDisbursementVoucherConstants.PayeeAffiliations.FACULTY) ||
+                    StringUtils.equalsIgnoreCase(person.getAffiliationTypeCode(), CuDisbursementVoucherConstants.PayeeAffiliations.STAFF)) {
+                if (StringUtils.isNotBlank(person.getEmployeeStatusCode()) && 
+                        (person.getEmployeeStatusCode().equals(ACTIVE)) || person.getEmployeeStatusCode().equals(RETIRED)) {
+                    CuDisbursementPayee payee = getPayeeFromPerson(person, fieldValues, KFSConstants.PaymentPayeeTypes.EMPLOYEE);
+                    payeeList.add(payee);
+                } else if (GlobalVariables.getMessageMap().containsMessageKey(CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE)) {
+                    warningExists = true;
+                }
+                if (!warningExists) {
+                    GlobalVariables.getMessageMap().putWarningWithoutFullErrorPath(KFSPropertyConstants.PRINCIPAL_ID, CUKFSKeyConstants.WARNING_DV_PAYEE_MUST_BE_ACTIVE);
                 }
             }
         }
@@ -224,22 +212,22 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         return payeeList;
     }
 
-
     @Override
     protected Map<String, String> getPersonFieldValues(final Map<String, String> fieldValues) {
         final Map<String, String> personFieldValues = new HashMap<>();
-        personFieldValues.put(KFSPropertyConstants.PERSON_FIRST_NAME,
-                fieldValues.get(KFSPropertyConstants.PERSON_FIRST_NAME));
-        personFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME,
-                fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
-        personFieldValues.put(KFSPropertyConstants.EMPLOYEE_ID, fieldValues.get(KFSPropertyConstants.EMPLOYEE_ID));       
+        personFieldValues.put(KIMPropertyConstants.Person.FIRST_NAME,
+                fieldValues.get(KIMPropertyConstants.Person.FIRST_NAME));
+        personFieldValues.put(KIMPropertyConstants.Person.LAST_NAME,
+                fieldValues.get(KIMPropertyConstants.Person.LAST_NAME));
+        personFieldValues.put(KIMPropertyConstants.Person.EMPLOYEE_ID,
+                fieldValues.get(KIMPropertyConstants.Person.EMPLOYEE_ID));
         personFieldValues.put(KFSPropertyConstants.ACTIVE, fieldValues.get(KFSPropertyConstants.ACTIVE));
-        personFieldValues.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME));
+        personFieldValues.put(KIMPropertyConstants.Principal.PRINCIPAL_NAME,
+                fieldValues.get(KIMPropertyConstants.Principal.PRINCIPAL_NAME));
         
         final Map<String, String> fieldConversionMap =
                 disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndPerson();
         replaceFieldKeys(personFieldValues, fieldConversionMap);
-        
 
         return personFieldValues;
     }
@@ -260,8 +248,8 @@ public class CuDisbursementPayeeLookupableHelperServiceImpl extends Disbursement
         vendorFieldValues.put(KFSPropertyConstants.TAX_NUMBER, fieldValues.get(KFSPropertyConstants.TAX_NUMBER));
         vendorFieldValues.put(KFSPropertyConstants.VENDOR_NAME, fieldValues.get(KFSPropertyConstants.VENDOR_NAME));
         vendorFieldValues.put(KFSPropertyConstants.VENDOR_NUMBER, fieldValues.get(KFSPropertyConstants.VENDOR_NUMBER));
-        vendorFieldValues.put(KFSPropertyConstants.PERSON_FIRST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_FIRST_NAME));
-        vendorFieldValues.put(KFSPropertyConstants.PERSON_LAST_NAME, fieldValues.get(KFSPropertyConstants.PERSON_LAST_NAME));
+        vendorFieldValues.put(KIMPropertyConstants.Person.FIRST_NAME, fieldValues.get(KIMPropertyConstants.Person.FIRST_NAME));
+        vendorFieldValues.put(KIMPropertyConstants.Person.LAST_NAME, fieldValues.get(KIMPropertyConstants.Person.LAST_NAME));
         vendorFieldValues.put(KFSPropertyConstants.ACTIVE, fieldValues.get(KFSPropertyConstants.ACTIVE));
 
         final Map<String, String> fieldConversionMap = disbursementVoucherPayeeService.getFieldConversionBetweenPayeeAndVendor();
