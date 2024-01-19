@@ -314,6 +314,15 @@
             <foreignkey field-ref="organizationRemitToStateCode" />
             <foreignkey field-ref="organizationRemitToCountyCode" />
         </reference-descriptor>
+        <reference-descriptor name="financialDocumentInitiator"
+                              class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true"
+                              auto-update="none"
+                              auto-delete="none"
+                              proxy="true">
+            <foreignkey field-ref="financialDocumentInitiatorIdentifier"
+                        target-field-ref="principalId"/>
+        </reference-descriptor>
     </class-descriptor>
 
 </descriptor-repository>

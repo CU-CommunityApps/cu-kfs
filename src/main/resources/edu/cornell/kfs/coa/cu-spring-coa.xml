@@ -61,7 +61,7 @@
         class="edu.cornell.kfs.coa.businessobject.lookup.AccountGlobalSearchLookupableHelperServiceImpl"
         scope="prototype" parent="lookupableHelperService"
         p:accountGlobalSearchDao-ref="accountGlobalSearchDao"
-        p:identityService-ref="identityService"
+        p:personService-ref="personService"
         p:permissionService-ref="permissionService"/>
 
 	<bean id="accountGlobalLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl"

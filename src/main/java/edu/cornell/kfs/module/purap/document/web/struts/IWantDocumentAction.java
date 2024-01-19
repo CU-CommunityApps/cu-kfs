@@ -26,9 +26,6 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
@@ -141,16 +138,16 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 if (iWantDocument != null) {
 
                     String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-                    Principal initiator = KimApiServiceLocator.getIdentityService().getPrincipal(principalId);
+                    Person initiator = KimApiServiceLocator.getPersonService().getPerson(principalId);
                     String initiatorPrincipalID = initiator.getPrincipalId();
                     String initiatorNetID = initiator.getPrincipalName();
 
                     iWantDocument.setInitiatorNetID(initiatorNetID);
 
                     Person currentUser = GlobalVariables.getUserSession().getPerson();
-                    String initiatorName = currentUser.getNameUnmasked();
-                    String initiatorPhoneNumber = currentUser.getPhoneNumberUnmasked();
-                    String initiatorEmailAddress = currentUser.getEmailAddressUnmasked();
+                    String initiatorName = currentUser.getName();
+                    String initiatorPhoneNumber = currentUser.getPhoneNumber();
+                    String initiatorEmailAddress = currentUser.getEmailAddress();
 
                     String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
 
@@ -360,26 +357,22 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
         if (iWantDocument != null && StringUtils.isEmpty(iWantDocument.getCollegeLevelOrganization())) {
 
-            String principalIdToUseForCollegeDeptLookup = null;
+            Person personToUseForCollegeDeptLookup;
             if (StringUtils.isNotBlank(iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId())) {
-                principalIdToUseForCollegeDeptLookup = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+                String principalIdToUseForCollegeDeptLookup = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+                personToUseForCollegeDeptLookup = KimApiServiceLocator.getPersonService().getPerson(principalIdToUseForCollegeDeptLookup);
             } else {
-                Person currentUser = GlobalVariables.getUserSession().getPerson();
-                principalIdToUseForCollegeDeptLookup = currentUser.getPrincipalId();
+                personToUseForCollegeDeptLookup = GlobalVariables.getUserSession().getPerson();
             }
 
-            Entity entityInfo = KimApiServiceLocator.getIdentityService().getEntityByPrincipalId(principalIdToUseForCollegeDeptLookup);
+            if (ObjectUtils.isNotNull(personToUseForCollegeDeptLookup)
+                    && StringUtils.isNotBlank(personToUseForCollegeDeptLookup.getPrimaryDepartmentCode())) {
+                String primaryDepartment = personToUseForCollegeDeptLookup.getPrimaryDepartmentCode();
+                primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf('-') + 1,
+                        primaryDepartment.length());
 
-            if (ObjectUtils.isNotNull(entityInfo)) {
-                if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation()) && entityInfo.getEmploymentInformation().size() > 0) {
-                    EntityEmployment employmentInformation = entityInfo.getEmploymentInformation().get(0);
-                    String primaryDepartment = employmentInformation.getPrimaryDepartmentCode();
-                    primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf('-') + 1,
-                            primaryDepartment.length());
-
-                    String cLevelOrg = iWantDocumentService.getCLevelOrganizationForDLevelOrg(primaryDepartment);
-                    ((IWantDocument) documentForm.getDocument()).setCollegeLevelOrganization(cLevelOrg);
-                }
+                String cLevelOrg = iWantDocumentService.getCLevelOrganizationForDLevelOrg(primaryDepartment);
+                ((IWantDocument) documentForm.getDocument()).setCollegeLevelOrganization(cLevelOrg);
             }
         }
 

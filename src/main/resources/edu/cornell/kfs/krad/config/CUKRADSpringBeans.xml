@@ -82,7 +82,8 @@
           p:dataObjectMetaDataService-ref="dataObjectMetaDataService"
           p:documentDictionaryService-ref="documentDictionaryService"
           p:documentService-ref="documentService"
-          p:identityService-ref="identityService"
-          p:maintenanceDocumentDao-ref="maintenanceDocumentDao"/>
+          p:maintenanceDocumentDao-ref="maintenanceDocumentDao"
+          p:personService-ref="personService"
+    />
 
 </beans>

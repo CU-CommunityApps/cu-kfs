@@ -368,6 +368,8 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
 
     @Override
     public void prepareForSave() {
+        super.prepareForSave();
+
         final SequenceAccessorService sas = getSequenceAccessorService();
 
         final String roleId;

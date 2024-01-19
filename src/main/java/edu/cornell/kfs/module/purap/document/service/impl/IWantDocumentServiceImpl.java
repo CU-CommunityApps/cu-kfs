@@ -24,10 +24,6 @@ import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.impl.identity.address.EntityAddress;
-import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
@@ -106,15 +102,20 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
      * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#getPersonCampusAddress(java.lang.String)
      */
     public String getPersonCampusAddress(String principalName) {
-    
-        EntityAddress foundAddress = getPersonEntityAddress(principalName);
+        Person person = personService.getPersonByPrincipalName(principalName);
+        if (ObjectUtils.isNull(person)) {
+            throw new IllegalArgumentException("Could not find user: " + principalName);
+        } else if (!StringUtils.equalsIgnoreCase(person.getAltAddressTypeCode(), CMP_ADDRESS_TYPE)) {
+            throw new IllegalStateException("User " + principalName
+                    + " is not storing their campus address in the expected fields");
+        }
 
-        String addressLine1 = StringUtils.trimToEmpty(foundAddress.getLine1Unmasked());
-        String addressLine2 = StringUtils.trimToEmpty(foundAddress.getLine2Unmasked());
-        String city = StringUtils.trimToEmpty(foundAddress.getCityUnmasked());
-        String stateCode = StringUtils.trimToEmpty(foundAddress.getStateProvinceCodeUnmasked());
-        String postalCode = StringUtils.trimToEmpty(foundAddress.getPostalCodeUnmasked());
-        String countryCode = StringUtils.trimToEmpty(foundAddress.getCountryCodeUnmasked());
+        String addressLine1 = StringUtils.trimToEmpty(person.getAltAddressLine1());
+        String addressLine2 = StringUtils.trimToEmpty(person.getAltAddressLine2());
+        String city = StringUtils.trimToEmpty(person.getAltAddressCity());
+        String stateCode = StringUtils.trimToEmpty(person.getAltAddressStateProvinceCode());
+        String postalCode = StringUtils.trimToEmpty(person.getAltAddressPostalCode());
+        String countryCode = StringUtils.trimToEmpty(person.getAltAddressCountryCode());
 
         String initiatorAddress = new StringBuilder(100).append(addressLine1).append(KRADConstants.NEWLINE).append(
                 addressLine2).append(KRADConstants.NEWLINE).append(
@@ -122,29 +123,6 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 postalCode).append(KRADConstants.NEWLINE).append(countryCode).toString();
 
         return initiatorAddress;
-    }
-
-    /**
-     * Gets Person entity address.
-     * 
-     * @param entityEntityType
-     * @return Person entity address
-     */
-    protected EntityAddress getPersonEntityAddress(String principalName) {
-        List<? extends EntityAddress> addresses = KimApiServiceLocator.getIdentityService().getEntityByPrincipalName(
-                principalName).getEntityTypeContactInfoByTypeCode(KimConstants.EntityTypes.PERSON).getAddresses();
-        EntityAddress foundAddress = null;
-        int count = 0;
-
-        while (count < addresses.size() && foundAddress == null) {
-            final EntityAddress currentAddress = addresses.get(count);
-            if (CMP_ADDRESS_TYPE.equals(currentAddress.getAddressType().getCode())) {
-                foundAddress = currentAddress;
-            }
-            count += 1;
-        }
-
-        return foundAddress;
     }
 
     /**
@@ -200,10 +178,10 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         PersonData personData = new PersonData();
 
         Person person = personService.getPersonByPrincipalName(principalName);
-        personData.setPersonName(person.getNameUnmasked());
+        personData.setPersonName(person.getName());
         personData.setNetID(principalName);
-        personData.setEmailAddress(person.getEmailAddressUnmasked());
-        personData.setPhoneNumber(person.getPhoneNumberUnmasked());
+        personData.setEmailAddress(person.getEmailAddress());
+        personData.setPhoneNumber(person.getPhoneNumber());
         personData.setCampusAddress(getPersonCampusAddress(principalName));
 
         return personData;
@@ -234,7 +212,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         String initiator = workflowDocument.getInitiatorPrincipalId();
         String documentNumber = iWantDocument.getDocumentNumber();
         Person initiatorPerson = personService.getPerson(initiator);
-        String initiatorEmail = initiatorPerson.getEmailAddressUnmasked();
+        String initiatorEmail = initiatorPerson.getEmailAddress();
 
         BodyMailMessage message = new BodyMailMessage();
 
@@ -252,7 +230,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
 
         emailBody.append("This is a message to inform you that the I Want document ").append(
                 iWantDocument.getDocumentNumber()).append(" has been finalized: ").append(KRADConstants.NEWLINE).append(KRADConstants.NEWLINE);
-        emailBody.append("From: ").append(initiatorPerson.getNameUnmasked()).append(KRADConstants.NEWLINE);
+        emailBody.append("From: ").append(initiatorPerson.getName()).append(KRADConstants.NEWLINE);
         emailBody.append("Title: ").append(iWantDocument.getDocumentTitle()).append(KRADConstants.NEWLINE);
         emailBody.append("Type: ").append(workflowDocument.getDocumentTypeName()).append(KRADConstants.NEWLINE);
         emailBody.append("Id: ").append(documentNumber).append(KRADConstants.NEWLINE);
@@ -411,11 +389,11 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
                 }
                 requisitionDocument.setDeliveryCampusCode(deliverTo.getCampusCode());
                 requisitionDocument.setDeliveryToName(deliverTo.getName());
-                requisitionDocument.setDeliveryToEmailAddress(deliverTo.getEmailAddressUnmasked());
+                requisitionDocument.setDeliveryToEmailAddress(deliverTo.getEmailAddress());
                 requisitionDocument.setDeliveryToPhoneNumber(
                         phoneNumberService.formatNumberIfPossible(deliverTo.getPhoneNumber()));
                 requisitionDocument.setRequestorPersonName(deliverTo.getName());
-                requisitionDocument.setRequestorPersonEmailAddress(deliverTo.getEmailAddressUnmasked());
+                requisitionDocument.setRequestorPersonEmailAddress(deliverTo.getEmailAddress());
                 requisitionDocument.setRequestorPersonPhoneNumber(
                         phoneNumberService.formatNumberIfPossible(deliverTo.getPhoneNumber()));
 
@@ -889,7 +867,7 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 	@Override
 	public void setUpIWantDocDefaultValues(IWantDocument iWantDocument, Person initiatorUser) {
 		String principalId = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-		Principal initiator = KimApiServiceLocator.getIdentityService().getPrincipal(principalId);
+		Person initiator = KimApiServiceLocator.getPersonService().getPerson(principalId);
 		String initiatorPrincipalID = initiator.getPrincipalId();
 		String initiatorNetID = initiator.getPrincipalName();
 
@@ -956,20 +934,13 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 		if (ObjectUtils.isNull(userOptionsCollege) && ObjectUtils.isNull(userOptionsDepartment)) {
 			String primaryDeptOrg = null;
 
-			if (ObjectUtils.isNotNull(iWantDocument)) {
+			if (ObjectUtils.isNotNull(iWantDocument)
+					&& StringUtils.isNotBlank(initiatorUser.getPrimaryDepartmentCode())) {
+				String primaryDepartment = initiatorUser.getPrimaryDepartmentCode();
+				primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf('-') + 1, primaryDepartment.length());
 
-				Entity entityInfo = KimApiServiceLocator.getIdentityService().getEntityByPrincipalId(initiatorUser.getPrincipalId());
-
-				if (ObjectUtils.isNotNull(entityInfo)) {
-					if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation()) && entityInfo.getEmploymentInformation().size() > 0) {
-						EntityEmployment employmentInformation = entityInfo.getEmploymentInformation().get(0);
-						String primaryDepartment = employmentInformation.getPrimaryDepartmentCode();
-						primaryDeptOrg = primaryDepartment.substring(primaryDepartment.lastIndexOf('-') + 1, primaryDepartment.length());
-
-						String cLevelOrg = getCLevelOrganizationForDLevelOrg(primaryDepartment);
-						iWantDocument.setCollegeLevelOrganization(cLevelOrg);
-					}
-				}
+				String cLevelOrg = getCLevelOrganizationForDLevelOrg(primaryDepartment);
+				iWantDocument.setCollegeLevelOrganization(cLevelOrg);
 			}
 
 			if (ObjectUtils.isNotNull(iWantDocument) && StringUtils.isNotEmpty(iWantDocument.getCollegeLevelOrganization())) {

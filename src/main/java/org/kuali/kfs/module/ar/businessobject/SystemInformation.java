@@ -24,7 +24,9 @@ import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.Organization;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
+import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.integration.ar.AccountsReceivableSystemInformation;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.sys.businessobject.Country;
@@ -34,7 +36,7 @@ import org.kuali.kfs.sys.businessobject.PostalCode;
 import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+
 
 /*
  * CU Customization: Backported the FINP-7147 changes into this file.
@@ -65,6 +67,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     protected String organizationRemitToCountryCode;
     protected String organizationCheckPayableToName;
     protected String financialDocumentInitiatorIdentifier;
+    protected String financialDocumentInitiatorPrincipalName;
     private String organizationRemitToCountyCode;
     private String uniqueEntityId;
     protected ObjectCode creditCardFinancialObject;
@@ -84,10 +87,14 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     private Country orgRemitToCountry;
     private County organizationRemitToCounty;
 
+    private transient PersonService personService;
+
     public Person getFinancialDocumentInitiator() {
-        financialDocumentInitiator = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
-                .updatePersonIfNecessary(financialDocumentInitiatorIdentifier, financialDocumentInitiator);
-        return financialDocumentInitiator;
+        return getPersonService().updatePrincipalNameIfNecessary(
+                financialDocumentInitiatorIdentifier,
+                financialDocumentInitiatorPrincipalName,
+                financialDocumentInitiator
+        );
     }
 
     public void setFinancialDocumentInitiator(final Person financialDocumentInitiator) {
@@ -214,6 +221,14 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
 
     public void setFinancialDocumentInitiatorIdentifier(final String financialDocumentInitiatorIdentifier) {
         this.financialDocumentInitiatorIdentifier = financialDocumentInitiatorIdentifier;
+    }
+
+    public String getFinancialDocumentInitiatorPrincipalName() {
+        return financialDocumentInitiatorPrincipalName;
+    }
+
+    public void setFinancialDocumentInitiatorPrincipalName(final String financialDocumentInitiatorPrincipalName) {
+        this.financialDocumentInitiatorPrincipalName = financialDocumentInitiatorPrincipalName;
     }
 
     public String getOrganizationRemitToCountyCode() {
@@ -441,4 +456,12 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     public void setOrganizationRemitToCounty(final County county) {
         this.organizationRemitToCounty = county;
     }
+
+    public PersonService getPersonService() {
+        if (personService == null) {
+            personService = SpringContext.getBean(PersonService.class);
+        }
+        return personService;
+    }
+
 }

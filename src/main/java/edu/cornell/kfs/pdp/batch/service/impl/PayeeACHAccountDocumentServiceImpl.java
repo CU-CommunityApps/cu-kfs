@@ -127,11 +127,11 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         achAccount.setBankAccountNumber(achDetail.getBankAccountNumber());
         achAccount.setBankAccountTypeCode(getACHTransactionCode(achDetail.getBankAccountType()));
         achAccount.setStandardEntryClass(determineStandardEntryClass(achAccount.getBankAccountTypeCode()));
-        if (StringUtils.isNotBlank(payee.getNameUnmasked())) {
-            achAccount.setPayeeName(payee.getNameUnmasked());
+        if (StringUtils.isNotBlank(payee.getName())) {
+            achAccount.setPayeeName(payee.getName());
         }
-        if (StringUtils.isNotBlank(payee.getEmailAddressUnmasked())) {
-            achAccount.setPayeeEmailAddress(payee.getEmailAddressUnmasked());
+        if (StringUtils.isNotBlank(payee.getEmailAddress())) {
+            achAccount.setPayeeEmailAddress(payee.getEmailAddress());
         }
         achAccount.setActive(true);
     }
@@ -207,7 +207,7 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     }
     
     protected void sendPayeeACHAccountAddOrUpdateEmail(PayeeACHAccount achAccount, Person payee, String emailSubject, String emailBody) {
-        if (StringUtils.isBlank(payee.getEmailAddressUnmasked())) {
+        if (StringUtils.isBlank(payee.getEmailAddress())) {
             LOG.warn("Payee " + payee.getPrincipalName() + " has no email address defined in KFS. No notification emails will be sent for this user.");
             return;
         }
@@ -218,7 +218,7 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
                 KFSConstants.CoreModuleNamespaces.PDP, KfsParameterConstants.BATCH_COMPONENT, KFSConstants.FROM_EMAIL_ADDRESS_PARAM_NM));
         message.setSubject(emailSubject);
         message.setMessage(getResolvedEmailBody(achAccount, emailBody));
-        message.addToAddress(payee.getEmailAddressUnmasked());
+        message.addToAddress(payee.getEmailAddress());
         
         // Send the message.
         emailService.sendMessage(message, false);        

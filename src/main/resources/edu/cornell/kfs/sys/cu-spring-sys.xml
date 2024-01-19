@@ -145,11 +145,12 @@
 				<prop key="db-url0">${edw.datasource.url}</prop>
 				<prop key="db-username0">${edw.datasource.username}</prop>
 				<prop key="db-password0">${edw.datasource.password}</prop>
-				<prop key="db-url1">${kfs.datasource.url}</prop>
-				<prop key="db-username1">${kfs.datasource.username}</prop>
-				<prop key="db-password1">${kfs.datasource.password}</prop>
+				<prop key="db-url1">${rice.datasource.url}</prop>
+				<prop key="db-username1">${rice.datasource.username}</prop>
+				<prop key="db-password1">${rice.datasource.password}</prop>
 			</props>
 		</property>
+		<property name="kimFeedService" ref="kimFeedService"/>
 	</bean>
 
 	<bean id="awsSecretValidationJob"
@@ -194,7 +195,7 @@
 		<property name="userProcurementProfileValidationService">
 			<ref bean="userProcurementProfileValidationService" />
 		</property>
-		<property name="identityService" ref="identityService"/>
+		<property name="personService" ref="personService"/>
     </bean>
 
 	<bean id="userProfileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">
