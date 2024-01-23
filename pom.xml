@@ -67,7 +67,6 @@
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
         <log4j.version>2.21.1</log4j.version>
-        <ehcache.version>2.10.10.3.24</ehcache.version>
         <cxf.version>3.4.10</cxf.version>
         <wss4j.version>2.2.5</wss4j.version>
     </properties>
@@ -546,10 +545,6 @@
                     <artifactId>netty-transport</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
                 </exclusion>
@@ -764,10 +759,6 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
                 </exclusion>
@@ -960,10 +951,6 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.prowidesoftware</groupId>
@@ -1164,10 +1151,6 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
                 </exclusion>
@@ -1362,10 +1345,6 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
                 </exclusion>
@@ -1560,10 +1539,6 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
                 </exclusion>
@@ -1758,10 +1733,6 @@
                     <artifactId>spring-webmvc</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.prowidesoftware</groupId>
                     <artifactId>pw-iso20022</artifactId>
                 </exclusion>
@@ -1953,10 +1924,6 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.prowidesoftware</groupId>
@@ -2872,11 +2839,6 @@
                     <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
         </dependency>
         <dependency>
             <groupId>com.prowidesoftware</groupId>
