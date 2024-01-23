@@ -82,7 +82,11 @@ import static java.util.Map.entry;
 @EnableCaching
 @Profile("cache-redis")
 public class CacheConfiguration {
-
+    
+    /*
+     * Cornell Customization 
+     * -- add more cache names 
+     */
     @Bean
     public Set<String> cacheNames() {
         return Set.of(
@@ -126,9 +130,6 @@ public class CacheConfiguration {
                 SubAccount.CACHE_NAME,
                 SystemOptions.CACHE_NAME,
                 UniversityDate.CACHE_NAME,
-                /*
-                 * CU custom Cache name
-                 */
                 MaintenanceUtils.LOCKING_ID_CACHE_NAME
         );
     }
