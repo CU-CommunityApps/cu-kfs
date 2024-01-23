@@ -1,7 +1,11 @@
 package com.rsmart.kuali.kfs.cr.document;
 
 import java.sql.Date;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.cache.RuntimeCacheException;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -22,6 +26,7 @@ import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
  * staus of a check is changed.
  */
 public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintainable {
+    private static final Logger LOG = LogManager.getLogger();
 
     /**
      * @see org.kuali.kfs.kns.maintenance.MaintainableImpl#doRouteStatusChange(org.kuali.kfs.kns.bo.DocumentHeader)
@@ -51,6 +56,23 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
                 }
             }
 
+        }
+    }
+    
+    @Override
+    public void processAfterEdit(final MaintenanceDocument document, final Map<String, String[]> requestParameters) {
+        LOG.info("processAfterEdit, entering");
+        if (document != null && document.getDocumentHeader() != null) {
+            if (StringUtils.isBlank(document.getDocumentHeader().getOrganizationDocumentNumber())) {
+                CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
+                String checkNumber = newCr.getCheckNumber().toString();
+                document.getDocumentHeader().setOrganizationDocumentNumber(getDocumentNumber(checkNumber));
+                LOG.info("processAfterEdit, setting org reg id to '{}'", checkNumber);
+            } else {
+                LOG.info("processAfterEdit, org reg id already set to {}", document.getDocumentHeader().getOrganizationDocumentNumber());
+            }
+        } else {
+            LOG.info("processAfterEdit, document or document header is null");
         }
     }
 
