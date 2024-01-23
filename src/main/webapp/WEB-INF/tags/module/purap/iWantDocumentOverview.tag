@@ -73,12 +73,19 @@
         </c:if>
     </table>
 
-    <table cellpadding="0" cellspacing="0" class="datatable">
+    <table class="standard side-margins"
+           title="view/edit document overview information"
+           summary="view/edit document overview information">
         <tr>
-            <th class="right">
-                <kul:htmlAttributeLabel attributeEntry="${iWantDocAttributes.sscProcessorNetId}"/>
-            </th>
-            <td align="left" valign="middle" width="70%" class="neutral">
+            <td class="top" width="50%"></td>
+            <kul:htmlAttributeHeaderCell
+                    labelFor="document.sscProcessorNetId"
+                    attributeEntry="${iWantDocAttributes.sscProcessorNetId}"
+                    horizontal="true"
+                    rowspan="1"
+                    addClass="right top"
+                    width="25%"/>
+            <td rowspan="1" class="top" width="25%">
                 <kul:user userIdFieldName="document.sscProcessorNetId"
                           userId="${KualiForm.document.sscProcessorNetId}"
                           universalIdFieldName=""
@@ -92,5 +99,6 @@
             </td>
         </tr>
     </table>
+
     <jsp:doBody/>
 </div>
