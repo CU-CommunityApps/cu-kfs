@@ -24,25 +24,6 @@
             </tr>
         </table>
         <h3>Miscellaneous</h3>
-        <table cellpadding="0" cellspacing="0" class="datatable">
-            <tr>
-                <th class="right">
-                    <kul:htmlAttributeLabel attributeEntry="${documentAttributes.sscProcessorNetId}"/>
-                </th>
-                <td align="left" valign="middle" width="70%" class="neutral">
-                    <kul:user userIdFieldName="document.sscProcessorNetId"
-                              userId="${KualiForm.document.sscProcessorNetId}"
-                              universalIdFieldName=""
-                              universalId=""
-                              userNameFieldName="document.sscProcessorName"
-                              userName="${KualiForm.document.sscProcessorName}"
-                              readOnly="${not fullEntryMode}"
-                              fieldConversions="principalName:document.sscProcessorNetId,name:document.sscProcessorName"
-                              hasErrors="${hasErrors}"
-                              onblur="loadSscProcessorInfo('document.sscProcessorNetId', 'document.sscProcessorName')"/>
-                </td>
-            </tr>
-        </table>
         <table cellpadding="0" cellspacing="0" class="datatable" summary="Instructions">
             <tr>
                 <th class="right">
