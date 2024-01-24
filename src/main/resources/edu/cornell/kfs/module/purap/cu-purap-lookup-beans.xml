@@ -32,4 +32,5 @@
     
     <bean id="requisitionAttachmentTypeValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.RequisitionAttachmentTypeValuesFinder"/>
+    
 </beans>

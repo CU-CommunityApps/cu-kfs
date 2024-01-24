@@ -30,7 +30,7 @@
     including addition of instructions and an "Attachment Description" column.
 --%>
 
-<c:set var="noteColSpan" value="7"/>
+<c:set var="noteColSpan" value="8"/>
 <c:set var="iWantDocumentAttributes" value="${DataDictionary.IWantDocument.attributes}"/>
 
 <c:set var="noteType" value="${KualiForm.document.noteType}"/>
@@ -117,6 +117,12 @@
                                                       property="newNote.noteTopicText" forceRequired="true"/>
                         </td>
                     </c:if>
+                    <td class="infoline">
+                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
+                        <br/>
+                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
+                                                property="document.noteTextOption"/>
+                    </td>
                     <td class="infoline">
                         <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteLabel}" forceRequired="${iWantDocumentAttributes.noteLabel.required}"/>
                         <br/>

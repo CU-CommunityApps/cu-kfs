@@ -335,6 +335,14 @@
 	    </collection-descriptor>-->
 	</class-descriptor>
     
+    <class-descriptor class="edu.cornell.kfs.module.purap.businessobject.IWantNote" table="CU_PUR_IWNT_NTE_TXT_T">
+        <field-descriptor name="noteIdentifier" column="NTE_ID" jdbc-type="INTEGER" primarykey="true" index="true" autoincrement="true" sequence-name="CU_PUR_IWNT_NTE_TXT_ID_SEQ"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="noteText" column="NTE_TXT" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" index="true" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    </class-descriptor>
+    
 
     <!-- KFSPTS-1458 added field  vendorEmailAddress -->
     <class-descriptor class="edu.cornell.kfs.module.purap.document.CuRequisitionDocument" table="PUR_REQS_T">
