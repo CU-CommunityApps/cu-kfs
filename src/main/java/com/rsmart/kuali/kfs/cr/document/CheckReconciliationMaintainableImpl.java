@@ -66,7 +66,7 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
             if (StringUtils.isBlank(document.getDocumentHeader().getOrganizationDocumentNumber())) {
                 CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
                 String checkNumber = newCr.getCheckNumber().toString();
-                document.getDocumentHeader().setOrganizationDocumentNumber(getDocumentNumber(checkNumber));
+                document.getDocumentHeader().setOrganizationDocumentNumber(checkNumber);
                 LOG.info("processAfterEdit, setting org reg id to '{}'", checkNumber);
             } else {
                 LOG.info("processAfterEdit, org reg id already set to {}", document.getDocumentHeader().getOrganizationDocumentNumber());
