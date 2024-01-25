@@ -61,18 +61,18 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
     
     @Override
     public void processAfterEdit(final MaintenanceDocument document, final Map<String, String[]> requestParameters) {
-        LOG.info("processAfterEdit, entering");
+        LOG.debug("processAfterEdit, entering");
         if (document != null && document.getDocumentHeader() != null) {
             if (StringUtils.isBlank(document.getDocumentHeader().getOrganizationDocumentNumber())) {
                 CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
                 String checkNumber = newCr.getCheckNumber().toString();
                 document.getDocumentHeader().setOrganizationDocumentNumber(checkNumber);
-                LOG.info("processAfterEdit, setting org reg id to '{}'", checkNumber);
+                LOG.debug("processAfterEdit, setting org reg id to '{}'", checkNumber);
             } else {
-                LOG.info("processAfterEdit, org reg id already set to {}", document.getDocumentHeader().getOrganizationDocumentNumber());
+                LOG.debug("processAfterEdit, org reg id already set to {}", document.getDocumentHeader().getOrganizationDocumentNumber());
             }
         } else {
-            LOG.info("processAfterEdit, document or document header is null");
+            LOG.debug("processAfterEdit, document or document header is null");
         }
     }
 
