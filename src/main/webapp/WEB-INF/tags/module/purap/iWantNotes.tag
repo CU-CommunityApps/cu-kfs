@@ -30,7 +30,7 @@
     including addition of instructions and an "Attachment Description" column.
 --%>
 
-<c:set var="noteColSpan" value="8"/>
+<c:set var="noteColSpan" value="7"/>
 <c:set var="iWantDocumentAttributes" value="${DataDictionary.IWantDocument.attributes}"/>
 
 <c:set var="noteType" value="${KualiForm.document.noteType}"/>
@@ -118,12 +118,6 @@
                         </td>
                     </c:if>
                     <td class="infoline">
-                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
-                        <br/>
-                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
-                                                property="document.noteTextOption"/>
-                    </td>
-                    <td class="infoline">
                         <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteLabel}" forceRequired="${iWantDocumentAttributes.noteLabel.required}"/>
                         <br/>
                         <kul:htmlControlAttribute attributeEntry="${notesAttributes.noteText}" property="newNote.noteText" forceRequired="${notesAttributes.noteText.required}" />
@@ -154,6 +148,33 @@
                     <td class="infoline">
                         <html:submit property="methodToCall.insertBONote" alt="Add a Note" title="Add a Note"
                                      styleClass="tinybutton btn btn-green" value="Add"/>
+                    </td>
+                    <c:if test="${allowsNoteFYI}">
+                        <td>&nbsp;</td>
+                    </c:if>
+                </tr>
+                <tr class="new-note">
+                    <td class="infoline">&nbsp;</td>
+                    <td class="infoline">&nbsp;</td>
+                    <td class="infoline">&nbsp;</td>
+                    <c:if test="${displayTopicFieldInNotes eq true}">
+                        <td class="infoline">&nbsp;</td>
+                    </c:if>
+                    <td class="infoline">&nbsp;</td>
+                    <td class="infoline">
+                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
+                        <br/>
+                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
+                                                property="document.noteTextOption"/>
+                    </td>
+                    <c:if test="${allowsNoteAttachments eq true}">
+                        <td class="infoline">&nbsp;</td>
+                    </c:if>
+                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
+                        <td class="infoline">&nbsp;</td>
+                    </c:if>
+                    <td class="infoline">
+                        <td class="infoline">&nbsp;</td>
                     </td>
                     <c:if test="${allowsNoteFYI}">
                         <td>&nbsp;</td>
