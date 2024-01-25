@@ -119,7 +119,7 @@
     	
     	<field-descriptor name="completeOption" column="COMPLETED" jdbc-type="VARCHAR"/> 
     	<field-descriptor name="currentRouteToNetId" column="CRNT_RT_TO_NET_ID" jdbc-type="VARCHAR" index="true"/>   
-        <field-descriptor name="sscProcessorNetId" column="SSC_PROCESSOR_NET_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="processorNetId" column="PROCESSOR_NET_ID" jdbc-type="VARCHAR" index="true"/>
 
         <field-descriptor name="reqsDocId" column="REQS_FDOC_NBR" jdbc-type="VARCHAR" />
          <field-descriptor name="dvDocId" column="DV_FDOC_NBR" jdbc-type="VARCHAR" />

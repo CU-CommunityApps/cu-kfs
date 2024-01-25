@@ -122,8 +122,8 @@ function loadRequestorInfo(sameAsInitiatorFieldName, requestorNetIDFieldName, re
 	}
 }
 
-function loadSscProcessorInfo(sscProcessorNetIDFieldName, sscProcessorNameFieldName) {
-	IWantDocumentService.getPersonData( sscProcessorNetID, dwrReply );
+function loadProcessorInfo(sscProcessorNetIDFieldName, processorNameFieldName) {
+	IWantDocumentService.getPersonData( processorNetID, dwrReply );
 }
 
 function loadDepartments(form) {

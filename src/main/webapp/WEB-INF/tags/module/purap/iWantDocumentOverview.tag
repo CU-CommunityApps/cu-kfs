@@ -79,23 +79,23 @@
         <tr>
             <td class="top" width="50%"></td>
             <kul:htmlAttributeHeaderCell
-                    labelFor="document.sscProcessorNetId"
-                    attributeEntry="${iWantDocAttributes.sscProcessorNetId}"
+                    labelFor="document.processorNetId"
+                    attributeEntry="${iWantDocAttributes.processorNetId}"
                     horizontal="true"
                     rowspan="1"
                     addClass="right top"
                     width="25%"/>
             <td rowspan="1" class="top" width="25%">
-                <kul:user userIdFieldName="document.sscProcessorNetId"
-                          userId="${KualiForm.document.sscProcessorNetId}"
+                <kul:user userIdFieldName="document.processorNetId"
+                          userId="${KualiForm.document.processorNetId}"
                           universalIdFieldName=""
                           universalId=""
-                          userNameFieldName="document.sscProcessorName"
-                          userName="${KualiForm.document.sscProcessorName}"
+                          userNameFieldName="document.processorName"
+                          userName="${KualiForm.document.processorName}"
                           readOnly="${not fullEntryMode}"
-                          fieldConversions="principalName:document.sscProcessorNetId,name:document.sscProcessorName"
+                          fieldConversions="principalName:document.processorNetId,name:document.processorName"
                           hasErrors="${hasErrors}"
-                          onblur="loadSscProcessorInfo('document.sscProcessorNetId', 'document.sscProcessorName')"/>
+                          onblur="loadProcessorInfo('document.processorNetId', 'document.processorName')"/>
             </td>
         </tr>
     </table>

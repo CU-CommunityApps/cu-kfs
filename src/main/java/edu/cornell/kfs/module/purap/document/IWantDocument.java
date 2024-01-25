@@ -97,8 +97,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     private String completeOption;
     private boolean completed;
-    private String sscProcessorNetId;
-    private String sscProcessorName;
+    private String processorNetId;
+    private String processorName;
 
     // routing fields
     private String routingChart;
@@ -886,27 +886,27 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
     }
 
-    public String getSscProcessorNetId() {
-        return sscProcessorNetId;
+    public String getProcessorNetId() {
+        return processorNetId;
     }
 
-    public void setSscProcessorNetId(String sscProcessorNetId) {
-        this.sscProcessorNetId = sscProcessorNetId;
+    public void setProcessorNetId(String processorNetId) {
+        this.processorNetId = processorNetId;
     }
 
-    public String getSscProcessorNetIDForLookup() {
-        if (StringUtils.isNotBlank(sscProcessorNetId)) {
-            return KFSConstants.WILDCARD_CHARACTER + sscProcessorNetId + KFSConstants.WILDCARD_CHARACTER;
+    public String getProcessorNetIDForLookup() {
+        if (StringUtils.isNotBlank(processorNetId)) {
+            return KFSConstants.WILDCARD_CHARACTER + processorNetId + KFSConstants.WILDCARD_CHARACTER;
         }
-        return sscProcessorNetId;
+        return processorNetId;
     }
 
-    public String getSscProcessorName() {
-        return sscProcessorName;
+    public String getProcessorName() {
+        return processorName;
     }
 
-    public void setSscProcessorName(String sscProcessorName) {
-        this.sscProcessorName = sscProcessorName;
+    public void setProcessorName(String processorName) {
+        this.processorName = processorName;
     }
     
     public String getCurrentRouteToNetId() {
