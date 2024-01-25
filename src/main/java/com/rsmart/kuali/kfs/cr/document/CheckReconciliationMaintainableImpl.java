@@ -6,17 +6,15 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.ojb.broker.cache.RuntimeCacheException;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.FinancialSystemMaintainable;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
@@ -62,17 +60,16 @@ public class CheckReconciliationMaintainableImpl extends FinancialSystemMaintain
     @Override
     public void processAfterEdit(final MaintenanceDocument document, final Map<String, String[]> requestParameters) {
         LOG.debug("processAfterEdit, entering");
+        super.processAfterEdit(document, requestParameters);
         if (document != null && document.getDocumentHeader() != null) {
             if (StringUtils.isBlank(document.getDocumentHeader().getOrganizationDocumentNumber())) {
                 CheckReconciliation newCr = (CheckReconciliation) document.getNewMaintainableObject().getBusinessObject();
                 String checkNumber = newCr.getCheckNumber().toString();
                 document.getDocumentHeader().setOrganizationDocumentNumber(checkNumber);
-                LOG.debug("processAfterEdit, setting org reg id to '{}'", checkNumber);
+                LOG.debug("processAfterEdit, setting org ref id to '{}'", checkNumber);
             } else {
-                LOG.debug("processAfterEdit, org reg id already set to {}", document.getDocumentHeader().getOrganizationDocumentNumber());
+                LOG.debug("processAfterEdit, org ref id already set to {}", document.getDocumentHeader().getOrganizationDocumentNumber());
             }
-        } else {
-            LOG.debug("processAfterEdit, document or document header is null");
         }
     }
 
