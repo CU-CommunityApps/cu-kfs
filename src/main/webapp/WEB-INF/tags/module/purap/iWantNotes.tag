@@ -157,28 +157,12 @@
                     <td class="infoline">&nbsp;</td>
                     <td class="infoline">&nbsp;</td>
                     <td class="infoline">&nbsp;</td>
-                    <c:if test="${displayTopicFieldInNotes eq true}">
-                        <td class="infoline">&nbsp;</td>
-                    </c:if>
-                    <td class="infoline">&nbsp;</td>
-                    <td class="infoline">
+                    <td class="infoline" colspan="${noteColSpan-3}">
                         <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
                         <br/>
                         <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
                                                 property="document.noteTextOption"/>
                     </td>
-                    <c:if test="${allowsNoteAttachments eq true}">
-                        <td class="infoline">&nbsp;</td>
-                    </c:if>
-                    <c:if test="${(not empty attachmentTypesValuesFinder) and (allowsNoteAttachments eq true)}">
-                        <td class="infoline">&nbsp;</td>
-                    </c:if>
-                    <td class="infoline">
-                        <td class="infoline">&nbsp;</td>
-                    </td>
-                    <c:if test="${allowsNoteFYI}">
-                        <td>&nbsp;</td>
-                    </c:if>
                 </tr>
             </c:if>
 
