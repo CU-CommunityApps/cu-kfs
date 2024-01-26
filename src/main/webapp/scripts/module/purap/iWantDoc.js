@@ -122,7 +122,7 @@ function loadRequestorInfo(sameAsInitiatorFieldName, requestorNetIDFieldName, re
 	}
 }
 
-function loadProcessorInfo(sscProcessorNetIDFieldName, processorNameFieldName) {
+function loadProcessorInfo(processorNetIDFieldName, processorNameFieldName) {
 	IWantDocumentService.getPersonData( processorNetID, dwrReply );
 }
 
