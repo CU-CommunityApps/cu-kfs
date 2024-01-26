@@ -157,7 +157,7 @@
                     <td class="infoline">&nbsp;</td>
                     <td class="infoline">&nbsp;</td>
                     <td class="infoline">&nbsp;</td>
-                    <td class="infoline" colspan="${noteColSpan-3}">
+                    <td class="infoline" colspan="${noteColSpan - 3}">
                         <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
                         <br/>
                         <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"

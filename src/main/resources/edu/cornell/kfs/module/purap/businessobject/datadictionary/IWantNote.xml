@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+
+    <bean id="IWantNote" parent="IWantNote-parentBean"/>
+    <bean id="IWantNote-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.IWantNote"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="IWantNote-inquiryDefinition"
+          p:lookupDefinition-ref="IWantNote-lookupDefinition"
+          p:name="IWantNote"
+          p:objectLabel="I Want Note"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="noteIdentifier">
+        <property name="keyAttributes">
+            <list>
+                <ref bean="IWantNote-noteIdentifier" />
+            </list>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="IWantNote-noteIdentifier"/>
+                <ref bean="IWantNote-noteText"/>
+                <ref bean="IWantNote-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="IWantNote-noteIdentifier" parent="IWantNote-noteIdentifier-parentBean"/>
+    <bean id="IWantNote-noteIdentifier-parentBean" abstract="true" parent="PurApGenericAttributes-genericItemIdentifier"
+          p:name="noteIdentifier" p:forceUppercase="true" p:label="I Want Note Identifier" p:shortLabel="Note Identifier">
+    </bean>
+    
+    <bean id="IWantNote-noteText" parent="IWantNote-noteText-parentBean"/>
+    <bean id="IWantNote-noteText-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="noteText" p:label="I Want Note Text" p:shortLabel="Name" p:maxLength="40"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50"/>
+        </property>
+    </bean>
+
+    <bean id="IWantNote-active" parent="IWantNote-active-parentBean"/>
+    <bean id="IWantNote-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
+          p:name="active"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="IWantNote-inquiryDefinition" parent="IWantNote-inquiryDefinition-parentBean"/>
+    <bean id="IWantNote-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="I Want Note">
+        <property name="sections">
+            <list>
+                <ref bean="IWantNote-sectionDefinition"/>
+            </list>
+        </property>
+        <property name="inquirySections">
+            <list>
+                <ref bean="IWantNote-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="IWantNote-sectionDefinition" parent="IWantNote-sectionDefinition-parentBean"/>
+    <bean id="IWantNote-sectionDefinition-parentBean" parent="sectionDefinition" abstract="true">
+        <property name="fields">
+            <list>
+                <ref bean="IWantNote-noteIdentifier"/>
+                <ref bean="IWantNote-noteText"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="IWantNote-inquirySectionDefinition" parent="IWantNote-inquirySectionDefinition-parentBean"/>
+    <bean id="IWantNote-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="" p:numberOfColumns="1">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="noteIdentifier"/>
+                <bean parent="FieldDefinition" p:attributeName="noteText"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="IWantNote-lookupDefinition" parent="IWantNote-lookupDefinition-parentBean"/>
+    <bean id="IWantNote-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="IWant Note Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>noteIdentifier</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="IWantNote-noteIdentifier"/>
+                <ref bean="IWantNote-noteText"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="IWantNote-noteIdentifier"/>
+                <ref bean="IWantNote-noteText"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
+</beans>
