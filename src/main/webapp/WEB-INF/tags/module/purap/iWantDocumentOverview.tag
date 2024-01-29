@@ -4,7 +4,6 @@
 
 <c:set var="docHeaderAttributes" value="${DataDictionary.DocumentHeader.attributes}"/>
 <c:set var="iWantDocAttributes" value="${DataDictionary.IWantDocument.attributes}"/>
-<c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 
 <div class="tab-container" align="center">
     <html:hidden property="document.documentHeader.documentNumber"/>
@@ -72,33 +71,5 @@
             </tr>
         </c:if>
     </table>
-
-    <table class="standard side-margins"
-           title="view/edit document overview information"
-           summary="view/edit document overview information">
-        <tr>
-            <td class="top" width="50%"></td>
-            <kul:htmlAttributeHeaderCell
-                    labelFor="document.processorNetId"
-                    attributeEntry="${iWantDocAttributes.processorNetId}"
-                    horizontal="true"
-                    rowspan="1"
-                    addClass="right top"
-                    width="25%"/>
-            <td rowspan="1" class="top" width="25%">
-                <kul:user userIdFieldName="document.processorNetId"
-                          userId="${KualiForm.document.processorNetId}"
-                          universalIdFieldName=""
-                          universalId=""
-                          userNameFieldName="document.processorName"
-                          userName="${KualiForm.document.processorName}"
-                          readOnly="${not fullEntryMode}"
-                          fieldConversions="principalName:document.processorNetId,name:document.processorName"
-                          hasErrors="${hasErrors}"
-                          onblur="loadProcessorInfo('document.processorNetId', 'document.processorName')"/>
-            </td>
-        </tr>
-    </table>
-
     <jsp:doBody/>
 </div>
