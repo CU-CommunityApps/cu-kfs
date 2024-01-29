@@ -80,7 +80,6 @@
         <ref bean="IWantDocument-completed"/>
         <ref bean="IWantDocument-completeOption" />
         <ref bean="IWantDocument-currentRouteToNetId"/>
-        <ref bean="IWantDocument-processorNetId"/>
 
         <ref bean="IWantDocument-accountDescriptionTxt"/>
         <ref bean="IWantDocument-vendorDescription"/>
@@ -668,19 +667,6 @@
     <property name="label" value="Department/Unit Organization Code"/>
     <property name="shortLabel" value="Dept/Unit Org Code"/>
   </bean>
-
-  <bean id="IWantDocument-processorNetId" parent="IWantDocument-processorNetId-parentBean"/>
-  <bean id="IWantDocument-processorNetId-parentBean" abstract="true" parent="Person-principalName">
-    <property name="shortLabel" value="SSC Processor Netid"/>
-    <property name="maxLength" value="30"/>
-    <property name="required" value="false"/>
-    <property name="control">
-      <bean parent="TextControlDefinition" p:size="32"/>
-    </property>
-    <property name="summary" value="&amp;nbsp;"/>
-    <property name="name" value="processorNetId"/>
-    <property name="label" value="SSC Processor Netid"/>
-  </bean>
   
   <bean id="IWantDocument-validations" parent="IWantDocument-validations-parentBean"/>
   
@@ -771,21 +757,6 @@
                             <value>departmentLevelOrgCodeForSearch</value>
                         </list>
                     </property>
-                </bean>
-                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
-                  <property name="searchingAttribute">
-                    <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
-                      <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
-                      <property name="attributeName" value="processorNetId"/>
-                      <property name="showAttributeInSearchCriteria" value="false"/>
-                      <property name="showAttributeInResultSet" value="true"/>
-                    </bean>
-                  </property>
-                  <property name="documentValues">
-                    <list>
-                      <value>processorNetId</value>
-                    </list>
-                  </property>
                 </bean>
     		</list>
     	</property>

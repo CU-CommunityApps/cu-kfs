@@ -122,10 +122,6 @@ function loadRequestorInfo(sameAsInitiatorFieldName, requestorNetIDFieldName, re
 	}
 }
 
-function loadProcessorInfo(processorNetIDFieldName, processorNameFieldName) {
-	IWantDocumentService.getPersonData( processorNetID, dwrReply );
-}
-
 function loadDepartments(form) {
 	// set the previously selected org
 	setRecipientValue( 'previousSelectedOrg', 'document.collegeLevelOrganization' );

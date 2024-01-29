@@ -97,8 +97,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     private String completeOption;
     private boolean completed;
-    private String processorNetId;
-    private String processorName;
 
     // routing fields
     private String routingChart;
@@ -886,29 +884,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
     }
 
-    public String getProcessorNetId() {
-        return processorNetId;
-    }
-
-    public void setProcessorNetId(String processorNetId) {
-        this.processorNetId = processorNetId;
-    }
-
-    public String getProcessorNetIDForLookup() {
-        if (StringUtils.isNotBlank(processorNetId)) {
-            return KFSConstants.WILDCARD_CHARACTER + processorNetId + KFSConstants.WILDCARD_CHARACTER;
-        }
-        return processorNetId;
-    }
-
-    public String getProcessorName() {
-        return processorName;
-    }
-
-    public void setProcessorName(String processorName) {
-        this.processorName = processorName;
-    }
-    
     public String getCurrentRouteToNetId() {
         return currentRouteToNetId;
     }
