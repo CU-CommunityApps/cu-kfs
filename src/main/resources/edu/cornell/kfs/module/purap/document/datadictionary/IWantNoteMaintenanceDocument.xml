@@ -9,6 +9,7 @@
     <bean id="IWantNoteMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
           p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.IWantNote"
           p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable" p:documentTypeName="INTE"
+          p:businessRulesClass="edu.cornell.kfs.module.purap.document.validation.IWantNoteRule"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
           p:workflowAttributes-ref="IWantNoteMaintenanceDocument-workflowAttributes">
         <property name="maintainableSections">

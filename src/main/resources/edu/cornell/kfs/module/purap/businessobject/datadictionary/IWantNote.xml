@@ -42,7 +42,7 @@
     
     <bean id="IWantNote-noteText" parent="IWantNote-noteText-parentBean"/>
     <bean id="IWantNote-noteText-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="noteText" p:label="I Want Note Text" p:shortLabel="Name" p:maxLength="40"
+          p:name="noteText" p:label="I Want Note Text" p:shortLabel="Name" p:maxLength="150"
           p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="50"/>
