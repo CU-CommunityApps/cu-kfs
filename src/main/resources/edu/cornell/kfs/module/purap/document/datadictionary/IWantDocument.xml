@@ -777,7 +777,7 @@
                     <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                       <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
                       <property name="attributeName" value="processorNetId"/>
-                      <property name="showAttributeInSearchCriteria" value="false"/>
+                      <property name="showAttributeInSearchCriteria" value="true"/>
                       <property name="showAttributeInResultSet" value="true"/>
                     </bean>
                   </property>
