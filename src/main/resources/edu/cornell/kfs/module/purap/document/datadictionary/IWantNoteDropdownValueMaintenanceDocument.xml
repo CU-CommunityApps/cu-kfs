@@ -5,16 +5,16 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="IWantNoteMaintenanceDocument" parent="IWantNoteMaintenanceDocument-parentBean"/>
-    <bean id="IWantNoteMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
-          p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.IWantNote"
+    <bean id="IWantNoteDropdownValueMaintenanceDocument" parent="IWantNoteDropdownValueMaintenanceDocument-parentBean"/>
+    <bean id="IWantNoteDropdownValueMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.IWantNoteDropdownValue"
           p:maintainableClass="org.kuali.kfs.sys.document.FinancialSystemMaintainable" p:documentTypeName="INTE"
-          p:businessRulesClass="edu.cornell.kfs.module.purap.document.validation.IWantNoteRule"
+          p:businessRulesClass="edu.cornell.kfs.module.purap.document.validation.IWantNoteDropdownValueRule"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase"
-          p:workflowAttributes-ref="IWantNoteMaintenanceDocument-workflowAttributes">
+          p:workflowAttributes-ref="IWantNoteDropdownValueMaintenanceDocument-workflowAttributes">
         <property name="maintainableSections">
             <list>
-                <ref bean="IWantNoteMaintenanceDocument-EditIWantNote"/>
+                <ref bean="IWantNoteDropdownValueMaintenanceDocument-EditIWantNoteDropdownValue"/>
             </list>
         </property>
         <property name="lockingKeys">
@@ -26,10 +26,10 @@
 
     <!-- Maintenance Section Definitions -->
 
-    <bean id="IWantNoteMaintenanceDocument-EditIWantNote"
-          parent="IWantNoteMaintenanceDocument-EditIWantNote-parentBean"/>
-    <bean id="IWantNoteMaintenanceDocument-EditIWantNote-parentBean" abstract="true"
-          parent="MaintainableSectionDefinition" p:id="Edit IWantNote" p:title="Edit IWant Note">
+    <bean id="IWantNoteDropdownValueMaintenanceDocument-EditIWantNoteDropdownValue"
+          parent="IWantNoteDropdownValueMaintenanceDocument-EditIWantNoteDropdownValue-parentBean"/>
+    <bean id="IWantNoteDropdownValueMaintenanceDocument-EditIWantNoteDropdownValue-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="EditIWantNoteDropdownValue" p:title="Edit IWant Note Dropdown Value">
         <property name="maintainableItems">
             <list>
                 <bean parent="MaintainableFieldDefinition" p:name="noteIdentifier" p:required="true" p:unconditionallyReadOnly="true"/>
@@ -40,5 +40,5 @@
     </bean>
 
     <!-- workflow attributes -->
-    <alias alias="IWantNoteMaintenanceDocument-workflowAttributes" name="EmptyWorkflowAttributes"/>
+    <alias alias="IWantNoteDropdownValueMaintenanceDocument-workflowAttributes" name="EmptyWorkflowAttributes"/>
 </beans>

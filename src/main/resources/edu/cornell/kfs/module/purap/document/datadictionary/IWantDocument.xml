@@ -566,7 +566,7 @@
     <property name="maxLength" value="100"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="SelectControlDefinition" p:valuesFinder-ref="iWantNoteValuesFinder" p:includeKeyInLabel="false"/>
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="iWantNoteDropdownValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
   <bean id="IWantDocument-totalDollarAmount" parent="IWantDocument-totalDollarAmount-parentBean"/>
@@ -858,7 +858,7 @@
     <bean id="favoriteAccountValuesFinder"
           class="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder" 
           p:businessObjectService-ref="grl.businessObjectService"/>
-    <bean id="iWantNoteValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.IWantNoteValuesFinder"
+    <bean id="iWantNoteDropdownValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.IWantNoteDropdownValuesFinder"
           p:keyValuesService-ref="grl.keyValuesService"/>
           
 </beans>

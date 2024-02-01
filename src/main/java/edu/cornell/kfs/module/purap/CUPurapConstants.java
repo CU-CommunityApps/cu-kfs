@@ -147,7 +147,7 @@ public class CUPurapConstants {
     public static final String AMOUNT = "AMOUNT";
     public static final String PERCENT = "PERCENT";
     
-    public static final String CU_PUR_IWNT_NTE_TXT_ID_SEQ = "CU_PUR_IWNT_NTE_TXT_ID_SEQ";
+    public static final String CU_PUR_IWNT_NTE_DRPDN_VAL_ID_SEQ = "CU_PUR_IWNT_NTE_DRPDN_VAL_ID_SEQ";
     
     //KFSPTS-1458:  
     //This email address is ONLY used when the system cannot retrieve or find parameter

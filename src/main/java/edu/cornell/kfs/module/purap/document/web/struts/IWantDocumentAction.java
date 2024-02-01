@@ -931,11 +931,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
         // If the note text is blank, set the attachment description as the text. Otherwise, concatenate both to form the text.
         if(StringUtils.isBlank(iWantDocumentForm.getIWantDocument().getNoteTextOption())) {
-        if (StringUtils.isBlank(note.getNoteText())) {
-            note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription());
-        } else {
-            note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
-        }
+            if (StringUtils.isBlank(note.getNoteText())) {
+                note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription());
+            } else {
+                note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
+            }
         }
         else {
             note.setNoteText(iWantDocumentForm.getIWantDocument().getNoteTextOption());

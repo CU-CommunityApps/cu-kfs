@@ -4,7 +4,7 @@
         <documentType>
             <name>INTE</name>
             <parent>FSSM</parent>
-            <label>I Want Note</label>
+            <label>I Want Note Dropdown Value</label>
         </documentType>
     </documentTypes>
 </data>

@@ -8,27 +8,28 @@ import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.service.KeyValuesService;
 
-import edu.cornell.kfs.module.purap.businessobject.IWantNote;
+import edu.cornell.kfs.module.purap.businessobject.IWantNoteDropdownValue;
+import edu.emory.mathcs.backport.java.util.Collections;
 
-public class IWantNoteValuesFinder extends KeyValuesBase {
+public class IWantNoteDropdownValuesFinder extends KeyValuesBase {
 
     private KeyValuesService keyValuesService;
 
     @Override
     public List<KeyValue> getKeyValues() {
-        List<IWantNote> noteTexts = (List<IWantNote>) keyValuesService.findAll(IWantNote.class);
+        List<IWantNoteDropdownValue> noteTexts = (List<IWantNoteDropdownValue>) keyValuesService.findAll(IWantNoteDropdownValue.class);
         if (noteTexts == null) {
             noteTexts = new ArrayList<>(0);
         } else {
             noteTexts = new ArrayList<>(noteTexts);
         }
 
-        noteTexts.sort(new IWantNoteComparator());
+        Collections.sort(noteTexts);
 
         final List<KeyValue> labels = new ArrayList<>();
         labels.add(new ConcreteKeyValue("", ""));
 
-        for (final IWantNote iWantNote : noteTexts) {
+        for (final IWantNoteDropdownValue iWantNote : noteTexts) {
             if (iWantNote.isActive()) {
                 labels.add(new ConcreteKeyValue(iWantNote.getNoteText(), iWantNote.getNoteText()));
             }
