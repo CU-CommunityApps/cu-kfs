@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.businessobject.options;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
@@ -9,7 +10,6 @@ import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
 import org.kuali.kfs.krad.service.KeyValuesService;
 
 import edu.cornell.kfs.module.purap.businessobject.IWantNoteDropdownValue;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class IWantNoteDropdownValuesFinder extends KeyValuesBase {
 
