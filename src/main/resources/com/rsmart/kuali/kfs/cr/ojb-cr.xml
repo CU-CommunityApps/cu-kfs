@@ -33,7 +33,6 @@
     	<field-descriptor name="bankCode" column="BNK_CD" jdbc-type="VARCHAR" />
     	<field-descriptor name="cancelDocHdrId" column="CNCL_DOC_HDR_ID" jdbc-type="VARCHAR" />
     	<field-descriptor name="versionNumber" locking="true" column="VER_NBR" jdbc-type="BIGINT" />
-    	<field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
     	
     	<reference-descriptor name="bank" class-ref="org.kuali.kfs.sys.businessobject.Bank" auto-retrieve="true" auto-update="none" auto-delete="none">
         	<foreignkey field-ref="bankCode" />

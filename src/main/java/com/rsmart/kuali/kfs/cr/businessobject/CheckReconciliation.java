@@ -60,8 +60,6 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
     
     
     private Bank bank;
-
-    private boolean active;
     
     /**
      * Constructs a CheckBase business object.
@@ -210,13 +208,5 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
 	public void setCancelDocHdrId(String cancelDocHdrId) {
 		this.cancelDocHdrId = cancelDocHdrId;
 	}
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 
 }

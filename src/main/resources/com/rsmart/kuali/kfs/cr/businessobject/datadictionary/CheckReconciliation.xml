@@ -29,7 +29,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <ref bean="CheckReconciliation-lastUpdatedTimestamp" />
         <ref bean="CheckReconciliation-versionNumber" />
         <ref bean="CheckReconciliation-glTransIndicator" />
-        <ref bean="CheckReconciliation-active" />
       </list>
     </property>
         <property name="relationships" >
@@ -245,11 +244,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 
   <bean id="CheckReconciliation-versionNumber-parentBean" abstract="true" parent="GenericAttributes-versionNumber">
   </bean>
-
-  <bean id="CheckReconciliation-active" parent="CheckReconciliation-active-parentBean"/>
-  <bean id="CheckReconciliation-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
-        p:name="active" p:label="Active" p:shortLabel="Active">
-  </bean>
   
   <!-- Business Object Lookup Definition -->
 
@@ -281,8 +275,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
               p:attributeName="status" />
         <bean parent="FieldDefinition"
               p:attributeName="sourceCode" />
-        <bean parent="FieldDefinition"
-              p:attributeName="active" />
       </list>
     </property>
     <property name="resultFields" >
