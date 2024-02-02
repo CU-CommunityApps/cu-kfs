@@ -14,7 +14,12 @@
                 <tr>
                     <td height="30" colspan="4" class="neutral"
                         style="color: blue; font-family:Verdana, Verdana, serif; font-size: 12px;font-style: italic">
-                        <b>NOTE:</b> Please select the college and department for which you are entering this request
+                        <b>NOTE:</b> Please select the college and department for which you are entering this request.
+                        <ul>
+                            <li>Preset values are your saved default college and department.</li>
+                            <li>Press "Reset Initiator Defaults" if you wish to have those defaults reset to your current Person data values.</li>
+                            <li>Check "Set as Default" if you want your defaults to be set to the values presently displayed when you Submit.</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>
@@ -38,15 +43,39 @@
                             <html:optionsCollection property="deptOrgKeyLabels" label="value" value="key"/>
                         </html:select>
                     </td>
+                </tr>
+                <tr>
+                    <td align="right" valign="middle" width="10%" class="neutral">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" valign="middle" class="neutral">
+                        &nbsp;
+                    </td>
                     <th class="right">
                         <kul:htmlAttributeLabel attributeEntry="${documentAttributes.useCollegeAndDepartmentAsDefault}"/>
                     </th>
-                    <td align="left" valign="middle" width="10%" class="neutral">
+                    <td align="left" valign="middle" class="neutral">
                         <kul:htmlControlAttribute
                                 attributeEntry="${documentAttributes.useCollegeAndDepartmentAsDefault}"
                                 property="document.useCollegeAndDepartmentAsDefault"
                                 readOnly="${not fullEntryMode}"
                                 tabindexOverride="${tabindexOverrideBase + 0}"/>
+                    </td>
+                    <td>
+                        <html:submit property="methodToCall.resetInitiatorDefaultCollegeAndDepartment"
+                                title="Reset Initator College-Department"
+                                alt="Reset Initiator College-Department"
+                                styleClass="btn btn-default"
+                                disabled="${not fullEntryMode}"
+                                value="Reset Initiator Defaults"/>
+                    </td>
+                    <th align="right" valign="middle" width="10%" class="neutral">
+                        &nbsp;
+                    </th>
+                    <td align="left" valign="middle" width="10%" class="neutral">
+                        &nbsp;
                     </td>
                 </tr>
             </table>

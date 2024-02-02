@@ -331,9 +331,15 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
         if (iWantDocument != null && StringUtils.isEmpty(iWantDocument.getCollegeLevelOrganization())) {
 
-            Person currentUser = GlobalVariables.getUserSession().getPerson();
+            String principalIdToUseForCollegeDeptLookup = null;
+            if (StringUtils.isNotBlank(iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId())) {
+                principalIdToUseForCollegeDeptLookup = iWantDocument.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+            } else {
+                Person currentUser = GlobalVariables.getUserSession().getPerson();
+                principalIdToUseForCollegeDeptLookup = currentUser.getPrincipalId();
+            }
 
-            Entity entityInfo = KimApiServiceLocator.getIdentityService().getEntityByPrincipalId(currentUser.getPrincipalId());
+            Entity entityInfo = KimApiServiceLocator.getIdentityService().getEntityByPrincipalId(principalIdToUseForCollegeDeptLookup);
 
             if (ObjectUtils.isNotNull(entityInfo)) {
                 if (ObjectUtils.isNotNull(entityInfo.getEmploymentInformation()) && entityInfo.getEmploymentInformation().size() > 0) {
@@ -383,6 +389,26 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return mapping.findForward("refresh");
     }
     
+    public ActionForward resetInitiatorDefaultCollegeAndDepartment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = null;
+
+        if (iWantForm != null && iWantForm.getDocument() != null) {
+
+            iWantDocument = (IWantDocument) iWantForm.getDocument();
+
+            iWantDocument.setCollegeLevelOrganization(KFSConstants.EMPTY_STRING);
+            iWantDocument.setDepartmentLevelOrganization(KFSConstants.EMPTY_STRING);
+
+            setCollegeAndDepartmentBasedOnPrimaryDepartment(iWantForm);
+            iWantDocument.setUseCollegeAndDepartmentAsDefault(true);
+        }
+
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+
     public ActionForward switchToFullPagePresentation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
