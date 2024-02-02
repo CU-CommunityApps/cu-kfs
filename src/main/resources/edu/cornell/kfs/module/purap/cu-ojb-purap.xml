@@ -341,6 +341,7 @@
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
         <field-descriptor name="noteText" column="NTE_TXT" jdbc-type="VARCHAR" index="true"/>
         <field-descriptor name="active" column="ROW_ACTV_IND" jdbc-type="VARCHAR" index="true" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     </class-descriptor>
     
 
