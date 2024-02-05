@@ -75,7 +75,7 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
         
         //String sql = "SELECT cr.cr_id FROM pdp_pmt_grp_t p, fp_bank_t b, cu_cr_check_recon_t cr where p.bnk_cd = b.bnk_cd and p.disb_typ_cd = 'CHCK' and cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr and p.lst_updt_ts > cr.lst_updt_ts and p.pmt_stat_cd in ('CDIS','CPAY') and gl_trans_ind = 'N'";
         // removed condition p.lst_updt_ts > cr.lst_updt_ts. Checks are by default set to issued status on check recon table. This will update them to cancelled if they are not move to gl.
-        String sql = "SELECT cr.cr_id FROM pdp_pmt_grp_t p, fp_bank_t b, cu_cr_check_recon_t cr where cr.active_ind='Y' and p.bnk_cd = b.bnk_cd and p.disb_typ_cd = 'CHCK' and cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr and  p.pmt_stat_cd in ('CDIS','CPAY') and gl_trans_ind = 'N'";
+        String sql = "SELECT cr.cr_id FROM pdp_pmt_grp_t p, fp_bank_t b, cu_cr_check_recon_t cr where cr.actv_ind='Y' and p.bnk_cd = b.bnk_cd and p.disb_typ_cd = 'CHCK' and cr.check_nbr = p.disb_nbr AND cr.bank_account_nbr = b.bnk_acct_nbr and  p.pmt_stat_cd in ('CDIS','CPAY') and gl_trans_ind = 'N'";
         
         try {
             Connection c = getPersistenceBroker(true).serviceConnectionManager().getConnection();
