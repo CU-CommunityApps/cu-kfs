@@ -282,7 +282,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <bean parent="FieldDefinition"
               p:attributeName="sourceCode" />
         <bean parent="FieldDefinition"
-              p:attributeName="active" />
+              p:attributeName="active"
+              p:defaultValue="Y" />
       </list>
     </property>
     <property name="resultFields" >
@@ -307,6 +308,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
               p:attributeName="amount" />
         <bean parent="FieldDefinition"
               p:attributeName="status" />
+        <bean parent="FieldDefinition"
+              p:attributeName="active" />
       </list>
     </property>
   </bean>
