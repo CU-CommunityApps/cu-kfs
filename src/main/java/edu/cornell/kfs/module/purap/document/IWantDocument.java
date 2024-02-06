@@ -94,6 +94,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     private String attachmentDescription;
     private String noteLabel;
+    private String noteTextOption;
 
     private String completeOption;
     private boolean completed;
@@ -1531,6 +1532,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     
     public String getDvDocumentLabel() throws WorkflowException{
         return SpringContext.getBean(DataDictionaryService.class).getDocumentLabelByTypeName("DV");     
+    }
+
+    public String getNoteTextOption() {
+        return noteTextOption;
+    }
+
+    public void setNoteTextOption(String noteTextOption) {
+        this.noteTextOption = noteTextOption;
     }
 
 }
