@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UncheckedIOException;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -196,20 +195,10 @@ public class PaymentWorksWebServiceCallsServiceImpl extends DisposableClientServ
     }
     
     private Response buildJsonResponse(URI uri, String jsonString) {
-        /*
-         * @todo remove this
-         */
-        PaymentWorksWebServiceCallsServiceImpl.<RuntimeException>throwException(new SocketTimeoutException(), null);
         Invocation request = buildJsonClientRequest(getClient(), uri, jsonString);
         Response response = request.invoke();
         response.bufferEntity();
         return response;
-    }
-    
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void throwException(Throwable exception, Object dummy) throws T
-    {
-        throw (T) exception;
     }
     
     private Invocation buildJsonClientRequest(Client client, URI uri, String jsonString) {
