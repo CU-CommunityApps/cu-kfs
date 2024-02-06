@@ -153,6 +153,17 @@
                         <td>&nbsp;</td>
                     </c:if>
                 </tr>
+                <tr class="new-note">
+                    <td class="infoline">&nbsp;</td>
+                    <td class="infoline">&nbsp;</td>
+                    <td class="infoline">&nbsp;</td>
+                    <td class="infoline" colspan="${noteColSpan - 3}">
+                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
+                        <br/>
+                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
+                                                property="document.noteTextOption"/>
+                    </td>
+                </tr>
             </c:if>
 
             <c:if test="${not empty documentNotes}">
