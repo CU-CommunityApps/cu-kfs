@@ -18,13 +18,19 @@ public class PaymentWorksUploadSuppliersStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        if (paymentWorksBatchUtilityService.isPaymentWorksIntegrationProcessingEnabled()) {
-            paymentWorksUploadSuppliersService.uploadPreparedVendorsToPaymentWorks();
-        } else {
-            LOG.info("execute: KFS System Parameter '" + PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND
-                    + "' is NOT active. The value of this KFS System parameter must be changed to turn on the batch jobs integration to PaymentWorks.");
+        try {
+            if (paymentWorksBatchUtilityService.isPaymentWorksIntegrationProcessingEnabled()) {
+                paymentWorksUploadSuppliersService.uploadPreparedVendorsToPaymentWorks();
+            } else {
+                LOG.info("execute: KFS System Parameter '" + PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND
+                        + "' is NOT active. The value of this KFS System parameter must be changed to turn on the batch jobs integration to PaymentWorks.");
+            }
+            return true;
+        } catch (RuntimeException e) {
+            LOG.error("execute, had an error processing payment works", e);
+            return false;
         }
-        return true;
+        
     }
 
     public void setPaymentWorksBatchUtilityService(PaymentWorksBatchUtilityService paymentWorksBatchUtilityService) {
