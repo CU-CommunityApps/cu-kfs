@@ -1,6 +1,7 @@
 package edu.cornell.kfs.pmw.batch;
 
 import java.util.Date;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.batch.AbstractStep;
@@ -17,13 +18,18 @@ public class PaymentWorksNewVendorCreateKfsAchStep extends AbstractStep {
     
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        if (getPaymentWorksBatchUtilityService().isPaymentWorksIntegrationProcessingEnabled()) {
-            getPaymentWorksNewVendorPayeeAchService().processKfsPayeeAchAccountsForApprovedAndDisapprovedPmwNewVendors();
-        } else {
-            LOG.info("execute: KFS System Parameter '" + PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND
-                     + "' is NOT active. The value of this KFS System parameter must be changed to turn on the batch jobs integration to PaymentWorks.");
+        try {
+            if (getPaymentWorksBatchUtilityService().isPaymentWorksIntegrationProcessingEnabled()) {
+                getPaymentWorksNewVendorPayeeAchService().processKfsPayeeAchAccountsForApprovedAndDisapprovedPmwNewVendors();
+            } else {
+                LOG.info("execute: KFS System Parameter '" + PaymentWorksParameterConstants.PMW_INTEGRATION_IS_ACTIVE_IND
+                         + "' is NOT active. The value of this KFS System parameter must be changed to turn on the batch jobs integration to PaymentWorks.");
+            }
+            return true;
+        } catch (RuntimeException e) {
+            LOG.error("execute, had an error processing payment works", e);
+            return false;
         }
-        return true;
     }
 
     public PaymentWorksNewVendorPayeeAchService getPaymentWorksNewVendorPayeeAchService() {
