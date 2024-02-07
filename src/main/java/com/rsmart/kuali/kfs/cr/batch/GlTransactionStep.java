@@ -82,7 +82,8 @@ public class GlTransactionStep extends AbstractStep {
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.STOP);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
-        
+        fieldValues.put("active", true);
+
         records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
             
         for(CheckReconciliation cr : records) {
@@ -131,7 +132,8 @@ public class GlTransactionStep extends AbstractStep {
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.CANCELLED);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
-        
+        fieldValues.put("active", true);
+
         records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
             
         for(CheckReconciliation cr : records) {
@@ -188,7 +190,8 @@ public class GlTransactionStep extends AbstractStep {
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.VOIDED);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
-        
+        fieldValues.put("active", true);
+
         records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
             
         for(CheckReconciliation cr : records) {
@@ -239,7 +242,8 @@ public class GlTransactionStep extends AbstractStep {
         fieldValues.put("glTransIndicator", "N");
         fieldValues.put("status", CRConstants.STALE);
         fieldValues.put("sourceCode", CRConstants.PDP_SRC);
-        
+        fieldValues.put("active", true);
+
         records = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
             
         for(CheckReconciliation cr : records) {

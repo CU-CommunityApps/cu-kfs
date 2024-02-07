@@ -109,7 +109,8 @@ public class CheckReconciliationRule extends MaintenanceDocumentRuleBase {
         Map<String,Object> fieldValues = new HashMap<String,Object>();
         fieldValues.put("checkNumber", newCheckReconciliation.getCheckNumber());
         fieldValues.put("bankAccountNumber", newCheckReconciliation.getBankAccountNumber());
-        
+        fieldValues.put("active", true);
+
         Collection<CheckReconciliation> checks = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
         
         boolean isEdit = document.isEdit();
