@@ -1107,7 +1107,8 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
     private CheckReconciliation getCheckReconciliation(KualiInteger checkNumber, String bankAccountNumber) {
         Map<String,Object> fieldValues = new HashMap<String,Object>();
         fieldValues.put("checkNumber", checkNumber);
-        fieldValues.put("bankAccountNumber", bankAccountNumber);  
+        fieldValues.put("bankAccountNumber", bankAccountNumber);
+        fieldValues.put("active", true);
         
         Collection<CheckReconciliation> checks = businessObjectService.findMatching(CheckReconciliation.class, fieldValues);
         
