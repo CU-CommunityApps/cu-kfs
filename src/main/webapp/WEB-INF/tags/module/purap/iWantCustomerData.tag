@@ -5,6 +5,8 @@
 
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
 <c:set var="tabindexOverrideBase" value="30"/>
+<c:set var="userMatchesInitiator" value="${KualiForm.userMatchesInitiator}"/>
+<c:set var="docIsInitiatedOrSaved" value="${KualiForm.docIsInitiatedOrSaved}"/>
 
 <h3>Organization Information</h3>
 <table class="datatable" summary="Customer Data">
@@ -60,7 +62,7 @@
                         <kul:htmlControlAttribute
                                 attributeEntry="${documentAttributes.useCollegeAndDepartmentAsDefault}"
                                 property="document.useCollegeAndDepartmentAsDefault"
-                                readOnly="${not fullEntryMode}"
+                                readOnly="${not userMatchesInitiator or not docIsInitiatedOrSaved}"
                                 tabindexOverride="${tabindexOverrideBase + 0}"/>
                     </td>
                     <td>
@@ -68,7 +70,7 @@
                                 title="Reset Initator College-Department"
                                 alt="Reset Initiator College-Department"
                                 styleClass="btn btn-default"
-                                disabled="${not fullEntryMode}"
+                                disabled="${not userMatchesInitiator or not docIsInitiatedOrSaved}"
                                 value="Reset Initiator Defaults"/>
                     </td>
                     <th align="right" valign="middle" width="10%" class="neutral">

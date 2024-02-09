@@ -295,10 +295,37 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 }
             }
             setupDocumentMessages(documentForm.getStep());
+
+            documentForm.setDocIsInitiatedOrSaved(determineDocStatusForCollegeDepartmentButtons(iWantDoc));
+            documentForm.setUserMatchesInitiator(userIsInitiator(iWantDoc));
         }
 
-
         return actionForward;
+    }
+
+    private boolean determineDocStatusForCollegeDepartmentButtons(IWantDocument iWantDocument) {
+        if (iWantDocument.getDocumentHeader().getWorkflowDocument().isInitiated()
+                | iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean userIsInitiator(IWantDocument iWantDocument) {
+        String documentInitiatorNetid = iWantDocument.getInitiatorNetID();
+
+        if (StringUtils.isBlank(documentInitiatorNetid)) {
+            return true;
+        }
+
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        String currentUserNetId = currentUser.getPrincipalName();
+
+        if (StringUtils.isNotBlank(currentUserNetId)
+                && StringUtils.equalsIgnoreCase(documentInitiatorNetid, currentUserNetId)) {
+            return true;
+        }
+        return false;
     }
 
     private void setupDocumentMessages(String step) {
