@@ -247,6 +247,31 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         return actionForward;
     }
 
+    private boolean determineDocStatusForCollegeDepartmentButtons(IWantDocument iWantDocument) {
+        if (iWantDocument.getDocumentHeader().getWorkflowDocument().isInitiated()
+                | iWantDocument.getDocumentHeader().getWorkflowDocument().isSaved()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean userIsInitiator(IWantDocument iWantDocument) {
+        String documentInitiatorNetid = iWantDocument.getInitiatorNetID();
+
+        if (StringUtils.isBlank(documentInitiatorNetid)) {
+            return true;
+        }
+
+        Person currentUser = GlobalVariables.getUserSession().getPerson();
+        String currentUserNetId = currentUser.getPrincipalName();
+
+        if (StringUtils.isNotBlank(currentUserNetId)
+                && StringUtils.equalsIgnoreCase(documentInitiatorNetid, currentUserNetId)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      *
      * @see org.kuali.kfs.kns.web.struts.action.KualiAction#execute(org.apache.struts.action.ActionMapping,
@@ -295,8 +320,11 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 }
             }
             setupDocumentMessages(documentForm.getStep());
-        }
 
+            //Set flags used to determine "Set as Default" and "Reset Initiator Defaults" usability on the document.
+            documentForm.setDocIsInitiatedOrSaved(determineDocStatusForCollegeDepartmentButtons(iWantDoc));
+            documentForm.setUserMatchesInitiator(userIsInitiator(iWantDoc));
+        }
 
         return actionForward;
     }

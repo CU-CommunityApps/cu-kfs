@@ -32,6 +32,9 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     protected List<KeyValue> deptOrgKeyLabels;
     protected String previousSelectedOrg = KFSConstants.EMPTY_STRING;
 
+    protected boolean userMatchesInitiator;
+    protected boolean docIsInitiatedOrSaved;
+
     public IWantDocumentForm() {
         super();
         setNewIWantItemLine(new IWantItem());
@@ -39,6 +42,8 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         this.setDeptOrgKeyLabels(new ArrayList<KeyValue>());
         editingMode = new HashMap<Object,Object>();
         presentationMode = CUPurapConstants.IWantPresentationModes.MULTIPLE_PAGE_MODE;
+        userMatchesInitiator = false;
+        docIsInitiatedOrSaved = false;
     }
 
     @Override
@@ -369,4 +374,21 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     public void setPresentationMode(String presentationMode) {
         this.presentationMode = presentationMode;
     }
+
+    public void setUserMatchesInitiator(boolean userMatchesInitiator) {
+        this.userMatchesInitiator = userMatchesInitiator;
+    }
+
+    public boolean isUserMatchesInitiator() {
+        return userMatchesInitiator;
+    }
+
+    public boolean isDocIsInitiatedOrSaved() {
+        return docIsInitiatedOrSaved;
+    }
+
+    public void setDocIsInitiatedOrSaved(boolean docIsInitiatedOrSaved) {
+        this.docIsInitiatedOrSaved = docIsInitiatedOrSaved;
+    }
+
 }
