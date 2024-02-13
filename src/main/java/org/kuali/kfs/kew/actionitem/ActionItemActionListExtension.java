@@ -36,6 +36,7 @@ import java.util.Map;
 /**
  * ====
  * CU Customization: Added a preference for controlling the visibility of the action list last modified date column.
+ *                   Also modified the "delegatorName" property to use the potentially masked Person name.
  * ====
  */
 
@@ -148,7 +149,7 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
             if (getDelegatorPrincipalId() != null) {
                 final Person person = SpringContext.getBean(PersonService.class).getPerson(getDelegatorPrincipalId());
                 if (person != null) {
-                    delegatorName = person.getName();
+                    delegatorName = person.getNameMaskedIfNecessary();
                 }
             }
             if (getDelegatorGroupId() != null) {

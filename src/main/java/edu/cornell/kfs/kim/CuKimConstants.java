@@ -25,6 +25,7 @@ public final class CuKimConstants {
         public static final String FACULTY = "FCLTY";
         public static final String STAFF = "STAFF";
         public static final String STUDENT = "STDNT";
+        public static final String NONE = "NONE";
     }
 
     public static final class AffiliationStatuses {
