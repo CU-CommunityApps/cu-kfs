@@ -160,7 +160,7 @@ public class KimFeedEdwDaoJdbc extends PlatformAwareDaoBaseJdbc implements KimFe
     }
 
     private EdwPerson mapToPersonDto(ResultSet rs, int rowNum) throws SQLException {
-        LOG.info("mapToPersonDto, Generating DTO for result row index {}", rowNum);
+        LOG.debug("mapToPersonDto, Generating DTO for result row index {}", rowNum);
         EdwPerson edwPerson = new EdwPerson();
         for (EdwColumn edwColumn : EdwColumn.values()) {
             String columnValue = rs.getString(edwColumn.getLabel());

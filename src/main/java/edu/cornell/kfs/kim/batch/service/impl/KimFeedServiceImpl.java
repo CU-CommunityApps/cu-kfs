@@ -1,6 +1,7 @@
 package edu.cornell.kfs.kim.batch.service.impl;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -44,6 +45,10 @@ public class KimFeedServiceImpl implements KimFeedService {
     private static final int ID_CHUNK_SIZE = 500;
     private static final String DISABLED_NETID_PREFIX = "DIS-";
     private static final String DISABLED_NETID_SEARCH_PATTERN = DISABLED_NETID_PREFIX + "%";
+    private static final String UPPER_FUNC_FORMAT = "UPPER({0})";
+
+    private static final List<String> AFFILIATION_STATUS_PRIORITIES = List.of(
+            AffiliationStatuses.ACTIVE, AffiliationStatuses.INACTIVE, AffiliationStatuses.RETIRED);
 
     private KimFeedEdwDao kimFeedEdwDao;
     private PersonService personService;
@@ -133,7 +138,7 @@ public class KimFeedServiceImpl implements KimFeedService {
         if (!StringUtils.equals(edwPerson.getCuPersonId(), kfsPerson.getPrincipalId())
                 || !StringUtils.equals(edwPerson.getCuPersonId(), kfsPerson.getEntityId())) {
             throw new RuntimeException("KFS user with principal ID " + kfsPerson.getPrincipalId()
-                        + "and entity ID " + kfsPerson.getEntityId() + " does not match EDW row " + edwPerson);
+                        + " and entity ID " + kfsPerson.getEntityId() + " does not match EDW row " + edwPerson);
         }
     }
 
@@ -163,8 +168,20 @@ public class KimFeedServiceImpl implements KimFeedService {
         kfsPerson.setFacultyAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getFacultyAffil));
         kfsPerson.setStaffAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getStaffAffil));
         kfsPerson.setStudentAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getStudentAffil));
-        kfsPerson.setPrimaryDepartmentCode(getPrimaryDepartmentCode(edwPerson));
-        kfsPerson.setEmployeeId(edwPerson.getEmployeeId());
+
+        String primaryEmploymentAffiliation = getPrimaryEmploymentAffiliation(edwPerson);
+        if (StringUtils.isNotBlank(primaryEmploymentAffiliation)) {
+            kfsPerson.setPrimaryDepartmentCode(getPrimaryDepartmentCode(edwPerson));
+            kfsPerson.setEmployeeId(edwPerson.getEmployeeId());
+            kfsPerson.setEmployeeStatusCode(
+                    getPrimaryEmploymentAffiliationStatus(edwPerson, primaryEmploymentAffiliation));
+            kfsPerson.setEmployeeTypeCode(KFSConstants.PROFESSIONAL_EMPLOYEE_TYPE_CODE);
+        } else {
+            kfsPerson.setPrimaryDepartmentCode(null);
+            kfsPerson.setEmployeeId(null);
+            kfsPerson.setEmployeeStatusCode(null);
+            kfsPerson.setEmployeeTypeCode(null);
+        }
     }
 
     private String convertPrimaryAffiliationCode(EdwPerson edwPerson) {
@@ -185,8 +202,7 @@ public class KimFeedServiceImpl implements KimFeedService {
             case EdwAffiliations.STUDENT:
                 return KfsAffiliations.STUDENT;
             default:
-                throw new RuntimeException("Invalid primary affiliation of '" + edwAffiliation
-                        + "' was detected for " + edwPerson);
+                return KfsAffiliations.NONE;
         }
     }
 
@@ -201,6 +217,43 @@ public class KimFeedServiceImpl implements KimFeedService {
             default:
                 throw new RuntimeException("Found an invalid affiliation status of '" + affiliationStatus
                         + "' on " + edwPerson);
+        }
+    }
+
+    private String getPrimaryEmploymentAffiliation(EdwPerson edwPerson) {
+        String edwAffiliation = StringUtils.defaultString(edwPerson.getPrimaryAffiliation());
+        switch (edwAffiliation) {
+            case EdwAffiliations.AFFILIATE:
+                return KfsAffiliations.AFFILIATE;
+            case EdwAffiliations.FACULTY:
+                return KfsAffiliations.FACULTY;
+            case EdwAffiliations.STAFF:
+                return KfsAffiliations.STAFF;
+            default:
+                for (String affiliationStatus : AFFILIATION_STATUS_PRIORITIES) {
+                    if (StringUtils.equals(edwPerson.getFacultyAffil(), affiliationStatus)) {
+                        return KfsAffiliations.FACULTY;
+                    } else if (StringUtils.equals(edwPerson.getStaffAffil(), affiliationStatus)) {
+                        return KfsAffiliations.STAFF;
+                    } else if (StringUtils.equals(edwPerson.getAffiliateAffil(), affiliationStatus)) {
+                        return KfsAffiliations.AFFILIATE;
+                    }
+                }
+                return null;
+        }
+    }
+
+    private String getPrimaryEmploymentAffiliationStatus(EdwPerson edwPerson, String primaryEmploymentAffiliation) {
+        switch (primaryEmploymentAffiliation) {
+            case KfsAffiliations.AFFILIATE:
+                return getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getAffiliateAffil);
+            case KfsAffiliations.FACULTY:
+                return getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getFacultyAffil);
+            case KfsAffiliations.STAFF:
+                return getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getStaffAffil);
+            default :
+                throw new RuntimeException("Invalid primary employment affiliation '" + primaryEmploymentAffiliation
+                        + "' was detected for " + edwPerson);
         }
     }
 
@@ -314,8 +367,9 @@ public class KimFeedServiceImpl implements KimFeedService {
             List<String> subIds = principalIds.subList(startIndex, endIndex);
             GenericQueryResults<Person> results = personService.findPeople(QueryByCriteria.Builder.fromPredicates(
                     PredicateFactory.in(KIMPropertyConstants.Principal.PRINCIPAL_ID, subIds),
-                    PredicateFactory.notLikeIgnoreCase(
-                            KIMPropertyConstants.Principal.PRINCIPAL_NAME, DISABLED_NETID_SEARCH_PATTERN)));
+                    CuPredicateFactory.notLike(
+                            getUppercasedPropertyExpression(KIMPropertyConstants.Principal.PRINCIPAL_NAME),
+                            DISABLED_NETID_SEARCH_PATTERN)));
             List<Person> usersToUpdate = results.getResults();
             if (!usersToUpdate.isEmpty()) {
                 for (Person person : usersToUpdate) {
@@ -326,6 +380,10 @@ public class KimFeedServiceImpl implements KimFeedService {
             }
             startIndex += ID_CHUNK_SIZE;
         } while (startIndex < principalIds.size());
+    }
+
+    private String getUppercasedPropertyExpression(String propertyName) {
+        return MessageFormat.format(UPPER_FUNC_FORMAT, propertyName);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
