@@ -51,7 +51,7 @@
 
 <c:set var="oldUserNameFieldName" value="${!empty userNameFieldName ? userNameFieldName : ''}"/>
 
-<c:if test="${!empty userNameFieldName && !empty userIdFieldName && fn:endsWith(userNameFieldName, '.name') && fn:endsWith(userIdFieldName, '.principalName')}">
+<c:if test="${!empty userNameFieldName && fn:endsWith(userNameFieldName, '.name') && !fn:contains(userNameFieldName, 'HocRoutePerson')}">
     <c:set var="userNameFieldName" value="${fn:replace(userNameFieldName, '.name', '.nameMaskedIfNecessary')}"/>
 </c:if>
 
@@ -60,11 +60,11 @@
 </c:if>
 
 <c:if test="${!empty fieldConversions}">
-    <c:set var="fieldConversions" value="${kfsfunc:convertPersonFieldConversionsForMasking(fieldConversions, oldUserNameFieldName, userNameFieldName)}"/>
+    <c:set var="fieldConversions" value="${kfsfunc:convertPersonFieldConversionsForMasking(fieldConversions)}"/>
 </c:if>
 
 <c:if test="${!empty lookupParameters}">
-    <c:set var="lookupParameters" value="${kfsfunc:convertPersonLookupParametersForMasking(lookupParameters, oldUserNameFieldName, userNameFieldName)}"/>
+    <c:set var="lookupParameters" value="${kfsfunc:convertPersonLookupParametersForMasking(lookupParameters)}"/>
 </c:if>
 
 <%-- End CU Customization --%>
@@ -85,12 +85,14 @@
     <c:if test="${hasErrors}">
      <kul:fieldShowErrorIcon />
     </c:if>
+    <%-- CU Customization: Set property to indicate that the Person field references were already adjusted. --%>
     <kul:lookup boClassName="org.kuali.kfs.kim.impl.identity.Person"
           fieldConversions="${fieldConversions}"
           lookupParameters="${lookupParameters}"
           fieldLabel="${label}"
           referencesToRefresh="${referencesToRefresh}"
-          anchor="${currentTabIndex}" />
+          anchor="${currentTabIndex}"
+          alreadyAdjustedForPerson="${true}"/>
   </c:otherwise>
 </c:choose>
 <c:choose>

@@ -39,6 +39,7 @@ public final class CuWebUtilities {
     );
 
     private static final String NOT_FOUND_MESSAGE = "not found";
+    private static final String AD_HOC_ROUTE_PERSON_PROPERTY_FRAGMENT = "HocRoutePerson";
 
     private CuWebUtilities() {
         throw new UnsupportedOperationException("do not call");
@@ -55,50 +56,46 @@ public final class CuWebUtilities {
         }
     }
 
-    public static String convertPersonFieldConversionsForMasking(String fieldConversions,
-            String oldPersonNameField, String newPersonNameField) {
+    public static String convertPersonFieldConversionsForMasking(String fieldConversions) {
         if (StringUtils.isBlank(fieldConversions)) {
             return fieldConversions;
         }
         return Arrays.stream(StringUtils.split(fieldConversions, KFSConstants.COMMA))
-                .map(fieldConversion -> updateFieldConversion(fieldConversion, oldPersonNameField, newPersonNameField))
+                .map(CuWebUtilities::updateFieldConversion)
                 .collect(Collectors.joining(KFSConstants.COMMA));
     }
 
-    private static String updateFieldConversion(String fieldConversion,
-            String oldPersonNameField, String newPersonNameField) {
+    private static String updateFieldConversion(String fieldConversion) {
         String personFieldName = StringUtils.substringBefore(fieldConversion, CUKFSConstants.COLON);
         String formFieldName = StringUtils.substringAfter(fieldConversion, CUKFSConstants.COLON);
-        if (MASKABLE_PERSON_FIELDS.contains(personFieldName)
-                && StringUtils.isNotBlank(newPersonNameField)
-                && StringUtils.equals(oldPersonNameField, newPersonNameField)) {
+        if (MASKABLE_PERSON_FIELDS.contains(personFieldName)) {
+            if (StringUtils.endsWith(formFieldName, KFSConstants.DELIMITER + personFieldName)
+                    && !StringUtils.contains(formFieldName, AD_HOC_ROUTE_PERSON_PROPERTY_FRAGMENT)) {
+                formFieldName += CuKimPropertyConstants.MASKED_IF_NECESSARY_SUFFIX;
+            }
             personFieldName += CuKimPropertyConstants.MASKED_IF_NECESSARY_SUFFIX;
-        }
-        if (StringUtils.equals(formFieldName, oldPersonNameField)) {
-            formFieldName = newPersonNameField;
         }
         return StringUtils.join(personFieldName, CUKFSConstants.COLON, formFieldName);
     }
 
-    public static String convertPersonLookupParametersForMasking(String lookupParameters,
-            String oldPersonNameField, String newPersonNameField) {
+    public static String convertPersonLookupParametersForMasking(String lookupParameters) {
         if (StringUtils.isBlank(lookupParameters)) {
             return lookupParameters;
         }
         return Arrays.stream(StringUtils.split(lookupParameters, KFSConstants.COMMA))
-                .map(lookupParameter -> updateLookupParameter(lookupParameter, oldPersonNameField, newPersonNameField))
+                .map(CuWebUtilities::updateLookupParameter)
                 .collect(Collectors.joining(KFSConstants.COMMA));
     }
 
-    private static String updateLookupParameter(String lookupParameter,
-            String oldPersonNameField, String newPersonNameField) {
+    private static String updateLookupParameter(String lookupParameter) {
         String personFieldName = StringUtils.substringAfter(lookupParameter, CUKFSConstants.COLON);
         String formFieldName = StringUtils.substringBefore(lookupParameter, CUKFSConstants.COLON);
         if (MASKABLE_PERSON_FIELDS.contains(personFieldName)) {
+            if (StringUtils.endsWith(formFieldName, KFSConstants.DELIMITER + personFieldName)
+                    && !StringUtils.contains(formFieldName, AD_HOC_ROUTE_PERSON_PROPERTY_FRAGMENT)) {
+                formFieldName += CuKimPropertyConstants.MASKED_IF_NECESSARY_SUFFIX;
+            }
             personFieldName += CuKimPropertyConstants.MASKED_IF_NECESSARY_SUFFIX;
-        }
-        if (StringUtils.equals(formFieldName, oldPersonNameField)) {
-            formFieldName = newPersonNameField;
         }
         return StringUtils.join(formFieldName, CUKFSConstants.COLON, personFieldName);
     }
