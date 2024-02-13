@@ -20,7 +20,20 @@
 
 -->
 
-<!-- CU Customization: Backport FINP-10440 (2024-01-10) changes on to 2023-01-25 KualiCo version of this file. -->
+<!--
+     *************************************************************************************************
+     Backport of FINP-10440 that should be removed when Cornell reaches KualiCo release tag 2024-01-10
+
+     Initial backport was implemented by applying FINP-10440 changes onto the KualiCo patch level
+     version of the file that Cornell was using at that time (2023-01-25).
+
+     NOTE: This backport overlay will need to be adjusted for any base code changes in the interim.
+
+     If Cornell specific customizations are needed, those adjustments should be made in Cornell's
+     existing customization located here:
+         edu.cornell.kfs.pdp.document.datadictionary.CuPayeeACHAccountMaintenanceDocument.xml
+     **************************************************************************************************
+-->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -60,7 +73,7 @@
         <property name="webScriptFiles">
             <list>
                 <value>dwr/interface/AchBankService.js</value>
-                <value>dwr/interface/VendorService.js</value>
+                <value>dwr/interface/VendorService.js</value>   <!-- FINP-10440 -->
                 <value>scripts/pdp/objectInfo.js</value>
             </list>
         </property>
@@ -79,8 +92,8 @@
                 <bean parent="MaintainableFieldDefinition" p:name="payeeIdentifierTypeCode" p:required="true"
                       p:webUILeaveFieldFunction="submit"/>
                 <bean parent="MaintainableFieldDefinition" p:name="payeeIdNumber" p:required="true"
-                      p:webUILeaveFieldFunction="submit"/>
-                <bean parent="MaintainableFieldDefinition" p:name="payeeName" p:required="false"/>
+                      p:webUILeaveFieldFunction="submit"/>                                           <!-- FINP-10440 -->
+                <bean parent="MaintainableFieldDefinition" p:name="payeeName" p:required="false"/>   <!-- FINP-10440 -->
                 <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber" p:required="true"
                       p:webUILeaveFieldFunction="loadAchBankInfo"/>
                 <bean parent="MaintainableFieldDefinition" p:name="bankRouting.bankName"
