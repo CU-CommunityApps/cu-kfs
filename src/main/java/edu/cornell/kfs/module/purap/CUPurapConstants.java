@@ -132,6 +132,7 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_CREATE_REQ = "createReq";
     public static final String IWNT_DOC_CREATE_DV = "createDV";
     public static final String IWNT_DOC_USE_LOOKUPS = "iwntUseLookups";
+    public static final String IWNT_DOC_DISPLAY_NOTE_OPTIONS = "displayNoteOptions";
     
     public static final String USER_OPTIONS_PRINCIPAL_ID = "principalId";
     public static final String USER_OPTIONS_OPTION_ID = "optionId";

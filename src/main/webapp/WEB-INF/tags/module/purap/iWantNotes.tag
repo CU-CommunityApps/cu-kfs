@@ -41,6 +41,7 @@
 <c:set var="documentEntry" value="${DataDictionary[documentTypeName]}"/>
 <c:set var="allowsNoteAttachments" value="${documentEntry.allowsNoteAttachments}"/>
 <c:set var="allowsNoteFYI" value="${documentEntry.allowsNoteFYI}"/>
+<c:set var="displayNoteOptions" value="${KualiForm.editingMode['displayNoteOptions']}" scope="request"/>
 <c:set var="tabTitle" value="Notes and Attachments"/>
 <c:if test="${allowsNoteAttachments eq false}">
     <c:set var="tabTitle" value="Notes"/>
@@ -153,17 +154,19 @@
                         <td>&nbsp;</td>
                     </c:if>
                 </tr>
-                <tr class="new-note">
-                    <td class="infoline">&nbsp;</td>
-                    <td class="infoline">&nbsp;</td>
-                    <td class="infoline">&nbsp;</td>
-                    <td class="infoline" colspan="${noteColSpan - 3}">
-                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
-                        <br/>
-                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
-                                                property="document.noteTextOption"/>
-                    </td>
-                </tr>
+                <c:if test="${displayNoteOptions}">
+	                <tr class="new-note">
+	                    <td class="infoline">&nbsp;</td>
+	                    <td class="infoline">&nbsp;</td>
+	                    <td class="infoline">&nbsp;</td>
+	                    <td class="infoline" colspan="${noteColSpan - 3}">
+	                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
+	                        <br/>
+	                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
+	                                                property="document.noteTextOption"/>
+	                    </td>
+	                </tr>
+                </c:if>
             </c:if>
 
             <c:if test="${not empty documentNotes}">
