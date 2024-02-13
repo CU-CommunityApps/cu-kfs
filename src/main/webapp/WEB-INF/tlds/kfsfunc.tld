@@ -77,28 +77,28 @@
     <function>
         <description>
             Updates the flattened lookup field conversions list so that references to potentially masked fields
-            will reference the equivalent mask-if-necessary fields instead. If from/to conversions for the form's
-            Person Name field are provided, they will also be updated in the flattened list.
+            will reference the equivalent mask-if-necessary fields instead. If the from/to conversions reference
+            nested Person fields on the form, they will also be updated in the flattened list.
         </description>
         <name>convertPersonFieldConversionsForMasking</name>
         <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
-        <function-signature>java.lang.String convertPersonFieldConversionsForMasking(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+        <function-signature>java.lang.String convertPersonFieldConversionsForMasking(java.lang.String)</function-signature>
         <example>
-            &lt;c:set var="newFieldConversions" test="${kfsfunc:convertPersonFieldConversionsForMasking(oldFieldConversions, oldPersonNameFieldName, newPersonNameFieldName)}"/&gt;
+            &lt;c:set var="newFieldConversions" test="${kfsfunc:convertPersonFieldConversionsForMasking(oldFieldConversions)}"/&gt;
         </example>
     </function>
 
     <function>
         <description>
             Updates the flattened lookup parameters list so that references to potentially masked fields
-            will reference the equivalent mask-if-necessary fields instead. If from/to conversions for the form's
-            Person Name field are provided, they will also be updated in the flattened list.
+            will reference the equivalent mask-if-necessary fields instead. If the from/to conversions reference
+            nested Person fields on the form, they will also be updated in the flattened list.
         </description>
         <name>convertPersonLookupParametersForMasking</name>
         <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
-        <function-signature>java.lang.String convertPersonLookupParametersForMasking(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+        <function-signature>java.lang.String convertPersonLookupParametersForMasking(java.lang.String)</function-signature>
         <example>
-            &lt;c:set var="newlookupParameters" test="${kfsfunc:convertPersonLookupParametersForMasking(oldLookupParameters, oldPersonNameFieldName, newPersonNameFieldName)}"/&gt;
+            &lt;c:set var="newlookupParameters" test="${kfsfunc:convertPersonLookupParametersForMasking(oldLookupParameters)}"/&gt;
         </example>
     </function>
 

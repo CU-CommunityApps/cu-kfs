@@ -84,12 +84,6 @@
 
     <!-- End of FINP-9235 backport section. -->
 
-    <bean id="Person-phoneNumber" parent="Person-phoneNumber-parentBean">
-        <property name="validationPattern">
-            <bean parent="CuKimPhoneNumberValidationPattern"/>
-        </property>
-    </bean>
-
     <bean id="Person-baseSalaryAmount" parent="Person-baseSalaryAmount-parentBean">
         <property name="attributeSecurity">
             <bean parent="AttributeSecurity" p:mask="true">
@@ -178,14 +172,6 @@
     </bean>
 
     <!-- End of FINP-9357 backport section. -->
-
-    <!-- Customize base Person Name attribute to auto-mask most child beans that are derived from it. -->
-    <bean id="Person-name"
-          parent="Person-name-parentBean"
-          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
-          p:personAttributeName="name"
-    >
-    </bean>
 
     <!-- Start of non-address masked fields. -->
 
@@ -563,6 +549,92 @@
     />
 
     <!-- End of privacy preference fields. -->
+
+    <!-- Customize certain base Person attributes to auto-mask most child beans that are derived from them. -->
+
+    <bean id="Person-addressLine1"
+          parent="Person-addressLine1-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressLine1"
+    />
+
+    <bean id="Person-addressLine2"
+          parent="Person-addressLine2-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressLine2"
+    />
+
+    <bean id="Person-addressLine3"
+          parent="Person-addressLine3-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressLine3"
+    />
+
+    <bean id="Person-addressCity"
+          parent="Person-addressCity-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressCity"
+    />
+
+    <bean id="Person-addressStateProvinceCode"
+          parent="Person-addressStateProvinceCode-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressStateProvinceCode"
+    />
+
+    <bean id="Person-addressPostalCode"
+          parent="Person-addressPostalCode-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressPostalCode"
+    />
+
+    <bean id="Person-addressCountryCode"
+          parent="Person-addressCountryCode-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="addressCountryCode"
+    />
+
+    <bean id="Person-firstName"
+          parent="Person-firstName-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="firstName"
+    />
+
+    <bean id="Person-lastName"
+          parent="Person-lastName-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="lastName"
+    />
+
+    <bean id="Person-middleName"
+          parent="Person-middleName-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="middleName"
+    />
+
+    <bean id="Person-name"
+          parent="Person-name-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="name"
+    />
+
+    <bean id="Person-emailAddress"
+          parent="Person-emailAddress-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="emailAddress"
+    />
+
+    <bean id="Person-phoneNumber"
+          parent="Person-phoneNumber-parentBean"
+          class="edu.cornell.kfs.krad.datadictionary.MaskedPersonAttributeDefinition"
+          p:personAttributeName="phoneNumber"
+    >
+        <property name="validationPattern">
+            <bean parent="CuKimPhoneNumberValidationPattern"/>
+        </property>
+    </bean>
+
+    <!-- End of mask-enforcing attribute overrides. -->
 
     <!-- Start of Person Inquiry overrides. -->
 

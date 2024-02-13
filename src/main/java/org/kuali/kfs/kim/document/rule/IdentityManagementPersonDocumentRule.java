@@ -158,6 +158,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         final String affiliationTypeCode = personDoc.getAffiliationTypeCode();
 
         if (StringUtils.isBlank(affiliationTypeCode)
+                || StringUtils.isBlank(personDoc.getAffiliateAffiliation())
                 || StringUtils.isBlank(personDoc.getFacultyAffiliation())
                 || StringUtils.isBlank(personDoc.getStaffAffiliation())) {
             return true;
@@ -167,6 +168,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
                 getBusinessObjectService().findBySinglePrimaryKey(EntityAffiliationType.class, affiliationTypeCode);
         if (!entityAffiliationType.isEmploymentAffiliationType()
             && StringUtils.isNotBlank(personDoc.getEmployeeId())
+            && StringUtils.equalsIgnoreCase(personDoc.getAffiliateAffiliation(), AffiliationStatuses.NONEXISTENT)
             && StringUtils.equalsIgnoreCase(personDoc.getFacultyAffiliation(), AffiliationStatuses.NONEXISTENT)
             && StringUtils.equalsIgnoreCase(personDoc.getStaffAffiliation(), AffiliationStatuses.NONEXISTENT)
         ) {
@@ -187,6 +189,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         final String affiliationTypeCode = personDoc.getAffiliationTypeCode();
 
         if (StringUtils.isBlank(affiliationTypeCode)
+                || StringUtils.isBlank(personDoc.getAffiliateAffiliation())
                 || StringUtils.isBlank(personDoc.getFacultyAffiliation())
                 || StringUtils.isBlank(personDoc.getStaffAffiliation())) {
             return true;
@@ -195,6 +198,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         final EntityAffiliationType entityAffiliationType =
                 getBusinessObjectService().findBySinglePrimaryKey(EntityAffiliationType.class, affiliationTypeCode);
         if ((entityAffiliationType.isEmploymentAffiliationType()
+                || !StringUtils.equalsIgnoreCase(personDoc.getAffiliateAffiliation(), AffiliationStatuses.NONEXISTENT)
                 || !StringUtils.equalsIgnoreCase(personDoc.getFacultyAffiliation(), AffiliationStatuses.NONEXISTENT)
                 || !StringUtils.equalsIgnoreCase(personDoc.getStaffAffiliation(), AffiliationStatuses.NONEXISTENT))
             && StringUtils.isBlank(personDoc.getEmployeeId())
@@ -217,6 +221,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         final String affiliationTypeCode = personDoc.getAffiliationTypeCode();
 
         if (StringUtils.isBlank(affiliationTypeCode)
+                || StringUtils.isBlank(personDoc.getAffiliateAffiliation())
                 || StringUtils.isBlank(personDoc.getFacultyAffiliation())
                 || StringUtils.isBlank(personDoc.getStaffAffiliation())) {
             return true;
@@ -225,6 +230,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         final EntityAffiliationType entityAffiliationType =
                 getBusinessObjectService().findBySinglePrimaryKey(EntityAffiliationType.class, affiliationTypeCode);
         if ((entityAffiliationType.isEmploymentAffiliationType()
+                || !StringUtils.equalsIgnoreCase(personDoc.getAffiliateAffiliation(), AffiliationStatuses.NONEXISTENT)
                 || !StringUtils.equalsIgnoreCase(personDoc.getFacultyAffiliation(), AffiliationStatuses.NONEXISTENT)
                 || !StringUtils.equalsIgnoreCase(personDoc.getStaffAffiliation(), AffiliationStatuses.NONEXISTENT))
             && employmentInfoIsMissing(personDoc)
