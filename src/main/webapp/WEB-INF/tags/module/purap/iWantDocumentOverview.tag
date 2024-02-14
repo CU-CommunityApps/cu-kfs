@@ -5,6 +5,9 @@
 <c:set var="docHeaderAttributes" value="${DataDictionary.DocumentHeader.attributes}"/>
 <c:set var="iWantDocAttributes" value="${DataDictionary.IWantDocument.attributes}"/>
 <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}"/>
+<c:set var="canEditProcessorNetId" value="${(not empty KualiForm.editingMode['editProcessorNetId'])}" scope="request"/>
+<c:set var="docEnroute" value="${KualiForm.docEnroute}"/>
+<c:set var="processorNetIdReadOnly" value="${!fullEntryMode || !canEditProcessorNetId || !docEnroute}" scope="request"/>
 
 <div class="tab-container" align="center">
     <html:hidden property="document.documentHeader.documentNumber"/>
@@ -92,7 +95,7 @@
                           universalId=""
                           userNameFieldName="document.processorName"
                           userName="${KualiForm.document.processorName}"
-                          readOnly="${not fullEntryMode}"
+                          readOnly="${processorNetIdReadOnly}"
                           fieldConversions="principalName:document.processorNetId,name:document.processorName"
                           hasErrors="${hasErrors}"
                           onblur="loadProcessorInfo('document.processorNetId', 'document.processorName')"/>
