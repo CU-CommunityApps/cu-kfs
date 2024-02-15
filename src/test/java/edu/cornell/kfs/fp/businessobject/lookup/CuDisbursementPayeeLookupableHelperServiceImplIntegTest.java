@@ -34,7 +34,7 @@ public class CuDisbursementPayeeLookupableHelperServiceImplIntegTest extends Kua
 			"where f.dv_payee_typ_cd = 'A' " +
 			"and f.dv_payee_id_nbr = k.entity_id " +
 			"and k.afltn_alumni = 'A' " +
-			"and k.dflt_ind = 'Y' " +
+			"and k.afltn_typ_cd = 'ALUMNI' " +
 			"and k.actv_ind = 'Y' " +
 			"and rownum <= 1";
 
