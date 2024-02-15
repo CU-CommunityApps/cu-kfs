@@ -16,12 +16,12 @@ public class IWantNoteDropdownValueRule extends MaintenanceDocumentRuleBase {
         boolean isValid = super.processCustomRouteDocumentBusinessRules(document);
         if (isValid) {
             final IWantNoteDropdownValue iWantNote = (IWantNoteDropdownValue) document.getNewMaintainableObject().getBusinessObject();
-            if (ObjectUtils.isNull(iWantNote.getNoteIdentifier())) {
+            if (ObjectUtils.isNull(iWantNote.getId())) {
                 final SequenceAccessorService sequenceAccessorService = SpringContext
                         .getBean(SequenceAccessorService.class);
                 final Integer noteId = Integer.valueOf(String.valueOf(sequenceAccessorService
                         .getNextAvailableSequenceNumber(CUPurapConstants.CU_PUR_IWNT_NTE_DRPDN_VAL_ID_SEQ)));
-                iWantNote.setNoteIdentifier(noteId);
+                iWantNote.setId(noteId);
             }
         }
         return isValid;

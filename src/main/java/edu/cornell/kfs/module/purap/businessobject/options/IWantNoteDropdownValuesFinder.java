@@ -31,7 +31,7 @@ public class IWantNoteDropdownValuesFinder extends KeyValuesBase {
 
         for (final IWantNoteDropdownValue iWantNote : noteTexts) {
             if (iWantNote.isActive()) {
-                labels.add(new ConcreteKeyValue(iWantNote.getNoteText(), iWantNote.getNoteText()));
+                labels.add(new ConcreteKeyValue(iWantNote.getText(), iWantNote.getText()));
             }
         }
 

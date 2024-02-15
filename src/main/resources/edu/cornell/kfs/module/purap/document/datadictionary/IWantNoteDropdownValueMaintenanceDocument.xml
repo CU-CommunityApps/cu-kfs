@@ -19,7 +19,7 @@
         </property>
         <property name="lockingKeys">
             <list>
-                <value>noteIdentifier</value>
+                <value>id</value>
             </list>
         </property>
     </bean>
@@ -32,8 +32,8 @@
           parent="MaintainableSectionDefinition" p:id="EditIWantNoteDropdownValue" p:title="Edit IWant Note Dropdown Value">
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="noteIdentifier" p:required="true" p:unconditionallyReadOnly="true"/>
-                <bean parent="MaintainableFieldDefinition" p:name="noteText" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="id" p:required="true" p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="text" p:required="true"/>
                 <bean parent="MaintainableFieldDefinition" p:defaultValue="true" p:name="active"/>
             </list>
         </property>

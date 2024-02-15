@@ -3,24 +3,24 @@ package edu.cornell.kfs.module.purap.businessobject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 public class IWantNoteDropdownValue extends PersistableBusinessObjectBase implements Comparable<IWantNoteDropdownValue>{
-    private Integer noteIdentifier;
-    private String noteText;
+    private Integer id;
+    private String text;
     private boolean active;
 
-    public Integer getNoteIdentifier() {
-        return noteIdentifier;
+    public Integer getId() {
+        return id;
     }
 
-    public void setNoteIdentifier(Integer noteIdentifier) {
-        this.noteIdentifier = noteIdentifier;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getNoteText() {
-        return noteText;
+    public String getText() {
+        return text;
     }
 
-    public void setNoteText(String noteText) {
-        this.noteText = noteText;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public boolean isActive() {
@@ -33,6 +33,6 @@ public class IWantNoteDropdownValue extends PersistableBusinessObjectBase implem
 
     @Override
     public int compareTo(IWantNoteDropdownValue iWantNote) {
-        return this.getNoteText().compareTo(iWantNote.getNoteText());
+        return this.getText().compareTo(iWantNote.getText());
     }
 }

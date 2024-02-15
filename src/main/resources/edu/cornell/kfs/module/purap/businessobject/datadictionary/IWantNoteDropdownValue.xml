@@ -18,16 +18,16 @@
           p:name="IWantNoteDropdownValue"
           p:objectLabel="I Want Note Dropdown Value"
           p:searchService-ref="defaultSearchService"
-          p:titleAttribute="noteIdentifier">
+          p:titleAttribute="id">
         <property name="keyAttributes">
             <list>
-                <ref bean="IWantNoteDropdownValue-noteIdentifier" />
+                <ref bean="IWantNoteDropdownValue-id" />
             </list>
         </property>
         <property name="attributes">
             <list>
-                <ref bean="IWantNoteDropdownValue-noteIdentifier"/>
-                <ref bean="IWantNoteDropdownValue-noteText"/>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
                 <ref bean="IWantNoteDropdownValue-active"/>
             </list>
         </property>
@@ -35,14 +35,14 @@
 
     <!-- Attribute Definitions -->
 
-    <bean id="IWantNoteDropdownValue-noteIdentifier" parent="IWantNoteDropdownValue-noteIdentifier-parentBean"/>
-    <bean id="IWantNoteDropdownValue-noteIdentifier-parentBean" abstract="true" parent="PurApGenericAttributes-genericItemIdentifier"
-          p:name="noteIdentifier" p:forceUppercase="true" p:label="I Want Note Dropdown Value Identifier" p:shortLabel="Note Identifier">
+    <bean id="IWantNoteDropdownValue-id" parent="IWantNoteDropdownValue-id-parentBean"/>
+    <bean id="IWantNoteDropdownValue-id-parentBean" abstract="true" parent="PurApGenericAttributes-genericItemIdentifier"
+          p:name="id" p:forceUppercase="true" p:label="I Want Note Dropdown Value Identifier" p:shortLabel="Value Identifier">
     </bean>
     
-    <bean id="IWantNoteDropdownValue-noteText" parent="IWantNoteDropdownValue-noteText-parentBean"/>
-    <bean id="IWantNoteDropdownValue-noteText-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="noteText" p:label="I Want Note Dropdown Value Text" p:shortLabel="Name" p:maxLength="150"
+    <bean id="IWantNoteDropdownValue-text" parent="IWantNoteDropdownValue-text-parentBean"/>
+    <bean id="IWantNoteDropdownValue-text-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="text" p:label="I Want Note Dropdown Value Text" p:shortLabel="Name" p:maxLength="150"
           p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
         <property name="control">
             <bean parent="TextControlDefinition" p:size="50"/>
@@ -74,8 +74,8 @@
     <bean id="IWantNoteDropdownValue-sectionDefinition-parentBean" parent="sectionDefinition" abstract="true">
         <property name="fields">
             <list>
-                <ref bean="IWantNoteDropdownValue-noteIdentifier"/>
-                <ref bean="IWantNoteDropdownValue-noteText"/>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
@@ -86,8 +86,8 @@
           p:title="" p:numberOfColumns="1">
         <property name="inquiryFields">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="noteIdentifier"/>
-                <bean parent="FieldDefinition" p:attributeName="noteText"/>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="text"/>
                 <bean parent="FieldDefinition" p:attributeName="active"/>
             </list>
         </property>
@@ -102,22 +102,22 @@
             <bean parent="SortDefinition">
                 <property name="attributeNames">
                     <list>
-                        <value>noteIdentifier</value>
+                        <value>id</value>
                     </list>
                 </property>
             </bean>
         </property>
         <property name="formAttributeDefinitions">
             <list>
-                <ref bean="IWantNoteDropdownValue-noteIdentifier"/>
-                <ref bean="IWantNoteDropdownValue-noteText"/>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>
         <property name="displayAttributeDefinitions">
             <list>
-                <ref bean="IWantNoteDropdownValue-noteIdentifier"/>
-                <ref bean="IWantNoteDropdownValue-noteText"/>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
                 <ref bean="activeIndicatorAttributeDefinition"/>
             </list>
         </property>

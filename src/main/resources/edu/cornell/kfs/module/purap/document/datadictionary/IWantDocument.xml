@@ -76,7 +76,7 @@
         
         <ref bean="IWantDocument-attachmentDescription"/>
         <ref bean="IWantDocument-noteLabel"/>
-        <ref bean="IWantDocument-noteTextOption"/>
+        <ref bean="IWantDocument-noteOptionDropdownSelectedValue"/>
         
         <ref bean="IWantDocument-completed"/>
         <ref bean="IWantDocument-completeOption" />
@@ -557,10 +557,10 @@
       <bean parent="SelectControlDefinition" p:valuesFinder-ref="attachmentDescriptionValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
-  <bean id="IWantDocument-noteTextOption" parent="IWantDocument-noteTextOption-parentBean"/>
+  <bean id="IWantDocument-noteOptionDropdownSelectedValue" parent="IWantDocument-noteOptionDropdownSelectedValue-parentBean"/>
 
-  <bean id="IWantDocument-noteTextOption-parentBean" abstract="true" parent="AttributeDefinition">
-    <property name="name" value="noteTextOption"/>
+  <bean id="IWantDocument-noteOptionDropdownSelectedValue-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="noteOptionDropdownSelectedValue"/>
     <property name="label" value="Note Text Options"/>
     <property name="shortLabel" value="Note Text Options"/>
     <property name="maxLength" value="100"/>

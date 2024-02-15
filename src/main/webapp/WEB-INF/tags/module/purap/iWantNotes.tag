@@ -160,10 +160,10 @@
 	                    <td class="infoline">&nbsp;</td>
 	                    <td class="infoline">&nbsp;</td>
 	                    <td class="infoline" colspan="${noteColSpan - 3}">
-	                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteTextOption}"/>
+	                        <kul:htmlAttributeLabel attributeEntry="${iWantDocumentAttributes.noteOptionDropdownSelectedValue}"/>
 	                        <br/>
-	                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteTextOption}"
-	                                                property="document.noteTextOption"/>
+	                        <kul:htmlControlAttribute attributeEntry="${iWantDocumentAttributes.noteOptionDropdownSelectedValue}"
+	                                                property="document.noteOptionDropdownSelectedValue"/>
 	                    </td>
 	                </tr>
                 </c:if>
