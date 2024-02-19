@@ -1,0 +1,23 @@
+--- a/kfs-core/src/main/java/org/kuali/kfs/krad/bo/AdHocRoutePerson.java
++++ b/kfs-core/src/main/java/org/kuali/kfs/krad/bo/AdHocRoutePerson.java
+@@ -60,8 +60,9 @@ public void setId(final String id) {
+     public void setName(final String name) {
+         super.setName(name);
+ 
++        // CU Customization: Use potentially masked Person name instead.
+         if (StringUtils.isNotBlank(name) && getId() != null
+-            && person != null && !StringUtils.equals(person.getName(), name)) {
++            && person != null && !StringUtils.equals(person.getNameMaskedIfNecessary(), name)) {
+             person = KimApiServiceLocator.getPersonService().getPersonByPrincipalName(getId());
+             setPerson(person);
+         }
+@@ -83,7 +84,8 @@ public void setPerson(final Person person) {
+         this.person = person;
+         if (person != null) {
+             id = person.getPrincipalName();
+-            name = person.getName();
++            // CU Customization: Use potentially masked Person name instead.
++            name = person.getNameMaskedIfNecessary();
+         }
+     }
+ }

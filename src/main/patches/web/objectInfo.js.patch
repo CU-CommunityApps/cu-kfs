@@ -1,0 +1,43 @@
+--- a/kfs-web/src/main/webapp/scripts/objectInfo.js
++++ b/kfs-web/src/main/webapp/scripts/objectInfo.js
+@@ -17,6 +17,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++// CU Customization: Modified this function to reference the potentially masked Person name fields instead.
+ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) {
+   var userId = dwr.util.getValue(userIdFieldName);
+ 
+@@ -31,11 +32,11 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName)
+             setRecipientValue(universalIdFieldName, data.principalId);
+           }
+           if (userNameFieldName != null && userNameFieldName != "") {
+-            setRecipientValue(userNameFieldName, data.name);
++            setRecipientValue(userNameFieldName, data.nameMaskedIfNecessary);
+           } else {
+             // guess the DIV name
+-            divName = userIdFieldName.replace(".principalName", ".name.div");
+-            dwr.util.setValue(divName, data.name);
++            divName = userIdFieldName.replace(".principalName", ".nameMaskedIfNecessary.div");
++            dwr.util.setValue(divName, data.nameMaskedIfNecessary);
+           }
+         } else {
+           if (universalIdFieldName != null && universalIdFieldName != "") {
+@@ -45,7 +46,7 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName)
+             setRecipientValue(userNameFieldName, wrapError("person not found"), true);
+           } else {
+             // guess the DIV name
+-            divName = userIdFieldName.replace(".principalName", ".name.div");
++            divName = userIdFieldName.replace(".principalName", ".nameMaskedIfNecessary.div");
+             dwr.util.setValue(divName, wrapError("person not found"), {escapeHtml: false});
+           }
+         }
+@@ -59,7 +60,7 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName)
+           setRecipientValue(userNameFieldName, wrapError("person not found"), true);
+         } else {
+           // guess the DIV name
+-          divName = userIdFieldName.replace(".principalName", ".name.div");
++          divName = userIdFieldName.replace(".principalName", ".nameMaskedIfNecessary.div");
+           dwr.util.setValue(divName, wrapError("person not found"), {escapeHtml: false});
+         }
+       }
