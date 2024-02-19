@@ -1,0 +1,21 @@
+--- a/kfs-web/src/main/webapp/WEB-INF/tags/module/ec/reportInformation.tag
++++ b/kfs-web/src/main/webapp/WEB-INF/tags/module/ec/reportInformation.tag
+@@ -30,14 +30,16 @@
+             <tbody>
+                 <tr>
+                     <th scope="row" class="right" width="25%">
+-                        <kul:htmlAttributeLabel attributeEntry="${erAttributes['employee.name']}"/>
++                        <%-- CU Customization: Reference the potentially masked Person name instead. --%>
++                        <kul:htmlAttributeLabel attributeEntry="${erAttributes['employee.nameMaskedIfNecessary']}"/>
+                     </th>
+                     <td class="infocell" width="25%">
++                        <%-- CU Customization: Print the potentially masked Person name instead. --%>
+                         <kul:inquiry
+                                  boClassName="org.kuali.kfs.kim.impl.identity.Person"
+                                 keyValues="employeeId=${document.emplid}&principalId=${document.employee.principalId}"
+                                 render="true">
+-                            ${document.employee.name}
++                            ${document.employee.nameMaskedIfNecessary}
+                         </kul:inquiry>
+                     </td>
+                     <th scope="row" class="right" width="25%">

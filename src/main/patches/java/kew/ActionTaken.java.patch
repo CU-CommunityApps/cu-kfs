@@ -1,0 +1,22 @@
+--- a/kfs-core/src/main/java/org/kuali/kfs/kew/actiontaken/ActionTaken.java
++++ b/kfs-core/src/main/java/org/kuali/kfs/kew/actiontaken/ActionTaken.java
+@@ -69,7 +69,8 @@ public String getPrincipalDisplayName() {
+             throw new IllegalArgumentException("Could not locate a person with the given principal id of " +
+                                                principalId);
+         }
+-        return person.getName();
++        // CU Customization: Return potentially masked Person name instead.
++        return person.getNameMaskedIfNecessary();
+     }
+ 
+     public Person getDelegatorPerson() {
+@@ -103,7 +104,8 @@ public String getDelegatorDisplayName() {
+                 throw new IllegalArgumentException("Could not locate a person with the given principal id of " +
+                                                    delegatorPrincipalId);
+             }
+-            return person.getName();
++            // CU Customization: Return potentially masked Person name instead.
++            return person.getNameMaskedIfNecessary();
+         } else if (getDelegatorGroupId() != null) {
+             return getDelegatorGroup().getName();
+         } else {
