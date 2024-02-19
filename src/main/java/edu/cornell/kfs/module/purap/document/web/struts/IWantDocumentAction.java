@@ -21,7 +21,9 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.kew.api.KewApiConstants;
+import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.identity.employment.EntityEmployment;
@@ -1104,6 +1106,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         ActionForward actionForward = super.save(mapping, form, request, response);
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        reIndexDocument(iWantDocument);
         boolean added = true;
 
         //add new item and new accounting line if not empty
@@ -1135,6 +1138,18 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         }
 
         return actionForward;
+    }
+
+    /**
+     * This method is being added to handle calls to force re-indexing of documents following change events performed on the documents.
+     * This is necessary to correct problems with searches not returning accurate results due to changes being made to documents,
+     * but those changes not be indexed.
+     *
+     * @param document - The document to be re-indexed.
+     */
+    private void reIndexDocument(final IWantDocument document) {
+        final DocumentAttributeIndexingQueue documentAttributeIndexingQueue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
+        documentAttributeIndexingQueue.indexDocument(document.getDocumentNumber());
     }
 
     /**
