@@ -1,0 +1,12 @@
+--- a/kfs-core/src/main/java/org/kuali/kfs/kew/actionrequest/ActionRequest.java
++++ b/kfs-core/src/main/java/org/kuali/kfs/kew/actionrequest/ActionRequest.java
+@@ -136,7 +136,8 @@ public String getDisplayName() {
+         if (isUserRequest()) {
+             final Person person = getPerson();
+             if (person != null) {
+-                return person.getName();
++                // CU Customization: Return potentially masked Person name instead.
++                return person.getNameMaskedIfNecessary();
+             }
+         } else if (isGroupRequest()) {
+             final Group group = getGroup();
