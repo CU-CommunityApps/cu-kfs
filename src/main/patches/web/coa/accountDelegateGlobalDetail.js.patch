@@ -1,0 +1,22 @@
+--- a/kfs-web/src/main/webapp/scripts/coa/accountDelegateGlobalDetail.js
++++ b/kfs-web/src/main/webapp/scripts/coa/accountDelegateGlobalDetail.js
+@@ -21,7 +21,8 @@
+ function principalNameLookup (userIdField) {
+   var userIdFieldName = userIdField.name
+   var elPrefix = findElPrefix(userIdFieldName)
+-  var userNameFieldName = elPrefix + '.name'
++  // CU Customization: Reference the potentially masked Person name instead.
++  var userNameFieldName = elPrefix + '.nameMaskedIfNecessary'
+   var universalIdFieldName = findElPrefix(elPrefix) + '.principalId'
+ 
+   loadPrincipalInfo(userIdFieldName, universalIdFieldName, userNameFieldName)
+@@ -42,7 +43,8 @@ function loadPrincipalInfo (
+       callback: function (data) {
+         if (data != null && typeof data === 'object') {
+           setRecipientValue(universalIdFieldName, data.principalId)
+-          setRecipientValue(userNameFieldName, data.name)
++          // CU Customization: Use the potentially masked Person name instead.
++          setRecipientValue(userNameFieldName, data.nameMaskedIfNecessary)
+         } else {
+           clearRecipients(universalIdFieldName)
+           setRecipientValue(

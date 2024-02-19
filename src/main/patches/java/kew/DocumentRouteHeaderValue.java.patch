@@ -1,0 +1,12 @@
+--- a/kfs-core/src/main/java/org/kuali/kfs/kew/routeheader/DocumentRouteHeaderValue.java
++++ b/kfs-core/src/main/java/org/kuali/kfs/kew/routeheader/DocumentRouteHeaderValue.java
+@@ -223,7 +223,8 @@ private static Person getPerson(final String principalId) {
+     }
+ 
+     public String getInitiatorDisplayName() {
+-        return getPerson(initiatorWorkflowId).getName();
++        // CU Customization: Return potentially masked Person name instead.
++        return getPerson(initiatorWorkflowId).getNameMaskedIfNecessary();
+     }
+ 
+     /**
