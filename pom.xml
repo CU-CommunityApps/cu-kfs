@@ -52,15 +52,18 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
+        <maven.patch.version>1.2</maven.patch.version>
         <project.java.version>1.11</project.java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <unpack.includes>META-INF/**,org/kuali/kfs/kim/impl/**/*.xml</unpack.includes>
-        <unpack.meta.excludes>META-INF/maven/**,META-INF/MANIFEST.MF,META-INF/*weaving.xml</unpack.meta.excludes>
-        <unpack.excludes>${unpack.meta.excludes}</unpack.excludes>
-        <unpack.overlays.directory>${project.build.directory}/unpacked-overlays</unpack.overlays.directory>
-        <unpack.test.overlays.directory>${project.build.directory}/test-classes</unpack.test.overlays.directory>
+        <unpack.dd.fix.includes>org/kuali/kfs/kim/impl/**/*.xml</unpack.dd.fix.includes>
+        <unpack.dd.fix.directory>${project.build.directory}/unpacked-dd-files</unpack.dd.fix.directory>
+        <unpack.patch.java.directory>${project.build.directory}/patch-java</unpack.patch.java.directory>
+        <unpack.patch.web.directory>${project.build.directory}/patch-web</unpack.patch.web.directory>
+        <plugin.antrun.version>3.1.0</plugin.antrun.version>
+        <plugin.build-helper.version>3.3.0</plugin.build-helper.version>
         <plugin.checkstyle.version>3.2.0</plugin.checkstyle.version>
         <plugin.lifecycle-mapping.version>1.0.0</plugin.lifecycle-mapping.version>
+        <plugin.resources.version>3.3.0</plugin.resources.version>
         <plugin.surefire.version>3.0.0-M7</plugin.surefire.version>
         <plugin.dependency.version>3.3.0</plugin.dependency.version>
         <plugin.war.version>3.3.2</plugin.war.version>
@@ -94,6 +97,7 @@
                                         <artifactId>maven-dependency-plugin</artifactId>
                                         <versionRange>[1.0,)</versionRange>
                                         <goals>
+                                            <goal>unpack</goal>
                                             <goal>unpack-dependencies</goal>
                                         </goals>
                                     </pluginExecutionFilter>
@@ -108,6 +112,32 @@
                                         <versionRange>[1.0,)</versionRange>
                                         <goals>
                                             <goal>checkstyle</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-patch-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>apply</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
@@ -144,6 +174,114 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${plugin.antrun.version}</version>
+                <executions>
+                    <execution>
+                        <id>set-props-derived-from-patch-files</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target>
+                                <macrodef name="init-patch-file-properties"
+                                      description="Sets properties based on patch files and the files they modify">
+                                    <attribute name="patch-files-basedir"
+                                          description="The path to the patch files, relative to the project root"/>
+                                    <attribute name="patch-files-propname"
+                                          description="The property for storing the list of patch diff filenames"/>
+                                    <attribute name="target-files-propname"
+                                          description="The property for storing the list of files to modify"/>
+                                    <sequential>
+                                        <fileset id="patch-diff-files"
+                                              dir="@{patch-files-basedir}">
+                                            <include name="**/*.patch"/>
+                                        </fileset>
+                                        
+                                        <echo level="info"
+                                              message="Initializing property: @{patch-files-propname}"/>
+                                        <pathconvert property="@{patch-files-propname}"
+                                              refid="patch-diff-files"
+                                              targetos="unix"
+                                              pathsep=",">
+                                            <regexpmapper from="^.*@{patch-files-basedir}/(.*)"
+                                                  to="\1"
+                                                  casesensitive="false"
+                                                  handledirsep="true"/>
+                                         </pathconvert>
+                                         <echo level="debug"
+                                               message="@{patch-files-propname}=${@{patch-files-propname}}"/>
+                                         
+                                         <echo level="info"
+                                               message="Initializing property: @{target-files-propname}"/>
+                                         <loadresource property="@{target-files-propname}">
+                                            <concat>
+                                                <concat filterbeforeconcat="true">
+                                                    <fileset refid="patch-diff-files"/>
+                                                    <filterchain id="extracted-filepath-plus-comma">
+                                                        <headfilter lines="1"/>
+                                                        <tokenfilter>
+                                                            <filetokenizer/>
+                                                            <replaceregex
+                                                                  pattern="^.*/kfs-\w+/src/(main|test)/\w+/(\S+).*$$"
+                                                                  replace="\2,"/>
+                                                            <trim/>
+                                                        </tokenfilter>
+                                                    </filterchain>
+                                                </concat>
+                                                <filterchain id="remove-trailing-comma">
+                                                    <tokenfilter>
+                                                        <filetokenizer/>
+                                                        <replaceregex pattern=",$$" replace=""/>
+                                                    </tokenfilter>
+                                                </filterchain>
+                                            </concat>
+                                        </loadresource>
+                                        <echo level="debug"
+                                              message="@{target-files-propname}=${@{target-files-propname}}"/>
+                                    </sequential>
+                                </macrodef>
+                                
+                                <echo level="info"
+                                      message="--- Starting extra build property initialization ---"/>
+                                <init-patch-file-properties
+                                      patch-files-basedir="src/main/patches/java"
+                                      patch-files-propname="unpack.patch.java.patchfiles"
+                                      target-files-propname="unpack.patch.java.includes"/>
+                                <init-patch-file-properties
+                                      patch-files-basedir="src/main/patches/web"
+                                      patch-files-propname="unpack.patch.web.patchfiles"
+                                      target-files-propname="unpack.patch.web.includes"/>
+                                <echo level="info"
+                                      message="--- Finished extra build property initialization ---"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${plugin.build-helper.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-patched-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${unpack.patch.java.directory}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
                 <configuration>
@@ -157,8 +295,36 @@
                 <version>${plugin.dependency.version}</version>
                 <executions>
                     <execution>
-                        <id>unpack-overlays-for-testing</id>
-                        <phase>process-test-resources</phase>
+                        <id>unpack-java-files-for-patching</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.kuali.kfs</groupId>
+                                    <artifactId>kfs-core</artifactId>
+                                    <version>${kfs.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>${unpack.patch.java.includes}</includes>
+                            <outputDirectory>${unpack.patch.java.directory}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!--
+                            This specific execution works around a potential Data Dictionary file-loading issue
+                            when one of our Java overlays shares the same path as a financials DD XML file
+                            (minus the src/main/xxxx part). Forcibly extracting and copying such XML files
+                            into the appropriate build directories seems to fix the problem.
+                        -->
+                        <id>unpack-dd-files-from-paths-with-cu-class-overlays</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
@@ -167,29 +333,85 @@
                             <includeArtifactIds>kfs-core</includeArtifactIds>
                             <includeTypes>jar</includeTypes>
                             <excludeTransitive>true</excludeTransitive>
-                            <includes>${unpack.includes}</includes>
-                            <excludes>${unpack.excludes}</excludes>
-                            <outputDirectory>${unpack.test.overlays.directory}</outputDirectory>
+                            <includes>${unpack.dd.fix.includes}</includes>
+                            <outputDirectory>${unpack.dd.fix.directory}</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>unpack-overlays-from-jars</id>
+                        <id>unpack-web-files-for-patching</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
                             <includeGroupIds>org.kuali.kfs</includeGroupIds>
-                            <includeArtifactIds>kfs-core</includeArtifactIds>
-                            <includeTypes>jar</includeTypes>
+                            <includeArtifactIds>kfs-web</includeArtifactIds>
+                            <includeTypes>war</includeTypes>
                             <excludeTransitive>true</excludeTransitive>
-                            <includes>${unpack.includes}</includes>
-                            <excludes>${unpack.excludes}</excludes>
-                            <outputDirectory>${unpack.overlays.directory}</outputDirectory>
+                            <includes>${unpack.patch.web.includes}</includes>
+                            <outputDirectory>${unpack.patch.web.directory}</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-patch-plugin</artifactId>
+                <version>${maven.patch.version}</version>
+                <executions>
+                    <execution>
+                        <id>patch-financials-java-files</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                        <configuration>
+                            <targetDirectory>${unpack.patch.java.directory}</targetDirectory>
+                            <patchDirectory>src/main/patches/java</patchDirectory>
+                            <patches>${unpack.patch.java.patchfiles}</patches>
+                            <optimizations>false</optimizations>
+                            <strip>5</strip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>patch-financials-web-files</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                        <configuration>
+                            <targetDirectory>${unpack.patch.web.directory}</targetDirectory>
+                            <patchDirectory>src/main/patches/web</patchDirectory>
+                            <patches>${unpack.patch.web.patchfiles}</patches>
+                            <optimizations>false</optimizations>
+                            <strip>5</strip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${plugin.resources.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-unpacked-dd-files-to-test-dirs</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${unpack.dd.fix.directory}</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -202,8 +424,12 @@
                     <containerConfigXML>deploy/tomcat/context.xml</containerConfigXML>
                     <webResources>
                         <resource>
-                            <directory>${unpack.overlays.directory}</directory>
+                            <directory>${unpack.dd.fix.directory}</directory>
                             <targetPath>WEB-INF/classes</targetPath>
+                            <filtering>false</filtering>
+                        </resource>
+                        <resource>
+                            <directory>${unpack.patch.web.directory}</directory>
                             <filtering>false</filtering>
                         </resource>
                     </webResources>

@@ -1,0 +1,12 @@
+--- a/kfs-web/src/main/webapp/scripts/sys/objectInfo.js
++++ b/kfs-web/src/main/webapp/scripts/sys/objectInfo.js
+@@ -547,7 +547,8 @@ function loadEmplInfo (emplIdFieldName, userNameFieldName) {
+     var dwrReply = {
+       callback: function (data) {
+         if (data != null && typeof data === 'object') {
+-          dwr.util.setValue(containerDiv.id, data.name, { escapeHtml: true })
++          // CU Customization: Use potentially masked Person name instead.
++          dwr.util.setValue(containerDiv.id, data.nameMaskedIfNecessary, { escapeHtml: true })
+         } else {
+           dwr.util.setValue(containerDiv.id, wrapError('person not found'), {
+             escapeHtml: false

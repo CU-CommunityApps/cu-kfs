@@ -1,0 +1,22 @@
+--- a/kfs-web/src/main/webapp/scripts/module/cg/proposalDocument.js
++++ b/kfs-web/src/main/webapp/scripts/module/cg/proposalDocument.js
+@@ -110,7 +110,8 @@ function organizationNameLookup (anyFieldOnProposalOrganization) {
+ function proposalDirectorIDLookup (userIdField) {
+   var userIdFieldName = userIdField.name
+   var elPrefix = findElPrefix(userIdFieldName)
+-  var userNameFieldName = elPrefix + '.name'
++  // CU Customization: Reference the potentially masked Person name instead.
++  var userNameFieldName = elPrefix + '.nameMaskedIfNecessary'
+   var universalIdFieldName = findElPrefix(elPrefix) + '.principalId'
+ 
+   loadDirectorInfo(userIdFieldName, universalIdFieldName, userNameFieldName)
+@@ -127,7 +128,8 @@ function loadDirectorInfo (userIdFieldName, universalIdFieldName, userNameFieldN
+       callback: function (data) {
+         if (data != null && typeof data === 'object') {
+           setRecipientValue(universalIdFieldName, data.principalId)
+-          setRecipientValue(userNameFieldName, data.name)
++          // CU Customization: Use the potentially masked Person name instead.
++          setRecipientValue(userNameFieldName, data.nameMaskedIfNecessary)
+         } else {
+           clearRecipients(universalIdFieldName)
+           setRecipientValue(userNameFieldName, wrapError('director not found'), true)
