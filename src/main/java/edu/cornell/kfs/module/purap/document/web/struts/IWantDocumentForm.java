@@ -11,6 +11,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.KeyValue;
+import org.kuali.kfs.kew.api.WorkflowDocument;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -365,6 +366,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                 + "');return false;");
         clearButton.setExtraButtonParams("_blank");
         return clearButton;
+    }
+    
+    public boolean isDocEnroute() {
+        final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
+        return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isEnroute();
     }
 
     public String getPresentationMode() {

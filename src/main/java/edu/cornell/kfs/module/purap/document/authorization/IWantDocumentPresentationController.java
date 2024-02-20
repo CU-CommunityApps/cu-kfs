@@ -143,6 +143,8 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             editModes.add(CUPurapConstants.I_WANT_DOC_MULTIPLE_PAGE_IS_ALLOWED);
             editModes.add(CUPurapConstants.I_WANT_DOC_FULL_PAGE_IS_ALLOWED);
         }
+        
+        editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
 
         return editModes;
     }
