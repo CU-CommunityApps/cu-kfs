@@ -370,7 +370,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     
     public boolean isDocEnroute() {
         final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
-        return workflowDocument != null ? workflowDocument.isEnroute()  : false;
+        return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isEnroute();
     }
 
     public String getPresentationMode() {
