@@ -52,7 +52,6 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <xapool.version>1.5.0-patch7</xapool.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
-        <maven.patch.version>1.2</maven.patch.version>
         <project.java.version>1.11</project.java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <unpack.dd.fix.includes>org/kuali/kfs/kim/impl/**/*.xml</unpack.dd.fix.includes>
@@ -175,95 +174,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${plugin.antrun.version}</version>
-                <executions>
-                    <execution>
-                        <id>set-props-derived-from-patch-files</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <exportAntProperties>true</exportAntProperties>
-                            <target>
-                                <macrodef name="init-patch-file-properties"
-                                      description="Sets properties based on patch files and the files they modify">
-                                    <attribute name="patch-files-basedir"
-                                          description="The path to the patch files, relative to the project root"/>
-                                    <attribute name="patch-files-propname"
-                                          description="The property for storing the list of patch diff filenames"/>
-                                    <attribute name="target-files-propname"
-                                          description="The property for storing the list of files to modify"/>
-                                    <sequential>
-                                        <fileset id="patch-diff-files"
-                                              dir="@{patch-files-basedir}">
-                                            <include name="**/*.patch"/>
-                                        </fileset>
-                                        
-                                        <echo level="info"
-                                              message="Initializing property: @{patch-files-propname}"/>
-                                        <pathconvert property="@{patch-files-propname}"
-                                              refid="patch-diff-files"
-                                              targetos="unix"
-                                              pathsep=",">
-                                            <regexpmapper from="^.*@{patch-files-basedir}/(.*)"
-                                                  to="\1"
-                                                  casesensitive="false"
-                                                  handledirsep="true"/>
-                                         </pathconvert>
-                                         <echo level="debug"
-                                               message="@{patch-files-propname}=${@{patch-files-propname}}"/>
-                                         
-                                         <echo level="info"
-                                               message="Initializing property: @{target-files-propname}"/>
-                                         <loadresource property="@{target-files-propname}">
-                                            <concat>
-                                                <concat filterbeforeconcat="true">
-                                                    <fileset refid="patch-diff-files"/>
-                                                    <filterchain id="extracted-filepath-plus-comma">
-                                                        <headfilter lines="1"/>
-                                                        <tokenfilter>
-                                                            <filetokenizer/>
-                                                            <replaceregex
-                                                                  pattern="^.*/kfs-\w+/src/(main|test)/\w+/(\S+).*$$"
-                                                                  replace="\2,"/>
-                                                            <trim/>
-                                                        </tokenfilter>
-                                                    </filterchain>
-                                                </concat>
-                                                <filterchain id="remove-trailing-comma">
-                                                    <tokenfilter>
-                                                        <filetokenizer/>
-                                                        <replaceregex pattern=",$$" replace=""/>
-                                                    </tokenfilter>
-                                                </filterchain>
-                                            </concat>
-                                        </loadresource>
-                                        <echo level="debug"
-                                              message="@{target-files-propname}=${@{target-files-propname}}"/>
-                                    </sequential>
-                                </macrodef>
-                                
-                                <echo level="info"
-                                      message="--- Starting extra build property initialization ---"/>
-                                <init-patch-file-properties
-                                      patch-files-basedir="src/main/patches/java"
-                                      patch-files-propname="unpack.patch.java.patchfiles"
-                                      target-files-propname="unpack.patch.java.includes"/>
-                                <init-patch-file-properties
-                                      patch-files-basedir="src/main/patches/web"
-                                      patch-files-propname="unpack.patch.web.patchfiles"
-                                      target-files-propname="unpack.patch.web.includes"/>
-                                <echo level="info"
-                                      message="--- Finished extra build property initialization ---"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>${plugin.build-helper.version}</version>
@@ -362,35 +272,123 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-patch-plugin</artifactId>
-                <version>${maven.patch.version}</version>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${plugin.antrun.version}</version>
                 <executions>
+                    <execution>
+                        <id>set-props-derived-from-patch-files</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target>
+                                <macrodef name="init-patch-target-files-property"
+                                      description="Sets a property to hold the files targeted by a set of patch files">
+                                    <attribute name="patch-files-basedir"
+                                          description="The path to the patch diff files"/>
+                                    <attribute name="target-files-propname"
+                                          description="The property for storing the list of files to modify"/>
+                                    <sequential>
+                                         <echo level="info"
+                                               message="Initializing property: @{target-files-propname}"/>
+                                         <loadresource property="@{target-files-propname}">
+                                            <concat>
+                                                <concat filterbeforeconcat="true">
+                                                    <fileset id="patch-diff-files"
+                                                          dir="@{patch-files-basedir}">
+                                                        <include name="**/*.patch"/>
+                                                    </fileset>
+                                                    <filterchain id="extracted-filepath-plus-comma">
+                                                        <headfilter lines="1"/>
+                                                        <tokenfilter>
+                                                            <filetokenizer/>
+                                                            <replaceregex
+                                                                  pattern="^.*/kfs-\w+/src/(main|test)/\w+/(\S+).*$$"
+                                                                  replace="\2,"/>
+                                                            <trim/>
+                                                        </tokenfilter>
+                                                    </filterchain>
+                                                </concat>
+                                                <filterchain id="remove-trailing-comma">
+                                                    <tokenfilter>
+                                                        <filetokenizer/>
+                                                        <replaceregex pattern=",$$" replace=""/>
+                                                    </tokenfilter>
+                                                </filterchain>
+                                            </concat>
+                                        </loadresource>
+                                        <echo level="debug"
+                                              message="@{target-files-propname}=${@{target-files-propname}}"/>
+                                    </sequential>
+                                </macrodef>
+                                
+                                <echo level="info"
+                                      message="--- Starting extra build property initialization ---"/>
+                                <init-patch-target-files-property
+                                      patch-files-basedir="${patch.java.diffs.directory}"
+                                      target-files-propname="unpack.patch.java.includes"/>
+                                <init-patch-target-files-property
+                                      patch-files-basedir="${patch.web.diffs.directory}"
+                                      target-files-propname="unpack.patch.web.includes"/>
+                                <echo level="info"
+                                      message="--- Finished extra build property initialization ---"/>
+                            </target>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>patch-financials-java-files</id>
                         <phase>process-sources</phase>
                         <goals>
-                            <goal>apply</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <targetDirectory>${unpack.patch.java.directory}</targetDirectory>
-                            <patchDirectory>${patch.java.diffs.directory}</patchDirectory>
-                            <patches>${unpack.patch.java.patchfiles}</patches>
-                            <optimizations>false</optimizations>
-                            <strip>5</strip>
+                            <target>
+                                <echo level="info"
+                                      message="--- Applying patches to financials Java files ---"/>
+                                <apply executable="git"
+                                      parallel="false"
+                                      vmlauncher="false"
+                                      failonerror="true">
+                                    <arg value="apply"/>
+                                    <arg value="-p5"/>
+                                    <arg value="--directory=target/patch-java"/>
+                                    <fileset id="java-patch-diff-files"
+                                          dir="${patch.java.diffs.directory}">
+                                        <include name="**/*.patch"/>
+                                    </fileset>
+                                </apply>
+                                <echo level="info"
+                                      message="--- Finished applying patches to financials Java files ---"/>
+                            </target>
                         </configuration>
                     </execution>
                     <execution>
                         <id>patch-financials-web-files</id>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>apply</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <targetDirectory>${unpack.patch.web.directory}</targetDirectory>
-                            <patchDirectory>${patch.web.diffs.directory}</patchDirectory>
-                            <patches>${unpack.patch.web.patchfiles}</patches>
-                            <optimizations>false</optimizations>
-                            <strip>5</strip>
+                            <target>
+                                <echo level="info"
+                                      message="--- Applying patches to financials web files ---"/>
+                                <apply executable="git"
+                                      parallel="false"
+                                      vmlauncher="false"
+                                      failonerror="true">
+                                    <arg value="apply"/>
+                                    <arg value="-p5"/>
+                                    <arg value="--directory=target/patch-web"/>
+                                    <fileset id="web-patch-diff-files"
+                                          dir="${patch.web.diffs.directory}">
+                                        <include name="**/*.patch"/>
+                                    </fileset>
+                                </apply>
+                                <echo level="info"
+                                      message="--- Finished applying patches to financials web files ---"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
