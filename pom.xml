@@ -350,7 +350,6 @@
                                       message="--- Applying patches to financials Java files ---"/>
                                 <apply executable="git"
                                       parallel="false"
-                                      vmlauncher="false"
                                       failonerror="true">
                                     <arg value="apply"/>
                                     <arg value="-p5"/>
@@ -377,7 +376,6 @@
                                       message="--- Applying patches to financials web files ---"/>
                                 <apply executable="git"
                                       parallel="false"
-                                      vmlauncher="false"
                                       failonerror="true">
                                     <arg value="apply"/>
                                     <arg value="-p5"/>
