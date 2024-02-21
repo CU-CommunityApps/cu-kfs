@@ -232,13 +232,13 @@
                                 <exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>
                                 <exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
                                 <exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-1.2-api-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-api-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-core-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-jcl-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-jul-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-1.2-api-2.18.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-api-2.18.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-core-2.18.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-jcl-2.18.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-jul-2.18.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-slf4j-impl-2.18.*.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-web-2.18.*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
                                 <exclude>WEB-INF/lib/netty-*-4.*.jar</exclude>
