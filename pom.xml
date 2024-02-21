@@ -59,6 +59,8 @@
         <unpack.dd.fix.directory>${project.build.directory}/unpacked-dd-files</unpack.dd.fix.directory>
         <unpack.patch.java.directory>${project.build.directory}/patch-java</unpack.patch.java.directory>
         <unpack.patch.web.directory>${project.build.directory}/patch-web</unpack.patch.web.directory>
+        <patch.java.diffs.directory>${project.basedir}/src/main/patches/java</patch.java.diffs.directory>
+        <patch.web.diffs.directory>${project.basedir}/src/main/patches/web</patch.web.diffs.directory>
         <plugin.antrun.version>3.1.0</plugin.antrun.version>
         <plugin.build-helper.version>3.3.0</plugin.build-helper.version>
         <plugin.checkstyle.version>3.2.0</plugin.checkstyle.version>
@@ -371,7 +373,7 @@
                         </goals>
                         <configuration>
                             <targetDirectory>${unpack.patch.java.directory}</targetDirectory>
-                            <patchDirectory>src/main/patches/java</patchDirectory>
+                            <patchDirectory>${patch.java.diffs.directory}</patchDirectory>
                             <patches>${unpack.patch.java.patchfiles}</patches>
                             <optimizations>false</optimizations>
                             <strip>5</strip>
@@ -385,7 +387,7 @@
                         </goals>
                         <configuration>
                             <targetDirectory>${unpack.patch.web.directory}</targetDirectory>
-                            <patchDirectory>src/main/patches/web</patchDirectory>
+                            <patchDirectory>${patch.web.diffs.directory}</patchDirectory>
                             <patches>${unpack.patch.web.patchfiles}</patches>
                             <optimizations>false</optimizations>
                             <strip>5</strip>
