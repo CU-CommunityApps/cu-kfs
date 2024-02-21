@@ -145,6 +145,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         }
         
         editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
+        editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_NOTE_OPTIONS);
 
         return editModes;
     }

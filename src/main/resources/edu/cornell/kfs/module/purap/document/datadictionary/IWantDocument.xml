@@ -76,6 +76,7 @@
         
         <ref bean="IWantDocument-attachmentDescription"/>
         <ref bean="IWantDocument-noteLabel"/>
+        <ref bean="IWantDocument-noteOptionDropdownSelectedValue"/>
         
         <ref bean="IWantDocument-completed"/>
         <ref bean="IWantDocument-completeOption" />
@@ -556,6 +557,18 @@
       <bean parent="SelectControlDefinition" p:valuesFinder-ref="attachmentDescriptionValuesFinder" p:includeKeyInLabel="false"/>
     </property>
   </bean>
+  <bean id="IWantDocument-noteOptionDropdownSelectedValue" parent="IWantDocument-noteOptionDropdownSelectedValue-parentBean"/>
+
+  <bean id="IWantDocument-noteOptionDropdownSelectedValue-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="noteOptionDropdownSelectedValue"/>
+    <property name="label" value="Note Text Options"/>
+    <property name="shortLabel" value="Note Text Options"/>
+    <property name="maxLength" value="100"/>
+    <property name="required" value="false"/>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="iWantNoteDropdownValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+  </bean>
   <bean id="IWantDocument-totalDollarAmount" parent="IWantDocument-totalDollarAmount-parentBean"/>
 
   <bean id="IWantDocument-totalDollarAmount-parentBean" abstract="true" parent="GenericAttributes-genericAmount">
@@ -845,5 +858,7 @@
     <bean id="favoriteAccountValuesFinder"
           class="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder" 
           p:businessObjectService-ref="grl.businessObjectService"/>
+    <bean id="iWantNoteDropdownValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.IWantNoteDropdownValuesFinder"
+          p:keyValuesService-ref="grl.keyValuesService"/>
           
 </beans>
