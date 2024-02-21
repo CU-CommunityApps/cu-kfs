@@ -30,7 +30,8 @@
             <tbody>
                 <tr>
                     <th scope="row" class="right" width="25%">
-                        <kul:htmlAttributeLabel attributeEntry="${erAttributes['employee.name']}"/>
+                        <%-- CU Customization: Modified label to reference the potentially masked name. --%>
+                        <kul:htmlAttributeLabel attributeEntry="${erAttributes['employee.nameMaskedIfNecessary']}"/>
                     </th>
                     <td class="infocell" width="25%">
                         <%-- CU Customization: Modified inquiry tag body to reference the potentially masked name. --%>
