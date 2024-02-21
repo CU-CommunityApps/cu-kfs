@@ -958,16 +958,20 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
         
-        // If the note text is blank, set the attachment description as the text. Otherwise, concatenate both to form the text.
-        if (StringUtils.isBlank(note.getNoteText())) {
-            note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription());
+        if (StringUtils.isBlank(iWantDocumentForm.getIWantDocument().getNoteOptionDropdownSelectedValue())) {
+            if (StringUtils.isBlank(note.getNoteText())) {
+                note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription());
+            } else {
+                note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
+            }
         } else {
-            note.setNoteText(iWantDocumentForm.getIWantDocument().getAttachmentDescription() + ": " + note.getNoteText());
+            note.setNoteText(iWantDocumentForm.getIWantDocument().getNoteOptionDropdownSelectedValue());
         }
         
         ActionForward actionForward = super.insertBONote(mapping, form, request, response);
         
         iWantDocumentForm.getIWantDocument().setAttachmentDescription(StringUtils.EMPTY);
+        iWantDocumentForm.getIWantDocument().setNoteOptionDropdownSelectedValue(StringUtils.EMPTY);
 
         return actionForward;
     }

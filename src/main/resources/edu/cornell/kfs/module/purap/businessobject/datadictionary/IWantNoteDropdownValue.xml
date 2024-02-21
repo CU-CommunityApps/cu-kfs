@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:org/kuali/kfs/kns/datadictionary/kns-lookup-beans.xml"/>
+
+    <bean id="IWantNoteDropdownValue" parent="IWantNoteDropdownValue-parentBean"/>
+    <bean id="IWantNoteDropdownValue-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectClass="edu.cornell.kfs.module.purap.businessobject.IWantNoteDropdownValue"
+          p:businessObjectAdminService-ref="defaultBoAdminService"
+          p:inquiryDefinition-ref="IWantNoteDropdownValue-inquiryDefinition"
+          p:lookupDefinition-ref="IWantNoteDropdownValue-lookupDefinition"
+          p:name="IWantNoteDropdownValue"
+          p:objectLabel="I Want Note Dropdown Value"
+          p:searchService-ref="defaultSearchService"
+          p:titleAttribute="id">
+        <property name="keyAttributes">
+            <list>
+                <ref bean="IWantNoteDropdownValue-id" />
+            </list>
+        </property>
+        <property name="attributes">
+            <list>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
+                <ref bean="IWantNoteDropdownValue-active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Attribute Definitions -->
+
+    <bean id="IWantNoteDropdownValue-id" parent="IWantNoteDropdownValue-id-parentBean"/>
+    <bean id="IWantNoteDropdownValue-id-parentBean" abstract="true" parent="PurApGenericAttributes-genericItemIdentifier"
+          p:name="id" p:forceUppercase="true" p:label="I Want Note Dropdown Value Identifier" p:shortLabel="Value Identifier">
+    </bean>
+    
+    <bean id="IWantNoteDropdownValue-text" parent="IWantNoteDropdownValue-text-parentBean"/>
+    <bean id="IWantNoteDropdownValue-text-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="text" p:label="I Want Note Dropdown Value Text" p:shortLabel="Name" p:maxLength="150"
+          p:validationPattern-ref="AnyCharacterWithWhitespaceValidation" p:required="true">
+        <property name="control">
+            <bean parent="TextControlDefinition" p:size="50"/>
+        </property>
+    </bean>
+
+    <bean id="IWantNoteDropdownValue-active" parent="IWantNoteDropdownValue-active-parentBean"/>
+    <bean id="IWantNoteDropdownValue-active-parentBean" abstract="true" parent="GenericAttributes-activeIndicator"
+          p:name="active"/>
+
+    <!-- Business Object Inquiry Definition -->
+
+    <bean id="IWantNoteDropdownValue-inquiryDefinition" parent="IWantNoteDropdownValue-inquiryDefinition-parentBean"/>
+    <bean id="IWantNoteDropdownValue-inquiryDefinition-parentBean" abstract="true" parent="InquiryDefinition"
+          p:title="I Want Note">
+        <property name="sections">
+            <list>
+                <ref bean="IWantNoteDropdownValue-sectionDefinition"/>
+            </list>
+        </property>
+        <property name="inquirySections">
+            <list>
+                <ref bean="IWantNoteDropdownValue-inquirySectionDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="IWantNoteDropdownValue-sectionDefinition" parent="IWantNoteDropdownValue-sectionDefinition-parentBean"/>
+    <bean id="IWantNoteDropdownValue-sectionDefinition-parentBean" parent="sectionDefinition" abstract="true">
+        <property name="fields">
+            <list>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="IWantNoteDropdownValue-inquirySectionDefinition" parent="IWantNoteDropdownValue-inquirySectionDefinition-parentBean"/>
+    <bean id="IWantNoteDropdownValue-inquirySectionDefinition-parentBean" parent="InquirySectionDefinition" abstract="true"
+          p:title="" p:numberOfColumns="1">
+        <property name="inquiryFields">
+            <list>
+                <bean parent="FieldDefinition" p:attributeName="id"/>
+                <bean parent="FieldDefinition" p:attributeName="text"/>
+                <bean parent="FieldDefinition" p:attributeName="active"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Business Object Lookup Definition -->
+
+    <bean id="IWantNoteDropdownValue-lookupDefinition" parent="IWantNoteDropdownValue-lookupDefinition-parentBean"/>
+    <bean id="IWantNoteDropdownValue-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition"
+          p:title="I Want Note Dropdown Value Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>id</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="IWantNoteDropdownValue-id"/>
+                <ref bean="IWantNoteDropdownValue-text"/>
+                <ref bean="activeIndicatorAttributeDefinition"/>
+            </list>
+        </property>
+    </bean>
+</beans>
