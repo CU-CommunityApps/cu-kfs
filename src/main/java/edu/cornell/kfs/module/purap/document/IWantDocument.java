@@ -779,7 +779,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         setAccountsPayablePurchasingDocumentLinkIdentifier(null);
         setReqsDocId(null);
         setDvDocId(null);
-        
+        setProcessorNetId(null);
+        setProcessorName(null);
+
         this.completeOption = null;
         this.completed = false;
     }
@@ -793,6 +795,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         setAccountsPayablePurchasingDocumentLinkIdentifier(null);
         setReqsDocId(null);
         setDvDocId(null);
+        setProcessorNetId(null);
+        setProcessorName(null);
 
         this.completeOption = null;
         this.completed = false;
