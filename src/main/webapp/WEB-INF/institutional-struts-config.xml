@@ -144,6 +144,14 @@
 			<forward name="basic" path="/jsp/module/purap/Requisition.jsp" />	
 		</action>
 
+		<action path="/camsCapitalAssetInformation" name="CapitalAssetInformationForm"
+				input="/jsp/module/cams/CapitalAssetInformation.jsp"
+				type="edu.cornell.kfs.module.cam.web.struts.CuCapitalAssetInformationAction" scope="session"
+				parameter="methodToCall" validate="true" attribute="KualiForm">
+			<set-property property="cancellable" value="true"/>
+			<forward name="basic" path="/jsp/module/cams/CapitalAssetInformation.jsp"/>
+		</action>
+
 	   <action path="/purapPurchaseOrder" name="CuPurchaseOrderForm"
 			input="/jsp/module/purap/PurchaseOrder.jsp"
 			type="edu.cornell.kfs.module.purap.document.web.struts.CuPurchaseOrderAction"
