@@ -23,7 +23,7 @@ public class CuCapitalAssetInformationAction extends CapitalAssetInformationActi
         List<CapitalAssetInformation> capitalAssetInformations = glLineService.findAllCapitalAssetInformation(entry.getDocumentNumber());
         Collection<GeneralLedgerEntry> glEntries = glLineService.findAllGeneralLedgerEntry(entry.getDocumentNumber());
 
-        if(!capitalAssetInformations.isEmpty() && capitalAssetInformations.size() != glEntries.size()){
+        if (!capitalAssetInformations.isEmpty() && capitalAssetInformations.size() != glEntries.size()) {
             // we need to generate missing capital asset info
             glLineService.setupMissingCapitalAssetInformation(entry.getDocumentNumber());
         }
