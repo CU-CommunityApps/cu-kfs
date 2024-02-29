@@ -66,7 +66,7 @@
         <plugin.war.version>3.3.2</plugin.war.version>
         <jaxws-ri.version>2.3.0</jaxws-ri.version>
         <jta.version>1.1</jta.version>
-        <log4j.version>2.21.1</log4j.version>
+        <log4j.version>2.22.1</log4j.version>
         <cxf.version>3.4.10</cxf.version>
         <wss4j.version>2.2.5</wss4j.version>
     </properties>
@@ -229,16 +229,8 @@
                             <artifactId>kfs-web</artifactId>
                             <filtered>false</filtered>
                             <excludes>
-                                <exclude>WEB-INF/lib/log4j-*-2.11.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-1.2-api-2.11.0.jar</exclude>
+                                <exclude>WEB-INF/lib/log4j-*-2.*.jar</exclude>
                                 <exclude>WEB-INF/lib/httpclient-4.5.5.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-1.2-api-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-api-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-core-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-jcl-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-jul-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-slf4j-impl-2.13.*.jar</exclude>
-                                <exclude>WEB-INF/lib/log4j-web-2.13.*.jar</exclude>
                                 <exclude>WEB-INF/lib/commons-logging-*.jar</exclude>
                                 <exclude>WEB-INF/lib/gson-*.jar</exclude>
                                 <exclude>WEB-INF/lib/netty-*-4.*.jar</exclude>
