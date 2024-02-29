@@ -66,4 +66,6 @@ public interface ReportWriterService extends org.kuali.kfs.sys.service.ReportWri
 	public void setTitle(String title);
 
 	public void destroy();
+
+	public void initalize(String dataFileNamePrefix);
 }

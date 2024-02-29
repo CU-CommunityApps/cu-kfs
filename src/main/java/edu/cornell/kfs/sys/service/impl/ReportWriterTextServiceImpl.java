@@ -22,6 +22,7 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.api.role.RoleService;
@@ -40,6 +41,9 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		implements ReportWriterService {
 	private static final Logger LOG = LogManager.getLogger();
 
+	private static String REPORT_FILE_NAME_INFIX = "_report_";
+	private static int NUM_CHARS_ALLOWED_FOR_FULL_FILE_PATH = 512;
+
 	protected String fullFilePath;
 	protected String fromAddress;
 	protected String messageBody;
@@ -55,7 +59,7 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	public void initialize() {
 		try {
 			fullFilePath = generateFullFilePath();
-			LOG.debug("initialize, fullFilePath: " + fullFilePath);
+			LOG.info("initialize, report fullFilePath: {}", fullFilePath);
 			printStream = new PrintStream(fullFilePath);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
@@ -64,6 +68,36 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		page = initialPageNumber;
 		initializeBusinessObjectReportHelpers();
 		this.writeHeader(title);
+	}
+
+	@Override
+    public void initalize(String dataFileNamePrefix) {
+        if (StringUtils.isNotBlank(dataFileNamePrefix)
+                && fullFilePathLimitWouldNotBeExceeded(dataFileNamePrefix)) {
+            LOG.info("initalize, with XML data file name prefix: {}", dataFileNamePrefix);
+            setFileNamePrefix(dataFileNamePrefix + REPORT_FILE_NAME_INFIX);
+        }
+        initialize();
+    }
+
+	private boolean fullFilePathLimitWouldNotBeExceeded(String dataFileNamePrefix) {
+        //initialized to force use of default report file prefix when processing fails for any reason
+        int numCharsCalculated = NUM_CHARS_ALLOWED_FOR_FULL_FILE_PATH + 1;
+
+        numCharsCalculated = filePath.length() + File.separator.length() 
+                + dataFileNamePrefix.length() + REPORT_FILE_NAME_INFIX.length() 
+                    + dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate()).length() 
+                        + fileNameSuffix.length();
+
+        if (numCharsCalculated < NUM_CHARS_ALLOWED_FOR_FULL_FILE_PATH) {
+            LOG.debug("fullFilePathLimitWouldNotBeExceeded: report file name prefix {} ok for path limit.", dataFileNamePrefix);
+            return true;
+        } else {
+            LOG.warn("fullFilePathLimitWouldNotBeExceeded: Using data file XML name as prefix for report file prefix "
+                        + "would make full report file path, name, extension too long. Using default report file name "
+                        + "prefix {} instead.", fileNamePrefix);
+            return false;
+        }
 	}
 
 	@Override
