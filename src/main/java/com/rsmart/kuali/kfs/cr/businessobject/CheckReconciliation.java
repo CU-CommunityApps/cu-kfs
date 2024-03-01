@@ -61,7 +61,7 @@ public class CheckReconciliation extends PersistableBusinessObjectBase implement
     
     private Bank bank;
 
-    private boolean active;
+    private boolean active = true;
     
     /**
      * Constructs a CheckBase business object.
