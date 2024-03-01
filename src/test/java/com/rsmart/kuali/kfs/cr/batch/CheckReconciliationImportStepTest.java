@@ -551,6 +551,7 @@ public class CheckReconciliationImportStepTest {
             assertEquals(checkReconFixture.newCheckStatus, checkRecon.getStatus(), "Wrong check status");
             assertEquals(checkReconFixture.getParsedStatusChangeDate(), checkRecon.getStatusChangeDate(),
                     "Wrong status change date");
+            assertTrue(checkRecon.isActive());
         }
     }
 

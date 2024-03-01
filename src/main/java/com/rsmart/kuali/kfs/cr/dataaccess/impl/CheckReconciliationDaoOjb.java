@@ -117,6 +117,7 @@ public class CheckReconciliationDaoOjb extends PlatformAwareDaoBaseOjb implement
             
             while(rs.next()) {
                 cr = new CheckReconciliation();
+                cr.setActive(true);
                 cr.setCheckNumber(new KualiInteger(rs.getInt(1)));
                 cr.setCheckDate(new java.sql.Date(rs.getDate(2).getTime()));  //This is last status change date.
                 cr.setAmount(new KualiDecimal(rs.getDouble(3)));

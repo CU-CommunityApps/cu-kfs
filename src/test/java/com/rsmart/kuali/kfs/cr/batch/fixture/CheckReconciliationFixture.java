@@ -100,6 +100,7 @@ public enum CheckReconciliationFixture {
     private CheckReconciliation toCheckReconciliation() {
         CheckReconciliation checkReconciliation = new CheckReconciliation();
         checkReconciliation.setId(ordinal());
+        checkReconciliation.setActive(true);
         checkReconciliation.setBankCode(bankCode);
         checkReconciliation.setBankAccountNumber(getExpectedBankAccountNumber());
         checkReconciliation.setCheckNumber(checkNumber);
