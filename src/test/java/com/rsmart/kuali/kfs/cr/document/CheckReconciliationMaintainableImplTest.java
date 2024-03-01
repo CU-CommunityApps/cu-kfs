@@ -68,6 +68,7 @@ public class CheckReconciliationMaintainableImplTest {
         document.setDocumentHeader(dh);
 
         CheckReconciliation newCr = new CheckReconciliation();
+        newCr.setActive(true);
         KualiInteger checkNumber = new KualiInteger(checkNumberString);
         newCr.setCheckNumber(checkNumber);
 
