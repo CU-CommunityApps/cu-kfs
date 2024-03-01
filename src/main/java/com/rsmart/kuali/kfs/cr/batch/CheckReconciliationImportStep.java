@@ -893,6 +893,7 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
         issueDate = dateParser.apply(issueDateRawValue);
         
         CheckReconciliation cr = new CheckReconciliation();
+        cr.setActive(true);
         cr.setAmount(amount);
         cr.setCheckDate(new java.sql.Date(issueDate.getTime()));
         cr.setCheckNumber(new KualiInteger(checkNumber));
