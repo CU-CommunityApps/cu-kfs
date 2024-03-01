@@ -8,38 +8,29 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.service.AccountingPeriodService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonresidentTax;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.pdp.PdpConstants;
-import org.kuali.kfs.pdp.PdpPropertyConstants;
-import org.kuali.kfs.pdp.businessobject.PaymentDetail;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
-import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
-import org.kuali.kfs.sys.util.KfsDateUtils;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.routeheader.service.RouteHeaderService;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -47,9 +38,19 @@ import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.pdp.PdpConstants;
+import org.kuali.kfs.pdp.PdpPropertyConstants;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
+import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
+import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.util.KfsDateUtils;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.fp.batch.RecurringDisbursementVoucherDocumentRoutingReportItem;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherDetail;
 import edu.cornell.kfs.fp.businessobject.RecurringDisbursementVoucherPDPStatus;
@@ -58,6 +59,7 @@ import edu.cornell.kfs.fp.dataaccess.RecurringDisbursementVoucherSearchDao;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherExtractionHelperService;
+import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentRoutingService;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherPaymentMaintenanceService;
 import edu.cornell.kfs.gl.service.ScheduledAccountingLineService;
@@ -78,6 +80,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     protected RouteHeaderService routeHeaderService;
     protected CuDisbursementVoucherExtractionHelperService cuDisbursementVoucherExtractionHelperService;
     protected NoteService noteService;
+    protected RecurringDisbursementVoucherDocumentRoutingService recurringDisbursementVoucherDocumentRoutingService;
 
     @Override
     public void updateRecurringDisbursementVoucherDetails(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument){
@@ -410,89 +413,36 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Entered.");
         int approvalCount = 0;
         int errorCount = 0;
-        List <String> dvDocIdsCausingError = new ArrayList<String>();
-        Collection <String> dvDocIds = getRecurringDisbursementVoucherSearchDao().findSavedDvIdsSpawnedByRecurringDvForCurrentAndPastFiscalPeriods(getCurrentFiscalPeriodEndDate());
-        if (ObjectUtils.isNotNull(dvDocIds) && !(dvDocIds.isEmpty())) {
-            for (String dvDocId :  dvDocIds) {
-                LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Processing start for DV ID:: " + dvDocId);
-                CuDisbursementVoucherDocument dv = null;
-                try{
-                    dv = getDisbursementVoucher(dvDocId);
-                } catch (WorkflowException e) {
-                    dvDocIdsCausingError.add(new String("DocId=" + dvDocId ));
+        List<String> dvDocIdsCausingError = new ArrayList<String>();
+        Collection<String> dvDocIds = getRecurringDisbursementVoucherSearchDao().findSavedDvIdsSpawnedByRecurringDvForCurrentAndPastFiscalPeriods(getCurrentFiscalPeriodEndDate());
+        List<RecurringDisbursementVoucherDocumentRoutingReportItem> reportItems = new ArrayList<>(
+                CollectionUtils.size(dvDocIds));
+        if (CollectionUtils.isNotEmpty(dvDocIds)) {
+            for (String dvDocId : dvDocIds) {
+                LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Processing start for DV ID:: {}", dvDocId);
+                RecurringDisbursementVoucherDocumentRoutingReportItem reportItem =
+                        recurringDisbursementVoucherDocumentRoutingService
+                                .autoApproveSpawnedDisbursementVoucher(dvDocId);
+                reportItems.add(reportItem);
+                if (reportItem.hasErrors()) {
                     errorCount++;
-                }
-                if (ObjectUtils.isNotNull(dv)) {
-                    if (isKfsSystemUserDvInitiator(dv)) {
-                        try {
-                            addNoteToAutoApproveDv(dv, "Batch job Submit and Blanket Approve performed for DV spawned by Recurring DV.");
-                            try{
-                                blanketApproveDisbursementVoucherDocument(dv);
-                                approvalCount++;
-
-                            } catch (WorkflowException e) {
-                                dvDocIdsCausingError.add(new String("DocId=" + dvDocId ));
-                                errorCount++;
-                            }
-                        } catch (WorkflowException e) {
-                            dvDocIdsCausingError.add(new String("DocId=" + dvDocId ));
-                            errorCount++;
-                        }
-                    }
-                    else {
-                        LOG.error("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Detected document initiator was not KFS System user. Auto blanket approval was NOT attemtped for document ID: " + dv.getDocumentNumber());
-                        dvDocIdsCausingError.add(new String("DocId=" + dvDocId ));
-                        errorCount++;
-                    }
+                    dvDocIdsCausingError.add(dvDocId);
+                } else {
+                    approvalCount++;
                 }
             }
-        }
-        else {
+        } else {
             LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: No DV's spwned by Recurring DV found. Nothing will be auto approved. ");
         }
 
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: **************** Batch Job Processing Results ****************");
-        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers that generated Errors:: " + errorCount);
-        for (Iterator iterator = dvDocIdsCausingError.iterator(); iterator.hasNext();) {
-            LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Erroring " + (String)iterator.next());
+        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers that generated Errors:: {}", errorCount);
+        for (String dvDocIdCausingError : dvDocIdsCausingError) {
+            LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Erroring {}", dvDocIdCausingError);
         }
-        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers successfuly Blanket Approved (fully processed):: " + approvalCount);
+        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers successfuly Blanket Approved (fully processed):: {}", approvalCount);
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Leaving.");
         return errorCount == 0;
-    }
-
-    private CuDisbursementVoucherDocument getDisbursementVoucher(String dvDocId) throws WorkflowException {
-        CuDisbursementVoucherDocument dvFound = null;
-        dvFound = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocId);
-
-        return dvFound;
-    }
-
-    private String getKfsSystemUserPrincipalId() {
-        Person kfsSystemUser = getPersonService().getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
-        return kfsSystemUser.getPrincipalId();
-    }
-
-    private boolean isKfsSystemUserDvInitiator(CuDisbursementVoucherDocument dv) {
-        String dvDocInitatorPrincipalId = dv.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-
-        if ( StringUtils.equals(dvDocInitatorPrincipalId, getKfsSystemUserPrincipalId()) ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private void addNoteToAutoApproveDv(CuDisbursementVoucherDocument dv, String noteText) throws WorkflowException {
-        Note note = buildNoteBase();
-        note.setNoteText(noteText);
-        dv.addNote(note);
-        getDocumentService().saveDocument(dv);
-    }
-
-    private void blanketApproveDisbursementVoucherDocument(CuDisbursementVoucherDocument dv) throws WorkflowException {
-        getDocumentService().blanketApproveDocument(dv, "Auto blanket approve from Batch Job", null);
     }
 
     private Date getCurrentFiscalPeriodEndDate() {
@@ -670,6 +620,11 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     public void setDataDictionaryService(DataDictionaryService dataDictionaryService) {
         this.dataDictionaryService = dataDictionaryService;
+    }
+
+    public void setRecurringDisbursementVoucherDocumentRoutingService(
+            RecurringDisbursementVoucherDocumentRoutingService recurringDisbursementVoucherDocumentRoutingService) {
+        this.recurringDisbursementVoucherDocumentRoutingService = recurringDisbursementVoucherDocumentRoutingService;
     }
 
 }

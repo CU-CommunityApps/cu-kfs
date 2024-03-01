@@ -1,10 +1,10 @@
 package edu.cornell.kfs.fp.dataaccess.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,15 +15,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.framework.persistence.jdbc.dao.PlatformAwareDaoBaseJdbc;
-import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.sys.context.SpringContext;
-
+import org.kuali.kfs.kew.api.KewApiConstants;
 import org.springframework.jdbc.core.ConnectionCallback;
 
 import edu.cornell.kfs.fp.dataaccess.RecurringDisbursementVoucherSearchDao;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.CuSqlChunk;
+import edu.cornell.kfs.sys.util.CuSqlQuery;
 
 public class RecurringDisbursementVoucherSearchDaoJdbc extends PlatformAwareDaoBaseJdbc implements RecurringDisbursementVoucherSearchDao {
 
@@ -88,6 +87,16 @@ public class RecurringDisbursementVoucherSearchDaoJdbc extends PlatformAwareDaoB
         sqlBuilder.append("AND C.DOC_HDR_STAT_CD = '").append(KewApiConstants.ROUTE_HEADER_SAVED_CD).append("' ");
         sqlBuilder.append("AND B.DV_CHECK_DT <= '").append(formatter.format(currentFisalPeriodEndDate)).append("'");
         return sqlBuilder.toString();
+    }
+
+    @Override
+    public String findRecurringDvIdForSpawnedDv(String spawnedDvDocumentNumber) {
+        CuSqlQuery query = new CuSqlChunk()
+                .append("SELECT RECURRING_DV_DOC_NUMBER FROM KFS.FP_RCDV_DTL_T WHERE DV_DOC_NBR = ")
+                .appendAsParameter(spawnedDvDocumentNumber)
+                .toQuery();
+        return getJdbcTemplate().queryForObject(
+                query.getQueryString(), String.class, query.getParametersArray());
     }
 
     protected DateTimeService getDateTimeService() {
