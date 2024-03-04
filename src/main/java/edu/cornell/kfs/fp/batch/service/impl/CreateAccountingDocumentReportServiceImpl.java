@@ -1,6 +1,5 @@
 package edu.cornell.kfs.fp.batch.service.impl;
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,13 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
-import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItemDetail;
@@ -33,14 +30,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
 
     @Override
     public void generateReport(CreateAccountingDocumentReportItem reportItem) {
-        String dataFilePrefix = obtainDataFileName(reportItem.getXmlFileName());
-        if (StringUtils.isNotBlank(reportItem.getXmlFileName()) && StringUtils.isNotBlank(dataFilePrefix)) {
-            //use data XML file name as part of report file name
-            reportWriterService.initalize(dataFilePrefix);
-        } else {
-            //use spring configured default report file name
-            reportWriterService.initialize();
-        }
+        reportWriterService.initialize(reportItem.getXmlFileName());
         if (reportItem.isNonBusinessRuleFailure() 
                 && (ObjectUtils.isNotNull(reportItem.getValidationErrorMessage()) && StringUtils.isNotBlank(reportItem.getValidationErrorMessage()))) {
             LOG.info("generateReport: generateFileFailureDueToHeaderValidationErrorSummary request was issued.");
@@ -55,35 +45,6 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
             }
         }
         reportWriterService.destroy();
-    }
-    
-    /**
-     * This method generates a file name prefix from the fully qualified CreateAccountingDocumentReportItem
-     * xmlFileName attribute. The input parameter is assumed to contain the fully qualified directory path
-     * as well as a file name and extension. This method strips off both the directory path and file extension
-     * returning just the file name portion of the string.
-     *
-     * Example:
-     *  Input parameter : /infra/work/staging/fp/accountingXmlDocument/fp_ib_netsuite_20240229_050035.xml
-     *  Return value    : fp_ib_netsuite_20240229_050035
-     *
-     * @param xmlDataFileName
-     */
-    private String obtainDataFileName(String fullyQualifiedDataFile) {
-        String onlyDataFileName = KFSConstants.EMPTY_STRING;
-
-        int startingIndexOfFileExtension = fullyQualifiedDataFile.lastIndexOf(CuFPConstants.XML_FILE_EXTENSION);
-
-        if (startingIndexOfFileExtension != -1) {
-            onlyDataFileName = fullyQualifiedDataFile.substring(0, startingIndexOfFileExtension);
-
-            int startingIndexOfLastPathSeparator = onlyDataFileName.lastIndexOf(File.separator);
-
-            if (startingIndexOfLastPathSeparator != -1) {
-                onlyDataFileName = onlyDataFileName.substring(startingIndexOfLastPathSeparator + 1);
-            }
-        }
-        return onlyDataFileName;
     }
 
     private void generateFileProcessingSummary(CreateAccountingDocumentReportItem reportItem) {
