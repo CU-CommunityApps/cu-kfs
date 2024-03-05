@@ -21,8 +21,8 @@ import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class CreateAccountingDocumentReportServiceImpl implements CreateAccountingDocumentReportService {
-	private static final Logger LOG = LogManager.getLogger(CreateAccountingDocumentReportServiceImpl.class);
-    
+	private static final Logger LOG = LogManager.getLogger();
+
     protected ConfigurationService configurationService;
     protected ReportWriterService reportWriterService;
     protected EmailService emailService;
@@ -30,7 +30,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
 
     @Override
     public void generateReport(CreateAccountingDocumentReportItem reportItem) {
-        reportWriterService.initialize();
+        reportWriterService.initialize(reportItem.getXmlFileName());
         if (reportItem.isNonBusinessRuleFailure() 
                 && (ObjectUtils.isNotNull(reportItem.getValidationErrorMessage()) && StringUtils.isNotBlank(reportItem.getValidationErrorMessage()))) {
             LOG.info("generateReport: generateFileFailureDueToHeaderValidationErrorSummary request was issued.");
@@ -46,7 +46,7 @@ public class CreateAccountingDocumentReportServiceImpl implements CreateAccounti
         }
         reportWriterService.destroy();
     }
-    
+
     private void generateFileProcessingSummary(CreateAccountingDocumentReportItem reportItem) {
         generateSummary(reportItem);
         reportWriterService.writeNewLines(2);
