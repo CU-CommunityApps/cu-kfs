@@ -22,9 +22,12 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.api.role.RoleService;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
@@ -40,11 +43,17 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		implements ReportWriterService {
 	private static final Logger LOG = LogManager.getLogger();
 
+	private static final String REPORT_FILE_NAME_INFIX = "_report_";
+	private static final int NUM_CHARS_ALLOWED_FOR_FULL_FILE_PATH = 512;
+
 	protected String fullFilePath;
 	protected String fromAddress;
 	protected String messageBody;
 	protected RoleService roleService;
 	protected Set<String> ccAddresses;
+	
+	protected String springFileNamePrefixBackupCopy = KFSConstants.EMPTY_STRING;
+	protected boolean resetFileNamePrefixToSpringValue = false;
 
 	public ReportWriterTextServiceImpl() {
 		super();
@@ -55,7 +64,7 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	public void initialize() {
 		try {
 			fullFilePath = generateFullFilePath();
-			LOG.debug("initialize, fullFilePath: " + fullFilePath);
+			LOG.info("initialize, report fullFilePath: {}", fullFilePath);
 			printStream = new PrintStream(fullFilePath);
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
@@ -64,6 +73,81 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 		page = initialPageNumber;
 		initializeBusinessObjectReportHelpers();
 		this.writeHeader(title);
+	}
+
+	@Override
+	public void initialize(String fullyQualifiedDataFileName) {
+	    String dataFileNamePrefix = obtainDataFileName(fullyQualifiedDataFileName);
+	    if (StringUtils.isNotBlank(fullyQualifiedDataFileName)
+	            && StringUtils.isNotBlank(dataFileNamePrefix)
+	            && fullFilePathLimitWouldNotBeExceeded(dataFileNamePrefix)) {
+	        //use data file name as part of this report file name
+	        configureFileNamePrefixForThisReport(dataFileNamePrefix);
+	        LOG.info("initialize, data file name configured into report prefix name: {}", fileNamePrefix);
+	    } //else - use spring configured default report file name
+	    initialize();
+	}
+	
+	/**
+	 * This method generates a file name prefix from the fully qualified file name attribute
+	 *     (i.e.   directoryPath/fileName.fileExtension)
+	 * This functionality was created for the CreateAccountingDocumentReportItem xmlFileName attribute but could
+	 * be utilized by any other batch job that desired the report output file contain the input data file name
+	 * as the report file prefix. The input parameter is assumed to contain the fully qualified directory path
+	 * as well as a file name and extension. This method strips off both the directory path and file extension
+	 * returning just the file name portion of the string.
+	 * When both a directory path and file extension are not detected, a zero length string is returned.
+	 *
+	 * Example:
+	 *  Input parameter : /infra/work/staging/fp/accountingXmlDocument/fp_ib_netsuite_20240229_050035.xml
+	 *  Return value    : fp_ib_netsuite_20240229_050035
+	 *  
+	 *  @param fullyQualifiedDataFileName
+	 */
+	private String obtainDataFileName(String fullyQualifiedDataFileName) {
+	    String onlyDataFileName = KFSConstants.EMPTY_STRING;
+	    
+	    if (StringUtils.contains(fullyQualifiedDataFileName, KFSConstants.DELIMITER)
+	            && (StringUtils.contains(fullyQualifiedDataFileName, File.separator))) {
+	        onlyDataFileName = StringUtils.substringBeforeLast(fullyQualifiedDataFileName, KFSConstants.DELIMITER);
+	        
+	        if (StringUtils.isNotBlank(onlyDataFileName)) {
+	            onlyDataFileName = StringUtils.substringAfterLast(onlyDataFileName, File.separator);
+	        }
+	    }
+	    return onlyDataFileName;
+	}
+	
+	private boolean fullFilePathLimitWouldNotBeExceeded(String dataFileNamePrefix) {
+	    int numCharsCalculated = StringUtils.length(filePath) + File.separator.length() 
+	            + StringUtils.length(dataFileNamePrefix) + StringUtils.length(REPORT_FILE_NAME_INFIX) 
+	                + StringUtils.length(dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate())) 
+	                    + StringUtils.length(fileNameSuffix);
+
+	    if (numCharsCalculated < NUM_CHARS_ALLOWED_FOR_FULL_FILE_PATH) {
+	        LOG.debug("fullFilePathLimitWouldNotBeExceeded: report file name prefix {} ok for path limit.", dataFileNamePrefix);
+	        return true;
+	    } else {
+	        LOG.warn("fullFilePathLimitWouldNotBeExceeded: Using data file name as prefix for report file prefix "
+	                    + "would make full report file path, name, extension too long. Using default report file name "
+	                    + "prefix {} instead.", fileNamePrefix);
+	        return false;
+	    }
+	}
+	
+	private void configureFileNamePrefixForThisReport(String dataFileNamePrefix) {
+	    resetFileNamePrefixToSpringValue = true;
+	    springFileNamePrefixBackupCopy = fileNamePrefix;
+	    setFileNamePrefix(dataFileNamePrefix + REPORT_FILE_NAME_INFIX);
+	}
+	
+	private void restoreFileNamePrefixToSpringConfiguredPrefix() {
+	    if (resetFileNamePrefixToSpringValue) {
+	        resetFileNamePrefixToSpringValue = false;
+	        setFileNamePrefix(springFileNamePrefixBackupCopy);
+	        springFileNamePrefixBackupCopy = KFSConstants.EMPTY_STRING;
+	        LOG.info("restoreFileNamePrefixToSpringConfiguredPrefix, data file name prefix reset to Spring default value: {}", fileNamePrefix);
+	    }
 	}
 
 	@Override
@@ -171,6 +255,7 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 
 	@Override
 	public void destroy() {
+	    restoreFileNamePrefixToSpringConfiguredPrefix();
 	    super.destroy();
 	}
 }
