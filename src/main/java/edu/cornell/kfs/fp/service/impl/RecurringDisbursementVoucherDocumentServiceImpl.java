@@ -1,5 +1,6 @@
 package edu.cornell.kfs.fp.service.impl;
 
+import java.io.File;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -59,6 +60,7 @@ import edu.cornell.kfs.fp.dataaccess.RecurringDisbursementVoucherSearchDao;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.RecurringDisbursementVoucherDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherExtractionHelperService;
+import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentReportService;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentRoutingService;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherDocumentService;
 import edu.cornell.kfs.fp.service.RecurringDisbursementVoucherPaymentMaintenanceService;
@@ -81,6 +83,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     protected CuDisbursementVoucherExtractionHelperService cuDisbursementVoucherExtractionHelperService;
     protected NoteService noteService;
     protected RecurringDisbursementVoucherDocumentRoutingService recurringDisbursementVoucherDocumentRoutingService;
+    protected RecurringDisbursementVoucherDocumentReportService recurringDisbursementVoucherDocumentReportService;
 
     @Override
     public void updateRecurringDisbursementVoucherDetails(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument){
@@ -409,7 +412,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     }
 
     @Override
-    public boolean autoApproveDisbursementVouchersSpawnedByRecurringDvs() {
+    public void autoApproveDisbursementVouchersSpawnedByRecurringDvs() {
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Entered.");
         int approvalCount = 0;
         int errorCount = 0;
@@ -441,8 +444,13 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Erroring {}", dvDocIdCausingError);
         }
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers successfuly Blanket Approved (fully processed):: {}", approvalCount);
+
+        if (errorCount > 0) {
+            File reportFile = recurringDisbursementVoucherDocumentReportService
+                    .buildDvAutoApproveErrorReport(reportItems);
+            recurringDisbursementVoucherDocumentReportService.sendDvAutoApproveErrorReportEmail(reportFile);
+        }
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Leaving.");
-        return errorCount == 0;
     }
 
     private Date getCurrentFiscalPeriodEndDate() {
@@ -625,6 +633,11 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     public void setRecurringDisbursementVoucherDocumentRoutingService(
             RecurringDisbursementVoucherDocumentRoutingService recurringDisbursementVoucherDocumentRoutingService) {
         this.recurringDisbursementVoucherDocumentRoutingService = recurringDisbursementVoucherDocumentRoutingService;
+    }
+
+    public void setRecurringDisbursementVoucherDocumentReportService(
+            RecurringDisbursementVoucherDocumentReportService recurringDisbursementVoucherDocumentReportService) {
+        this.recurringDisbursementVoucherDocumentReportService = recurringDisbursementVoucherDocumentReportService;
     }
 
 }

@@ -92,7 +92,7 @@ public class RecurringDisbursementVoucherSearchDaoJdbc extends PlatformAwareDaoB
     @Override
     public String findRecurringDvIdForSpawnedDv(String spawnedDvDocumentNumber) {
         CuSqlQuery query = new CuSqlChunk()
-                .append("SELECT RECURRING_DV_DOC_NUMBER FROM KFS.FP_RCDV_DTL_T WHERE DV_DOC_NBR = ")
+                .append("SELECT RECURRING_DV_DOC_NBR FROM KFS.FP_RCDV_DTL_T WHERE DV_DOC_NBR = ")
                 .appendAsParameter(spawnedDvDocumentNumber)
                 .toQuery();
         return getJdbcTemplate().queryForObject(
