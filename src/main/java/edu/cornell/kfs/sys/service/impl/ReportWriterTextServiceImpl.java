@@ -109,23 +109,13 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	    
 	    if (StringUtils.contains(fullyQualifiedDataFileName, KFSConstants.DELIMITER)
 	            && (StringUtils.contains(fullyQualifiedDataFileName, File.separator))) {
-	        onlyDataFileName = removeFileExtension(fullyQualifiedDataFileName);
+	        onlyDataFileName = StringUtils.substringBeforeLast(fullyQualifiedDataFileName, KFSConstants.DELIMITER);
 	        
 	        if (StringUtils.isNotBlank(onlyDataFileName)) {
 	            onlyDataFileName = StringUtils.substringAfterLast(onlyDataFileName, File.separator);
 	        }
 	    }
 	    return onlyDataFileName;
-	}
-	
-	private String removeFileExtension(String fullyQualifiedDataFileName) {
-	    String filePathAndNameWithExtensionRemoved = KFSConstants.EMPTY_STRING;
-	    String [] subStringArray = StringUtils.split(fullyQualifiedDataFileName, KFSConstants.DELIMITER);
-	    if (ObjectUtils.isNotNull(subStringArray) 
-	            && subStringArray.length == 2) {
-	        filePathAndNameWithExtensionRemoved =  subStringArray[0];
-	    }
-	    return filePathAndNameWithExtensionRemoved;
 	}
 	
 	private boolean fullFilePathLimitWouldNotBeExceeded(String dataFileNamePrefix) {
@@ -138,7 +128,7 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	        LOG.debug("fullFilePathLimitWouldNotBeExceeded: report file name prefix {} ok for path limit.", dataFileNamePrefix);
 	        return true;
 	    } else {
-	        LOG.warn("fullFilePathLimitWouldNotBeExceeded: Using data file XML name as prefix for report file prefix "
+	        LOG.warn("fullFilePathLimitWouldNotBeExceeded: Using data file name as prefix for report file prefix "
 	                    + "would make full report file path, name, extension too long. Using default report file name "
 	                    + "prefix {} instead.", fileNamePrefix);
 	        return false;
