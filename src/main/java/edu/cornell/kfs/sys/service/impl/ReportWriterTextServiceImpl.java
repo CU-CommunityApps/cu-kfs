@@ -26,9 +26,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.api.role.RoleService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 /**
@@ -76,48 +76,60 @@ public class ReportWriterTextServiceImpl extends org.kuali.kfs.sys.service.impl.
 	}
 
 	@Override
-	public void initialize(String fullyQualifiedDataXmlFileName) {
-	    String dataFileNamePrefix = obtainDataFileName(fullyQualifiedDataXmlFileName);
-	    if (StringUtils.isNotBlank(fullyQualifiedDataXmlFileName) 
+	public void initialize(String fullyQualifiedDataFileName) {
+	    String dataFileNamePrefix = obtainDataFileName(fullyQualifiedDataFileName);
+	    if (StringUtils.isNotBlank(fullyQualifiedDataFileName)
 	            && StringUtils.isNotBlank(dataFileNamePrefix)
 	            && fullFilePathLimitWouldNotBeExceeded(dataFileNamePrefix)) {
-	        //use data XML file name as part of this report file name
+	        //use data file name as part of this report file name
 	        configureFileNamePrefixForThisReport(dataFileNamePrefix);
 	        LOG.info("initialize, data file name configured into report prefix name: {}", fileNamePrefix);
-	        } //else - use spring configured default report file name
+	    } //else - use spring configured default report file name
 	    initialize();
 	}
 	
 	/**
-	 * This method generates a file name prefix from the fully qualified xmlFileName attribute.
+	 * This method generates a file name prefix from the fully qualified file name attribute
+	 *     (i.e.   directoryPath/fileName.fileExtension)
 	 * This functionality was created for the CreateAccountingDocumentReportItem xmlFileName attribute but could
 	 * be utilized by any other batch job that desired the report output file contain the input data file name
 	 * as the report file prefix. The input parameter is assumed to contain the fully qualified directory path
 	 * as well as a file name and extension. This method strips off both the directory path and file extension
 	 * returning just the file name portion of the string.
+	 * When both a directory path and file extension are not detected, a zero length string is returned.
 	 *
 	 * Example:
 	 *  Input parameter : /infra/work/staging/fp/accountingXmlDocument/fp_ib_netsuite_20240229_050035.xml
 	 *  Return value    : fp_ib_netsuite_20240229_050035
 	 *  
-	 *  @param xmlDataFileName
+	 *  @param fullyQualifiedDataFileName
 	 */
-	private String obtainDataFileName(String fullyQualifiedDataFile) {
+	private String obtainDataFileName(String fullyQualifiedDataFileName) {
 	    String onlyDataFileName = KFSConstants.EMPTY_STRING;
 	    
-	    if (StringUtils.endsWithIgnoreCase(fullyQualifiedDataFile, CuFPConstants.XML_FILE_EXTENSION)
-	            && (StringUtils.contains(fullyQualifiedDataFile, File.separator))) {
-	        onlyDataFileName = StringUtils.removeEndIgnoreCase(fullyQualifiedDataFile, CuFPConstants.XML_FILE_EXTENSION);
-	        onlyDataFileName = StringUtils.substringAfterLast(onlyDataFileName, File.separator);
+	    if (StringUtils.contains(fullyQualifiedDataFileName, KFSConstants.DELIMITER)
+	            && (StringUtils.contains(fullyQualifiedDataFileName, File.separator))) {
+	        onlyDataFileName = removeFileExtension(fullyQualifiedDataFileName);
+	        
+	        if (StringUtils.isNotBlank(onlyDataFileName)) {
+	            onlyDataFileName = StringUtils.substringAfterLast(onlyDataFileName, File.separator);
+	        }
 	    }
 	    return onlyDataFileName;
 	}
 	
+	private String removeFileExtension(String fullyQualifiedDataFileName) {
+	    String filePathAndNameWithExtensionRemoved = KFSConstants.EMPTY_STRING;
+	    String [] subStringArray = StringUtils.split(fullyQualifiedDataFileName, KFSConstants.DELIMITER);
+	    if (ObjectUtils.isNotNull(subStringArray) 
+	            && subStringArray.length == 2) {
+	        filePathAndNameWithExtensionRemoved =  subStringArray[0];
+	    }
+	    return filePathAndNameWithExtensionRemoved;
+	}
+	
 	private boolean fullFilePathLimitWouldNotBeExceeded(String dataFileNamePrefix) {
-	    //initialized to force use of default report file prefix when processing fails for any reason
-	    int numCharsCalculated = NUM_CHARS_ALLOWED_FOR_FULL_FILE_PATH + 1;
-
-	    numCharsCalculated = StringUtils.length(filePath) + File.separator.length() 
+	    int numCharsCalculated = StringUtils.length(filePath) + File.separator.length() 
 	            + StringUtils.length(dataFileNamePrefix) + StringUtils.length(REPORT_FILE_NAME_INFIX) 
 	                + StringUtils.length(dateTimeService.toDateTimeStringForFilename(dateTimeService.getCurrentDate())) 
 	                    + StringUtils.length(fileNameSuffix);
