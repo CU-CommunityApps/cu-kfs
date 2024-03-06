@@ -23,7 +23,7 @@
 
         <kfs.version>2023-01-25</kfs.version>
 
-        <aws-java-sdk.version>2.14.7</aws-java-sdk.version>
+        <aws-java-sdk.version>2.25.2</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
         <checkstyle.version>10.4</checkstyle.version>
         <!-- CU customization to continue support for commons-digester after KualiCo has removed it from base code;
@@ -2042,6 +2042,11 @@
                     <artifactId>reactive-streams</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.1</version>
         </dependency>
         <dependency>
             <groupId>backport-util-concurrent</groupId>
