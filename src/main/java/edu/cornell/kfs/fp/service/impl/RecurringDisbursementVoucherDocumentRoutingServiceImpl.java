@@ -114,8 +114,12 @@ public class RecurringDisbursementVoucherDocumentRoutingServiceImpl
     private Note buildNoteBase() {
         Note noteBase = new Note();
         noteBase.setAuthorUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
-        noteBase.setNotePostedTimestampToCurrent();
+        setNotePostedTimestampToCurrent(noteBase);
         return noteBase;
+    }
+
+    protected void setNotePostedTimestampToCurrent(Note note) {
+        note.setNotePostedTimestampToCurrent();
     }
 
     private RecurringDisbursementVoucherDocumentRoutingReportItem buildReportItemForBusinessRuleValidationFailures(
