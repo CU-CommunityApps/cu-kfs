@@ -47,6 +47,30 @@ public class CapitalAssetInformationDetail extends PersistableBusinessObjectBase
     protected Room room;
     protected CapitalAssetInformation capitalAssetInformation;
 
+    // ==== CU Customization: Add handling of the extended attribute's primary key fields. ====
+
+    @Override
+    protected void beforeInsert() {
+        super.beforeInsert();
+        populatePrimaryKeyOnExtendedAttribute();
+    }
+
+    @Override
+    protected void beforeUpdate() {
+        super.beforeUpdate();
+        populatePrimaryKeyOnExtendedAttribute();
+    }
+
+    private void populatePrimaryKeyOnExtendedAttribute() {
+        CapitalAssetInformationDetailExtendedAttribute extension =
+                (CapitalAssetInformationDetailExtendedAttribute) getExtension();
+        extension.setDocumentNumber(getDocumentNumber());
+        extension.setCapitalAssetLineNumber(getCapitalAssetLineNumber());
+        extension.setItemLineNumber(getItemLineNumber());
+    }
+
+    // ==== End CU Customization ====
+
     public String getDocumentNumber() {
         return documentNumber;
     }
@@ -166,29 +190,4 @@ public class CapitalAssetInformationDetail extends PersistableBusinessObjectBase
         simpleValues.put(KFSPropertyConstants.BUILDING_ROOM_NUMBER, getBuildingRoomNumber());
         return simpleValues;
     }
-
-    // ==== CU Customization: Add handling of the extended attribute's primary key fields. ====
-
-    @Override
-    protected void beforeInsert() {
-        super.beforeInsert();
-        populatePrimaryKeyOnExtendedAttribute();
-    }
-
-    @Override
-    protected void beforeUpdate() {
-        super.beforeUpdate();
-        populatePrimaryKeyOnExtendedAttribute();
-    }
-
-    private void populatePrimaryKeyOnExtendedAttribute() {
-        CapitalAssetInformationDetailExtendedAttribute extension =
-                (CapitalAssetInformationDetailExtendedAttribute) getExtension();
-        extension.setDocumentNumber(getDocumentNumber());
-        extension.setCapitalAssetLineNumber(getCapitalAssetLineNumber());
-        extension.setItemLineNumber(getItemLineNumber());
-    }
-
-    // ==== End CU Customization ====
-
 }
