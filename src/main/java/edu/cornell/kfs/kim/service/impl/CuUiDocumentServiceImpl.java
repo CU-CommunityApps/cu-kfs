@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ojb.broker.core.proxy.CollectionProxyDefaultImpl;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
@@ -26,6 +28,11 @@ import org.kuali.kfs.kim.service.impl.UiDocumentServiceImpl;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.cache.annotation.CacheEvict;
+
+import edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation;
+import edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension;
+import edu.cornell.kfs.kim.impl.identity.PersonAffiliation;
+import edu.cornell.kfs.kim.impl.identity.PersonExtension;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
@@ -118,9 +125,11 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
         Person person = personService.getPerson(identityManagementPersonDocument.getPrincipalId());
         if (person == null) {
             person = new Person();
+            person.setExtension(new PersonExtension());
             person.setEntityId(identityManagementPersonDocument.getEntityId());
             person.setEntityTypeCode(KimConstants.EntityTypes.PERSON);
             person.setPrincipalId(identityManagementPersonDocument.getPrincipalId());
+            person.getPersonExtension().setPrincipalId(identityManagementPersonDocument.getPrincipalId());
             person.setActive(true);
         }
         person.setPrincipalName(identityManagementPersonDocument.getPrincipalName());
@@ -189,13 +198,32 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
         person.setEmployeeTypeCode(identityManagementPersonDocument.getEmployeeTypeCode());
         person.setPrimaryDepartmentCode(identityManagementPersonDocument.getPrimaryDepartmentCode());
         person.setBaseSalaryAmount(identityManagementPersonDocument.getBaseSalaryAmount());
-        person.setAcademicAffiliation(identityManagementPersonDocument.getAcademicAffiliation());
-        person.setAffiliateAffiliation(identityManagementPersonDocument.getAffiliateAffiliation());
-        person.setAlumniAffiliation(identityManagementPersonDocument.getAlumniAffiliation());
-        person.setExceptionAffiliation(identityManagementPersonDocument.getExceptionAffiliation());
-        person.setFacultyAffiliation(identityManagementPersonDocument.getFacultyAffiliation());
-        person.setStaffAffiliation(identityManagementPersonDocument.getStaffAffiliation());
-        person.setStudentAffiliation(identityManagementPersonDocument.getStudentAffiliation());
+        for (final PersonDocumentAffiliation docAffiliation :
+                identityManagementPersonDocument.getPersonDocumentExtension().getAffiliations()) {
+            final PersonAffiliation affiliation = findOrAddPersonAffiliation(person,
+                    docAffiliation.getAffiliationTypeCode());
+            affiliation.setAffiliationStatus(docAffiliation.getAffiliationStatus());
+            affiliation.setPrimary(docAffiliation.isPrimary());
+        }
+    }
+
+    private PersonAffiliation findOrAddPersonAffiliation(
+            final Person person,
+            final String affiliationTypeCode
+    ) {
+        final List<PersonAffiliation> affiliations = person.getPersonExtension().getAffiliations();
+        final Optional<PersonAffiliation> existingAffiliation = affiliations.stream()
+                .filter(personAffil -> StringUtils.equals(personAffil.getAffiliationTypeCode(), affiliationTypeCode))
+                .findFirst();
+        if (existingAffiliation.isPresent()) {
+            return existingAffiliation.get();
+        } else {
+            final PersonAffiliation affiliation = new PersonAffiliation();
+            affiliation.setPrincipalId(person.getPrincipalId());
+            affiliation.setAffiliationTypeCode(affiliationTypeCode);
+            affiliations.add(affiliation);
+            return affiliation;
+        }
     }
 
     /**
@@ -207,24 +235,30 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
             final Person person
     ) {
         super.setupAddress(identityManagementPersonDocument, person);
-        person.setAltAddressTypeCode(identityManagementPersonDocument.getAltAddressTypeCode());
-        person.setAltAddressLine1(identityManagementPersonDocument.getAltAddressLine1());
-        person.setAltAddressLine2(identityManagementPersonDocument.getAltAddressLine2());
-        person.setAltAddressLine3(identityManagementPersonDocument.getAltAddressLine3());
-        person.setAltAddressCity(identityManagementPersonDocument.getAltAddressCity());
-        person.setAltAddressStateProvinceCode(identityManagementPersonDocument.getAltAddressStateProvinceCode());
-        person.setAltAddressPostalCode(identityManagementPersonDocument.getAltAddressPostalCode());
-        person.setAltAddressCountryCode(identityManagementPersonDocument.getAltAddressCountryCode());
+        final PersonExtension personExtension = person.getPersonExtension();
+        final IdentityManagementPersonDocumentExtension docExtension =
+                identityManagementPersonDocument.getPersonDocumentExtension();
+        personExtension.setAltAddressTypeCode(docExtension.getAltAddressTypeCode());
+        personExtension.setAltAddressLine1(docExtension.getAltAddressLine1());
+        personExtension.setAltAddressLine2(docExtension.getAltAddressLine2());
+        personExtension.setAltAddressLine3(docExtension.getAltAddressLine3());
+        personExtension.setAltAddressCity(docExtension.getAltAddressCity());
+        personExtension.setAltAddressStateProvinceCode(docExtension.getAltAddressStateProvinceCode());
+        personExtension.setAltAddressPostalCode(docExtension.getAltAddressPostalCode());
+        personExtension.setAltAddressCountryCode(docExtension.getAltAddressCountryCode());
     }
 
     private void setupPrivacyPreferences(
             final IdentityManagementPersonDocument identityManagementPersonDocument,
             final Person person
     ) {
-        person.setSuppressName(identityManagementPersonDocument.isSuppressName());
-        person.setSuppressEmail(identityManagementPersonDocument.isSuppressEmail());
-        person.setSuppressPhone(identityManagementPersonDocument.isSuppressPhone());
-        person.setSuppressPersonal(identityManagementPersonDocument.isSuppressPersonal());
+        final PersonExtension personExtension = person.getPersonExtension();
+        final IdentityManagementPersonDocumentExtension docExtension =
+                identityManagementPersonDocument.getPersonDocumentExtension();
+        personExtension.setSuppressName(docExtension.isSuppressName());
+        personExtension.setSuppressEmail(docExtension.isSuppressEmail());
+        personExtension.setSuppressPhone(docExtension.isSuppressPhone());
+        personExtension.setSuppressPersonal(docExtension.isSuppressPersonal());
     }
 
     /**
@@ -236,31 +270,46 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
             final String principalId
     ) {
         super.loadPersonDoc(identityManagementPersonDocument, principalId);
+        identityManagementPersonDocument.initializeDocumentExtension();
         final Person person = personService.getPerson(principalId);
 
         if (ObjectUtils.isNull(person)) {
             throw new RuntimeException("Person does not exist for principal id:" + principalId);
         }
 
-        identityManagementPersonDocument.setAcademicAffiliation(person.getAcademicAffiliation());
-        identityManagementPersonDocument.setAffiliateAffiliation(person.getAffiliateAffiliation());
-        identityManagementPersonDocument.setAlumniAffiliation(person.getAlumniAffiliation());
-        identityManagementPersonDocument.setExceptionAffiliation(person.getExceptionAffiliation());
-        identityManagementPersonDocument.setFacultyAffiliation(person.getFacultyAffiliation());
-        identityManagementPersonDocument.setStaffAffiliation(person.getStaffAffiliation());
-        identityManagementPersonDocument.setStudentAffiliation(person.getStudentAffiliation());
-        identityManagementPersonDocument.setAltAddressTypeCode(person.getAltAddressTypeCode());
-        identityManagementPersonDocument.setAltAddressLine1(person.getAltAddressLine1());
-        identityManagementPersonDocument.setAltAddressLine2(person.getAltAddressLine2());
-        identityManagementPersonDocument.setAltAddressLine3(person.getAltAddressLine3());
-        identityManagementPersonDocument.setAltAddressCity(person.getAltAddressCity());
-        identityManagementPersonDocument.setAltAddressStateProvinceCode(person.getAltAddressStateProvinceCode());
-        identityManagementPersonDocument.setAltAddressPostalCode(person.getAltAddressPostalCode());
-        identityManagementPersonDocument.setAltAddressCountryCode(person.getAltAddressCountryCode());
-        identityManagementPersonDocument.setSuppressName(person.isSuppressName());
-        identityManagementPersonDocument.setSuppressEmail(person.isSuppressEmail());
-        identityManagementPersonDocument.setSuppressPhone(person.isSuppressPhone());
-        identityManagementPersonDocument.setSuppressPersonal(person.isSuppressPersonal());
+        final PersonExtension personExtension = person.getPersonExtension();
+        final IdentityManagementPersonDocumentExtension docExtension =
+                identityManagementPersonDocument.getPersonDocumentExtension();
+
+        docExtension.setAltAddressTypeCode(personExtension.getAltAddressTypeCode());
+        docExtension.setAltAddressLine1(personExtension.getAltAddressLine1());
+        docExtension.setAltAddressLine2(personExtension.getAltAddressLine2());
+        docExtension.setAltAddressLine3(personExtension.getAltAddressLine3());
+        docExtension.setAltAddressCity(personExtension.getAltAddressCity());
+        docExtension.setAltAddressStateProvinceCode(personExtension.getAltAddressStateProvinceCode());
+        docExtension.setAltAddressPostalCode(personExtension.getAltAddressPostalCode());
+        docExtension.setAltAddressCountryCode(personExtension.getAltAddressCountryCode());
+        docExtension.setSuppressName(personExtension.isSuppressName());
+        docExtension.setSuppressEmail(personExtension.isSuppressEmail());
+        docExtension.setSuppressPhone(personExtension.isSuppressPhone());
+        docExtension.setSuppressPersonal(personExtension.isSuppressPersonal());
+
+        loadPersonDocAffiliations(docExtension, personExtension);
+    }
+
+    private void loadPersonDocAffiliations(
+            final IdentityManagementPersonDocumentExtension docExtension,
+            final PersonExtension personExtension
+    ) {
+        List<PersonDocumentAffiliation> docAffiliations = docExtension.getAffiliations();
+        for (PersonAffiliation personAffiliation : personExtension.getAffiliations()) {
+            PersonDocumentAffiliation docAffiliation = new PersonDocumentAffiliation();
+            docAffiliation.setDocumentNumber(docExtension.getDocumentNumber());
+            docAffiliation.setAffiliationTypeCode(personAffiliation.getAffiliationTypeCode());
+            docAffiliation.setAffiliationStatus(personAffiliation.getAffiliationStatus());
+            docAffiliation.setPrimary(personAffiliation.isPrimary());
+            docAffiliations.add(docAffiliation);
+        }
     }
 
     @Override
