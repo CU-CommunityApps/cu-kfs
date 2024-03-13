@@ -21,6 +21,7 @@ public class CuFPTestConstants {
     public static final int FY_2018 = 2018;
     public static final String DATE_02_21_2019 = "02/21/2019";
     public static final String AV_VALIDATION_MESSAGE_KEY_PREFIX = "error.create.accounting.document.av.";
+    public static final String ACCOUNT_NUMBER_LABEL = "Account Number";
 
     public static final String UOM_EACH = "EA";
     public static final String UOM_DOZEN = "DZ";

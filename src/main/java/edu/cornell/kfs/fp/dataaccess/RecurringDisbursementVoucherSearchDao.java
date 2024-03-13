@@ -7,6 +7,8 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 
 public interface RecurringDisbursementVoucherSearchDao {
 
-    public Collection<String> findSavedDvIdsSpawnedByRecurringDvForCurrentAndPastFiscalPeriods(Date currentFisalPeriodEndDate);
+    Collection<String> findSavedDvIdsSpawnedByRecurringDvForCurrentAndPastFiscalPeriods(Date currentFisalPeriodEndDate);
+
+    String findRecurringDvIdForSpawnedDv(String spawnedDvDocumentNumber);
 
 }

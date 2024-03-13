@@ -47,9 +47,8 @@ public interface RecurringDisbursementVoucherDocumentService {
 	 * Automatically approve all saved disbursement voucher documents with a
 	 * payment date in the current or past fiscal period spawned by the
 	 * recurring disbursement voucher document.
-	 * @return boolean
 	 */
-	boolean autoApproveDisbursementVouchersSpawnedByRecurringDvs();
+	void autoApproveDisbursementVouchersSpawnedByRecurringDvs();
 
     /**
      * Cancels all DVs spawned by the Recurring Disbursement Voucher that are in saved status.

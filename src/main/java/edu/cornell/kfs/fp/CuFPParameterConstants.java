@@ -31,6 +31,9 @@ public class CuFPParameterConstants {
     
     public static class DisbursementVoucherDocument {
         public static final String NUMBER_OF_DAYS_FOR_DEFAULT_DV_DUE_DATE = "NUMBER_OF_DAYS_FOR_DEFAULT_DV_DUE_DATE";
+        public static final String DV_AUTO_APPROVE_ERROR_FROM_EMAIL_ADDRESS = "DV_AUTO_APPROVE_ERROR_FROM_EMAIL_ADDRESS";
+        public static final String DV_AUTO_APPROVE_ERROR_TO_EMAIL_ADDRESSES = "DV_AUTO_APPROVE_ERROR_TO_EMAIL_ADDRESSES";
+        public static final String DV_AUTO_APPROVE_ERROR_EMAIL_SUBJECT = "DV_AUTO_APPROVE_ERROR_EMAIL_SUBJECT";
     }
     
     public static final String ERROR_TRANS_OBJECT_CODE_PARM_NM = "ERROR_TRANSACTION_OBJECT_CODE";
