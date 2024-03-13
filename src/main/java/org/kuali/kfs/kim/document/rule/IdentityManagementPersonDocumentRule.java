@@ -18,7 +18,13 @@
  */
 package org.kuali.kfs.kim.document.rule;
 
-import edu.cornell.kfs.kim.CuKimConstants.AffiliationStatuses;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,15 +62,15 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSKeyConstants;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import edu.cornell.kfs.kim.CuKimConstants.AffiliationStatuses;
+import edu.cornell.kfs.kim.CuKimConstants.KfsAffiliations;
+import edu.cornell.kfs.kim.CuKimKeyConstants;
+import edu.cornell.kfs.kim.CuKimPropertyConstants;
+import edu.cornell.kfs.kim.api.identity.CuPersonService;
+import edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation;
 
 /*
  * CU Customization:
@@ -87,6 +93,8 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     private final AttributeValidationHelper attributeValidationHelper = new AttributeValidationHelper();
     private BusinessObjectService businessObjectService;
     private RoleService roleService;
+    // ==== CU Customization: Add CuPersonService reference. ====
+    private CuPersonService cuPersonService;
 
     @Override
     protected boolean processCustomSaveDocumentBusinessRules(final Document document) {
@@ -157,10 +165,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     private boolean checkAffiliationTypeChange(final IdentityManagementPersonDocument personDoc) {
         final String affiliationTypeCode = personDoc.getAffiliationTypeCode();
 
-        if (StringUtils.isBlank(affiliationTypeCode)
-                || StringUtils.isBlank(personDoc.getAffiliateAffiliation())
-                || StringUtils.isBlank(personDoc.getFacultyAffiliation())
-                || StringUtils.isBlank(personDoc.getStaffAffiliation())) {
+        if (StringUtils.isBlank(affiliationTypeCode)) {
             return true;
         }
 
@@ -168,9 +173,7 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
                 getBusinessObjectService().findBySinglePrimaryKey(EntityAffiliationType.class, affiliationTypeCode);
         if (!entityAffiliationType.isEmploymentAffiliationType()
             && StringUtils.isNotBlank(personDoc.getEmployeeId())
-            && StringUtils.equalsIgnoreCase(personDoc.getAffiliateAffiliation(), AffiliationStatuses.NONEXISTENT)
-            && StringUtils.equalsIgnoreCase(personDoc.getFacultyAffiliation(), AffiliationStatuses.NONEXISTENT)
-            && StringUtils.equalsIgnoreCase(personDoc.getStaffAffiliation(), AffiliationStatuses.NONEXISTENT)
+            && doesNotHaveAnyEmploymentAffiliations(personDoc)
         ) {
             GlobalVariables.getMessageMap().putError(
                     "affiliationTypeCode",
@@ -183,24 +186,40 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     }
 
     /*
+     * CU Customization: Added a helper method to simplify our custom employment affiliation checking.
+     */
+    private boolean hasEmploymentAffiliation(final IdentityManagementPersonDocument personDoc) {
+        final Set<String> employmentAffiliations =
+                getCuPersonService().getAffiliationTypesSupportingEmploymentInformation();
+        final List<PersonDocumentAffiliation> affiliations = personDoc.getPersonDocumentExtension().getAffiliations();
+        if (CollectionUtils.isEmpty(affiliations)) {
+            return false;
+        }
+        return affiliations.stream()
+                .anyMatch(affiliation -> employmentAffiliations.contains(
+                        StringUtils.defaultString(affiliation.getAffiliationTypeCode())));
+    }
+
+    /*
+     * CU Customization: Added another helper method to simplify our custom employment affiliation checking.
+     */
+    private boolean doesNotHaveAnyEmploymentAffiliations(final IdentityManagementPersonDocument personDoc) {
+        return !hasEmploymentAffiliation(personDoc);
+    }
+
+    /*
      * CU Customization: Require an Employee ID if the Person has a non-default affiliation supporting it.
      */
     private boolean validEmployeeIDForAffiliation(final IdentityManagementPersonDocument personDoc) {
         final String affiliationTypeCode = personDoc.getAffiliationTypeCode();
 
-        if (StringUtils.isBlank(affiliationTypeCode)
-                || StringUtils.isBlank(personDoc.getAffiliateAffiliation())
-                || StringUtils.isBlank(personDoc.getFacultyAffiliation())
-                || StringUtils.isBlank(personDoc.getStaffAffiliation())) {
+        if (StringUtils.isBlank(affiliationTypeCode)) {
             return true;
         }
 
         final EntityAffiliationType entityAffiliationType =
                 getBusinessObjectService().findBySinglePrimaryKey(EntityAffiliationType.class, affiliationTypeCode);
-        if ((entityAffiliationType.isEmploymentAffiliationType()
-                || !StringUtils.equalsIgnoreCase(personDoc.getAffiliateAffiliation(), AffiliationStatuses.NONEXISTENT)
-                || !StringUtils.equalsIgnoreCase(personDoc.getFacultyAffiliation(), AffiliationStatuses.NONEXISTENT)
-                || !StringUtils.equalsIgnoreCase(personDoc.getStaffAffiliation(), AffiliationStatuses.NONEXISTENT))
+        if ((entityAffiliationType.isEmploymentAffiliationType() || hasEmploymentAffiliation(personDoc))
             && StringUtils.isBlank(personDoc.getEmployeeId())
         ) {
             GlobalVariables.getMessageMap().putError(
@@ -220,19 +239,13 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     private boolean checkAffiliationEithOneEMpInfo(final IdentityManagementPersonDocument personDoc) {
         final String affiliationTypeCode = personDoc.getAffiliationTypeCode();
 
-        if (StringUtils.isBlank(affiliationTypeCode)
-                || StringUtils.isBlank(personDoc.getAffiliateAffiliation())
-                || StringUtils.isBlank(personDoc.getFacultyAffiliation())
-                || StringUtils.isBlank(personDoc.getStaffAffiliation())) {
+        if (StringUtils.isBlank(affiliationTypeCode)) {
             return true;
         }
 
         final EntityAffiliationType entityAffiliationType =
                 getBusinessObjectService().findBySinglePrimaryKey(EntityAffiliationType.class, affiliationTypeCode);
-        if ((entityAffiliationType.isEmploymentAffiliationType()
-                || !StringUtils.equalsIgnoreCase(personDoc.getAffiliateAffiliation(), AffiliationStatuses.NONEXISTENT)
-                || !StringUtils.equalsIgnoreCase(personDoc.getFacultyAffiliation(), AffiliationStatuses.NONEXISTENT)
-                || !StringUtils.equalsIgnoreCase(personDoc.getStaffAffiliation(), AffiliationStatuses.NONEXISTENT))
+        if ((entityAffiliationType.isEmploymentAffiliationType() || hasEmploymentAffiliation(personDoc))
             && employmentInfoIsMissing(personDoc)
         ) {
             GlobalVariables.getMessageMap().putError(
@@ -256,8 +269,9 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
      * Verify at least one affiliation and one default name
      * 
      * CU Customization: Also verify that the CU-specific affiliation fields have been populated.
+     *                   Also converted this method from a static one to an instance one.
      */
-    private static boolean validateAffiliationAndName(final IdentityManagementPersonDocument personDoc) {
+    private boolean validateAffiliationAndName(final IdentityManagementPersonDocument personDoc) {
         boolean valid = true;
         if (StringUtils.isBlank(personDoc.getAffiliationTypeCode())) {
             GlobalVariables.getMessageMap().putError("affiliationTypeCode", KFSKeyConstants.ERROR_REQUIRED,
@@ -279,43 +293,118 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
                     "Last Name");
             valid = false;
         }
-        if (StringUtils.isBlank(personDoc.getAcademicAffiliation())) {
-            GlobalVariables.getMessageMap().putError("academicAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Academic");
+        valid &= validateAffiliations(personDoc);
+        return valid;
+    }
+
+    /*
+     * CU Customization: Added several helper methods for validating CU-specific affiliation data.
+     */
+
+    private boolean validateAffiliations(final IdentityManagementPersonDocument personDoc) {
+        final boolean primaryAffiliationTypeIsPresent = StringUtils.isNotBlank(personDoc.getAffiliationTypeCode());
+
+        final List<PersonDocumentAffiliation> affiliations = personDoc.getPersonDocumentExtension().getAffiliations();
+        if (CollectionUtils.isEmpty(affiliations)) {
+            return !primaryAffiliationTypeIsPresent || validateSetupForEmptyAffiliationsList(personDoc, affiliations);
+        }
+
+        boolean valid = validateAffiliationCounts(affiliations);
+        if (primaryAffiliationTypeIsPresent) {
+            valid &= validatePrimaryAffiliationPresence(personDoc, affiliations);
+        }
+        valid &= validateAffiliationStatuses(affiliations);
+
+        return valid;
+    }
+
+    private boolean validateSetupForEmptyAffiliationsList(final IdentityManagementPersonDocument personDoc,
+            final List<PersonDocumentAffiliation> affiliations) {
+        final EntityAffiliationType noneAffil = getCuPersonService().getAffiliationType(KfsAffiliations.NONE);
+        if (!StringUtils.equals(personDoc.getAffiliationTypeCode(), KfsAffiliations.NONE)) {
+            GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.AFFILIATION_TYPE_CODE,
+                    CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_INVALID_EMPTY_STATE, noneAffil.getName());
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean validateAffiliationCounts(final List<PersonDocumentAffiliation> affiliations) {
+        boolean valid = true;
+
+        final Set<String> uniqueAffiliations = new HashSet<>();
+        for (int i = 0; valid && i < affiliations.size(); i++) {
+            final String affiliationTypeCode = affiliations.get(i).getAffiliationTypeCode();
+            if (StringUtils.isNotBlank(affiliationTypeCode) && !uniqueAffiliations.add(affiliationTypeCode)) {
+                GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.EXTENSION_AFFILIATIONS,
+                        CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_DUPLICATE);
+                valid = false;
+            }
+        }
+
+        final int numPrimaryAffiliations = getPrimaryAffiliationCount(affiliations);
+        if (numPrimaryAffiliations != 1) {
+            GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.EXTENSION_AFFILIATIONS,
+                    CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_PRIMARY_COUNT_INVALID);
             valid = false;
         }
-        if (StringUtils.isBlank(personDoc.getAffiliateAffiliation())) {
-            GlobalVariables.getMessageMap().putError("affiliateAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Affiliate");
-            valid = false;
+
+        return valid;
+    }
+
+    private int getPrimaryAffiliationCount(final List<PersonDocumentAffiliation> affiliations) {
+        return (int) affiliations.stream()
+                .filter(PersonDocumentAffiliation::isPrimary)
+                .count();
+    }
+
+    private boolean validatePrimaryAffiliationPresence(final IdentityManagementPersonDocument personDoc,
+            final List<PersonDocumentAffiliation> affiliations) {
+        final PersonDocumentAffiliation primaryAffiliation = affiliations.stream()
+                .filter(affiliation ->
+                        StringUtils.equals(affiliation.getAffiliationTypeCode(), personDoc.getAffiliationTypeCode()))
+                .findFirst()
+                .orElse(null);
+        if (ObjectUtils.isNull(primaryAffiliation)) {
+            GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.AFFILIATION_TYPE_CODE,
+                    CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_UNMATCHED);
+            return false;
+        } else if (!primaryAffiliation.isPrimary() && getPrimaryAffiliationCount(affiliations) > 0) {
+            GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.AFFILIATION_TYPE_CODE,
+                    CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_PRIMARY_UNMATCHED);
+            return false;
+        } else {
+            return true;
         }
-        if (StringUtils.isBlank(personDoc.getAlumniAffiliation())) {
-            GlobalVariables.getMessageMap().putError("alumniAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Alumni");
-            valid = false;
-        }
-        if (StringUtils.isBlank(personDoc.getExceptionAffiliation())) {
-            GlobalVariables.getMessageMap().putError("exceptionAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Exception");
-            valid = false;
-        }
-        if (StringUtils.isBlank(personDoc.getFacultyAffiliation())) {
-            GlobalVariables.getMessageMap().putError("facultyAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Faculty");
-            valid = false;
-        }
-        if (StringUtils.isBlank(personDoc.getStaffAffiliation())) {
-            GlobalVariables.getMessageMap().putError("staffAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Staff");
-            valid = false;
-        }
-        if (StringUtils.isBlank(personDoc.getStudentAffiliation())) {
-            GlobalVariables.getMessageMap().putError("studentAffiliation", KFSKeyConstants.ERROR_REQUIRED,
-                    "Student");
-            valid = false;
+    }
+
+    private boolean validateAffiliationStatuses(final List<PersonDocumentAffiliation> affiliations) {
+        boolean valid = true;
+        for (final PersonDocumentAffiliation affiliation : affiliations) {
+            if (StringUtils.isBlank(affiliation.getAffiliationStatus())) {
+                continue;
+            }
+            final EntityAffiliationType affiliationType = getCuPersonService().getAffiliationType(
+                    affiliation.getAffiliationTypeCode());
+            if (ObjectUtils.isNull(affiliationType)) {
+                continue;
+            } else if (!affiliationType.isEmploymentAffiliationType()
+                    && !StringUtils.equalsAny(affiliation.getAffiliationStatus(),
+                            AffiliationStatuses.ACTIVE, AffiliationStatuses.INACTIVE)) {
+                GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.EXTENSION_AFFILIATIONS,
+                        CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_STATUS_UNSUPPORTED,
+                        affiliationType.getName(), AffiliationStatuses.ACTIVE_LABEL,
+                        AffiliationStatuses.INACTIVE_LABEL);
+                valid = false;
+            }
         }
         return valid;
     }
+
+    /*
+     * End CU Customization Block.
+     */
 
     private boolean doesPrincipalNameExist(final String principalName, final String principalId) {
         final Person person = getPersonService().getPersonByPrincipalName(principalName);
@@ -744,4 +833,15 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
         }
         return roleService;
     }
+
+    /*
+     * CU Customization: Add CuPersonService getter.
+     */
+    protected CuPersonService getCuPersonService() {
+        if (cuPersonService == null) {
+            cuPersonService = (CuPersonService) KimApiServiceLocator.getPersonService();
+        }
+        return cuPersonService;
+    }
+
 }

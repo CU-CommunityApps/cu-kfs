@@ -30,9 +30,13 @@ public final class CuKimConstants {
 
     public static final class AffiliationStatuses {
         public static final String ACTIVE = "A";
+        public static final String ACTIVE_LABEL = "Active";
         public static final String INACTIVE = "I";
+        public static final String INACTIVE_LABEL = "Inactive";
         public static final String RETIRED = "R";
+        public static final String RETIRED_LABEL = "Retired";
         public static final String NONEXISTENT = "N";
+        public static final String NONEXISTENT_LABEL = "N/A";
     }
 
     public static final class AddressTypes {

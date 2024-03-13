@@ -18,6 +18,12 @@
  */
 package org.kuali.kfs.kim.document;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -40,14 +46,11 @@ import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension;
+import edu.cornell.kfs.kim.util.CuKimUtils;
 
 /*
- * CU Customization: Added CU-specific Person Document fields.
+ * CU Customization: Added CU-specific Person Document fields and masking.
  *                   Also backported the FINP-9357 changes.
  */
 public class IdentityManagementPersonDocument extends IdentityManagementKimDocument {
@@ -89,28 +92,6 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
 
     private String phoneNumber = "";
     private String emailAddress = "";
-
-    // ==== CU Customization: Add more fields to the Person Document. ====
-    private String academicAffiliation;
-    private String affiliateAffiliation;
-    private String alumniAffiliation;
-    private String exceptionAffiliation;
-    private String facultyAffiliation;
-    private String staffAffiliation;
-    private String studentAffiliation;
-    private String altAddressTypeCode;
-    private String altAddressLine1;
-    private String altAddressLine2;
-    private String altAddressLine3;
-    private String altAddressCity;
-    private String altAddressStateProvinceCode;
-    private String altAddressPostalCode;
-    private String altAddressCountryCode;
-    private boolean suppressName;
-    private boolean suppressEmail;
-    private boolean suppressPhone;
-    private boolean suppressPersonal;
-    // ==== End CU-specific field additions ====
 
     protected List<PersonDocumentGroup> groups;
 
@@ -251,13 +232,12 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
 
     // ==== CU Customization: Added methods related to masking the person's name. ====
 
-    private boolean canViewName() {
-        return !suppressName || canModifyPerson();
+    public IdentityManagementPersonDocumentExtension getPersonDocumentExtension() {
+        return (IdentityManagementPersonDocumentExtension) getExtension();
     }
 
-    private boolean canModifyPerson() {
-        return getUiDocumentService()
-                .canModifyPerson(GlobalVariables.getUserSession().getPrincipalId(), principalId);
+    private boolean canViewName() {
+        return !getPersonDocumentExtension().isSuppressName() || CuKimUtils.canModifyPerson(principalId);
     }
 
     public String getFirstNameMaskedIfNecessary() {
@@ -415,7 +395,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     // ==== CU Customization: Added methods related to masking the person's phone number. ====
 
     public boolean canViewPhoneNumber() {
-        return !suppressPhone || canModifyPerson();
+        return !getPersonDocumentExtension().isSuppressPhone() || CuKimUtils.canModifyPerson(principalId);
     }
 
     public String getPhoneNumberMaskedIfNecessary() {
@@ -435,7 +415,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     // ==== CU Customization: Added methods related to masking the person's email address. ====
 
     private boolean canViewEmailAddress() {
-        return !suppressEmail || canModifyPerson();
+        return !getPersonDocumentExtension().isSuppressEmail() || CuKimUtils.canModifyPerson(principalId);
     }
 
     public String getEmailAddressMaskedIfNecessary() {
@@ -460,195 +440,6 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         this.groups = groups;
     }
 
-    // ==== CU Customization: Add getters and setters for CU-specific fields. ====
-
-    public String getAcademicAffiliation() {
-        return academicAffiliation;
-    }
-
-    public void setAcademicAffiliation(String academicAffiliation) {
-        this.academicAffiliation = academicAffiliation;
-    }
-
-    public String getAffiliateAffiliation() {
-        return affiliateAffiliation;
-    }
-
-    public void setAffiliateAffiliation(String affiliateAffiliation) {
-        this.affiliateAffiliation = affiliateAffiliation;
-    }
-
-    public String getAlumniAffiliation() {
-        return alumniAffiliation;
-    }
-
-    public void setAlumniAffiliation(String alumniAffiliation) {
-        this.alumniAffiliation = alumniAffiliation;
-    }
-
-    public String getExceptionAffiliation() {
-        return exceptionAffiliation;
-    }
-
-    public void setExceptionAffiliation(String exceptionAffiliation) {
-        this.exceptionAffiliation = exceptionAffiliation;
-    }
-
-    public String getFacultyAffiliation() {
-        return facultyAffiliation;
-    }
-
-    public void setFacultyAffiliation(String facultyAffiliation) {
-        this.facultyAffiliation = facultyAffiliation;
-    }
-
-    public String getStaffAffiliation() {
-        return staffAffiliation;
-    }
-
-    public void setStaffAffiliation(String staffAffiliation) {
-        this.staffAffiliation = staffAffiliation;
-    }
-
-    public String getStudentAffiliation() {
-        return studentAffiliation;
-    }
-
-    public void setStudentAffiliation(String studentAffiliation) {
-        this.studentAffiliation = studentAffiliation;
-    }
-
-    public String getAltAddressTypeCode() {
-        return altAddressTypeCode;
-    }
-
-    public void setAltAddressTypeCode(String altAddressTypeCode) {
-        this.altAddressTypeCode = altAddressTypeCode;
-    }
-
-    public String getAltAddressLine1() {
-        return altAddressLine1;
-    }
-
-    public String getAltAddressLine1MaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressLine1 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    private boolean canViewAltAddress() {
-        return StringUtils.equals(altAddressTypeCode, KimConstants.AddressTypes.WORK)
-                || canModifyPerson();
-    }
-
-    public void setAltAddressLine1(String altAddressLine1) {
-        this.altAddressLine1 = altAddressLine1;
-    }
-
-    public String getAltAddressLine2() {
-        return altAddressLine2;
-    }
-
-    public String getAltAddressLine2MaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressLine2 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressLine2(String altAddressLine2) {
-        this.altAddressLine2 = altAddressLine2;
-    }
-
-    public String getAltAddressLine3() {
-        return altAddressLine3;
-    }
-
-    public String getAltAddressLine3MaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressLine3 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressLine3(String altAddressLine3) {
-        this.altAddressLine3 = altAddressLine3;
-    }
-
-    public String getAltAddressCity() {
-        return altAddressCity;
-    }
-
-    public String getAltAddressCityMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressCity : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressCity(String altAddressCity) {
-        this.altAddressCity = altAddressCity;
-    }
-
-    public String getAltAddressStateProvinceCode() {
-        return altAddressStateProvinceCode;
-    }
-
-    public String getAltAddressStateProvinceCodeMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressStateProvinceCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressStateProvinceCode(String altAddressStateProvinceCode) {
-        this.altAddressStateProvinceCode = altAddressStateProvinceCode;
-    }
-
-    public String getAltAddressPostalCode() {
-        return altAddressPostalCode;
-    }
-
-    public String getAltAddressPostalCodeMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressPostalCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressPostalCode(String altAddressPostalCode) {
-        this.altAddressPostalCode = altAddressPostalCode;
-    }
-
-    public String getAltAddressCountryCode() {
-        return altAddressCountryCode;
-    }
-
-    public String getAltAddressCountryCodeMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressCountryCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressCountryCode(String altAddressCountryCode) {
-        this.altAddressCountryCode = altAddressCountryCode;
-    }
-
-    public boolean isSuppressName() {
-        return suppressName;
-    }
-
-    public void setSuppressName(boolean suppressName) {
-        this.suppressName = suppressName;
-    }
-
-    public boolean isSuppressEmail() {
-        return suppressEmail;
-    }
-
-    public void setSuppressEmail(boolean suppressEmail) {
-        this.suppressEmail = suppressEmail;
-    }
-
-    public boolean isSuppressPhone() {
-        return suppressPhone;
-    }
-
-    public void setSuppressPhone(boolean suppressPhone) {
-        this.suppressPhone = suppressPhone;
-    }
-
-    public boolean isSuppressPersonal() {
-        return suppressPersonal;
-    }
-
-    public void setSuppressPersonal(boolean suppressPersonal) {
-        this.suppressPersonal = suppressPersonal;
-    }
-
-    // ==== End CU-specific getters and setters ====
-
     public void initializeDocumentForNewPerson() {
         if (StringUtils.isBlank(principalId)) {
             principalId = getSequenceAccessorService()
@@ -660,6 +451,23 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
                     .getNextAvailableSequenceNumber(KimConstants.SequenceNames.KRIM_ENTITY_ID_S,
                             getClass()).toString();
         }
+        // ==== CU Customization: Invoke method for performing CU-specific initialization. ====
+        initializeDocumentExtension();
+    }
+
+    // ==== CU Customization: Added a helper method for CU-specific Person doc initialization. ====
+    public void initializeDocumentExtension() {
+        final IdentityManagementPersonDocumentExtension extension = new IdentityManagementPersonDocumentExtension();
+        extension.setDocumentNumber(getDocumentNumber());
+        extension.setPrincipalId(principalId);
+        setExtension(extension);
+    }
+
+    // ==== CU Customization: After loading from DB, initialize a transient field on the extension object. ====
+    @Override
+    protected void afterLookup() {
+        super.afterLookup();
+        getPersonDocumentExtension().setPrincipalId(principalId);
     }
 
     @Override
