@@ -12,7 +12,8 @@ public class ApproveDvsSpawnedByRecurringDvStep extends AbstractStep {
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        return getRecurringDisbursementVoucherDocumentService().autoApproveDisbursementVouchersSpawnedByRecurringDvs();
+        getRecurringDisbursementVoucherDocumentService().autoApproveDisbursementVouchersSpawnedByRecurringDvs();
+        return true;
     }
 
     public RecurringDisbursementVoucherDocumentService getRecurringDisbursementVoucherDocumentService() {
