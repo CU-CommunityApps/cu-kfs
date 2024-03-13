@@ -18,6 +18,10 @@
  */
 package org.kuali.kfs.kim.impl.identity;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
@@ -37,14 +41,12 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.cornell.kfs.kim.impl.identity.PersonExtension;
+import edu.cornell.kfs.kim.util.CuKimUtils;
 
 /*
  * CU Customizations:
  * 
- * -- Added fields related to affiliations, alternate/campus addresses and privacy preferences.
  * -- Reintroduced masking of name/phone/etc. based on the user's privacy preferences.
  * -- Backported the FINP-9357 changes into this file.
  * -- Backported the FINP-9387 changes into this file.
@@ -87,28 +89,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
     private List<GroupMember> groupMembers;
     private List<RoleMember> roleMembers;
     private List<DelegateMember> delegateMembers;
-
-    // ==== CU Customization: Add more fields to the Person object. ====
-    private String academicAffiliation;
-    private String affiliateAffiliation;
-    private String alumniAffiliation;
-    private String exceptionAffiliation;
-    private String facultyAffiliation;
-    private String staffAffiliation;
-    private String studentAffiliation;
-    private String altAddressTypeCode;
-    private String altAddressLine1;
-    private String altAddressLine2;
-    private String altAddressLine3;
-    private String altAddressCity;
-    private String altAddressStateProvinceCode;
-    private String altAddressPostalCode;
-    private String altAddressCountryCode;
-    private boolean suppressName;
-    private boolean suppressEmail;
-    private boolean suppressPhone;
-    private boolean suppressPersonal;
-    // ==== End CU-specific field additions ====
 
     private static BusinessObjectService businessObjectService;
     private static PersonService personService;
@@ -188,20 +168,13 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
 
     // ==== CU Customization: Added methods related to masking the person's name. ====
 
-    private boolean canViewName() {
-        return !suppressName || canOverridePrivacyPreferences();
+    public PersonExtension getPersonExtension() {
+        return (PersonExtension) getExtension();
     }
 
-    // Convenience method that copies most of the code and logic from base code's canViewAddress() method.
-    private boolean canOverridePrivacyPreferences() {
-        final UserSession userSession = GlobalVariables.getUserSession();
-        if (userSession == null) {
-            // internal system call - no need to check permission
-            return true;
-        }
-        final String currentUserPrincipalId = userSession.getPrincipalId();
-        return StringUtils.equals(currentUserPrincipalId, principalId) ||
-               getUiDocumentService().canModifyPerson(currentUserPrincipalId, principalId);
+    private boolean canViewName() {
+        return !getPersonExtension().isSuppressName()
+                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
     }
 
     public String getFirstNameMaskedIfNecessary() {
@@ -373,7 +346,8 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
     // ==== CU Customization: Added methods related to masking the person's email address. ====
 
     private boolean canViewEmailAddress() {
-        return !suppressEmail || canOverridePrivacyPreferences();
+        return !getPersonExtension().isSuppressEmail()
+                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
     }
 
     public String getEmailAddressMaskedIfNecessary() {
@@ -390,10 +364,11 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         this.phoneNumber = phoneNumber;
     }
 
-    // ==== CU Customization: Added methods related to masking the person's email address. ====
+    // ==== CU Customization: Added methods related to masking the person's phone number. ====
 
     private boolean canViewPhoneNumber() {
-        return !suppressPhone || canOverridePrivacyPreferences();
+        return !getPersonExtension().isSuppressPhone()
+                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
     }
 
     public String getPhoneNumberMaskedIfNecessary() {
@@ -515,195 +490,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
     public void setDelegateMembers(final List<DelegateMember> delegateMembers) {
         this.delegateMembers = delegateMembers;
     }
-
-    // ==== CU Customization: Add getters and setters for CU-specific fields. ====
-
-    public String getAcademicAffiliation() {
-        return academicAffiliation;
-    }
-
-    public void setAcademicAffiliation(String academicAffiliation) {
-        this.academicAffiliation = academicAffiliation;
-    }
-
-    public String getAffiliateAffiliation() {
-        return affiliateAffiliation;
-    }
-
-    public void setAffiliateAffiliation(String affiliateAffiliation) {
-        this.affiliateAffiliation = affiliateAffiliation;
-    }
-
-    public String getAlumniAffiliation() {
-        return alumniAffiliation;
-    }
-
-    public void setAlumniAffiliation(String alumniAffiliation) {
-        this.alumniAffiliation = alumniAffiliation;
-    }
-
-    public String getExceptionAffiliation() {
-        return exceptionAffiliation;
-    }
-
-    public void setExceptionAffiliation(String exceptionAffiliation) {
-        this.exceptionAffiliation = exceptionAffiliation;
-    }
-
-    public String getFacultyAffiliation() {
-        return facultyAffiliation;
-    }
-
-    public void setFacultyAffiliation(String facultyAffiliation) {
-        this.facultyAffiliation = facultyAffiliation;
-    }
-
-    public String getStaffAffiliation() {
-        return staffAffiliation;
-    }
-
-    public void setStaffAffiliation(String staffAffiliation) {
-        this.staffAffiliation = staffAffiliation;
-    }
-
-    public String getStudentAffiliation() {
-        return studentAffiliation;
-    }
-
-    public void setStudentAffiliation(String studentAffiliation) {
-        this.studentAffiliation = studentAffiliation;
-    }
-
-    public String getAltAddressTypeCode() {
-        return altAddressTypeCode;
-    }
-
-    public void setAltAddressTypeCode(String altAddressTypeCode) {
-        this.altAddressTypeCode = altAddressTypeCode;
-    }
-
-    public String getAltAddressLine1() {
-        return altAddressLine1;
-    }
-
-    public String getAltAddressLine1MaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressLine1 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    private boolean canViewAltAddress() {
-        return StringUtils.equals(altAddressTypeCode, KimConstants.AddressTypes.WORK)
-                || canOverridePrivacyPreferences();
-    }
-
-    public void setAltAddressLine1(String altAddressLine1) {
-        this.altAddressLine1 = altAddressLine1;
-    }
-
-    public String getAltAddressLine2() {
-        return altAddressLine2;
-    }
-
-    public String getAltAddressLine2MaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressLine2 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressLine2(String altAddressLine2) {
-        this.altAddressLine2 = altAddressLine2;
-    }
-
-    public String getAltAddressLine3() {
-        return altAddressLine3;
-    }
-
-    public String getAltAddressLine3MaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressLine3 : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressLine3(String altAddressLine3) {
-        this.altAddressLine3 = altAddressLine3;
-    }
-
-    public String getAltAddressCity() {
-        return altAddressCity;
-    }
-
-    public String getAltAddressCityMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressCity : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressCity(String altAddressCity) {
-        this.altAddressCity = altAddressCity;
-    }
-
-    public String getAltAddressStateProvinceCode() {
-        return altAddressStateProvinceCode;
-    }
-
-    public String getAltAddressStateProvinceCodeMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressStateProvinceCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressStateProvinceCode(String altAddressStateProvinceCode) {
-        this.altAddressStateProvinceCode = altAddressStateProvinceCode;
-    }
-
-    public String getAltAddressPostalCode() {
-        return altAddressPostalCode;
-    }
-
-    public String getAltAddressPostalCodeMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressPostalCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressPostalCode(String altAddressPostalCode) {
-        this.altAddressPostalCode = altAddressPostalCode;
-    }
-
-    public String getAltAddressCountryCode() {
-        return altAddressCountryCode;
-    }
-
-    public String getAltAddressCountryCodeMaskedIfNecessary() {
-        return canViewAltAddress() ? altAddressCountryCode : KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
-    }
-
-    public void setAltAddressCountryCode(String altAddressCountryCode) {
-        this.altAddressCountryCode = altAddressCountryCode;
-    }
-
-    public boolean isSuppressName() {
-        return suppressName;
-    }
-
-    public void setSuppressName(boolean suppressName) {
-        this.suppressName = suppressName;
-    }
-
-    public boolean isSuppressEmail() {
-        return suppressEmail;
-    }
-
-    public void setSuppressEmail(boolean suppressEmail) {
-        this.suppressEmail = suppressEmail;
-    }
-
-    public boolean isSuppressPhone() {
-        return suppressPhone;
-    }
-
-    public void setSuppressPhone(boolean suppressPhone) {
-        this.suppressPhone = suppressPhone;
-    }
-
-    public boolean isSuppressPersonal() {
-        return suppressPersonal;
-    }
-
-    public void setSuppressPersonal(boolean suppressPersonal) {
-        this.suppressPersonal = suppressPersonal;
-    }
-
-    // ==== End CU-specific getters and setters ====
 
     public void populateMembers() {
         populateGroupMembers();
