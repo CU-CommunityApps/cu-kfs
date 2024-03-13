@@ -89,7 +89,7 @@ public class RecurringDisbursementVoucherDocumentRoutingServiceImpl
             LOG.error("autoApproveSpawnedDisbursementVoucherInternal, Encountered validation errors while "
                     + "auto-approving DV {}", spawnedDvDocumentNumber, e);
             return buildReportItemForBusinessRuleValidationFailures(
-                    recurringDvDocumentNumber, spawnedDvDocumentNumber, e);
+                    recurringDvDocumentNumber, spawnedDvDocumentNumber);
         }
         return new RecurringDisbursementVoucherDocumentRoutingReportItem(
                 recurringDvDocumentNumber, spawnedDvDocumentNumber);
@@ -123,7 +123,7 @@ public class RecurringDisbursementVoucherDocumentRoutingServiceImpl
     }
 
     private RecurringDisbursementVoucherDocumentRoutingReportItem buildReportItemForBusinessRuleValidationFailures(
-            String recurringDvDocumentNumber, String spawnedDvDocumentNumber, ValidationException exception) {
+            String recurringDvDocumentNumber, String spawnedDvDocumentNumber) {
         RecurringDisbursementVoucherDocumentRoutingReportItem reportItem =
                 new RecurringDisbursementVoucherDocumentRoutingReportItem(
                         recurringDvDocumentNumber, spawnedDvDocumentNumber);

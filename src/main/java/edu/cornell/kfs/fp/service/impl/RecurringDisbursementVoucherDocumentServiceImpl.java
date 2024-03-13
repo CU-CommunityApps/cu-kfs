@@ -416,7 +416,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Entered.");
         int approvalCount = 0;
         int errorCount = 0;
-        List<String> dvDocIdsCausingError = new ArrayList<String>();
+        List<String> dvDocIdsCausingError = new ArrayList<>();
         Collection<String> dvDocIds = getRecurringDisbursementVoucherSearchDao().findSavedDvIdsSpawnedByRecurringDvForCurrentAndPastFiscalPeriods(getCurrentFiscalPeriodEndDate());
         List<RecurringDisbursementVoucherDocumentRoutingReportItem> reportItems = new ArrayList<>(
                 CollectionUtils.size(dvDocIds));
@@ -443,7 +443,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         for (String dvDocIdCausingError : dvDocIdsCausingError) {
             LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Erroring {}", dvDocIdCausingError);
         }
-        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers successfuly Blanket Approved (fully processed):: {}", approvalCount);
+        LOG.info("autoApproveDisbursementVouchersSpawnedByRecurringDvs: Number of Disbursement Vouchers successfully Blanket Approved (fully processed):: {}", approvalCount);
 
         if (errorCount > 0) {
             File reportFile = recurringDisbursementVoucherDocumentReportService
