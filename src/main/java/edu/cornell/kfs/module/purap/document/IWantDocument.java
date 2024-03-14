@@ -101,12 +101,17 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String processorNetId;
     private String processorName;
 
+    private boolean contractIndicator;
+
     // routing fields
     private String routingChart;
     private String routingOrganization;
 
     //adhoc routing
     private String currentRouteToNetId;
+    
+    //contract tab routing fields
+    private String routingContractIndicator;
 
     //Items
     private List<IWantItem> items;
@@ -784,6 +789,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        setContractIndicator(false);
     }
 
     @Override
@@ -800,6 +806,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        setContractIndicator(false);
     }
 
     /**
@@ -885,10 +892,37 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+    
+
+    public boolean isContractIndicator() {
+        return contractIndicator;
+    }
+
+    public void setContractIndicator(boolean contractIndicator) {
+        this.contractIndicator = contractIndicator;
+        setRoutingContractIndicator(contractIndicator ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE);
+    }
+
+    public String getRoutingContractIndicator() {
+        if (StringUtils.isBlank(routingContractIndicator)) {
+            return KRADConstants.NO_INDICATOR_VALUE;
+        }
+        return routingContractIndicator;
+    }
+
+    public void setRoutingContractIndicator(String routingContractIndicator) {
+        this.routingContractIndicator = routingContractIndicator;
+    }
 
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+        if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_ORDER_COMPLETED)) {
+            return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+        }
+        if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_CONTRACT_INDICATOR_CHECKED)) {
+            return isContractIndicator();
+        }
+        throw new UnsupportedOperationException("Cannot answer IWantDocument split question for node called \"" + nodeName + "\"");
     }
 
     public String getProcessorNetId() {
