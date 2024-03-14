@@ -101,6 +101,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String processorNetId;
     private String processorName;
 
+    private boolean contractIndicator;
+
     // routing fields
     private String routingChart;
     private String routingOrganization;
@@ -784,6 +786,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        this.contractIndicator = false;
     }
 
     @Override
@@ -800,6 +803,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        this.contractIndicator = false;
     }
 
     /**
@@ -1544,6 +1548,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setNoteOptionDropdownSelectedValue(String noteOptionDropdownSelectedValue) {
         this.noteOptionDropdownSelectedValue = noteOptionDropdownSelectedValue;
+    }
+
+    public boolean isContractIndicator() {
+        return contractIndicator;
+    }
+
+    public void setContractIndicator(boolean contractIndicator) {
+        this.contractIndicator = contractIndicator;
     }
 
 }
