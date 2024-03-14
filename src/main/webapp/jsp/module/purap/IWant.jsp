@@ -69,6 +69,9 @@
                 </kul:tabTop>
             </c:otherwise>
         </c:choose>
+        
+        <%-- Display contract tab based on user role/permissions and document route node--%>
+        <purap:iWantContract documentAttributes="${DataDictionary.IWantDocument.attributes}"/>
 
         <purap:iWantMisc documentAttributes="${DataDictionary.IWantDocument.attributes}"/>
 

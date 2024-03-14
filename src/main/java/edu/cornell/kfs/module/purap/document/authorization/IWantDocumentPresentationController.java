@@ -81,6 +81,27 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
                         workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
     }
 
+    /* 
+     * CU Customization:
+     * Everyone should be able to view the Contract tab when the document is Final.
+     */
+    public boolean canViewContractTab(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        return workflowDocument.isFinal();
+    }
+
+    /*
+     * CU Customization:
+     * We restrict the editing of the Contract Tab contents on IWNT docs to enroute status at the
+     * OrganizationHierarchy node and PurchasingContractAssistant node.
+     */
+    public boolean canEditContractIndicator(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
+                && (nodeNames.contains("OrganizationHierarchy") | nodeNames.contains("PurchasingContractAssistant"));
+    }
+
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
@@ -146,6 +167,13 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         
         editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
         editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_NOTE_OPTIONS);
+        
+        if (canEditContractIndicator(document)) {
+            editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+            editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
+        } else if (canViewContractTab(document)) {
+            editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+        }
 
         return editModes;
     }

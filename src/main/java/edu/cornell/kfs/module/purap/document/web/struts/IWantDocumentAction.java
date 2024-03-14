@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -832,9 +833,17 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
         }
+        
+//nkk4 changes for confirmation question: This existing line is causing new stacktrace with preRules in place
         ActionForward actionForward = super.route(mapping, form, request, response);
-
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
+        
+        //determine whether contract indicator has been checked and whether edoc is on purchasing contract assistant node
+        WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        boolean routeToPurchasingContractAssistantRequested = CollectionUtils.isNotEmpty(nodeNames) && (nodeNames.contains("PurchasingContractAssistant") & iWantDocument.isContractIndicator());
+        
+        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)
+                && !routeToPurchasingContractAssistantRequested) {
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
 
@@ -1182,6 +1191,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_REQUISITION_EXISTS);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
+        
+//nkk4 changes for confirmation question: Need to have question present here as well as when CreateReq button is pressed in GUI. 
 
         String url = ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                 + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + iWantDocument.getDocumentNumber();

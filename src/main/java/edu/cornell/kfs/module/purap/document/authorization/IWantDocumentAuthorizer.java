@@ -12,6 +12,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentAuthorizerBase;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
 @SuppressWarnings("deprecation")
@@ -41,6 +42,8 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         IWantDocument iWantDocument = (IWantDocument) dataObject;
         attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
+        
+        attributes.put(CUPurapConstants.IWantDocumentAttributes.CONTRACT_INDICATOR, iWantDocument.getRoutingContractIndicator());
     }
 
     @Override
@@ -49,6 +52,8 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         IWantDocument iWantDocument = (IWantDocument) dataObject;
         attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
+        
+        attributes.put(CUPurapConstants.IWantDocumentAttributes.CONTRACT_INDICATOR, iWantDocument.getRoutingContractIndicator());
     }
 
     /*

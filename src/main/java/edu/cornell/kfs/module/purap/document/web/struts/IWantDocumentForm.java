@@ -372,6 +372,11 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
         return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isEnroute();
     }
+    
+    public boolean isDocFinal() {
+        final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
+        return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isFinal();
+    }
 
     public String getPresentationMode() {
         return presentationMode;
