@@ -18,9 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%--
-    CU Customization: Reintroduced masking of names on the Person Document.
---%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="personAttributes" value="${DataDictionary.Person.attributes}" />
@@ -28,11 +25,14 @@
 <kul:subtab width="${tableWidth}" subTabTitle="Name" noShowHideButton="true">
     <table class="standard side-margins">
         <tr>
+            <%-- CU Customization: Added potential masking of names. --%>
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.firstNameMaskedIfNecessary}" noColon="true" />
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.middleNameMaskedIfNecessary}" noColon="true" />
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.lastNameMaskedIfNecessary}" noColon="true" />
+            <%-- End CU Customization --%>
         </tr>
         <tr>
+            <%-- CU Customization: Added potential masking of names. --%>
             <c:choose>
                 <c:when test="${readOnlyEntity}">
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.firstNameMaskedIfNecessary" attributeEntry="${personAttributes.firstNameMaskedIfNecessary}" readOnly="true" />
@@ -45,6 +45,7 @@
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.lastName" attributeEntry="${personAttributes.lastName}" />
                 </c:otherwise>
             </c:choose>
+            <%-- End CU Customization --%>
         </tr>
     </table>
 </kul:subtab>

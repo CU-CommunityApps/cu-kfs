@@ -37,38 +37,52 @@
                 <ref bean="Person-addressPostalCodeMaskedIfNecessary"/>
                 <ref bean="Person-addressCountryCodeMaskedIfNecessary"/>
                 <!-- End of FINP-9357 backport section. -->
+                <!-- Start of CU-specific property additions to the Person object directly. -->
                 <ref bean="Person-firstNameMaskedIfNecessary"/>
                 <ref bean="Person-lastNameMaskedIfNecessary"/>
                 <ref bean="Person-middleNameMaskedIfNecessary"/>
                 <ref bean="Person-nameMaskedIfNecessary"/>
                 <ref bean="Person-emailAddressMaskedIfNecessary"/>
                 <ref bean="Person-phoneNumberMaskedIfNecessary"/>
-                <ref bean="Person-academicAffiliation"/>
-                <ref bean="Person-affiliateAffiliation"/>
-                <ref bean="Person-alumniAffiliation"/>
-                <ref bean="Person-exceptionAffiliation"/>
-                <ref bean="Person-facultyAffiliation"/>
-                <ref bean="Person-staffAffiliation"/>
-                <ref bean="Person-studentAffiliation"/>
-                <ref bean="Person-altAddressTypeCode"/>
-                <ref bean="Person-altAddressLine1"/>
-                <ref bean="Person-altAddressLine1MaskedIfNecessary"/>
-                <ref bean="Person-altAddressLine2"/>
-                <ref bean="Person-altAddressLine2MaskedIfNecessary"/>
-                <ref bean="Person-altAddressLine3"/>
-                <ref bean="Person-altAddressLine3MaskedIfNecessary"/>
-                <ref bean="Person-altAddressCity"/>
-                <ref bean="Person-altAddressCityMaskedIfNecessary"/>
-                <ref bean="Person-altAddressStateProvinceCode"/>
-                <ref bean="Person-altAddressStateProvinceCodeMaskedIfNecessary"/>
-                <ref bean="Person-altAddressPostalCode"/>
-                <ref bean="Person-altAddressPostalCodeMaskedIfNecessary"/>
-                <ref bean="Person-altAddressCountryCode"/>
-                <ref bean="Person-altAddressCountryCodeMaskedIfNecessary"/>
-                <ref bean="Person-suppressName"/>
-                <ref bean="Person-suppressEmail"/>
-                <ref bean="Person-suppressPhone"/>
-                <ref bean="Person-suppressPersonal"/>
+                <!-- End of CU-specific property additions to the Person object directly. -->
+                <ref bean="Person-extension-altAddressTypeCode"/>
+                <ref bean="Person-extension-altAddressLine1"/>
+                <ref bean="Person-extension-altAddressLine1MaskedIfNecessary"/>
+                <ref bean="Person-extension-altAddressLine2"/>
+                <ref bean="Person-extension-altAddressLine2MaskedIfNecessary"/>
+                <ref bean="Person-extension-altAddressLine3"/>
+                <ref bean="Person-extension-altAddressLine3MaskedIfNecessary"/>
+                <ref bean="Person-extension-altAddressCity"/>
+                <ref bean="Person-extension-altAddressCityMaskedIfNecessary"/>
+                <ref bean="Person-extension-altAddressStateProvinceCode"/>
+                <ref bean="Person-extension-altAddressStateProvinceCodeMaskedIfNecessary"/>
+                <ref bean="Person-extension-altAddressPostalCode"/>
+                <ref bean="Person-extension-altAddressPostalCodeMaskedIfNecessary"/>
+                <ref bean="Person-extension-altAddressCountryCode"/>
+                <ref bean="Person-extension-altAddressCountryCodeMaskedIfNecessary"/>
+                <ref bean="Person-extension-suppressName"/>
+                <ref bean="Person-extension-suppressEmail"/>
+                <ref bean="Person-extension-suppressPhone"/>
+                <ref bean="Person-extension-suppressPersonal"/>
+            </list>
+        </property>
+        <property name="collections">
+            <list merge="true">
+                <bean parent="CollectionDefinition" 
+                      p:name="extension.affiliations" p:label="Affiliations"
+                      p:shortLabel="Affiliations" p:elementLabel="Affiliation"/> 
+            </list>
+        </property>
+        <property name="relationships">
+            <list merge="true">
+                <bean parent="RelationshipDefinition" p:objectAttributeName="extension">
+                    <property name="primitiveAttributes">
+                        <list>
+                            <bean parent="PrimitiveAttributeDefinition" p:sourceName="principalId"
+                                  p:targetName="principalId"/>
+                        </list>
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>
@@ -173,7 +187,7 @@
 
     <!-- End of FINP-9357 backport section. -->
 
-    <!-- Start of non-address masked fields. -->
+    <!-- Start of CU-specific non-address masked fields. -->
 
     <bean id="Person-firstNameMaskedIfNecessary"
           parent="Person-firstNameMaskedIfNecessary-parentBean"
@@ -229,323 +243,183 @@
           p:name="phoneNumberMaskedIfNecessary"
     />
 
-    <!-- End of non-address masked fields. -->
-
-    <!-- Start of extra affiliation fields. -->
-
-    <bean abstract="true"
-          id="GenericPersonAttribute-affiliationStatus"
-          parent="AttributeDefinition"
-          p:maxLength="1"
-    >
-        <property name="control">
-            <bean parent="SelectControlDefinition" p:valuesFinder-ref="affiliationStatusValuesFinder"
-                  p:includeKeyInLabel="false"/>
-        </property>
-    </bean>
-
-    <bean id="Person-academicAffiliation"
-          parent="Person-academicAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-academicAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Academic"
-          p:name="academicAffiliation"
-          p:shortLabel="Academic"
-    />
-
-    <bean id="Person-affiliateAffiliation"
-          parent="Person-affiliateAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-affiliateAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Affiliate"
-          p:name="affiliateAffiliation"
-          p:shortLabel="Affiliate"
-    />
-
-    <bean id="Person-alumniAffiliation"
-          parent="Person-alumniAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-alumniAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Alumni"
-          p:name="alumniAffiliation"
-          p:shortLabel="Alumni"
-    />
-
-    <bean id="Person-exceptionAffiliation"
-          parent="Person-exceptionAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-exceptionAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Exception"
-          p:name="exceptionAffiliation"
-          p:shortLabel="Exception"
-    />
-
-    <bean id="Person-facultyAffiliation"
-          parent="Person-facultyAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-facultyAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Faculty"
-          p:name="facultyAffiliation"
-          p:shortLabel="Faculty"
-    />
-
-    <bean id="Person-staffAffiliation"
-          parent="Person-staffAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-staffAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Staff"
-          p:name="staffAffiliation"
-          p:shortLabel="Staff"
-    />
-
-    <bean id="Person-studentAffiliation"
-          parent="Person-studentAffiliation-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-studentAffiliation-parentBean"
-          parent="GenericPersonAttribute-affiliationStatus"
-          p:label="Student"
-          p:name="studentAffiliation"
-          p:shortLabel="Student"
-    />
-
-    <!-- End of extra affiliation fields. -->
+    <!-- End of CU-specific non-address masked fields. -->
 
     <!-- Start of alternate address fields. -->
 
-    <bean id="Person-altAddressTypeCode"
-          parent="Person-altAddressTypeCode-parentBean"
+    <bean id="Person-extension-altAddressTypeCode"
+          parent="Person-extension-altAddressTypeCode-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressTypeCode-parentBean"
-          parent="Person-addressTypeCode-parentBean"
-          p:label="Alt Address Type"
-          p:name="altAddressTypeCode"
-          p:shortLabel="Alt Address Type"
+          id="Person-extension-altAddressTypeCode-parentBean"
+          parent="PersonExtension-altAddressTypeCode-parentBean"
+          p:name="extension.altAddressTypeCode"
     />
 
-    <bean id="Person-altAddressLine1"
-          parent="Person-altAddressLine1-parentBean"
+    <bean id="Person-extension-altAddressLine1"
+          parent="Person-extension-altAddressLine1-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressLine1-parentBean"
-          parent="Person-addressLine1-parentBean"
-          p:label="Alt Line 1"
-          p:name="altAddressLine1"
-          p:shortLabel="Alt Line 1"
+          id="Person-extension-altAddressLine1-parentBean"
+          parent="PersonExtension-altAddressLine1-parentBean"
+          p:name="extension.altAddressLine1"
     />
 
-    <bean id="Person-altAddressLine1MaskedIfNecessary"
-          parent="Person-altAddressLine1MaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressLine1MaskedIfNecessary"
+          parent="Person-extension-altAddressLine1MaskedIfNecessary-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressLine1MaskedIfNecessary-parentBean"
-          parent="Person-altAddressLine1-parentBean"
-          p:name="altAddressLine1MaskedIfNecessary"
+          id="Person-extension-altAddressLine1MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine1MaskedIfNecessary-parentBean"
+          p:name="extension.altAddressLine1MaskedIfNecessary"
     />
 
-    <bean id="Person-altAddressLine2"
-          parent="Person-altAddressLine2-parentBean"
+    <bean id="Person-extension-altAddressLine2"
+          parent="Person-extension-altAddressLine2-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressLine2-parentBean"
-          parent="Person-addressLine2-parentBean"
-          p:label="Alt Line 2"
-          p:name="altAddressLine2"
-          p:shortLabel="Alt Line 2"
+          id="Person-extension-altAddressLine2-parentBean"
+          parent="PersonExtension-altAaddressLine2-parentBean"
+          p:name="extension.altAddressLine2"
     />
 
-    <bean id="Person-altAddressLine2MaskedIfNecessary"
-          parent="Person-altAddressLine2MaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressLine2MaskedIfNecessary"
+          parent="Person-extension-altAddressLine2MaskedIfNecessary-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressLine2MaskedIfNecessary-parentBean"
-          parent="Person-altAddressLine2-parentBean"
-          p:name="altAddressLine2MaskedIfNecessary"
+          id="Person-extension-altAddressLine2MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine2MaskedIfNecessary-parentBean"
+          p:name="extension.altAddressLine2MaskedIfNecessary"
     />
 
-    <bean id="Person-altAddressLine3"
-          parent="Person-altAddressLine3-parentBean"
+    <bean id="Person-extension-altAddressLine3"
+          parent="Person-extension-altAddressLine3-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressLine3-parentBean"
-          parent="Person-addressLine3-parentBean"
-          p:label="Alt Line 3"
-          p:name="altAddressLine3"
-          p:shortLabel="Alt Line 3"
+          id="Person-extension-altAddressLine3-parentBean"
+          parent="PersonExtension-altAddressLine3-parentBean"
+          p:name="extension.altAddressLine3"
     />
 
-    <bean id="Person-altAddressLine3MaskedIfNecessary"
-          parent="Person-altAddressLine3MaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressLine3MaskedIfNecessary"
+          parent="Person-extension-altAddressLine3MaskedIfNecessary-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressLine3MaskedIfNecessary-parentBean"
-          parent="Person-altAddressLine3-parentBean"
-          p:name="altAddressLine3MaskedIfNecessary"
+          id="Person-extension-altAddressLine3MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine3MaskedIfNecessary-parentBean"
+          p:name="extension.altAddressLine3MaskedIfNecessary"
     />
 
-    <bean id="Person-altAddressCity"
-          parent="Person-altAddressCity-parentBean"
+    <bean id="Person-extension-altAddressCity"
+          parent="Person-extension-altAddressCity-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressCity-parentBean"
-          parent="Person-addressCity-parentBean"
-          p:label="Alt City"
-          p:name="altAddressCity"
-          p:shortLabel="Alt City"
+          id="Person-extension-altAddressCity-parentBean"
+          parent="PersonExtension-altAddressCity-parentBean"
+          p:name="extension.altAddressCity"
     />
 
-    <bean id="Person-altAddressCityMaskedIfNecessary"
-          parent="Person-altAddressCityMaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressCityMaskedIfNecessary"
+          parent="Person-extension-altAddressCityMaskedIfNecessary-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressCityMaskedIfNecessary-parentBean"
-          parent="Person-altAddressCity-parentBean"
-          p:name="altAddressCityMaskedIfNecessary"
+          id="Person-extension-altAddressCityMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressCityMaskedIfNecessary-parentBean"
+          p:name="extension.altAddressCityMaskedIfNecessary"
     />
 
-    <bean id="Person-altAddressStateProvinceCode"
-          parent="Person-altAddressStateProvinceCode-parentBean"
+    <bean id="Person-extension-altAddressStateProvinceCode"
+          parent="Person-extension-altAddressStateProvinceCode-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressStateProvinceCode-parentBean"
-          parent="Person-addressStateProvinceCode-parentBean"
-          p:label="Alt State/Province"
-          p:name="altAddressStateProvinceCode"
-          p:shortLabel="Alt State/Province"
+          id="Person-extension-altAddressStateProvinceCode-parentBean"
+          parent="PersonExtension-altAddressStateProvinceCode-parentBean"
+          p:name="extension.altAddressStateProvinceCode"
     />
 
-    <bean id="Person-altAddressStateProvinceCodeMaskedIfNecessary"
-          parent="Person-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressStateProvinceCodeMaskedIfNecessary"
+          parent="Person-extension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
-          parent="Person-altAddressStateProvinceCode-parentBean"
-          p:name="altAddressStateProvinceCodeMaskedIfNecessary"
-    >
-        <property name="control">
-            <bean parent="TextControlDefinition"
-                  p:size="10"
-            />
-        </property>
-    </bean>
-
-    <bean id="Person-altAddressPostalCode"
-          parent="Person-altAddressPostalCode-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-altAddressPostalCode-parentBean"
-          parent="Person-addressPostalCode-parentBean"
-          p:label="Alt Postal Code"
-          p:name="altAddressPostalCode"
-          p:shortLabel="Alt Postal Code"
+          id="Person-extension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+          p:name="extension.altAddressStateProvinceCodeMaskedIfNecessary"
     />
 
-    <bean id="Person-altAddressPostalCodeMaskedIfNecessary"
-          parent="Person-altAddressPostalCodeMaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressPostalCode"
+          parent="Person-extension-altAddressPostalCode-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressPostalCodeMaskedIfNecessary-parentBean"
-          parent="Person-altAddressPostalCode-parentBean"
-          p:name="altAddressPostalCodeMaskedIfNecessary"
+          id="Person-extension-altAddressPostalCode-parentBean"
+          parent="PersonExtension-altAddressPostalCode-parentBean"
+          p:name="extension.altAddressPostalCode"
     />
 
-    <bean id="Person-altAddressCountryCode"
-          parent="Person-altAddressCountryCode-parentBean"
+    <bean id="Person-extension-altAddressPostalCodeMaskedIfNecessary"
+          parent="Person-extension-altAddressPostalCodeMaskedIfNecessary-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressCountryCode-parentBean"
-          parent="Person-addressCountryCode-parentBean"
-          p:label="Alt Country"
-          p:name="altAddressCountryCode"
-          p:shortLabel="Alt Country"
+          id="Person-extension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+          p:name="extension.altAddressPostalCodeMaskedIfNecessary"
     />
 
-    <bean id="Person-altAddressCountryCodeMaskedIfNecessary"
-          parent="Person-altAddressCountryCodeMaskedIfNecessary-parentBean"
+    <bean id="Person-extension-altAddressCountryCode"
+          parent="Person-extension-altAddressCountryCode-parentBean"
     />
     <bean abstract="true"
-          id="Person-altAddressCountryCodeMaskedIfNecessary-parentBean"
-          parent="Person-altAddressCountryCode-parentBean"
-          p:name="altAddressCountryCodeMaskedIfNecessary"
-    >
-        <property name="control">
-            <bean parent="TextControlDefinition"
-                  p:size="10"
-            />
-        </property>
-    </bean>
+          id="Person-extension-altAddressCountryCode-parentBean"
+          parent="PersonExtension-altAddressCountryCode-parentBean"
+          p:name="extension.altAddressCountryCode"
+    />
+
+    <bean id="Person-extension-altAddressCountryCodeMaskedIfNecessary"
+          parent="Person-extension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="Person-extension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+          p:name="extension.altAddressCountryCodeMaskedIfNecessary"
+    />
 
     <!-- End of alternate address fields. -->
 
     <!-- Start of privacy preference fields. -->
 
-    <bean abstract="true"
-          id="GenericPersonAttribute-privacyPreference"
-          parent="AttributeDefinition"
-          p:forceUppercase="false"
-          p:maxLength="1"
-          p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter"
-    >
-        <property name="control">
-            <bean parent="CheckboxControlDefinition"/>
-        </property>
-    </bean>
-
-    <bean id="Person-suppressName"
-          parent="Person-suppressName-parentBean"
+    <bean id="Person-extension-suppressName"
+          parent="Person-extension-suppressName-parentBean"
     />
     <bean abstract="true"
-          id="Person-suppressName-parentBean"
-          parent="GenericPersonAttribute-privacyPreference"
-          p:label="Suppress Name"
-          p:name="suppressName"
-          p:shortLabel="Suppress Name"
+          id="Person-extension-suppressName-parentBean"
+          parent="PersonExtension-suppressName-parentBean"
+          p:name="extension.suppressName"
     />
 
-    <bean id="Person-suppressEmail"
-          parent="Person-suppressEmail-parentBean"
+    <bean id="Person-extension-suppressEmail"
+          parent="Person-extension-suppressEmail-parentBean"
     />
     <bean abstract="true"
-          id="Person-suppressEmail-parentBean"
-          parent="GenericPersonAttribute-privacyPreference"
-          p:label="Suppress Email"
-          p:name="suppressEmail"
-          p:shortLabel="Suppress Email"
+          id="Person-extension-suppressEmail-parentBean"
+          parent="PersonExtension-suppressEmail-parentBean"
+          p:name="extension.suppressEmail"
     />
 
-    <bean id="Person-suppressPhone"
-          parent="Person-suppressPhone-parentBean"
+    <bean id="Person-extension-suppressPhone"
+          parent="Person-extension-suppressPhone-parentBean"
     />
     <bean abstract="true"
-          id="Person-suppressPhone-parentBean"
-          parent="GenericPersonAttribute-privacyPreference"
-          p:label="Suppress Phone"
-          p:name="suppressPhone"
-          p:shortLabel="Suppress Phone"
+          id="Person-extension-suppressPhone-parentBean"
+          parent="PersonExtension-suppressPhone-parentBean"
+          p:name="extension.suppressPhone"
     />
 
-    <bean id="Person-suppressPersonal"
-          parent="Person-suppressPersonal-parentBean"
+    <bean id="Person-extension-suppressPersonal"
+          parent="Person-extension-suppressPersonal-parentBean"
     />
     <bean abstract="true"
-          id="Person-suppressPersonal-parentBean"
-          parent="GenericPersonAttribute-privacyPreference"
-          p:label="Suppress Personal"
-          p:name="suppressPersonal"
-          p:shortLabel="Suppress Personal"
+          id="Person-extension-suppressPersonal-parentBean"
+          parent="PersonExtension-suppressPersonal-parentBean"
+          p:name="extension.suppressPersonal"
     />
 
     <!-- End of privacy preference fields. -->
@@ -717,7 +591,7 @@
                 >
                     <property name="replaceWith">
                         <bean parent="InquirySectionDefinition"
-                              p:numberOfColumns="2"
+                              p:numberOfColumns="1"
                               p:title="Affiliation"
                         >
                             <property name="inquiryFields">
@@ -732,36 +606,25 @@
                                           p:attributeName="campusCode"
                                           p:noInquiry="true"
                                     />
-                                    <bean parent="InquirySubSectionHeaderDefinition"
-                                          p:attributeName="All Affiliations"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="academicAffiliation"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="affiliateAffiliation"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="alumniAffiliation"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="exceptionAffiliation"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="facultyAffiliation"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="staffAffiliation"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="studentAffiliation"
-                                          p:noInquiry="true"
-                                    />
+                                    <bean parent="InquiryCollectionDefinition"
+                                          p:attributeName="extension.affiliations"
+                                          p:businessObjectClass="edu.cornell.kfs.kim.impl.identity.PersonAffiliation"
+                                          p:compact="true"
+                                          p:numberOfColumns="1"
+                                          p:summaryTitle="All Affiliations"
+                                    >
+                                        <property name="inquiryFields">
+                                            <bean parent="FieldDefinition"
+                                                  p:attributeName="affiliationTypeCode"
+                                                  p:noInquiry="true"/>
+                                            <bean parent="FieldDefinition"
+                                                  p:attributeName="affiliationStatus"
+                                                  p:noInquiry="true"/>
+                                            <bean parent="FieldDefinition"
+                                                  p:attributeName="primary"
+                                                  p:noInquiry="true"/>
+                                        </property>
+                                    </bean>
                                 </list>
                             </property>
                         </bean>
@@ -805,28 +668,28 @@
                             <property name="inquiryFields">
                                 <list>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressTypeCode"
+                                          p:attributeName="extension.altAddressTypeCode"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressLine1MaskedIfNecessary"
+                                          p:attributeName="extension.altAddressLine1MaskedIfNecessary"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressLine2MaskedIfNecessary"
+                                          p:attributeName="extension.altAddressLine2MaskedIfNecessary"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressLine3MaskedIfNecessary"
+                                          p:attributeName="extension.altAddressLine3MaskedIfNecessary"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressCityMaskedIfNecessary"
+                                          p:attributeName="extension.altAddressCityMaskedIfNecessary"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressStateProvinceCodeMaskedIfNecessary"
+                                          p:attributeName="extension.altAddressStateProvinceCodeMaskedIfNecessary"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressPostalCodeMaskedIfNecessary"
+                                          p:attributeName="extension.altAddressPostalCodeMaskedIfNecessary"
                                           p:noInquiry="true"/>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="altAddressCountryCodeMaskedIfNecessary"
+                                          p:attributeName="extension.altAddressCountryCodeMaskedIfNecessary"
                                           p:noInquiry="true"/>
                                 </list>
                             </property>
@@ -882,19 +745,19 @@
                             <property name="inquiryFields">
                                 <list>
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="suppressName"
+                                          p:attributeName="extension.suppressName"
                                           p:noInquiry="true"
                                     />
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="suppressEmail"
+                                          p:attributeName="extension.suppressEmail"
                                           p:noInquiry="true"
                                     />
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="suppressPhone"
+                                          p:attributeName="extension.suppressPhone"
                                           p:noInquiry="true"
                                     />
                                     <bean parent="FieldDefinition"
-                                          p:attributeName="suppressPersonal"
+                                          p:attributeName="extension.suppressPersonal"
                                           p:noInquiry="true"
                                     />
                                 </list>

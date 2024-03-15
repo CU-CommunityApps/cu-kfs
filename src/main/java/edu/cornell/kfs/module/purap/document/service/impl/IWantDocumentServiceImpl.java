@@ -20,7 +20,6 @@ import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.web.struts.DisbursementVoucherForm;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
@@ -61,6 +60,7 @@ import org.kuali.kfs.vnd.document.service.VendorService;
 import org.kuali.kfs.vnd.service.PhoneNumberService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.kim.impl.identity.PersonExtension;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -105,17 +105,20 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
         Person person = personService.getPersonByPrincipalName(principalName);
         if (ObjectUtils.isNull(person)) {
             throw new IllegalArgumentException("Could not find user: " + principalName);
-        } else if (!StringUtils.equalsIgnoreCase(person.getAltAddressTypeCode(), CMP_ADDRESS_TYPE)) {
+        }
+
+        PersonExtension personExtension = person.getPersonExtension();
+        if (!StringUtils.equalsIgnoreCase(personExtension.getAltAddressTypeCode(), CMP_ADDRESS_TYPE)) {
             throw new IllegalStateException("User " + principalName
                     + " is not storing their campus address in the expected fields");
         }
 
-        String addressLine1 = StringUtils.trimToEmpty(person.getAltAddressLine1());
-        String addressLine2 = StringUtils.trimToEmpty(person.getAltAddressLine2());
-        String city = StringUtils.trimToEmpty(person.getAltAddressCity());
-        String stateCode = StringUtils.trimToEmpty(person.getAltAddressStateProvinceCode());
-        String postalCode = StringUtils.trimToEmpty(person.getAltAddressPostalCode());
-        String countryCode = StringUtils.trimToEmpty(person.getAltAddressCountryCode());
+        String addressLine1 = StringUtils.trimToEmpty(personExtension.getAltAddressLine1());
+        String addressLine2 = StringUtils.trimToEmpty(personExtension.getAltAddressLine2());
+        String city = StringUtils.trimToEmpty(personExtension.getAltAddressCity());
+        String stateCode = StringUtils.trimToEmpty(personExtension.getAltAddressStateProvinceCode());
+        String postalCode = StringUtils.trimToEmpty(personExtension.getAltAddressPostalCode());
+        String countryCode = StringUtils.trimToEmpty(personExtension.getAltAddressCountryCode());
 
         String initiatorAddress = new StringBuilder(100).append(addressLine1).append(KRADConstants.NEWLINE).append(
                 addressLine2).append(KRADConstants.NEWLINE).append(

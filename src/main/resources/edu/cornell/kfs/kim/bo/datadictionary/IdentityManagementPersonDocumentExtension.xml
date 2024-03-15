@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="IdentityManagementPersonDocumentExtension"
+          parent="IdentityManagementPersonDocumentExtension-parentBean"/>
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-parentBean"
+          parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension"
+          p:objectLabel="Person Document Extension"
+          p:titleAttribute="documentNumber"
+    >
+        <property name="attributes">
+            <list>
+                <ref bean="IdentityManagementPersonDocumentExtension-documentNumber"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressTypeCode"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressLine1"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressLine2"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressLine3"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressCity"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCode"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressPostalCode"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-altAddressCountryCode"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-suppressName"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-suppressEmail"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-suppressPhone"/>
+                <ref bean="IdentityManagementPersonDocumentExtension-suppressPersonal"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="IdentityManagementPersonDocumentExtension-documentNumber"
+          parent="IdentityManagementPersonDocumentExtension-documentNumber-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-documentNumber-parentBean"
+          parent="IdentityManagementPersonDocument-documentNumber-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressTypeCode"
+          parent="IdentityManagementPersonDocumentExtension-altAddressTypeCode-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressTypeCode-parentBean"
+          parent="PersonExtension-altAddressTypeCode-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressLine1"
+          parent="IdentityManagementPersonDocumentExtension-altAddressLine1-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressLine1-parentBean"
+          parent="PersonExtension-altAddressLine1-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressLine1MaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressLine1MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressLine1MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine1MaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressLine2"
+          parent="IdentityManagementPersonDocumentExtension-altAddressLine2-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressLine2-parentBean"
+          parent="PersonExtension-altAddressLine2-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressLine2MaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressLine2MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressLine2MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine2MaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressLine3"
+          parent="IdentityManagementPersonDocumentExtension-altAddressLine3-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressLine3-parentBean"
+          parent="PersonExtension-altAddressLine3-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressLine3MaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressLine3MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressLine3MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine3MaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressCity"
+          parent="IdentityManagementPersonDocumentExtension-altAddressCity-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressCity-parentBean"
+          parent="PersonExtension-altAddressCity-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressCityMaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressCityMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressCityMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressCityMaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCode"
+          parent="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCode-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCode-parentBean"
+          parent="PersonExtension-altAddressStateProvinceCode-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCodeMaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressPostalCode"
+          parent="IdentityManagementPersonDocumentExtension-altAddressPostalCode-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressPostalCode-parentBean"
+          parent="PersonExtension-altAddressPostalCode-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressPostalCodeMaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressCountryCode"
+          parent="IdentityManagementPersonDocumentExtension-altAddressCountryCode-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressCountryCode-parentBean"
+          parent="PersonExtension-altAddressCountryCode-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-altAddressCountryCodeMaskedIfNecessary"
+          parent="IdentityManagementPersonDocumentExtension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-suppressName"
+          parent="IdentityManagementPersonDocumentExtension-suppressName-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-suppressName-parentBean"
+          parent="PersonExtension-suppressName-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-suppressEmail"
+          parent="IdentityManagementPersonDocumentExtension-suppressEmail-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-suppressEmail-parentBean"
+          parent="PersonExtension-suppressEmail-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-suppressPhone"
+          parent="IdentityManagementPersonDocumentExtension-suppressPhone-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-suppressPhone-parentBean"
+          parent="PersonExtension-suppressPhone-parentBean"
+    />
+
+    <bean id="IdentityManagementPersonDocumentExtension-suppressPersonal"
+          parent="IdentityManagementPersonDocumentExtension-suppressPersonal-parentBean"
+    />
+    <bean abstract="true"
+          id="IdentityManagementPersonDocumentExtension-suppressPersonal-parentBean"
+          parent="PersonExtension-suppressPersonal-parentBean"
+    />
+
+</beans>

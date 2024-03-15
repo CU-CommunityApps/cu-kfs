@@ -17,10 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * CU Customization: Updated the "loadEmplInfo" function to reference the potentially masked Person Name fields.
- */
-
 var chartCodeSuffix = '.chartOfAccountsCode'
 var chartNameSuffix = '.chart.finChartOfAccountDescription'
 var accountNumberSuffix = '.accountNumber'
@@ -551,7 +547,9 @@ function loadEmplInfo (emplIdFieldName, userNameFieldName) {
     var dwrReply = {
       callback: function (data) {
         if (data != null && typeof data === 'object') {
+          // ==== CU Customization: Use potentially masked Person name instead. ====
           dwr.util.setValue(containerDiv.id, data.nameMaskedIfNecessary, { escapeHtml: true })
+          // ==== End CU Customization ====
         } else {
           dwr.util.setValue(containerDiv.id, wrapError('person not found'), {
             escapeHtml: false

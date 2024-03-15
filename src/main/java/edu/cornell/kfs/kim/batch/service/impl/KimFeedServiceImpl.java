@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,6 +39,8 @@ import edu.cornell.kfs.kim.CuKimConstants.KfsAffiliations;
 import edu.cornell.kfs.kim.batch.dataaccess.KimFeedEdwDao;
 import edu.cornell.kfs.kim.batch.service.KimFeedService;
 import edu.cornell.kfs.kim.businessobject.EdwPerson;
+import edu.cornell.kfs.kim.impl.identity.PersonAffiliation;
+import edu.cornell.kfs.kim.impl.identity.PersonExtension;
 
 public class KimFeedServiceImpl implements KimFeedService {
 
@@ -85,12 +89,13 @@ public class KimFeedServiceImpl implements KimFeedService {
             if (ObjectUtils.isNotNull(kfsPerson)) {
                 LOG.info("processPersonChange, Updating KFS Person record for {}", edwPerson);
                 verifyExistingPersonHasExpectedIdentifiers(kfsPerson, edwPerson);
+                mergePersonIntoKfs(kfsPerson, edwPerson);
             } else {
                 LOG.info("processPersonChange, Inserting new KFS Person record for {}", edwPerson);
                 verifyNewPersonCanBeSafelyInsertedIntoKfs(edwPerson);
                 kfsPerson = new Person();
+                mergePersonIntoKfs(kfsPerson, edwPerson);
             }
-            mergePersonIntoKfs(kfsPerson, edwPerson);
             report.rowsSuccessful++;
         } catch (RuntimeException e) {
             LOG.error("processPersonChange, Unable to insert or update {}", edwPerson, e);
@@ -149,7 +154,8 @@ public class KimFeedServiceImpl implements KimFeedService {
             kfsPerson.setPrincipalName(edwPerson.getNetId());
             kfsPerson.setEntityTypeCode(EntityTypes.PERSON);
         }
-        mergeAffiliationsAndEmploymentInformation(kfsPerson, edwPerson);
+        mergeAffiliations(kfsPerson, edwPerson);
+        mergeEmploymentInformation(kfsPerson, edwPerson);
         mergeName(kfsPerson, edwPerson);
         mergeHomeAddress(kfsPerson, edwPerson);
         mergeCampusAddress(kfsPerson, edwPerson);
@@ -158,29 +164,45 @@ public class KimFeedServiceImpl implements KimFeedService {
         businessObjectService.save(kfsPerson);
     }
 
-    private void mergeAffiliationsAndEmploymentInformation(Person kfsPerson, EdwPerson edwPerson) {
-        kfsPerson.setAffiliationTypeCode(convertPrimaryAffiliationCode(edwPerson));
-        kfsPerson.setCampusCode(CuKimConstants.CORNELL_IT_CAMPUS);
-        kfsPerson.setAcademicAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getAcademicAffil));
-        kfsPerson.setAffiliateAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getAffiliateAffil));
-        kfsPerson.setAlumniAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getAlumniAffil));
-        kfsPerson.setExceptionAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getExceptionAffil));
-        kfsPerson.setFacultyAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getFacultyAffil));
-        kfsPerson.setStaffAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getStaffAffil));
-        kfsPerson.setStudentAffiliation(getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getStudentAffil));
+    private void mergeAffiliations(Person kfsPerson, EdwPerson edwPerson) {
+        String primaryKfsAffiliation = convertPrimaryAffiliationCode(edwPerson);
+        Map<String, String> newAffiliationStatuses = Map.ofEntries(
+                Map.entry(KfsAffiliations.ACADEMIC, getAndVerifyAffilStatus(edwPerson, EdwPerson::getAcademicAffil)),
+                Map.entry(KfsAffiliations.AFFILIATE, getAndVerifyAffilStatus(edwPerson, EdwPerson::getAffiliateAffil)),
+                Map.entry(KfsAffiliations.ALUMNI, getAndVerifyAffilStatus(edwPerson, EdwPerson::getAlumniAffil)),
+                Map.entry(KfsAffiliations.EXCEPTION, getAndVerifyAffilStatus(edwPerson, EdwPerson::getExceptionAffil)),
+                Map.entry(KfsAffiliations.FACULTY, getAndVerifyAffilStatus(edwPerson, EdwPerson::getFacultyAffil)),
+                Map.entry(KfsAffiliations.STAFF, getAndVerifyAffilStatus(edwPerson, EdwPerson::getStaffAffil)),
+                Map.entry(KfsAffiliations.STUDENT, getAndVerifyAffilStatus(edwPerson, EdwPerson::getStudentAffil))
+        );
+        List<PersonAffiliation> affiliations = kfsPerson.getPersonExtension().getAffiliations();
+        Map<String, PersonAffiliation> existingAffiliations = affiliations.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        PersonAffiliation::getAffiliationTypeCode, Function.identity()));
 
-        String primaryEmploymentAffiliation = getPrimaryEmploymentAffiliation(edwPerson);
-        if (StringUtils.isNotBlank(primaryEmploymentAffiliation)) {
-            kfsPerson.setPrimaryDepartmentCode(getPrimaryDepartmentCode(edwPerson));
-            kfsPerson.setEmployeeId(edwPerson.getEmployeeId());
-            kfsPerson.setEmployeeStatusCode(
-                    getPrimaryEmploymentAffiliationStatus(edwPerson, primaryEmploymentAffiliation));
-            kfsPerson.setEmployeeTypeCode(KFSConstants.PROFESSIONAL_EMPLOYEE_TYPE_CODE);
-        } else {
-            kfsPerson.setPrimaryDepartmentCode(null);
-            kfsPerson.setEmployeeId(null);
-            kfsPerson.setEmployeeStatusCode(null);
-            kfsPerson.setEmployeeTypeCode(null);
+        kfsPerson.setAffiliationTypeCode(primaryKfsAffiliation);
+        kfsPerson.setCampusCode(CuKimConstants.CORNELL_IT_CAMPUS);
+
+        for (Map.Entry<String, String> affiliationEntry : newAffiliationStatuses.entrySet()) {
+            String affiliationType = affiliationEntry.getKey();
+            String newAffiliationStatus = affiliationEntry.getValue();
+            PersonAffiliation affiliation = existingAffiliations.get(affiliationType);
+
+            if (StringUtils.equals(newAffiliationStatus, AffiliationStatuses.NONEXISTENT)) {
+                if (ObjectUtils.isNotNull(affiliation)) {
+                    affiliation.setAffiliationStatus(AffiliationStatuses.INACTIVE);
+                    affiliation.setPrimary(false);
+                }
+            } else {
+                if (ObjectUtils.isNull(affiliation)) {
+                    affiliation = new PersonAffiliation();
+                    affiliation.setPrincipalId(kfsPerson.getPrincipalId());
+                    affiliation.setAffiliationTypeCode(affiliationType);
+                    affiliations.add(affiliation);
+                }
+                affiliation.setAffiliationStatus(newAffiliationStatus);
+                affiliation.setPrimary(StringUtils.equals(affiliationType, primaryKfsAffiliation));
+            }
         }
     }
 
@@ -206,7 +228,7 @@ public class KimFeedServiceImpl implements KimFeedService {
         }
     }
 
-    private String getAndVerifyAffiliationStatus(EdwPerson edwPerson, Function<EdwPerson, String> statusGetter) {
+    private String getAndVerifyAffilStatus(EdwPerson edwPerson, Function<EdwPerson, String> statusGetter) {
         String affiliationStatus = StringUtils.defaultString(statusGetter.apply(edwPerson));
         switch (affiliationStatus) {
             case AffiliationStatuses.ACTIVE:
@@ -217,6 +239,22 @@ public class KimFeedServiceImpl implements KimFeedService {
             default:
                 throw new RuntimeException("Found an invalid affiliation status of '" + affiliationStatus
                         + "' on " + edwPerson);
+        }
+    }
+
+    private void mergeEmploymentInformation(Person kfsPerson, EdwPerson edwPerson) {
+        String primaryEmploymentAffiliation = getPrimaryEmploymentAffiliation(edwPerson);
+        if (StringUtils.isNotBlank(primaryEmploymentAffiliation)) {
+            kfsPerson.setPrimaryDepartmentCode(getPrimaryDepartmentCode(edwPerson));
+            kfsPerson.setEmployeeId(edwPerson.getEmployeeId());
+            kfsPerson.setEmployeeStatusCode(
+                    getPrimaryEmploymentAffiliationStatus(edwPerson, primaryEmploymentAffiliation));
+            kfsPerson.setEmployeeTypeCode(KFSConstants.PROFESSIONAL_EMPLOYEE_TYPE_CODE);
+        } else {
+            kfsPerson.setPrimaryDepartmentCode(null);
+            kfsPerson.setEmployeeId(null);
+            kfsPerson.setEmployeeStatusCode(null);
+            kfsPerson.setEmployeeTypeCode(null);
         }
     }
 
@@ -246,11 +284,11 @@ public class KimFeedServiceImpl implements KimFeedService {
     private String getPrimaryEmploymentAffiliationStatus(EdwPerson edwPerson, String primaryEmploymentAffiliation) {
         switch (primaryEmploymentAffiliation) {
             case KfsAffiliations.AFFILIATE:
-                return getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getAffiliateAffil);
+                return getAndVerifyAffilStatus(edwPerson, EdwPerson::getAffiliateAffil);
             case KfsAffiliations.FACULTY:
-                return getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getFacultyAffil);
+                return getAndVerifyAffilStatus(edwPerson, EdwPerson::getFacultyAffil);
             case KfsAffiliations.STAFF:
-                return getAndVerifyAffiliationStatus(edwPerson, EdwPerson::getStaffAffil);
+                return getAndVerifyAffilStatus(edwPerson, EdwPerson::getStaffAffil);
             default :
                 throw new RuntimeException("Invalid primary employment affiliation '" + primaryEmploymentAffiliation
                         + "' was detected for " + edwPerson);
@@ -309,6 +347,7 @@ public class KimFeedServiceImpl implements KimFeedService {
     }
 
     private void mergeCampusAddress(Person kfsPerson, EdwPerson edwPerson) {
+        PersonExtension personExtension = kfsPerson.getPersonExtension();
         String line1 = edwPerson.getCampusAddress();
         String line2 = StringUtils.length(line1) > CuKimConstants.MAX_ADDRESS_LINE_LENGTH
                 ? StringUtils.substring(line1, CuKimConstants.MAX_ADDRESS_LINE_LENGTH) : KFSConstants.BLANK_SPACE;
@@ -318,22 +357,23 @@ public class KimFeedServiceImpl implements KimFeedService {
         line2 = StringUtils.left(line2, CuKimConstants.MAX_ADDRESS_LINE_LENGTH);
         line3 = StringUtils.left(line3, CuKimConstants.MAX_ADDRESS_LINE_LENGTH);
 
-        kfsPerson.setAltAddressTypeCode(AddressTypes.CAMPUS);
-        kfsPerson.setAltAddressLine1(line1);
-        kfsPerson.setAltAddressLine2(line2);
-        kfsPerson.setAltAddressLine3(line3);
-        kfsPerson.setAltAddressCity(edwPerson.getCampusCity());
-        kfsPerson.setAltAddressStateProvinceCode(StringUtils.left(edwPerson.getCampusState(), 2));
-        kfsPerson.setAltAddressPostalCode(edwPerson.getCampusPostalCode());
-        kfsPerson.setAltAddressCountryCode(KFSConstants.BLANK_SPACE);
+        personExtension.setAltAddressTypeCode(AddressTypes.CAMPUS);
+        personExtension.setAltAddressLine1(line1);
+        personExtension.setAltAddressLine2(line2);
+        personExtension.setAltAddressLine3(line3);
+        personExtension.setAltAddressCity(edwPerson.getCampusCity());
+        personExtension.setAltAddressStateProvinceCode(StringUtils.left(edwPerson.getCampusState(), 2));
+        personExtension.setAltAddressPostalCode(edwPerson.getCampusPostalCode());
+        personExtension.setAltAddressCountryCode(KFSConstants.BLANK_SPACE);
     }
 
     private void mergePrivacyPreferences(Person kfsPerson, EdwPerson edwPerson) {
         if (StringUtils.equalsIgnoreCase(edwPerson.getLdapSuppress(), KRADConstants.YES_INDICATOR_VALUE)) {
-            kfsPerson.setSuppressName(true);
-            kfsPerson.setSuppressEmail(true);
-            kfsPerson.setSuppressPhone(true);
-            kfsPerson.setSuppressPersonal(true);
+            PersonExtension personExtension = kfsPerson.getPersonExtension();
+            personExtension.setSuppressName(true);
+            personExtension.setSuppressEmail(true);
+            personExtension.setSuppressPhone(true);
+            personExtension.setSuppressPersonal(true);
         }
     }
 
