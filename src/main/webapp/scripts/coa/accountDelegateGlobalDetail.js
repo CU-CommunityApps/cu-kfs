@@ -25,6 +25,7 @@
 function principalNameLookup (userIdField) {
   var userIdFieldName = userIdField.name
   var elPrefix = findElPrefix(userIdFieldName)
+  // ==== CU Customization: Use the potentially masked Person name instead. ====
   var userNameFieldName = elPrefix + '.nameMaskedIfNecessary'
   var universalIdFieldName = findElPrefix(elPrefix) + '.principalId'
 
@@ -46,6 +47,7 @@ function loadPrincipalInfo (
       callback: function (data) {
         if (data != null && typeof data === 'object') {
           setRecipientValue(universalIdFieldName, data.principalId)
+          // ==== CU Customization: Use the potentially masked Person name instead. ====
           setRecipientValue(userNameFieldName, data.nameMaskedIfNecessary)
         } else {
           clearRecipients(universalIdFieldName)

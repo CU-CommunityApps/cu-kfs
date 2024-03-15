@@ -98,7 +98,9 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     protected List<PersonDocumentRole> roles;
 
     protected transient DocumentHelperService documentHelperService;
+    // ==== Start FINP-9357 Backport ====
     private transient UiDocumentService uiDocumentService;
+    // ==== End FINP-9357 Backport ====
 
     public IdentityManagementPersonDocument() {
         groups = new ArrayList<>();
@@ -270,6 +272,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressLine1;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressLine1MaskedIfNecessary() {
         if (canViewAddress()) {
@@ -283,6 +286,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
                || getUiDocumentService()
                        .canModifyPerson(GlobalVariables.getUserSession().getPrincipalId(), principalId);
     }
+    // ==== End FINP-9357 Backport ====
 
     public void setAddressLine1(final String addressLine1) {
         this.addressLine1 = addressLine1;
@@ -292,6 +296,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressLine2;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressLine2MaskedIfNecessary() {
         if (canViewAddress()) {
@@ -299,6 +304,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
+    // ==== End FINP-9357 Backport ====
 
     public void setAddressLine2(final String addressLine2) {
         this.addressLine2 = addressLine2;
@@ -308,6 +314,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressLine3;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressLine3MaskedIfNecessary() {
         if (canViewAddress()) {
@@ -315,6 +322,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
+    //==== End FINP-9357 Backport ====
 
     public void setAddressLine3(final String addressLine3) {
         this.addressLine3 = addressLine3;
@@ -324,6 +332,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressCity;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressCityMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -331,6 +340,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
+    // ==== End FINP-9357 Backport ====
 
     public void setAddressCity(final String addressCity) {
         this.addressCity = addressCity;
@@ -340,6 +350,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressStateProvinceCode;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressStateProvinceCodeMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -347,6 +358,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
+    // ==== End FINP-9357 Backport ====
 
     public void setAddressStateProvinceCode(final String addressStateProvinceCode) {
         this.addressStateProvinceCode = addressStateProvinceCode;
@@ -356,6 +368,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressPostalCode;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressPostalCodeMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -363,6 +376,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK_ZIP;
     }
+    // ==== End FINP-9357 Backport ====
 
     public void setAddressPostalCode(final String addressPostalCode) {
         this.addressPostalCode = addressPostalCode;
@@ -372,6 +386,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return addressCountryCode;
     }
 
+    // ==== Start FINP-9357 Backport ====
     // used by personAddress.tag
     public String getAddressCountryCodeMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -379,6 +394,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
+    // ==== End FINP-9357 Backport ====
 
     public void setAddressCountryCode(final String addressCountryCode) {
         this.addressCountryCode = addressCountryCode;
@@ -609,11 +625,13 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         return documentHelperService;
     }
 
+    // ==== Start FINP-9357 Backport ====
     private UiDocumentService getUiDocumentService() {
         if (uiDocumentService == null) {
             uiDocumentService = SpringContext.getBean(UiDocumentService.class);
         }
         return uiDocumentService;
     }
+    // ==== End FINP-9357 Backport ====
 
 }

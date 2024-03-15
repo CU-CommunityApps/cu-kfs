@@ -22,9 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 
-/*
- * CU Customization: Modify Ad Hoc Person to use the potentially masked Person Name property variant.
- */
 public class AdHocRoutePerson extends AdHocRouteRecipient {
 
     private static final long serialVersionUID = 1L;
@@ -63,6 +60,7 @@ public class AdHocRoutePerson extends AdHocRouteRecipient {
     public void setName(final String name) {
         super.setName(name);
 
+        // ==== CU Customization: Use potentially masked Person name instead. ====
         if (StringUtils.isNotBlank(name) && getId() != null
             && person != null && !StringUtils.equals(person.getNameMaskedIfNecessary(), name)) {
             person = KimApiServiceLocator.getPersonService().getPersonByPrincipalName(getId());
@@ -86,6 +84,7 @@ public class AdHocRoutePerson extends AdHocRouteRecipient {
         this.person = person;
         if (person != null) {
             id = person.getPrincipalName();
+            // ==== CU Customization: Use potentially masked Person name instead. ====
             name = person.getNameMaskedIfNecessary();
         }
     }

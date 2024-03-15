@@ -18,9 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%--
-    CU Customization: Reintroduced masking of email addresses on the Person Document.
---%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="personAttributes" value="${DataDictionary.Person.attributes}" />
@@ -28,11 +25,14 @@
 <kul:subtab width="${tableWidth}" subTabTitle="Email Address" noShowHideButton="true">
     <table class="standard side-margins">
         <tr>
+            <%-- CU Customization: Add potential masking of email addresses. --%>
             <th><div align="left"><kul:htmlAttributeLabel attributeEntry="${personAttributes.emailAddressMaskedIfNecessary}" noColon="true" /></div></th>
+            <%-- End CU Customization --%>
         </tr>
         <tr>
             <td>
                 <div align="left">
+                    <%-- CU Customization: Add potential masking of email addresses. --%>
                     <c:choose>
                         <c:when test="${readOnlyEntity}">
                             <kul:htmlControlAttribute property="document.emailAddressMaskedIfNecessary" attributeEntry="${personAttributes.emailAddressMaskedIfNecessary}" readOnly="true" />
@@ -41,6 +41,7 @@
                             <kul:htmlControlAttribute property="document.emailAddress" attributeEntry="${personAttributes.emailAddress}" />
                         </c:otherwise>
                     </c:choose>
+                    <%-- End CU Customization --%>
                 </div>
             </td>
         </tr>

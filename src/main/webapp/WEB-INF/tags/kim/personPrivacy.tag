@@ -25,22 +25,22 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<c:set var="personAttributes" value="${DataDictionary.Person.attributes}" />
+<c:set var="personExtensionAttributes" value="${DataDictionary.PersonExtension.attributes}" />
 
 <kul:tab tabTitle="Privacy Preferences" defaultOpen="false">
     <div class="tab-container" align="center">
         <table class="standard side-margins">
             <tr>
-                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personAttributes.suppressName}" /> 
-                <kim:cell cellWidth="20%" textAlign="center" property="document.suppressName" attributeEntry="${personAttributes.suppressName}" readOnly="${readOnlyEntity}" />
-                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personAttributes.suppressPhone}" />
-                <kim:cell cellWidth="20%" textAlign="center" property="document.suppressPhone" attributeEntry="${personAttributes.suppressPhone}" readOnly="${readOnlyEntity}" />
+                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personExtensionAttributes.suppressName}" /> 
+                <kim:cell cellWidth="20%" textAlign="center" property="document.extension.suppressName" attributeEntry="${personExtensionAttributes.suppressName}" readOnly="${readOnlyEntity}" />
+                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personExtensionAttributes.suppressPhone}" />
+                <kim:cell cellWidth="20%" textAlign="center" property="document.extension.suppressPhone" attributeEntry="${personExtensionAttributes.suppressPhone}" readOnly="${readOnlyEntity}" />
             </tr>
             <tr>
-                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personAttributes.suppressPersonal}" />
-                <kim:cell cellWidth="20%" textAlign="center" property="document.suppressPersonal" attributeEntry="${personAttributes.suppressPersonal}" readOnly="${readOnlyEntity}" />
-                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personAttributes.suppressEmail}" />
-                <kim:cell cellWidth="20%" textAlign="center" property="document.suppressEmail" attributeEntry="${personAttributes.suppressEmail}" readOnly="${readOnlyEntity}" />
+                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personExtensionAttributes.suppressPersonal}" />
+                <kim:cell cellWidth="20%" textAlign="center" property="document.extension.suppressPersonal" attributeEntry="${personExtensionAttributes.suppressPersonal}" readOnly="${readOnlyEntity}" />
+                <kim:cell cellWidth="30%" isLabel="true" textAlign="right" attributeEntry="${personExtensionAttributes.suppressEmail}" />
+                <kim:cell cellWidth="20%" textAlign="center" property="document.extension.suppressEmail" attributeEntry="${personExtensionAttributes.suppressEmail}" readOnly="${readOnlyEntity}" />
             </tr>
         </table>        
     </div>

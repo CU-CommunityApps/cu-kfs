@@ -17,10 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * CU Customization: Updated the loadUserInfo() function to reference the potentially masked Person Name fields.
- */
-
 function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) {
   var userId = dwr.util.getValue(userIdFieldName);
 
@@ -34,6 +30,7 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) 
           if (universalIdFieldName != null && universalIdFieldName != "") {
             setRecipientValue(universalIdFieldName, data.principalId);
           }
+          // ==== CU Customization: Use the potentially masked name instead. ====
           if (userNameFieldName != null && userNameFieldName != "") {
             setRecipientValue(userNameFieldName, data.nameMaskedIfNecessary);
           } else {
@@ -41,6 +38,7 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) 
             divName = userIdFieldName.replace(".principalName", ".nameMaskedIfNecessary.div");
             dwr.util.setValue(divName, data.nameMaskedIfNecessary);
           }
+          // ==== End CU Customization ====
         } else {
           if (universalIdFieldName != null && universalIdFieldName != "") {
             setRecipientValue(universalIdFieldName, "");
@@ -49,7 +47,9 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) 
             setRecipientValue(userNameFieldName, wrapError("person not found"), true);
           } else {
             // guess the DIV name
+            // ==== CU Customization: Use the potentially masked name instead. ====
             divName = userIdFieldName.replace(".principalName", ".nameMaskedIfNecessary.div");
+            // ==== End CU Customization ====
             dwr.util.setValue(divName, wrapError("person not found"), {escapeHtml: false});
           }
         }
@@ -63,7 +63,9 @@ function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) 
           setRecipientValue(userNameFieldName, wrapError("person not found"), true);
         } else {
           // guess the DIV name
+          // ==== CU Customization: Use the potentially masked name instead. ====
           divName = userIdFieldName.replace(".principalName", ".nameMaskedIfNecessary.div");
+          // ==== End CU Customization ====
           dwr.util.setValue(divName, wrapError("person not found"), {escapeHtml: false});
         }
       }

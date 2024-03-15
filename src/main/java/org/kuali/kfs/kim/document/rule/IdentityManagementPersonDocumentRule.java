@@ -63,6 +63,7 @@ import org.kuali.kfs.krad.service.KRADServiceLocator;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 
 import edu.cornell.kfs.kim.CuKimConstants.AffiliationStatuses;
@@ -71,14 +72,17 @@ import edu.cornell.kfs.kim.CuKimKeyConstants;
 import edu.cornell.kfs.kim.CuKimPropertyConstants;
 import edu.cornell.kfs.kim.api.identity.CuPersonService;
 import edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation;
+import edu.cornell.kfs.kim.rule.event.ui.AddAffiliationEvent;
+import edu.cornell.kfs.kim.rule.ui.AddAffiliationRule;
 
 /*
  * CU Customization:
  * 
  * Modified affiliation and employment validation to take the related CU-specific fields into consideration.
+ * Also added validation of affiliation addlines.
  */
 public class IdentityManagementPersonDocumentRule extends TransactionalDocumentRuleBase implements AddGroupRule,
-        AddRoleRule, AddPersonDocumentRoleQualifierRule, AddPersonDelegationMemberRule {
+        AddRoleRule, AddPersonDocumentRoleQualifierRule, AddPersonDelegationMemberRule, AddAffiliationRule {
 
     private static final String ERROR_EXIST_PRINCIPAL_NAME = "error.exist.principalName";
     private static final String ERROR_NOT_EMPLOYMENT_AFFILIATION_TYPE = "error.not.employment.affilationType";
@@ -88,12 +92,18 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     private static final String GROUP_ID_ERROR_PATH = NEW_GROUP + ".groupId";
     private static final String NEW_DELEGATION_MEMBER_ERROR_PATH = "document.newDelegationMember";
     public static final String ROLE_ID_ERROR_PATH = "newRole.roleId";
+    /*
+     * CU Customization: Added constants related to validating affiliation addlines.
+     */
+    private static final String AFFILIATION_TYPE_ERROR_PATH = "newAffiliation.affiliationTypeCode";
 
     private final ActiveRoleMemberHelper activeRoleMemberHelper = new ActiveRoleMemberHelper();
     private final AttributeValidationHelper attributeValidationHelper = new AttributeValidationHelper();
     private BusinessObjectService businessObjectService;
     private RoleService roleService;
-    // ==== CU Customization: Add CuPersonService reference. ====
+    /*
+     * CU Customization: Add CuPersonService reference.
+     */
     private CuPersonService cuPersonService;
 
     @Override
@@ -381,7 +391,9 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
 
     private boolean validateAffiliationStatuses(final List<PersonDocumentAffiliation> affiliations) {
         boolean valid = true;
+        int i = -1;
         for (final PersonDocumentAffiliation affiliation : affiliations) {
+            i++;
             if (StringUtils.isBlank(affiliation.getAffiliationStatus())) {
                 continue;
             }
@@ -392,7 +404,9 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
             } else if (!affiliationType.isEmploymentAffiliationType()
                     && !StringUtils.equalsAny(affiliation.getAffiliationStatus(),
                             AffiliationStatuses.ACTIVE, AffiliationStatuses.INACTIVE)) {
-                GlobalVariables.getMessageMap().putError(CuKimPropertyConstants.EXTENSION_AFFILIATIONS,
+                final String propertyPath = buildListEntryPropertyPath(
+                        CuKimPropertyConstants.EXTENSION_AFFILIATIONS, i, CuKimPropertyConstants.AFFILIATION_STATUS);
+                GlobalVariables.getMessageMap().putError(propertyPath,
                         CuKimKeyConstants.ERROR_PERSON_AFFILIATIONS_STATUS_UNSUPPORTED,
                         affiliationType.getName(), AffiliationStatuses.ACTIVE_LABEL,
                         AffiliationStatuses.INACTIVE_LABEL);
@@ -400,6 +414,11 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
             }
         }
         return valid;
+    }
+
+    private String buildListEntryPropertyPath(String listPath, int index, String entryPropertyName) {
+        return StringUtils.join(listPath, KFSConstants.SQUARE_BRACKET_LEFT, index, KFSConstants.SQUARE_BRACKET_RIGHT,
+                KFSConstants.DELIMITER, entryPropertyName);
     }
 
     /*
@@ -818,6 +837,23 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
                     attributeValidationHelper.convertQualifiersToAttrIdxMap(delegationMember.getQualifiers()),
                     unmodifiableAttributesErrorsTemp));
         }
+    }
+
+    /*
+     * CU Customization: Added method for validating new affiliations on the Person Document.
+     */
+    @Override
+    public boolean processAddAffiliation(AddAffiliationEvent addAffiliationEvent) {
+        final IdentityManagementPersonDocument document =
+                (IdentityManagementPersonDocument) addAffiliationEvent.getDocument();
+        final PersonDocumentAffiliation newAffiliation = addAffiliationEvent.getAffiliation();
+        boolean valid = true;
+
+        if (ObjectUtils.isNull(newAffiliation) || StringUtils.isBlank(newAffiliation.getAffiliationTypeCode())) {
+            valid = false;
+        }
+
+        return valid;
     }
 
     public BusinessObjectService getBusinessObjectService() {

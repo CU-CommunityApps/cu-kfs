@@ -18,13 +18,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%--
-    CU Customization: Added CU-specific affiliation fields.
---%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="personAttributes" value="${DataDictionary.Person.attributes}"/>
+<%-- CU Customization: Add reference to Person Affiliation attributes. --%>
+<c:set var="docAffilAttributes" value="${DataDictionary.PersonDocumentAffiliation.attributes}"/>
 
+<%-- CU Customization: Changed sub-tab title to "Primary Affiliation" instead. --%>
 <kul:subtab width="${tableWidth}" subTabTitle="Primary Affiliation" noShowHideButton="true">
     <table class="standard side-margins">
         <tr>
@@ -49,46 +49,73 @@
     </table>
 </kul:subtab>
 
+<%--
+    CU Customization: Added a sub-tab for handling Person Affiliations list.
+    Has a structure similar to that of "personGroup.tag" in base code.
+--%>
 <kul:subtab width="${tableWidth}" subTabTitle="All Affiliations" noShowHideButton="true">
     <table class="standard side-margins">
         <tr>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.academicAffiliation}" noColon="true"/>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.affiliateAffiliation}" noColon="true"/>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.alumniAffiliation}" noColon="true"/>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.exceptionAffiliation}" noColon="true"/>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.facultyAffiliation}" noColon="true"/>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.staffAffiliation}" noColon="true"/>
-            <kim:cell isLabel="true" textAlign="left"
-                      attributeEntry="${personAttributes.studentAffiliation}" noColon="true"/>
+            <th><div align="left">&nbsp;</div></th>
+            <kim:cell isLabel="true" textAlign="center"
+                      attributeEntry="${docAffilAttributes.affiliationTypeCode}" noColon="true"/>
+            <kim:cell isLabel="true" textAlign="center"
+                      attributeEntry="${docAffilAttributes.affiliationStatus}" noColon="true"/>
+            <kim:cell isLabel="true" textAlign="center"
+                      attributeEntry="${docAffilAttributes.primary}" noColon="true"/>
+            <c:if test="${not readOnlyEntity}">
+                <kul:htmlAttributeHeaderCell literalLabel="Actions" scope="col"/>
+            </c:if>
         </tr>
-        <tr>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.academicAffiliation"
-                      attributeEntry="${personAttributes.academicAffiliation}" readOnly="${readOnlyEntity}"/>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.affiliateAffiliation"
-                      attributeEntry="${personAttributes.affiliateAffiliation}" readOnly="${readOnlyEntity}"/>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.alumniAffiliation"
-                      attributeEntry="${personAttributes.alumniAffiliation}" readOnly="${readOnlyEntity}"/>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.exceptionAffiliation"
-                      attributeEntry="${personAttributes.exceptionAffiliation}" readOnly="${readOnlyEntity}"/>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.facultyAffiliation"
-                      attributeEntry="${personAttributes.facultyAffiliation}" readOnly="${readOnlyEntity}"/>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.staffAffiliation"
-                      attributeEntry="${personAttributes.staffAffiliation}" readOnly="${readOnlyEntity}"/>
-            <kim:cell valign="middle" cellClass="infoline" textAlign="left"
-                      property="document.studentAffiliation"
-                      attributeEntry="${personAttributes.studentAffiliation}" readOnly="${readOnlyEntity}"/>
-        </tr>
+        <c:if test="${not readOnlyEntity}">
+            <tr>
+                <th class="infoline">
+                    <c:out value="Add:"/>
+                </th>
+                <kim:cell valign="middle" cellClass="infoline" textAlign="center"
+                      property="newAffiliation.affiliationTypeCode"
+                      attributeEntry="${docAffilAttributes.affiliationTypeCode}"
+                      readOnly="${readOnlyEntity}"/>
+                <kim:cell valign="middle" cellClass="infoline" textAlign="center"
+                      property="newAffiliation.affiliationStatus"
+                      attributeEntry="${docAffilAttributes.affiliationStatus}"
+                      readOnly="${readOnlyEntity}"/>
+                <kim:cell valign="middle" cellClass="infoline" textAlign="center"
+                      property="newAffiliation.primary"
+                      attributeEntry="${docAffilAttributes.primary}"
+                      readOnly="${readOnlyEntity}"/>
+                <td align="left" valign="middle" class="infoline">
+                    <div align="center">
+                        <html:submit property="methodToCall.addAffiliation.anchor${tabKey}"
+                              value="Add" styleClass="btn btn-green"/>
+                    </div>
+                </td>
+            </tr>
+        </c:if>
+        <c:forEach var="affiliation" items="${KualiForm.document.extension.affiliations}" varStatus="status">
+            <tr>
+                <th class="infoline">
+                    <c:out value="${status.index + 1}"/>
+                </th>
+                <kim:cell valign="middle" cellClass="infoline" textAlign="center"
+                      property="document.extension.affiliations[${status.index}].affiliationTypeCode"
+                      attributeEntry="${docAffilAttributes.affiliationTypeCode}"
+                      readOnly="true"/>
+                <kim:cell valign="middle" cellClass="infoline" textAlign="center"
+                      property="document.extension.affiliations[${status.index}].affiliationStatus"
+                      attributeEntry="${docAffilAttributes.affiliationStatus}"
+                      readOnly="${readOnlyEntity}"/>
+                <kim:cell valign="middle" cellClass="infoline" textAlign="center"
+                      property="document.extension.affiliations[${status.index}].primary"
+                      attributeEntry="${docAffilAttributes.primary}"
+                      readOnly="${readOnlyEntity}"/>
+                <c:if test="${not readOnlyEntity}">
+                    <td align="left" valign="middle" class="infoline">
+                        <div align="center">&nbsp;</div>
+                    </td>
+                </c:if>
+            </tr>
+        </c:forEach>
     </table>
 </kul:subtab>
+<%-- End CU Customization --%>
