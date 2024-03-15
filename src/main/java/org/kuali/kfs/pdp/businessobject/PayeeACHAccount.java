@@ -18,8 +18,6 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import java.lang.reflect.Field;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
@@ -35,6 +33,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+
+import java.lang.reflect.Field;
 
 public class PayeeACHAccount extends PersistableBusinessObjectBase implements MutableInactivatable {
 

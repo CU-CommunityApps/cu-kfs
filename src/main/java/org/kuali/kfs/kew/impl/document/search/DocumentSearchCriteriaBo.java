@@ -34,10 +34,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import java.sql.Timestamp;
 
 /**
- * ====
- * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
- * ====
- * 
  * Defines the business object that specifies the criteria used on document searches.
  */
 public class DocumentSearchCriteriaBo implements BusinessObject {
@@ -269,6 +265,7 @@ public class DocumentSearchCriteriaBo implements BusinessObject {
     public String getInitiatorDisplayName() {
         if (StringUtils.isNotBlank(initiatorPrincipalId)) {
             final Person person = SpringContext.getBean(PersonService.class).getPerson(getInitiatorPrincipalId());
+            // ==== CU Customization: Return potentially masked Person name instead. ====
             return person == null ? initiatorPrincipalId : person.getNameMaskedIfNecessary();
         }
 

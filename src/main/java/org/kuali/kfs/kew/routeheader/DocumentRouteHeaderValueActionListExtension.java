@@ -25,10 +25,6 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.sys.context.SpringContext;
 
 /**
- * ====
- * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
- * ====
- * 
  * An extension of {@link DocumentRouteHeaderValue} which is mapped to OJB to help
  * with optimization of the loading of a user's Action List.
  */
@@ -57,6 +53,7 @@ public class DocumentRouteHeaderValueActionListExtension extends DocumentRouteHe
         if (!isInitiatorNameInitialized) {
             final Person person = SpringContext.getBean(PersonService.class).getPerson(getInitiatorPrincipalId());
             if (person != null) {
+                // ==== CU Customization: Return potentially masked Person name instead. ====
                 initiatorName = person.getNameMaskedIfNecessary();
             }
             isInitiatorNameInitialized = true;

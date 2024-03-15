@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:edu/cornell/kfs/kim/cu-kim-lookup-beans.xml"/>
+
+    <bean id="PersonAffiliation"
+          parent="PersonAffiliation-parentBean"/>
+    <bean abstract="true"
+          id="PersonAffiliation-parentBean"
+          parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.kim.impl.identity.PersonAffiliation"
+          p:objectLabel="Person Affiliation"
+          p:titleAttribute="affiliationTypeCode"
+    >
+        <property name="attributes">
+            <list>
+                <ref bean="PersonAffiliation-principalId"/>
+                <ref bean="PersonAffiliation-affiliationTypeCode"/>
+                <ref bean="PersonAffiliation-affiliationStatus"/>
+                <ref bean="PersonAffiliation-primary"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PersonAffiliation-principalId"
+          parent="PersonAffiliation-principalId-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonAffiliation-principalId-parentBean"
+          parent="KimBaseBeans-principalId"
+    />
+
+    <bean id="PersonAffiliation-affiliationTypeCode"
+          parent="PersonAffiliation-affiliationTypeCode-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonAffiliation-affiliationTypeCode-parentBean"
+          parent="Person-affiliationTypeCode-parentBean"
+    />
+
+    <bean id="PersonAffiliation-affiliationStatus"
+          parent="PersonAffiliation-affiliationStatus-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonAffiliation-affiliationStatus-parentBean"
+          parent="AttributeDefinition"
+          p:maxLength="1"
+    >
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="affiliationStatusValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="PersonAffiliation-primary"
+          parent="PersonAffiliation-primary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonAffiliation-primary-parentBean"
+          parent="CuKimBaseBeans-booleanAttribute"
+          p:name="primary"
+          p:label="Primary"
+          p:shortLabel="Primary"
+    />
+
+</beans>

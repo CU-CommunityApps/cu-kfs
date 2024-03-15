@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="CuKimBaseBeans-booleanAttribute" parent="CuKimBaseBeans-booleanAttribute-parentBean"/>
+    <bean abstract="true"
+          id="CuKimBaseBeans-booleanAttribute-parentBean"
+          parent="AttributeDefinition"
+          p:name="booleanAttribute"
+          p:label="Boolean Attribute"
+          p:shortLabel="Bool Attr"
+          p:forceUppercase="false"
+          p:maxLength="1"
+          p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter"
+    >
+        <property name="control">
+            <bean parent="CheckboxControlDefinition"/>
+        </property>
+    </bean>
+
+    <bean id="CuKimBaseBeans-privacyPreference" parent="CuKimBaseBeans-privacyPreference-parentBean"/>
+    <bean abstract="true"
+          id="CuKimBaseBeans-privacyPreference-parentBean"
+          parent="CuKimBaseBeans-booleanAttribute"
+          p:name="privacyPreference"
+          p:label="Privacy Preference"
+          p:shortLabel="Priv Pref"
+    />
+
+</beans>

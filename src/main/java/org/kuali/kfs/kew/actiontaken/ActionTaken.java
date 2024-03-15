@@ -41,10 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ====
- * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
- * ====
- * 
  * Model object mapped to ojb for representing actions taken on documents by users.
  */
 public class ActionTaken extends PersistableBusinessObjectBase {
@@ -73,6 +69,7 @@ public class ActionTaken extends PersistableBusinessObjectBase {
             throw new IllegalArgumentException("Could not locate a person with the given principal id of " +
                                                principalId);
         }
+        // ==== CU Customization: Return potentially masked Person name instead. ====
         return person.getNameMaskedIfNecessary();
     }
 
@@ -107,6 +104,7 @@ public class ActionTaken extends PersistableBusinessObjectBase {
                 throw new IllegalArgumentException("Could not locate a person with the given principal id of " +
                                                    delegatorPrincipalId);
             }
+            // ==== CU Customization: Return potentially masked Person name instead. ====
             return person.getNameMaskedIfNecessary();
         } else if (getDelegatorGroupId() != null) {
             return getDelegatorGroup().getName();

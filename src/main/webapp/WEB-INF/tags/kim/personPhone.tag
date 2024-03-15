@@ -18,9 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<%--
-    CU Customization: Reintroduced masking of phone numbers on the Person Document.
---%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="personAttributes" value="${DataDictionary.Person.attributes}" />
@@ -28,11 +25,14 @@
 <kul:subtab width="${tableWidth}" subTabTitle="Phone Number" noShowHideButton="true">
     <table class="standard side-margins">
         <tr>
+            <%-- CU Customization: Add potential masking of phone numbers. --%>
             <th><div align="left"><kul:htmlAttributeLabel attributeEntry="${personAttributes.phoneNumberMaskedIfNecessary}" noColon="true" /></div></th>
+            <%-- End CU Customization --%>
         </tr>
         <tr>
             <td>
                 <div align="left">
+                    <%-- CU Customization: Add potential masking of phone numbers. --%>
                     <c:choose>
                         <c:when test="${readOnlyEntity}">
                             <kul:htmlControlAttribute property="document.phoneNumberMaskedIfNecessary" attributeEntry="${personAttributes.phoneNumberMaskedIfNecessary}" readOnly="true" />
@@ -41,6 +41,7 @@
                             <kul:htmlControlAttribute property="document.phoneNumber" attributeEntry="${personAttributes.phoneNumber}" />
                         </c:otherwise>
                     </c:choose>
+                    <%-- End CU Customization --%>
                 </div>
             </td>
         </tr>
