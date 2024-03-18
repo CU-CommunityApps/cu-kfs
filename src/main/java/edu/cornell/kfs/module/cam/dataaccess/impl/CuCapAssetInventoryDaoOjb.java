@@ -47,7 +47,7 @@ public class CuCapAssetInventoryDaoOjb extends PlatformAwareDaoBaseOjb implement
 
     public Asset getAssetByTagNumber(String assetTagNumber) {
         Criteria criteria = new Criteria();
-        criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_TAG_NUMBER, assetTagNumber);
+        criteria.addEqualTo(CuCamsConstants.CapAssetApi.CAMPUS_TAG_NUMBER, StringUtils.upperCase(assetTagNumber));
         Query query = QueryFactory.newQuery(Asset.class, criteria);
         ((QueryByCriteria) query).setCriteria(criteria);
         return (Asset) getPersistenceBrokerTemplate().getObjectByQuery(query);
