@@ -362,11 +362,13 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     }
 
     private static void clearCache(final ApplicationContext applicationContext) {
+        LOG.info("Clear cache");
         final CacheService cacheService = applicationContext.getBean("cacheService", CacheService.class);
         cacheService.clearNamedCache(BatchFile.CACHE_NAME);
     }
 
     private static void createBatchDirectories(final ApplicationContext applicationContext) {
+        LOG.info("Create batch directories KFS configurer");
         final BatchFileDirectoryService batchFileDirectoryService =
                 applicationContext.getBean("batchFileDirectoryService", BatchFileDirectoryService.class);
         CompletableFuture.supplyAsync(batchFileDirectoryService::buildBatchFileLookupDirectoriesHierarchy);
