@@ -60,6 +60,7 @@ import org.kuali.kfs.sys.businessobject.SystemOptions;
 import org.kuali.kfs.sys.businessobject.UniversityDate;
 import org.kuali.kfs.sys.service.MenuService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -209,6 +210,11 @@ public class CacheConfiguration {
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
 
+//        System.out.println("Default config ttl: " + cacheDefaults.getTtl());
+//        Cache batchCache = redisCacheManager.getCache(BatchFile.CACHE_NAME);
+        
         return redisCacheManager;
     }
+    
+    
 }
