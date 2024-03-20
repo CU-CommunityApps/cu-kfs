@@ -40,7 +40,7 @@ public class BatchFileDirectoryServiceImpl implements BatchFileDirectoryService 
     @Override
     @Cacheable(cacheNames = BatchFile.CACHE_NAME, key = "'getHierarchicalControlValues'")
     public List<HierarchicalData> buildBatchFileLookupDirectoriesHierarchy() {
-        LOG.info("buildBatchFileLookupDirectoriesHierarchy instead of cache value");
+        LOG.info("buildBatchFileLookupDirectoriesHierarchy: create directory instead of using cache value");
         final List<HierarchicalData> hierarchicalData = new LinkedList<>();
         final List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
         rootDirectories.sort(Comparator.comparing(File::getName));
