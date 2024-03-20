@@ -139,14 +139,15 @@ public class CuCapAssetInventoryApiResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateAsset(@PathParam(CuCamsConstants.CapAssetApi.ASSET_TAG_PARAMETER) String assetTag, @Context HttpHeaders headers) {
         try {
+            String assetTagUpper = StringUtils.upperCase(assetTag);
             Map<String, String> jsonFields = getShallowJsonFieldMappingsFromCurrentRequest();
 
-            if (!validateUpdateAssetRequestBodyAndTag(assetTag, jsonFields)) {
-                LOG.error("updateAsset: Bad Request for Asset Tag #" + assetTag + " " + jsonFields);
+            if (!validateUpdateAssetRequestBodyAndTag(assetTagUpper, jsonFields)) {
+                LOG.error("updateAsset: Bad Request for Asset Tag #" + assetTagUpper + " " + jsonFields);
                 return respondBadRequest();
             }
 
-            LOG.info("updateAsset: Requesting Capital Asset Tag #" + assetTag + " " + jsonFields);
+            LOG.info("updateAsset: Requesting Capital Asset Tag #" + assetTagUpper + " " + jsonFields);
             String conditionCode = jsonFields.get(CuCamsConstants.CapAssetApi.CONDITION_CODE);
             String buildingCode = jsonFields.get(CuCamsConstants.CapAssetApi.BUILDING_CODE);
             String roomNumber = jsonFields.get(CuCamsConstants.CapAssetApi.ROOM_NUMBER);
@@ -166,15 +167,15 @@ public class CuCapAssetInventoryApiResource {
                 return respondBadRequest(errorMessage);
             }
 
-            Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTag);
+            Asset asset = getCuCapAssetInventoryDao().getAssetByTagNumber(assetTagUpper);
             if (ObjectUtils.isNull(asset)) {
-                LOG.error("updateAsset: Asset Inventory Tag #" + assetTag + " Not Found");
-                createCapitalAssetErrorDocument(netid, assetTag, conditionCode, buildingCode, roomNumber);
+                LOG.error("updateAsset: Asset Inventory Tag #" + assetTagUpper + " Not Found");
+                createCapitalAssetErrorDocument(netid, assetTagUpper, conditionCode, buildingCode, roomNumber);
                 return respondAssetNotFound();
             }
 
             asset = getCuAssetService().updateAssetInventory(asset, conditionCode, buildingCode, roomNumber, netid);
-            LOG.info("updateAsset: Updated Capital Asset Inventory Tag #" + assetTag + " " + asset.getLastInventoryDate().toString());
+            LOG.info("updateAsset: Updated Capital Asset Inventory Tag #" + assetTagUpper + " " + asset.getLastInventoryDate().toString());
             Properties properties = getAssetProperties(asset);
             return Response.ok(gson.toJson(properties)).build();
         } catch (Exception ex) {
