@@ -34,12 +34,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/* CU customization: this overlay has been added to cu-kfs to add logging that will help
+ * investigate issues with the Batch File cache
+ */
 public class BatchFileDirectoryServiceImpl implements BatchFileDirectoryService {
+    //CU customization to add logging
     private static final Logger LOG = LogManager.getLogger();
 
     @Override
     @Cacheable(cacheNames = BatchFile.CACHE_NAME, key = "'getHierarchicalControlValues'")
     public List<HierarchicalData> buildBatchFileLookupDirectoriesHierarchy() {
+        //CU customization to add logging
         LOG.info("buildBatchFileLookupDirectoriesHierarchy: create directory instead of using cache value");
         final List<HierarchicalData> hierarchicalData = new LinkedList<>();
         final List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
