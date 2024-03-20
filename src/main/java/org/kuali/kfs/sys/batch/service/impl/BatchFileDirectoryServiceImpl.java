@@ -46,6 +46,7 @@ public class BatchFileDirectoryServiceImpl implements BatchFileDirectoryService 
     public List<HierarchicalData> buildBatchFileLookupDirectoriesHierarchy() {
         //CU customization to add logging
         LOG.info("buildBatchFileLookupDirectoriesHierarchy: create directory instead of using cache value");
+        
         final List<HierarchicalData> hierarchicalData = new LinkedList<>();
         final List<File> rootDirectories = BatchFileUtils.retrieveBatchFileLookupRootDirectories();
         rootDirectories.sort(Comparator.comparing(File::getName));
