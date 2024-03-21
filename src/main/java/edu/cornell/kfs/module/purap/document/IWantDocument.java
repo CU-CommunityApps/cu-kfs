@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
@@ -48,6 +50,8 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, PurchasingAccountsPayableDocument, AmountTotaling {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger LOG = LogManager.getLogger();
 
     private String step;
 
@@ -109,6 +113,9 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     //adhoc routing
     private String currentRouteToNetId;
+    
+    //contract tab routing fields
+    private String routingContractIndicator;
 
     //Items
     private List<IWantItem> items;
@@ -889,10 +896,42 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+    
+
+    public boolean isContractIndicator() {
+        return contractIndicator;
+    }
+
+    public void setContractIndicator(boolean contractIndicator) {
+        this.contractIndicator = contractIndicator;
+        setRoutingContractIndicator(contractIndicator ? "Y" : "N");
+    }
+
+    public String getRoutingContractIndicator() {
+        return routingContractIndicator;
+    }
+
+    public void setRoutingContractIndicator(String routingContractIndicator) {
+        this.routingContractIndicator = routingContractIndicator;
+    }
 
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+LOG.info("IWant answerSplitNodeQuestion:::  nodeName={}=", nodeName);
+LOG.info("IWant answerSplitNodeQuestion:::  complete={}=", completed);
+LOG.info("IWant answerSplitNodeQuestion:::  completeOption={}=", completeOption);
+LOG.info("IWant answerSplitNodeQuestion:::  isContractIndicator()={}=", isContractIndicator());
+
+        if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_ORDER_COMPLETED)) {
+LOG.info("IWant answerSplitNodeQuestion:::  executing path for nodeName={}=", nodeName);
+            return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+        }
+
+        if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_CONTRACT_INDICATOR_CHECKED)) {
+LOG.info("IWant answerSplitNodeQuestion:::  executing path for nodeName={}=", nodeName);
+            return isContractIndicator();
+        }
+        throw new UnsupportedOperationException("Cannot answer IWantDocument split question for node called \"" + nodeName + "\"");
     }
 
     public String getProcessorNetId() {
@@ -1549,13 +1588,4 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setNoteOptionDropdownSelectedValue(String noteOptionDropdownSelectedValue) {
         this.noteOptionDropdownSelectedValue = noteOptionDropdownSelectedValue;
     }
-
-    public boolean isContractIndicator() {
-        return contractIndicator;
-    }
-
-    public void setContractIndicator(boolean contractIndicator) {
-        this.contractIndicator = contractIndicator;
-    }
-
 }

@@ -836,6 +836,7 @@
         <property name="routingTypeDefinitions">
     		<map>
     			<entry key="OrganizationHierarchy" value-ref="IWantDocument-RoutingType-OrganizationHierarchy"/>
+                <entry key="PurchasingContractAssistant" value-ref="IWantDocument-RoutingType-PurchasingContractAssistant"/>
     		</map>
 		</property>
 		
@@ -869,6 +870,31 @@
     			<ref bean="IWantDocument-DocumentValuePathGroup-ChartOrganization"/>
     		</list>
     	</property>
+    </bean>
+    
+    <bean id="IWantDocument-RoutingAttribute-ContractIndicator" class="org.kuali.kfs.krad.datadictionary.RoutingAttribute">
+        <property name="qualificationAttributeName" value="contractIndicator"/>
+    </bean>
+    
+    <bean id="IWantDocument-DocumentValuePathGroup-ContractIndicator" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+        <property name="documentValues">
+            <list>
+                <value>routingContractIndicator</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="IWantDocument-RoutingType-PurchasingContractAssistant" class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
+        <property name="routingAttributes">
+            <list>
+                <ref bean="IWantDocument-RoutingAttribute-ContractIndicator"/>
+            </list>
+        </property>
+        <property name="documentValuePathGroups">
+            <list>
+                <ref bean="IWantDocument-DocumentValuePathGroup-ContractIndicator"/>
+            </list>
+        </property>
     </bean>
 	
 	<bean id="orderCompletedValuesFinder"

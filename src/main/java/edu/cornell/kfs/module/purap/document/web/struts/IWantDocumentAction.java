@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -837,17 +838,28 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         if (StringUtils.isNotBlank(iWantDocForm.getNewAdHocRoutePerson().getId())) {
             iWantDocument.setCurrentRouteToNetId(iWantDocForm.getNewAdHocRoutePerson().getId());
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
-
+            LOG.info("IWantDocumentAction.route::::: just added AdHoc route to person={}=", iWantDocForm.getNewAdHocRoutePerson().getId());
         }
-        ActionForward actionForward = super.route(mapping, form, request, response);
+        
+LOG.info("IWantDocumentAction.route::::: isContractIndicator={}=", iWantDocument.isContractIndicator());
+LOG.info("IWantDocumentAction.route::::: step={}=", step);
 
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
+        ActionForward actionForward = super.route(mapping, form, request, response);
+        
+        //determine whether contract indicator has been checked and whether edoc is on purchasing contract assistant node
+        WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        boolean routeToPurchasingContractAssistantRequested = CollectionUtils.isNotEmpty(nodeNames) && (nodeNames.contains("PurchasingContractAssistant") & iWantDocument.isContractIndicator());
+LOG.info("IWantDocumentAction.route::::: routeToPurchasingContractAssistantRequested={}=", routeToPurchasingContractAssistantRequested);
+        
+        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)
+                && !routeToPurchasingContractAssistantRequested) {
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
-
+            LOG.info("IWantDocumentAction.route::::: INSIDE if looking for ROUTING_STEP>>>> WILL be returning FINISH");
             return mapping.findForward("finish");
         }
-
+        LOG.info("IWantDocumentAction.route::::: right before final return of method");
         return actionForward;
     }
     

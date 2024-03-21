@@ -10,7 +10,7 @@
             <routePaths>
                 <routePath>
                     <start name="AdHoc" nextNode="IsOrderCompleted"/>
-                    <split name="IsOrderCompleted" nextNode="IsContractIndicator">
+                    <split name="IsOrderCompleted" nextNode="IsContractIndicatorChecked">
                         <branch name="True">
                             <simple name="NoOpIsOrderCompleted" nextNode="JoinIsOrderCompleted"/>
                         </branch>
@@ -19,14 +19,14 @@
                         </branch>
                         <join name="JoinIsOrderCompleted" />
                     </split>
-                    <split name="IsContractIndicator" nextNode="NoOpComplete">
+                    <split name="IsContractIndicatorChecked" nextNode="NoOpComplete">
                         <branch name="True">
-                            <role name="PurchasingContractAssistant" nextNode="JoinIsContractIndicator"/>
+                            <role name="PurchasingContractAssistant" nextNode="JoinIsContractIndicatorChecked"/>
                         </branch>
                         <branch name="False">
-                            <simple name="NoOpNoContractIndicator" nextNode="JoinIsContractIndicator"/>
+                            <simple name="NoOpNoContractIndicator" nextNode="JoinIsContractIndicatorChecked"/>
                         </branch>
-                        <join name="JoinIsContractIndicator"/>
+                        <join name="JoinIsContractIndicatorChecked"/>
                     </split>
                     <simple name="NoOpComplete" />
                 </routePath>
@@ -38,7 +38,7 @@
                 <split name="IsOrderCompleted">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
-                <split name="IsContractIndicator">
+                <split name="IsContractIndicatorChecked">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
                 <role name="OrganizationHierarchy">
@@ -59,7 +59,7 @@
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
                 <join name="JoinIsOrderCompleted"/>
-                <join name="JoinIsContractIndicator"/>
+                <join name="JoinIsContractIndicatorChecked"/>
             </routeNodes>
         </documentType>
     </documentTypes>

@@ -1,12 +1,18 @@
 package edu.cornell.kfs.module.purap.document.authorization;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+
+import com.mysql.jdbc.log.Log;
+
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -17,7 +23,7 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 public class IWantDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 
     private static final long serialVersionUID = 1L;
-
+    private static final Logger LOG = LogManager.getLogger();
     @Override
     public boolean canSave(Document document) {
         return super.canSave(document);
@@ -98,6 +104,12 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     public boolean canEditContractIndicator(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+Iterator<String> nodesIterator = nodeNames.iterator();
+while (nodesIterator.hasNext()) {
+    LOG.info("IWantDocPresentationController.canEditContractIndicator:::::: ALL NODES in workflowDocument ={}=", nodesIterator.next());
+}
+LOG.info("IWantDocPresentationController.canEditContractIndicator::::::   {}", (CollectionUtils.isNotEmpty(nodeNames) && nodeNames.contains("OrganizationHierarchy") ? "OrganizationHierarchy" : "DOES NOT CONTAIN => OrganizationHierarchy"));
+LOG.info("IWantDocPresentationController.canEditContractIndicator::::::   {}", (CollectionUtils.isNotEmpty(nodeNames) && nodeNames.contains("PurchasingContractAssistant") ? "PurchasingContractAssistant" : "DOES NOT CONTAIN => PurchasingContractAssistant"));
         return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
                 && (nodeNames.contains("OrganizationHierarchy") | nodeNames.contains("PurchasingContractAssistant"));
     }

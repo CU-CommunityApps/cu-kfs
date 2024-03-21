@@ -41,6 +41,8 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         IWantDocument iWantDocument = (IWantDocument) dataObject;
         attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
+        
+        attributes.put("contractIndicator", (iWantDocument.isCompleted() ? "Y" : "N"));
     }
 
     @Override
@@ -49,6 +51,8 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         IWantDocument iWantDocument = (IWantDocument) dataObject;
         attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
+        
+        attributes.put("contractIndicator", (iWantDocument.isCompleted() ? "Y" : "N"));
     }
 
     /*
