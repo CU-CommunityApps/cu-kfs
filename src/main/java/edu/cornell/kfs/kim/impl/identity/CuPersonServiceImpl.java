@@ -29,6 +29,7 @@ public class CuPersonServiceImpl extends PersonServiceImpl implements CuPersonSe
             return null;
         }
         final QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
+                PredicateFactory.equal(KFSPropertyConstants.CODE, affiliationTypeCode),
                 PredicateFactory.equal(KFSPropertyConstants.ACTIVE, KRADConstants.YES_INDICATOR_VALUE));
         final GenericQueryResults<EntityAffiliationType> results = criteriaLookupService.lookup(
                 EntityAffiliationType.class, criteria);

@@ -96,6 +96,9 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
      * CU Customization: Added constants related to validating affiliation addlines.
      */
     private static final String AFFILIATION_TYPE_ERROR_PATH = "newAffiliation.affiliationTypeCode";
+    private static final String AFFILIATION_TYPE_LABEL = "Affiliation Type";
+    private static final String AFFILIATION_STATUS_ERROR_PATH = "newAffiliation.affiliationStatus";
+    private static final String AFFILIATION_STATUS_LABEL = "Affiliation Status";
 
     private final ActiveRoleMemberHelper activeRoleMemberHelper = new ActiveRoleMemberHelper();
     private final AttributeValidationHelper attributeValidationHelper = new AttributeValidationHelper();
@@ -840,21 +843,50 @@ public class IdentityManagementPersonDocumentRule extends TransactionalDocumentR
     }
 
     /*
-     * CU Customization: Added method for validating new affiliations on the Person Document.
+     * CU Customization: Added methods for validating new affiliations on the Person Document.
      */
+
     @Override
     public boolean processAddAffiliation(AddAffiliationEvent addAffiliationEvent) {
         final IdentityManagementPersonDocument document =
                 (IdentityManagementPersonDocument) addAffiliationEvent.getDocument();
         final PersonDocumentAffiliation newAffiliation = addAffiliationEvent.getAffiliation();
-        boolean valid = true;
+        if (ObjectUtils.isNull(newAffiliation)) {
+            GlobalVariables.getMessageMap().putError(AFFILIATION_TYPE_ERROR_PATH,
+                    KFSKeyConstants.ERROR_EMPTY_ENTRY, AFFILIATION_TYPE_LABEL);
+            return false;
+        }
 
-        if (ObjectUtils.isNull(newAffiliation) || StringUtils.isBlank(newAffiliation.getAffiliationTypeCode())) {
+        boolean valid = true;
+        final String affiliationTypeCode = newAffiliation.getAffiliationTypeCode();
+        if (StringUtils.isBlank(affiliationTypeCode)) {
+            GlobalVariables.getMessageMap().putError(AFFILIATION_TYPE_ERROR_PATH,
+                    KFSKeyConstants.ERROR_EMPTY_ENTRY, AFFILIATION_TYPE_LABEL);
             valid = false;
+        } else if (personAlreadyHasAffiliation(document, affiliationTypeCode)) {
+            GlobalVariables.getMessageMap().putError(AFFILIATION_TYPE_ERROR_PATH,
+                    KFSKeyConstants.ERROR_DUPLICATE_ENTRY, AFFILIATION_TYPE_LABEL);
+            valid = false;
+        }
+
+        if (StringUtils.isBlank(newAffiliation.getAffiliationStatus())) {
+            GlobalVariables.getMessageMap().putError(AFFILIATION_STATUS_ERROR_PATH,
+                    KFSKeyConstants.ERROR_EMPTY_ENTRY, AFFILIATION_STATUS_LABEL);
         }
 
         return valid;
     }
+
+    private boolean personAlreadyHasAffiliation(
+            IdentityManagementPersonDocument document, final String affiliationTypeCode) {
+        List<PersonDocumentAffiliation> affiliations = document.getPersonDocumentExtension().getAffiliations();
+        return affiliations.stream()
+                .anyMatch(affil -> StringUtils.equals(affil.getAffiliationTypeCode(), affiliationTypeCode));
+    }
+
+    /*
+     * End CU Customization
+     */
 
     public BusinessObjectService getBusinessObjectService() {
         if (businessObjectService == null) {

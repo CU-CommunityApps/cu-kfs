@@ -215,9 +215,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         }
 
         // I'm assuming that if a tax id is present, then the employee must not be foreign
-        if (StringUtils.isNotBlank(employee.getTaxId())) {
-            dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
-        }
+        // ==== CU Customization: Always set the default Nonresident Payment Code to false. ====
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
         // Determine if employee is a research subject
         final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
@@ -267,10 +266,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         dvPayeeDetail.setDisbVchrPayeeZipCode(student.getAddressPostalCode());
         dvPayeeDetail.setDisbVchrPayeeCountryCode(student.getAddressCountryCode());
 
-        // I'm assuming that if a tax id is present, then the student must not be foreign
-        if (StringUtils.isNotBlank(student.getTaxId())) {
-            dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
-        }
+        // CU Note: We don't use Person Tax IDs, so by default we'll assume that the student must not be foreign
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
         // Determine if student is a research subject
 
 
@@ -321,10 +318,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         dvPayeeDetail.setDisbVchrPayeeZipCode(alumni.getAddressPostalCode());
         dvPayeeDetail.setDisbVchrPayeeCountryCode(alumni.getAddressCountryCode());
 
-        // I'm assuming that if a tax id is present, then the alumni must not be foreign
-        if (StringUtils.isNotBlank(alumni.getTaxId())) {
-            dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
-        }
+        // CU Note: We don't use Person Tax IDs, so by default we'll assume that the alumni must not be foreign.
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
         // Determine if alumni is a research subject
         final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,

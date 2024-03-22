@@ -37,6 +37,7 @@
     <bean abstract="true"
           id="PersonDocumentAffiliation-affiliationTypeCode-parentBean"
           parent="PersonAffiliation-affiliationTypeCode-parentBean"
+          p:required="true"
     />
 
     <bean id="PersonDocumentAffiliation-affiliationStatus"
@@ -45,6 +46,7 @@
     <bean abstract="true"
           id="PersonDocumentAffiliation-affiliationStatus-parentBean"
           parent="PersonAffiliation-affiliationStatus-parentBean"
+          p:required="true"
     />
 
     <bean id="PersonDocumentAffiliation-primary"

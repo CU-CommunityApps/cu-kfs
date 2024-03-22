@@ -11,38 +11,24 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
 import edu.cornell.kfs.kim.KimFeed;
-import edu.cornell.kfs.kim.batch.service.KimFeedService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class RunKimFeedStep extends AbstractStep {
 
-    private static final Logger LOG = LogManager.getLogger(RunKimFeedStep.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final String DELTA_RUN_TYPE = "delta";
 
     private Properties kimFeedBaseProperties;
-    private KimFeedService kimFeedService;
 
     @Override
     public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
         try {
-            LOG.info("execute: Starting run of legacy KIM feed");
+            LOG.info("execute: Starting run of KIM feed");
             Properties kimFeedProperties = buildKimFeedProperties();
             KimFeed.runKimFeed(kimFeedProperties, DELTA_RUN_TYPE);
-            LOG.info("execute: Successfully finished running legacy KIM feed");
-            
-            LOG.info("execute: Starting run of KFS KIM feed");
-            kimFeedService.processPersonDataMarkedForDisabling();
-            kimFeedService.processPersonDataChanges();
-            if (shouldSkipDeltaFlagUpdates()) {
-                LOG.info("execute: Skipping the step of marking the EDW data rows as read");
-            } else {
-                kimFeedService.markPersonDataChangesAsRead();
-            }
-            kimFeedService.flushPersonCache();
-            LOG.info("execute: Successfully finished running KFS KIM feed");
-            
+            LOG.info("execute: Successfully finished running KIM feed");
             return true;
         } catch (Exception e) {
             LOG.error("execute: Unexpected error encountered when running KIM feed", e);
@@ -75,18 +61,8 @@ public class RunKimFeedStep extends AbstractStep {
         return kimFeedProperties;
     }
 
-    protected boolean shouldSkipDeltaFlagUpdates() {
-        return parameterService.getParameterValueAsBoolean(
-                KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.BATCH_COMPONENT,
-                CUKFSParameterKeyConstants.KIM_FEED_SKIP_DELTA_FLAG_UPDATES);
-    }
-
     public void setKimFeedBaseProperties(Properties kimFeedBaseProperties) {
         this.kimFeedBaseProperties = kimFeedBaseProperties;
-    }
-
-    public void setKimFeedService(KimFeedService kimFeedService) {
-        this.kimFeedService = kimFeedService;
     }
 
 }
