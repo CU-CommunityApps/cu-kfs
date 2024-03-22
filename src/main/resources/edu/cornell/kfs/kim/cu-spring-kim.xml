@@ -36,7 +36,14 @@
 
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
           class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
-    
+
+    <bean class="edu.cornell.kfs.kim.impl.identity.CuPersonServiceImpl"
+          id="personService"
+          p:businessObjectService-ref="businessObjectService"
+          p:criteriaLookupService-ref="criteriaLookupService"
+          p:roleService-ref="roleService"
+    />
+
     <!-- KFSPTS-22142 Add local customization to fix Role lookup from a child/collection object on a maintenance doc -->
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">

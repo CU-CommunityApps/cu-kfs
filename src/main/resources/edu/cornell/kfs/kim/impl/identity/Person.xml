@@ -279,7 +279,7 @@
     />
     <bean abstract="true"
           id="Person-extension-altAddressLine2-parentBean"
-          parent="PersonExtension-altAaddressLine2-parentBean"
+          parent="PersonExtension-altAddressLine2-parentBean"
           p:name="extension.altAddressLine2"
     />
 
@@ -586,26 +586,16 @@
                     </property>
                 </bean>
                 <!-- End of FINP-9357 backport section. -->
-                <bean parent="Person-FieldOverrideForInquirySectionReplace"
+                <bean parent="Person-FieldOverrideForInquirySectionInsert"
                       p:element.title="Affiliation"
                 >
-                    <property name="replaceWith">
+                    <property name="insertAfter">
                         <bean parent="InquirySectionDefinition"
                               p:numberOfColumns="1"
-                              p:title="Affiliation"
+                              p:title="All Affiliations"
                         >
                             <property name="inquiryFields">
                                 <list>
-                                    <bean parent="InquirySubSectionHeaderDefinition"
-                                          p:attributeName="Primary Affiliation"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="affiliationTypeCode"
-                                          p:noInquiry="true"
-                                    />
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="campusCode"
-                                          p:noInquiry="true"
-                                    />
                                     <bean parent="InquiryCollectionDefinition"
                                           p:attributeName="extension.affiliations"
                                           p:businessObjectClass="edu.cornell.kfs.kim.impl.identity.PersonAffiliation"
@@ -614,15 +604,17 @@
                                           p:summaryTitle="All Affiliations"
                                     >
                                         <property name="inquiryFields">
-                                            <bean parent="FieldDefinition"
-                                                  p:attributeName="affiliationTypeCode"
-                                                  p:noInquiry="true"/>
-                                            <bean parent="FieldDefinition"
-                                                  p:attributeName="affiliationStatus"
-                                                  p:noInquiry="true"/>
-                                            <bean parent="FieldDefinition"
-                                                  p:attributeName="primary"
-                                                  p:noInquiry="true"/>
+                                            <list>
+                                                <bean parent="FieldDefinition"
+                                                      p:attributeName="affiliationTypeCode"
+                                                      p:noInquiry="true"/>
+                                                <bean parent="FieldDefinition"
+                                                      p:attributeName="affiliationStatus"
+                                                      p:noInquiry="true"/>
+                                                <bean parent="FieldDefinition"
+                                                      p:attributeName="primary"
+                                                      p:noInquiry="true"/>
+                                            </list>
                                         </property>
                                     </bean>
                                 </list>

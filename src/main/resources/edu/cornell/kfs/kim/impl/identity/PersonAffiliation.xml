@@ -39,7 +39,12 @@
     <bean abstract="true"
           id="PersonAffiliation-affiliationTypeCode-parentBean"
           parent="Person-affiliationTypeCode-parentBean"
-    />
+    >
+        <property name="control">
+            <bean parent="SelectControlDefinition" p:valuesFinder-ref="affiliationTypeForListItemValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
 
     <bean id="PersonAffiliation-affiliationStatus"
           parent="PersonAffiliation-affiliationStatus-parentBean"
@@ -47,6 +52,9 @@
     <bean abstract="true"
           id="PersonAffiliation-affiliationStatus-parentBean"
           parent="AttributeDefinition"
+          p:name="affiliationStatus"
+          p:label="Status"
+          p:shortLabel="Status"
           p:maxLength="1"
     >
         <property name="control">

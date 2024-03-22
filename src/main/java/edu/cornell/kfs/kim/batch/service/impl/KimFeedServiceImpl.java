@@ -94,6 +94,7 @@ public class KimFeedServiceImpl implements KimFeedService {
                 LOG.info("processPersonChange, Inserting new KFS Person record for {}", edwPerson);
                 verifyNewPersonCanBeSafelyInsertedIntoKfs(edwPerson);
                 kfsPerson = new Person();
+                kfsPerson.setExtension(new PersonExtension());
                 mergePersonIntoKfs(kfsPerson, edwPerson);
             }
             report.rowsSuccessful++;
@@ -150,6 +151,7 @@ public class KimFeedServiceImpl implements KimFeedService {
     private void mergePersonIntoKfs(Person kfsPerson, EdwPerson edwPerson) {
         if (StringUtils.isBlank(kfsPerson.getPrincipalId())) {
             kfsPerson.setPrincipalId(edwPerson.getCuPersonId());
+            kfsPerson.getPersonExtension().setPrincipalId(edwPerson.getCuPersonId());
             kfsPerson.setEntityId(edwPerson.getCuPersonId());
             kfsPerson.setPrincipalName(edwPerson.getNetId());
             kfsPerson.setEntityTypeCode(EntityTypes.PERSON);

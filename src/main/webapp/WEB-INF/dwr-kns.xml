@@ -20,6 +20,9 @@
 -->
 <!--
     CU Customization: Updated the Person bean converter to reference the potentially masked name/email fields instead.
+
+    CU Note: If PersonService method entries are added or removed below, please update the related
+             "ResourceLoginFilter" mappings in "web.xml" so that field masking will work properly.
 -->
 <!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.org/dwr/dwr30.dtd">
 

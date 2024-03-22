@@ -68,6 +68,9 @@
 		
 		<form-bean name="KualiMaintenanceForm" type="org.kuali.kfs.kns.web.struts.form.KualiMaintenanceForm"/>
 
+        <form-bean name="CuIdentityManagementPersonDocumentForm"
+            type="edu.cornell.kfs.kim.web.struts.form.CuIdentityManagementPersonDocumentForm"/>
+
     </form-beans>
     
     <action-mappings>
@@ -282,6 +285,14 @@
             <forward name="removeframe" path="/jsp/module/purap/ShopRemoveFrame.jsp"/>
             <forward name="failure" path="/requisition/requisitionFailure.jsp"/>
             <forward name="invalid" path="/requisition/shopFail.jsp"/>
+        </action>
+        
+        <action path="/identityManagementPersonDocument" name="CuIdentityManagementPersonDocumentForm"
+                input="/jsp/kim/IdentityManagementPersonDocument.jsp"
+                type="edu.cornell.kfs.kim.web.struts.action.CuIdentityManagementPersonDocumentAction"
+                scope="request" parameter="methodToCall" validate="true" attribute="KualiForm">
+            <forward name="basic" path="/jsp/kim/IdentityManagementPersonDocument.jsp" />
+            <forward name="inquiry" path="/jsp/kim/IdentityManagementPersonDocument.jsp" />
         </action>
         
     </action-mappings>

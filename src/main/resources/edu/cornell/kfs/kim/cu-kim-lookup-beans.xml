@@ -8,4 +8,8 @@
     <bean id="affiliationStatusValuesFinder"
           class="edu.cornell.kfs.kim.businessobject.options.AffiliationStatusValuesFinder"/>
 
+    <bean id="affiliationTypeForListItemValuesFinder"
+          class="edu.cornell.kfs.kim.businessobject.options.AffiliationTypeForListItemValuesFinder"
+          p:keyValuesService-ref="grl.keyValuesService"/>
+
 </beans>
