@@ -263,8 +263,6 @@ public class KimFeedServiceImpl implements KimFeedService {
     private String getPrimaryEmploymentAffiliation(EdwPerson edwPerson) {
         String edwAffiliation = StringUtils.defaultString(edwPerson.getPrimaryAffiliation());
         switch (edwAffiliation) {
-            case EdwAffiliations.AFFILIATE:
-                return KfsAffiliations.AFFILIATE;
             case EdwAffiliations.FACULTY:
                 return KfsAffiliations.FACULTY;
             case EdwAffiliations.STAFF:
@@ -275,8 +273,6 @@ public class KimFeedServiceImpl implements KimFeedService {
                         return KfsAffiliations.FACULTY;
                     } else if (StringUtils.equals(edwPerson.getStaffAffil(), affiliationStatus)) {
                         return KfsAffiliations.STAFF;
-                    } else if (StringUtils.equals(edwPerson.getAffiliateAffil(), affiliationStatus)) {
-                        return KfsAffiliations.AFFILIATE;
                     }
                 }
                 return null;
@@ -285,8 +281,6 @@ public class KimFeedServiceImpl implements KimFeedService {
 
     private String getPrimaryEmploymentAffiliationStatus(EdwPerson edwPerson, String primaryEmploymentAffiliation) {
         switch (primaryEmploymentAffiliation) {
-            case KfsAffiliations.AFFILIATE:
-                return getAndVerifyAffilStatus(edwPerson, EdwPerson::getAffiliateAffil);
             case KfsAffiliations.FACULTY:
                 return getAndVerifyAffilStatus(edwPerson, EdwPerson::getFacultyAffil);
             case KfsAffiliations.STAFF:
