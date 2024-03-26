@@ -194,6 +194,17 @@ public class KimFeed {
 
 	// Passed to indicate properties should be read from System properties instead of a file
 	private static final String SYSTEM_PROPERTIES_FILE_INDICATOR = "-";
+
+	private static final class Affiliations {
+		private static final char ACADEMIC = 'A';
+		private static final char AFFILIATE = 'I';
+		private static final char ALUMNI = 'L';
+		private static final char EXCEPTION = 'X';
+		private static final char FACULTY = 'F';
+		private static final char STAFF = 'E';
+		private static final char STUDENT = 'S';
+	}
+
 	private JdbcTemplate serverTemplate;
 	private Properties dbProps;
 
@@ -272,7 +283,6 @@ public class KimFeed {
 
 	//Primary EMPLOYMENT (in case primary/default affiliation is not supposed to have employment info)
 	private String PRIMARY_EMPLOYMENT_FACULTY;
-	private String PRIMARY_EMPLOYMENT_AFFILIATE;
 	private String PRIMARY_EMPLOYMENT_STAFF;
 
 	//FERPA Flag
@@ -553,13 +563,13 @@ public class KimFeed {
 		ALUMNI = rs.getString(ALUMNI_ROW).charAt(0);
 		PRIMARY_ORG_CODE = IT_PREFIX + rs.getString(PRIMARY_ORG_CODE_ROW);
 		PRIMARY_AFFILIATION_VALUE = rs.getString(PRIMARY_AFFILIATION_ROW).charAt(0);
-		PRIMARY_AFFILIATION_ACADEMIC = (PRIMARY_AFFILIATION_VALUE == 'A') ? YES_VAL : NO_VAL;
-		PRIMARY_AFFILIATION_FACULTY = (PRIMARY_AFFILIATION_VALUE == 'F') ? YES_VAL : NO_VAL;
-		PRIMARY_AFFILIATION_AFFILIATE = (PRIMARY_AFFILIATION_VALUE == 'I') ? YES_VAL : NO_VAL;
-		PRIMARY_AFFILIATION_EXCEPTION = (PRIMARY_AFFILIATION_VALUE == 'X') ? YES_VAL : NO_VAL;
-		PRIMARY_AFFILIATION_STAFF = (PRIMARY_AFFILIATION_VALUE == 'E') ? YES_VAL : NO_VAL;
-		PRIMARY_AFFILIATION_STUDENT = (PRIMARY_AFFILIATION_VALUE == 'S') ? YES_VAL : NO_VAL;
-		PRIMARY_AFFILIATION_ALUMNI = (PRIMARY_AFFILIATION_VALUE == 'L') ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_ACADEMIC = (PRIMARY_AFFILIATION_VALUE == Affiliations.ACADEMIC) ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_FACULTY = (PRIMARY_AFFILIATION_VALUE == Affiliations.FACULTY) ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_AFFILIATE = (PRIMARY_AFFILIATION_VALUE == Affiliations.AFFILIATE) ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_EXCEPTION = (PRIMARY_AFFILIATION_VALUE == Affiliations.EXCEPTION) ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_STAFF = (PRIMARY_AFFILIATION_VALUE == Affiliations.STAFF) ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_STUDENT = (PRIMARY_AFFILIATION_VALUE == Affiliations.STUDENT) ? YES_VAL : NO_VAL;
+		PRIMARY_AFFILIATION_ALUMNI = (PRIMARY_AFFILIATION_VALUE == Affiliations.ALUMNI) ? YES_VAL : NO_VAL;
 		
 		// Truncate "home" address lines, and move truncated characters to subsequent blank lines as needed.
 		if (StringUtils.isNotEmpty(HOME_ADDRESS1) && HOME_ADDRESS1.length() > 40) {
@@ -593,17 +603,17 @@ public class KimFeed {
 			CAMPUS_ADDRESS3 = BLANK_ADDRESS_LINE;
 		}
 		
-		// Determine primary employment info, which requires special handling if the primary affiliation is Academic, Student, Exception, or Alumni,
-		// since those four affiliation types are not supposed to have employment info.
+		// Determine primary employment info, which requires special handling if the primary affiliation is Academic, Affiliate, Student, Exception, or Alumni,
+		// since those five affiliation types are not supposed to have employment info.
 		switch (PRIMARY_AFFILIATION_VALUE) {
-			case 'A' :
-			case 'L' :
-			case 'S' :
-			case 'X' :
+			case Affiliations.ACADEMIC :
+			case Affiliations.AFFILIATE :
+			case Affiliations.ALUMNI :
+			case Affiliations.STUDENT :
+			case Affiliations.EXCEPTION :
 				PRIMARY_EMPLOYMENT_FACULTY = NO_VAL;
-				PRIMARY_EMPLOYMENT_AFFILIATE = NO_VAL;
 				PRIMARY_EMPLOYMENT_STAFF = NO_VAL;
-				// If necessary, set a Faculty, Staff, or Affiliate as having the primary employment info.
+				// If necessary, set a Faculty or Staff as having the primary employment info.
 				// Active employment infos take precedence over inactive ones, and inactive ones take precedence over retired ones.
 				boolean foundPrimaryEmployment = false;
 				for (int i = 0; !foundPrimaryEmployment && i < EMP_STAT_CHARS.length; i++) {
@@ -613,15 +623,11 @@ public class KimFeed {
 					} else if (STAFF == EMP_STAT_CHARS[i]) {
 						PRIMARY_EMPLOYMENT_STAFF = YES_VAL;
 						foundPrimaryEmployment = true;
-					} else if (AFFILIATE == EMP_STAT_CHARS[i]) {
-						PRIMARY_EMPLOYMENT_AFFILIATE = YES_VAL;
-						foundPrimaryEmployment = true;
 					}
 				}
 				break;
 			default :
 				PRIMARY_EMPLOYMENT_FACULTY = PRIMARY_AFFILIATION_FACULTY;
-				PRIMARY_EMPLOYMENT_AFFILIATE = PRIMARY_AFFILIATION_AFFILIATE;
 				PRIMARY_EMPLOYMENT_STAFF = PRIMARY_AFFILIATION_STAFF;
 				break;
 		}
@@ -719,19 +725,16 @@ public class KimFeed {
 				}
 			}
 			
-			// Create or update AFLT (Affiliate) affiliation and employment info as needed.
+			// Create or update AFLT (Affiliate) affiliation (and delete any existing associated employment info) as needed.
 			if (affils.contains(AFFILIATE_AFFIL_CONST)) {
 				destTemplate.update(UPDATE_AFFIL_SQL, get3Args(PRIMARY_AFFILIATION_AFFILIATE, CU_PERSON_SID, AFFILIATE_AFFIL_CONST) );
-				destTemplate.update(UPDATE_EMP_INFO_SQL, getMArgs((AFFILIATE != IS_NONEXISTENT_AFFIL) ? String.valueOf(AFFILIATE) : INACTIVE_VAL,
-						PRIMARY_EMPLOYMENT_AFFILIATE, AFFILIATE_AFFIL_CONST, CU_PERSON_SID, AFFILIATE_AFFIL_CONST) );
+				destTemplate.update(DELETE_EMP_INFO_SQL, get2Args(CU_PERSON_SID, AFFILIATE_AFFIL_CONST));
 			} else {
 				switch (AFFILIATE) {
 					case IS_ACTIVE_AFFIL :
 					case IS_INACTIVE_AFFIL :
 					case IS_RETIRED_AFFIL :
 						destTemplate.update(INSERT_AFFIL_SQL, get3Args(CU_PERSON_SID, AFFILIATE_AFFIL_CONST, PRIMARY_AFFILIATION_AFFILIATE) );
-						destTemplate.update(INSERT_EMP_INFO_SQL, getMArgs(
-								CU_PERSON_SID, String.valueOf(AFFILIATE), PRIMARY_EMPLOYMENT_AFFILIATE, PRIMARY_ORG_CODE, EMPLID, AFFILIATE_AFFIL_CONST) );
 						break;
 				}
 			}
@@ -870,14 +873,12 @@ public class KimFeed {
 					break;
 			}
 			
-			// Add the person's AFLT (Affiliate) affiliation and employment info, if necessary.
+			// Add the person's AFLT (Affiliate) affiliation, if necessary.
 			switch (AFFILIATE) {
 				case IS_ACTIVE_AFFIL :
 				case IS_INACTIVE_AFFIL :
 				case IS_RETIRED_AFFIL :
 					destTemplate.update(INSERT_AFFIL_SQL, get3Args(CU_PERSON_SID, AFFILIATE_AFFIL_CONST, PRIMARY_AFFILIATION_AFFILIATE) );
-					destTemplate.update(INSERT_EMP_INFO_SQL, getMArgs(
-							CU_PERSON_SID, String.valueOf(AFFILIATE), PRIMARY_EMPLOYMENT_AFFILIATE, PRIMARY_ORG_CODE, EMPLID, AFFILIATE_AFFIL_CONST) );
 					break;
 			}
 			
