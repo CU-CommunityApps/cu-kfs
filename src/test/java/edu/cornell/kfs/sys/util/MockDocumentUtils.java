@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherPreConferenceDetail;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.krad.bo.AdHocRouteRecipient;
 import org.kuali.kfs.krad.bo.Note;
@@ -16,12 +17,12 @@ import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 import org.kuali.kfs.sys.document.AccountingDocument;
 import org.kuali.kfs.sys.document.LedgerPostingDocumentBase;
-import org.kuali.kfs.kim.impl.identity.Person;
 import org.powermock.api.mockito.PowerMockito;
 
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.kim.impl.identity.PersonExtension;
 
 public final class MockDocumentUtils {
     
@@ -140,10 +141,13 @@ public final class MockDocumentUtils {
      * @PrepareForTest({MockDocumentUtils.TestAdHocRoutePerson.class})
      */
     public static AdHocRoutePerson buildMockAdHocRoutePerson() {
+        Person person = new Person();
+        person.setExtension(new PersonExtension());
+
         PowerMockito.suppress(PowerMockito.constructor(AdHocRoutePerson.class));
         TestAdHocRoutePerson adHocPerson = PowerMockito.spy(new TestAdHocRoutePerson());
         adHocPerson.setType(AdHocRouteRecipient.PERSON_TYPE);
-        adHocPerson.setPerson(new Person());
+        adHocPerson.setPerson(person);
         return adHocPerson;
     }
 

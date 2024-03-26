@@ -44,6 +44,7 @@ import org.kuali.kfs.sys.businessobject.serialization.PersistableBusinessObjectS
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 
 import java.sql.Date;
@@ -88,8 +89,11 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected String sourceOfFundsTypeCode;
 
     protected String accountFiscalOfficerSystemIdentifier;
+    protected String accountFiscalOfficerUserPrincipalName;
     protected String accountsSupervisorySystemsIdentifier;
+    protected String accountSupervisoryUserPrincipalName;
     protected String accountManagerSystemIdentifier;
+    protected String accountManagerUserPrincipalName;
     protected String organizationCode;
     protected String accountTypeCode;
     protected String accountPhysicalCampusCode;
@@ -158,6 +162,8 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     //added for the employee labor benefit calculation
     protected String laborBenefitRateCategoryCode;
     protected LaborBenefitRateCategory laborBenefitRateCategory;
+
+    private transient PersonService personService;
 
     public Account() {
         // assume active is true until set otherwise
@@ -665,21 +671,11 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountFiscalOfficerUser() {
-        accountFiscalOfficerUser = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
-                .updatePersonIfNecessary(accountFiscalOfficerSystemIdentifier, accountFiscalOfficerUser);
-        return accountFiscalOfficerUser;
-    }
-
-    /**
-     * This fix is temporary until Jonathan's fix is reflected to Rice
-     */
-    @Override
-    public void refreshReferenceObject(final String referenceObjectName) {
-        if (!"accountFiscalOfficerUser".equals(referenceObjectName)
-                && !"accountSupervisoryUser".equals(referenceObjectName)
-                && !"accountManagerUser".equals(referenceObjectName)) {
-            super.refreshReferenceObject(referenceObjectName);
-        }
+        return getPersonService().updatePrincipalNameIfNecessary(
+                accountFiscalOfficerSystemIdentifier,
+                accountFiscalOfficerUserPrincipalName,
+                accountFiscalOfficerUser
+        );
     }
 
     @Deprecated
@@ -690,9 +686,11 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountManagerUser() {
-        accountManagerUser = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
-                .updatePersonIfNecessary(accountManagerSystemIdentifier, accountManagerUser);
-        return accountManagerUser;
+        return getPersonService().updatePrincipalNameIfNecessary(
+                accountManagerSystemIdentifier,
+                accountManagerUserPrincipalName,
+                accountManagerUser
+        );
     }
 
     @Deprecated
@@ -703,9 +701,11 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
 
     @Override
     public Person getAccountSupervisoryUser() {
-        accountSupervisoryUser = SpringContext.getBean(org.kuali.kfs.kim.api.identity.PersonService.class)
-                .updatePersonIfNecessary(accountsSupervisorySystemsIdentifier, accountSupervisoryUser);
-        return accountSupervisoryUser;
+        return getPersonService().updatePrincipalNameIfNecessary(
+                accountsSupervisorySystemsIdentifier,
+                accountSupervisoryUserPrincipalName,
+                accountSupervisoryUser
+        );
     }
 
     @Deprecated
@@ -779,6 +779,14 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
         this.accountFiscalOfficerSystemIdentifier = accountFiscalOfficerSystemIdentifier;
     }
 
+    public String getAccountFiscalOfficerUserPrincipalName() {
+        return accountFiscalOfficerUserPrincipalName;
+    }
+
+    public void setAccountFiscalOfficerUserPrincipalName(final String accountFiscalOfficerUserPrincipalName) {
+        this.accountFiscalOfficerUserPrincipalName = accountFiscalOfficerUserPrincipalName;
+    }
+
     @Override
     public String getAccountManagerSystemIdentifier() {
         return accountManagerSystemIdentifier;
@@ -791,6 +799,14 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     @Override
     public void setAccountManagerSystemIdentifier(final String accountManagerSystemIdentifier) {
         this.accountManagerSystemIdentifier = accountManagerSystemIdentifier;
+    }
+
+    public String getAccountManagerUserPrincipalName() {
+        return accountManagerUserPrincipalName;
+    }
+
+    public void setAccountManagerUserPrincipalName(final String accountManagerUserPrincipalName) {
+        this.accountManagerUserPrincipalName = accountManagerUserPrincipalName;
     }
 
     @Override
@@ -825,6 +841,14 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     @Override
     public void setAccountsSupervisorySystemsIdentifier(final String accountsSupervisorySystemsIdentifier) {
         this.accountsSupervisorySystemsIdentifier = accountsSupervisorySystemsIdentifier;
+    }
+
+    public String getAccountSupervisoryUserPrincipalName() {
+        return accountSupervisoryUserPrincipalName;
+    }
+
+    public void setAccountSupervisoryUserPrincipalName(final String accountSupervisoryUserPrincipalName) {
+        this.accountSupervisoryUserPrincipalName = accountSupervisoryUserPrincipalName;
     }
 
     @Override
@@ -1253,7 +1277,14 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     public void setSourceOfFunds(final SourceOfFunds sourceOfFunds) {
         this.sourceOfFunds = sourceOfFunds;
     }
-    
+
+    public PersonService getPersonService() {
+        if (personService == null) {
+            personService = SpringContext.getBean(PersonService.class);
+        }
+        return personService;
+    }
+
     public List<Note> getBoNotes() {
         CuAccountService accountService = SpringContext.getBean(CuAccountService.class);
         return accountService.getAccountNotes(this);

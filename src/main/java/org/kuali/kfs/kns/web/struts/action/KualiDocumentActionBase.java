@@ -65,7 +65,6 @@ import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.kns.util.WebUtils;
 import org.kuali.kfs.kns.web.struts.form.BlankFormFile;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
-import org.kuali.kfs.kns.web.struts.form.KualiForm;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
@@ -1892,16 +1891,6 @@ public class KualiDocumentActionBase extends KualiAction {
             WebUtils.reuseErrorMapFromPreviousRequest((KualiDocumentFormBase) form);
         }
         return super.toggleTab(mapping, form, request, response);
-    }
-
-    @Override
-    public void doProcessingAfterPost(final KualiForm form, final HttpServletRequest request) {
-        super.doProcessingAfterPost(form, request);
-        if (form instanceof KualiDocumentFormBase) {
-            final Document document = ((KualiDocumentFormBase) form).getDocument();
-
-            getBusinessObjectService().linkUserFields(document);
-        }
     }
 
     public ActionForward takeSuperUserActions(

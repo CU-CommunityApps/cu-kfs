@@ -96,10 +96,10 @@ public class CuRequisitionDocument extends RequisitionDocument {
         super.initiateDocument();
 
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
-        setDeliveryToName(currentUser.getNameUnmasked());
-        setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
-        setRequestorPersonName(currentUser.getNameUnmasked());
-        setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumberUnmasked()));
+        setDeliveryToName(currentUser.getName());
+        setDeliveryToPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumber()));
+        setRequestorPersonName(currentUser.getName());
+        setRequestorPersonPhoneNumber(SpringContext.getBean(PhoneNumberService.class).formatNumberIfPossible(currentUser.getPhoneNumber()));
         
         setOrganizationAutomaticPurchaseOrderLimit(getPurapService().getApoLimit(this));
     }

@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="PersonExtension"
+          parent="PersonExtension-parentBean"/>
+    <bean abstract="true"
+          id="PersonExtension-parentBean"
+          parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.kim.impl.identity.PersonExtension"
+          p:objectLabel="Person Extension"
+          p:titleAttribute="principalId"
+    >
+        <property name="attributes">
+            <list>
+                <ref bean="PersonExtension-principalId"/>
+                <ref bean="PersonExtension-altAddressTypeCode"/>
+                <ref bean="PersonExtension-altAddressLine1"/>
+                <ref bean="PersonExtension-altAddressLine1MaskedIfNecessary"/>
+                <ref bean="PersonExtension-altAddressLine2"/>
+                <ref bean="PersonExtension-altAddressLine2MaskedIfNecessary"/>
+                <ref bean="PersonExtension-altAddressLine3"/>
+                <ref bean="PersonExtension-altAddressLine3MaskedIfNecessary"/>
+                <ref bean="PersonExtension-altAddressCity"/>
+                <ref bean="PersonExtension-altAddressCityMaskedIfNecessary"/>
+                <ref bean="PersonExtension-altAddressStateProvinceCode"/>
+                <ref bean="PersonExtension-altAddressStateProvinceCodeMaskedIfNecessary"/>
+                <ref bean="PersonExtension-altAddressPostalCode"/>
+                <ref bean="PersonExtension-altAddressPostalCodeMaskedIfNecessary"/>
+                <ref bean="PersonExtension-altAddressCountryCode"/>
+                <ref bean="PersonExtension-altAddressCountryCodeMaskedIfNecessary"/>
+                <ref bean="PersonExtension-suppressName"/>
+                <ref bean="PersonExtension-suppressEmail"/>
+                <ref bean="PersonExtension-suppressPhone"/>
+                <ref bean="PersonExtension-suppressPersonal"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PersonExtension-principalId"
+          parent="PersonExtension-principalId-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-principalId-parentBean"
+          parent="KimBaseBeans-principalId"
+    />
+
+    <bean id="PersonExtension-altAddressTypeCode"
+          parent="PersonExtension-altAddressTypeCode-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressTypeCode-parentBean"
+          parent="Person-addressTypeCode-parentBean"
+          p:label="Alt Address Type"
+          p:name="altAddressTypeCode"
+          p:shortLabel="Alt Address Type"
+    />
+
+    <bean id="PersonExtension-altAddressLine1"
+          parent="PersonExtension-altAddressLine1-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressLine1-parentBean"
+          parent="Person-addressLine1-parentBean"
+          p:label="Alt Line 1"
+          p:name="altAddressLine1"
+          p:shortLabel="Alt Line 1"
+    />
+
+    <bean id="PersonExtension-altAddressLine1MaskedIfNecessary"
+          parent="PersonExtension-altAddressLine1MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressLine1MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine1-parentBean"
+          p:name="altAddressLine1MaskedIfNecessary"
+    />
+
+    <bean id="PersonExtension-altAddressLine2"
+          parent="PersonExtension-altAddressLine2-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressLine2-parentBean"
+          parent="Person-addressLine2-parentBean"
+          p:label="Alt Line 2"
+          p:name="altAddressLine2"
+          p:shortLabel="Alt Line 2"
+    />
+
+    <bean id="PersonExtension-altAddressLine2MaskedIfNecessary"
+          parent="PersonExtension-altAddressLine2MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressLine2MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine2-parentBean"
+          p:name="altAddressLine2MaskedIfNecessary"
+    />
+
+    <bean id="PersonExtension-altAddressLine3"
+          parent="PersonExtension-altAddressLine3-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressLine3-parentBean"
+          parent="Person-addressLine3-parentBean"
+          p:label="Alt Line 3"
+          p:name="altAddressLine3"
+          p:shortLabel="Alt Line 3"
+    />
+
+    <bean id="PersonExtension-altAddressLine3MaskedIfNecessary"
+          parent="PersonExtension-altAddressLine3MaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressLine3MaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressLine3-parentBean"
+          p:name="altAddressLine3MaskedIfNecessary"
+    />
+
+    <bean id="PersonExtension-altAddressCity"
+          parent="PersonExtension-altAddressCity-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressCity-parentBean"
+          parent="Person-addressCity-parentBean"
+          p:label="Alt City"
+          p:name="altAddressCity"
+          p:shortLabel="Alt City"
+    />
+
+    <bean id="PersonExtension-altAddressCityMaskedIfNecessary"
+          parent="PersonExtension-altAddressCityMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressCityMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressCity-parentBean"
+          p:name="altAddressCityMaskedIfNecessary"
+    />
+
+    <bean id="PersonExtension-altAddressStateProvinceCode"
+          parent="PersonExtension-altAddressStateProvinceCode-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressStateProvinceCode-parentBean"
+          parent="Person-addressStateProvinceCode-parentBean"
+          p:label="Alt State/Province"
+          p:name="altAddressStateProvinceCode"
+          p:shortLabel="Alt State/Province"
+    />
+
+    <bean id="PersonExtension-altAddressStateProvinceCodeMaskedIfNecessary"
+          parent="PersonExtension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressStateProvinceCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressStateProvinceCode-parentBean"
+          p:name="altAddressStateProvinceCodeMaskedIfNecessary"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition"
+                  p:size="10"
+            />
+        </property>
+    </bean>
+
+    <bean id="PersonExtension-altAddressPostalCode"
+          parent="PersonExtension-altAddressPostalCode-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressPostalCode-parentBean"
+          parent="Person-addressPostalCode-parentBean"
+          p:label="Alt Postal Code"
+          p:name="altAddressPostalCode"
+          p:shortLabel="Alt Postal Code"
+    />
+
+    <bean id="PersonExtension-altAddressPostalCodeMaskedIfNecessary"
+          parent="PersonExtension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressPostalCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressPostalCode-parentBean"
+          p:name="altAddressPostalCodeMaskedIfNecessary"
+    />
+
+    <bean id="PersonExtension-altAddressCountryCode"
+          parent="PersonExtension-altAddressCountryCode-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressCountryCode-parentBean"
+          parent="Person-addressCountryCode-parentBean"
+          p:label="Alt Country"
+          p:name="altAddressCountryCode"
+          p:shortLabel="Alt Country"
+    />
+
+    <bean id="PersonExtension-altAddressCountryCodeMaskedIfNecessary"
+          parent="PersonExtension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-altAddressCountryCodeMaskedIfNecessary-parentBean"
+          parent="PersonExtension-altAddressCountryCode-parentBean"
+          p:name="altAddressCountryCodeMaskedIfNecessary"
+    >
+        <property name="control">
+            <bean parent="TextControlDefinition"
+                  p:size="10"
+            />
+        </property>
+    </bean>
+
+    <bean id="PersonExtension-suppressName"
+          parent="PersonExtension-suppressName-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-suppressName-parentBean"
+          parent="CuKimBaseBeans-privacyPreference"
+          p:label="Suppress Name"
+          p:name="suppressName"
+          p:shortLabel="Suppress Name"
+    />
+
+    <bean id="PersonExtension-suppressEmail"
+          parent="PersonExtension-suppressEmail-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-suppressEmail-parentBean"
+          parent="CuKimBaseBeans-privacyPreference"
+          p:label="Suppress Email"
+          p:name="suppressEmail"
+          p:shortLabel="Suppress Email"
+    />
+
+    <bean id="PersonExtension-suppressPhone"
+          parent="PersonExtension-suppressPhone-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-suppressPhone-parentBean"
+          parent="CuKimBaseBeans-privacyPreference"
+          p:label="Suppress Phone"
+          p:name="suppressPhone"
+          p:shortLabel="Suppress Phone"
+    />
+
+    <bean id="PersonExtension-suppressPersonal"
+          parent="PersonExtension-suppressPersonal-parentBean"
+    />
+    <bean abstract="true"
+          id="PersonExtension-suppressPersonal-parentBean"
+          parent="CuKimBaseBeans-privacyPreference"
+          p:label="Suppress Personal"
+          p:name="suppressPersonal"
+          p:shortLabel="Suppress Personal"
+    />
+
+</beans>

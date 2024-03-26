@@ -105,13 +105,13 @@ public class CuPaymentFileServiceImpl extends PaymentFileServiceImpl {
     }
     
     private void updatePayeeAddressFieldsFromPerson(final PaymentGroup paymentGroup, final Person person) {
-        paymentGroup.setLine1Address(person.getAddressLine1Unmasked());
-        paymentGroup.setLine2Address(person.getAddressLine2Unmasked());
-        paymentGroup.setLine3Address(person.getAddressLine3Unmasked());
-        paymentGroup.setCity(person.getAddressCityUnmasked());
-        paymentGroup.setState(person.getAddressStateProvinceCodeUnmasked());
-        paymentGroup.setZipCd(person.getAddressPostalCodeUnmasked());
-        paymentGroup.setCountry(person.getAddressCountryCodeUnmasked());
+        paymentGroup.setLine1Address(person.getAddressLine1());
+        paymentGroup.setLine2Address(person.getAddressLine2());
+        paymentGroup.setLine3Address(person.getAddressLine3());
+        paymentGroup.setCity(person.getAddressCity());
+        paymentGroup.setState(person.getAddressStateProvinceCode());
+        paymentGroup.setZipCd(person.getAddressPostalCode());
+        paymentGroup.setCountry(person.getAddressCountryCode());
     }
     
     @Override

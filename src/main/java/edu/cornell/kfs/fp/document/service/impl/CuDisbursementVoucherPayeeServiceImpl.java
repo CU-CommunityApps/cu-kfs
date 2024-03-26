@@ -100,14 +100,14 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
         disbursementPayee.setPrincipalId(person.getPrincipalId());
         disbursementPayee.setPrincipalName(person.getPrincipalName()); 
         
-        disbursementPayee.setPayeeName(person.getNameUnmasked());
+        disbursementPayee.setPayeeName(person.getName());
         disbursementPayee.setTaxNumber(KFSConstants.BLANK_SPACE);
 
         disbursementPayee.setPayeeTypeCode(KFSConstants.PaymentPayeeTypes.EMPLOYEE);
 
         disbursementPayee.setPayeeTypeCode(payeeTypeCode);
         
-        final String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1Unmasked(), person.getAddressCityUnmasked(), person.getAddressStateProvinceCodeUnmasked(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
+        final String personAddress = MessageFormat.format(addressPattern, person.getAddressLine1(), person.getAddressCity(), person.getAddressStateProvinceCode(), person.getAddressCountryCode() == null ? "" : person.getAddressCountryCode());
         disbursementPayee.setAddress(personAddress);
 
         return (DisbursementPayee) disbursementPayee;
@@ -119,7 +119,7 @@ public class CuDisbursementVoucherPayeeServiceImpl extends DisbursementVoucherPa
     @Override
     public Map<String, String> getFieldConversionBetweenPayeeAndPerson() {
         final Map<String, String> fieldConversionMap = super.getFieldConversionBetweenPayeeAndPerson();
-        fieldConversionMap.put(KFSPropertyConstants.PERSON_USER_IDENTIFIER, KIMPropertyConstants.Principal.PRINCIPAL_NAME);
+        fieldConversionMap.put(KIMPropertyConstants.Principal.PRINCIPAL_NAME, KIMPropertyConstants.Principal.PRINCIPAL_NAME);
         return fieldConversionMap;
     }
     

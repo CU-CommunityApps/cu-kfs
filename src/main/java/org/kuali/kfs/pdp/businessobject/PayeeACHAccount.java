@@ -18,21 +18,12 @@
  */
 package org.kuali.kfs.pdp.businessobject;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.kuali.kfs.core.api.criteria.PredicateFactory;
-import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
-import org.kuali.kfs.kim.impl.KIMPropertyConstants;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
@@ -42,6 +33,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.FinancialSystemUserService;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.document.service.VendorService;
+
+import java.lang.reflect.Field;
 
 public class PayeeACHAccount extends PersistableBusinessObjectBase implements MutableInactivatable {
 
@@ -62,87 +55,52 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     private ACHTransactionType transactionType;
     private ACHPayee achPayee;
 
-    public PayeeACHAccount() {
-
-    }
-
-    /**
-     * Gets the achAccountGeneratedIdentifier attribute.
-     *
-     * @return Returns the achAccountGeneratedIdentifier
-     */
     public KualiInteger getAchAccountGeneratedIdentifier() {
         return achAccountGeneratedIdentifier;
     }
 
-    /**
-     * Sets the achAccountGeneratedIdentifier attribute.
-     *
-     * @param achAccountGeneratedIdentifier The achAccountGeneratedIdentifier to set.
-     */
     public void setAchAccountGeneratedIdentifier(final KualiInteger achAccountGeneratedIdentifier) {
         this.achAccountGeneratedIdentifier = achAccountGeneratedIdentifier;
     }
 
-    /**
-     * Gets the bankRoutingNumber attribute.
-     *
-     * @return Returns the bankRoutingNumber
-     */
     public String getBankRoutingNumber() {
         return bankRoutingNumber;
     }
 
-    /**
-     * Sets the bankRoutingNumber attribute.
-     *
-     * @param bankRoutingNumber The bankRoutingNumber to set.
-     */
     public void setBankRoutingNumber(final String bankRoutingNumber) {
         this.bankRoutingNumber = bankRoutingNumber;
     }
 
-    /**
-     * Gets the bankAccountNumber attribute.
-     *
-     * @return Returns the bankAccountNumber
-     */
     public String getBankAccountNumber() {
         return bankAccountNumber;
     }
 
-    /**
-     * Sets the bankAccountNumber attribute.
-     *
-     * @param bankAccountNumber The bankAccountNumber to set.
-     */
     public void setBankAccountNumber(final String bankAccountNumber) {
         this.bankAccountNumber = bankAccountNumber;
     }
 
     /**
-     * Gets the payee's name from KIM or Vendor data, if the payee type is Employee, Entity or Vendor; otherwise returns the stored
-     * field value.
+     * Gets the payee's name from KIM or Vendor data, if the payee type is Employee, Entity or Vendor; otherwise
+     * returns the stored field value.
      *
      * @return Returns the payee name
      */
     public String getPayeeName() {
-        // for Employee, retrieves from Person table by employee ID
         if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
+            // for Employee, retrieves from Person table by employee ID
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                final String name = SpringContext.getBean(FinancialSystemUserService.class).getPersonNameByEmployeeId(payeeIdNumber);
-
-                // Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
+                final String name = SpringContext.getBean(FinancialSystemUserService.class)
+                        .getPersonNameByEmployeeId(payeeIdNumber);
                 if (ObjectUtils.isNotNull(name)) {
                     return name;
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
-            // for Entity, retrieve from Entity table by entity ID
+            // for Entity, retrieve from Person table by entity ID
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                final Entity entity = KimApiServiceLocator.getIdentityService().getEntity(payeeIdNumber);
-                if (ObjectUtils.isNotNull(entity) && ObjectUtils.isNotNull(entity.getDefaultName())) {
-                    return entity.getDefaultName().getCompositeName();
+                final Person person = SpringContext.getBean(PersonService.class).getPersonByEntityId(payeeIdNumber);
+                if (ObjectUtils.isNotNull(person)) {
+                    return person.getName();
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.VENDOR_ID)) {
@@ -157,11 +115,6 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         return payeeName;
     }
 
-    /**
-     * Sets the payeeName attribute.
-     *
-     * @param payeeName The payeeName to set.
-     */
     public void setPayeeName(final String payeeName) {
         this.payeeName = payeeName;
     }
@@ -170,48 +123,29 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
 
     /**
      * Gets the payee's principal name from KIM if payee type is Employee or Entity; otherwise returns null.
-     * If the payee is an entity with multiple principals, then this method will return all the principal names
-     * in a single String, with ", " as the separator.
      * 
      * @return The payee's principal name if an Employee or Entity payee, null otherwise.
      */
     public String getPayeePrincipalName() {
-        String principalName = null;
-        
         if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
-            // For employee, find a person with the given employee ID.
+            // For Employee, find a person with the given employee ID.
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                Person person = KimApiServiceLocator.getPersonService().getPersonByEmployeeId(payeeIdNumber);
-                if (ObjectUtils.isNotNull(person) && StringUtils.isNotBlank(person.getEntityId())) {
-                    // If a valid KIM-backed person was found, then return the person's principal name.
-                    principalName = person.getPrincipalName();
+                final Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
+                if (ObjectUtils.isNotNull(person)) {
+                    return person.getPrincipalName();
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
-            // For an entity, find all principals with the given entity ID.
+            // for Entity, retrieve from Person table by entity ID.
             if (ObjectUtils.isNotNull(payeeIdNumber)) {
-                QueryByCriteria criteria = QueryByCriteria.Builder.fromPredicates(
-                        PredicateFactory.equal(KIMPropertyConstants.Person.ENTITY_ID, payeeIdNumber));
-                List<Principal> principals = KimApiServiceLocator.getIdentityService().findPrincipals(criteria)
-                        .getResults();
-                if (CollectionUtils.isNotEmpty(principals)) {
-                    // It is possible for KIM entities to have multiple principals, so return a list of all of their principal names.
-                    if (principals.size() > 1) {
-                        StringBuilder allNames = new StringBuilder();
-                        for (Principal principal : principals) {
-                            allNames.append(principal.getPrincipalName()).append(", ");
-                        }
-                        // Remove the trailing ", " separator from the final result.
-                        principalName = allNames.substring(0, allNames.length() - 2);
-                    } else {
-                        // Shortcut for when entity has only one principal, which is the vast majority of cases.
-                        principalName = principals.get(0).getPrincipalName();
-                    }
+                final Person person = SpringContext.getBean(PersonService.class).getPersonByEntityId(payeeIdNumber);
+                if (ObjectUtils.isNotNull(person)) {
+                    return person.getPrincipalName();
                 }
             }
         }
         
-        return principalName;
+        return null;
     }
 
     /**
@@ -246,118 +180,50 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
     // End CU Customization.
 
     /**
-     * Gets the payee's email address from KIM data if the payee type is Employee or Entity; otherwise, returns the stored field
-     * value.
+     * Gets the payee's email address from KIM data if the payee type is Employee or Entity; otherwise, returns the
+     * stored field value.
      *
      * @return Returns the payeeEmailAddress
      */
     public String getPayeeEmailAddress() {
-//        // for Employee, retrieve from Person table by employee ID
-//        if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.EMPLOYEE)) {
-//            Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
-//            if (ObjectUtils.isNotNull(person)) {
-//                return person.getEmailAddress();
-//            }
-//        }
-//        // for Entity, retrieve from Entity table by entity ID then from Person table
-//        else if (StringUtils.equalsIgnoreCase(payeeIdentifierTypeCode, PayeeIdTypeCodes.ENTITY)) {
-//            if (ObjectUtils.isNotNull(payeeIdNumber)) {
-//                EntityDefault entity = KimApiServiceLocator.getIdentityService().getEntityDefault(payeeIdNumber);
-//                if (ObjectUtils.isNotNull(entity)) {
-//                    List<Principal> principals = entity.getPrincipals();
-//                    if (principals.size() > 0 && ObjectUtils.isNotNull(principals.get(0))) {
-//                        String principalId = principals.get(0).getPrincipalId();
-//                        Person person = SpringContext.getBean(PersonService.class).getPerson(principalId);
-//                        if (ObjectUtils.isNotNull(person)) {
-//                            return person.getEmailAddress();
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-        // otherwise returns the field value
+        // CU Customization: Always return the email address defined on the Payee ACH Account;
+        // do not derive it from the Person table when the payee is an Employee or Entity.
         return payeeEmailAddress;
     }
 
-    /**
-     * Sets the payeeEmailAddress attribute if the payee is not Employee or Entity.
-     *
-     * @param payeeEmailAddress The payeeEmailAddress to set.
-     */
     public void setPayeeEmailAddress(final String payeeEmailAddress) {
         this.payeeEmailAddress = payeeEmailAddress;
     }
 
-    /**
-     * Gets the payeeIdentifierTypeCode attribute.
-     *
-     * @return Returns the payeeIdentifierTypeCode
-     */
     public String getPayeeIdentifierTypeCode() {
         return payeeIdentifierTypeCode;
     }
 
-    /**
-     * Sets the payeeIdentifierTypeCode attribute.
-     *
-     * @param payeeIdentifierTypeCode The payeeIdentifierTypeCode to set.
-     */
     public void setPayeeIdentifierTypeCode(final String payeeIdentifierTypeCode) {
         this.payeeIdentifierTypeCode = payeeIdentifierTypeCode;
     }
 
-    /**
-     * Gets the achTransactionType attribute.
-     *
-     * @return Returns the achTransactionType.
-     */
     public String getAchTransactionType() {
         return achTransactionType;
     }
 
-    /**
-     * Sets the achTransactionType attribute value.
-     *
-     * @param achTransactionType The achTransactionType to set.
-     */
     public void setAchTransactionType(final String achTransactionType) {
         this.achTransactionType = achTransactionType;
     }
 
-    /**
-     * Gets the transactionType attribute.
-     *
-     * @return Returns the transactionType.
-     */
     public ACHTransactionType getTransactionType() {
         return transactionType;
     }
 
-    /**
-     * Sets the transactionType attribute value.
-     *
-     * @param transactionType The transactionType to set.
-     */
     public void setTransactionType(final ACHTransactionType transactionType) {
         this.transactionType = transactionType;
     }
 
-    /**
-     * Gets the active attribute.
-     *
-     * @return Returns the active
-     */
     @Override
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * Sets the active attribute.
-     *
-     * @param active The active to set.
-     */
     @Override
     public void setActive(final boolean active) {
         this.active = active;
@@ -371,58 +237,27 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         this.autoInactivationIndicator = autoInactivationIndicator;
     }
 
-    /**
-     * Gets the bankAccountTypeCode attribute.
-     *
-     * @return Returns the bankAccountTypeCode.
-     */
     public String getBankAccountTypeCode() {
         return bankAccountTypeCode;
     }
 
-    /**
-     * Sets the bankAccountTypeCode attribute value.
-     *
-     * @param bankAccountTypeCode The bankAccountTypeCode to set.
-     */
     public void setBankAccountTypeCode(final String bankAccountTypeCode) {
         this.bankAccountTypeCode = bankAccountTypeCode;
     }
 
-    /**
-     * Gets the bankRouting attribute.
-     *
-     * @return Returns the bankRouting.
-     */
     public ACHBank getBankRouting() {
         return bankRouting;
     }
 
-    /**
-     * Sets the bankRouting attribute value.
-     *
-     * @param bankRouting The bankRouting to set.
-     * @deprecated
-     */
     @Deprecated
     public void setBankRouting(final ACHBank bankRouting) {
         this.bankRouting = bankRouting;
     }
 
-    /**
-     * Gets the payeeIdNumber attribute.
-     *
-     * @return Returns the payeeIdNumber.
-     */
     public String getPayeeIdNumber() {
         return payeeIdNumber;
     }
 
-    /**
-     * Sets the payeeIdNumber attribute value.
-     *
-     * @param payeeIdNumber The payeeIdNumber to set.
-     */
     public void setPayeeIdNumber(final String payeeIdNumber) {
         this.payeeIdNumber = payeeIdNumber;
     }
@@ -435,26 +270,16 @@ public class PayeeACHAccount extends PersistableBusinessObjectBase implements Mu
         this.standardEntryClass = standardEntryClass;
     }
 
-    /**
-     * Gets the achPayee attribute.
-     *
-     * @return Returns the achPayee.
-     */
     public ACHPayee getAchPayee() {
         return achPayee;
     }
 
-    /**
-     * Sets the achPayee attribute value.
-     *
-     * @param achPayee The achPayee to set.
-     */
     public void setAchPayee(final ACHPayee achPayee) {
         this.achPayee = achPayee;
     }
 
     /**
-     * KFSCNTRB-1682: Some of the fields contain confidential information
+     * Overridden because some fields contain confidential information
      */
     @Override
     public String toString() {

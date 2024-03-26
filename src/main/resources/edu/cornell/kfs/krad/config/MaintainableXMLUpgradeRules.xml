@@ -835,6 +835,18 @@
                 <match>baseSalaryAmount</match>
                 <replacement>baseSalaryAmount</replacement>
             </pattern>
+            <pattern>
+                <match>suppressAddress</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>externalIdentifiers</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>primary</match>
+                <replacement/>
+            </pattern>
         </pattern>
         <!-- Special entries for converting archaic TypedArrayList elements. -->
         <pattern>

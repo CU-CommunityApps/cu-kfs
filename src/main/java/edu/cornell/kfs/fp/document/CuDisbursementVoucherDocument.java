@@ -22,7 +22,6 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherTaxService;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.engine.RouteContext;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.authorization.DocumentAuthorizer;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
@@ -58,6 +57,7 @@ import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateSe
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 
@@ -196,15 +196,15 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                     CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         }
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
-        // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
-        dvPayeeDetail.setDisbVchrPayeePersonName(employee.getNameUnmasked());
 
-        dvPayeeDetail.setDisbVchrPayeeLine1Addr(employee.getAddressLine1Unmasked());
-        dvPayeeDetail.setDisbVchrPayeeLine2Addr(employee.getAddressLine2Unmasked());
-        dvPayeeDetail.setDisbVchrPayeeCityName(employee.getAddressCityUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCodeUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeZipCode(employee.getAddressPostalCodeUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeCountryCode(employee.getAddressCountryCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeePersonName(employee.getName());
+
+        dvPayeeDetail.setDisbVchrPayeeLine1Addr(employee.getAddressLine1());
+        dvPayeeDetail.setDisbVchrPayeeLine2Addr(employee.getAddressLine2());
+        dvPayeeDetail.setDisbVchrPayeeCityName(employee.getAddressCity());
+        dvPayeeDetail.setDisbVchrPayeeStateCode(employee.getAddressStateProvinceCode());
+        dvPayeeDetail.setDisbVchrPayeeZipCode(employee.getAddressPostalCode());
+        dvPayeeDetail.setDisbVchrPayeeCountryCode(employee.getAddressCountryCode());
 
         //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the message
         // "Is this payee an employee" = No
@@ -214,12 +214,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             dvPayeeDetail.setDisbVchrPayeeEmployeeCode(false);
         }
 
-        // I'm assuming that if a tax id type code other than 'TAX' is present, then the employee must be foreign
-        for (final String externalIdentifierTypeCode : employee.getExternalIdentifiers().keySet()) {
-            if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
-            }
-        }
+        // I'm assuming that if a tax id is present, then the employee must not be foreign
+        // ==== CU Customization: Always set the default Nonresident Payment Code to false. ====
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
         // Determine if employee is a research subject
         final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
@@ -260,21 +257,17 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
-        dvPayeeDetail.setDisbVchrPayeePersonName(student.getNameUnmasked());
+        dvPayeeDetail.setDisbVchrPayeePersonName(student.getName());
 
-        dvPayeeDetail.setDisbVchrPayeeLine1Addr(student.getAddressLine1Unmasked());
-        dvPayeeDetail.setDisbVchrPayeeLine2Addr(student.getAddressLine2Unmasked());
-        dvPayeeDetail.setDisbVchrPayeeCityName(student.getAddressCityUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeStateCode(student.getAddressStateProvinceCodeUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeZipCode(student.getAddressPostalCodeUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeCountryCode(student.getAddressCountryCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine1Addr(student.getAddressLine1());
+        dvPayeeDetail.setDisbVchrPayeeLine2Addr(student.getAddressLine2());
+        dvPayeeDetail.setDisbVchrPayeeCityName(student.getAddressCity());
+        dvPayeeDetail.setDisbVchrPayeeStateCode(student.getAddressStateProvinceCode());
+        dvPayeeDetail.setDisbVchrPayeeZipCode(student.getAddressPostalCode());
+        dvPayeeDetail.setDisbVchrPayeeCountryCode(student.getAddressCountryCode());
 
-        // I'm assuming that if a tax id type code other than 'TAX' is present, then the student must be foreign
-        for (final String externalIdentifierTypeCode : student.getExternalIdentifiers().keySet()) {
-            if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
-            }
-        }
+        // CU Note: We don't use Person Tax IDs, so by default we'll assume that the student must not be foreign
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
         // Determine if student is a research subject
 
 
@@ -316,22 +309,17 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_ENTITY);
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(StringUtils.EMPTY);
 
-        // Changed this from employee.getName to employee.getNameUnmasked() otherwise "Xxxxxx" appears on the DV!
-        dvPayeeDetail.setDisbVchrPayeePersonName(alumni.getNameUnmasked());
+        dvPayeeDetail.setDisbVchrPayeePersonName(alumni.getName());
 
-        dvPayeeDetail.setDisbVchrPayeeLine1Addr(alumni.getAddressLine1Unmasked());
-        dvPayeeDetail.setDisbVchrPayeeLine2Addr(alumni.getAddressLine2Unmasked());
-        dvPayeeDetail.setDisbVchrPayeeCityName(alumni.getAddressCityUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCodeUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeZipCode(alumni.getAddressPostalCodeUnmasked());
-        dvPayeeDetail.setDisbVchrPayeeCountryCode(alumni.getAddressCountryCodeUnmasked());
+        dvPayeeDetail.setDisbVchrPayeeLine1Addr(alumni.getAddressLine1());
+        dvPayeeDetail.setDisbVchrPayeeLine2Addr(alumni.getAddressLine2());
+        dvPayeeDetail.setDisbVchrPayeeCityName(alumni.getAddressCity());
+        dvPayeeDetail.setDisbVchrPayeeStateCode(alumni.getAddressStateProvinceCode());
+        dvPayeeDetail.setDisbVchrPayeeZipCode(alumni.getAddressPostalCode());
+        dvPayeeDetail.setDisbVchrPayeeCountryCode(alumni.getAddressCountryCode());
 
-        // I'm assuming that if a tax id type code other than 'TAX' is present, then the alumni must be foreign
-        for (final String externalIdentifierTypeCode : alumni.getExternalIdentifiers().keySet()) {
-            if (KimConstants.PersonExternalIdentifierTypes.TAX.equals(externalIdentifierTypeCode)) {
-                dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
-            }
-        }
+        // CU Note: We don't use Person Tax IDs, so by default we'll assume that the alumni must not be foreign.
+        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(false);
         // Determine if alumni is a research subject
         final ParameterEvaluator researchPaymentReasonCodeEvaluator = SpringContext.getBean(ParameterEvaluatorService.class).getParameterEvaluator(
                 DisbursementVoucherDocument.class, FPParameterConstants.RESEARCH_PAYMENT_REASONS,
@@ -585,21 +573,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         final PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
         disbVchrContactPersonName = currentUser.getName();
-        disbVchrContactEmailId = currentUser.getEmailAddressUnmasked();
-        String phoneNumber = currentUser.getPhoneNumber();
+        disbVchrContactEmailId = currentUser.getEmailAddress();
+        final String phoneNumber = currentUser.getPhoneNumber();
 
-        if(StringUtils.isNotBlank(phoneNumber) && !StringUtils.equalsIgnoreCase("null", phoneNumber)) {
-            if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
-                disbVchrContactPhoneNumber = phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber());
-            } else if(StringUtils.equalsIgnoreCase(phoneNumber, "null")) {
-                // do nothing... we don't want phone number set to invalid value
+        // Our cu-kfs phone number logic is similar to the FINP-9213 fix, but ours also checks for the string "null".
+        if (StringUtils.isNotBlank(phoneNumber) && !StringUtils.equalsIgnoreCase(phoneNumber, CUKFSConstants.NULL)) {
+            if (!phoneNumberService.isDefaultFormatPhoneNumber(phoneNumber)) {
+                disbVchrContactPhoneNumber = phoneNumberService.formatNumberIfPossible(phoneNumber);
             } else {
-                disbVchrContactPhoneNumber = currentUser.getPhoneNumber();
+                disbVchrContactPhoneNumber = phoneNumber;
             }
-        }
-
-        if(!phoneNumberService.isDefaultFormatPhoneNumber(currentUser.getPhoneNumber())) {
-            disbVchrContactPhoneNumber = phoneNumberService.formatNumberIfPossible(currentUser.getPhoneNumber());
         }
 
         disbVchrContactEmailId = currentUser.getEmailAddress();

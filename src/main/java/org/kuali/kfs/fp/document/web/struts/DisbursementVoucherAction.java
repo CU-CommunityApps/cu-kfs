@@ -68,8 +68,6 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -118,11 +116,11 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             || !dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED)
                 && !dvDoc.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().contains(DV_ADHOC_NODE)) {
             
-            Entity entity = KimApiServiceLocator.getIdentityService().getEntityByEmployeeId(payeeIdNumber);
+            Person person = getPersonService().getPersonByEmployeeId(payeeIdNumber);
 
             //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the
             // message "Is this payee an employee" = No
-            if (entity != null && entity.isActive()) {
+            if (person != null && person.isActive()) {
                 dvDoc.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(true);
             } else {
                 dvDoc.getDvPayeeDetail().setDisbVchrPayeeEmployeeCode(false);

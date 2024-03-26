@@ -31,7 +31,7 @@ import org.kuali.kfs.core.api.criteria.QueryByCriteria;
 import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.kim.api.KimConstants;
-import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.role.RoleMembership;
 import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
@@ -45,7 +45,7 @@ import org.kuali.kfs.kim.impl.common.delegate.DelegateMember;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateMemberAttributeData;
 import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.Group;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.permission.Permission;
 import org.kuali.kfs.kim.impl.responsibility.Responsibility;
 import org.kuali.kfs.kim.impl.services.KimImplServiceLocator;
@@ -77,6 +77,7 @@ import static java.util.Map.entry;
 /**
  * CU Customization:
  * Updated the member-removal methods to properly convert the qualifiers where needed.
+ * Also backported the FINP-9235 changes into this file.
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
@@ -85,7 +86,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     private static final Map<String, RoleDaoAction> memberTypeToRoleDaoActionMap = populateMemberTypeToRoleDaoActionMap();
     private RoleService proxiedRoleService;
     private CacheManager cacheManager;
-    private IdentityService identityService;
+    private PersonService personService;
 
     private KimTypeInfoService kimTypeInfoService;
 
@@ -274,6 +275,16 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return null;
     }
 
+    protected List<RoleLite> getRolesFromCache(final String namespaceCode, final String name) {
+        final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
+        final String key = "{" + Role.CACHE_NAME + "s}namespaceCode=" + namespaceCode + "|name=" + name;
+        final Cache.ValueWrapper cachedValue = cache.get(key);
+        if (cachedValue != null) {
+            return (List<RoleLite>) cachedValue.get();
+        }
+        return List.of();
+    }
+
     protected void putRoleInCache(final RoleLite role) {
         if (role != null) {
             final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
@@ -282,6 +293,16 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                                    + role.getName();
             cache.put(idKey, role);
             cache.put(nameKey, role);
+        }
+    }
+
+    protected void putRolesInCache(final List<RoleLite> roles, final String namespaceCode, final String name) {
+        if (roles != null && !roles.isEmpty()) {
+            roles.forEach(this::putRoleInCache);
+            final Cache cache = cacheManager.getCache(Role.CACHE_NAME);
+            final String nameKey = "{" + Role.CACHE_NAME + "s}namespaceCode=" + namespaceCode + "|name="
+                                   + name;
+            cache.put(nameKey, roles);
         }
     }
 
@@ -354,6 +375,14 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return loadRoleByName(namespaceCode, roleName);
     }
 
+    @Cacheable(cacheNames = Role.CACHE_NAME,
+            key = "'{" + Role.CACHE_NAME + "}-namespaceCode=' + #p0 + '|' + 'name='+ #p1")
+    @Override
+    public List<RoleLite> getAllRolesByNamespaceCodeAndName(final String namespaceCode,
+            final String roleName) throws IllegalStateException {
+        return loadAllRolesByName(namespaceCode, roleName);
+    }
+
     /**
      * Loads the role with the given name, leveraging the cache where possible and querying the database if role not
      * already in the cache. If the role is not in the cache, then it will be placed in the cache once it is loaded.
@@ -373,6 +402,25 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         return role;
     }
 
+    /**
+     * Loads the role with the given name, leveraging the cache where possible and querying the database if role not
+     * already in the cache. If the role is not in the cache, then it will be placed in the cache once it is loaded.
+     */
+    protected List<RoleLite> loadAllRolesByName(final String namespaceCode, final String roleName) {
+        List<RoleLite> roles = getRolesFromCache(namespaceCode, roleName);
+        if (roles.isEmpty()) {
+            final List<RoleLite> roleLites = getRoleLitesByName(namespaceCode, roleName);
+            if (!roleLites.isEmpty()) {
+                roles = getRolesFromCache(namespaceCode, roleName);
+                if (roles.isEmpty()) {
+                    roles = roleLites;
+                }
+                putRolesInCache(roles, namespaceCode, roleName);
+            }
+        }
+        return roles;
+    }
+
     @Cacheable(cacheNames = Role.CACHE_NAME,
             key = "'{getRoleIdByNamespaceCodeAndName}' + 'namespaceCode=' + #p0 + '|' + 'name=' + #p1")
     @Override
@@ -386,6 +434,19 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             return role.getId();
         } else {
             return null;
+        }
+    }
+
+    @Cacheable(cacheNames = Role.CACHE_NAME,
+            key = "'{getAllRoleIdsByNamespaceCodeAndName}' + 'namespaceCode=' + #p0 + '|' + 'name=' + #p1")
+    @Override
+    public List<String> getAllRoleIdsByNamespaceCodeAndName(final String namespaceCode, final String roleName) throws
+            IllegalStateException {
+        final List<RoleLite> roles = getAllRolesByNamespaceCodeAndName(namespaceCode, roleName);
+        if (!roles.isEmpty()) {
+            return roles.stream().map(RoleLite::getId).collect(Collectors.toList());
+        } else {
+            return List.of();
         }
     }
 
@@ -526,6 +587,28 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     }
 
     @Cacheable(cacheNames = RoleMember.CACHE_NAME,
+            key = "'namespaceCode=' + #p0 + '|' + 'roleName=' + #p1 + '|' + 'qualification=' +" +
+                  "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).mapKey(#p2)",
+            condition = "!T(org.kuali.kfs.kim.api.cache.KimCacheUtils).isDynamicMembshipAllRolesByNamespaceAndName(#p0, #p1)")
+    @Override
+    public Collection<String> getRoleMemberPrincipalIdsAllowNull(
+            final String namespaceCode, final String roleName,
+            final Map<String, String> qualification) throws IllegalStateException {
+        final Set<String> principalIds = new HashSet<>();
+        final Set<String> foundRoleTypeMembers = new HashSet<>();
+        final List<String> roleIds = getAllRoleIdsByNamespaceCodeAndName(namespaceCode, roleName);
+        for (final RoleMembership roleMembership : getRoleMembers(roleIds, qualification, false, foundRoleTypeMembers)) {
+            if (MemberType.GROUP.equals(roleMembership.getType())) {
+                principalIds.addAll(getGroupService().getMemberPrincipalIds(roleMembership.getMemberId()));
+            } else {
+                principalIds.add(roleMembership.getMemberId());
+            }
+        }
+
+        return Collections.unmodifiableSet(principalIds);
+    }
+
+    @Cacheable(cacheNames = RoleMember.CACHE_NAME,
             key = "'getPrincipalIdSubListWithRole' + 'principalIds=' + " +
                 "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0) + '|' + 'roleNamespaceCode=' + #p1 + " +
                 "'|' + 'roleName=' + #p2 + '|' + 'qualification=' + " +
@@ -544,6 +627,36 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         for (final String principalId : principalIds) {
             if (getProxiedRoleService().principalHasRole(principalId, Collections.singletonList(role.getId()),
                     qualification)) {
+                subList.add(principalId);
+            }
+        }
+        return Collections.unmodifiableList(subList);
+    }
+
+    @Cacheable(cacheNames = RoleMember.CACHE_NAME,
+            key = "'getPrincipalIdSubListWithRoleAllowNull' + 'principalIds=' + " +
+                  "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).key(#p0) + '|' + 'roleNamespaceCode=' + #p1 + " +
+                  "'|' + 'roleName=' + #p2 + '|' + 'qualification=' + " +
+                  "T(org.kuali.kfs.core.api.cache.CacheKeyUtils).mapKey(#p3)",
+            condition = "!T(org.kuali.kfs.kim.api.cache.KimCacheUtils).isDynamicMembshipAllRolesByNamespaceAndName"
+                        + "(#p1, "
+                        + "#p2)")
+    @Override
+    public List<String> getPrincipalIdSubListWithRoleAllowNull(
+            final List<String> principalIds,
+            final String roleNamespaceCode,
+            final String roleName,
+            final Map<String, String> qualification
+    ) throws IllegalStateException {
+        incomingParamCheck(principalIds, "principalIds");
+
+        final List<String> subList = new ArrayList<>();
+        final List<RoleLite> roles = getRoleLitesByName(roleNamespaceCode, roleName);
+        for (final String principalId : principalIds) {
+            if (getProxiedRoleService().principalHasRole(principalId,
+                    roles.stream().map(RoleLite::getId).collect(Collectors.toList()),
+                    qualification
+            )) {
                 subList.add(principalId);
             }
         }
@@ -1978,8 +2091,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 }
                 break;
             case PRINCIPAL:
-                final Principal principal = identityService.getPrincipal(memberId);
-                if (principal == null) {
+                final Person person = personService.getPerson(memberId);
+                if (person == null) {
                     throw new IllegalStateException("the user does not exist: " + memberId);
                 }
                 break;
@@ -2325,9 +2438,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
         sb.append("   Principal : ").append(principalId);
         if (principalId != null) {
-            final Principal principal = identityService.getPrincipal(principalId);
-            if (principal != null) {
-                sb.append(" (").append(principal.getPrincipalName()).append(')');
+            final Person person = personService.getPerson(principalId);
+            if (person != null) {
+                sb.append(" (").append(person.getPrincipalName()).append(')');
             }
         }
         sb.append('\n');
@@ -2386,8 +2499,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         super.setKimTypeInfoService(kimTypeInfoService);
     }
 
-    public void setIdentityService(final IdentityService identityService) {
-        this.identityService = identityService;
+    public void setPersonService(final PersonService personService) {
+        this.personService = personService;
     }
 
     /**

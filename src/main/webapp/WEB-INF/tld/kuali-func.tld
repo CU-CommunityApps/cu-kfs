@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2023 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd" version="2.1">
+
+    <description>Kuali functions library</description>
+    <display-name>Kuali functions</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>kfunc</short-name>
+    <uri>http://www.kuali.org/jsp/jstl/functions</uri>
+
+    <function>
+        <description>Removes any duplicating spacing (internal or on the ends) from a String, meant to be exposed as a tag library function.</description>
+        <name>scrubWhitespace</name>
+        <function-class>org.kuali.kfs.kns.util.FieldUtils</function-class>
+        <function-signature>java.lang.String scrubWhitespace(java.lang.String)</function-signature>
+        <example>&lt;c:out value="${kfunc:scrubWhitespace(stringWithTonsAndTonsOfWhitespaceInItLikeAllTheStringsBuiltInJSP)}"></example>
+    </function>
+
+    <function>
+        <description>Returns the TabState for the given tab key in the action form.</description>
+        <name>getTabState</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getTabState(org.kuali.kfs.kns.web.struts.form.KualiForm,java.lang.String)</function-signature>
+        <example>&lt;c:set var="tabState" value="${kfunc:getTabState(KualiForm, tabTitle)}"></example>
+    </function>
+
+    <function>
+        <description>Generates a key from a string that can be used for the tab state key.</description>
+        <name>generateTabKey</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String generateTabKey(java.lang.String)</function-signature>
+        <example>&lt;c:set var="tabKey" value="${kfunc:generateTabKey(tabTitle)}"></example>
+    </function>
+    <function>
+        <description>Increment tabindex and add a new TabState to the HashMap.</description>
+        <name>incrementTabIndex</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>void incrementTabIndex(org.kuali.kfs.kns.web.struts.form.KualiForm, java.lang.String)</function-signature>
+        <example>${kfunc:incrementTabIndex(kualiForm)}</example>
+    </function>
+    <function>
+        <description>Registers that a property was editable on the page.</description>
+        <name>registerEditableProperty</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>void registerEditableProperty(org.kuali.kfs.kns.web.struts.form.pojo.PojoFormBase, java.lang.String)</function-signature>
+        <example>${kfunc:registerEditableProperty(KualiForm, editablePropertyName)}</example>
+    </function>
+
+    <function>
+        <description>Check Fully Unmask Permission.</description>
+        <name>canFullyUnmaskField</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>boolean canFullyUnmaskField(java.lang.String, java.lang.String, org.kuali.kfs.kns.web.struts.form.KualiForm)</function-signature>
+        <example>${kfunc:canFullyUnmaskField(businessObjectClassName, fieldName, kualiForm)}</example>
+    </function>
+    <function>
+        <description>Check Partially Unmask Permission.</description>
+        <name>canPartiallyUnmaskField</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>boolean canPartiallyUnmaskField(java.lang.String, java.lang.String, org.kuali.kfs.kns.web.struts.form.KualiForm)</function-signature>
+        <example>${kfunc:canPartiallyUnmaskField(businessObjectClassName, fieldName, kualiForm)}</example>
+    </function>
+    <function>
+        <description>Get Fully Masked Value</description>
+        <name>getFullyMaskedValue</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getFullyMaskedValue(java.lang.String, java.lang.String, java.lang.Object, java.lang.String)</function-signature>
+        <example>${kfunc:getFullyMaskedValue(className, fieldName, kualiForm, propertyName)}</example>
+    </function>
+    <function>
+        <description>Get Partially Masked Value</description>
+        <name>getPartiallyMaskedValue</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getPartiallyMaskedValue(java.lang.String, java.lang.String,, java.lang.Object, java.lang.String)</function-signature>
+        <example>${kfunc:getPartiallyMaskedValue(className, fieldName, kualiForm, propertyName)}</example>
+    </function>
+    <function>
+        <description>Check to see if field is configured to be hidden on inquiry screens.</description>
+        <name>isInquiryHiddenField</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>boolean isInquiryHiddenField(java.lang.String, java.lang.String, java.lang.Object, java.lang.String)</function-signature>
+        <example>${kfunc:isInquiryHiddenField(className, businessObjectClassName, fieldName, kualiForm)}</example>
+    </function>
+    <function>
+        <description>Check Add Note Permission</description>
+        <name>canAddNoteAttachment</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>boolean canAddNoteAttachment(org.kuali.kfs.krad.document.Document)</function-signature>
+        <example>${kfunc:canAddNoteAttachement(document)}</example>
+    </function>
+    <function>
+        <description>Check View Note Permission</description>
+        <name>canViewNoteAttachment</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>boolean canViewNoteAttachment(org.kuali.kfs.krad.document.Document, java.lang.String)</function-signature>
+        <example>${kfunc:canAddNoteAttachement(document, attachmentTypeCode)}</example>
+    </function>
+    <function>
+        <description>Check Delete Note Permission</description>
+        <name>canDeleteNoteAttachment</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>boolean canDeleteNoteAttachment(org.kuali.kfs.krad.document.Document, java.lang.String, java.lang.String)</function-signature>
+        <example>${kfunc:canDeleteNoteAttachement(document, attachmentTypeCode, authorUniversalIdentifier)}</example>
+    </function>
+    <function>
+        <description>get a named image url for a button, looking first for a property application.custom.image.url.(given image name). If that is not found, a default image URL is generated</description>
+        <name>getButtonImageUrl</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getButtonImageUrl(java.lang.String)</function-signature>
+        <example>${kfunc:getButtonImageUrl(buttonStyle)}</example>
+    </function>
+    <function>
+        <description>get a named image for an attachment based on its content type code.</description>
+        <name>getAttachmentImageForUrl</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getAttachmentImageForUrl(java.lang.String)</function-signature>
+        <example>${kfunc:getAttachmentImageForUrl(contentType)}</example>
+    </function>
+    <function>
+        <description>check config properties to determine if environment is production</description>
+        <name>isProductionEnvironment</name>
+        <function-class>org.kuali.kfs.krad.util.KRADUtils</function-class>
+        <function-signature>boolean isProductionEnvironment()</function-signature>
+        <example>${kfunc:isProductionEnvironment()}</example>
+    </function>
+    <function>
+        <description>Converts whitespace which would be ignored by HTML into HTML elements. This converts newlines in the given string to HTML breaks and multiple spaces into multiple nbsp</description>
+        <name>preserveWhitespace</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String preserveWhitespace(java.lang.String)</function-signature>
+        <example>${kfunc:preserveWhitespace("foo\n\nbar")}</example>
+    </function>
+    <function>
+        <description>Fetches the display name of a KIM Group when given the group ID</description>
+        <name>getKimGroupDisplayName</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getKimGroupDisplayName(java.lang.String)</function-signature>
+        <example>${kfunc:getKimGroupDisplayName("1234")}</example>
+    </function>
+    <!--
+        CU Customization: Modified this function to use a CU-specific implementation instead.
+        Also corrected a typo in the "example" element.
+    -->
+    <function>
+        <description>Fetches the display name for a principal when given the principal ID</description>
+        <name>getPrincipalDisplayName</name>
+        <function-class>edu.cornell.kfs.kns.util.CuWebUtils</function-class>
+        <function-signature>java.lang.String getPrincipalDisplayName(java.lang.String)</function-signature>
+        <example>${kfunc:getPrincipalDisplayName("1234")}</example>
+    </function>
+    <!-- End CU Customization -->
+    <function>
+        <description>Fetches the display name for a role when given an ActionRequest with a role recipient.</description>
+        <name>getRoleDisplayName</name>
+        <function-class>org.kuali.kfs.kns.util.WebUtils</function-class>
+        <function-signature>java.lang.String getRoleDisplayName(org.kuali.kfs.kew.actionrequest.ActionRequest)</function-signature>
+        <example>${kfunc:getRoleDisplayName(actionRequest)}</example>
+    </function>
+    <function>
+        <description>Check to see if a matching qualifier exists</description>
+        <name>matchingQualifierExists</name>
+        <function-class>org.kuali.kfs.kim.web.utils.KimWebUtils</function-class>
+        <function-signature>boolean matchingQualifierExists(java.util.List,java.lang.Integer, java.lang.String)</function-signature>
+        <example>${kfunc:matchingQualifierExists(member,index, atttrDefnId)}</example>
+    </function>
+    <function>
+        <description>Returns passed argument's file path</description>
+        <name>getManifestResource</name>
+        <function-class>org.kuali.kfs.web.JavascriptUtils</function-class>
+        <function-signature>java.lang.String getManifestResource(javax.servlet.jsp.PageContext, java.lang.String)</function-signature>
+        <example>${kfunc:getManifestResource(pageContext, "commons.js")}</example>
+    </function>
+</taglib>

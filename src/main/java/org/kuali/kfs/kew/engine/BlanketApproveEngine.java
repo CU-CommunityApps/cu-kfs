@@ -21,11 +21,10 @@ package org.kuali.kfs.kew.engine;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.actionrequest.ActionRequestFactory;
-import org.kuali.kfs.kew.actionrequest.KimPrincipalRecipient;
+import org.kuali.kfs.kew.actionrequest.PersonRecipient;
 import org.kuali.kfs.kew.actionrequest.service.ActionRequestService;
 import org.kuali.kfs.kew.actions.NotificationContext;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
@@ -116,7 +115,7 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
             if (config.isSendNotifications()) {
                 // ==== CU Customization (KFSPTS-324, KFSUPGRADE-504, KFSPTS-24745)): Updated the line below to send FYIs instead of ACKs. ====
                 notifyContext = new NotificationContext(
-                        KewApiConstants.ACTION_REQUEST_FYI_REQ, config.getCause().getPrincipal(),
+                        KewApiConstants.ACTION_REQUEST_FYI_REQ, config.getCause().getPerson(),
                         config.getCause().getActionTaken());
             }
             lockAdditionalDocuments(document);
@@ -281,12 +280,12 @@ public class BlanketApproveEngine extends StandardWorkflowEngine {
         if (notifyContext != null && !requestsToNotify.isEmpty()) {
             final ActionRequestFactory arFactory =
                     new ActionRequestFactory(RouteContext.getCurrentRouteContext().getDocument(), nodeInstance);
-            KimPrincipalRecipient delegatorRecipient = null;
-            if (actionTaken.getDelegatorPrincipal() != null) {
-                delegatorRecipient = new KimPrincipalRecipient(actionTaken.getDelegatorPrincipal());
+            PersonRecipient delegatorRecipient = null;
+            if (actionTaken.getDelegatorPerson() != null) {
+                delegatorRecipient = new PersonRecipient(actionTaken.getDelegatorPerson());
             }
             final List<ActionRequest> notificationRequests = arFactory
-                    .generateNotifications(requestsToNotify, notifyContext.getPrincipalTakingAction(),
+                    .generateNotifications(requestsToNotify, notifyContext.getPersonTakingAction(),
                             delegatorRecipient, notifyContext.getNotificationRequestCode(),
                             notifyContext.getActionTakenCode());
             getActionRequestService().activateRequests(notificationRequests);
