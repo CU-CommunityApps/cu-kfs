@@ -193,9 +193,9 @@ public class CacheConfiguration {
             final Map<String, Duration> cacheExpires,
             final RedisConnectionFactory connectionFactory
     ) {
+        // CU Customization: Remove the call to "disableKeyPrefix()" when building the cache configuration.
         final RedisCacheConfiguration cacheDefaults = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(redisDefaultTtl))
-                .disableKeyPrefix();
+                .entryTtl(Duration.ofSeconds(redisDefaultTtl));
 
         final Map<String, RedisCacheConfiguration> cacheConfigurations = cacheExpires.keySet()
                 .stream()
