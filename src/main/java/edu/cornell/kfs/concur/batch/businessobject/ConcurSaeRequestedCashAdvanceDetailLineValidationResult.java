@@ -4,7 +4,7 @@ import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 
 public class ConcurSaeRequestedCashAdvanceDetailLineValidationResult extends ValidationResult {
     private boolean cashAdvanceLine;
-    private boolean cashAdvanceAdministratorApprovedCashAdvance;
+    private boolean cashAdvanceApprovedOrApplied;
     private boolean clonedCashAdvance;
     private boolean cashAdvanceUsedInExpenseReport;
     private boolean duplicatedCashAdvanceLine;
@@ -15,7 +15,7 @@ public class ConcurSaeRequestedCashAdvanceDetailLineValidationResult extends Val
     public ConcurSaeRequestedCashAdvanceDetailLineValidationResult() {
         super();
         this.cashAdvanceLine = false;
-        this.cashAdvanceAdministratorApprovedCashAdvance = false;
+        this.cashAdvanceApprovedOrApplied = false;
         this.clonedCashAdvance = true;
         this.cashAdvanceUsedInExpenseReport = true;
         this.duplicatedCashAdvanceLine = true;
@@ -36,16 +36,12 @@ public class ConcurSaeRequestedCashAdvanceDetailLineValidationResult extends Val
         this.cashAdvanceLine = cashAdvanceLine;
     }
 
-    public boolean isCashAdvanceAdministratorApprovedCashAdvance() {
-        return cashAdvanceAdministratorApprovedCashAdvance;
-    }
-    
-    public boolean isNotCashAdvanceAdministratorApprovedCashAdvance() {
-        return !cashAdvanceAdministratorApprovedCashAdvance;
+    public boolean isCashAdvanceApprovedOrApplied() {
+        return cashAdvanceApprovedOrApplied;
     }
 
-    public void setCashAdvanceAdministratorApprovedCashAdvance(boolean cashAdvanceAdministratorApprovedCashAdvance) {
-        this.cashAdvanceAdministratorApprovedCashAdvance = cashAdvanceAdministratorApprovedCashAdvance;
+    public void setCashAdvanceApprovedOrApplied(boolean cashAdvanceApprovedOrApplied) {
+        this.cashAdvanceApprovedOrApplied = cashAdvanceApprovedOrApplied;
     }
 
     public boolean isCashAdvanceUsedInExpenseReport() {

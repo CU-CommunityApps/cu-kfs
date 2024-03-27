@@ -444,7 +444,7 @@ public class ConcurStandardAccountingExtractDetailLine {
         sb.append(" cashAdvanceName: ").append(cashAdvanceName);
         sb.append(" kfsAssembledRequestId: ").append(kfsAssembledRequestId);
         sb.append(" cashAdvanceLine: ").append(validationResult.isCashAdvanceLine());
-        sb.append(" cashAdvanceAdministratorApprovedCashAdvance: ").append(validationResult.isCashAdvanceAdministratorApprovedCashAdvance());
+        sb.append(" cashAdvanceAdministratorApprovedCashAdvance: ").append(validationResult.isCashAdvanceApprovedOrApplied());
         sb.append(" cashAdvanceUsedInExpenseReport: ").append(validationResult.isCashAdvanceUsedInExpenseReport());
         sb.append(" validCashAdvanceLine: ").append(validationResult.isValidCashAdvanceLine()).append(KFSConstants.NEWLINE);
         sb.append(" validationFailureMessages: ").append(KFSConstants.NEWLINE);
