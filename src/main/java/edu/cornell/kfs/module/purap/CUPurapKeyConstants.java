@@ -41,6 +41,7 @@ public class CUPurapKeyConstants {
 
     public static final String IWNT_NOTE_CREATE_DV = "iwnt.note.create.dv";
     public static final String IWNT_NOTE_CREATE_REQS = "iwnt.note.create.reqs";
+    public static final String IWNT_CONFIRM_REQ_CREATE_WITH_CONTRACT_INDICATOR = "iwnt.confirm.req.create.with.contract.indicated";
     
     public static final String JAGGAER_UPLOAD_XML_ERROR_MESSAGE = "jaggaer.upload.xml.error.message";
     public static final String JAGGAER_UPLOAD_WEBSERVICE_ERROR = "jaggaer.upload.webservice.error";

@@ -351,6 +351,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     public RoleLite getRoleByNamespaceCodeAndName(final String namespaceCode, final String roleName) throws IllegalStateException {
         incomingParamCheck(namespaceCode, "namespaceCode");
         incomingParamCheck(roleName, "roleName");
+LOG.info("getRoleIdByNamespaceCodeAndName received   namespaceCode={}=    roleName={}=", namespaceCode, roleName);
         return loadRoleByName(namespaceCode, roleName);
     }
 
@@ -359,15 +360,20 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
      * already in the cache. If the role is not in the cache, then it will be placed in the cache once it is loaded.
      */
     protected RoleLite loadRoleByName(final String namespaceCode, final String roleName) {
+LOG.info("loadRoleByName received   namespaceCode={}=    roleName={}=", namespaceCode, roleName);
         RoleLite role = getRoleFromCache(namespaceCode, roleName);
         if (role == null) {
+LOG.info("loadRoleByName call to getRoleFromCache detected to be null");
             final RoleLite roleLite = getRoleLiteByName(namespaceCode, roleName);
             if (roleLite != null) {
                 role = getRoleFromCache(roleLite.getId());
                 if (role == null) {
+LOG.info("loadRoleByName getRoleFromCache using rolelite ID value and will be retuning null");
                     role = roleLite;
                 }
                 putRoleInCache(role);
+            } else {
+LOG.info("loadRoleByName getRoleLiteByName and will be retuning null");
             }
         }
         return role;
@@ -380,7 +386,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
             IllegalStateException {
         incomingParamCheck(namespaceCode, "namespaceCode");
         incomingParamCheck(roleName, "roleName");
-
         final RoleLite role = getRoleByNamespaceCodeAndName(namespaceCode, roleName);
         if (role != null) {
             return role.getId();

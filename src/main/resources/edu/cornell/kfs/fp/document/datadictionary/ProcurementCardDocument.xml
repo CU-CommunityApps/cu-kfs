@@ -13,7 +13,7 @@
     
     <property name="attributes">
       <list>
-        <ref bean="ProcurementCardDocument-accountNumberForSearching"/>
+        <ref bean="ProcurementCardDocument-accountNumberForSearching"/> <!-- nkk4 use this for work around checkbos to radio button -->
       </list>
    </property>
 

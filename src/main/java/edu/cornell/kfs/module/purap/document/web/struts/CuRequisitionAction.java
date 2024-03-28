@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -49,6 +51,7 @@ import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 
 public class CuRequisitionAction extends RequisitionAction {
+    private static final Logger LOG = LogManager.getLogger();
 
     @SuppressWarnings("unchecked")
     @Override
@@ -196,7 +199,17 @@ public class CuRequisitionAction extends RequisitionAction {
                     "' because a DV or Requisition has already been created from that document");
         }
 
+LOG.info("createReqFromIWantDoc  ===>>> right before prompt for Y/N to create req");
+        //If shared service center user requests requisition creation when the contract field is checked, present
+        //confirmation question where Yes allows the requisition creation and No redirects back to IWant document.
         final IWantDocumentService iWantDocumentService = SpringContext.getBean(IWantDocumentService.class);
+        boolean userWantsToCreateReqAnyway = iWantDocumentService.sscUserWantsToCreateReqWithPositiveIwantContractIndicator(iWantDocument);
+        //if (!iWantDocumentService.sscUserWantsToCreateReqWithPositiveIwantContractIndicator(iWantDocument)) {
+        if (!userWantsToCreateReqAnyway) {
+LOG.info("sscUserWantsToCreateReqWithPositiveIwantContractIndicator  ===>>> SHOULD BE FALSE TO STOP REQ CREATION::::::::  userWantsToCreateReqAnyway={}=", userWantsToCreateReqAnyway);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        }
+LOG.info("sscUserWantsToCreateReqWithPositiveIwantContractIndicator  ===>>> AFTER if check .... going TO CREATE REQ");
 
         createDocument(requisitionForm);
 

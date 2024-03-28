@@ -843,8 +843,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
 LOG.info("IWantDocumentAction.route::::: isContractIndicator={}=", iWantDocument.isContractIndicator());
 LOG.info("IWantDocumentAction.route::::: step={}=", step);
-
+        //nkk4 This line is causing new stacktrace with preRules in place
         ActionForward actionForward = super.route(mapping, form, request, response);
+        
+LOG.info("IWantDocumentAction.route:::: AFTER CALL TO super.route()");
         
         //determine whether contract indicator has been checked and whether edoc is on purchasing contract assistant node
         WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
@@ -1201,6 +1203,16 @@ LOG.info("IWantDocumentAction.route::::: routeToPurchasingContractAssistantReque
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_REQUISITION_EXISTS);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
+        
+LOG.info("createRequisition::::::::: preRule should have been invoked before this");
+
+//        //Present warning if Contract indicator is checked and document is on OrganizationHierarchy route node
+//        if () {
+//            //present warning message
+//            if (user answered No) {
+//                return mapping.findForward(KFSConstants.MAPPING_BASIC);
+//            }
+//        }
 
         String url = ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                 + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + iWantDocument.getDocumentNumber();

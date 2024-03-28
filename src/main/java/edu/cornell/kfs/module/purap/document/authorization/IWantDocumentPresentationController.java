@@ -11,8 +11,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 
-import com.mysql.jdbc.log.Log;
-
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -163,11 +161,11 @@ LOG.info("IWantDocPresentationController.canEditContractIndicator::::::   {}", (
             editModes.remove(CUPurapConstants.IWantDocumentSteps.VENDOR_STEP);
         }
 
-        // KFSPTS-2527 only display create req and create DV buttons if neither REQ not DV has been created from I Want doc
-        if ((StringUtils.isBlank(iWantDocument.getReqsDocId()) && StringUtils.isBlank(iWantDocument.getDvDocId())) && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {   
+        // KFSPTS-2527 only display create req and create DV buttons if neither REQ nor DV has been created from I Want doc
+        if ((StringUtils.isBlank(iWantDocument.getReqsDocId()) && StringUtils.isBlank(iWantDocument.getDvDocId())) 
+                && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_REQ);
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_DV);
-
         }
         
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);

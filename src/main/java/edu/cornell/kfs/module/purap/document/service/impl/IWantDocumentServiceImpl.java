@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -76,6 +75,7 @@ import edu.cornell.kfs.module.purap.dataaccess.LevelOrganizationDao;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.CuPurapService;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentPreRules;
 import edu.cornell.kfs.sys.CUKFSConstants.ConfidentialAttachmentTypeCodes;
 import edu.cornell.kfs.sys.businessobject.NoteExtendedAttribute;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
@@ -101,6 +101,7 @@ public class IWantDocumentServiceImpl implements IWantDocumentService {
     private DocumentService documentService;
     private PhoneNumberService phoneNumberService;
     private ConfigurationService configurationService;
+    private IWantDocumentPreRules iWantDocumentPreRules;
 
     /**
      * @see edu.cornell.kfs.module.purap.document.service.IWantDocumentService#getPersonCampusAddress(java.lang.String)
@@ -1006,6 +1007,17 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 	}
 
     
+    public boolean sscUserWantsToCreateReqWithPositiveIwantContractIndicator(IWantDocument iWantDocument) {
+LOG.info("sscUserWantsToCreateReqWithPositiveIwantContractIndicator  ===>>> ENTERED");
+
+        //final IWantDocumentPreRules iWantDocumentPreRules = SpringContext.getBean(IWantDocumentPreRules.class);
+        boolean proceedWithRouting = iWantDocumentPreRules.doPrompts(iWantDocument);
+        
+LOG.info("sscUserWantsToCreateReqWithPositiveIwantContractIndicator  ===>>> right before leaving: Returning {} <======= to proceed with routing user answered Yes, I want to Proceed with Creating the Req implies true ; No implies go backto IWNT should be FALSE", proceedWithRouting);
+        return proceedWithRouting;
+    }
+    
+
     public AttachmentService getAttachmentService() {
         return attachmentService;
     }
@@ -1112,6 +1124,14 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
+    }
+
+    public IWantDocumentPreRules getiWantDocumentPreRules() {
+        return iWantDocumentPreRules;
+    }
+
+    public void setiWantDocumentPreRules(IWantDocumentPreRules iWantDocumentPreRules) {
+        this.iWantDocumentPreRules = iWantDocumentPreRules;
     }
 
 }

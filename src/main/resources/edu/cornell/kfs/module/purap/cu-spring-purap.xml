@@ -91,8 +91,10 @@
 	
     </bean>
     
+    <bean id="iWantDocumentPreRules" class="edu.cornell.kfs.module.purap.document.validation.impl.IWantDocumentPreRules"/>
+    
     <bean id="iWantDocumentService" class="edu.cornell.kfs.module.purap.document.service.impl.IWantDocumentServiceImpl">
-    	<property name="collegeLevelOrganizationDao">
+	   <property name="collegeLevelOrganizationDao">
 			<ref bean="collegeLevelOrganizationDao" />
 		</property>
 		<property name="attachmentService">
@@ -131,6 +133,9 @@
 		<property name="configurationService">
 			<ref bean="configurationService" />
 		</property>
+        <property name="iWantDocumentPreRules">
+            <ref bean="iWantDocumentPreRules" />
+        </property>
 	</bean>
 	
 	<bean id="purchasingAccountsPayableModuleService" parent="purchasingAccountsPayableModuleService-parentBean" class="edu.cornell.kfs.module.purap.document.service.impl.CuPurchasingAccountsPayableModuleServiceImpl"/>

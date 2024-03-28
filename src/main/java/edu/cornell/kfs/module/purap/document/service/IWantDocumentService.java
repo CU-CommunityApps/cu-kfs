@@ -121,4 +121,6 @@ public interface IWantDocumentService {
      */
     public void setUpIWantDocDefaultValues(IWantDocument iWantDocument, Person initiatorUser);
 
+    public boolean sscUserWantsToCreateReqWithPositiveIwantContractIndicator(IWantDocument iWantDocument);
+
 }

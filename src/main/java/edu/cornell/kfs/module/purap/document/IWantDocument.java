@@ -793,7 +793,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
-        this.contractIndicator = false;
+        setContractIndicator(false);
     }
 
     @Override
@@ -810,7 +810,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
-        this.contractIndicator = false;
+        setContractIndicator(false);
     }
 
     /**

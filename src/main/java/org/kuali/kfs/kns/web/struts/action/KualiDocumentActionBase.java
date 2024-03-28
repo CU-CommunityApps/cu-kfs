@@ -693,15 +693,17 @@ public class KualiDocumentActionBase extends KualiAction {
     public ActionForward route(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
+LOG.info("KualiDocumentActionBase.route::::::::::    ENTERED");
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
-
+LOG.info("KualiDocumentActionBase.route::::::::::    after doProcessingAfterPost");
         kualiDocumentFormBase.setDerivedValuesOnForm(request);
         final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
+LOG.info("KualiDocumentActionBase.route::::::::::    think this is the problem ====> preRulesForward={}=", preRulesForward);
         if (preRulesForward != null) {
             return preRulesForward;
         }
-
+LOG.info("KualiDocumentActionBase.route::::::::::   after preRulesForward != null check ={}=", preRulesForward);
         final Document document = kualiDocumentFormBase.getDocument();
 
         final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
@@ -709,12 +711,12 @@ public class KualiDocumentActionBase extends KualiAction {
         if (forward != null) {
             return forward;
         }
-
+LOG.info("KualiDocumentActionBase.route::::::::::   after sensitive data processing  has forward={}=", forward);
         getDocumentService().routeDocument(document, kualiDocumentFormBase.getAnnotation(),
                 combineAdHocRecipients(kualiDocumentFormBase));
         KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
         kualiDocumentFormBase.setAnnotation("");
-
+LOG.info("KualiDocumentActionBase.route::::::::::   right before final return in method");
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
