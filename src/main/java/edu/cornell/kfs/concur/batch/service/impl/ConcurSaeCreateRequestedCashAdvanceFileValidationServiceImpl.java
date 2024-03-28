@@ -61,8 +61,8 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
             lineValidationPassed &= requestedCashAdvanceHasNotBeenUsedInExpenseReport(detailFileLine);
             LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceHasNotBeenUsedInExpenseReport = " + lineValidationPassed);
             
-//            lineValidationPassed &= requestedCashAdvanceIsNotBeingDuplicated(detailFileLine);
-//            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
+            lineValidationPassed &= requestedCashAdvanceIsNotBeingDuplicated(detailFileLine);
+            LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceIsNotBeingDuplicated = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceHasValidAddressWhenPaymentIsByCheck(detailFileLine);
             LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceHasValidAddressWhenPaymentIsByCheck = " + lineValidationPassed);
