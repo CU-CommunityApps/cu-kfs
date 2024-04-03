@@ -83,8 +83,7 @@ public class ConcurStandardAccountingExtractCashAdvanceServiceImpl implements Co
     @Override
     public boolean isPreTripCashAdvanceIssuedByCashAdmin(ConcurStandardAccountingExtractDetailLine saeLine) {
         if (StringUtils.isNotBlank(saeLine.getCashAdvanceTransactionType())
-                && (StringUtils.equalsIgnoreCase(saeLine.getCashAdvanceTransactionType(), ConcurConstants.SAE_REQUESTED_CASH_ADVANCE_APPROVED_BY_CONCUR_ADMIN)
-                    || StringUtils.equalsIgnoreCase(saeLine.getCashAdvanceTransactionType(), ConcurConstants.SAE_CASH_ADVANCE_BEING_APPLIED_TO_TRIP_REIMBURSEMENT))) {
+                && StringUtils.equalsIgnoreCase(saeLine.getCashAdvanceTransactionType(), ConcurConstants.SAE_REQUESTED_CASH_ADVANCE_APPROVED_BY_CONCUR_ADMIN)) {
             return true;
         } else {
             return false;

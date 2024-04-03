@@ -92,21 +92,25 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
     }
 
     /**
-     * Requested cash advances are either valid if they are either approved by administrator (1) or applied to trip reimbursement (2)
+     * Requested cash advances are valid if they are either approved by administrator (1) or applied to trip reimbursement (2)
      *
      * @param detailFileLine
      * @return boolean
      */
     private boolean requestedCashAdvanceApprovedOrApplied(ConcurStandardAccountingExtractDetailLine detailFileLine) {
         boolean validCashAdvance = getConcurStandardAccountingExtractCashAdvanceService().isPreTripCashAdvanceIssuedByCashAdmin(detailFileLine) ||
-                getConcurStandardAccountingExtractCashAdvanceService().isPreTripCashAdvanceIssuedByCashAdmin(detailFileLine);
+                getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceToBeAppliedToReimbursement(detailFileLine);
+
         if (validCashAdvance) {
             detailFileLine.getValidationResult().setCashAdvanceApprovedOrApplied(true);
         } else {
             detailFileLine.getValidationResult().setCashAdvanceApprovedOrApplied(false);
-            String validationError = MessageFormat.format(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_APPROVED_REQUESTED_CASH_ADVANCE_DATA_LINE), detailFileLine.getCashAdvanceTransactionType());
+
+            String errorMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_APPROVED_REQUESTED_CASH_ADVANCE_DATA_LINE);
+            String validationError = MessageFormat.format(errorMessage, detailFileLine.getCashAdvanceTransactionType());
             detailFileLine.getValidationResult().addMessage(validationError);
         }
+
         return detailFileLine.getValidationResult().isCashAdvanceApprovedOrApplied();
     }
 
