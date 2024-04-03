@@ -106,7 +106,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
         } else {
             detailFileLine.getValidationResult().setCashAdvanceApprovedOrApplied(false);
 
-            String errorMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_APPROVED_REQUESTED_CASH_ADVANCE_DATA_LINE);
+            String errorMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_DATA_LINE_NOT_APPROVED_OR_APPLIED);
             String validationError = MessageFormat.format(errorMessage, detailFileLine.getCashAdvanceTransactionType());
             detailFileLine.getValidationResult().addMessage(validationError);
         }
