@@ -35,7 +35,7 @@ public class ConcurKeyConstants {
 
     public static final String CONCUR_REQUEST_EXTRACT_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER = "validation.error.concur.request.extract.cash.advance.invalid.unique.identifier";
     public static final String CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE = "validation.error.concur.sae.not.requested.cash.advance";
-    public static final String CONCUR_SAE_NOT_APPROVED_REQUESTED_CASH_ADVANCE_DATA_LINE = "validation.error.concur.sae.not.cash.admin.approved";
+    public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_DATA_LINE_NOT_APPROVED_OR_APPLIED = "validation.error.concur.sae.cash.advance.not.approved.or.applied";
     public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_USED_IN_EXPENSE_REPORT = "validation.error.concur.sae.requested.cash.advance.in.expense.report";
     public static final String CONCUR_SAE_REQUESTED_DUPLICATE_CASH_ADVANCE_DETECTED = "validation.error.concur.duplicate.sae.requested.cash.advance";
     public static final String CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_KEYS_FOR_DUPLICATE_CHECK = "validation.error.concur.sae.invalid.keys.duplicate.check";
