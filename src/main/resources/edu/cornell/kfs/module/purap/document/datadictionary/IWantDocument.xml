@@ -100,6 +100,7 @@
        <ref bean="IWantDocument-collegeLevelChartForSearch" />
        <ref bean="IWantDocument-collegeLevelOrgCodeForSearch" />
        <ref bean="IWantDocument-departmentLevelOrgCodeForSearch" />
+     <!--  <ref bean="IWantDocument-contractIndicatorForSearch"/>  -->
        
       </list>
     </property>
@@ -697,19 +698,81 @@
     <property name="label" value="SSC Processor Netid"/>
   </bean>
   
+   <bean id="indicatorMinusBothValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.IndicatorMinusBothValuesFinder"/>
+  
   <bean id="IWantDocument-contractIndicator" parent="IWantDocument-contractIndicator-parentBean"/>
-  <bean id="IWantDocument-contractIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+  <bean id="IWantDocument-contractIndicator-parentBean" abstract="true" parent="activeIndicatorAttributeDefinition">
     <property name="name" value="contractIndicator"/>
-    <property name="forceUppercase" value="false"/>
     <property name="label" value="Contract"/>
     <property name="shortLabel" value="Contract"/>
-    <property name="maxLength" value="1"/>
     <property name="required" value="false"/>
     <property name="control">
-      <bean parent="CheckboxControlDefinition"/>
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="indicatorMinusBothValuesFinder"/>
+<!--    <bean parent="CheckboxControlDefinition"/> -->
     </property>
   </bean>
-  
+ 
+ <!--  
+  <bean id="IWantDocument-contractIndicatorForSearch" parent="IWantDocument-contractIndicatorForSearch-parentBean"/>
+  <bean id="IWantDocument-contractIndicatorForSearch-parentBean" abstract="true" parent="activeIndicatorAttributeDefinition">
+    <property name="name" value="contractIndicatorForSearch"/>
+    <property name="label" value="Contract Indicator"/>
+    <property name="shortLabel" value="Contract Ind."/>
+    <property name="control">
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="indicatorYNBothValuesFinder"/>
+    </property>
+  </bean>
+  -->
+<!--   
+    <bean id="GenericAttributes-activeIndicator" parent="GenericAttributes-activeIndicator-parentBean"/>
+    <bean id="GenericAttributes-activeIndicator-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="activeIndicator" p:forceUppercase="false" p:label="Active Indicator" p:shortLabel="active"
+          p:maxLength="1" p:control-ref="KfsCheckboxControl"
+          p:formatterClass="org.kuali.kfs.core.web.format.BooleanFormatter" p:type="BOOLEAN"/>
+
+    <bean id="activeIndicatorAttributeDefinition" parent="activeIndicatorDisplayAttributeDefinition-parentBean"/>
+    <bean id="activeIndicatorDisplayAttributeDefinition-parentBean" parent="AttributeDefinition" abstract="true"
+          p:defaultValue="Y"
+          p:label="Status"
+          p:name="active"
+          p:type="BOOLEAN">
+        <property name="control">
+            <bean parent="RadioControlDefinition" p:valuesFinder-ref="indicatorActiveInactiveAllValuesFinder"/>
+        </property>
+    </bean>
+    
+    <bean id="indicatorYNBothValuesFinder" class="org.kuali.kfs.krad.keyvalues.IndicatorYNBothValuesFinder"/>
+    <bean id="indicatorYNNullValuesFinder" class="org.kuali.kfs.krad.keyvalues.IndicatorYNNullValuesFinder"/>
+    <bean id="indicatorYNOnlyValuesFinder" class="org.kuali.kfs.krad.keyvalues.IndicatorYNOnlyValuesFinder"/>
+    <bean id="yesNoValuesFinder" class="org.kuali.kfs.sys.businessobject.options.YesNoValuesFinder"/>
+    <bean id="indicatorActiveInactiveAllValuesFinder" class="org.kuali.kfs.krad.keyvalues.IndicatorActiveInactiveAllValuesFinder"/>
+    
+    
+    
+    
+<bean id="IWantDocument-servicePerformedOnCampus-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="servicePerformedOnCampus"/>
+    <property name="label" value="If procuring services, will service be performed on campus"/>
+    <property name="shortLabel" value="On Campus?"/>
+    <property name="required" value="false"/>
+    <property name="maxLength" value="1"/>
+     Setup validation similar to that from KFS's BarcodeInventoryErrorDocument. 
+    <property name="validationPattern">
+      <bean parent="CharsetValidationPattern" p:validChars="YN "/>
+    </property>
+    <property name="control">
+      <bean parent="SelectControlDefinition" p:valuesFinder-ref="yesNoValuesFinder" p:includeKeyInLabel="false"/>
+    </property>
+</bean>
+
+  <bean id="AccountReversionGlobal-carryForwardByObjectCodeIndicator" parent="AccountReversionGlobal-carryForwardByObjectCodeIndicator-parentBean"/>
+  <bean id="AccountReversionGlobal-carryForwardByObjectCodeIndicator-parentBean" abstract="true" parent="GenericAttributes-genericBoolean">
+    <property name="name" value="carryForwardByObjectCodeIndicator"/>
+    <property name="label" value="Carry Forward by Object Code Indicator"/>
+    <property name="shortLabel" value="CF by Object Code"/>
+    <property name="control" ref="IndicatorYNNullSelectControl" />
+  </bean>
+-->  
   <bean id="IWantDocument-validations" parent="IWantDocument-validations-parentBean"/>
   
   <bean id="IWantDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
@@ -815,6 +878,20 @@
                     </list>
                   </property>
                 </bean>
+<!--               <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+                  <property name="searchingAttribute">
+                    <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
+                      <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
+                      <property name="attributeName" value="contractIndicatorForSearch"/>
+                      <property name="showAttributeInResultSet" value="true"/>
+                    </bean>
+                  </property>
+                  <property name="documentValues">
+                    <list>
+                      <value>contractIndicatorForSearch</value>
+                    </list>
+                  </property>
+                </bean> -->
                 <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
                   <property name="searchingAttribute">
                     <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
