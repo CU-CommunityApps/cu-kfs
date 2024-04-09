@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * CU Customization: Updated the "loadEmplInfo" function to reference the potentially masked Person Name fields.
+ */
+
 var chartCodeSuffix = '.chartOfAccountsCode'
 var chartNameSuffix = '.chart.finChartOfAccountDescription'
 var accountNumberSuffix = '.accountNumber'

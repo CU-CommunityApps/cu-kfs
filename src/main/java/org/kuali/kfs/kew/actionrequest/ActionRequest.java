@@ -50,6 +50,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * ====
+ * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
+ * ====
+ * 
  * Bean mapped to DB. Represents ActionRequest to a workgroup, user or role.  Contains
  * references to children/parent if a member of a graph
  */

@@ -18,6 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%--
+    CU Customization: Reinserted the Privacy Preferences tab from the 2023-01-25 financials version of the document.
+--%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <c:set var="readOnly" scope="request" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" />

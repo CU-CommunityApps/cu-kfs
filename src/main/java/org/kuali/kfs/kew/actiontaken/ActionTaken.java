@@ -41,6 +41,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * ====
+ * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
+ * ====
+ * 
  * Model object mapped to ojb for representing actions taken on documents by users.
  */
 public class ActionTaken extends PersistableBusinessObjectBase {

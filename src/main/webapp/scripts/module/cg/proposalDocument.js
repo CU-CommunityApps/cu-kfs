@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * CU Customization: Update director-related functions to reference the potentially masked Person Name fields.
+ */
+
 // eslint-disable-next-line
 function onblur_proposalDirectCostAmount (directAmountField) {
   updateTotalAmount(directAmountField.name, findElPrefix(directAmountField.name) + '.proposalIndirectCostAmount', 'proposalTotalAmount')

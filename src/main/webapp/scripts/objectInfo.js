@@ -17,6 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * CU Customization: Updated the loadUserInfo() function to reference the potentially masked Person Name fields.
+ */
+
 function loadUserInfo(userIdFieldName, universalIdFieldName, userNameFieldName) {
   var userId = dwr.util.getValue(userIdFieldName);
 

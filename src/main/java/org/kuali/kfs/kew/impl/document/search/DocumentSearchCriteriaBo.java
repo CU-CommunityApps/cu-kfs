@@ -34,6 +34,10 @@ import org.kuali.kfs.sys.context.SpringContext;
 import java.sql.Timestamp;
 
 /**
+ * ====
+ * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
+ * ====
+ * 
  * Defines the business object that specifies the criteria used on document searches.
  */
 public class DocumentSearchCriteriaBo implements BusinessObject {

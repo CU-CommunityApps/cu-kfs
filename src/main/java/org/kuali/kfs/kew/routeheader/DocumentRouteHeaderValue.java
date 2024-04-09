@@ -55,6 +55,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * ====
+ * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
+ * ====
+ * 
  * A document within KEW.  A document effectively represents a process that moves through the workflow engine. It is
  * created from a particular {@link DocumentType} and follows the route path defined by that DocumentType.
  *

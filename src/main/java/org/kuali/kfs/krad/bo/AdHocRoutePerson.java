@@ -22,6 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 
+/*
+ * CU Customization: Modify Ad Hoc Person to use the potentially masked Person Name property variant.
+ */
 public class AdHocRoutePerson extends AdHocRouteRecipient {
 
     private static final long serialVersionUID = 1L;

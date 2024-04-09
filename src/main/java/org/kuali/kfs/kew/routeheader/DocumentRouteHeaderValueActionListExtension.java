@@ -25,6 +25,10 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.sys.context.SpringContext;
 
 /**
+ * ====
+ * CU Customization: Modified Person name references to use the potentially masked equivalents instead.
+ * ====
+ * 
  * An extension of {@link DocumentRouteHeaderValue} which is mapped to OJB to help
  * with optimization of the loading of a user's Action List.
  */
