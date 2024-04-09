@@ -833,8 +833,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
         }
-        
-//nkk4 changes for confirmation question: This existing line is causing new stacktrace with preRules in place
+
         ActionForward actionForward = super.route(mapping, form, request, response);
         
         //determine whether contract indicator has been checked and whether edoc is on purchasing contract assistant node
@@ -1191,8 +1190,6 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.ERROR_IWNT_REQUISITION_EXISTS);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
-        
-//nkk4 changes for confirmation question: Need to have question present here as well as when CreateReq button is pressed in GUI. 
 
         String url = ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                 + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + iWantDocument.getDocumentNumber();

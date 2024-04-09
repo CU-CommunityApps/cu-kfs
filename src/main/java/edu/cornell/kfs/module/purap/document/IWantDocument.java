@@ -163,9 +163,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private transient Organization collegeOrgForSearch;
     private transient Organization departmentOrgForSearch;
 
-    //Field value should be the same as attribute contractIndicator for lookup purposes only
-//    private transient Boolean contractIndicatorForSearch;
-    
     // The difference between the item and account totals; not persisted.
     private KualiDecimal itemAndAccountDifference;
     
@@ -903,16 +900,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setContractIndicator(String contractIndicator) {
         this.contractIndicator = contractIndicator;
-       // setRoutingContractIndicator(contractIndicator ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE);
     }
-
-//    private void setContractIndicatorForSearch(boolean contractIndicator) {
-//        this.contractIndicatorForSearch = (isContractIndicator() ? Boolean.TRUE : Boolean.FALSE);
-//    }
-//
-//    public Boolean getContractIndicatorForSearch() {
-//        return contractIndicatorForSearch;
-//    }
 
     public String getRoutingContractIndicator() {
         if (StringUtils.isBlank(routingContractIndicator)) {
