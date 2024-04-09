@@ -101,7 +101,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String processorNetId;
     private String processorName;
 
-    private boolean contractIndicator;
+    private String contractIndicator;
 
     // routing fields
     private String routingChart;
@@ -792,7 +792,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
-        setContractIndicator(false);
+        setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
     }
 
     @Override
@@ -809,7 +809,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
-        setContractIndicator(false);
+        setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
     }
 
     /**
@@ -897,14 +897,13 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
     
 
-    public boolean isContractIndicator() {
+    public String getContractIndicator() {
         return contractIndicator;
     }
 
-    public void setContractIndicator(boolean contractIndicator) {
+    public void setContractIndicator(String contractIndicator) {
         this.contractIndicator = contractIndicator;
-        setRoutingContractIndicator(contractIndicator ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE);
-//        setContractIndicatorForSearch(contractIndicator);
+       // setRoutingContractIndicator(contractIndicator ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE);
     }
 
 //    private void setContractIndicatorForSearch(boolean contractIndicator) {
@@ -932,7 +931,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
             return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
         }
         if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_CONTRACT_INDICATOR_CHECKED)) {
-            return isContractIndicator();
+            return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(contractIndicator);
         }
         throw new UnsupportedOperationException("Cannot answer IWantDocument split question for node called \"" + nodeName + "\"");
     }

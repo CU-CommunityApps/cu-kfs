@@ -840,7 +840,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         //determine whether contract indicator has been checked and whether edoc is on purchasing contract assistant node
         WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        boolean routeToPurchasingContractAssistantRequested = CollectionUtils.isNotEmpty(nodeNames) && (nodeNames.contains("PurchasingContractAssistant") & iWantDocument.isContractIndicator());
+        boolean routeToPurchasingContractAssistantRequested = CollectionUtils.isNotEmpty(nodeNames) && (nodeNames.contains("PurchasingContractAssistant") & KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(iWantDocument.getContractIndicator()));
         
         if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)
                 && !routeToPurchasingContractAssistantRequested) {
