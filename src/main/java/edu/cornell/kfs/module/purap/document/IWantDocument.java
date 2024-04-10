@@ -109,9 +109,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     //adhoc routing
     private String currentRouteToNetId;
-    
-    //contract tab routing fields
-    private String routingContractIndicator;
 
     //Items
     private List<IWantItem> items;
@@ -171,6 +168,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         items = new ArrayList<IWantItem>();
         accounts = new ArrayList<IWantAccount>();
         servicePerformedOnCampus = KFSConstants.ParameterValues.NO;
+        contractIndicator = KRADConstants.NO_INDICATOR_VALUE;
     }
 
     @Override
@@ -900,17 +898,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setContractIndicator(String contractIndicator) {
         this.contractIndicator = contractIndicator;
-    }
-
-    public String getRoutingContractIndicator() {
-        if (StringUtils.isBlank(routingContractIndicator)) {
-            return KRADConstants.NO_INDICATOR_VALUE;
-        }
-        return routingContractIndicator;
-    }
-
-    public void setRoutingContractIndicator(String routingContractIndicator) {
-        this.routingContractIndicator = routingContractIndicator;
     }
 
     @Override
