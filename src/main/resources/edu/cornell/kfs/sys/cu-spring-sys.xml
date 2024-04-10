@@ -35,7 +35,7 @@
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
-                <value>kimFeedV2Job</value>
+				<value>kimFeedV2Job</value>
 				<value>awsSecretValidationJob</value>
                 <value>testISOFIPSConversionMappingsJob</value>
             </list>
@@ -153,16 +153,16 @@
 		</property>
 	</bean>
 
-    <bean id="kimFeedV2Job" parent="unscheduledJobDescriptor">
-        <property name="steps">
-            <list>
-                <ref bean="runKimFeedV2Step"/>
-            </list>
-        </property>
-    </bean>
+	<bean id="kimFeedV2Job" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="runKimFeedV2Step"/>
+			</list>
+		</property>
+	</bean>
 
-    <bean id="runKimFeedV2Step" class="edu.cornell.kfs.sys.batch.RunKimFeedV2Step" parent="step"
-          p:kimFeedService-ref="kimFeedService"/>
+	<bean id="runKimFeedV2Step" class="edu.cornell.kfs.sys.batch.RunKimFeedV2Step" parent="step"
+		p:kimFeedService-ref="kimFeedService"/>
 
 	<bean id="awsSecretValidationJob"
 		parent="unscheduledJobDescriptor">
