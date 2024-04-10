@@ -879,7 +879,7 @@
     <bean id="IWantDocument-DocumentValuePathGroup-ContractIndicator" class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
         <property name="documentValues">
             <list>
-                <value>routingContractIndicator</value>
+                <value>contractIndicator</value>
             </list>
         </property>
     </bean>
