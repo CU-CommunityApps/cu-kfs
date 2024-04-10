@@ -43,7 +43,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
         
-        attributes.put(CUPurapConstants.IWantDocumentAttributes.CONTRACT_INDICATOR, iWantDocument.getRoutingContractIndicator());
+        attributes.put(CUPurapConstants.IWantDocumentAttributes.CONTRACT_INDICATOR, iWantDocument.getContractIndicator());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         attributes.put(KimAttributes.CHART_OF_ACCOUNTS_CODE, iWantDocument.getRoutingChart());
         attributes.put(KimAttributes.ORGANIZATION_CODE, iWantDocument.getRoutingOrganization());
         
-        attributes.put(CUPurapConstants.IWantDocumentAttributes.CONTRACT_INDICATOR, iWantDocument.getRoutingContractIndicator());
+        attributes.put(CUPurapConstants.IWantDocumentAttributes.CONTRACT_INDICATOR, iWantDocument.getContractIndicator());
     }
 
     /*
