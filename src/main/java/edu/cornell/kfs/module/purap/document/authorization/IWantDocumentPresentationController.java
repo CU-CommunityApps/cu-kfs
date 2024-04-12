@@ -1,18 +1,26 @@
 package edu.cornell.kfs.module.purap.document.authorization;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
+import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.module.purap.PurapConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class IWantDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 
@@ -98,8 +106,26 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     public boolean canEditContractIndicator(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        boolean isInApproversNode = isInApproversNode(document, nodeNames);
+        
         return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
-                && (nodeNames.contains("OrganizationHierarchy") | nodeNames.contains("PurchasingContractAssistant"));
+                && (nodeNames.contains("OrganizationHierarchy") || nodeNames.contains("PurchasingContractAssistant")) 
+                && isInApproversNode;
+    }
+    
+    private boolean isInApproversNode(Document document, Set<String> nodeNames) {
+        final Person currentUser = GlobalVariables.getUserSession().getPerson();
+        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
+        for (String nodeName : nodeNames) {
+            List<ActionRequest> actionRequests = workflowDocumentService.getActionRequestsForPrincipalAtNode(
+                    document.getDocumentNumber(), nodeName, currentUser.getPrincipalId());
+            for (ActionRequest actionRequest : actionRequests) {
+                if (actionRequest.isApproveRequest()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -168,14 +194,22 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
         editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_NOTE_OPTIONS);
         
-        if (canEditContractIndicator(document)) {
-            editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
-            editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
-        } else if (canViewContractTab(document)) {
-            editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+        if(isContractFunctionalityEnabled()) {
+            if (canEditContractIndicator(document)) {
+                editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+                editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
+            } else if (canViewContractTab(document)) {
+                editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+            }
         }
 
         return editModes;
+    }
+
+    private boolean isContractFunctionalityEnabled() {
+        return StringUtils.equalsIgnoreCase(
+                getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapConstants.IWNT_DOC_ENABLE_IWANT_CONTRACT_TAB_IND_PARM),
+                KFSConstants.ParameterValues.YES);
     }
 
 }

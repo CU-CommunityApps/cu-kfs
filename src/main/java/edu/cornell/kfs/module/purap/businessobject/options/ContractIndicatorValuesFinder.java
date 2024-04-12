@@ -18,23 +18,24 @@
  */
 package edu.cornell.kfs.module.purap.businessobject.options;
 
-import org.kuali.kfs.krad.util.KRADConstants;
+import java.util.List;
+
 import org.kuali.kfs.core.api.util.ConcreteKeyValue;
 import org.kuali.kfs.core.api.util.KeyValue;
-
-import java.util.List;
+import org.kuali.kfs.krad.keyvalues.KeyValuesBase;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
 
 /**
  * This class returns list of boolean key value pairs.
  */
-public class IndicatorMinusBothValuesFinder extends org.kuali.kfs.krad.keyvalues.KeyValuesBase {
+public class ContractIndicatorValuesFinder extends KeyValuesBase {
 
-    public static final IndicatorMinusBothValuesFinder INSTANCE = new IndicatorMinusBothValuesFinder();
+    public static final ContractIndicatorValuesFinder INSTANCE = new ContractIndicatorValuesFinder();
 
     protected static final List<KeyValue> ACTIVE_LABELS = List.of(
-            new ConcreteKeyValue(KRADConstants.YES_INDICATOR_VALUE, "Yes"),
-            new ConcreteKeyValue(KRADConstants.NO_INDICATOR_VALUE, "No")
-    );
+            new ConcreteKeyValue(KRADConstants.YES_INDICATOR_VALUE, KFSConstants.OptionLabels.YES),
+            new ConcreteKeyValue(KRADConstants.NO_INDICATOR_VALUE, KFSConstants.OptionLabels.NO));
 
     @Override
     public List<KeyValue> getKeyValues() {
