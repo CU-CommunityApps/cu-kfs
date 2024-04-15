@@ -5,7 +5,7 @@
 
 <c:set var="tabindexOverrideBase" value="30"/>
 <c:set var="displayContractTab" value="${(not empty KualiForm.editingMode['displayContractTab'])}" scope="request"/>
-<c:set var="contractIndicatorReadOnly" value="${KualiForm.docFinal}" scope="request"/>
+<c:set var="contractIndicatorReadOnly" value="${(empty KualiForm.editingMode['editContractIndicator'])}" scope="request"/>
 
 <c:if test="${displayContractTab}">
     <kul:tab tabTitle="Contract" defaultOpen="true">

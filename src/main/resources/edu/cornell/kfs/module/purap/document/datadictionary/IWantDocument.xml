@@ -84,6 +84,7 @@
         <ref bean="IWantDocument-processorNetId"/>
         
         <ref bean="IWantDocument-contractIndicator"/>
+        <ref bean="IWantDocument-contractIndicatorForSearch"/>
 
         <ref bean="IWantDocument-accountDescriptionTxt"/>
         <ref bean="IWantDocument-vendorDescription"/>
@@ -709,6 +710,17 @@
         <bean parent="RadioControlDefinition" p:valuesFinder-ref="contractIndicatorValuesFinder" />
     </property>
   </bean>
+  
+  <bean id="IWantDocument-contractIndicatorForSearch" parent="IWantDocument-contractIndicatorForSearch-parentBean"/>
+  <bean id="IWantDocument-contractIndicatorForSearch-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="contractIndicatorForSearch"/>
+    <property name="label" value="Contract"/>
+    <property name="shortLabel" value="Contract"/>
+    <property name="required" value="false"/>
+    <property name="control">
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="indicatorValuesFinder" />
+    </property>
+  </bean>
 
   <bean id="IWantDocument-validations" parent="IWantDocument-validations-parentBean"/>
   
@@ -819,7 +831,7 @@
                   <property name="searchingAttribute">
                     <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                       <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
-                      <property name="attributeName" value="contractIndicator"/>
+                      <property name="attributeName" value="contractIndicatorForSearch"/>
                       <property name="showAttributeInSearchCriteria" value="true"/>
                       <property name="showAttributeInResultSet" value="true"/>
                     </bean>
