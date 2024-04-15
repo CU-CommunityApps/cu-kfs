@@ -1566,4 +1566,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         this.noteOptionDropdownSelectedValue = noteOptionDropdownSelectedValue;
     }
 
+    public String getContractIndicatorForSearch() {
+        return contractIndicator;
+    }
+
 }

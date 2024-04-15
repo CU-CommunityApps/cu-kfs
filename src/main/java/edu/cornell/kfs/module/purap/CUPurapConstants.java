@@ -122,6 +122,7 @@ public class CUPurapConstants {
     public static final class IWantRouteNodes {
         public static final String IS_ORDER_COMPLETED = "IsOrderCompleted";
         public static final String IS_CONTRACT_INDICATOR_CHECKED = "IsContractIndicatorChecked";
+        public static final String PURCHASING_CONTRACT_ASSISTANT  = "PurchasingContractAssistant";
     }
     
     public static final class IWantDocumentAttributes {

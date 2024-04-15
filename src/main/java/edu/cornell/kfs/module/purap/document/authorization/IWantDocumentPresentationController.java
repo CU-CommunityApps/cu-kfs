@@ -13,6 +13,8 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
+import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
+import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -95,7 +97,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
      */
     public boolean canViewContractTab(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return workflowDocument.isFinal();
+        return isInOrgHierarchyOrPurchasingAssistantNode(document) || workflowDocument.isFinal();
     }
 
     /*
@@ -105,23 +107,26 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
      */
     public boolean canEditContractIndicator(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        boolean isInApproversNode = isInApproversNode(document, nodeNames);
+        boolean isInApproversNode = isInApproversNode(document);
         
-        return workflowDocument.isEnroute() && CollectionUtils.isNotEmpty(nodeNames) 
-                && (nodeNames.contains("OrganizationHierarchy") || nodeNames.contains("PurchasingContractAssistant")) 
+        return workflowDocument.isEnroute()
+                && isInOrgHierarchyOrPurchasingAssistantNode(document)
                 && isInApproversNode;
     }
     
-    private boolean isInApproversNode(Document document, Set<String> nodeNames) {
+    private boolean isInApproversNode(Document document) {
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
         WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
-        for (String nodeName : nodeNames) {
-            List<ActionRequest> actionRequests = workflowDocumentService.getActionRequestsForPrincipalAtNode(
-                    document.getDocumentNumber(), nodeName, currentUser.getPrincipalId());
-            for (ActionRequest actionRequest : actionRequests) {
-                if (actionRequest.isApproveRequest()) {
-                    return true;
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            for (String nodeName : nodeNames) {
+                List<ActionRequest> actionRequests = workflowDocumentService.getActionRequestsForPrincipalAtNode(
+                        document.getDocumentNumber(), nodeName, currentUser.getPrincipalId());
+                for (ActionRequest actionRequest : actionRequests) {
+                    if (actionRequest.isApproveRequest()) {
+                        return true;
+                    }
                 }
             }
         }
@@ -210,6 +215,17 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         return StringUtils.equalsIgnoreCase(
                 getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapConstants.IWNT_DOC_ENABLE_IWANT_CONTRACT_TAB_IND_PARM),
                 KFSConstants.ParameterValues.YES);
+    }
+    
+    private boolean isInOrgHierarchyOrPurchasingAssistantNode(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY)
+                    || nodeNames.contains(CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
+        }
+        return false;
     }
 
 }
