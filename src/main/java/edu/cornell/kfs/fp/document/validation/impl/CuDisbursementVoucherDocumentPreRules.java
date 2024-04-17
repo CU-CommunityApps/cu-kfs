@@ -11,6 +11,7 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
+import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -93,6 +94,41 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         }
 
         return tabStatesOK;
+    }
+
+    @Override
+    protected boolean hasWireTransferValues(final PaymentSourceWireTransfer dvWireTransfer) {
+        boolean hasValues = super.hasWireTransferValues(dvWireTransfer);
+        final DisbursementVoucherWireTransferExtendedAttribute wireExtension =
+                (DisbursementVoucherWireTransferExtendedAttribute) dvWireTransfer.getExtension();
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankStreetAddress());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankProvince());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankSWIFTCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankIBAN());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrSortOrTransitCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankName());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankAddress());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankRoutingNumber());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankAccountNumber());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankSwiftCode());
+        return hasValues;
+    }
+
+    @Override
+    protected void clearWireTransferValues(final PaymentSourceWireTransfer dvWireTransfer) {
+        super.clearWireTransferValues(dvWireTransfer);
+        final DisbursementVoucherWireTransferExtendedAttribute wireExtension =
+                (DisbursementVoucherWireTransferExtendedAttribute) dvWireTransfer.getExtension();
+        wireExtension.setDisbVchrBankStreetAddress(null);
+        wireExtension.setDisbVchrBankProvince(null);
+        wireExtension.setDisbVchrBankSWIFTCode(null);
+        wireExtension.setDisbVchrBankIBAN(null);
+        wireExtension.setDisbVchrSortOrTransitCode(null);
+        wireExtension.setDisbVchrCorrespondentBankName(null);
+        wireExtension.setDisbVchrCorrespondentBankAddress(null);
+        wireExtension.setDisbVchrCorrespondentBankRoutingNumber(null);
+        wireExtension.setDisbVchrCorrespondentBankAccountNumber(null);
+        wireExtension.setDisbVchrCorrespondentBankSwiftCode(null);
     }
 
     public CuCheckStubService getCuCheckStubService() {
