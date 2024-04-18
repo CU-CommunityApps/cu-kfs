@@ -1,6 +1,7 @@
 package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -52,7 +53,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
     public void performSaeDetailLineValidationForRequestedCashAdvances(ConcurStandardAccountingExtractDetailLine detailFileLine, List<String> uniqueRequestedCashAdvanceKeysInFile) {
         if (requestDetailFileLineIsCashAdvance(detailFileLine)) {
             boolean lineValidationPassed = true;
-            lineValidationPassed = requestedCashAdvanceApprovedOrApplied(detailFileLine);
+            lineValidationPassed =  requestedCashAdvanceApprovedByConcurAdministrator(detailFileLine);
             LOG.info("performSaeDetailLineValidationForRequestedCashAdvances: requestedCashAdvanceApprovedByConcurAdministrator = " + lineValidationPassed);
             
             lineValidationPassed &= requestedCashAdvanceHasNotBeenClonedInFile(detailFileLine, uniqueRequestedCashAdvanceKeysInFile);
@@ -92,26 +93,22 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
     }
 
     /**
-     * Requested cash advances are valid if they are either approved by administrator (1) or applied to trip reimbursement (2)
+     * Requested cash advances issued/approved by Concur Cash Advance Administrator will have a cash advance 
+     * transaction type indicating that approval/issuance.  These are the lines that need to be processed as requested
+     * cash advances when additional validation also passes.
      *
      * @param detailFileLine
      * @return boolean
      */
-    private boolean requestedCashAdvanceApprovedOrApplied(ConcurStandardAccountingExtractDetailLine detailFileLine) {
-        boolean validCashAdvance = getConcurStandardAccountingExtractCashAdvanceService().isPreTripCashAdvanceIssuedByCashAdmin(detailFileLine) ||
-                getConcurStandardAccountingExtractCashAdvanceService().isCashAdvanceToBeAppliedToReimbursement(detailFileLine);
-
-        if (validCashAdvance) {
-            detailFileLine.getValidationResult().setCashAdvanceApprovedOrApplied(true);
+    private boolean requestedCashAdvanceApprovedByConcurAdministrator(ConcurStandardAccountingExtractDetailLine detailFileLine) {
+        if (getConcurStandardAccountingExtractCashAdvanceService().isPreTripCashAdvanceIssuedByCashAdmin(detailFileLine)) {
+            detailFileLine.getValidationResult().setCashAdvanceAdministratorApprovedCashAdvance(true);
         } else {
-            detailFileLine.getValidationResult().setCashAdvanceApprovedOrApplied(false);
-
-            String errorMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_DATA_LINE_NOT_APPROVED_OR_APPLIED);
-            String validationError = MessageFormat.format(errorMessage, detailFileLine.getCashAdvanceTransactionType());
+            detailFileLine.getValidationResult().setCashAdvanceAdministratorApprovedCashAdvance(false);
+            String validationError = MessageFormat.format(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_APPROVED_REQUESTED_CASH_ADVANCE_DATA_LINE), detailFileLine.getCashAdvanceTransactionType());
             detailFileLine.getValidationResult().addMessage(validationError);
         }
-
-        return detailFileLine.getValidationResult().isCashAdvanceApprovedOrApplied();
+        return detailFileLine.getValidationResult().isCashAdvanceAdministratorApprovedCashAdvance();
     }
 
     /**
