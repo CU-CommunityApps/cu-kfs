@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,10 +47,32 @@ public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
         if(!reportData.getHeaderValidationErrors().isEmpty()) {
             sb.append("  There are header validation errors.");
         }
-        if(!reportData.getValidationErrorFileLines().isEmpty()) {
+        if(shouldAppendLineLevelValidationErrors(reportData.getValidationErrorFileLines())) {
             sb.append("  There are line level validation errors.");
         }
         return sb.toString();
+    }
+
+    protected boolean shouldAppendLineLevelValidationErrors(List<ConcurBatchReportLineValidationErrorItem> lineValidationErrorItems) {
+
+        for(ConcurBatchReportLineValidationErrorItem concurBatchReportLineValidationErrorItem : lineValidationErrorItems) {
+            if(isValidLineLevelValidationError(concurBatchReportLineValidationErrorItem)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean isValidLineLevelValidationError(ConcurBatchReportLineValidationErrorItem concurBatchReportLineValidationErrorItem) {
+
+        for (String lineValidationErrorItem : concurBatchReportLineValidationErrorItem.getItemErrorResults()) {
+            if (!lineValidationErrorItem.contains("The line has the Pseudo (XXXX) payment code")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
