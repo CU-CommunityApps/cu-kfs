@@ -66,8 +66,16 @@ public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
 
     protected boolean isValidLineLevelValidationError(ConcurBatchReportLineValidationErrorItem concurBatchReportLineValidationErrorItem) {
 
-        for (String lineValidationErrorItem : concurBatchReportLineValidationErrorItem.getItemErrorResults()) {
-            if (!lineValidationErrorItem.contains("The line has the Pseudo (XXXX) payment code")) {
+        for (String errorMessage : concurBatchReportLineValidationErrorItem.getItemErrorResults()) {
+            if (errorMessage.contains("The line has the Pseudo (XXXX) payment code")) {
+                continue;
+            } else if (errorMessage.contains("The line detected as cash advance request. Should have been processed by first batch job step")){
+                continue;
+            } else if (errorMessage.contains("Cash Advance with key") && errorMessage.contains("did not have a corresponding entry from the Request Extract")) {
+                continue;
+            } else if (errorMessage.contains("Line was not processed because a Cash Advance under the same Report ID was missing a related Request Extract entry")) {
+                continue;
+            } else {
                 return true;
             }
         }
