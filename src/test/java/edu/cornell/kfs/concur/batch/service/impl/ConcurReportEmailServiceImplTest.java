@@ -101,6 +101,7 @@ public class ConcurReportEmailServiceImplTest {
     
     private void  addLineErrorToReportData() {
         ConcurBatchReportLineValidationErrorItem item = new ConcurBatchReportLineValidationErrorItem();
+        item.addItemErrorResult("Invalid debit +999.99");
         reportData.getValidationErrorFileLines().add(item);
     }
     
