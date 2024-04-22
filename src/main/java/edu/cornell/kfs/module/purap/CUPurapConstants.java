@@ -147,6 +147,7 @@ public class CUPurapConstants {
     
     public static final String IWNT_DOC_DISPLAY_CONTRACT_TAB = "displayContractTab";
     public static final String IWNT_DOC_EDIT_CONTRACT_INDICATOR = "editContractIndicator";
+    public static final String IWNT_DOC_DISPLAY_CONFIRMATION = "displayConfirmation";
     
     public static final String IWNT_DOC_ENABLE_IWANT_CONTRACT_TAB_IND_PARM = "ENABLE_IWANT_CONTRACT_TAB_IND";
     

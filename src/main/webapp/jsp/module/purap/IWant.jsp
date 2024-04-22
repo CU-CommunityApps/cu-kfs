@@ -19,6 +19,18 @@
         var kualiForm = document.forms['KualiForm'];
         var kualiElements = kualiForm.elements;
     </SCRIPT>
+    
+    <c:set var="displayConfirmation" value="${KualiForm.editingMode['displayConfirmation']}" scope="request"/>
+    
+    <c:if test="${displayConfirmation}">
+            <c:set var="globalButtonTabIndex" value="50"/>
+
+
+        <div align="right"><br><bean:message key="message.creditMemo.initMessage"/></div>
+        <br>
+    </c:if>
+    
+    <c:if test="${not displayConfirmation}">
 
     <%-- Display "Document Overview" tab, if at the regular or customer data steps. --%>
     <c:if test="${isRegularStep or (step eq 'customerDataStep')}">
@@ -127,6 +139,7 @@
         </c:if>
         
         <kul:superUserActions/>
+    </c:if>
     </c:if>
 
     <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>

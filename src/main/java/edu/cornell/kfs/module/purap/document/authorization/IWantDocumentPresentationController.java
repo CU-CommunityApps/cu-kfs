@@ -18,6 +18,7 @@ import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.module.purap.PurapConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
@@ -206,9 +207,24 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             } else if (canViewContractTab(document)) {
                 editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
             }
+            // confirmation needed to create REQ
+            if(confirmationNeeded(document)) {
+                editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
+            }
         }
 
         return editModes;
+    }
+
+    private boolean confirmationNeeded(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        IWantDocument iWantDocument = (IWantDocument) document;
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(iWantDocument.getContractIndicator());
+        }
+        return false;
     }
 
     private boolean isContractFunctionalityEnabled() {
