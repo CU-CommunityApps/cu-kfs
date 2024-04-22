@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2023 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+    CU Customization: Added some Cornell-specific functions to this library.
+-->
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+        version="2.0">
+
+    <description>JSTL 1.1 functions library</description>
+    <display-name>JSTL functions</display-name>
+    <tlib-version>1.1</tlib-version>
+    <short-name>fn</short-name>
+    <uri>http://www.kuali.org/communities/kfs/jsp/functions</uri>
+
+    <function>
+        <description>
+            Converts a property name so that it is correct for the purposes of populating a business object in the maintenance framework
+        </description>
+        <name>renamePropertyForMaintenanceFramework</name>
+        <function-class>org.kuali.kfs.sys.web.WebUtilities</function-class>
+        <function-signature>java.lang.String renamePropertyForMaintenanceFramework(java.lang.String)</function-signature>
+        <example>
+            &lt;html:hidden property="${kfsfunc:renamePropertyForMaintenanceFramework(propertyName)}" /&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Determines if the given value matches the given pattern
+        </description>
+        <name>matchesPattern</name>
+        <function-class>org.kuali.kfs.sys.web.WebUtilities</function-class>
+        <function-signature>boolean matchesPattern(java.lang.String, java.lang.String)</function-signature>
+        <example>
+            &lt;c:if test="${kfsfunc:matchesPattern(value,'^-*$')}"&gt;
+        </example>
+    </function>
+
+    <!-- Start of CU-specific functions -->
+
+    <function>
+        <description>
+            Updates the given Person Name to a potentially masked equivalent when necessary. If the value is
+            already masked or consists of a person-not-found error message, then it will be left as-is.
+            Otherwise, it will be replaced with the value obtained from the given form property, which is
+            expected to have automatic masking of sensitive values.
+        </description>
+        <name>convertPersonNameForDisplayIfNecessary</name>
+        <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
+        <function-signature>java.lang.String convertPersonNameForDisplayIfNecessary(java.lang.String, org.apache.struts.action.ActionForm, java.lang.String)</function-signature>
+        <example>
+            &lt;c:set var="safePersonName" test="${kfsfunc:convertPersonNameForDisplayIfNecessary(personName, actionForm, personNameFieldName)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Updates the flattened lookup field conversions list so that references to potentially masked fields
+            will reference the equivalent mask-if-necessary fields instead. If the from/to conversions reference
+            nested Person fields on the form, they will also be updated in the flattened list.
+        </description>
+        <name>convertPersonFieldConversionsForMasking</name>
+        <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
+        <function-signature>java.lang.String convertPersonFieldConversionsForMasking(java.lang.String)</function-signature>
+        <example>
+            &lt;c:set var="newFieldConversions" test="${kfsfunc:convertPersonFieldConversionsForMasking(oldFieldConversions)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
+            Updates the flattened lookup parameters list so that references to potentially masked fields
+            will reference the equivalent mask-if-necessary fields instead. If the from/to conversions reference
+            nested Person fields on the form, they will also be updated in the flattened list.
+        </description>
+        <name>convertPersonLookupParametersForMasking</name>
+        <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
+        <function-signature>java.lang.String convertPersonLookupParametersForMasking(java.lang.String)</function-signature>
+        <example>
+            &lt;c:set var="newlookupParameters" test="${kfsfunc:convertPersonLookupParametersForMasking(oldLookupParameters)}"/&gt;
+        </example>
+    </function>
+
+    <!-- End of CU-specific functions -->
+
+</taglib>

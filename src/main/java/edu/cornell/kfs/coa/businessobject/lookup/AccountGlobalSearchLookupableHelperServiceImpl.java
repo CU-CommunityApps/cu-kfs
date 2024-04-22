@@ -19,24 +19,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import edu.cornell.kfs.sys.CUKFSConstants;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.coa.businessobject.lookup.KualiAccountLookupableHelperServiceImpl;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.core.web.format.BooleanFormatter;
-import org.kuali.kfs.kim.api.identity.IdentityService;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.permission.PermissionService;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.util.BeanPropertyComparator;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.coa.dataaccess.AccountGlobalSearchDao;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccountLookupableHelperServiceImpl {
     private AccountGlobalSearchDao accountGlobalSearchDao;
-    private IdentityService identityService;
+    private PersonService personService;
     private PermissionService permissionService;
 
     /**
@@ -112,13 +112,13 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         final String principalName = parameters.get(userPrefix + CUKFSConstants.DELIMITER + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER);
 
         if (StringUtils.isNotBlank(principalName)) {
-            final Principal principal = identityService.getPrincipalByPrincipalName(principalName);
+            final Person person = personService.getPersonByPrincipalName(principalName);
 
-            if (principal == null) {
+            if (person == null) {
                 return false;
             }
 
-            parameters.put(userIdentifierKey, principal.getPrincipalId());
+            parameters.put(userIdentifierKey, person.getPrincipalId());
             parameters.remove(userPrefix + CUKFSConstants.DELIMITER + KFSPropertyConstants.KUALI_USER_PERSON_USER_IDENTIFIER);
         }
 
@@ -169,13 +169,13 @@ public class AccountGlobalSearchLookupableHelperServiceImpl extends KualiAccount
         this.accountGlobalSearchDao = accountGlobalSearchDao;
     }
 
-    public IdentityService getIdentityService() {
-        return identityService;
+    public PersonService getPersonService() {
+        return personService;
     }
 
-    public void setIdentityService(IdentityService identityService) {
-        this.identityService = identityService;
-        super.setIdentityService(identityService);
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
+        super.setPersonService(personService);
     }
 
     public PermissionService getPermissionService() {
