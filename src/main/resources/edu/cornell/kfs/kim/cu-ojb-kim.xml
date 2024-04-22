@@ -1,0 +1,170 @@
+<descriptor-repository version="1.0">
+
+    <class-descriptor class="org.kuali.kfs.kim.impl.identity.Person" table="KRIM_PERSON_T">
+        <field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="principalName" column="PRNCPL_NM" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="entityId" column="ENTITY_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="entityTypeCode" column="ENT_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP"/>
+        <field-descriptor name="firstName" column="FIRST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="middleName" column="MIDDLE_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="lastName" column="LAST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress" column="EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneNumber" column="PHONE_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressTypeCode" column="ADDR_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine1" column="ADDR_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine2" column="ADDR_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine3" column="ADDR_LINE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressCity" column="ADDR_CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressStateProvinceCode" column="ADDR_STATE_PVC_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressPostalCode" column="ADDR_POSTAL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressCountryCode" column="ADDR_POSTAL_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="affiliationTypeCode" column="AFLTN_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="campusCode" column="CAMPUS_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="employeeStatusCode" column="EMP_STAT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="employeeTypeCode" column="EMP_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primaryDepartmentCode" column="PRMRY_DEPT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="baseSalaryAmount" column="BASE_SLRY_AMT" jdbc-type="DECIMAL"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="employeeId" column="EMP_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="taxId" column="TAX_ID" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <reference-descriptor name="extension"
+                              class-ref="edu.cornell.kfs.kim.impl.identity.PersonExtension"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="principalId"/>
+        </reference-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.kim.impl.identity.PersonExtension" table="KRIM_PERSON_TX">
+        <field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="altAddressTypeCode" column="ALT_ADDR_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressLine1" column="ALT_ADDR_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressLine2" column="ALT_ADDR_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressLine3" column="ALT_ADDR_LINE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressCity" column="ALT_ADDR_CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressStateProvinceCode" column="ALT_ADDR_STATE_PVC_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressPostalCode" column="ALT_ADDR_POSTAL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressCountryCode" column="ALT_ADDR_POSTAL_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="suppressName" column="SUPPRESS_NM_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="suppressEmail" column="SUPPRESS_EMAIL_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="suppressPhone" column="SUPPRESS_PHONE_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="suppressPersonal" column="SUPPRESS_PRSNL_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <collection-descriptor name="affiliations"
+                               element-class-ref="edu.cornell.kfs.kim.impl.identity.PersonAffiliation"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+                               auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <inverse-foreignkey field-ref="principalId"/>
+        </collection-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.kim.impl.identity.PersonAffiliation" table="KRIM_PERSON_CU_AFLTN_T">
+        <field-descriptor name="principalId" column="PRNCPL_ID" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="affiliationTypeCode" column="AFLTN_TYP_CD" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="affiliationStatus" column="AFLTN_STATUS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primary" column="PRMRY_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    </class-descriptor>
+
+    <class-descriptor class="org.kuali.kfs.kim.document.IdentityManagementPersonDocument" table="KRIM_PERSON_DOCUMENT_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="entityId" column="entity_id" jdbc-type="VARCHAR" autoincrement="true" sequence-name="KRIM_ENTITY_ID_S"/>
+        <field-descriptor name="principalId" column="prncpl_id" jdbc-type="VARCHAR" autoincrement="true" sequence-name="KRIM_PRNCPL_ID_S"/>
+        <field-descriptor name="principalName" column="prncpl_nm" jdbc-type="VARCHAR"/>
+        <field-descriptor name="affiliationTypeCode" column="AFLTN_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="campusCode" column="CAMPUS_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="employeeStatusCode" column="EMP_STAT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="employeeTypeCode" column="EMP_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primaryDepartmentCode" column="PRMRY_DEPT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="baseSalaryAmount" column="BASE_SLRY_AMT" jdbc-type="DECIMAL"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
+        <field-descriptor name="employeeId" column="EMP_ID" jdbc-type="VARCHAR"/>
+        <field-descriptor name="firstName" column="FIRST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="middleName" column="MIDDLE_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="lastName" column="LAST_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressTypeCode" column="ADDR_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine1" column="ADDR_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine2" column="ADDR_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressLine3" column="ADDR_LINE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressCity" column="ADDR_CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressStateProvinceCode" column="ADDR_STATE_PVC_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressPostalCode" column="ADDR_POSTAL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="addressCountryCode" column="ADDR_POSTAL_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="phoneNumber" column="PHONE_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="emailAddress" column="EMAIL_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="active" column="ACTV_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <reference-descriptor name="documentHeader" class-ref="org.kuali.kfs.sys.businessobject.DocumentHeader" auto-retrieve="true" auto-update="object" auto-delete="object">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+        <collection-descriptor name="roles" element-class-ref="org.kuali.kfs.kim.bo.ui.PersonDocumentRole" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object"
+                               auto-delete="object" proxy="false">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="groups" element-class-ref="org.kuali.kfs.kim.bo.ui.PersonDocumentGroup" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object"
+                               auto-delete="object" proxy="false">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <collection-descriptor name="delegations" element-class-ref="org.kuali.kfs.kim.bo.ui.RoleDocumentDelegation" collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList" auto-retrieve="true" auto-update="object"
+                               auto-delete="object" proxy="false">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+        <reference-descriptor name="extension"
+                              class-ref="edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension"
+                      table="KRIM_PERSON_DOCUMENT_TX">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+                <field-descriptor name="altAddressTypeCode" column="ALT_ADDR_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressLine1" column="ALT_ADDR_LINE_1" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressLine2" column="ALT_ADDR_LINE_2" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressLine3" column="ALT_ADDR_LINE_3" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressCity" column="ALT_ADDR_CITY" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressStateProvinceCode" column="ALT_ADDR_STATE_PVC_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressPostalCode" column="ALT_ADDR_POSTAL_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="altAddressCountryCode" column="ALT_ADDR_POSTAL_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="suppressName" column="SUPPRESS_NM_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="suppressEmail" column="SUPPRESS_EMAIL_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="suppressPhone" column="SUPPRESS_PHONE_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="suppressPersonal" column="SUPPRESS_PRSNL_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <collection-descriptor name="affiliations"
+                               element-class-ref="edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation"
+                               collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
+                               auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <inverse-foreignkey field-ref="documentNumber"/>
+        </collection-descriptor>
+    </class-descriptor>
+
+    <class-descriptor class="edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation" table="KRIM_PND_CU_AFLTN_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="affiliationTypeCode" column="AFLTN_TYP_CD" jdbc-type="VARCHAR" primarykey="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" indexed="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="affiliationStatus" column="AFLTN_STATUS" jdbc-type="VARCHAR"/>
+        <field-descriptor name="primary" column="PRMRY_IND" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+    </class-descriptor>
+
+</descriptor-repository>

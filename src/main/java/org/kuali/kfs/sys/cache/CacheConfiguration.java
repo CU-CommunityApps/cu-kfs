@@ -40,10 +40,7 @@ import org.kuali.kfs.kim.impl.common.delegate.DelegateType;
 import org.kuali.kfs.kim.impl.group.Group;
 import org.kuali.kfs.kim.impl.group.GroupMember;
 import org.kuali.kfs.kim.impl.identity.CodedAttribute;
-import org.kuali.kfs.kim.impl.identity.entity.Entity;
-import org.kuali.kfs.kim.impl.identity.name.EntityName;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
-import org.kuali.kfs.kim.impl.identity.privacy.EntityPrivacyPreferences;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.impl.permission.Permission;
 import org.kuali.kfs.kim.impl.permission.PermissionTemplate;
 import org.kuali.kfs.kim.impl.responsibility.Responsibility;
@@ -100,9 +97,6 @@ public class CacheConfiguration {
                 DelegateMember.CACHE_NAME,
                 DelegateType.CACHE_NAME,
                 DocumentType.CACHE_NAME,
-                Entity.CACHE_NAME,
-                EntityName.CACHE_NAME,
-                EntityPrivacyPreferences.CACHE_NAME,
                 Group.CACHE_NAME,
                 GroupMember.CACHE_NAME,
                 HomeOrigination.CACHE_NAME,
@@ -117,7 +111,7 @@ public class CacheConfiguration {
                 Parameter.CACHE_NAME,
                 Permission.CACHE_NAME,
                 PermissionTemplate.CACHE_NAME,
-                Principal.CACHE_NAME,
+                Person.CACHE_NAME,
                 ProjectCode.CACHE_NAME,
                 Responsibility.CACHE_NAME,
                 ResponsibilityTemplate.CACHE_NAME,

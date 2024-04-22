@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
-import edu.cornell.kfs.module.cam.document.service.CuAssetService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.kim.impl.identity.PersonServiceImpl;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.cam.CamsConstants;
@@ -19,15 +19,15 @@ import org.kuali.kfs.module.cam.businessobject.Asset;
 import org.kuali.kfs.module.cam.document.service.impl.AssetServiceImpl;
 
 import edu.cornell.kfs.module.cam.CuCamsConstants;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kim.impl.identity.Person;
+import edu.cornell.kfs.module.cam.businessobject.AssetExtension;
+import edu.cornell.kfs.module.cam.document.service.CuAssetService;
 
 public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetService {
 
     private BusinessObjectService businessObjectService;
     private ParameterService parameterService;
     private DateTimeService dateTimeService;
-    private PersonServiceImpl personService;
+    private PersonService personService;
 
     @Override
     public List<Asset> findActiveAssetsMatchingTagNumber(final String campusTagNumber) {
@@ -83,7 +83,7 @@ public class CuAssetServiceImpl extends AssetServiceImpl implements CuAssetServi
         this.dateTimeService = dateTimeService;
     }
 
-    public void setPersonService(final PersonServiceImpl personService) {
+    public void setPersonService(final PersonService personService) {
         this.personService = personService;
     }
 

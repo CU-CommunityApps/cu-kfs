@@ -30,11 +30,12 @@ public class CuDisbursementPayeeLookupableHelperServiceImplIntegTest extends Kua
 	private PersonService personService;
 	private UnitTestSqlDao unitTestSqlDao;
 	private String alumniSql = "SELECT f.dv_payee_id_nbr " +
-			"FROM kfs.FP_DV_PAYEE_DTL_T f, kfs.krim_entity_afltn_t k " +
+			"FROM kfs.FP_DV_PAYEE_DTL_T f, kfs.krim_person_t k, kfs.krim_person_cu_afltn_t a " +
 			"where f.dv_payee_typ_cd = 'A' " +
 			"and f.dv_payee_id_nbr = k.entity_id " +
-			"and k.afltn_typ_cd = 'ALUMNI' " +
-			"and k.dflt_ind = 'Y' " +
+			"and k.prncpl_id = a.prncpl_id " +
+			"and a.afltn_typ_cd = 'ALUMNI' " +
+			"and a.afltn_status = 'A' " +
 			"and k.actv_ind = 'Y' " +
 			"and rownum <= 1";
 

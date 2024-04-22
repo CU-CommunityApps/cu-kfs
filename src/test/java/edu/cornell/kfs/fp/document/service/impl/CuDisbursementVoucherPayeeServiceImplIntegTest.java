@@ -88,10 +88,10 @@ public class CuDisbursementVoucherPayeeServiceImplIntegTest extends KualiIntegTe
 		
 		people = personService.findPeople( Collections.singletonMap(KIMPropertyConstants.Person.ENTITY_ID, aentid) );
 		alumni = people.get(0);
-		people.clear();
+
 		people = personService.findPeople( Collections.singletonMap(KIMPropertyConstants.Person.ENTITY_ID, sentid) );
 		student = people.get(0);		
-		people.clear();		
+		
 		people = personService.findPeople( Collections.singletonMap(KIMPropertyConstants.Person.EMPLOYEE_ID, emEmpid) );		
 		employee = people.get(0);
 								
