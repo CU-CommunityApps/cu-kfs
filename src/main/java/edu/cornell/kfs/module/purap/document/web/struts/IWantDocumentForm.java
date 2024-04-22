@@ -21,6 +21,7 @@ import java.util.List;
 public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormBase {
 
     private static final long serialVersionUID = -82175061546434849L;
+    private static final String CONTRACT_WARNING_MESSAGE = "When the contract indicator is Yes, the SSC should not create the associated Requisition document. Are you sure you want to proceed?";
 
     protected boolean isWizard;
     protected String step;
@@ -350,9 +351,29 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonProperty("methodToCall.createRequisition");
         clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
         clearButton.setExtraButtonAltText("Create Req");
-        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
-                + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + getDocument().getDocumentNumber()
-                + "');return false;");
+        clearButton.setExtraButtonOnclick(
+                " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
+                        + " { " 
+                        + " if(confirm('" + CONTRACT_WARNING_MESSAGE + "')){ " 
+                        + " alert('creating REQ'); " 
+                        + "window.open('"
+                        + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                        + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="
+                        + getDocument().getDocumentNumber() 
+                        + "'); return false;" 
+                        + " } " 
+                        + " else { " 
+                        + "return false; "
+                        + " } } "
+                        + " else {"
+                        + "window.open('" 
+                        + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                        + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" 
+                        + getDocument().getDocumentNumber()
+                        + "'); return false; "
+                        + " } "
+                );
+
         return clearButton;
     }
     

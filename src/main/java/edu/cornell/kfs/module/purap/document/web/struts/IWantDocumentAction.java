@@ -1184,6 +1184,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        final String contractIndicator = iWantDocument.getContractIndicator();
+        
+        if(confirmationNeeded(iWantDocument, contractIndicator)) {
+            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.MESSAGE_IWNT_CONFIRM_CREATE_REQ);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        }
 
         // Make sure a related requisition does not already exist before creating one.
         if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
@@ -1197,6 +1203,16 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         ActionForward actionForward = new ActionForward(url, true);
 
         return actionForward;
+    }
+    
+    private boolean confirmationNeeded(IWantDocument document, String contractIndicator) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(contractIndicator);
+        }
+        return false;
     }
 
     private boolean addNewAccount(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantAccount account) {
