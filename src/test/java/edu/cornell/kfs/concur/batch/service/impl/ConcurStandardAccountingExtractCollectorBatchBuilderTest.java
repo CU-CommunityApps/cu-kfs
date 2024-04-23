@@ -618,7 +618,7 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilderTest {
     protected boolean validateLine(InvocationOnMock invocation) {
         ConcurStandardAccountingExtractDetailLine saeLine = invocation.getArgument(0);
         if (StringUtils.isBlank(saeLine.getReportId()) || StringUtils.isBlank(saeLine.getJournalAccountCode())) {
-            builder.reportUnprocessedLine(saeLine, "Line failed validation");
+            builder.reportUnprocessedLine(saeLine, "Employee not found", true);
             return false;
         }
         
