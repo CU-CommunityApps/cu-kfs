@@ -197,6 +197,10 @@
     <reference-descriptor name="vendorShippingPaymentTerms" class-ref="org.kuali.kfs.vnd.businessobject.ShippingPaymentTerms" auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" >
         <foreignkey field-ref="vendorShippingPaymentTermsCode" />
     </reference-descriptor>
+    <reference-descriptor name="vendorRestrictedPerson" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                          auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+        <foreignkey field-ref="vendorRestrictedPersonIdentifier" target-field-ref="principalId"/>
+    </reference-descriptor>
     <reference-descriptor name="extension" class-ref="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension" auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
         <foreignkey field-ref="vendorHeaderGeneratedIdentifier" />        
         <foreignkey field-ref="vendorDetailAssignedIdentifier" />

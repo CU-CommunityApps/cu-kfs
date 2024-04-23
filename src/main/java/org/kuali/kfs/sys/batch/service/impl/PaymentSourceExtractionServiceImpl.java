@@ -24,8 +24,8 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
-import org.kuali.kfs.kim.api.identity.IdentityService;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.pdp.PdpConstants;
@@ -63,7 +63,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     private FinancialSystemDocumentService financialSystemDocumentService;
     protected Set<String> checkAchFsloDocTypes;
 
-    private IdentityService identityService;
+    private PersonService personService;
 
     // This should only be set to true when testing this system. Setting this to true will run the code but
     // won't set the doc status to extracted
@@ -80,7 +80,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         LOG.debug("extractPayments() started");
         final Date processRunDate = dateTimeService.getCurrentDate();
 
-        final Principal user = identityService.getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
+        final Person user = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
         if (user == null) {
             LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
@@ -109,9 +109,8 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
     public void extractImmediatePayments() {
         LOG.debug("extractImmediatePayments() started");
         final Date processRunDate = dateTimeService.getCurrentDate();
-        final Principal uuser = identityService
-                .getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
-        if (uuser == null) {
+        final Person user = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+        if (user == null) {
             LOG.debug("extractPayments() Unable to find user {}", KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
         }
@@ -121,7 +120,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
                 .retrievePaymentSourcesByCampus(true);
         // Process each campus one at a time
         for (final String campusCode : documentsByCampus.keySet()) {
-            extractImmediatePaymentsForCampus(campusCode, uuser.getPrincipalId(), processRunDate,
+            extractImmediatePaymentsForCampus(campusCode, user.getPrincipalId(), processRunDate,
                     documentsByCampus.get(campusCode));
         }
     }
@@ -349,13 +348,13 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
             final PaymentSource paymentSource,
             final Date processRunDate,
             final boolean immediate) {
-        final Principal principal = identityService.getPrincipalByPrincipalName(KFSConstants.SYSTEM_USER);
-        if (principal == null) {
+        final Person person = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
+        if (person == null) {
             LOG.debug("extractSinglePayment() Unable to find user {}", KFSConstants.SYSTEM_USER);
             throw new IllegalArgumentException("Unable to find user " + KFSConstants.SYSTEM_USER);
         }
 
-        final Batch batch = createBatch(paymentSource.getCampusCode(), principal.getPrincipalId(), processRunDate);
+        final Batch batch = createBatch(paymentSource.getCampusCode(), person.getPrincipalId(), processRunDate);
         KualiDecimal totalAmount = KualiDecimal.ZERO;
 
         final PaymentGroup paymentGroup = addPayment(paymentSource, batch, processRunDate, immediate);
@@ -413,7 +412,7 @@ public class PaymentSourceExtractionServiceImpl implements PaymentSourceExtracti
         this.financialSystemDocumentService = financialSystemDocumentService;
     }
 
-    public void setIdentityService(final IdentityService identityService) {
-        this.identityService = identityService;
+    public void setPersonService(final PersonService personService) {
+        this.personService = personService;
     }
 }

@@ -428,9 +428,9 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
             iWantDocument.setInitiatorNetID(initiatorNetID);
 
-            String initiatorName = initiator.getNameUnmasked();
-            String initiatorPhoneNumber = initiator.getPhoneNumberUnmasked();
-            String initiatorEmailAddress = initiator.getEmailAddressUnmasked();
+            String initiatorName = initiator.getName();
+            String initiatorPhoneNumber = initiator.getPhoneNumber();
+            String initiatorEmailAddress = initiator.getEmailAddress();
 
             String address = iWantDocumentService.getPersonCampusAddress(initiatorNetID);
 
@@ -486,9 +486,9 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                      noErrors = false;
                  }
                  else{
- 	                String deliverToName = deliverToPerson.getNameUnmasked();
- 	                String deliverToPhoneNumber = deliverToPerson.getPhoneNumberUnmasked();
- 	                String deliverToEmailAddress = deliverToPerson.getEmailAddressUnmasked();
+ 	                String deliverToName = deliverToPerson.getName();
+ 	                String deliverToPhoneNumber = deliverToPerson.getPhoneNumber();
+ 	                String deliverToEmailAddress = deliverToPerson.getEmailAddress();
  	
  	                String address = iWantDocumentService.getPersonCampusAddress(batchIWantDocument.getDeliverToNetID());
  	                

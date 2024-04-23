@@ -23,9 +23,11 @@ import org.kuali.kfs.kew.api.preferences.Preferences;
 import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValueActionListExtension;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kew.web.RowStyleable;
+import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.group.Group;
-import org.kuali.kfs.kim.impl.identity.name.EntityName;
+import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import java.util.Map;
 /**
  * ====
  * CU Customization: Added a preference for controlling the visibility of the action list last modified date column.
+ *                   Also modified the "delegatorName" property to use the potentially masked Person name.
  * ====
  */
 
@@ -144,10 +147,9 @@ public class ActionItemActionListExtension extends ActionItem implements RowStyl
     private void initializeDelegatorName() {
         if (!delegatorNameInitialized) {
             if (getDelegatorPrincipalId() != null) {
-                final EntityName name = KimApiServiceLocator.getIdentityService()
-                        .getDefaultNamesForPrincipalId(getDelegatorPrincipalId());
-                if (name != null) {
-                    delegatorName = name.getCompositeName();
+                final Person person = SpringContext.getBean(PersonService.class).getPerson(getDelegatorPrincipalId());
+                if (person != null) {
+                    delegatorName = person.getNameMaskedIfNecessary();
                 }
             }
             if (getDelegatorGroupId() != null) {

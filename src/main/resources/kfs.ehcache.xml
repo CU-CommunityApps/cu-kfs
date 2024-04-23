@@ -50,10 +50,8 @@
     <cache name="GroupType" maxEntriesLocalHeap="25000" timeToLiveSeconds="1800"/>
     <cache name="GroupHistoryType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
     <cache name="GroupMemberType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
-    <cache name="EntityType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
-    <cache name="EntityNameType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
+    <cache name="Person" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
     <cache name="PrincipalType" maxEntriesLocalHeap="100000" timeToLiveSeconds="1800"/>
-    <cache name="EntityPrivacyPreferencesType" maxEntriesLocalHeap="50000" timeToLiveSeconds="1800"/>
     <cache name="CodedAttributeType" maxEntriesLocalHeap="100" timeToLiveSeconds="1800"/>
     <cache name="PermissionType" maxEntriesLocalHeap="50000" timeToLiveSeconds="1800"/>
     <cache name="PermissionTemplate" maxEntriesLocalHeap="10000" timeToLiveSeconds="1800"/>

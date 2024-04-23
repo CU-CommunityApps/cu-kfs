@@ -362,15 +362,11 @@ public class KFSConfigurer implements DisposableBean, InitializingBean, ServletC
     }
 
     private static void clearCache(final ApplicationContext applicationContext) {
-        // CU customization to add additional logging
-        LOG.info("clearCache: Clear cache");
         final CacheService cacheService = applicationContext.getBean("cacheService", CacheService.class);
         cacheService.clearNamedCache(BatchFile.CACHE_NAME);
     }
 
     private static void createBatchDirectories(final ApplicationContext applicationContext) {
-        // CU customization to add additional logging
-        LOG.info("createBatchDirectories: Create batch directories");
         final BatchFileDirectoryService batchFileDirectoryService =
                 applicationContext.getBean("batchFileDirectoryService", BatchFileDirectoryService.class);
         CompletableFuture.supplyAsync(batchFileDirectoryService::buildBatchFileLookupDirectoriesHierarchy);
