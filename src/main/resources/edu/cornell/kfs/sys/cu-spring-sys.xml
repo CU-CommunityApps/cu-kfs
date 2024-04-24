@@ -35,6 +35,7 @@
 				<value>documentReindexerJob</value>
 				<value>autoCancelBatchJob</value>
 				<value>kimFeedJob</value>
+				<value>kimFeedV2Job</value>
 				<value>awsSecretValidationJob</value>
                 <value>testISOFIPSConversionMappingsJob</value>
             </list>
@@ -145,12 +146,23 @@
 				<prop key="db-url0">${edw.datasource.url}</prop>
 				<prop key="db-username0">${edw.datasource.username}</prop>
 				<prop key="db-password0">${edw.datasource.password}</prop>
-				<prop key="db-url1">${kfs.datasource.url}</prop>
-				<prop key="db-username1">${kfs.datasource.username}</prop>
-				<prop key="db-password1">${kfs.datasource.password}</prop>
+				<prop key="db-url1">${rice.datasource.url}</prop>
+				<prop key="db-username1">${rice.datasource.username}</prop>
+				<prop key="db-password1">${rice.datasource.password}</prop>
 			</props>
 		</property>
 	</bean>
+
+	<bean id="kimFeedV2Job" parent="unscheduledJobDescriptor">
+		<property name="steps">
+			<list>
+				<ref bean="runKimFeedV2Step"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="runKimFeedV2Step" class="edu.cornell.kfs.sys.batch.RunKimFeedV2Step" parent="step"
+		p:kimFeedService-ref="kimFeedService"/>
 
 	<bean id="awsSecretValidationJob"
 		parent="unscheduledJobDescriptor">
@@ -194,7 +206,7 @@
 		<property name="userProcurementProfileValidationService">
 			<ref bean="userProcurementProfileValidationService" />
 		</property>
-		<property name="identityService" ref="identityService"/>
+		<property name="personService" ref="personService"/>
     </bean>
 
 	<bean id="userProfileLookupable" class="org.kuali.kfs.kns.lookup.KualiLookupableImpl" scope="prototype">

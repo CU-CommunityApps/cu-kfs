@@ -28,22 +28,15 @@ public enum ACHPersonPayeeFixture {
     }
 
     public Person toPerson() {
-        return new MockACHPerson(this);
-    }
-
-    public static final class MockACHPerson extends Person {
-        private static final long serialVersionUID = 1L;
-        
-        public MockACHPerson(ACHPersonPayeeFixture fixture) {
-            super();
-            this.principalId = fixture.principalId;
-            this.principalName = fixture.principalName;
-            this.entityId = fixture.entityId;
-            this.employeeId = fixture.employeeId;
-            this.emailAddress = fixture.emailAddress;
-            this.name = fixture.name;
-            this.active = true;
-        }
+        Person person = new Person();
+        person.setPrincipalId(principalId);
+        person.setPrincipalName(principalName);
+        person.setEntityId(entityId);
+        person.setEmployeeId(employeeId);
+        person.setEmailAddress(emailAddress);
+        person.setName(name);
+        person.setActive(true);
+        return person;
     }
 
 }

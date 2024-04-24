@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 /**
  * CU Customization:
  * Updated this class to include improved KIM attribute handling.
+ * Also backported the FINP-9235 changes into this file.
  */
 abstract class RoleServiceBase {
 
@@ -388,6 +389,18 @@ abstract class RoleServiceBase {
         criteria.put(KRADPropertyConstants.ACTIVE, "Y");
         // while this is not actually the primary key - there will be at most one row with these criteria
         return getBusinessObjectService().findByPrimaryKey(RoleLite.class, criteria);
+    }
+
+    protected List<RoleLite> getRoleLitesByName(final String namespaceCode, final String roleName) {
+        final Map<String, String> criteria = new HashMap<>();
+        if (StringUtils.isNotBlank(namespaceCode)) {
+            criteria.put(KimConstants.UniqueKeyConstants.NAMESPACE_CODE, namespaceCode);
+        }
+        if (StringUtils.isNotBlank(roleName)) {
+            criteria.put(KimConstants.UniqueKeyConstants.NAME, roleName);
+        }
+        criteria.put(KRADPropertyConstants.ACTIVE, "Y");
+        return (List<RoleLite>) getBusinessObjectService().findMatching(RoleLite.class, criteria);
     }
 
     protected List<RoleMember> doAnyMemberRecordsMatchByExactQualifier(

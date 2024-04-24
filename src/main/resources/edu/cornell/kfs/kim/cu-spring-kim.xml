@@ -20,6 +20,11 @@
                 <value>edu.cornell.kfs.kim</value>
             </list>
         </property>
+        <property name="databaseRepositoryFilePaths">
+            <list merge="true">
+                <value>edu/cornell/kfs/kim/cu-ojb-kim.xml</value>
+            </list>
+        </property>
     </bean>
 
     <bean id="kimAuthenticationService" class="edu.cornell.kfs.kim.impl.identity.CUWebAuthAuthenticationService"
@@ -31,7 +36,14 @@
 
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
           class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
-    
+
+    <bean class="edu.cornell.kfs.kim.impl.identity.CuPersonServiceImpl"
+          id="personService"
+          p:businessObjectService-ref="businessObjectService"
+          p:criteriaLookupService-ref="criteriaLookupService"
+          p:roleService-ref="roleService"
+    />
+
     <!-- KFSPTS-22142 Add local customization to fix Role lookup from a child/collection object on a maintenance doc -->
     <bean id="roleLookupable" class="org.kuali.kfs.kim.lookup.RoleLookupableImpl" parent="kualiLookupable" scope="prototype">
         <property name="lookupableHelperService">
@@ -39,14 +51,33 @@
                   parent="lookupableHelperService"
                   p:dateTimeService-ref="dateTimeService"
                   p:groupService-ref="kimGroupService"
-                  p:identityService-ref="identityService"    
                   p:kimTypeInfoService-ref="kimTypeInfoService"
                   p:permissionService-ref="permissionService"
+                  p:personService-ref="personService"
                   p:responsibilityService-ref="kimResponsibilityService"
                   p:roleService-ref="roleService"/>
         </property>
     </bean>
     
     <bean id="kimModule" parent="kimModule-parentBean" class="edu.cornell.kfs.kim.service.impl.CuKimModuleService"/>
+
+    <bean id="kimFeedEdwDao" parent="kimFeedEdwDao-parentBean"/>
+    <bean id="kimFeedEdwDao-parentBean"
+          abstract="true"
+          parent="platformAwareDaoJdbc"
+          class="edu.cornell.kfs.kim.batch.dataaccess.impl.KimFeedEdwDaoJdbc"
+          p:dataSource-ref="edwDataSource"
+          p:parameterService-ref="parameterService"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="kimFeedService" parent="kimFeedService-parentBean"/>
+    <bean id="kimFeedService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.kim.batch.service.impl.KimFeedServiceImpl"
+          p:kimFeedEdwDao-ref="kimFeedEdwDao"
+          p:personService-ref="personService"
+          p:businessObjectService-ref="businessObjectService"
+          p:dateTimeService-ref="dateTimeService"
+          p:dummyBaseSalaryAmount="${cu.kim.feed.dummy.salary}"/>
 
 </beans>

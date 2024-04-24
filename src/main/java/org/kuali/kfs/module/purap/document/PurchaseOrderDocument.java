@@ -42,7 +42,6 @@ import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.impl.identity.principal.Principal;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.dao.DocumentDao;
@@ -306,10 +305,7 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
     public String getAssignedUserPrincipalName() {
         // init this field when PO is first loaded and assigned user exists in PO
         if (assignedUserPrincipalName == null && assignedUserPrincipalId != null) {
-            // extra caution in case ref obj didn't get refreshed
-            //if (assignedUser == null)
-            //    this.refreshReferenceObject("assignedUser");
-            final Principal assignedUser = KimApiServiceLocator.getIdentityService().getPrincipal(assignedUserPrincipalId);
+            final Person assignedUser = KimApiServiceLocator.getPersonService().getPerson(assignedUserPrincipalId);
             assignedUserPrincipalName = assignedUser.getPrincipalName();
         }
         // otherwise return its current value directly
@@ -320,10 +316,9 @@ public class PurchaseOrderDocument extends PurchasingDocumentBase implements Mul
         this.assignedUserPrincipalName = assignedUserPrincipalName;
         // each time this field changes we need to update the assigned user ID and ref obj to keep consistent
         // this code can be moved to where PO is saved and with validation too, which may be more appropriate
-        Principal assignedUser = null;
+        Person assignedUser = null;
         if (assignedUserPrincipalName != null) {
-            assignedUser = KimApiServiceLocator.getIdentityService()
-                    .getPrincipalByPrincipalName(assignedUserPrincipalName);
+            assignedUser = KimApiServiceLocator.getPersonService().getPersonByPrincipalName(assignedUserPrincipalName);
         }
         if (assignedUser != null) {
             assignedUserPrincipalId = assignedUser.getPrincipalId();

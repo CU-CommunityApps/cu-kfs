@@ -16,7 +16,7 @@ import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
 public class RunKimFeedStep extends AbstractStep {
 
-    private static final Logger LOG = LogManager.getLogger(RunKimFeedStep.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final String DELTA_RUN_TYPE = "delta";
 
@@ -32,21 +32,18 @@ public class RunKimFeedStep extends AbstractStep {
             return true;
         } catch (Exception e) {
             LOG.error("execute: Unexpected error encountered when running KIM feed", e);
-            return false;
+            throw e;
         }
     }
 
     protected Properties buildKimFeedProperties() {
         Properties kimFeedProperties = new Properties(kimFeedBaseProperties);
         
-        Boolean skipDeltaFlagUpdates = parameterService.getParameterValueAsBoolean(
-                KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.BATCH_COMPONENT,
-                CUKFSParameterKeyConstants.KIM_FEED_SKIP_DELTA_FLAG_UPDATES);
         String deltasToLoad = parameterService.getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.BATCH_COMPONENT,
                 CUKFSParameterKeyConstants.KIM_FEED_DELTAS_TO_LOAD);
         
-        kimFeedProperties.setProperty(KimFeed.SKIP_DELTA_FLAG_UPDATES_PROP, skipDeltaFlagUpdates.toString());
+        kimFeedProperties.setProperty(KimFeed.SKIP_DELTA_FLAG_UPDATES_PROP, Boolean.TRUE.toString());
         
         if (StringUtils.isBlank(deltasToLoad)) {
             throw new IllegalStateException(CUKFSParameterKeyConstants.KIM_FEED_DELTAS_TO_LOAD + " parameter cannot be blank");
