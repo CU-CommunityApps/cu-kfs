@@ -239,7 +239,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     }
 
     private boolean canViewName() {
-        return !getPersonDocumentExtension().isSuppressName() || CuKimUtils.canModifyPerson(principalId);
+        return !getPersonDocumentExtension().isSuppressName();
     }
 
     public String getFirstNameMaskedIfNecessary() {
@@ -411,7 +411,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     // ==== CU Customization: Added methods related to masking the person's phone number. ====
 
     public boolean canViewPhoneNumber() {
-        return !getPersonDocumentExtension().isSuppressPhone() || CuKimUtils.canModifyPerson(principalId);
+        return !getPersonDocumentExtension().isSuppressPhone();
     }
 
     public String getPhoneNumberMaskedIfNecessary() {
@@ -431,7 +431,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
     // ==== CU Customization: Added methods related to masking the person's email address. ====
 
     private boolean canViewEmailAddress() {
-        return !getPersonDocumentExtension().isSuppressEmail() || CuKimUtils.canModifyPerson(principalId);
+        return !getPersonDocumentExtension().isSuppressEmail();
     }
 
     public String getEmailAddressMaskedIfNecessary() {

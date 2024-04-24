@@ -7,6 +7,12 @@ public final class CuKimConstants {
     public static final String DEPARTMENT_CODE_PREFIX = "IT-";
     public static final int MAX_ADDRESS_LINE_LENGTH = 40;
 
+    public static final class PersonInquirySections {
+        public static final String NAME = "Name";
+        public static final String PHONE_NUMBER = "Phone Number";
+        public static final String EMAIL_ADDRESS = "Email Address";
+    }
+
     public static final class EdwAffiliations {
         public static final String ACADEMIC = "A";
         public static final String AFFILIATE = "I";

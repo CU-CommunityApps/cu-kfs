@@ -7,5 +7,6 @@ public final class CuKimPropertyConstants {
     public static final String AFFILIATION_STATUS = "affiliationStatus";
     public static final String EMPLOYMENT_AFFILIATION_TYPE = "employmentAffiliationType";
     public static final String EXTENSION_AFFILIATIONS = "extension.affiliations";
+    public static final String MIDDLE_NAME = "middleName";
 
 }
