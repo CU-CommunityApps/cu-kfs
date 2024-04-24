@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    The Kuali Financial System, a comprehensive financial management system for higher education.
+
+    Copyright 2005-2023 Kuali, Inc.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="PayeeACHAccountMaintenanceDocument" parent="PayeeACHAccountMaintenanceDocument-parentBean"/>
+    <bean id="PayeeACHAccountMaintenanceDocument-parentBean" abstract="true" parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="org.kuali.kfs.pdp.businessobject.PayeeACHAccount"
+          p:maintainableClass="org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl" p:documentTypeName="PAAT"
+          p:businessRulesClass="org.kuali.kfs.pdp.document.validation.impl.PayeeAchAccountRule"
+          p:documentPresentationControllerClass="org.kuali.kfs.pdp.document.authorization.PayeeACHAccountMaintenanceDocumentPresentationController"
+          p:documentAuthorizerClass="org.kuali.kfs.pdp.document.authorization.PayeeACHAccountMaintenanceDocumentAuthorizer"
+          p:encryptDocumentDataInPersistentSessionStorage="true"
+          p:workflowAttributes-ref="PayeeACHAccountMaintenanceDocument-workflowAttributes">
+        <property name="maintainableSections">
+            <list>
+                <ref bean="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount"/>
+            </list>
+        </property>
+        <property name="defaultExistenceChecks">
+            <list>
+                <bean parent="ReferenceDefinition" p:attributeName="bankRouting"
+                      p:attributeToHighlightOnFail="bankRoutingNumber"/>
+                <bean parent="ReferenceDefinition" p:attributeName="transactionType"
+                      p:attributeToHighlightOnFail="achTransactionType"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>payeeIdentifierTypeCode</value>
+                <value>payeeIdNumber</value>
+                <value>achTransactionType</value>
+            </list>
+        </property>
+        <property name="webScriptFiles">
+            <list>
+                <value>dwr/interface/AchBankService.js</value>
+                <value>scripts/pdp/objectInfo.js</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Maintenance Section Definitions -->
+
+    <bean id="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount"
+          parent="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount-parentBean"/>
+    <bean id="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount-parentBean" abstract="true"
+          parent="MaintainableSectionDefinition" p:id="Edit Payee ACH Account" p:title="Edit Payee ACH Account">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="achAccountGeneratedIdentifier"
+                      p:unconditionallyReadOnly="true" p:defaultValueFinder-ref="nextAchAccountIdentifierFinder"/>
+                <bean parent="MaintainableFieldDefinition" p:name="payeeIdentifierTypeCode" p:required="true"
+                      p:webUILeaveFieldFunction="submit"/>
+                <bean parent="MaintainableFieldDefinition" p:name="payeeIdNumber" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber" p:required="true"
+                      p:webUILeaveFieldFunction="loadAchBankInfo"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankRouting.bankName"
+                      p:unconditionallyReadOnly="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankAccountNumber" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="bankAccountTypeCode" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="standardEntryClass"/>
+                <bean parent="MaintainableFieldDefinition" p:name="payeeName" p:required="false"/>
+                <bean parent="MaintainableFieldDefinition" p:name="payeeEmailAddress" p:required="false"/>
+                <bean parent="MaintainableFieldDefinition"
+                      p:name="achTransactionType"
+                      p:noLookup="true"
+                      p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Exported Workflow Properties -->
+    <bean id="PayeeACHAccountMaintenanceDocument-workflowAttributes"
+          parent="PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean"/>
+    <bean id="PayeeACHAccountMaintenanceDocument-workflowAttributes-parentBean" abstract="true"
+          parent="WorkflowAttributes">
+        <property name="searchingTypeDefinitions">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+                              p:businessObjectClassName="org.kuali.kfs.pdp.businessobject.PayeeACHAccount"
+                              p:attributeName="payeeIdentifierTypeCode"/>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>newMaintainableObject.businessObject.payeeIdentifierTypeCode</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+                              p:businessObjectClassName="org.kuali.kfs.pdp.businessobject.PayeeACHAccount"
+                              p:attributeName="payeeIdNumber"/>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>newMaintainableObject.businessObject.payeeIdNumber</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute"
+                              p:businessObjectClassName="org.kuali.kfs.pdp.businessobject.PayeeACHAccount"
+                              p:attributeName="payeeName"/>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>newMaintainableObject.businessObject.payeeName</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="nextAchAccountIdentifierFinder"
+          class="org.kuali.kfs.pdp.businessobject.defaultvalue.NextAchAccountIdentifierFinder"/>
+</beans>
