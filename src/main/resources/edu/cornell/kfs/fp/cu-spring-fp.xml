@@ -628,6 +628,12 @@
         <property name="dateTimeService" ref="dateTimeService"/>
     </bean>
     
+    <bean id="AccountingDocumentGenerator_PE" class="edu.cornell.kfs.fp.batch.service.impl.PreEncumbranceDocumentGenerator">
+        <property name="personService" ref="personService"/>
+        <property name="accountingXmlDocumentDownloadAttachmentService" ref="accountingXmlDocumentDownloadAttachmentService"/>
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
+    
     <bean id="cuDisbursementVoucherDefaultDueDateService" parent="cuDisbursementVoucherDefaultDueDateService-parentBean"/>
     <bean id="cuDisbursementVoucherDefaultDueDateService-parentBean" class="edu.cornell.kfs.fp.document.service.impl.CuDisbursementVoucherDefaultDueDateServiceImpl" abstract="true">
     	<property name="parameterService" ref="parameterService"/>
