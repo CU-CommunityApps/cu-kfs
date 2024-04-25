@@ -24,6 +24,8 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="personAttributes" value="${DataDictionary.Person.attributes}" />
+<%-- CU Customization: Added masking-related helper variable. --%>
+<c:set var="maskReadOnlyDataIfNecessary" value="${!KualiForm.canOverridePrivacyPreferences}"/>
 
 <kul:subtab width="${tableWidth}" subTabTitle="Email Address" noShowHideButton="true">
     <table class="standard side-margins">
@@ -37,7 +39,7 @@
                 <div align="left">
                     <%-- CU Customization: Add potential masking of email addresses. --%>
                     <c:choose>
-                        <c:when test="${readOnlyEntity}">
+                        <c:when test="${readOnlyEntity && maskReadOnlyDataIfNecessary}">
                             <kul:htmlControlAttribute property="document.emailAddressMaskedIfNecessary" attributeEntry="${personAttributes.emailAddressMaskedIfNecessary}" readOnly="true" />
                         </c:when>
                         <c:otherwise>

@@ -17,7 +17,7 @@ public final class CuKimUtils {
     /*
      * Convenience method that copies most of the code and logic from base code's Person.canViewAddress() method.
      */
-    public static boolean canOverridePrivacyPreferencesForUser(final String principalId) {
+    public static boolean canSystemCallOrCurrentUserOverridePrivacyPreferencesForUser(final String principalId) {
         final UserSession userSession = GlobalVariables.getUserSession();
         if (userSession == null) {
             // internal system call - no need to check permission
@@ -26,6 +26,11 @@ public final class CuKimUtils {
         final String currentUserPrincipalId = userSession.getPrincipalId();
         return StringUtils.equals(currentUserPrincipalId, principalId) ||
                getUiDocumentService().canModifyPerson(currentUserPrincipalId, principalId);
+    }
+
+    public static boolean currentUserIsPresentAndCanOverridePrivacyPreferencesForUser(final String principalId) {
+        return GlobalVariables.getUserSession() != null
+                && canSystemCallOrCurrentUserOverridePrivacyPreferencesForUser(principalId);
     }
 
     public static boolean canModifyPerson(final String principalId) {

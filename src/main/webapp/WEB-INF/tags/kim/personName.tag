@@ -24,6 +24,8 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="personAttributes" value="${DataDictionary.Person.attributes}" />
+<%-- CU Customization: Added masking-related helper variable. --%>
+<c:set var="maskReadOnlyDataIfNecessary" value="${!KualiForm.canOverridePrivacyPreferences}"/>
 
 <kul:subtab width="${tableWidth}" subTabTitle="Name" noShowHideButton="true">
     <table class="standard side-margins">
@@ -37,7 +39,7 @@
         <tr>
             <%-- CU Customization: Added potential masking of names. --%>
             <c:choose>
-                <c:when test="${readOnlyEntity}">
+                <c:when test="${readOnlyEntity && maskReadOnlyDataIfNecessary}">
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.firstNameMaskedIfNecessary" attributeEntry="${personAttributes.firstNameMaskedIfNecessary}" readOnly="true" />
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.middleNameMaskedIfNecessary" attributeEntry="${personAttributes.middleNameMaskedIfNecessary}" readOnly="true" />
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.lastNameMaskedIfNecessary" attributeEntry="${personAttributes.lastNameMaskedIfNecessary}" readOnly="true" />
