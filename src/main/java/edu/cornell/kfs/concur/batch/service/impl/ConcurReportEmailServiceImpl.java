@@ -54,7 +54,7 @@ public class ConcurReportEmailServiceImpl implements ConcurReportEmailService {
     }
 
     protected boolean shouldAppendLineLevelValidationErrors(List<ConcurBatchReportLineValidationErrorItem> lineValidationErrorItems) {
-        return lineValidationErrorItems.stream().anyMatch(r -> r.getReportableAsLineLevelValidationError());
+        return lineValidationErrorItems.stream().anyMatch(r -> r.isReportableAsLineLevelValidationError());
     }
 
     @Override

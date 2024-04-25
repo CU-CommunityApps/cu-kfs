@@ -233,7 +233,7 @@ public class ConcurBatchReportLineValidationErrorItem {
         this.itemErrorResults.add(itemErrorResult);
     }
 
-    public boolean getReportableAsLineLevelValidationError() {
+    public boolean isReportableAsLineLevelValidationError() {
         return reportableAsLineLevelValidationError;
     }
 
