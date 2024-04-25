@@ -1,6 +1,7 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
@@ -8,8 +9,10 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 
@@ -21,8 +24,7 @@ import java.util.List;
 public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormBase {
 
     private static final long serialVersionUID = -82175061546434849L;
-    private static final String CONTRACT_WARNING_MESSAGE = "When the contract indicator is Yes, the SSC should not create the associated Requisition document. Are you sure you want to proceed?";
-
+    
     protected boolean isWizard;
     protected String step;
     protected String presentationMode;
@@ -62,9 +64,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     }
 
     public String getLineItemImportInstructionsUrl() {
-        //return SpringContext.getBean(KualiConfigurationService.class).getPropertyString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY) +
-        //SpringContext.getBean(ParameterService.class).getParameterValue(
-        //KfsParameterConstants.PURCHASING_DOCUMENT.class, PurapParameterConstants.LINE_ITEM_IMPORT);
         return "";
     }
 
@@ -186,6 +185,12 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         
         boolean isFullPageAllowed = Boolean.parseBoolean((String) getEditingMode().get(CUPurapConstants.I_WANT_DOC_FULL_PAGE_IS_ALLOWED));
         boolean isMultiplePagesAllowed = Boolean.parseBoolean((String) getEditingMode().get(CUPurapConstants.I_WANT_DOC_MULTIPLE_PAGE_IS_ALLOWED));
+        
+        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION)) {
+            extraButtons.add(createConfirmYesButton());
+            extraButtons.add(createConfirmNoButton());
+        }
+        else {
 
         if (ObjectUtils.isNotNull(customerDataStep) && wizard.equalsIgnoreCase(customerDataStep)) {
             extraButtons.add(createContinueToItemsButton());
@@ -217,6 +222,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         }
         
         createAppropriatePresentationModeChangeButton(isFullPageAllowed, isMultiplePagesAllowed);
+        }
         
         return extraButtons;
     }
@@ -354,7 +360,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         clearButton.setExtraButtonOnclick(
                 " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
                         + " { " 
-                        + " if(confirm('" + CONTRACT_WARNING_MESSAGE + "')){ " 
+                        + " if(confirm('" + getContractWarningMessage() + "')){ " 
                         + " alert('creating REQ'); " 
                         + "window.open('"
                         + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
@@ -389,6 +395,22 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         return clearButton;
     }
     
+    protected ExtraButton createConfirmYesButton() {
+        ExtraButton confirmYesButton = new ExtraButton();
+        confirmYesButton.setExtraButtonProperty("methodToCall.createRequisition");
+        confirmYesButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_yes.gif");
+        confirmYesButton.setExtraButtonAltText("Yes");
+        return confirmYesButton;
+    }
+    
+    protected ExtraButton createConfirmNoButton() {
+        ExtraButton confirmNoButton = new ExtraButton();
+        confirmNoButton.setExtraButtonProperty("methodToCall.cancelCreateReq");
+        confirmNoButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_no.gif");
+        confirmNoButton.setExtraButtonAltText("No");
+        return confirmNoButton;
+    }
+    
     public boolean isDocEnroute() {
         final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
         return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isEnroute();
@@ -397,6 +419,14 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     public boolean isDocFinal() {
         final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
         return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isFinal();
+    }
+    
+    public String getContractWarningMessage() {
+        return getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWNT_CONFIRM_CREATE_REQ);
+    }
+    
+    public ConfigurationService getConfigurationService() {
+         return SpringContext.getBean(ConfigurationService.class);
     }
 
     public String getPresentationMode() {

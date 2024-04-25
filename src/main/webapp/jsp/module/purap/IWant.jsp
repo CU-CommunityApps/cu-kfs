@@ -23,10 +23,7 @@
     <c:set var="displayConfirmation" value="${KualiForm.editingMode['displayConfirmation']}" scope="request"/>
     
     <c:if test="${displayConfirmation}">
-            <c:set var="globalButtonTabIndex" value="50"/>
-
-
-        <div align="right"><br><bean:message key="message.creditMemo.initMessage"/></div>
+        <div align="center"><br><bean:message key="message.createReq.confirmationMessage"/></div>
         <br>
     </c:if>
     
@@ -145,6 +142,6 @@
     <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
 
     <sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}"
-                          suppressRoutingControls="${!isRegularStep and KualiForm.editingMode['wizard']}"/>
+                          suppressRoutingControls="${(!isRegularStep and KualiForm.editingMode['wizard']) or displayConfirmation}"/>
 
 </kul:documentPage>

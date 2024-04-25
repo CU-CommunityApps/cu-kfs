@@ -109,6 +109,7 @@ public class CUPurapConstants {
         public static final String VENDOR_STEP = "vendorStep";
         public static final String ROUTING_STEP = "routingStep";
         public static final String REGULAR = "regular";
+        public static final String CONFIRM_STEP = "confirmStep";
     }
     
     public static final class IWantPresentationModes {

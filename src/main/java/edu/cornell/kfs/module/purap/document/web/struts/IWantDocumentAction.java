@@ -1186,8 +1186,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         final String contractIndicator = iWantDocument.getContractIndicator();
         
-        if(confirmationNeeded(iWantDocument, contractIndicator)) {
-            GlobalVariables.getMessageMap().putError(KRADConstants.GLOBAL_ERRORS, CUPurapKeyConstants.MESSAGE_IWNT_CONFIRM_CREATE_REQ);
+        if(iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())){
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
+        }
+        else if(confirmationNeeded(iWantDocument, contractIndicator)) {
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP);
+            iWantDocForm.getEditingMode().put(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION, CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
 
@@ -1204,6 +1209,21 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         return actionForward;
     }
+    
+    public ActionForward cancelCreateReq(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        if(iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())){
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
+        }
+       
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
     
     private boolean confirmationNeeded(IWantDocument document, String contractIndicator) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();

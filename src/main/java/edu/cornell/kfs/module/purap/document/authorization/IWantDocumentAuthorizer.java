@@ -76,4 +76,44 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
                 KimConstants.PermissionTemplateNames.EDIT_DOCUMENT,
                 user.getPrincipalId());
     }
+    
+    @Override
+    public boolean canSave(Document document, Person user) {
+        IWantDocument iWantDocument = (IWantDocument) document;
+        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+            return false;
+        } else {
+            return super.canSave(document, user);
+        }
+    }
+    
+    @Override
+    public boolean canReload(Document document, Person user) {
+        IWantDocument iWantDocument = (IWantDocument) document;
+        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+            return false;
+        } else {
+            return super.canReload(document, user);
+        }
+    }
+    
+    @Override
+    public boolean canClose(Document document, Person user) {
+        IWantDocument iWantDocument = (IWantDocument) document;
+        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+            return false;
+        } else {
+            return super.canClose(document, user);
+        }
+    }
+    
+    @Override
+    public boolean canCopy(Document document, Person user) {
+        IWantDocument iWantDocument = (IWantDocument) document;
+        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+            return false;
+        } else {
+            return super.canCopy(document, user);
+        }
+    }
 }
