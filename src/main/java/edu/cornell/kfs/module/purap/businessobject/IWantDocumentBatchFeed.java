@@ -3,8 +3,6 @@ package edu.cornell.kfs.module.purap.businessobject;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.rsmart.kuali.kfs.fp.document.BatchDisbursementVoucherDocument;
-
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 
 public class IWantDocumentBatchFeed {
