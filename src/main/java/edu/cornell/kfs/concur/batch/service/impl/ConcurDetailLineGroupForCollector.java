@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
@@ -311,7 +312,7 @@ public class ConcurDetailLineGroupForCollector {
         return !hasMissingRequestedCashAdvance;
     }
 
-    public void reportErrors(BiConsumer<ConcurStandardAccountingExtractDetailLine, String> lineErrorReporter) {
+    public void reportErrors(TriConsumer<ConcurStandardAccountingExtractDetailLine, String, Boolean> lineErrorReporter) {
         reportAllLinesForGroupAsFailuresDueToOrphanedCashAdvanceLines(lineErrorReporter);
     }
 
@@ -856,7 +857,7 @@ public class ConcurDetailLineGroupForCollector {
     }
 
     protected void reportAllLinesForGroupAsFailuresDueToOrphanedCashAdvanceLines(
-            BiConsumer<ConcurStandardAccountingExtractDetailLine, String> lineErrorReporter) {
+            TriConsumer<ConcurStandardAccountingExtractDetailLine, String, Boolean> lineErrorReporter) {
         List<ConcurStandardAccountingExtractDetailLine> linesForGroup = getDetailLinesSortedBySequenceNumberNumerically();
         Set<String> sequenceNumbersForOrphanedCashAdvanceLines = getSequenceNumbersForOrphanedCashAdvanceLines();
         
@@ -868,7 +869,7 @@ public class ConcurDetailLineGroupForCollector {
             } else {
                 errorMessage = collectorHelper.getValidationMessage(ConcurKeyConstants.CONCUR_SAE_GROUP_WITH_ORPHANED_CASH_ADVANCE);
             }
-            lineErrorReporter.accept(detailLine, errorMessage);
+            lineErrorReporter.accept(detailLine, errorMessage, false);
         }
     }
 

@@ -343,12 +343,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
                     return true;
                 } else {
                     reportBypassOfLineWithPseudoPaymentCode(saeLine);
-                    reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code");
+                    reportUnprocessedLine(saeLine, "The line has the Pseudo (XXXX) payment code", false);
                     return false;
                 }
             case StringUtils.EMPTY :
                 reportBypassOfCashAdvanceRequestLine(saeLine);
-                reportUnprocessedLine(saeLine, "The line detected as cash advance request. Should have been processed by first batch job step.");
+                reportUnprocessedLine(saeLine, "The line detected as cash advance request. Should have been processed by first batch job step.",
+                        false);
                 return false;
             default :
                 reportUnprocessedLine(saeLine, "The line has an unrecognized payment code");
@@ -399,7 +400,13 @@ public class ConcurStandardAccountingExtractCollectorBatchBuilder {
     }
 
     protected void reportUnprocessedLine(ConcurStandardAccountingExtractDetailLine saeLine, String errorMessage) {
-        ConcurBatchReportLineValidationErrorItem errorItem = new ConcurBatchReportLineValidationErrorItem(saeLine, errorMessage);
+        reportUnprocessedLine(saeLine, errorMessage, true);
+    }
+
+    protected void reportUnprocessedLine(ConcurStandardAccountingExtractDetailLine saeLine, String errorMessage, boolean reportableAsLineLevelValidationError) {
+        ConcurBatchReportLineValidationErrorItem errorItem = new ConcurBatchReportLineValidationErrorItem(saeLine, errorMessage,
+                reportableAsLineLevelValidationError);
+
         reportData.addValidationErrorFileLine(errorItem);
     }
 
