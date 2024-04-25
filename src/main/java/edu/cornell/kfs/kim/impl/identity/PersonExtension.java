@@ -61,7 +61,7 @@ public class PersonExtension extends PersistableBusinessObjectBase
 
     private boolean canViewAltAddress() {
         return StringUtils.equals(altAddressTypeCode, KimConstants.AddressTypes.WORK)
-                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
+                || CuKimUtils.canSystemCallOrCurrentUserOverridePrivacyPreferencesForUser(principalId);
     }
 
     public void setAltAddressLine1(String altAddressLine1) {

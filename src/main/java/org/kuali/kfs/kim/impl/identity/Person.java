@@ -42,7 +42,6 @@ import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.kim.impl.identity.PersonExtension;
-import edu.cornell.kfs.kim.util.CuKimUtils;
 
 /*
  * CU Customizations:
@@ -175,8 +174,7 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
     }
 
     private boolean canViewName() {
-        return !getPersonExtension().isSuppressName()
-                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
+        return !getPersonExtension().isSuppressName();
     }
 
     public String getFirstNameMaskedIfNecessary() {
@@ -364,8 +362,7 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
     // ==== CU Customization: Added methods related to masking the person's email address. ====
 
     private boolean canViewEmailAddress() {
-        return !getPersonExtension().isSuppressEmail()
-                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
+        return !getPersonExtension().isSuppressEmail();
     }
 
     public String getEmailAddressMaskedIfNecessary() {
@@ -385,8 +382,7 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
     // ==== CU Customization: Added methods related to masking the person's phone number. ====
 
     private boolean canViewPhoneNumber() {
-        return !getPersonExtension().isSuppressPhone()
-                || CuKimUtils.canOverridePrivacyPreferencesForUser(principalId);
+        return !getPersonExtension().isSuppressPhone();
     }
 
     public String getPhoneNumberMaskedIfNecessary() {

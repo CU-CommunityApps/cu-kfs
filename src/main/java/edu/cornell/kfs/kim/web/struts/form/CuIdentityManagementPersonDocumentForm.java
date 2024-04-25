@@ -3,6 +3,7 @@ package edu.cornell.kfs.kim.web.struts.form;
 import org.kuali.kfs.kim.web.struts.form.IdentityManagementPersonDocumentForm;
 
 import edu.cornell.kfs.kim.bo.ui.PersonDocumentAffiliation;
+import edu.cornell.kfs.kim.util.CuKimUtils;
 
 public class CuIdentityManagementPersonDocumentForm extends IdentityManagementPersonDocumentForm {
 
@@ -21,6 +22,10 @@ public class CuIdentityManagementPersonDocumentForm extends IdentityManagementPe
 
     public void setNewAffiliation(PersonDocumentAffiliation newAffiliation) {
         this.newAffiliation = newAffiliation;
+    }
+
+    public boolean isCanOverridePrivacyPreferences() {
+        return CuKimUtils.currentUserIsPresentAndCanOverridePrivacyPreferencesForUser(principalId);
     }
 
 }
