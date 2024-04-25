@@ -39,10 +39,10 @@ public class PreEncumbranceDocumentGenerator extends AccountingDocumentGenerator
     private java.sql.Date parseReveralDate(AccountingXmlDocumentEntry documentEntry) {
         if (documentEntry.getReversalDate() != null) {
             java.sql.Date reversalDate = new java.sql.Date(documentEntry.getReversalDate().getTime());
-            LOG.info("parseReveralDate, reversal date is {}", reversalDate);
+            LOG.debug("parseReveralDate, reversal date is {}", reversalDate);
             return reversalDate;
         } else {
-            LOG.info("parseReveralDate, no reveral sate found");
+            LOG.debug("parseReveralDate, no reveral sate found");
             return null;
         }
     }
@@ -54,7 +54,7 @@ public class PreEncumbranceDocumentGenerator extends AccountingDocumentGenerator
         
         if (line instanceof TargetAccountingLine) {
             TargetAccountingLine targetLine = (TargetAccountingLine) line;
-            LOG.info("buildAccountingLine, setting reference number in target line to {}", xmlLine.getReferenceNumber());
+            LOG.debug("buildAccountingLine, setting reference number in target line to {}", xmlLine.getReferenceNumber());
             targetLine.setReferenceNumber(xmlLine.getReferenceNumber());
             targetLine.setFinancialDocumentLineDescription(StringUtils.EMPTY);
         }
