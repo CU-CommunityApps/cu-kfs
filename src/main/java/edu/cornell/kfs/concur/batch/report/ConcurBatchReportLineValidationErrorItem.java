@@ -24,6 +24,7 @@ public class ConcurBatchReportLineValidationErrorItem {
     private String orgRefId;
     private KualiDecimal lineAmount;
     private List<String> itemErrorResults;
+    private boolean reportableAsLineLevelValidationError = true;
     
     public ConcurBatchReportLineValidationErrorItem() {
         this.lineId = KFSConstants.EMPTY_STRING;
@@ -60,6 +61,14 @@ public class ConcurBatchReportLineValidationErrorItem {
                 saeLine.getEmployeeMiddleInitial(), saeLine.getChartOfAccountsCode(), saeLine.getAccountNumber(), saeLine.getSubAccountNumber(),
                 saeLine.getJournalAccountCode(), saeLine.getSubObjectCode(), saeLine.getProjectCode(), saeLine.getOrgRefId(),
                 saeLine.getJournalAmount(), itemErrorResult);
+    }
+
+    public ConcurBatchReportLineValidationErrorItem(ConcurStandardAccountingExtractDetailLine saeLine, String itemErrorResult, boolean reportableAsLineLevelValidationError) {
+        this(saeLine.getSequenceNumber(), saeLine.getReportId(), saeLine.getEmployeeId(), saeLine.getEmployeeLastName(), saeLine.getEmployeeFirstName(),
+                saeLine.getEmployeeMiddleInitial(), saeLine.getChartOfAccountsCode(), saeLine.getAccountNumber(), saeLine.getSubAccountNumber(),
+                saeLine.getJournalAccountCode(), saeLine.getSubObjectCode(), saeLine.getProjectCode(), saeLine.getOrgRefId(),
+                saeLine.getJournalAmount(), itemErrorResult);
+        this.reportableAsLineLevelValidationError = reportableAsLineLevelValidationError;
     }
 
     public ConcurBatchReportLineValidationErrorItem(ConcurStandardAccountingExtractDetailLine saeLine, List<String> itemErrorResults) {
@@ -222,6 +231,14 @@ public class ConcurBatchReportLineValidationErrorItem {
             itemErrorResults = new ArrayList<String>();
         }
         this.itemErrorResults.add(itemErrorResult);
+    }
+
+    public boolean isReportableAsLineLevelValidationError() {
+        return reportableAsLineLevelValidationError;
+    }
+
+    public void setReportableAsLineLevelValidationError(boolean reportableAsLineLevelValidationError) {
+        this.reportableAsLineLevelValidationError = reportableAsLineLevelValidationError;
     }
 
 }
