@@ -349,6 +349,18 @@
                 <match>finPreencumSufficientFundIndicator</match>
                 <replacement/>
             </pattern>
+            <pattern>
+                <match>accountFiscalOfficerUser</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>accountSupervisoryUser</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>accountManagerUser</match>
+                <replacement/>
+            </pattern>
         </pattern>
         <pattern>
             <class>org.kuali.kfs.coa.businessobject.AccountingPeriod</class>
@@ -590,6 +602,98 @@
             <pattern>
                 <match>activeIndicator</match>
                 <replacement>active</replacement>
+            </pattern>
+        </pattern>
+        <!--
+            As a result of the FINP-7610 changes from KualiCo's 2022-01-26 patch, many of the XML-converted
+            Person properties on maintenance documents no longer have XML elements or attributes that specifically
+            reference the Person class. To allow such Person properties to still be removed in nearly all cases,
+            we had to add some entries to specifically remove the named properties. (Note that the some of the other
+            rules in this file already perform the needed Person cleanup on Awards, Proposals, etc.)
+        -->
+        <pattern>
+            <class>org.kuali.kfs.module.ar.businessobject.InvoiceRecurrence</class>
+            <pattern>
+                <match>documentInitiatorUser</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cam.businessobject.Asset</class>
+            <pattern>
+                <match>assetRepresentative</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.cam.businessobject.AssetLocation</class>
+            <pattern>
+                <match>assetLocationContact</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.AccountDelegate</class>
+            <pattern>
+                <match>accountDelegate</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.AccountDelegateModelDetail</class>
+            <pattern>
+                <match>accountDelegate</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.coa.businessobject.CuAccountGlobal</class>
+            <pattern>
+                <match>accountFiscalOfficerUser</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>accountSupervisoryUser</match>
+                <replacement/>
+            </pattern>
+            <pattern>
+                <match>accountManagerUser</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.Organization</class>
+            <pattern>
+                <match>organizationManagerUniversal</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.coa.businessobject.OrganizationGlobal</class>
+            <pattern>
+                <match>organizationManagerUniversal</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.coa.businessobject.ProjectCode</class>
+            <pattern>
+                <match>projectManagerUniversal</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.module.ar.businessobject.SystemInformation</class>
+            <pattern>
+                <match>financialDocumentInitiator</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.sec.businessobject.SecurityPrincipal</class>
+            <pattern>
+                <match>securityPerson</match>
+                <replacement/>
             </pattern>
         </pattern>
         <!--
@@ -1312,6 +1416,20 @@
             </pattern>
         </pattern>
         <!-- KDO-934 end -->
+        <pattern>
+            <class>org.kuali.kfs.vnd.businessobject.VendorDetail</class>
+            <pattern>
+                <match>vendorRestrictedPerson</match>
+                <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>org.kuali.kfs.vnd.businessobject.VendorTaxChange</class>
+            <pattern>
+                <match>vendorTaxChangePerson</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <pattern>
             <class>account</class>
             <pattern>
