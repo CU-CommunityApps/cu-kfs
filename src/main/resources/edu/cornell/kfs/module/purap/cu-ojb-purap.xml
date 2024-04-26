@@ -120,9 +120,7 @@
     	<field-descriptor name="completeOption" column="COMPLETED" jdbc-type="VARCHAR"/> 
     	<field-descriptor name="currentRouteToNetId" column="CRNT_RT_TO_NET_ID" jdbc-type="VARCHAR" index="true"/>   
         <field-descriptor name="processorNetId" column="PROCESSOR_NET_ID" jdbc-type="VARCHAR" index="true"/>
-        
         <field-descriptor name="contractIndicator" column="CONTRACT_IND" jdbc-type="VARCHAR" index="true"/>
-        
         <field-descriptor name="reqsDocId" column="REQS_FDOC_NBR" jdbc-type="VARCHAR" />
          <field-descriptor name="dvDocId" column="DV_FDOC_NBR" jdbc-type="VARCHAR" />
         <field-descriptor name="accountsPayablePurchasingDocumentLinkIdentifier" column="AP_PUR_DOC_LNK_ID" jdbc-type="INTEGER" autoincrement="true" sequence-name="AP_PUR_DOC_LNK_ID"/>

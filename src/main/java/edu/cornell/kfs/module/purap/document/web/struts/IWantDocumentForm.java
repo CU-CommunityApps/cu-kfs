@@ -186,44 +186,43 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         boolean isFullPageAllowed = Boolean.parseBoolean((String) getEditingMode().get(CUPurapConstants.I_WANT_DOC_FULL_PAGE_IS_ALLOWED));
         boolean isMultiplePagesAllowed = Boolean.parseBoolean((String) getEditingMode().get(CUPurapConstants.I_WANT_DOC_MULTIPLE_PAGE_IS_ALLOWED));
         
-        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION)) {
+        if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION)) {
             extraButtons.add(createConfirmYesButton());
             extraButtons.add(createConfirmNoButton());
-        }
-        else {
+        } else {
 
-        if (ObjectUtils.isNotNull(customerDataStep) && wizard.equalsIgnoreCase(customerDataStep)) {
-            extraButtons.add(createContinueToItemsButton());
-            
-        } else if (ObjectUtils.isNotNull(itemsAndAcctStep) && wizard.equalsIgnoreCase(itemsAndAcctStep)) {
-            
-            extraButtons.add(createBackToCustomerDataButton());
-            extraButtons.add(createContinueToVendorButton());
-           
-        } else if (ObjectUtils.isNotNull(vendorDataStep) && wizard.equalsIgnoreCase(vendorDataStep)) {
-            
-            extraButtons.add(createBackToItemsButton());
-            extraButtons.add(createContinueToRoutingButton());
-            
-        } else if (ObjectUtils.isNotNull(routingStep) && wizard.equalsIgnoreCase(routingStep)) {
-            
-            extraButtons.add(createBackToVendorButton());
-            extraButtons.add(createSubmitButton());
-            
+            if (ObjectUtils.isNotNull(customerDataStep) && wizard.equalsIgnoreCase(customerDataStep)) {
+                extraButtons.add(createContinueToItemsButton());
+
+            } else if (ObjectUtils.isNotNull(itemsAndAcctStep) && wizard.equalsIgnoreCase(itemsAndAcctStep)) {
+
+                extraButtons.add(createBackToCustomerDataButton());
+                extraButtons.add(createContinueToVendorButton());
+
+            } else if (ObjectUtils.isNotNull(vendorDataStep) && wizard.equalsIgnoreCase(vendorDataStep)) {
+
+                extraButtons.add(createBackToItemsButton());
+                extraButtons.add(createContinueToRoutingButton());
+
+            } else if (ObjectUtils.isNotNull(routingStep) && wizard.equalsIgnoreCase(routingStep)) {
+
+                extraButtons.add(createBackToVendorButton());
+                extraButtons.add(createSubmitButton());
+
+            }
+
+            if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_REQ)) {
+                extraButtons.add(createCreateRequisitionButton());
+            }
+
+            if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_DV)) {
+                // KFSPTS-2527 add create DV button
+                extraButtons.add(createCreateDVButton());
+            }
+
+            createAppropriatePresentationModeChangeButton(isFullPageAllowed, isMultiplePagesAllowed);
         }
-        
-        if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_REQ)) {
-            extraButtons.add(createCreateRequisitionButton());
-        }
-        
-        if(getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_CREATE_DV)){
-            //KFSPTS-2527 add create DV button
-            extraButtons.add(createCreateDVButton());
-        }
-        
-        createAppropriatePresentationModeChangeButton(isFullPageAllowed, isMultiplePagesAllowed);
-        }
-        
+
         return extraButtons;
     }
     
@@ -361,7 +360,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                 " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
                         + " { " 
                         + " if(confirm('" + getContractWarningMessage() + "')){ " 
-                        + " alert('creating REQ'); " 
                         + "window.open('"
                         + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                         + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="

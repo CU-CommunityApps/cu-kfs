@@ -101,7 +101,6 @@
        <ref bean="IWantDocument-collegeLevelChartForSearch" />
        <ref bean="IWantDocument-collegeLevelOrgCodeForSearch" />
        <ref bean="IWantDocument-departmentLevelOrgCodeForSearch" />
-     
       </list>
     </property>
     <property name="validationMap" ref="IWantDocument-validations"/>
