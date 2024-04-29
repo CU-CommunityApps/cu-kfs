@@ -84,7 +84,9 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     CHART_IT_ACCT_R589966_NONCA_OBJ_1000_AMOUNT_12_VALID("IT", "R589966", "NONCA", "1000", null, "EB-PLGIFT", "AEH56", null, 12.00),
     CHART_IT_ACCT_R589966_NONCA_OBJ_1000_10X_AMOUNT_12_VALID("IT", "R589966", "NONCA", "1000", "10X", "EB-PLGIFT", "AEH56", null, 12.00),
     ACCT_1433000_OBJ_4480_DEBIT_55("IT", "1433000", null, "4480", null, null, null, null, 55.00, 0),
-    ACCT_C200222_OBJ_5390_CREDIT_55("IT", "C200222", null, "5390", null, null, null, null, 0, 55.00);
+    ACCT_C200222_OBJ_5390_CREDIT_55("IT", "C200222", null, "5390", null, null, null, null, 0, 55.00),
+    ACCT_1003163_SUB_24100_OBJ_6900_AMT_50_ENCUM_LINE("IT", "1003163", null, "6900", null, null, null, "Encumbrance Line", 50),
+    ACCT_1533039_SUB_24100_OBJ_6900_AMT_50_REF_NUMBER("IT", "1533039", null, "6900", null, null, null, null, 50, "RefNumber");
 
     public final String chartCode;
     public final String accountNumber;
@@ -98,6 +100,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     public final KualiDecimal debitAmount;
     public final KualiDecimal creditAmount;
     public final BudgetAdjustmentAccountDataFixture budgetAdjustmentData;
+    public final String referenceNumber;
 
     private AccountingXmlDocumentAccountingLineFixture(
             AccountingXmlDocumentAccountingLineFixture baseFixture, double newAmount) {
@@ -110,26 +113,34 @@ public enum AccountingXmlDocumentAccountingLineFixture {
             double newAmount, BudgetAdjustmentAccountDataFixture newBudgetAdjustmentData) {
         this(baseFixture.chartCode, baseFixture.accountNumber, baseFixture.subAccountNumber,
                 baseFixture.objectCode, baseFixture.subObjectCode, baseFixture.projectCode, baseFixture.orgRefId,
-                baseFixture.lineDescription, newAmount, 0, 0, newBudgetAdjustmentData);
+                baseFixture.lineDescription, newAmount, 0, 0, newBudgetAdjustmentData, null);
     }
 
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
             String lineDescription, double amount) {
         this(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId,
-                lineDescription, amount, 0, 0, null);
+                lineDescription, amount, 0, 0, null, null);
+    }
+    
+    private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
+            String objectCode, String subObjectCode, String projectCode, String orgRefId,
+            String lineDescription, double amount, String referenceNumber) {
+        this(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId,
+                lineDescription, amount, 0, 0, null, referenceNumber);
     }
 
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
             String lineDescription, double debitAmount, double creditAmount) {
         this(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId,
-                lineDescription, 0, debitAmount, creditAmount, null);
+                lineDescription, 0, debitAmount, creditAmount, null, null);
     }
 
     private AccountingXmlDocumentAccountingLineFixture(String chartCode, String accountNumber, String subAccountNumber,
             String objectCode, String subObjectCode, String projectCode, String orgRefId,
-            String lineDescription, double amount, double debitAmount, double creditAmount, BudgetAdjustmentAccountDataFixture budgetAdjustmentData) {
+            String lineDescription, double amount, double debitAmount, double creditAmount, 
+            BudgetAdjustmentAccountDataFixture budgetAdjustmentData, String referenceNumber) {
         this.chartCode = chartCode;
         this.accountNumber = accountNumber;
         this.subAccountNumber = defaultToEmptyStringIfBlank(subAccountNumber);
@@ -142,6 +153,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
         this.debitAmount = new KualiDecimal(debitAmount);
         this.creditAmount = new KualiDecimal(creditAmount);
         this.budgetAdjustmentData = budgetAdjustmentData;
+        this.referenceNumber = referenceNumber;
     }
 
     public AccountingXmlDocumentAccountingLine toAccountingLinePojo() {

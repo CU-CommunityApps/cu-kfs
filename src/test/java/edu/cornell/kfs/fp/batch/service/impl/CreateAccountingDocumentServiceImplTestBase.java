@@ -285,6 +285,7 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         assertEquals("Wrong org ref ID", expectedLine.getOrganizationReferenceId(), actualLine.getOrganizationReferenceId());
         assertEquals("Wrong line description", expectedLine.getFinancialDocumentLineDescription(), actualLine.getFinancialDocumentLineDescription());
         assertEquals("Wrong line amount", expectedLine.getAmount(), actualLine.getAmount());
+        //assertEquals("wrong reference number", expectedLine.getReferenceNumber(), actualLine.getReferenceNumber());
         if (StringUtils.isNotBlank(expectedLine.getDebitCreditCode())) {
             assertEquals("Wrong debit/credit code", expectedLine.getDebitCreditCode(), actualLine.getDebitCreditCode());
         } else {

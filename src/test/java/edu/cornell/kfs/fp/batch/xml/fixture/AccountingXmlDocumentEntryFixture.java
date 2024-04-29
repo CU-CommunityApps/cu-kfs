@@ -658,6 +658,23 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+    SINGLE_PE_DOCUMENT_TEST_DOC1(
+            1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_SUB_24100_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_SUB_24100_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
                     AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE));
 
     public final Long index;
@@ -683,6 +700,17 @@ public enum AccountingXmlDocumentEntryFixture {
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
                 sourceAccountingLines, targetAccountingLines, notes, adHocRecipients, backupLinks);
+    }
+    
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber, String reversalDate,
+            AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients,
+            AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, null, null, reversalDate, 0,
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks,
+                CuDisbursementVoucherDocumentFixture.EMPTY);
     }
     
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
