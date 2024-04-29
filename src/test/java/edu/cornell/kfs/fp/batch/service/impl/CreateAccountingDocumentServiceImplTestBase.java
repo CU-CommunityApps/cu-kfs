@@ -48,6 +48,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.resourceloader.ResourceLoaderException;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.document.PreEncumbranceDocument;
 import org.kuali.kfs.fp.service.FiscalYearFunctionControlService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
@@ -245,6 +246,13 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
             Class<? extends AccountingDocument> documentClass, AccountingDocument expectedDocument, AccountingDocument actualDocument) {
         assertTrue("Document was not of the expected type of " + documentClass.getName(), documentClass.isAssignableFrom(actualDocument.getClass()));
         assertEquals("Wrong document number", expectedDocument.getDocumentNumber(), actualDocument.getDocumentNumber());
+        
+        if (expectedDocument instanceof PreEncumbranceDocument) {
+            PreEncumbranceDocument expectedPeDocument = (PreEncumbranceDocument) expectedDocument;
+            PreEncumbranceDocument actualPeDocument = (PreEncumbranceDocument) actualDocument;
+            assertEquals("wrong reversal date", expectedPeDocument.getReversalDate(), actualPeDocument.getReversalDate());
+            
+        }
         
         assertHeaderIsCorrect(expectedDocument.getDocumentHeader(),
                 actualDocument.getDocumentHeader());

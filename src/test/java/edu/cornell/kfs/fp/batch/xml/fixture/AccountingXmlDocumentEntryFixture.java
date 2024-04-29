@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.PreEncumbranceDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
@@ -837,6 +838,13 @@ public enum AccountingXmlDocumentEntryFixture {
         
         if (postingFiscalYear != null) {
             accountingDocument.setPostingYear(postingFiscalYear);
+        }
+        
+        if (accountingDocumentClass == PreEncumbranceDocument.class) {
+            PreEncumbranceDocument peDoc = (PreEncumbranceDocument) accountingDocument;
+            if (StringUtils.isNotBlank(reversalDate)) {
+                peDoc.setReversalDate(getParsedReversalDate(java.sql.Date::new));
+            }
         }
         
         return accountingDocument;
