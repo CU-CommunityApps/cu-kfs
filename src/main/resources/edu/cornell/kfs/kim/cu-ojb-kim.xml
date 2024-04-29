@@ -62,7 +62,7 @@
         <collection-descriptor name="affiliations"
                                element-class-ref="edu.cornell.kfs.kim.impl.identity.PersonAffiliation"
                                collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
-                               auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+                               auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
             <inverse-foreignkey field-ref="principalId"/>
         </collection-descriptor>
     </class-descriptor>
