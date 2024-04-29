@@ -23,4 +23,8 @@
           class="edu.cornell.kfs.sec.businessobject.lookup.CuAccessSecurityAccountDelegateModelLookupableHelperServiceImpl"
           parent="securityAccountDelegateModelLookupableHelperService-parentBean" scope="prototype"/>
 
+    <bean id="accessSecurityService" parent="accessSecurityService-parentBean"
+          class="edu.cornell.kfs.sec.service.impl.CuAccessSecurityServiceImpl"
+          p:workflowDocumentActionsService-ref="workflowDocumentActionsService"/>
+
 </beans>
