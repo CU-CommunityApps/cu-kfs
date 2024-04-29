@@ -505,7 +505,6 @@ public class InvoiceDetailRequestHeader {
                 header.setIdReferenceCreator(lastPartner.getIdReference().getCreator());
                 
                 //CU Customization: Fix for missing Description tag in data submitted by eInvoice vendors, KFSPTS-31486/KFSPTS-31489
-                //header.setIdReferenceDescription(lastPartner.getIdReference().getDescription().getValue();
                 if (lastPartner.getIdReference().getDescription() != null
                         && lastPartner.getIdReference().getDescription().getValue() != null) {
                     header.setIdReferenceDescription(lastPartner.getIdReference().getDescription().getValue());

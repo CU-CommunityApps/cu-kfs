@@ -583,7 +583,6 @@ public class InvoiceDetailItem {
             }
             
             //CU Customization: Fix for missing Description tag in data submitted by eInvoice vendors, KFSPTS-31486/KFSPTS-31489
-            //item.setReferenceDescription(invoiceDetailItemReference.getDescription().getValue());
             if (invoiceDetailItemReference.getDescription() != null
                     && invoiceDetailItemReference.getDescription().getValue() != null) {
                 item.setReferenceDescription(invoiceDetailItemReference.getDescription().getValue());
