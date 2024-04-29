@@ -2,6 +2,7 @@ package edu.cornell.kfs.fp.batch.service.impl;
 
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.fp.document.PreEncumbranceDocument;
@@ -12,7 +13,6 @@ import org.kuali.kfs.sys.businessobject.TargetAccountingLine;
 
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentAccountingLine;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentEntry;
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 public class PreEncumbranceDocumentGenerator extends AccountingDocumentGeneratorBase<PreEncumbranceDocument> {
     private static final Logger LOG = LogManager.getLogger();
@@ -58,7 +58,6 @@ public class PreEncumbranceDocumentGenerator extends AccountingDocumentGenerator
             targetLine.setReferenceNumber(xmlLine.getReferenceNumber());
             targetLine.setFinancialDocumentLineDescription(StringUtils.EMPTY);
         }
-        
         return line;
     }
 

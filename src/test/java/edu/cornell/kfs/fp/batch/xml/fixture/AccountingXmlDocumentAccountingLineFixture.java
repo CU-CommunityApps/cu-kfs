@@ -201,6 +201,7 @@ public enum AccountingXmlDocumentAccountingLineFixture {
                     budgetAdjustmentData.configureBudgetAdjustmentAccountingLine(budgetAdjustmentLine);
                 }
             }
+            accountingLine.setReferenceNumber(referenceNumber);
             return accountingLine;
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
