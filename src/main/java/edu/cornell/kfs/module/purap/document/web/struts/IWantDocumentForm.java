@@ -5,8 +5,11 @@ import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -19,6 +22,7 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormBase {
@@ -352,33 +356,39 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
      * @return
      */
     protected ExtraButton createCreateRequisitionButton() {
-        ExtraButton clearButton = new ExtraButton();
-        clearButton.setExtraButtonProperty("methodToCall.createRequisition");
-        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
-        clearButton.setExtraButtonAltText("Create Req");
-        clearButton.setExtraButtonOnclick(
-                " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
-                        + " { " 
-                        + " if(confirm('" + getContractWarningMessage() + "')){ " 
-                        + "window.open('"
-                        + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
-                        + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="
-                        + getDocument().getDocumentNumber() 
-                        + "'); return false;" 
-                        + " } " 
-                        + " else { " 
-                        + "return false; "
-                        + " } } "
-                        + " else {"
-                        + "window.open('" 
-                        + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
-                        + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" 
-                        + getDocument().getDocumentNumber()
-                        + "'); return false; "
-                        + " } "
-                );
+        ExtraButton createReqButton = new ExtraButton();
+        createReqButton.setExtraButtonProperty("methodToCall.createRequisition");
+        createReqButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
+        createReqButton.setExtraButtonAltText("Create Req");
+        if(isInOrgHierarchyNode(getDocument())) {
+            createReqButton.setExtraButtonOnclick(
+                    " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
+                            + " { " 
+                            + " if(confirm('" + getContractWarningMessage() + "')){ " 
+                            + "window.open('"
+                            + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                            + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="
+                            + getDocument().getDocumentNumber() 
+                            + "'); return false;" 
+                            + " } " 
+                            + " else { " 
+                            + "return false; "
+                            + " } } "
+                            + " else {"
+                            + "window.open('" 
+                            + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                            + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" 
+                            + getDocument().getDocumentNumber()
+                            + "'); return false; "
+                            + " } "
+                    );
+        } else if(isInPurchasingAssistantNode(getDocument())) {
+            createReqButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                    + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + getDocument().getDocumentNumber()
+                    + "');return false;");
+        }
 
-        return clearButton;
+        return createReqButton;
     }
     
     protected ExtraButton createCreateDVButton() {
@@ -450,5 +460,24 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     public void setDocIsInitiatedOrSaved(boolean docIsInitiatedOrSaved) {
         this.docIsInitiatedOrSaved = docIsInitiatedOrSaved;
     }
+    
+    private boolean isDocInNode(Document document, String node) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            return nodeNames.contains(node);
+        }
+        return false;
+    }
+    
+    private boolean isInOrgHierarchyNode(Document document) {
+        return isDocInNode(document, KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY);
+    }
+    
+    private boolean isInPurchasingAssistantNode(Document document) {
+        return isDocInNode(document, CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
+    }
+
 
 }
