@@ -207,24 +207,9 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             } else if (canViewContractTab(document)) {
                 editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
             }
-            // confirmation needed to create REQ
-            if(confirmationNeeded(document)) {
-                editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
-            }
         }
 
         return editModes;
-    }
-
-    private boolean confirmationNeeded(Document document) {
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        IWantDocument iWantDocument = (IWantDocument) document;
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        
-        if (CollectionUtils.isNotEmpty(nodeNames)) {
-            return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(iWantDocument.getContractIndicator());
-        }
-        return false;
     }
 
     private boolean isContractFunctionalityEnabled() {
