@@ -696,6 +696,13 @@
                 <replacement/>
             </pattern>
         </pattern>
+        <pattern>
+            <class>org.kuali.kfs.krad.bo.Note</class>
+            <pattern>
+                <match>authorUniversal</match>
+                <replacement/>
+            </pattern>
+        </pattern>
         <!--
             The next set of entries will remove unneeded role objects from the various KSR business objects,
             and will also effectively unwrap any "value" elements within their various ID/numeric fields.
