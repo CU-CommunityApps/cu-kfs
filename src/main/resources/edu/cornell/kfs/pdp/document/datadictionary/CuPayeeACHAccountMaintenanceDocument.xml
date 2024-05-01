@@ -28,6 +28,17 @@
             </list>
           </property>
         </bean>
+
+        <bean parent="FieldOverrideForListElementReplace">
+          <property name="propertyName" value="maintainableItems" />
+          <property name="element">
+            <bean parent="MaintainableFieldDefinition" p:name="payeeIdNumber" p:required="true"/>
+          </property>
+          <property name="replaceWith">
+            <bean parent="MaintainableFieldDefinition" p:name="payeeIdNumber" p:required="true"
+                  p:webUILeaveFieldFunction="submit"/>
+          </property>
+        </bean>
       </list>
     </property>
   </bean>
