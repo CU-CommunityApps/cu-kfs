@@ -4,6 +4,11 @@
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
+    <property name="webScriptFiles">
+      <list merge="true">
+        <value>dwr/interface/VendorService.js</value>
+      </list>
+    </property>
   </bean>
 
   <bean parent="DataDictionaryBeanOverride">
