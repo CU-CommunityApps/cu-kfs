@@ -70,18 +70,6 @@ public class IWantDocumentInputFileType extends DigesterXmlBatchInputFileType {
     }
 
     /**
-     * @see org.kuali.kfs.sys.batch.BatchInputFileTypeBase#process(java.lang.String, java.lang.Object)
-     */
-    @Override
-    public void process(String fileName, Object parsedFileContents) {
-//        DisbursementVoucherBatchFeed batchFeed = (DisbursementVoucherBatchFeed) parsedFileContents;
-//
-//        DisbursementVoucherBatchStatus batchStatus = new DisbursementVoucherBatchStatus();
-//        disbursementVoucherDocumentBatchService.loadDisbursementVouchers(batchFeed, batchStatus, fileName, GlobalVariables.getMessageMap());
-//        disbursementVoucherDocumentBatchService.generateAuditReport(batchStatus);
-    }
-
-    /**
      * Sets the dateTimeService attribute value.
      * 
      * @param dateTimeService The dateTimeService to set.
