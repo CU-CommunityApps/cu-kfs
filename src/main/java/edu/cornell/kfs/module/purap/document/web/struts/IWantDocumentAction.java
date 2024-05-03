@@ -836,13 +836,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         ActionForward actionForward = super.route(mapping, form, request, response);
         
-        //determine whether contract indicator has been checked and whether edoc is on purchasing contract assistant node
-        WorkflowDocument workflowDocument = iWantDocument.getDocumentHeader().getWorkflowDocument();
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        boolean routeToPurchasingContractAssistantRequested = CollectionUtils.isNotEmpty(nodeNames) && (nodeNames.contains("PurchasingContractAssistant") & KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(iWantDocument.getContractIndicator()));
-        
-        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)
-                && !routeToPurchasingContractAssistantRequested) {
+        if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
 
@@ -1186,11 +1180,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         final String contractIndicator = iWantDocument.getContractIndicator();
         
-        if(iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())){
+        if (iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
-        }
-        else if(confirmationNeeded(iWantDocument, contractIndicator)) {
+        } else if (confirmationNeeded(iWantDocument, contractIndicator)) {
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP);
             iWantDocForm.getEditingMode().put(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION, CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
@@ -1216,12 +1209,12 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
         
-        if(iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())){
+        if (iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
         }
        
-            return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     
     

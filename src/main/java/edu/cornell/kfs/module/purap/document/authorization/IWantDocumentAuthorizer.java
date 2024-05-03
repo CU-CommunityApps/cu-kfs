@@ -75,8 +75,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     
     @Override
     public boolean canSave(Document document, Person user) {
-        IWantDocument iWantDocument = (IWantDocument) document;
-        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+        if (isDocumentAtConfirmationStep(document)) {
             return false;
         } else {
             return super.canSave(document, user);
@@ -85,8 +84,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     
     @Override
     public boolean canReload(Document document, Person user) {
-        IWantDocument iWantDocument = (IWantDocument) document;
-        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+        if (isDocumentAtConfirmationStep(document)) {
             return false;
         } else {
             return super.canReload(document, user);
@@ -95,8 +93,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     
     @Override
     public boolean canClose(Document document, Person user) {
-        IWantDocument iWantDocument = (IWantDocument) document;
-        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+        if (isDocumentAtConfirmationStep(document)) {
             return false;
         } else {
             return super.canClose(document, user);
@@ -105,11 +102,15 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     
     @Override
     public boolean canCopy(Document document, Person user) {
-        IWantDocument iWantDocument = (IWantDocument) document;
-        if (CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+        if (isDocumentAtConfirmationStep(document)) {
             return false;
         } else {
             return super.canCopy(document, user);
         }
+    }
+    
+    private boolean isDocumentAtConfirmationStep(Document document) {
+        IWantDocument iWantDocument = (IWantDocument) document;
+        return CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep());
     }
 }

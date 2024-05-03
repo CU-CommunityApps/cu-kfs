@@ -13,15 +13,12 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
-import org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue;
-import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.module.purap.PurapConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -93,7 +90,6 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     /* 
-     * CU Customization:
      * Everyone should be able to view the Contract tab when the document is Final.
      */
     public boolean canViewContractTab(Document document) {
@@ -102,7 +98,6 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     /*
-     * CU Customization:
      * We restrict the editing of the Contract Tab contents on IWNT docs to enroute status at the
      * OrganizationHierarchy node and PurchasingContractAssistant node.
      */
@@ -213,9 +208,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
     }
 
     private boolean isContractFunctionalityEnabled() {
-        return StringUtils.equalsIgnoreCase(
-                getParameterService().getParameterValueAsString(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapConstants.IWNT_DOC_ENABLE_IWANT_CONTRACT_TAB_IND_PARM),
-                KFSConstants.ParameterValues.YES);
+        return getParameterService().getParameterValueAsBoolean(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapParameterConstants.IWNT_DOC_ENABLE_IWANT_CONTRACT_TAB_IND_PARM);
     }
     
     private boolean isInOrgHierarchyOrPurchasingAssistantNode(Document document) {

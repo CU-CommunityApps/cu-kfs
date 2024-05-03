@@ -6,7 +6,7 @@ import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.document.Document;
@@ -360,7 +360,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         createReqButton.setExtraButtonProperty("methodToCall.createRequisition");
         createReqButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
         createReqButton.setExtraButtonAltText("Create Req");
-        if(isInOrgHierarchyNode(getDocument())) {
+        if (isInOrgHierarchyNode(getDocument())) {
             createReqButton.setExtraButtonOnclick(
                     " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
                             + " { " 
@@ -382,7 +382,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                             + "'); return false; "
                             + " } "
                     );
-        } else if(isInPurchasingAssistantNode(getDocument())) {
+        } else {
             createReqButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                     + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" + getDocument().getDocumentNumber()
                     + "');return false;");
