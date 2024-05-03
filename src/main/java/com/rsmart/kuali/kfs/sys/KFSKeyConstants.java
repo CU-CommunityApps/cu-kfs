@@ -19,8 +19,6 @@ package com.rsmart.kuali.kfs.sys;
  * General constants for custom functionality
  */
 public class KFSKeyConstants {
-    public static final String WORKFLOW_DIRECTORY = "data.xml.root.location";
-    public static final String INGESTION_DIRECTORY = "ingestion";
     public static final String IMAGE_ATTACHMENT_NOTE_TEXT = "message.batchFeed.noteAttachmentText";
     public static final String ERROR_BATCH_FEED_ATTACHMENT = "error.batchFeed.attachment";
     public static final String ERROR_BATCH_FEED_ATTACHMENT_TYPE = "error.batchFeed.attachmentType";
