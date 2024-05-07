@@ -31,18 +31,18 @@ public class PreEncumbranceDocumentGenerator extends AccountingDocumentGenerator
     }
     
     @Override
-    protected void populateDocumentHeader(PreEncumbranceDocument document, AccountingXmlDocumentEntry documentEntry) {
-      super.populateDocumentHeader(document, documentEntry);
-      document.setReversalDate(parseReveralDate(documentEntry));
+    protected void populateCustomAccountingDocumentData(PreEncumbranceDocument document, AccountingXmlDocumentEntry documentEntry) {
+        super.populateCustomAccountingDocumentData(document, documentEntry);
+        document.setReversalDate(parseReversalDate(documentEntry));
     }
     
-    private java.sql.Date parseReveralDate(AccountingXmlDocumentEntry documentEntry) {
+    private java.sql.Date parseReversalDate(AccountingXmlDocumentEntry documentEntry) {
         if (documentEntry.getReversalDate() != null) {
             java.sql.Date reversalDate = new java.sql.Date(documentEntry.getReversalDate().getTime());
-            LOG.debug("parseReveralDate, reversal date is {}", reversalDate);
+            LOG.debug("parseReversalDate, reversal date is {}", reversalDate);
             return reversalDate;
         } else {
-            LOG.debug("parseReveralDate, no reveral sate found");
+            LOG.debug("parseReversalDate, no reversal date found");
             return null;
         }
     }

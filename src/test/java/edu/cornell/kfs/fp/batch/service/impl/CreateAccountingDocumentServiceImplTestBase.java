@@ -251,7 +251,6 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
             PreEncumbranceDocument expectedPeDocument = (PreEncumbranceDocument) expectedDocument;
             PreEncumbranceDocument actualPeDocument = (PreEncumbranceDocument) actualDocument;
             assertEquals("wrong reversal date", expectedPeDocument.getReversalDate(), actualPeDocument.getReversalDate());
-            
         }
         
         assertHeaderIsCorrect(expectedDocument.getDocumentHeader(),

@@ -664,9 +664,9 @@ public enum AccountingXmlDocumentEntryFixture {
             1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
             "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
             sourceAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_SUB_24100_OBJ_6900_AMT_50_ENCUM_LINE),
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
             targetAccountingLines(
-                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_SUB_24100_OBJ_6900_AMT_50_REF_NUMBER),
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
             notes(
                     "A note for a PE document"),
             adHocRecipients(
@@ -833,18 +833,12 @@ public enum AccountingXmlDocumentEntryFixture {
         addItemsToDocumentIfNecessary(accountingDocument);
         addDvDetailsToDocumentIfNecessary(accountingDocument);
         addAuxiliaryVoucherSettingsToDocumentIfNecessary(accountingDocument);
+        addPeDetailsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
         
         if (postingFiscalYear != null) {
             accountingDocument.setPostingYear(postingFiscalYear);
-        }
-        
-        if (accountingDocumentClass == PreEncumbranceDocument.class) {
-            PreEncumbranceDocument peDoc = (PreEncumbranceDocument) accountingDocument;
-            if (StringUtils.isNotBlank(reversalDate)) {
-                peDoc.setReversalDate(getParsedReversalDate(java.sql.Date::new));
-            }
         }
         
         return accountingDocument;
@@ -913,6 +907,15 @@ public enum AccountingXmlDocumentEntryFixture {
                 dvDoc.setInvoiceDate(new Date(dvDetails.invoiceDate.getMillis()));
             }
             dvDoc.setInvoiceNumber(dvDetails.invoiceNumber);
+        }
+    }
+    
+    private void addPeDetailsToDocumentIfNecessary(AccountingDocument accountingDocument) {
+        if (accountingDocument instanceof PreEncumbranceDocument) {
+            PreEncumbranceDocument peDoc = (PreEncumbranceDocument) accountingDocument;
+            if (StringUtils.isNotBlank(reversalDate)) {
+                peDoc.setReversalDate(getParsedReversalDate(java.sql.Date::new));
+            }
         }
     }
 

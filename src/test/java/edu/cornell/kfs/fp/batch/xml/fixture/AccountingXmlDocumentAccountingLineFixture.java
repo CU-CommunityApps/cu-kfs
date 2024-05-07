@@ -85,8 +85,8 @@ public enum AccountingXmlDocumentAccountingLineFixture {
     CHART_IT_ACCT_R589966_NONCA_OBJ_1000_10X_AMOUNT_12_VALID("IT", "R589966", "NONCA", "1000", "10X", "EB-PLGIFT", "AEH56", null, 12.00),
     ACCT_1433000_OBJ_4480_DEBIT_55("IT", "1433000", null, "4480", null, null, null, null, 55.00, 0),
     ACCT_C200222_OBJ_5390_CREDIT_55("IT", "C200222", null, "5390", null, null, null, null, 0, 55.00),
-    ACCT_1003163_SUB_24100_OBJ_6900_AMT_50_ENCUM_LINE("IT", "1003163", null, "6900", null, null, null, "Encumbrance Line", 50),
-    ACCT_1533039_SUB_24100_OBJ_6900_AMT_50_REF_NUMBER("IT", "1533039", null, "6900", null, null, null, null, 50, "RefNumber");
+    ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE("IT", "1003163", null, "6900", null, null, null, "Encumbrance Line", 50),
+    ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER("IT", "1533039", null, "6900", null, null, null, null, 50, "RefNumber");
 
     public final String chartCode;
     public final String accountNumber;
