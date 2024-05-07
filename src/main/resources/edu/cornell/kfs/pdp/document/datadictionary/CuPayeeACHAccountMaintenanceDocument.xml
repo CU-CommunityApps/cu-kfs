@@ -21,9 +21,9 @@
               p:webUILeaveFieldFunction="submit"/>
         <bean parent="MaintainableFieldDefinition" p:name="payeeIdNumber" p:required="true"
               p:webUILeaveFieldFunction="submit"/>
-        <bean parent="MaintainableFieldDefinition" p:name="payeeName" p:required="false" />
         <bean parent="MaintainableFieldDefinition" p:name="payeePrincipalName" p:noLookup="true"
               p:unconditionallyReadOnly="true" />
+        <bean parent="MaintainableFieldDefinition" p:name="payeeName" p:required="false" />
         <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber" p:required="true"
               p:webUILeaveFieldFunction="loadAchBankInfo"/>
         <bean parent="MaintainableFieldDefinition" p:name="bankRouting.bankName"
