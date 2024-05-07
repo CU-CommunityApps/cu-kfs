@@ -905,5 +905,45 @@
                 </BackupLink>
             </BackupDocumentLinks>
         </Document>
+        <Document>
+            <Index>12</Index>
+            <DocumentType>PE</DocumentType>
+            <Description>PE Doc</Description>
+            <Explanation>PE Doc explanation</Explanation>
+            <OrganizationDocumentNumber>WXYZ5680</OrganizationDocumentNumber>
+            <ReversalDate>03/30/2024</ReversalDate>
+            <NoteList>
+                <Note>
+                    <Description>A note for a PE document</Description>
+                </Note>
+            </NoteList>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1003163</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>6900</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Encumbrance Line</line_description>
+                    <amount>50</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1533039</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>6900</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <reference_number>RefNumber</reference_number>
+                    <amount>50</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+        </Document>
     </DocumentList>
 </DocumentWrapper>

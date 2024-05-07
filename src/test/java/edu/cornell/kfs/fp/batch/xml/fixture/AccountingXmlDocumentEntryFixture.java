@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.document.AuxiliaryVoucherDocument;
 import org.kuali.kfs.fp.document.InternalBillingDocument;
+import org.kuali.kfs.fp.document.PreEncumbranceDocument;
 import org.kuali.kfs.krad.bo.AdHocRoutePerson;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
@@ -489,6 +490,18 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
     MULTI_DOC_TYPE_TEST_AV(BASE_AV_ADJUSTMENT, 11),
+    
+    MULTI_DOC_TYPE_TEST_PE(
+            12, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(),
+            backupLinks()),
 
     SINGLE_DOC_TYPE_TEST_YETF(1, CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
             "Test YETF Document", "This is only a test YETF document!", "ABCD1234",
@@ -658,7 +671,52 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
-                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE));
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+    SINGLE_PE_DOCUMENT_TEST_DOC1(
+            1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+    MUTLI_PE_DOCUMENT_TEST_DOC1(
+            1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+    MULTI_PE_DOCUMENT_TEST_DOC2(
+            1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc 2", "PE Doc explanation 2", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(),
+            backupLinks());
 
     public final Long index;
     public final String documentTypeCode;
@@ -683,6 +741,17 @@ public enum AccountingXmlDocumentEntryFixture {
             AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients, AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
         this(index, documentTypeCode, baseFixture.description, baseFixture.explanation, baseFixture.organizationDocumentNumber,
                 sourceAccountingLines, targetAccountingLines, notes, adHocRecipients, backupLinks);
+    }
+    
+    private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
+            String explanation, String organizationDocumentNumber, String reversalDate,
+            AccountingXmlDocumentAccountingLineFixture[] sourceAccountingLines,
+            AccountingXmlDocumentAccountingLineFixture[] targetAccountingLines, String[] notes,
+            AccountingXmlDocumentAdHocRecipientFixture[] adHocRecipients,
+            AccountingXmlDocumentBackupLinkFixture[] backupLinks) {
+        this(index, documentTypeCode, description, explanation, organizationDocumentNumber, null, null, reversalDate, 0,
+                sourceAccountingLines, targetAccountingLines, items(), notes, adHocRecipients, backupLinks,
+                CuDisbursementVoucherDocumentFixture.EMPTY);
     }
     
     private AccountingXmlDocumentEntryFixture(long index, String documentTypeCode, String description,
@@ -804,6 +873,7 @@ public enum AccountingXmlDocumentEntryFixture {
         addItemsToDocumentIfNecessary(accountingDocument);
         addDvDetailsToDocumentIfNecessary(accountingDocument);
         addAuxiliaryVoucherSettingsToDocumentIfNecessary(accountingDocument);
+        addPeDetailsToDocumentIfNecessary(accountingDocument);
         addNotesToDocument(accountingDocument);
         addAdHocRecipientsToDocument(accountingDocument);
         
@@ -877,6 +947,15 @@ public enum AccountingXmlDocumentEntryFixture {
                 dvDoc.setInvoiceDate(new Date(dvDetails.invoiceDate.getMillis()));
             }
             dvDoc.setInvoiceNumber(dvDetails.invoiceNumber);
+        }
+    }
+    
+    private void addPeDetailsToDocumentIfNecessary(AccountingDocument accountingDocument) {
+        if (accountingDocument instanceof PreEncumbranceDocument) {
+            PreEncumbranceDocument peDoc = (PreEncumbranceDocument) accountingDocument;
+            if (StringUtils.isNotBlank(reversalDate)) {
+                peDoc.setReversalDate(getParsedReversalDate(java.sql.Date::new));
+            }
         }
     }
 
