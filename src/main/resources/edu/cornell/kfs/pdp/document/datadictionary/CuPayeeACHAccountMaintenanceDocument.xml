@@ -4,26 +4,41 @@
     <property name="maintainableClass" value="edu.cornell.kfs.pdp.document.CuPayeeACHAccountMaintainableImpl"/>
     <property name="documentAuthorizerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentAuthorizer"/>
     <property name="documentPresentationControllerClass" value="edu.cornell.kfs.pdp.document.authorization.CuPayeeACHAccountMaintenanceDocumentPresentationController"/>        
-  </bean>
-
-  <bean parent="DataDictionaryBeanOverride">
-    <property name="beanName" value="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount" />
-    <property name="fieldOverrides">
-      <list>
-        <!-- Add read-only "payeePrincipalName" to the Payee ACH Account maintenance document. -->
-        <bean parent="FieldOverrideForListElementInsert">
-          <property name="propertyName" value="maintainableItems" />
-          <property name="propertyNameForElementCompare" value="name" />
-          <property name="element">
-            <bean parent="MaintainableFieldDefinition" p:name="payeeName" />
-          </property>
-          <property name="insertAfter">
-            <list>
-              <bean parent="MaintainableFieldDefinition" p:name="payeePrincipalName" p:noLookup="true" p:unconditionallyReadOnly="true" />
-            </list>
-          </property>
-        </bean>
+    <property name="webScriptFiles">
+      <list merge="true">
+        <value>dwr/interface/VendorService.js</value>
       </list>
     </property>
   </bean>
+
+  <bean id="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount"
+        parent="PayeeACHAccountMaintenanceDocument-EditPayeeACHAccount-parentBean">
+    <property name="maintainableItems">
+      <list>
+        <bean parent="MaintainableFieldDefinition" p:name="achAccountGeneratedIdentifier"
+              p:unconditionallyReadOnly="true" p:defaultValueFinder-ref="nextAchAccountIdentifierFinder"/>
+        <bean parent="MaintainableFieldDefinition" p:name="payeeIdentifierTypeCode" p:required="true"
+              p:webUILeaveFieldFunction="submit"/>
+        <bean parent="MaintainableFieldDefinition" p:name="payeeIdNumber" p:required="true"
+              p:webUILeaveFieldFunction="submit"/>
+        <bean parent="MaintainableFieldDefinition" p:name="payeePrincipalName" p:noLookup="true"
+              p:unconditionallyReadOnly="true" />
+        <bean parent="MaintainableFieldDefinition" p:name="payeeName" p:required="false" />
+        <bean parent="MaintainableFieldDefinition" p:name="bankRoutingNumber" p:required="true"
+              p:webUILeaveFieldFunction="loadAchBankInfo"/>
+        <bean parent="MaintainableFieldDefinition" p:name="bankRouting.bankName"
+              p:unconditionallyReadOnly="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="bankAccountNumber" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="bankAccountTypeCode" p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="standardEntryClass"/>
+        <bean parent="MaintainableFieldDefinition" p:name="payeeEmailAddress" p:required="false"/>
+        <bean parent="MaintainableFieldDefinition"
+              p:name="achTransactionType"
+              p:noLookup="true"
+              p:required="true"/>
+        <bean parent="MaintainableFieldDefinition" p:name="active" p:required="true" p:defaultValue="true"/>
+      </list>
+    </property>
+  </bean>
+
 </beans>
