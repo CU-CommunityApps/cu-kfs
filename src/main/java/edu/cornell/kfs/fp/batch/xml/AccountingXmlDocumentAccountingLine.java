@@ -1,8 +1,8 @@
 package edu.cornell.kfs.fp.batch.xml;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
@@ -115,6 +115,10 @@ public class AccountingXmlDocumentAccountingLine {
     @XmlElement(name = "credit_amount", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
     protected KualiDecimal creditAmount;
+    
+    @XmlElement(name = "reference_number", namespace = StringUtils.EMPTY, required = false)
+    @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
+    protected String referenceNumber;
 
     public String getChartCode() {
         return chartCode;
@@ -308,44 +312,22 @@ public class AccountingXmlDocumentAccountingLine {
         this.creditAmount = creditAmount;
     }
 
-    @Override
-    public boolean equals(Object xmlAccountingLineObject) {
-        if (xmlAccountingLineObject instanceof AccountingXmlDocumentAccountingLine) {
-            AccountingXmlDocumentAccountingLine xmlAccountingLine = (AccountingXmlDocumentAccountingLine) xmlAccountingLineObject;
-            return Objects.equals(this.chartCode, xmlAccountingLine.getChartCode())
-                    && Objects.equals(this.accountNumber, xmlAccountingLine.getAccountNumber())
-                    && Objects.equals(this.subAccountNumber, xmlAccountingLine.getSubAccountNumber())
-                    && Objects.equals(this.objectCode, xmlAccountingLine.getObjectCode())
-                    && Objects.equals(this.subObjectCode, xmlAccountingLine.getSubObjectCode())
-                    && Objects.equals(this.projectCode, xmlAccountingLine.getProjectCode())
-                    && Objects.equals(this.orgRefId, xmlAccountingLine.getOrgRefId())
-                    && Objects.equals(this.lineDescription, xmlAccountingLine.getLineDescription())
-                    && Objects.equals(this.amount, xmlAccountingLine.getAmount())
-                    && Objects.equals(this.baseAmount, xmlAccountingLine.getBaseAmount())
-                    && Objects.equals(this.month01Amount, xmlAccountingLine.getMonth01Amount())
-                    && Objects.equals(this.month02Amount, xmlAccountingLine.getMonth02Amount())
-                    && Objects.equals(this.month03Amount, xmlAccountingLine.getMonth03Amount())
-                    && Objects.equals(this.month04Amount, xmlAccountingLine.getMonth04Amount())
-                    && Objects.equals(this.month05Amount, xmlAccountingLine.getMonth05Amount())
-                    && Objects.equals(this.month06Amount, xmlAccountingLine.getMonth06Amount())
-                    && Objects.equals(this.month07Amount, xmlAccountingLine.getMonth07Amount())
-                    && Objects.equals(this.month08Amount, xmlAccountingLine.getMonth08Amount())
-                    && Objects.equals(this.month09Amount, xmlAccountingLine.getMonth09Amount())
-                    && Objects.equals(this.month10Amount, xmlAccountingLine.getMonth10Amount())
-                    && Objects.equals(this.month11Amount, xmlAccountingLine.getMonth11Amount())
-                    && Objects.equals(this.month12Amount, xmlAccountingLine.getMonth12Amount())
-                    && Objects.equals(this.debitAmount, xmlAccountingLine.getDebitAmount())
-                    && Objects.equals(this.creditAmount, xmlAccountingLine.getCreditAmount());
-        }
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
 
-        return false;
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(obj, this);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chartCode, accountNumber, subAccountNumber, objectCode, subObjectCode, projectCode, orgRefId, lineDescription, amount,
-                baseAmount, month01Amount, month02Amount, month03Amount, month04Amount, month05Amount, month06Amount, month07Amount,
-                month08Amount, month09Amount, month10Amount, month11Amount, month12Amount, debitAmount, creditAmount);
+        return HashCodeBuilder.reflectionHashCode(this);
     }
     
     @Override

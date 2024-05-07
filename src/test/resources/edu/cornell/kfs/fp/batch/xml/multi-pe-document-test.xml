@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<DocumentWrapper>
+    <CreateDate>09/28/2017</CreateDate>
+    <ReportEmail>abc123@cornell.edu</ReportEmail>
+    <Overview>Example XML file</Overview>
+    <DocumentList>
+        <Document>
+            <Index>1</Index>
+            <DocumentType>PE</DocumentType>
+            <Description>PE Doc</Description>
+            <Explanation>PE Doc explanation</Explanation>
+            <OrganizationDocumentNumber>WXYZ5680</OrganizationDocumentNumber>
+            <ReversalDate>03/30/2024</ReversalDate>
+            <NoteList>
+                <Note>
+                    <Description>A note for a PE document</Description>
+                </Note>
+            </NoteList>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1003163</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>6900</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Encumbrance Line</line_description>
+                    <amount>50</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1533039</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>6900</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <reference_number>RefNumber</reference_number>
+                    <amount>50</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+            <AdhocRecipientList>
+                <Recipient>
+                    <Netid>jdh34</Netid>
+                    <ActionRequested>Approve</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>se12</Netid>
+                    <ActionRequested>FYI</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>ccs1</Netid>
+                    <ActionRequested>Complete</ActionRequested>
+                </Recipient>
+                <Recipient>
+                    <Netid>nkk4</Netid>
+                    <ActionRequested>Acknowledge</ActionRequested>
+                </Recipient>
+            </AdhocRecipientList>
+            <BackupDocumentLinks>
+                <BackupLink>
+                    <Link>http://www.cornell.edu/index.html</Link>
+                    <Description>Cornell index page</Description>
+                    <FileName>index.html</FileName>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
+                </BackupLink>
+                <BackupLink>
+                    <Link>https://www.dfa.cornell.edu/index.cfm</Link>
+                    <Description>DFA index page</Description>
+                    <FileName>index.cfm</FileName>
+                    <CredentialGroupCode>TESTGRP</CredentialGroupCode>
+                </BackupLink>
+            </BackupDocumentLinks>
+        </Document>
+        <Document>
+            <Index>2</Index>
+            <DocumentType>PE</DocumentType>
+            <Description>PE Doc 2</Description>
+            <Explanation>PE Doc explanation 2</Explanation>
+            <OrganizationDocumentNumber>WXYZ5680</OrganizationDocumentNumber>
+            <ReversalDate>03/30/2024</ReversalDate>
+            <NoteList>
+                <Note>
+                    <Description>A note for a PE document</Description>
+                </Note>
+            </NoteList>
+            <SourceAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1003163</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>6900</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description>Encumbrance Line</line_description>
+                    <amount>50</amount>
+                </Accounting>
+            </SourceAccountingLineList>
+            <TargetAccountingLineList>
+                <Accounting>
+                    <coa_cd>IT</coa_cd>
+                    <account_nbr>1533039</account_nbr>
+                    <sub_account_nbr></sub_account_nbr>
+                    <object_cd>6900</object_cd>
+                    <sub_object_cd></sub_object_cd>
+                    <project></project>
+                    <org_ref_id></org_ref_id>
+                    <line_description></line_description>
+                    <reference_number>RefNumber</reference_number>
+                    <amount>50</amount>
+                </Accounting>
+            </TargetAccountingLineList>
+        </Document>
+    </DocumentList>
+</DocumentWrapper>

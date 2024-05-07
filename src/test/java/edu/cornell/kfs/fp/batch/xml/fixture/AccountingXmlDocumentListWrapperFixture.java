@@ -191,7 +191,8 @@ public enum AccountingXmlDocumentListWrapperFixture {
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_DV,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YEBA,
                     AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_YETF,
-                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_AV)),
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_AV,
+                    AccountingXmlDocumentEntryFixture.MULTI_DOC_TYPE_TEST_PE)),
     TF_DOCUMENT_TEST("02/26/2018", "xyz789@cornell.edu", "Example multi-doc-type XML file",
             documents(
                     AccountingXmlDocumentEntryFixture.SINGLE_DOC_TYPE_TEST_TF1)),
@@ -239,7 +240,16 @@ public enum AccountingXmlDocumentListWrapperFixture {
             documents(
                     AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC1,
                     AccountingXmlDocumentEntryFixture.BAD_CONVERSION_DOCUMENT_PLACEHOLDER,
-                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3), false);
+                    AccountingXmlDocumentEntryFixture.MULTI_YEDI_DOCUMENT_TEST_DOC3), false),
+    SINGLE_PE_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.SINGLE_PE_DOCUMENT_TEST_DOC1)),
+    MULTI_PE_DOCUMENT_TEST(
+            BASE_WRAPPER,
+            documents(
+                    AccountingXmlDocumentEntryFixture.MUTLI_PE_DOCUMENT_TEST_DOC1,
+                    AccountingXmlDocumentEntryFixture.MULTI_PE_DOCUMENT_TEST_DOC2));
 
     public final String createDate;
     public final String reportEmail;
