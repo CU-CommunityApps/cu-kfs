@@ -27,4 +27,11 @@ public class CreateAccountingDocumentServiceImplTestPE extends CreateAccountingD
         assertDocumentsAreGeneratedCorrectlyByBatchProcess(
                 AccountingXmlDocumentListWrapperFixture.SINGLE_PE_DOCUMENT_TEST);
     }
+    
+    @Test
+    public void testLoadSingleFileWithMultiPEDocument() throws Exception {
+        copyTestFilesAndCreateDoneFiles("multi-pe-document-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.MULTI_PE_DOCUMENT_TEST);
+    }
 }

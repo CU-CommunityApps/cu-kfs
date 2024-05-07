@@ -490,6 +490,18 @@ public enum AccountingXmlDocumentEntryFixture {
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE)),
     MULTI_DOC_TYPE_TEST_AV(BASE_AV_ADJUSTMENT, 11),
+    
+    MULTI_DOC_TYPE_TEST_PE(
+            12, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(),
+            backupLinks()),
 
     SINGLE_DOC_TYPE_TEST_YETF(1, CuFPTestConstants.YEAR_END_TRANSFER_OF_FUNDS_DOC_TYPE,
             "Test YETF Document", "This is only a test YETF document!", "ABCD1234",
@@ -676,7 +688,35 @@ public enum AccountingXmlDocumentEntryFixture {
                     AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
             backupLinks(
                     AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
-                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE));
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+    MUTLI_PE_DOCUMENT_TEST_DOC1(
+            1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc", "PE Doc explanation", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(
+                    AccountingXmlDocumentAdHocRecipientFixture.JDH34_APPROVE,
+                    AccountingXmlDocumentAdHocRecipientFixture.SE12_FYI,
+                    AccountingXmlDocumentAdHocRecipientFixture.CCS1_COMPLETE,
+                    AccountingXmlDocumentAdHocRecipientFixture.NKK4_ACKNOWLEDGE),
+            backupLinks(
+                    AccountingXmlDocumentBackupLinkFixture.CORNELL_INDEX_PAGE,
+                    AccountingXmlDocumentBackupLinkFixture.DFA_INDEX_PAGE)),
+    MULTI_PE_DOCUMENT_TEST_DOC2(
+            1, KFSConstants.BALANCE_TYPE_PRE_ENCUMBRANCE,
+            "PE Doc 2", "PE Doc explanation 2", "WXYZ5680", "03/30/2024",
+            sourceAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1003163_OBJ_6900_AMT_50_ENCUM_LINE),
+            targetAccountingLines(
+                    AccountingXmlDocumentAccountingLineFixture.ACCT_1533039_OBJ_6900_AMT_50_REF_NUMBER),
+            notes(
+                    "A note for a PE document"),
+            adHocRecipients(),
+            backupLinks());
 
     public final Long index;
     public final String documentTypeCode;
