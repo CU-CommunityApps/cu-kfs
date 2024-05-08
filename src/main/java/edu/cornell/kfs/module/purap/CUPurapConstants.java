@@ -554,4 +554,9 @@ public class CUPurapConstants {
     }
 
     public static final String JAGGAER_XML_INPUT_FILE_TYPE_IDENTIFIER = "jaggaerUploadFileType";
+    
+    public static final class IWantRoles {
+        public static final String IWNT_ORG_AUTHORIZER = "IWNT Organization Authorizer";
+        public static final String IWNT_PURCHASING_CONTRACT_ASSISTANT = "Purchasing Contract Assistant(cu)";
+    }
 }

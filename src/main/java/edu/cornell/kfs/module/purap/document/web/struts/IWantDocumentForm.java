@@ -360,9 +360,9 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         createReqButton.setExtraButtonProperty("methodToCall.createRequisition");
         createReqButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_req.gif");
         createReqButton.setExtraButtonAltText("Create Req");
-        if (isInOrgHierarchyNode(getDocument())) {
+        if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR) && isInOrgHierarchyNode(getDocument())) {
             createReqButton.setExtraButtonOnclick(
-                    " if((document.getElementsByName('document.contractIndicator'))[0].checked) " 
+                    " if((document.getElementsByName('document.contractIndicator'))[1].checked) " 
                             + " { " 
                             + " if(confirm('" + getContractWarningMessage() + "')){ " 
                             + "window.open('"
@@ -380,6 +380,20 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                             + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId=" 
                             + getDocument().getDocumentNumber()
                             + "'); return false; "
+                            + " } "
+                    );
+        } else if (!getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR)
+                        && isInOrgHierarchyNode(getDocument()) && Boolean.valueOf(getIWantDocument().getContractIndicator())) {
+            createReqButton.setExtraButtonOnclick(
+                            " if (confirm('" + getContractWarningMessage() + "')) { " 
+                            + "window.open('"
+                            + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                            + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="
+                            + getDocument().getDocumentNumber() 
+                            + "'); return false;" 
+                            + " } " 
+                            + " else { " 
+                            + "return false; "
                             + " } "
                     );
         } else {

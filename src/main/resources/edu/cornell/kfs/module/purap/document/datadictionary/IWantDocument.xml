@@ -697,8 +697,6 @@
     <property name="label" value="SSC Processor Netid"/>
   </bean>
   
-   <bean id="contractIndicatorValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.ContractIndicatorValuesFinder"/>
-  
   <bean id="IWantDocument-contractIndicator" parent="IWantDocument-contractIndicator-parentBean"/>
   <bean id="IWantDocument-contractIndicator-parentBean" abstract="true" parent="AttributeDefinition">
     <property name="name" value="contractIndicator"/>
@@ -706,7 +704,7 @@
     <property name="shortLabel" value="Contract"/>
     <property name="required" value="false"/>
     <property name="control">
-        <bean parent="RadioControlDefinition" p:valuesFinder-ref="contractIndicatorValuesFinder" />
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="yesNoValuesFinder" />
     </property>
   </bean>
   

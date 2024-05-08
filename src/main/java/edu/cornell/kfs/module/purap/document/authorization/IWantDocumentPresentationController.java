@@ -195,20 +195,17 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
         editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_NOTE_OPTIONS);
         
-        if(isContractFunctionalityEnabled()) {
-            if (canEditContractIndicator(document)) {
-                editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
-                editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
-            } else if (canViewContractTab(document)) {
-                editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
-            }
+        if (isContractFunctionalityEnabled()) {
+            editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+            editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
+
         }
 
         return editModes;
     }
 
     private boolean isContractFunctionalityEnabled() {
-        return getParameterService().getParameterValueAsBoolean(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapParameterConstants.IWNT_DOC_ENABLE_IWANT_CONTRACT_TAB_IND_PARM);
+        return getParameterService().getParameterValueAsBoolean(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapParameterConstants.ENABLE_IWANT_CONTRACT_TAB_IND);
     }
     
     private boolean isInOrgHierarchyOrPurchasingAssistantNode(Document document) {
