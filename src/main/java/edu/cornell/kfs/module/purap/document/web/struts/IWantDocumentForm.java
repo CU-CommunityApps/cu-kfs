@@ -383,7 +383,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                             + " } "
                     );
         } else if (!getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR)
-                        && isInOrgHierarchyNode(getDocument()) && Boolean.valueOf(getIWantDocument().getContractIndicator())) {
+                        && isInOrgHierarchyNode(getDocument()) && KFSConstants.ParameterValues.YES.equalsIgnoreCase(getIWantDocument().getContractIndicator())) {
             createReqButton.setExtraButtonOnclick(
                             " if (confirm('" + getContractWarningMessage() + "')) { " 
                             + "window.open('"
@@ -438,11 +438,6 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isEnroute();
     }
     
-    public boolean isDocFinal() {
-        final WorkflowDocument workflowDocument = getDocument().getDocumentHeader().getWorkflowDocument();
-        return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isFinal();
-    }
-    
     public String getContractWarningMessage() {
         return getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWNT_CONFIRM_CREATE_REQ);
     }
@@ -489,9 +484,4 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         return isDocInNode(document, KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY);
     }
     
-    private boolean isInPurchasingAssistantNode(Document document) {
-        return isDocInNode(document, CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
-    }
-
-
 }

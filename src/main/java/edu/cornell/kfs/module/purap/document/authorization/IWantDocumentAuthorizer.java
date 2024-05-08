@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.kim.api.KimConstants;
+import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.bo.impl.KimAttributes;
 import org.kuali.kfs.kim.impl.identity.Person;
@@ -29,6 +30,9 @@ import edu.cornell.kfs.module.purap.document.IWantDocument;
 public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumentAuthorizerBase {
 
     private static final long serialVersionUID = 1L;
+    
+    private static WorkflowDocumentService workflowDocumentService;
+    private static RoleService roleService; 
     
     /*
      * Customization to ensure the canSendNoteFyi action is available when the canSendNoteFyi is true. 
@@ -66,10 +70,10 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     public Set<String> getEditModes(Document document, Person user, Set<String> editModes) {
         Set<String> result = super.getEditModes(document, user, editModes);
         
-        if(!canViewContractTab(document)) {
+        if (!canViewContractTab(document, user)) {
             result.remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
         }
-        if(!canEditContractIndicator(document, user)) {
+        if (!canEditContractIndicator(document, user)) {
             result.remove(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
         }
         
@@ -138,9 +142,10 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         return CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep());
     }
     
-    public boolean canViewContractTab(Document document) {
+    public boolean canViewContractTab(Document document, Person person) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return (isInOrgHierarchyOrPurchasingAssistantNode(document) && (isCurrentUserOrgReviewer() || isCurrentUserPurchasingAssistant())) || workflowDocument.isFinal();
+        return (isInOrgHierarchyOrPurchasingAssistantNode(document) && (isCurrentUserOrgReviewer(person) 
+                || isCurrentUserPurchasingAssistant(person))) || workflowDocument.isFinal();
     }
 
     /*
@@ -160,10 +165,10 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
+
         if (CollectionUtils.isNotEmpty(nodeNames)) {
             for (String nodeName : nodeNames) {
-                List<ActionRequest> actionRequests = workflowDocumentService.getActionRequestsForPrincipalAtNode(
+                List<ActionRequest> actionRequests = getWorkflowDocumentService().getActionRequestsForPrincipalAtNode(
                         document.getDocumentNumber(), nodeName, currentUser.getPrincipalId());
                 for (ActionRequest actionRequest : actionRequests) {
                     if (actionRequest.isApproveRequest()) {
@@ -186,20 +191,35 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         return false;
     }
     
-    private boolean isCurrentUserInRole(String namespace, String roleName) {
-        Person currentUser = GlobalVariables.getUserSession().getPerson();
+    private boolean isCurrentUserInRole(String namespace, String roleName, Person currentUser) {
         List<String> roleIds = new ArrayList<String>();
-        roleIds.add(KimApiServiceLocator.getRoleService().getRoleIdByNamespaceCodeAndName(namespace, roleName));
+        roleIds.add(getRoleService().getRoleIdByNamespaceCodeAndName(namespace, roleName));
         Map<String,String> roleQualifier = new HashMap<String,String>();
               
-        return KimApiServiceLocator.getRoleService().principalHasRole(currentUser.getPrincipalId(), roleIds, roleQualifier);
+        return getRoleService().principalHasRole(currentUser.getPrincipalId(), roleIds, roleQualifier);
     }
     
-    private boolean isCurrentUserOrgReviewer() {
-        return isCurrentUserInRole(KFSConstants.CoreModuleNamespaces.KFS, CUPurapConstants.IWantRoles.IWNT_ORG_AUTHORIZER);
+    private boolean isCurrentUserOrgReviewer(Person currentUser) {
+        return isCurrentUserInRole(KFSConstants.CoreModuleNamespaces.KFS, CUPurapConstants.IWantRoles.IWNT_ORG_AUTHORIZER, currentUser);
     }
     
-    private boolean isCurrentUserPurchasingAssistant() {   
-        return isCurrentUserInRole(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.IWantRoles.IWNT_PURCHASING_CONTRACT_ASSISTANT);
+    private boolean isCurrentUserPurchasingAssistant(Person currentUser) {   
+        return isCurrentUserInRole(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.IWantRoles.IWNT_PURCHASING_CONTRACT_ASSISTANT,
+                currentUser);
     }
+
+    public static WorkflowDocumentService getWorkflowDocumentService() {
+        if (workflowDocumentService == null) {
+            workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
+        }
+        return workflowDocumentService;
+    }
+
+    public static RoleService getRoleService() {
+        if (roleService == null) {
+            roleService = KimApiServiceLocator.getRoleService();
+        }
+        return roleService;
+    }
+    
 }

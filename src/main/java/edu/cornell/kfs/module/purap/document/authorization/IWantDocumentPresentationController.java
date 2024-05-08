@@ -88,47 +88,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
                 && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
                         workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
     }
-
-    /* 
-     * Everyone should be able to view the Contract tab when the document is Final.
-     */
-    public boolean canViewContractTab(Document document) {
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return isInOrgHierarchyOrPurchasingAssistantNode(document) || workflowDocument.isFinal();
-    }
-
-    /*
-     * We restrict the editing of the Contract Tab contents on IWNT docs to enroute status at the
-     * OrganizationHierarchy node and PurchasingContractAssistant node.
-     */
-    public boolean canEditContractIndicator(Document document) {
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        boolean isInApproversNode = isInApproversNode(document);
-        
-        return workflowDocument.isEnroute()
-                && isInOrgHierarchyOrPurchasingAssistantNode(document)
-                && isInApproversNode;
-    }
     
-    private boolean isInApproversNode(Document document) {
-        final Person currentUser = GlobalVariables.getUserSession().getPerson();
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        WorkflowDocumentService workflowDocumentService = SpringContext.getBean(WorkflowDocumentService.class);
-        if (CollectionUtils.isNotEmpty(nodeNames)) {
-            for (String nodeName : nodeNames) {
-                List<ActionRequest> actionRequests = workflowDocumentService.getActionRequestsForPrincipalAtNode(
-                        document.getDocumentNumber(), nodeName, currentUser.getPrincipalId());
-                for (ActionRequest actionRequest : actionRequests) {
-                    if (actionRequest.isApproveRequest()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
@@ -182,7 +142,6 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         if ((StringUtils.isBlank(iWantDocument.getReqsDocId()) && StringUtils.isBlank(iWantDocument.getDvDocId())) && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {   
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_REQ);
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_DV);
-
         }
         
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);
@@ -208,15 +167,4 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         return getParameterService().getParameterValueAsBoolean(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapParameterConstants.ENABLE_IWANT_CONTRACT_TAB_IND);
     }
     
-    private boolean isInOrgHierarchyOrPurchasingAssistantNode(Document document) {
-        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
-        
-        if (CollectionUtils.isNotEmpty(nodeNames)) {
-            return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY)
-                    || nodeNames.contains(CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
-        }
-        return false;
-    }
-
 }
