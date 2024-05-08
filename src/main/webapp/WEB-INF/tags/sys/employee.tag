@@ -43,7 +43,7 @@
 
 <c:set var="oldUserNameFieldName" value="${!empty userNameFieldName ? userNameFieldName : ''}"/>
 
-<c:if test="${!empty userNameFieldName && fn:endsWith(userNameFieldName, '.name') && !fn:contains(userNameFieldName, 'HocRoutePerson')}">
+<c:if test="${!empty userNameFieldName && fn:endsWith(userNameFieldName, '.name') && !fn:contains(userNameFieldName, 'HocRoutePerson') && !fn:contains(userNameFieldName, 'HocRouteRecipient')}">
     <c:set var="userNameFieldName" value="${fn:replace(userNameFieldName, '.name', '.nameMaskedIfNecessary')}"/>
 </c:if>
 
