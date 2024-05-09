@@ -82,6 +82,9 @@
         <ref bean="IWantDocument-completeOption" />
         <ref bean="IWantDocument-currentRouteToNetId"/>
         <ref bean="IWantDocument-processorNetId"/>
+        
+        <ref bean="IWantDocument-contractIndicator"/>
+        <ref bean="IWantDocument-contractIndicatorForSearch"/>
 
         <ref bean="IWantDocument-accountDescriptionTxt"/>
         <ref bean="IWantDocument-vendorDescription"/>
@@ -98,7 +101,6 @@
        <ref bean="IWantDocument-collegeLevelChartForSearch" />
        <ref bean="IWantDocument-collegeLevelOrgCodeForSearch" />
        <ref bean="IWantDocument-departmentLevelOrgCodeForSearch" />
-       
       </list>
     </property>
     <property name="validationMap" ref="IWantDocument-validations"/>
@@ -695,6 +697,28 @@
     <property name="label" value="SSC Processor Netid"/>
   </bean>
   
+  <bean id="IWantDocument-contractIndicator" parent="IWantDocument-contractIndicator-parentBean"/>
+  <bean id="IWantDocument-contractIndicator-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="contractIndicator"/>
+    <property name="label" value="Contract"/>
+    <property name="shortLabel" value="Contract"/>
+    <property name="required" value="false"/>
+    <property name="control">
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="yesNoValuesFinder" />
+    </property>
+  </bean>
+  
+  <bean id="IWantDocument-contractIndicatorForSearch" parent="IWantDocument-contractIndicatorForSearch-parentBean"/>
+  <bean id="IWantDocument-contractIndicatorForSearch-parentBean" abstract="true" parent="AttributeDefinition">
+    <property name="name" value="contractIndicatorForSearch"/>
+    <property name="label" value="Contract"/>
+    <property name="shortLabel" value="Contract"/>
+    <property name="required" value="false"/>
+    <property name="control">
+        <bean parent="RadioControlDefinition" p:valuesFinder-ref="indicatorValuesFinder" />
+    </property>
+  </bean>
+
   <bean id="IWantDocument-validations" parent="IWantDocument-validations-parentBean"/>
   
   <bean id="IWantDocument-validations-parentBean" class="org.springframework.beans.factory.config.MapFactoryBean">
@@ -797,6 +821,21 @@
                   <property name="documentValues">
                     <list>
                       <value>processorNetId</value>
+                    </list>
+                  </property>
+                </bean>
+                <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+                  <property name="searchingAttribute">
+                    <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
+                      <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
+                      <property name="attributeName" value="contractIndicatorForSearch"/>
+                      <property name="showAttributeInSearchCriteria" value="true"/>
+                      <property name="showAttributeInResultSet" value="true"/>
+                    </bean>
+                  </property>
+                  <property name="documentValues">
+                    <list>
+                      <value>contractIndicator</value>
                     </list>
                   </property>
                 </bean>

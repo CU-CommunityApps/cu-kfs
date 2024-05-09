@@ -101,6 +101,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String processorNetId;
     private String processorName;
 
+    private String contractIndicator;
+
     // routing fields
     private String routingChart;
     private String routingOrganization;
@@ -157,7 +159,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private transient Chart collegeChartForSearch;
     private transient Organization collegeOrgForSearch;
     private transient Organization departmentOrgForSearch;
-    
+
     // The difference between the item and account totals; not persisted.
     private KualiDecimal itemAndAccountDifference;
     
@@ -166,6 +168,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         items = new ArrayList<IWantItem>();
         accounts = new ArrayList<IWantAccount>();
         servicePerformedOnCampus = KFSConstants.ParameterValues.NO;
+        contractIndicator = KRADConstants.NO_INDICATOR_VALUE;
     }
 
     @Override
@@ -784,6 +787,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
     }
 
     @Override
@@ -800,6 +804,7 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
         this.completeOption = null;
         this.completed = false;
+        setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
     }
 
     /**
@@ -885,10 +890,25 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+    
+
+    public String getContractIndicator() {
+        return contractIndicator;
+    }
+
+    public void setContractIndicator(String contractIndicator) {
+        this.contractIndicator = contractIndicator;
+    }
 
     @Override
     public boolean answerSplitNodeQuestion(String nodeName) throws UnsupportedOperationException {
-        return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+        if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_ORDER_COMPLETED)) {
+            return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(completeOption);
+        }
+        if (nodeName.equals(CUPurapConstants.IWantRouteNodes.IS_CONTRACT_INDICATOR_CHECKED)) {
+            return KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(contractIndicator);
+        }
+        throw new UnsupportedOperationException("Cannot answer IWantDocument split question for node called \"" + nodeName + "\"");
     }
 
     public String getProcessorNetId() {
@@ -1544,6 +1564,10 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public void setNoteOptionDropdownSelectedValue(String noteOptionDropdownSelectedValue) {
         this.noteOptionDropdownSelectedValue = noteOptionDropdownSelectedValue;
+    }
+
+    public String getContractIndicatorForSearch() {
+        return contractIndicator;
     }
 
 }

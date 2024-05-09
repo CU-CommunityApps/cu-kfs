@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -832,8 +833,9 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             insertAdHocRoutePerson(mapping, iWantDocForm, request, response);
 
         }
-        ActionForward actionForward = super.route(mapping, form, request, response);
 
+        ActionForward actionForward = super.route(mapping, form, request, response);
+        
         if (CUPurapConstants.IWantDocumentSteps.ROUTING_STEP.equalsIgnoreCase(step)) {
             iWantDocForm.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
             iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
@@ -1176,6 +1178,16 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
         IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
         IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        final String contractIndicator = iWantDocument.getContractIndicator();
+        
+        if (iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
+        } else if (confirmationNeeded(iWantDocument, contractIndicator)) {
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP);
+            iWantDocForm.getEditingMode().put(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION, CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
+            return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        }
 
         // Make sure a related requisition does not already exist before creating one.
         if (StringUtils.isNotBlank(iWantDocument.getReqsDocId())) {
@@ -1189,6 +1201,31 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         ActionForward actionForward = new ActionForward(url, true);
 
         return actionForward;
+    }
+    
+    public ActionForward cancelCreateReq(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        if (iWantDocForm.getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION) && CUPurapConstants.IWantDocumentSteps.CONFIRM_STEP.equalsIgnoreCase(iWantDocument.getStep())) {
+            iWantDocument.setStep(CUPurapConstants.IWantDocumentSteps.REGULAR);
+            iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
+        }
+       
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    
+    private boolean confirmationNeeded(IWantDocument document, String contractIndicator) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(contractIndicator);
+        }
+        return false;
     }
 
     private boolean addNewAccount(IWantDocumentForm iWantDocumentForm, IWantDocument iWantDoc, IWantAccount account) {
