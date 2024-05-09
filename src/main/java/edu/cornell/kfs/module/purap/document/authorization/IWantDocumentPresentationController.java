@@ -4,15 +4,18 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
-import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
+import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
+import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
+import edu.cornell.kfs.sys.CUKFSConstants;
 
 public class IWantDocumentPresentationController extends FinancialSystemTransactionalDocumentPresentationControllerBase {
 
@@ -80,7 +83,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
                 && !SpringContext.getBean(FinancialSystemWorkflowHelperService.class).isAdhocApprovalRequestedForPrincipal(
                         workflowDocument, GlobalVariables.getUserSession().getPrincipalId());
     }
-
+    
     @Override
     public Set<String> getEditModes(Document document) {
         Set<String> editModes = super.getEditModes(document);
@@ -134,7 +137,6 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         if ((StringUtils.isBlank(iWantDocument.getReqsDocId()) && StringUtils.isBlank(iWantDocument.getDvDocId())) && !workflowDocument.isInitiated() && !workflowDocument.isSaved()) {   
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_REQ);
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_DV);
-
         }
         
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);
@@ -146,8 +148,18 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         
         editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
         editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_NOTE_OPTIONS);
+        
+        if (isContractFunctionalityEnabled()) {
+            editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
+            editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
+
+        }
 
         return editModes;
     }
 
+    private boolean isContractFunctionalityEnabled() {
+        return getParameterService().getParameterValueAsBoolean(CUKFSConstants.ParameterNamespaces.PURCHASING, KfsParameterConstants.DOCUMENT_COMPONENT, CUPurapParameterConstants.ENABLE_IWANT_CONTRACT_TAB_IND);
+    }
+    
 }

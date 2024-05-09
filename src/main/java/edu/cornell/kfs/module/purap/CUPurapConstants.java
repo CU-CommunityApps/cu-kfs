@@ -109,6 +109,7 @@ public class CUPurapConstants {
         public static final String VENDOR_STEP = "vendorStep";
         public static final String ROUTING_STEP = "routingStep";
         public static final String REGULAR = "regular";
+        public static final String CONFIRM_STEP = "confirmStep";
     }
     
     public static final class IWantPresentationModes {
@@ -117,6 +118,16 @@ public class CUPurapConstants {
         public static final String MULTIPLE_PAGE_MODE = "multiplePageMode";
         //This mode shows all I Want doc data entry pages together on a single page.
         public static final String FULL_PAGE_MODE = "fullPageMode";
+    }
+    
+    public static final class IWantRouteNodes {
+        public static final String IS_ORDER_COMPLETED = "IsOrderCompleted";
+        public static final String IS_CONTRACT_INDICATOR_CHECKED = "IsContractIndicatorChecked";
+        public static final String PURCHASING_CONTRACT_ASSISTANT  = "PurchasingContractAssistant";
+    }
+    
+    public static final class IWantDocumentAttributes {
+        public static final String CONTRACT_INDICATOR = "contractIndicator";
     }
     
     //These two constants were added to the editMode processing to provide the user functionality 
@@ -134,6 +145,10 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_CREATE_DV = "createDV";
     public static final String IWNT_DOC_USE_LOOKUPS = "iwntUseLookups";
     public static final String IWNT_DOC_DISPLAY_NOTE_OPTIONS = "displayNoteOptions";
+    
+    public static final String IWNT_DOC_DISPLAY_CONTRACT_TAB = "displayContractTab";
+    public static final String IWNT_DOC_EDIT_CONTRACT_INDICATOR = "editContractIndicator";
+    public static final String IWNT_DOC_DISPLAY_CONFIRMATION = "displayConfirmation";
     
     public static final String USER_OPTIONS_PRINCIPAL_ID = "principalId";
     public static final String USER_OPTIONS_OPTION_ID = "optionId";
@@ -539,4 +554,9 @@ public class CUPurapConstants {
     }
 
     public static final String JAGGAER_XML_INPUT_FILE_TYPE_IDENTIFIER = "jaggaerUploadFileType";
+    
+    public static final class IWantRoles {
+        public static final String IWNT_ORG_AUTHORIZER = "IWNT Organization Authorizer";
+        public static final String IWNT_PURCHASING_CONTRACT_ASSISTANT = "Purchasing Contract Assistant(cu)";
+    }
 }
