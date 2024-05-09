@@ -1,21 +1,16 @@
 package edu.cornell.kfs.module.purap.document.authorization;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.authorization.FinancialSystemTransactionalDocumentPresentationControllerBase;
 import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.kew.actionrequest.ActionRequest;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.GlobalVariables;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;

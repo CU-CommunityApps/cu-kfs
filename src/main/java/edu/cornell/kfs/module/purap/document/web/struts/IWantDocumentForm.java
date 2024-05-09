@@ -10,6 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.kns.web.ui.ExtraButton;
 import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -383,7 +384,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                             + " } "
                     );
         } else if (!getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR)
-                        && isInOrgHierarchyNode(getDocument()) && KFSConstants.ParameterValues.YES.equalsIgnoreCase(getIWantDocument().getContractIndicator())) {
+                        && isInOrgHierarchyNode(getDocument()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(getIWantDocument().getContractIndicator())) {
             createReqButton.setExtraButtonOnclick(
                             " if (confirm('" + getContractWarningMessage() + "')) { " 
                             + "window.open('"
