@@ -8,6 +8,8 @@
 <c:set var="canEditProcessorNetId" value="${(not empty KualiForm.editingMode['editProcessorNetId'])}" scope="request"/>
 <c:set var="docEnroute" value="${KualiForm.docEnroute}"/>
 <c:set var="processorNetIdReadOnly" value="${!fullEntryMode || !canEditProcessorNetId || !docEnroute}" scope="request"/>
+<c:set var="canEditProcessingAssistantNetId" value="${(not empty KualiForm.editingMode['editPurcharingAssistantNetId'])}" scope="request"/>
+<c:set var="purcharingAssistantNetIdReadOnly" value="${!fullEntryMode || !canEditProcessorNetId || !docEnroute}" scope="request"/>
 
 <div class="tab-container" align="center">
     <html:hidden property="document.documentHeader.documentNumber"/>
@@ -80,7 +82,25 @@
            title="view/edit document overview information"
            summary="view/edit document overview information">
         <tr>
-            <td class="top" width="50%"></td>
+           <kul:htmlAttributeHeaderCell
+                    labelFor="document.purcharingAssistantNetId"
+                    attributeEntry="${iWantDocAttributes.purcharingAssistantNetId}"
+                    horizontal="true"
+                    rowspan="1"
+                    addClass="right top"
+                    width="25%"/>
+            <td rowspan="1" class="top" width="25%">
+                <kul:user userIdFieldName="document.purcharingAssistantNetId"
+                          userId="${KualiForm.document.purcharingAssistantNetId}"
+                          universalIdFieldName=""
+                          universalId=""
+                          userNameFieldName="document.purcharingAssistantName"
+                          userName="${KualiForm.document.purcharingAssistantName}"
+                          readOnly="${purcharingAssistantNetIdReadOnly}"
+                          fieldConversions="principalName:document.purcharingAssistantNetId,name:document.purcharingAssistantName"
+                          hasErrors="${hasErrors}"
+                          onblur="loadProcessorInfo('document.purcharingAssistantNetId', 'document.purcharingAssistantName')"/>
+            </td>
             <kul:htmlAttributeHeaderCell
                     labelFor="document.processorNetId"
                     attributeEntry="${iWantDocAttributes.processorNetId}"
