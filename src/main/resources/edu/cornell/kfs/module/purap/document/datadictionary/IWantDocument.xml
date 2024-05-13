@@ -82,7 +82,7 @@
         <ref bean="IWantDocument-completeOption" />
         <ref bean="IWantDocument-currentRouteToNetId"/>
         <ref bean="IWantDocument-processorNetId"/>
-        <ref bean="IWantDocument-purcharingAssistantNetId"/>
+        <ref bean="IWantDocument-purchasingAssistantNetId"/>
         
         <ref bean="IWantDocument-contractIndicator"/>
         <ref bean="IWantDocument-contractIndicatorForSearch"/>
@@ -698,8 +698,8 @@
     <property name="label" value="SSC Processor Netid"/>
   </bean>
   
-  <bean id="IWantDocument-purcharingAssistantNetId" parent="IWantDocument-purcharingAssistantNetId-parentBean"/>
-  <bean id="IWantDocument-purcharingAssistantNetId-parentBean" abstract="true" parent="Person-principalName">
+  <bean id="IWantDocument-purchasingAssistantNetId" parent="IWantDocument-purchasingAssistantNetId-parentBean"/>
+  <bean id="IWantDocument-purchasingAssistantNetId-parentBean" abstract="true" parent="Person-principalName">
     <property name="shortLabel" value="Purchasing Assistant Netid"/>
     <property name="maxLength" value="30"/>
     <property name="required" value="false"/>
@@ -707,7 +707,7 @@
       <bean parent="TextControlDefinition" p:size="32"/>
     </property>
     <property name="summary" value="&amp;nbsp;"/>
-    <property name="name" value="purcharingAssistantNetId"/>
+    <property name="name" value="purchasingAssistantNetId"/>
     <property name="label" value="Purchasing Assistant Netid"/>
   </bean>
   
@@ -842,14 +842,14 @@
                   <property name="searchingAttribute">
                     <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
                       <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.IWantDocument"/>
-                      <property name="attributeName" value="purcharingAssistantNetId"/>
+                      <property name="attributeName" value="purchasingAssistantNetId"/>
                       <property name="showAttributeInSearchCriteria" value="true"/>
                       <property name="showAttributeInResultSet" value="true"/>
                     </bean>
                   </property>
                   <property name="documentValues">
                     <list>
-                      <value>purcharingAssistantNetId</value>
+                      <value>purchasingAssistantNetId</value>
                     </list>
                   </property>
                 </bean>
