@@ -1,14 +1,16 @@
 package edu.cornell.kfs.vnd.businessobject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
+import org.kuali.kfs.sys.KFSConstants;
 
-public class VendorForEmployeeSearch extends TransientBusinessObjectBase {
+public class VendorWithSSN extends TransientBusinessObjectBase {
 
     private static final long serialVersionUID = 1L;
 
     private Integer vendorHeaderGeneratedIdentifier;
     private Integer vendorDetailAssignedIdentifier;
-    private String vendorTaxTypeCode;
+    private String vendorTaxNumber;
 
     public Integer getVendorHeaderGeneratedIdentifier() {
         return vendorHeaderGeneratedIdentifier;
@@ -26,12 +28,16 @@ public class VendorForEmployeeSearch extends TransientBusinessObjectBase {
         this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
     }
 
-    public String getVendorTaxTypeCode() {
-        return vendorTaxTypeCode;
+    public String getVendorTaxNumber() {
+        return vendorTaxNumber;
     }
 
-    public void setVendorTaxTypeCode(String vendorTaxTypeCode) {
-        this.vendorTaxTypeCode = vendorTaxTypeCode;
+    public void setVendorTaxNumber(String vendorTaxNumber) {
+        this.vendorTaxNumber = vendorTaxNumber;
+    }
+
+    public String getVendorId() {
+        return StringUtils.join(vendorHeaderGeneratedIdentifier, KFSConstants.DASH, vendorDetailAssignedIdentifier);
     }
 
 }

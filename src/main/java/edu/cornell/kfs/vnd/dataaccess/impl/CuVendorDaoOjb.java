@@ -36,7 +36,7 @@ import org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.VendorForEmployeeSearch;
+import edu.cornell.kfs.vnd.businessobject.VendorWithSSN;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
@@ -223,7 +223,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
     }
 
     @Override
-    public Stream<VendorForEmployeeSearch> getPotentialVendorEmployeesAsCloseableStream() {
+    public Stream<VendorWithSSN> getPotentialEmployeeVendorsAsCloseableStream() {
         final Criteria criteria = new Criteria();
         criteria.addEqualTo(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE,
                 VendorOwnershipCodes.INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC);
@@ -238,16 +238,20 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
                 VendorPropertyConstants.VENDOR_TAX_NUMBER
         });
         reportQuery.setJdbcTypes(new int[] {
-                Types.VARCHAR, Types.VARCHAR, Types.VARCHAR
+                Types.INTEGER, Types.INTEGER, Types.VARCHAR
         });
 
         return CuOjbUtils.buildCloseableStreamForReportQueryResults(
                 () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery),
-                this::mapToVendorEmployeeDto);
+                this::mapToSSNVendor);
     }
 
-    private VendorForEmployeeSearch mapToVendorEmployeeDto(Object[] queryResultRow) {
-        return null;
+    private VendorWithSSN mapToSSNVendor(final Object[] queryResultRow) {
+        final VendorWithSSN ssnVendor = new VendorWithSSN();
+        ssnVendor.setVendorHeaderGeneratedIdentifier((Integer) queryResultRow[0]);
+        ssnVendor.setVendorDetailAssignedIdentifier((Integer) queryResultRow[1]);
+        ssnVendor.setVendorTaxNumber((String) queryResultRow[2]);
+        return ssnVendor;
     }
 
 }
