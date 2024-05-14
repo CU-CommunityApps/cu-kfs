@@ -102,7 +102,6 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private String processorName;
     private String purchasingAssistantNetId;
     private String purchasingAssistantName;
-    
 
     private String contractIndicator;
 

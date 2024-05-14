@@ -55,5 +55,4 @@
     </table>
         </div>
     </kul:tab>
-    <jsp:doBody/>
 </c:if>
