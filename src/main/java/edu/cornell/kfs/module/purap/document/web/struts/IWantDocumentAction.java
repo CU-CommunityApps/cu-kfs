@@ -53,6 +53,7 @@ import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocUserOptions;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.businessobject.LevelOrganization;
+import edu.cornell.kfs.module.purap.businessobject.PersonData;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
@@ -241,6 +242,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 }
 
                 iWantDocumentService.setIWantDocumentDescription(iWantDocument);
+            }
+            
+            if (StringUtils.isNotBlank(iWantDocument.getPurchasingAssistantNetId())) {
+                PersonData purchasingAssistant = iWantDocumentService.getPersonData(iWantDocument.getPurchasingAssistantNetId());
+                if (ObjectUtils.isNotNull(purchasingAssistant)) {
+                    iWantDocument.setPurchasingAssistantName(purchasingAssistant.getPersonName());
+                }
             }
         }
 
