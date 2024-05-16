@@ -137,6 +137,7 @@ public class CUPurapConstants {
     public static final String I_WANT_DOC_MULTIPLE_PAGE_IS_ALLOWED = "multiplePageIsAllowed";
     public static final String I_WANT_DOC_FULL_PAGE_IS_ALLOWED = "fullPageIsAllowed";
     public static final String I_WANT_DOC_EDIT_PROC_NET_ID = "editProcessorNetId";
+    public static final String I_WANT_DOC_EDIT_PUR_ASSISTANT_NET_ID = "editPurchasingAssistantNetId";
     
     public static final String IWNT_DOC_TYPE = "IWNT";
     public static final String IWNT_STEP_PARAMETER = "step";
