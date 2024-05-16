@@ -100,6 +100,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private boolean completed;
     private String processorNetId;
     private String processorName;
+    private String purchasingAssistantNetId;
+    transient private String purchasingAssistantName;
 
     private String contractIndicator;
 
@@ -1568,6 +1570,22 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     public String getContractIndicatorForSearch() {
         return contractIndicator;
+    }
+
+    public String getPurchasingAssistantNetId() {
+        return purchasingAssistantNetId;
+    }
+
+    public void setPurchasingAssistantNetId(String purchasingAssistantNetId) {
+        this.purchasingAssistantNetId = purchasingAssistantNetId;
+    }
+
+    public String getPurchasingAssistantName() {
+        return purchasingAssistantName;
+    }
+
+    public void setPurchasingAssistantName(String purchasingAssistantName) {
+        this.purchasingAssistantName = purchasingAssistantName;
     }
 
 }
