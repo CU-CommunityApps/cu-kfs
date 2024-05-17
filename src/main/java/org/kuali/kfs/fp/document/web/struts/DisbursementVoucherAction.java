@@ -57,6 +57,7 @@ import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
 import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.util.DuplicatePaymentCheckUtils;
@@ -85,8 +86,8 @@ import java.util.stream.Collectors;
  * This class handles Actions for the DisbursementVoucher.
  */
 public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase {
-	
-	private static final Logger LOG = LogManager.getLogger();
+
+    private static final Logger LOG = LogManager.getLogger();
     private static final String PAYMENT_METHOD_PROPERTY_ADDITIONAL_DISBURSEMENT_VOUCHER_DATA_CODE =
             "additionalDisbursementVoucherDataCode";
     private static final String UPDATE_BANK_BASED_ON_PAYMENT_METHOD = "updateBankBasedOnPaymentMethod";
@@ -96,6 +97,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     protected DisbursementVoucherPayeeService disbursementVoucherPayeeService;
     protected DisbursementVoucherValidationService disbursementVoucherValidationService;
     private BankService bankService;
+    private PaymentSourceHelperService paymentSourceHelperService;
 
     /**
      * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
@@ -194,6 +196,9 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             dvForm.setOriginalPaymentMethodCode(Objects.requireNonNullElse(dvDoc.getPaymentMethodCode(), ""));
         }
 
+        // set wire charge message in form
+        dvForm.setWireChargeMessage(getPaymentSourceHelperService().retrieveWireChargeMessage());
+
         return dest;
     }
     
@@ -254,9 +259,6 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     protected void createDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.createDocument(kualiDocumentFormBase);
         ((DisbursementVoucherDocument) kualiDocumentFormBase.getDocument()).initiateDocument();
-
-        // set wire charge message in form
-        ((DisbursementVoucherForm) kualiDocumentFormBase).setWireChargeMessage(retrieveWireChargeMessage());
     }
 
     /**
@@ -1000,5 +1002,12 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             bankService = SpringContext.getBean(BankService.class);
         }
         return bankService;
+    }
+
+    public PaymentSourceHelperService getPaymentSourceHelperService() {
+        if (paymentSourceHelperService == null) {
+            paymentSourceHelperService = SpringContext.getBean(PaymentSourceHelperService.class);
+        }
+        return paymentSourceHelperService;
     }
 }

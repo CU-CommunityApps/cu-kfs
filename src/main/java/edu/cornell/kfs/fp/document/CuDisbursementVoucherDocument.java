@@ -574,9 +574,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
         disbVchrContactPersonName = currentUser.getName();
         disbVchrContactEmailId = currentUser.getEmailAddress();
-        final String phoneNumber = currentUser.getPhoneNumber();
 
-        // Our cu-kfs phone number logic is similar to the FINP-9213 fix, but ours also checks for the string "null".
+        final String phoneNumber = currentUser.getPhoneNumber();
+        //CU Customization: Add check for phoneNumber not being the actual string "null".
         if (StringUtils.isNotBlank(phoneNumber) && !StringUtils.equalsIgnoreCase(phoneNumber, CUKFSConstants.NULL)) {
             if (!phoneNumberService.isDefaultFormatPhoneNumber(phoneNumber)) {
                 disbVchrContactPhoneNumber = phoneNumberService.formatNumberIfPossible(phoneNumber);
@@ -586,7 +586,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         }
 
         disbVchrContactEmailId = currentUser.getEmailAddress();
-        final ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class).getPrimaryOrganization(currentUser, KFSConstants.CoreModuleNamespaces.FINANCIAL);
+        final ChartOrgHolder chartOrg = SpringContext.getBean(org.kuali.kfs.sys.service.FinancialSystemUserService.class)
+            .getPrimaryOrganization(currentUser, KFSConstants.CoreModuleNamespaces.FINANCIAL);
 
         // Does a valid campus code exist for this person?  If so, simply grab
         // the campus code via the business object service.
@@ -603,9 +604,9 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         // default doc location
         if (StringUtils.isBlank(disbursementVoucherDocumentationLocationCode)) {
             disbursementVoucherDocumentationLocationCode = getParameterService().getParameterValueAsString(
-                    DisbursementVoucherDocument.class, 
+                    DisbursementVoucherDocument.class,
                     FPParameterConstants.DOCUMENTATION_LOCATION
-                    );
+            );
         }
 
         updateBankBasedOnPaymentMethodCode();

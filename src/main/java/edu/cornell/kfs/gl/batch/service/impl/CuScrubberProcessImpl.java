@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.A21SubAccount;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
-import org.kuali.kfs.gl.batch.ScrubberStep;
 import org.kuali.kfs.gl.batch.service.impl.ScrubberProcessImpl;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.gl.businessobject.OriginEntryInformation;
@@ -59,7 +58,8 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
 
             costShareEntry.setFinancialObjectCode(parameterService.getParameterValueAsString(KFSConstants.CoreModuleNamespaces.GL,
                     SCRUBBER_JOB_COST_SHARE_COMPONENT,
-                    TRANSFER_IN_OBJECT_CODE));
+                    TRANSFER_IN_OBJECT_CODE
+            ));
             costShareEntry.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             costShareEntry.setFinancialObjectTypeCode(scrubbedEntryOption.getFinancialObjectTypeTransferExpenseCd());
             costShareEntry.setTransactionLedgerEntrySequenceNumber(new Integer(0));
@@ -73,8 +73,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             costShareEntry.setTransactionLedgerEntryAmount(scrubCostShareAmount);
             if (scrubCostShareAmount.isPositive()) {
                 costShareEntry.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
-            }
-            else {
+            } else {
                 costShareEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
                 costShareEntry.setTransactionLedgerEntryAmount(scrubCostShareAmount.negated());
             }
@@ -92,19 +91,19 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             createOutputEntry(costShareEntry, OUTPUT_GLE_FILE_ps);
             scrubberReport.incrementCostShareEntryGenerated();
 
-            OriginEntryFull costShareOffsetEntry = new OriginEntryFull(costShareEntry);
+            final OriginEntryFull costShareOffsetEntry = new OriginEntryFull(costShareEntry);
             costShareOffsetEntry.setTransactionLedgerEntryDescription(getOffsetMessage());
             OffsetDefinition offsetDefinition = accountingCycleCachingService.getOffsetDefinition(
                     scrubbedEntry.getUniversityFiscalYear(), scrubbedEntry.getChartOfAccountsCode(),
                     KFSConstants.TRANSFER_FUNDS, scrubbedEntry.getFinancialBalanceTypeCode());
-            if (offsetDefinition != null) {
+            if (offsetDefinition != null && offsetDefinition.isActive()) {
                 if (offsetDefinition.getFinancialObject() == null) {
                     final String objectCodeKey = offsetDefinition.getUniversityFiscalYear() + "-" +
-                            offsetDefinition.getChartOfAccountsCode() + "-" +
-                            offsetDefinition.getFinancialObjectCode();
+                                                 offsetDefinition.getChartOfAccountsCode() + "-" +
+                                                 offsetDefinition.getFinancialObjectCode();
                     final Message m = new Message(configurationService.getPropertyValueAsString(
                             KFSKeyConstants.ERROR_OFFSET_DEFINITION_OBJECT_CODE_NOT_FOUND) + " (" + objectCodeKey +
-                            ")", Message.TYPE_FATAL);
+                                                  ")", Message.TYPE_FATAL);
                     LOG.debug("generateCostShareEntries() Error 1 object not found");
                     return new ScrubberProcessTransactionError(costShareEntry, m);
                 }
@@ -112,11 +111,10 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                 costShareOffsetEntry.setFinancialObjectCode(offsetDefinition.getFinancialObjectCode());
                 costShareOffsetEntry.setFinancialObject(offsetDefinition.getFinancialObject());
                 costShareOffsetEntry.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
-            }
-            else {
+            } else {
                 final String offsetKey = "cost share transfer " + scrubbedEntry.getUniversityFiscalYear() + "-" +
-                        scrubbedEntry.getChartOfAccountsCode() + "-TF-" +
-                        scrubbedEntry.getFinancialBalanceTypeCode();
+                                         scrubbedEntry.getChartOfAccountsCode() + "-TF-" +
+                                         scrubbedEntry.getFinancialBalanceTypeCode();
                 final Message m = new Message(configurationService.getPropertyValueAsString(
                         KFSKeyConstants.ERROR_OFFSET_DEFINITION_NOT_FOUND) + " (" + offsetKey + ")",
                         Message.TYPE_FATAL);
@@ -130,15 +128,13 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
 
             if (costShareEntry.isCredit()) {
                 costShareOffsetEntry.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
-            }
-            else {
+            } else {
                 costShareOffsetEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
             }
 
             try {
                 flexibleOffsetAccountService.updateOffset(costShareOffsetEntry);
-            }
-            catch (final InvalidFlexibleOffsetException e) {
+            } catch (final InvalidFlexibleOffsetException e) {
                 final Message m = new Message(e.getMessage(), Message.TYPE_FATAL);
                 LOG.debug("generateCostShareEntries() Cost Share Transfer Flexible Offset Error: {}", e::getMessage);
                 return new ScrubberProcessTransactionError(costShareEntry, m);
@@ -175,8 +171,7 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             costShareSourceAccountEntry.setTransactionLedgerEntryAmount(scrubCostShareAmount);
             if (scrubCostShareAmount.isPositive()) {
                 costShareSourceAccountEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
-            }
-            else {
+            } else {
                 costShareSourceAccountEntry.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
                 costShareSourceAccountEntry.setTransactionLedgerEntryAmount(scrubCostShareAmount.negated());
             }
@@ -201,14 +196,14 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
             offsetDefinition = accountingCycleCachingService.getOffsetDefinition(
                     scrubbedEntry.getUniversityFiscalYear(), scrubbedEntry.getChartOfAccountsCode(),
                     KFSConstants.TRANSFER_FUNDS, scrubbedEntry.getFinancialBalanceTypeCode());
-            if (offsetDefinition != null) {
+            if (offsetDefinition != null && offsetDefinition.isActive()) {
                 if (offsetDefinition.getFinancialObject() == null) {
                     final String objectCodeKey = costShareEntry.getUniversityFiscalYear() +
-                            "-" + scrubbedEntry.getChartOfAccountsCode() +
-                            "-" + scrubbedEntry.getFinancialObjectCode();
+                                                 "-" + scrubbedEntry.getChartOfAccountsCode() +
+                                                 "-" + scrubbedEntry.getFinancialObjectCode();
                     final Message m = new Message(configurationService.getPropertyValueAsString(
                             KFSKeyConstants.ERROR_OFFSET_DEFINITION_OBJECT_CODE_NOT_FOUND) + " (" + objectCodeKey +
-                            ")", Message.TYPE_FATAL);
+                                                  ")", Message.TYPE_FATAL);
 
                     LOG.debug("generateCostShareEntries() Error 3 object not found");
                     return new ScrubberProcessTransactionError(costShareSourceAccountEntry, m);
@@ -218,10 +213,9 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
                 costShareSourceAccountOffsetEntry.setFinancialObject(offsetDefinition.getFinancialObject());
                 costShareSourceAccountOffsetEntry.setFinancialSubObjectCode(
                         KFSConstants.getDashFinancialSubObjectCode());
-            }
-            else {
+            } else {
                 final String offsetKey = "cost share transfer source " + scrubbedEntry.getUniversityFiscalYear() + "-" +
-                        scrubbedEntry.getChartOfAccountsCode() + "-TF-" + scrubbedEntry.getFinancialBalanceTypeCode();
+                                         scrubbedEntry.getChartOfAccountsCode() + "-TF-" + scrubbedEntry.getFinancialBalanceTypeCode();
                 final Message m = new Message(configurationService.getPropertyValueAsString(
                         KFSKeyConstants.ERROR_OFFSET_DEFINITION_NOT_FOUND) + " (" + offsetKey + ")",
                         Message.TYPE_FATAL);
@@ -235,15 +229,13 @@ public class CuScrubberProcessImpl extends ScrubberProcessImpl {
 
             if (scrubbedEntry.isCredit()) {
                 costShareSourceAccountOffsetEntry.setTransactionDebitCreditCode(KFSConstants.GL_DEBIT_CODE);
-            }
-            else {
+            } else {
                 costShareSourceAccountOffsetEntry.setTransactionDebitCreditCode(KFSConstants.GL_CREDIT_CODE);
             }
 
             try {
                 flexibleOffsetAccountService.updateOffset(costShareSourceAccountOffsetEntry);
-            }
-            catch (final InvalidFlexibleOffsetException e) {
+            } catch (final InvalidFlexibleOffsetException e) {
                 final Message m = new Message(e.getMessage(), Message.TYPE_FATAL);
                 LOG.debug(
                         "generateCostShareEntries() Cost Share Transfer Account Flexible Offset Error: {}",

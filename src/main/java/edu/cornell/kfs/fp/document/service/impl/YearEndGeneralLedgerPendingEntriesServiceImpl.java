@@ -20,12 +20,10 @@ import org.kuali.kfs.coa.service.ObjectTypeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GLParameterConstants;
-import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.gl.batch.BalanceForwardStep;
 import org.kuali.kfs.gl.batch.NominalActivityClosingStep;
 import org.kuali.kfs.gl.businessobject.OriginEntryFull;
 import org.kuali.kfs.gl.service.BalanceService;
-import org.kuali.kfs.gl.service.impl.BalanceServiceImpl;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
@@ -46,7 +44,6 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.fp.document.service.YearEndGeneralLedgerPendingEntriesService;
-import edu.cornell.kfs.gl.service.impl.CuBalanceServiceImpl;
 
 public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGeneralLedgerPendingEntriesService{
 	private static final Logger LOG = LogManager.getLogger(YearEndGeneralLedgerPendingEntriesServiceImpl.class);
@@ -618,9 +615,13 @@ public class YearEndGeneralLedgerPendingEntriesServiceImpl implements YearEndGen
 		
 		Integer closingFiscalYear = new Integer(getParameterService().getParameterValueAsString(KfsParameterConstants.GENERAL_LEDGER_BATCH.class, GLParameterConstants.ANNUAL_CLOSING_FISCAL_YEAR));
 		String currentDocumentTypeName = document.getDocumentHeader().getWorkflowDocument().getDocumentTypeName();
-		OffsetDefinition cashOffsetDefinition = offsetDefinitionService.getByPrimaryId(fiscalYear, accountingLine.getChartOfAccountsCode(), documentTypeCode, KFSConstants.BALANCE_TYPE_ACTUAL);
-		ObjectCode cashObjectCode = cashOffsetDefinition.getFinancialObject();
-		String cashOffsetObjectCode = cashOffsetDefinition.getFinancialObjectCode();
+		OffsetDefinition cashOffsetDefinition = offsetDefinitionService.getActiveByPrimaryId(fiscalYear, accountingLine.getChartOfAccountsCode(), documentTypeCode, KFSConstants.BALANCE_TYPE_ACTUAL).orElse(null);
+		ObjectCode cashObjectCode = null;
+		String cashOffsetObjectCode = null;
+		if (ObjectUtils.isNotNull(cashOffsetDefinition)) {
+		    cashObjectCode = cashOffsetDefinition.getFinancialObject();
+		    cashOffsetObjectCode = cashOffsetDefinition.getFinancialObjectCode();
+		}
 		String debitCreditCode = null;
 
 

@@ -205,8 +205,8 @@ public class CuPendingTransactionServiceImpl extends PendingTransactionServiceIm
 
                 final Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
                 if ((relieveLiabilities != null) && (relieveLiabilities.booleanValue()) && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
-                    final OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode());
-                    glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ? offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
+                    final OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getActiveByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode()).orElse(null);
+                    glPendingTransaction.setFinancialObjectCode(ObjectUtils.isNotNull(offsetDefinition) ? offsetDefinition.getFinancialObjectCode() : paymentAccountDetail.getFinObjectCode());
                     glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
                 } else {
                     glPendingTransaction.setFinancialObjectCode(paymentAccountDetail.getFinObjectCode());

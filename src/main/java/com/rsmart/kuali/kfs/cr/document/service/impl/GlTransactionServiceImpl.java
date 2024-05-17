@@ -16,7 +16,6 @@
 package com.rsmart.kuali.kfs.cr.document.service.impl;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
+import org.kuali.kfs.krad.util.ObjectUtils;
 
 import com.rsmart.kuali.kfs.cr.CRConstants;
 import com.rsmart.kuali.kfs.cr.batch.CheckReconciliationImportStep;
@@ -168,11 +168,11 @@ public class GlTransactionServiceImpl implements GlTransactionService {
             
             Boolean relieveLiabilities = paymentGroup.getBatch().getCustomerProfile().getRelieveLiabilities();
             if ((relieveLiabilities != null) && (relieveLiabilities.booleanValue()) && paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode() != null) {
-                OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode());
+                OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getActiveByPrimaryId(glPendingTransaction.getUniversityFiscalYear(), glPendingTransaction.getChartOfAccountsCode(), paymentAccountDetail.getPaymentDetail().getFinancialDocumentTypeCode(), glPendingTransaction.getFinancialBalanceTypeCode()).orElse(null);
                 
                 glPendingTransaction.setAccountNumber(accountNbr);
                 glPendingTransaction.setChartOfAccountsCode(finCoaCd);
-                glPendingTransaction.setFinancialObjectCode(offsetDefinition != null ? offsetDefinition.getFinancialObjectCode() : finObjectCode);
+                glPendingTransaction.setFinancialObjectCode(ObjectUtils.isNotNull(finObjectCode) ? offsetDefinition.getFinancialObjectCode() : finObjectCode);
                 glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             }
             else {
