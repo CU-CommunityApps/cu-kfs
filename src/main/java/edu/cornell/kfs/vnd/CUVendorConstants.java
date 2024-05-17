@@ -88,26 +88,7 @@ public class CUVendorConstants {
         public static final String INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC = "ID";
     }
 
-    public enum VendorEmployeeSearchCsv {
-        KFS_VENDOR_ID("KFS_Vendor_ID", "vendorId"),
-        VENDOR_SSN("Vendor_SSN", "vendorTaxNumber");
-
-        public final String headerLabel;
-        public final String vendorDtoPropertyName;
-
-        private VendorEmployeeSearchCsv(String headerLabel, String vendorDtoPropertyName) {
-            this.headerLabel = headerLabel;
-            this.vendorDtoPropertyName = vendorDtoPropertyName;
-        }
-
-        public String getHeaderLabel() {
-            return headerLabel;
-        }
-
-        public String getVendorDtoPropertyName() {
-            return vendorDtoPropertyName;
-        }
-    }
+    public static final String VENDOR_EMPLOYEE_COMPARISON_RESULT_FILE_TYPE_ID = "vendorEmployeeComparisonResult_kfs";
 
     public static final String EMPLOYEE_COMPARISON_OUTBOUND_FILE_PREFIX = "empl_compare_";
     public static final String EMPLOYEE_COMPARISON_RESULT_FILE_PREFIX = "empl_result_";

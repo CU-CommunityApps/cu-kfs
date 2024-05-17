@@ -1,7 +1,9 @@
 package edu.cornell.kfs.vnd.batch.service;
 
-public interface VendorEmployeeSearchService {
+public interface VendorEmployeeComparisonService {
 
     void generateFileContainingPotentialVendorEmployees();
+
+    void processResultsOfVendorEmployeeComparison();
 
 }
