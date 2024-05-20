@@ -1498,6 +1498,21 @@
             <foreignkey field-ref="accountZipCode" target-field-ref="code"/>
         </reference-descriptor>
         
+        <reference-descriptor name="accountFiscalOfficerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountFiscalOfficerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="accountManagerUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountManagerSystemIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        
+        <reference-descriptor name="accountSupervisoryUser" class-ref="org.kuali.kfs.kim.impl.identity.Person"
+                              auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true">
+            <foreignkey field-ref="accountsSupervisorySystemsIdentifier" target-field-ref="principalId"/>
+        </reference-descriptor>
+        
 		<!-- removed and substituted with EBO relationship <reference-descriptor 
 			name="laborBenefitRateCategory" class-ref="org.kuali.kfs.integration.ld.LaborBenefitRateCategory" 
 			auto-retrieve="true" auto-update="none" auto-delete="none" proxy="true" > 
