@@ -28,7 +28,7 @@ public class CUPurapKeyConstants {
 
     public static final String ATTACHMENT_QUESTION_CONFIRM_CHANGE = "attachment.message.confirm.change";
     
-    public static final String MESSAGE_IWNT_CONFIRM_CREATE_REQ = "message.createReq.confirmationMessage";
+    public static final String MESSAGE_IWNT_CONFIRM_CREATE_REQ_OR_DV = "message.createReqOrDV.confirmationMessage";
     
     // KFSPTS-2096
     public static final String PURAP_MIX_ITEM_QTY_NONQTY = "error.purap.mix.item.itemtype.nonqty";
