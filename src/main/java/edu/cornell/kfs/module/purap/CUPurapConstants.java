@@ -146,6 +146,7 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_CREATE_DV = "createDV";
     public static final String IWNT_DOC_USE_LOOKUPS = "iwntUseLookups";
     public static final String IWNT_DOC_DISPLAY_NOTE_OPTIONS = "displayNoteOptions";
+    public static final String IWNT_DOC_RETURN_TO_SSC = "returnToSSC";
     
     public static final String IWNT_DOC_DISPLAY_CONTRACT_TAB = "displayContractTab";
     public static final String IWNT_DOC_EDIT_CONTRACT_INDICATOR = "editContractIndicator";

@@ -3,10 +3,18 @@ package edu.cornell.kfs.krad.service.impl;
 import com.thoughtworks.xstream.core.BaseException;
 import org.kuali.kfs.core.framework.persistence.jta.TransactionalNoValidationExceptionRollback;
 import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kew.api.action.DocumentActionParameters;
+import org.kuali.kfs.kew.api.action.DocumentActionResult;
+import org.kuali.kfs.kew.api.action.ReturnPoint;
+import org.kuali.kfs.kew.api.action.WorkflowDocumentActionsService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.UserSession;
+import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.MaintainableXMLConversionService;
 import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
+import org.kuali.kfs.krad.util.GlobalVariables;
 
 /**
  * Custom DocumentServiceImpl subclass that performs its own handling
@@ -24,6 +32,7 @@ import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 public class CuDocumentServiceImpl extends DocumentServiceImpl {
 
     protected MaintainableXMLConversionService maintainableXMLConversionService;
+    private transient WorkflowDocumentActionsService workflowDocumentActionsService;
 
     /**
      * Overridden to perform just-in-time legacy maintenance XML conversion if necessary.
@@ -68,6 +77,25 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
                 && document instanceof MaintenanceDocument
                 && BaseException.class.isAssignableFrom(e.getClass());
     }
+    
+    public Document returnDocumenToPreviousNode(Document document, String annotation, String nodeName) {
+        checkForNulls(document);
+
+        Note note = createNoteFromDocument(document, annotation);
+        document.addNote(note);
+        getNoteService().save(note);
+
+        getDocumentDao().save(document);
+        prepareWorkflowDocument(document);
+        document.getDocumentHeader().getWorkflowDocument().returnToPreviousNode(annotation, nodeName);
+        final UserSession userSession = GlobalVariables.getUserSession();
+        if (userSession != null) {
+            UserSessionUtils.addWorkflowDocument(userSession, document.getDocumentHeader().getWorkflowDocument());
+        }
+        //removeAdHocPersonsAndWorkgroups(document);
+        return document;
+    }
+    
 
     public void setMaintainableXMLConversionService(final MaintainableXMLConversionService maintainableXMLConversionService) {
         this.maintainableXMLConversionService = maintainableXMLConversionService;
