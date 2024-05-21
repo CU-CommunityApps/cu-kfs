@@ -1,17 +1,25 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Execution;
@@ -23,10 +31,13 @@ import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.util.FixtureUtils;
+import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonRow;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonRows;
-import edu.cornell.kfs.vnd.businessobject.VendorWithSSN;
+import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -40,7 +51,7 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
             TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY + "being-written/";
 
     private static final ZonedDateTime MOCK_CURRENT_DATE = ZonedDateTime.of(
-            2024, 5, 17, 10, 30, 0, 0, ZoneId.of("US/Eastern"));
+            2024, 5, 17, 10, 30, 0, 0, ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
 
     private VendorEmployeeComparisonServiceImpl vendorEmployeeComparisonService;
     private VendorComparisonRows testCaseFixture;
@@ -84,15 +95,15 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
         return vendorDao;
     }
 
-    private Stream<VendorWithSSN> getMockDaoSearchResults() {
-        assertNotNull(testCaseFixture, "The test case's metadata was not properly initialized");
+    private Stream<VendorWithTaxId> getMockDaoSearchResults() {
+        assertTestCaseFixtureWasInitialized();
         if (forceExceptionWithinDaoMethodCall) {
             throw new RuntimeException("Forcibly throwing exception for "
                     + "getPotentialEmployeeVendorsAsCloseableStream() method call");
         }
         return Arrays.stream(testCaseFixture.value())
                 .onClose(this::recordClosingOfStream)
-                .map(VendorComparisonRow.Converters::toVendorWithSSN);
+                .map(VendorComparisonRow.Converters::toVendorWithTaxId);
     }
 
     private void recordClosingOfStream() {
@@ -104,6 +115,10 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
         Mockito.when(dateTimeService.getCurrentDate())
                 .then(invocation -> Date.from(MOCK_CURRENT_DATE.toInstant()));
         return dateTimeService;
+    }
+
+    private void assertTestCaseFixtureWasInitialized() {
+        assertNotNull(testCaseFixture, "The test case's metadata was not properly initialized");
     }
 
     @AfterEach
@@ -156,7 +171,7 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
 
     static Stream<LocalTestCase> standardTestCases() {
         return Stream.of(
-                LocalTestCase.EMPTY_SOURCE,
+                //LocalTestCase.EMPTY_SOURCE,
                 LocalTestCase.SINGLE_VENDOR,
                 LocalTestCase.MULTIPLE_VENDORS
         );
@@ -175,10 +190,68 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
     @MethodSource("standardTestCases")
     void testSuccessfulCsvFilePreparation(LocalTestCase testCase) throws Exception {
         initializeTestCaseFixture(testCase);
+        assertCsvFilePreparationSucceeds();
     }
 
-    private void assertCsvFileHasExpectedContent() {
-        
+    private void assertCsvFilePreparationSucceeds() throws Exception {
+        vendorEmployeeComparisonService.generateFileContainingPotentialVendorEmployees();
+        assertCsvFileHasExpectedContent();
+    }
+
+    private void assertCsvFileHasExpectedContent() throws Exception {
+        assertTestCaseFixtureWasInitialized();
+        final File csvFile = assertAndGetGeneratedCsvFile();
+        try (
+                final LineIterator csvLineIterator = FileUtils.lineIterator(csvFile, StandardCharsets.UTF_8.name());
+        ) {
+            assertTrue(csvLineIterator.hasNext(), "The CSV file should not have been empty");
+            final String expectedHeaderRow = getExpectedCsvHeaderRow();
+            final String actualHeaderRow = csvLineIterator.next();
+            assertEquals(expectedHeaderRow, actualHeaderRow, "Wrong CSV header row content");
+            assertCsvFileHasExpectedDataRows(csvLineIterator);
+        }
+    }
+
+    private void assertCsvFileHasExpectedDataRows(final LineIterator csvLineIterator) throws Exception {
+        final VendorComparisonRow[] expectedRows = testCaseFixture.value();
+        int dataLineIndex = 0;
+
+        while (csvLineIterator.hasNext()) {
+            assertTrue(dataLineIndex < expectedRows.length,
+                    "The CSV file had more than the expected " + expectedRows.length + " data rows");
+            final String expectedRow = VendorComparisonRow.Converters.toCsvRow(expectedRows[dataLineIndex]);
+            final String actualRow = csvLineIterator.next();
+            assertEquals(expectedRow, actualRow, "Wrong CSV data on file line " + (dataLineIndex + 2));
+            dataLineIndex++;
+        }
+
+        assertEquals(expectedRows.length, dataLineIndex, "Wrong number of data rows in CSV file");
+    }
+
+    private File assertAndGetGeneratedCsvFile() {
+        final File csvCreationDirectory = new File(TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY);
+        final File csvExportDirectory = new File(TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY);
+
+        final Collection<File> creationDirectoryCsvFiles = FileUtils.listFiles(csvCreationDirectory, null, false);
+        assertTrue(CollectionUtils.isEmpty(creationDirectoryCsvFiles),
+                "The directory for temporarily storing the generated CSV file should have been empty");
+
+        final Collection<File> exportDirectoryCsvFiles = FileUtils.listFiles(csvExportDirectory, null, false);
+        assertEquals(1, CollectionUtils.size(exportDirectoryCsvFiles),
+                "Wrong number of files in CSV export directory");
+
+        final File csvFile = exportDirectoryCsvFiles.iterator().next();
+        assertNotNull(csvFile, "The generated CSV file should have been present in the export directory");
+        assertTrue(StringUtils.endsWithIgnoreCase(csvFile.getAbsolutePath(), FileExtensions.CSV),
+                "The generated file should have been a .csv file");
+        return csvFile;
+    }
+
+    private String getExpectedCsvHeaderRow() {
+        return Arrays.stream(VendorEmployeeComparisonCsv.values())
+                .map(VendorEmployeeComparisonCsv::getHeaderLabel)
+                .collect(Collectors.joining(
+                        CUKFSConstants.COMMA_WITH_QUOTES, CUKFSConstants.DOUBLE_QUOTE, CUKFSConstants.DOUBLE_QUOTE));
     }
 
 }

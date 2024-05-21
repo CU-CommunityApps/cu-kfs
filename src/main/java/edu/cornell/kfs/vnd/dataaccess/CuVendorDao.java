@@ -7,12 +7,12 @@ import java.util.stream.Stream;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.vnd.dataaccess.VendorDao;
 
-import edu.cornell.kfs.vnd.businessobject.VendorWithSSN;
+import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 
 public interface CuVendorDao extends VendorDao {
 
     List<BusinessObject> getSearchResults(Map<String,String> fieldValues);
 
-    Stream<VendorWithSSN> getPotentialEmployeeVendorsAsCloseableStream();
+    Stream<VendorWithTaxId> getPotentialEmployeeVendorsAsCloseableStream();
 
 }

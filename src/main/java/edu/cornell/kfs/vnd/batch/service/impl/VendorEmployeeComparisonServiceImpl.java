@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +40,7 @@ import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonService;
 import edu.cornell.kfs.vnd.businessobject.VendorEmployeeComparisonResult;
-import edu.cornell.kfs.vnd.businessobject.VendorWithSSN;
+import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeComparisonService {
@@ -71,8 +72,9 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
 
     private String generateEmployeeComparisonCsvOutboundFileName() {
         final Date currentDate = dateTimeService.getCurrentDate();
-        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(
-                CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US);
+        final DateTimeFormatter dateFormatter = DateTimeFormatter
+                .ofPattern(CUKFSConstants.DATE_FORMAT_yyyyMMdd_HHmmss, Locale.US)
+                .withZone(ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
         final String currentDateString = dateFormatter.format(currentDate.toInstant());
         return StringUtils.join(CUVendorConstants.EMPLOYEE_COMPARISON_OUTBOUND_FILE_PREFIX, currentDateString,
                 FileExtensions.CSV);
@@ -88,7 +90,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
 
     private int writeEmployeeComparisonOutboundCsvFile(final String qualifiedCreationDirectoryFileName) {
         try (
-                final Stream<VendorWithSSN> ssnVendors = vendorDao.getPotentialEmployeeVendorsAsCloseableStream();
+                final Stream<VendorWithTaxId> ssnVendors = vendorDao.getPotentialEmployeeVendorsAsCloseableStream();
                 final FileOutputStream fileStream = new FileOutputStream(qualifiedCreationDirectoryFileName);
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
                 final BufferedWriter bufferedWriter = new BufferedWriter(streamWriter);
@@ -102,21 +104,21 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
         }
     }
 
-    private int writeSSNVendorsToCsvFile(final Stream<VendorWithSSN> ssnVendors, final BufferedWriter bufferedWriter)
+    private int writeSSNVendorsToCsvFile(final Stream<VendorWithTaxId> ssnVendors, final BufferedWriter bufferedWriter)
             throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
-        final EnumConfiguredMappingStrategy<VendorWithSSN, VendorEmployeeComparisonCsv> mappingStrategy =
+        final EnumConfiguredMappingStrategy<VendorWithTaxId, VendorEmployeeComparisonCsv> mappingStrategy =
                 new EnumConfiguredMappingStrategy<>(
                         VendorEmployeeComparisonCsv.class,
                         VendorEmployeeComparisonCsv::getHeaderLabel,
                         VendorEmployeeComparisonCsv::getVendorDtoPropertyName);
-        mappingStrategy.setType(VendorWithSSN.class);
+        mappingStrategy.setType(VendorWithTaxId.class);
 
-        final StatefulBeanToCsv<VendorWithSSN> csvWriter = new StatefulBeanToCsvBuilder<VendorWithSSN>(bufferedWriter)
+        final StatefulBeanToCsv<VendorWithTaxId> csvWriter = new StatefulBeanToCsvBuilder<VendorWithTaxId>(bufferedWriter)
                 .withMappingStrategy(mappingStrategy)
                 .build();
 
         int ssnVendorCount = 0;
-        for (final VendorWithSSN ssnVendor : IteratorUtils.asIterable(ssnVendors.iterator())) {
+        for (final VendorWithTaxId ssnVendor : IteratorUtils.asIterable(ssnVendors.iterator())) {
             ssnVendorCount++;
             csvWriter.write(ssnVendor);
         }

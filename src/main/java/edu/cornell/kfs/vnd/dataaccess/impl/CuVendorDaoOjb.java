@@ -36,7 +36,7 @@ import org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb;
 import edu.cornell.kfs.sys.util.CuOjbUtils;
 import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
-import edu.cornell.kfs.vnd.businessobject.VendorWithSSN;
+import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
@@ -223,7 +223,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
     }
 
     @Override
-    public Stream<VendorWithSSN> getPotentialEmployeeVendorsAsCloseableStream() {
+    public Stream<VendorWithTaxId> getPotentialEmployeeVendorsAsCloseableStream() {
         final Criteria criteria = new Criteria();
         criteria.addEqualTo(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE,
                 VendorOwnershipCodes.INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC);
@@ -243,15 +243,16 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
 
         return CuOjbUtils.buildCloseableStreamForReportQueryResults(
                 () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery),
-                this::mapToSSNVendor);
+                this::mapToVendorWithTaxId);
     }
 
-    private VendorWithSSN mapToSSNVendor(final Object[] queryResultRow) {
-        final VendorWithSSN ssnVendor = new VendorWithSSN();
-        ssnVendor.setVendorHeaderGeneratedIdentifier((Integer) queryResultRow[0]);
-        ssnVendor.setVendorDetailAssignedIdentifier((Integer) queryResultRow[1]);
-        ssnVendor.setVendorTaxNumber((String) queryResultRow[2]);
-        return ssnVendor;
+    private VendorWithTaxId mapToVendorWithTaxId(final Object[] queryResultRow) {
+        final String vendorId = StringUtils.join(
+                (Integer) queryResultRow[0], KFSConstants.DASH, (Integer) queryResultRow[1]);
+        final VendorWithTaxId vendor = new VendorWithTaxId();
+        vendor.setVendorId(vendorId);
+        vendor.setVendorTaxNumber((String) queryResultRow[2]);
+        return vendor;
     }
 
 }
