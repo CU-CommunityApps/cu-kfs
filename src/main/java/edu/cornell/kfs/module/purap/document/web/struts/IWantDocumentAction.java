@@ -32,11 +32,13 @@ import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.bo.Note;
+import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -47,6 +49,8 @@ import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.fp.CuFPConstants;
+import edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl;
+import edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -1222,6 +1226,39 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             iWantDocForm.getEditingMode().remove(CUPurapConstants.IWNT_DOC_DISPLAY_CONFIRMATION);
         }
        
+        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    }
+    
+    public ActionForward returnToSSC(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
+        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        
+        final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
+        doProcessingAfterPost(kualiDocumentFormBase, request);
+
+        kualiDocumentFormBase.setDerivedValuesOnForm(request);
+        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
+        if (preRulesForward != null) {
+            return preRulesForward;
+        }
+
+        final Document document = kualiDocumentFormBase.getDocument();
+
+        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
+                KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "route", "");
+        if (forward != null) {
+            return forward;
+        }
+        
+        kualiDocumentFormBase.setAnnotation(getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
+        iWantDocument.setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
+        ((CuDocumentServiceImpl)getDocumentService()).returnDocumenToPreviousNode(document, kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
+
+        KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
+        kualiDocumentFormBase.setAnnotation("");
+
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
     

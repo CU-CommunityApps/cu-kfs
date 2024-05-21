@@ -225,6 +225,10 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
                 // KFSPTS-2527 add create DV button
                 extraButtons.add(createCreateDVButton());
             }
+            
+            if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC)) {
+                extraButtons.add(createReturnToSSCButton());
+            }
 
             createAppropriatePresentationModeChangeButton(isFullPageAllowed, isMultiplePagesAllowed);
         }
@@ -254,6 +258,14 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         switchToMultipleStepsPresentationButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
         switchToMultipleStepsPresentationButton.setExtraButtonAltText("Show 4 Steps");
         return switchToMultipleStepsPresentationButton;
+    }
+    
+    protected ExtraButton createReturnToSSCButton() {
+        ExtraButton returnToSSCButton = new ExtraButton();
+        returnToSSCButton.setExtraButtonProperty("methodToCall.returnToSSC");
+        returnToSSCButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
+        returnToSSCButton.setExtraButtonAltText("Return To Shared Service Center");
+        return returnToSSCButton;
     }
 
     /**

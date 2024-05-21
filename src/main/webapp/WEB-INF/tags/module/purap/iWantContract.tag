@@ -12,11 +12,11 @@
 <c:set var="purchasingAssistantNetIdReadOnly" value="${!fullEntryMode || !canEditProcessingAssistantNetId || !docEnroute}" scope="request"/>
 
 <c:if test="${displayContractTab}">
-    <kul:tab tabTitle="Contract" defaultOpen="true">
+    <kul:tab tabTitle="Jaggaer Contract" defaultOpen="true">
         <div class="tab-container">
             <table class="standard side-margins"
-           title="Contract"
-           summary="Contract">
+           title="Jaggaer Contract"
+           summary="Jaggaer Contract">
         <tr>
            <kul:htmlAttributeHeaderCell
                     labelFor="document.contractIndicator"
