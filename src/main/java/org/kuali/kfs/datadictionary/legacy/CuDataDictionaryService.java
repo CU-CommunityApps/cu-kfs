@@ -445,7 +445,7 @@ public class CuDataDictionaryService extends DataDictionaryService {
     private <T> boolean adjustChildObjectDefinition(T definition,
             Function<T, Class<? extends BusinessObject>> boClassGetter, BiPredicate<T, Set<String>> definitionMasker) {
         Set<String> attributesToMask = getPersonAttributesToMask(boClassGetter.apply(definition));
-        return !attributesToMask.isEmpty() && definitionMasker.test(definition, attributesToMask);
+        return definitionMasker.test(definition, attributesToMask);
     }
 
     private Set<String> getPersonAttributesToMask(Class<? extends BusinessObject> businessObjectClass) {
