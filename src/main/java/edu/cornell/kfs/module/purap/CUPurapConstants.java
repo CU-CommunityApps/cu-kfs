@@ -130,6 +130,11 @@ public class CUPurapConstants {
         public static final String CONTRACT_INDICATOR = "contractIndicator";
     }
     
+    public static final class IWantDocumentRelatedDocsLabels {
+        public static final String REQUISITION = "Requisition";
+        public static final String DV = "DV";
+    }
+    
     //These two constants were added to the editMode processing to provide the user functionality 
     //for switching between a single form and multiple forms during I Want doc data entry.
     //Using this methodology minimized the changes required for the presentation switching  

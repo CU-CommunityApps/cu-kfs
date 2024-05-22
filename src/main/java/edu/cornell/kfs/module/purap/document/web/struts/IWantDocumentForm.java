@@ -20,6 +20,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.KeyValue;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -365,7 +366,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
             createReqButton.setExtraButtonOnclick(
                     " if((document.getElementsByName('document.contractIndicator'))[1].checked) " 
                             + " { " 
-                            + " if(confirm('" + getContractWarningMessage() + "')){ " 
+                            + " if(confirm('" + getContractWarningMessage(CUPurapConstants.IWantDocumentRelatedDocsLabels.REQUISITION) + "')){ " 
                             + "window.open('"
                             + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                             + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="
@@ -386,7 +387,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         } else if (!getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR)
                         && isInOrgHierarchyNode(getDocument()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(getIWantDocument().getContractIndicator())) {
             createReqButton.setExtraButtonOnclick(
-                            " if (confirm('" + getContractWarningMessage() + "')) { " 
+                            " if (confirm('" + getContractWarningMessage(CUPurapConstants.IWantDocumentRelatedDocsLabels.REQUISITION) + "')) { " 
                             + "window.open('"
                             + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
                             + "/purapRequisition.do?methodToCall=createReqFromIWantDoc&docId="
@@ -407,15 +408,53 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     }
     
     protected ExtraButton createCreateDVButton() {
-        ExtraButton clearButton = new ExtraButton();
-        clearButton.setExtraButtonProperty("methodToCall.createDV");
-        clearButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_DV.gif");
-        clearButton.setExtraButtonAltText("Create DV");
-        clearButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
-                + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId=" + getDocument().getDocumentNumber()
-                + "');return false;");
-        clearButton.setExtraButtonParams("_blank");
-        return clearButton;
+        ExtraButton createDVButton = new ExtraButton();
+        createDVButton.setExtraButtonProperty("methodToCall.createDV");
+        createDVButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_create_DV.gif");
+        createDVButton.setExtraButtonAltText("Create DV");
+        if (getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR) && isInOrgHierarchyNode(getDocument())) {
+            createDVButton.setExtraButtonOnclick(
+                    " if((document.getElementsByName('document.contractIndicator'))[1].checked) " 
+                            + " { " 
+                            + " if(confirm('" + getContractWarningMessage(CUPurapConstants.IWantDocumentRelatedDocsLabels.DV) + "')){ " 
+                            + "window.open('"
+                            + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                            + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId="
+                            + getDocument().getDocumentNumber() 
+                            + "'); return false;" 
+                            + " } " 
+                            + " else { " 
+                            + "return false; "
+                            + " } } "
+                            + " else {"
+                            + "window.open('" 
+                            + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                            + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId=" 
+                            + getDocument().getDocumentNumber()
+                            + "'); return false; "
+                            + " } "
+                    );
+        } else if (!getEditingMode().containsKey(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR)
+                        && isInOrgHierarchyNode(getDocument()) && KRADConstants.YES_INDICATOR_VALUE.equalsIgnoreCase(getIWantDocument().getContractIndicator())) {
+            createDVButton.setExtraButtonOnclick(
+                            " if (confirm('" + getContractWarningMessage(CUPurapConstants.IWantDocumentRelatedDocsLabels.DV) + "')) { " 
+                            + "window.open('"
+                            + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                            + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId="
+                            + getDocument().getDocumentNumber() 
+                            + "'); return false;" 
+                            + " } " 
+                            + " else { " 
+                            + "return false; "
+                            + " } "
+                    );
+        } else {
+            createDVButton.setExtraButtonOnclick("window.open('" + ConfigContext.getCurrentContextConfig().getProperty(KFSConstants.APPLICATION_URL_KEY)
+                    + "/financialDisbursementVoucher.do?methodToCall=createDVFromIWantDoc&docId=" + getDocument().getDocumentNumber()
+                    + "');return false;");
+        }
+
+        return createDVButton;
     }
     
     protected ExtraButton createConfirmYesButton() {
@@ -439,8 +478,9 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         return ObjectUtils.isNotNull(workflowDocument) && workflowDocument.isEnroute();
     }
     
-    public String getContractWarningMessage() {
-        return getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWNT_CONFIRM_CREATE_REQ);
+    public String getContractWarningMessage(String docType) {
+        return MessageFormat.format(getConfigurationService()
+                .getPropertyValueAsString(CUPurapKeyConstants.MESSAGE_IWNT_CONFIRM_CREATE_REQ_OR_DV), docType);
     }
     
     public ConfigurationService getConfigurationService() {
