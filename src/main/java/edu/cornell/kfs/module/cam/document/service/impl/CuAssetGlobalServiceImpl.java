@@ -51,6 +51,7 @@ public class CuAssetGlobalServiceImpl extends AssetGlobalServiceImpl {
     /*
      * CU-Customization
      * The asset representative might mot be a Cornell person, so we need to handle this situation
+     * KualiCo jira FINP-11058 should address this bug
      */
     private void processAssetLocationInstitutionName(final AssetGlobalDetail assetGlobalDetail,
             final AssetLocation offCampusAssetLocation) {
