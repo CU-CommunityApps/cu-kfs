@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.fp.FPKeyConstants;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeExpense;
 import org.kuali.kfs.fp.businessobject.DisbursementVoucherNonEmployeeTravel;
@@ -38,6 +39,9 @@ import org.kuali.kfs.fp.document.service.DisbursementVoucherValidationService;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomer;
 import org.kuali.kfs.integration.ar.AccountsReceivableCustomerAddress;
 import org.kuali.kfs.integration.ar.AccountsReceivableModuleService;
+import org.kuali.kfs.kew.api.document.DocumentStatus;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentAuthorizer;
 import org.kuali.kfs.kns.document.authorization.TransactionalDocumentPresentationController;
 import org.kuali.kfs.kns.service.DictionaryValidationService;
@@ -55,20 +59,13 @@ import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.PaymentMethodAdditionalDisbursementVoucherData;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.PaymentMethod;
-import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.document.service.PaymentSourceHelperService;
 import org.kuali.kfs.sys.service.BankService;
-import org.kuali.kfs.sys.service.UniversityDateService;
 import org.kuali.kfs.sys.util.DuplicatePaymentCheckUtils;
 import org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.document.DocumentStatus;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,9 +96,6 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     private BankService bankService;
     private PaymentSourceHelperService paymentSourceHelperService;
 
-    /**
-     * @see org.kuali.kfs.sys.web.struts.KualiAccountingDocumentActionBase#loadDocument(org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase)
-     */
     @Override
     protected void loadDocument(final KualiDocumentFormBase kualiDocumentFormBase) {
         super.loadDocument(kualiDocumentFormBase);
@@ -117,8 +111,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         if (payeeIdNumber != null && !payeeIdNumber.isEmpty()
             || !dvDoc.getDocumentHeader().getWorkflowDocument().checkStatus(DocumentStatus.SAVED)
                 && !dvDoc.getDocumentHeader().getWorkflowDocument().getCurrentNodeNames().contains(DV_ADHOC_NODE)) {
-            
-            Person person = getPersonService().getPersonByEmployeeId(payeeIdNumber);
+            final Person person = getPersonService().getPersonByEmployeeId(payeeIdNumber);
 
             //KFSMI-8935: When an employee is inactive, the Payment Type field on DV documents should display the
             // message "Is this payee an employee" = No
@@ -265,11 +258,9 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
      * Calls service to generate the disbursement voucher cover sheet as a pdf.
      */
     public ActionForward printDisbursementVoucherCoverSheet(
-            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final ActionMapping mapping, final ActionForm form,
+            final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
-
-        // get directory of template
-        final String directory = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(KFSConstants.EXTERNALIZABLE_HELP_URL_KEY);
 
         final DisbursementVoucherDocument document = (DisbursementVoucherDocument) SpringContext.getBean(
                 DocumentService.class).getByDocumentHeaderId(
@@ -308,7 +299,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
 
             dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemCalculatedAmt(perDiemAmount);
             dvDocument.getDvNonEmployeeTravel().setDisbVchrPerdiemActualAmount(perDiemAmount);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             String errorMessage = e.getMessage();
 
             if (StringUtils.isBlank(errorMessage)) {
@@ -586,7 +577,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     }
 
     /**
-     * Calls service to clear tax accounting lines and updates nra tax line string in action form.
+     * Calls service to clear tax accounting lines and updates nonresident tax line string in action form.
      */
     public ActionForward clearNonresidentTaxLines(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
@@ -619,30 +610,13 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
 
-    /**
-     * Builds the wire charge message for the current fiscal year.
-     *
-     * @return the wire charge message for the current fiscal year
-     */
-    protected String retrieveWireChargeMessage() {
-        final String message = SpringContext.getBean(ConfigurationService.class).getPropertyValueAsString(
-                KFSKeyConstants.MESSAGE_PAYMENT_WIRE_CHARGE);
-        WireCharge wireCharge = new WireCharge();
-        wireCharge.setUniversityFiscalYear(SpringContext.getBean(UniversityDateService.class).getCurrentFiscalYear());
-
-        wireCharge = (WireCharge) SpringContext.getBean(BusinessObjectService.class).retrieve(wireCharge);
-        final Object[] args = {wireCharge.getDomesticChargeAmt(), wireCharge.getForeignChargeAmt()};
-
-        return MessageFormat.format(message, args);
-    }
-
     @Override
     public ActionForward refresh(
             final ActionMapping mapping, final ActionForm form, final HttpServletRequest request,
             final HttpServletResponse response) throws Exception {
         final DisbursementVoucherForm dvForm = (DisbursementVoucherForm) form;
 
-        final ActionForward actionAfterPayeeLookup = this.refreshAfterPayeeSelection(mapping, dvForm, request);
+        final ActionForward actionAfterPayeeLookup = refreshAfterPayeeSelection(mapping, dvForm, request);
         if (actionAfterPayeeLookup != null) {
             return actionAfterPayeeLookup;
         }
@@ -819,8 +793,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KFSPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID, dvForm.getVendorDetailAssignedIdentifier());
         props.put(KFSPropertyConstants.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
 
-        props.put(KRADConstants.RETURN_LOCATION_PARAMETER, this.getReturnLocation(request, mapping));
-        props.put(KRADConstants.BACK_LOCATION, this.getReturnLocation(request, mapping));
+        props.put(KRADConstants.RETURN_LOCATION_PARAMETER, getReturnLocation(request, mapping));
+        props.put(KRADConstants.BACK_LOCATION, getReturnLocation(request, mapping));
 
         props.put(KRADConstants.LOOKUP_AUTO_SEARCH, "Yes");
         props.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.SEARCH_METHOD);
@@ -839,7 +813,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * setup the payee as an employee with the given id number
      */
-    protected void setupPayeeAsEmployee(final DisbursementVoucherForm dvForm, String payeeIdNumber) {
+    protected void setupPayeeAsEmployee(final DisbursementVoucherForm dvForm, final String payeeIdNumber) {
         final Person person = SpringContext.getBean(PersonService.class).getPersonByEmployeeId(payeeIdNumber);
         if (person != null) {
             ((DisbursementVoucherDocument) dvForm.getDocument()).templateEmployee(person);
@@ -854,7 +828,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * setup the payee as a vendor with the given id number and address id
      */
-    protected void setupPayeeAsVendor(final DisbursementVoucherForm dvForm, String payeeIdNumber, String payeeAddressIdentifier) {
+    protected void setupPayeeAsVendor(final DisbursementVoucherForm dvForm, final String payeeIdNumber, final String payeeAddressIdentifier) {
         VendorDetail vendorDetail = new VendorDetail();
         vendorDetail.setVendorNumber(payeeIdNumber);
         vendorDetail = (VendorDetail) SpringContext.getBean(BusinessObjectService.class).retrieve(vendorDetail);
@@ -901,8 +875,8 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KFSPropertyConstants.CUSTOMER_NUMBER, dvForm.getPayeeIdNumber());
         props.put(KFSPropertyConstants.ACTIVE, KFSConstants.ACTIVE_INDICATOR);
 
-        props.put(KRADConstants.RETURN_LOCATION_PARAMETER, this.getReturnLocation(request, mapping));
-        props.put(KRADConstants.BACK_LOCATION, this.getReturnLocation(request, mapping));
+        props.put(KRADConstants.RETURN_LOCATION_PARAMETER, getReturnLocation(request, mapping));
+        props.put(KRADConstants.BACK_LOCATION, getReturnLocation(request, mapping));
 
         props.put(KRADConstants.LOOKUP_AUTO_SEARCH, "Yes");
         props.put(KRADConstants.DISPATCH_REQUEST_PARAMETER, KFSConstants.SEARCH_METHOD);
@@ -911,8 +885,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         props.put(KRADConstants.DOC_NUM, dvForm.getDocument().getDocumentNumber());
 
         // TODO: how should this forward be handled
-        final String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION,
-                props);
+        final String url = UrlFactory.parameterizeUrl(getApplicationBaseUrl() + "/" + KRADConstants.LOOKUP_ACTION, props);
 
         dvForm.registerEditableProperty("methodToCall");
 
@@ -942,7 +915,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
     /**
      * add warning message based on the given reason code
      */
-    protected void addPaymentCodeWarningMessage(final DisbursementVoucherForm dvForm, String paymentReasonCode) {
+    protected void addPaymentCodeWarningMessage(final DisbursementVoucherForm dvForm, final String paymentReasonCode) {
         // clear up the warning message and tab state carried from previous screen
         for (final String tabKey : TabByReasonCode.getAllTabKeys()) {
             dvForm.getTabStates().remove(tabKey);
@@ -952,7 +925,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
             GlobalVariables.getMessageMap().removeAllWarningMessagesForProperty(propertyKey);
         }
 
-        String reasonCodeProperty = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DV_PAYEE_DETAIL + "." +
+        final String reasonCodeProperty = KFSPropertyConstants.DOCUMENT + "." + KFSPropertyConstants.DV_PAYEE_DETAIL + "." +
                 KFSPropertyConstants.DISB_VCHR_PAYMENT_REASON_CODE;
         GlobalVariables.getMessageMap().removeAllWarningMessagesForProperty(reasonCodeProperty);
 
