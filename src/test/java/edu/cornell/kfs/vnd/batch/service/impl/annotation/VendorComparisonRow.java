@@ -23,7 +23,7 @@ public @interface VendorComparisonRow {
     public static final class Converters {
         public static VendorWithTaxId toVendorWithTaxId(final VendorComparisonRow comparisonRow) {
             if (comparisonRow.forceException()) {
-                throw new RuntimeException("Forcing a RuntimeException for: " + comparisonRow);
+                throw new RuntimeException("Forcing a RuntimeException for: " + comparisonRow.vendorId());
             }
             final VendorWithTaxId vendor = new VendorWithTaxId();
             vendor.setVendorId(comparisonRow.vendorId());
