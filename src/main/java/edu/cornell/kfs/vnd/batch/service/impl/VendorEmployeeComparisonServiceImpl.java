@@ -62,6 +62,11 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
 
         LOG.info("generateFileContainingPotentialVendorEmployees, Creating employee comparison file: {}", csvFileName);
         final int ssnVendorCount = writeEmployeeComparisonOutboundCsvFile(qualifiedCreationDirectoryFileName);
+        if (ssnVendorCount == 0) {
+            LOG.warn("generateFileContainingPotentialVendorEmployees, There were no eligible vendors to include"
+                    + " in the employee comparison file, so it will NOT be staged for export: {}", csvFileName);
+            return;
+        }
         LOG.info("generateFileContainingPotentialVendorEmployees, Successfully created employee comparison file "
                 + "containing {} data rows: {}", ssnVendorCount, csvFileName);
         moveEmployeeComparisonCsvFileToExportDirectory(
@@ -95,7 +100,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
                 final BufferedWriter bufferedWriter = new BufferedWriter(streamWriter);
         ) {
-            final int ssnVendorCount = writeSSNVendorsToCsvFile(ssnVendors, bufferedWriter);
+            final int ssnVendorCount = writeSsnVendorsToCsvFile(ssnVendors, bufferedWriter);
             bufferedWriter.flush();
             return ssnVendorCount;
         } catch (final Exception e) {
@@ -104,7 +109,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
         }
     }
 
-    private int writeSSNVendorsToCsvFile(final Stream<VendorWithTaxId> ssnVendors, final BufferedWriter bufferedWriter)
+    private int writeSsnVendorsToCsvFile(final Stream<VendorWithTaxId> ssnVendors, final BufferedWriter writer)
             throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
         final EnumConfiguredMappingStrategy<VendorWithTaxId, VendorEmployeeComparisonCsv> mappingStrategy =
                 new EnumConfiguredMappingStrategy<>(
@@ -113,7 +118,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
                         VendorEmployeeComparisonCsv::getVendorDtoPropertyName);
         mappingStrategy.setType(VendorWithTaxId.class);
 
-        final StatefulBeanToCsv<VendorWithTaxId> csvWriter = new StatefulBeanToCsvBuilder<VendorWithTaxId>(bufferedWriter)
+        final StatefulBeanToCsv<VendorWithTaxId> csvWriter = new StatefulBeanToCsvBuilder<VendorWithTaxId>(writer)
                 .withMappingStrategy(mappingStrategy)
                 .build();
 
