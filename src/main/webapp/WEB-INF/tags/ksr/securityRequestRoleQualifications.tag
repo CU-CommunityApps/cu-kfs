@@ -30,7 +30,7 @@
     </tr>
 
     <%-- Add Line --%>
-    <c:if test="${!readOnly}">
+    <c:if test="${!readOnly && !securityRequestRole.allowKSRToManageQualifications}">
         <tr>
             <th scope="row"><div align="right">add:</div>
             </th>
@@ -69,18 +69,19 @@
                 <c:set var="detailIndex" value="${wrappedQualificationDetail.detailIndex}"/>
                 <c:set var="attributeEntry" value="${qualificationDetail.attributeEntry}" />
                 <kul:htmlControlAttribute attributeEntry="${attributeEntry}" 
-                    property="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}].roleQualificationDetails[${detailIndex}].attributeValue" readOnly="${readOnly}" />
+                    property="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${qualStatus.count-1}].roleQualificationDetails[${detailIndex}].attributeValue" 
+                        readOnly="${readOnly || securityRequestRole.allowKSRToManageQualifications}" />
             
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />  
                  
-                <c:if test="${(!empty attributeDefinition.quickFinder) && !readOnly}"> 
-                <c:set var="quickFinder" value="${qualificationDetail.attributeDefinition.quickFinder}" />
+                <c:if test="${(!empty attributeDefinition.quickFinder) && !readOnly && !securityRequestRole.allowKSRToManageQualifications}"> 
+                   <c:set var="quickFinder" value="${qualificationDetail.attributeDefinition.quickFinder}" />
                    <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].requestRoleQualifications[${detailIndex}]" quickFinder="${quickFinder}" />
                 </c:if>              
               </td>
             </c:forEach>
             
-            <c:if test="${!readOnly}">
+            <c:if test="${!readOnly && !securityRequestRole.allowKSRToManageQualifications}">
               <td>
                  <html:html-button property="methodToCall.deleteQualificationLine.roleRequestIndex${securityRequestRoleIndex}.qualificationIndex${qualStatus.count-1}" 
                 	alt="Delete Qualification" title="Delete Qualification" styleClass="btn btn-red skinny" value="Delete" innerHTML="<span class=\"fa fa-trash\"></span>"/>

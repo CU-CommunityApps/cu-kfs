@@ -125,6 +125,7 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
                         requestRole.setDocumentNumber(document.getDocumentNumber());
                         requestRole.setRoleId(provisioningGroup.getRoleId());
                         requestRole.setRoleRequestId(Long.valueOf(roleRequestId));
+                        requestRole.setAllowKSRToManageQualifications(!isRoleIdInParameter(provisioningGroup.getRoleId()));
 
                         buildSecurityRequestRoleQualifications(requestRole, document.getPrincipalId());
 
@@ -136,6 +137,19 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
         }
 
         document.setSecurityRequestRoles(requestRoles);
+    }
+    
+    /*
+     * @todo actually pull a parameter value
+     */
+    protected boolean isRoleIdInParameter(String roleId) {
+        if (StringUtils.equalsIgnoreCase(roleId, "54")) {
+            LOG.info("isRoleIdInParameter, role ID {} is in parameter returning TRUE", roleId);
+            return true;
+        } else {
+            LOG.info("isRoleIdInParameter, role ID {} is NOT in parameter returning FALSE", roleId);
+            return false;
+        }
     }
     
     protected void buildSecurityRequestRoleQualifications(SecurityRequestRole requestRole, String principalId) {
