@@ -172,7 +172,7 @@ public class GlTransactionServiceImpl implements GlTransactionService {
                 
                 glPendingTransaction.setAccountNumber(accountNbr);
                 glPendingTransaction.setChartOfAccountsCode(finCoaCd);
-                glPendingTransaction.setFinancialObjectCode(ObjectUtils.isNotNull(finObjectCode) ? offsetDefinition.getFinancialObjectCode() : finObjectCode);
+                glPendingTransaction.setFinancialObjectCode(ObjectUtils.isNotNull(offsetDefinition) ? offsetDefinition.getFinancialObjectCode() : finObjectCode);
                 glPendingTransaction.setFinancialSubObjectCode(KFSConstants.getDashFinancialSubObjectCode());
             }
             else {
