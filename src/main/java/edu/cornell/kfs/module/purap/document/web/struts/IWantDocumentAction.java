@@ -1251,7 +1251,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         if (forward != null) {
             return forward;
         }
-
+        
         ((CuDocumentServiceImpl)getDocumentService()).returnDocumenToPreviousNode(document, kualiDocumentFormBase.getAnnotation(), "OrganizationHierarchy");
 
         KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);

@@ -139,6 +139,7 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
             editModes.add(CUPurapConstants.IWNT_DOC_CREATE_DV);
         }
         
+        editModes.add(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC);
         editModes.add(CUPurapConstants.IWNT_DOC_USE_LOOKUPS);
         
         if (workflowDocument.isInitiated() || workflowDocument.isSaved()) {
