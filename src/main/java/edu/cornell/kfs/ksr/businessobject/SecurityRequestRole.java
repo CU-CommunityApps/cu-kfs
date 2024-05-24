@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
 import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.type.KimTypeInfoService;
-import org.kuali.kfs.kim.impl.role.Role;
 import org.kuali.kfs.kim.impl.role.RoleLite;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
@@ -27,6 +26,7 @@ public class SecurityRequestRole extends PersistableBusinessObjectBase implement
     private boolean active;
     private boolean currentActive;
     private String currentQualifications;
+    private transient boolean allowKSRToManageQualifications;
 
     private RoleLite roleInfo;
 
@@ -143,6 +143,14 @@ public class SecurityRequestRole extends PersistableBusinessObjectBase implement
 
     public String getCurrentQualificationsForDisplay() {
     	return (StringUtils.isNotBlank(currentQualifications)) ? CURRENT_QUALIFICATIONS + currentQualifications : "";
+    }
+
+    public boolean isAllowKSRToManageQualifications() {
+        return allowKSRToManageQualifications;
+    }
+
+    public void setAllowKSRToManageQualifications(boolean allowKSRToManageQualifications) {
+        this.allowKSRToManageQualifications = allowKSRToManageQualifications;
     }
 
 }
