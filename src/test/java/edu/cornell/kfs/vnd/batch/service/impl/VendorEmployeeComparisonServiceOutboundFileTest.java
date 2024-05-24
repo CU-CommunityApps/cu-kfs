@@ -39,6 +39,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
+import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonRow;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonRows;
 import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
@@ -86,6 +87,7 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
         service.setCsvEmployeeComparisonFileCreationDirectory(TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY);
         service.setCsvEmployeeComparisonFileExportDirectory(TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY);
         service.setVendorDao(buildMockVendorDao());
+        service.setVendorEmployeeComparisonReportService(Mockito.mock(VendorEmployeeComparisonReportService.class));
         service.setBatchInputFileService(Mockito.mock(BatchInputFileService.class));
         service.setVendorEmployeeComparisonResultFileType(Mockito.mock(BatchInputFileType.class));
         service.setDateTimeService(buildMockDateTimeService());

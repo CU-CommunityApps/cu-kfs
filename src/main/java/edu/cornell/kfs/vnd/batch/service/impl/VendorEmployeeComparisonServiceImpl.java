@@ -38,6 +38,7 @@ import edu.cornell.kfs.sys.util.EnumConfiguredMappingStrategy;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
+import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonService;
 import edu.cornell.kfs.vnd.businessobject.VendorEmployeeComparisonResult;
 import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
@@ -50,6 +51,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     private String csvEmployeeComparisonFileCreationDirectory;
     private String csvEmployeeComparisonFileExportDirectory;
     private CuVendorDao vendorDao;
+    private VendorEmployeeComparisonReportService vendorEmployeeComparisonReportService;
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType vendorEmployeeComparisonResultFileType;
     private DateTimeService dateTimeService;
@@ -174,8 +176,11 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
         LOG.info("processVendorEmployeeComparisonResultFile, Processing employee comparison result file: {}",
                 resultFile);
         final List<VendorEmployeeComparisonResult> parsedResult = parseVendorComparisonResultFile(resultFile);
-        // TODO: Process parsed results accordingly!
-        LOG.info("processVendorEmployeeComparisonResultFile, {}", parsedResult);
+        LOG.info("processVendorEmployeeComparisonResultFile, Generating report for result file: {}", parsedResult);
+        vendorEmployeeComparisonReportService.generateReportForVendorEmployeeComparisonResults(
+                resultFile, parsedResult);
+        LOG.info("processVendorEmployeeComparisonResultFile, Finished generating report for result file: {}",
+                parsedResult);
     }
 
     @SuppressWarnings("unchecked")
@@ -216,15 +221,21 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
         this.vendorDao = vendorDao;
     }
 
+    public void setVendorEmployeeComparisonReportService(
+            final VendorEmployeeComparisonReportService vendorEmployeeComparisonReportService) {
+        this.vendorEmployeeComparisonReportService = vendorEmployeeComparisonReportService;
+    }
+
     public void setDateTimeService(final DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
     }
 
-    public void setBatchInputFileService(BatchInputFileService batchInputFileService) {
+    public void setBatchInputFileService(final BatchInputFileService batchInputFileService) {
         this.batchInputFileService = batchInputFileService;
     }
 
-    public void setVendorEmployeeComparisonResultFileType(BatchInputFileType vendorEmployeeComparisonResultFileType) {
+    public void setVendorEmployeeComparisonResultFileType(
+            final BatchInputFileType vendorEmployeeComparisonResultFileType) {
         this.vendorEmployeeComparisonResultFileType = vendorEmployeeComparisonResultFileType;
     }
 
