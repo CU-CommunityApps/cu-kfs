@@ -26,6 +26,10 @@ public class CuAssetGlobalServiceImpl extends AssetGlobalServiceImpl {
 
     }
     
+    /*
+     * This method is overridden to prevent an NPE when the Asset Representative is null
+     * when FINP-11058 is is brought into our over lay we should be able to remove this override
+     */
     @Override
     protected void setupAssetLocationOffCampus(final AssetGlobalDetail assetGlobalDetail, final Asset asset) {
         // We are not checking if it already exists since on a new asset it can't
@@ -50,7 +54,7 @@ public class CuAssetGlobalServiceImpl extends AssetGlobalServiceImpl {
     
     /*
      * CU-Customization
-     * The asset representative might mot be a Cornell person, so we need to handle this situation
+     * The asset representative might not be a Cornell person, so we need to handle this situation
      * KualiCo jira FINP-11058 should address this bug
      */
     private void processAssetLocationInstitutionName(final AssetGlobalDetail assetGlobalDetail,
@@ -59,8 +63,8 @@ public class CuAssetGlobalServiceImpl extends AssetGlobalServiceImpl {
             offCampusAssetLocation.setAssetLocationInstitutionName(
                     assetGlobalDetail.getAssetRepresentative().getPrimaryDepartmentCode());
         } else {
-            LOG.info("processAssetLocationInstitutionName, the asset representative is not sent, unable to set asset location institution name");
+            LOG.info("processAssetLocationInstitutionName, the asset representative is not set, unable to set asset location institution name");
         }
     }
 
-}   
+}
