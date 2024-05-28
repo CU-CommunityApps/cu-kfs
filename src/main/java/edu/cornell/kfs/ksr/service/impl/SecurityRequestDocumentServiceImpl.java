@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.role.RoleService;
@@ -27,7 +29,7 @@ import edu.cornell.kfs.ksr.service.SecurityRequestDocumentService;
 import edu.cornell.kfs.ksr.util.KSRUtil;
 
 public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocumentService {
-    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SecurityRequestDocumentServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger();
 
     private BusinessObjectService businessObjectService;
     private PersonService personService;
@@ -144,10 +146,10 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
      */
     protected boolean isRoleIdInParameter(String roleId) {
         if (StringUtils.equalsIgnoreCase(roleId, "54")) {
-            LOG.info("isRoleIdInParameter, role ID {} is in parameter returning TRUE", roleId);
+            LOG.info("isRoleIdInParameter, role ID {} is in parameter returning true", roleId);
             return true;
         } else {
-            LOG.info("isRoleIdInParameter, role ID {} is NOT in parameter returning FALSE", roleId);
+            LOG.info("isRoleIdInParameter, role ID {} is NOT in parameter returning false", roleId);
             return false;
         }
     }
