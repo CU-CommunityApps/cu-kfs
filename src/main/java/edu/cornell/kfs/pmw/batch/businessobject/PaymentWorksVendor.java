@@ -17,6 +17,12 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable, PurgeableBusinessObjectInterface {
+
+
+
+
+
+
     private static final long serialVersionUID = -6784832598701451681L;
     
     private Integer id;

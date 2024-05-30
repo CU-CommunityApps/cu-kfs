@@ -8,7 +8,7 @@
     <name>KFS war</name>
     <version>current</version>
     <description>
-        This project wraps the KFS war with a war overlay. and this PR is just testing utestup
+        This project wraps the KFS war with a war overlay.
     </description>
     <inceptionYear>2013</inceptionYear>
     <organization>
