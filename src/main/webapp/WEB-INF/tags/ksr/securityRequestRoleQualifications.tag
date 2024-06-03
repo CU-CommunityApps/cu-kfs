@@ -46,23 +46,24 @@
                 
                 <c:set var="attributeDefinition" value="${qualificationDetail.attributeDefinition}" />    
                 <c:if test="${(!empty attributeDefinition.quickFinder) && !roleQualifierReadOnly}"> 
-                    <c:set var="quickFinder" value="${qualificationDetail.attributeDefinition.quickFinder}" />
+                	<c:set var="quickFinder" value="${qualificationDetail.attributeDefinition.quickFinder}" />
                    <ksr:securityRequestQualifierLookup requestQualifications="${securityRequestRoleQualificationHdr.roleQualificationDetails}" pathPrefix="document.securityRequestRoles[${securityRequestRoleIndex}].newRequestRoleQualification" quickFinder="${quickFinder}" />
                 </c:if>    
               </td>
             </c:forEach>
             
             <td>
-                <c:if test="${(!empty attributeDefinition.quickFinder) && !roleQualifierReadOnly}">
+                <c:if test="${!roleQualifierReadOnly}">
 					<html:html-button
 						property="methodToCall.addQualificationLine.roleRequestIndex${securityRequestRoleIndex}"
 						alt="Add Qualification" title="Add Qualification"
 						styleClass="btn btn-green skinny" value="Add"
 						innerHTML="<span class=\" fafa-plus\">
 						</span>"/>
-                    
+                	
 				</c:if>
 			</td>
+            
         </tr>
     </c:if>
 
@@ -92,7 +93,7 @@
             <c:if test="${!roleQualifierReadOnly}">
               <td>
                  <html:html-button property="methodToCall.deleteQualificationLine.roleRequestIndex${securityRequestRoleIndex}.qualificationIndex${qualStatus.count-1}" 
-                    alt="Delete Qualification" title="Delete Qualification" styleClass="btn btn-red skinny" value="Delete" innerHTML="<span class=\"fa fa-trash\"></span>"/>
+                	alt="Delete Qualification" title="Delete Qualification" styleClass="btn btn-red skinny" value="Delete" innerHTML="<span class=\"fa fa-trash\"></span>"/>
               </td>
             </c:if>
         </tr>
