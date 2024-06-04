@@ -54,13 +54,11 @@
             
             <td>
                 <c:if test="${!roleQualifierReadOnly}">
-					<html:html-button property="methodToCall.addQualificationLine.roleRequestIndex${securityRequestRoleIndex}" 
-					   alt="Add Qualification" title="Add Qualification" styleClass="btn btn-green skinny" 
-					   value="Add" innerHTML="<span class=\"fa fa-plus\"></span>"/>
-                	
-				</c:if>
-			</td>
-            
+                    <html:html-button property="methodToCall.addQualificationLine.roleRequestIndex${securityRequestRoleIndex}" 
+                        alt="Add Qualification" title="Add Qualification" styleClass="btn btn-green skinny" 
+                        value="Add" innerHTML="<span class=\"fa fa-plus\"></span>"/>
+                </c:if>
+            </td>
         </tr>
     </c:if>
 
