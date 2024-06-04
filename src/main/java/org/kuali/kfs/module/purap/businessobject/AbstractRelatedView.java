@@ -20,7 +20,6 @@ package org.kuali.kfs.module.purap.businessobject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kew.api.KewApiConstants;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
@@ -37,6 +36,7 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.context.SpringContext;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +52,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     private String poNumberMasked;
 
     //create date from the workflow document header...
-    private DateTime createDate;
+    private LocalDateTime createDate;
 
     protected DocumentHeader documentHeader;
 
@@ -165,9 +165,9 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
         return document;
     }
 
-    public DateTime getCreateDate() {
+    public LocalDateTime getCreateDate() {
         DocumentRouteHeaderValue document = findWorkflowDocument(getDocumentNumber());
-        return document.getDateCreated();
+        return getDateTimeService().getLocalDateTime(document.getDateCreated());
 
     }
 }

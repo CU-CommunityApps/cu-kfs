@@ -67,15 +67,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CU Customization: Backported the FINP-9050 changes into this file, adjusting for compatibility as needed.
- * This overlay can tentatively be removed when we upgrade to the 2023-02-08 financials patch.
- * 
- * NOTE: The new annotation message has a typo in base code at the time of this writing. We have fixed the typo
- * in this overlay for now, though we don't appear to be using the related Organization routing at the moment.
- * If we're still not using the REQS Organization routing when we upgrade to the 2023-02-08 patch or later,
- * then it should be safe to remove this overlay despite the typo.
- * ============
- * 
+ * CU Customization: Backport FINP-9395 from KualiCo Patch release 2023-04-05
+ * This backport can be removed when we reach that KualiCo version.
+ */
+
+/**
  * Struts Action for Requisition document.
  */
 public class RequisitionAction extends PurchasingActionBase {
@@ -202,6 +198,8 @@ public class RequisitionAction extends PurchasingActionBase {
                         .getRouteHeader(document.getDocumentNumber());
                 final DocumentRefreshQueue docRequeue = KewApiServiceLocator
                         .getDocumentRequeuerService(routeHeader.getDocumentId(), 0L);
+                
+                //CU Customization: FINP-9395 backport
                 docRequeue.refreshDocument(
                         routeHeader.getDocumentId(),
                         "Document was requeued in RequisitionAction because Org was updated at the content review node."

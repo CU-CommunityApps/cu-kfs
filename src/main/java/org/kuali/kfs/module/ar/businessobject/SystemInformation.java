@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.module.ar.businessobject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.ObjectCode;
@@ -87,6 +88,7 @@ public class SystemInformation extends PersistableBusinessObjectBase implements 
     private Country orgRemitToCountry;
     private County organizationRemitToCounty;
 
+    @JsonIgnore
     private transient PersonService personService;
 
     public Person getFinancialDocumentInitiator() {
