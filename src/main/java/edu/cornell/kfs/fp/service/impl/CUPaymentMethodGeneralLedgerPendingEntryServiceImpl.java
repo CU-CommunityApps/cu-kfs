@@ -16,8 +16,6 @@
 package edu.cornell.kfs.fp.service.impl;
 
 import static org.kuali.kfs.module.purap.PurapConstants.PURAP_ORIGIN_CODE;
-import static org.kuali.kfs.sys.KFSConstants.GL_CREDIT_CODE;
-import static org.kuali.kfs.sys.KFSConstants.GL_DEBIT_CODE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.coa.businessobject.ObjectCode;
 import org.kuali.kfs.coa.businessobject.OffsetDefinition;
 import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.OffsetDefinitionService;
@@ -252,8 +249,9 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         List<GeneralLedgerPendingEntry> glpes = document.getGeneralLedgerPendingEntries();
 
         for (GeneralLedgerPendingEntry glpe : glpes) {
-            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL);
-            if (glpe.getFinancialObjectCode().equalsIgnoreCase(offsetDefinition.getFinancialObjectCode())) {
+            OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getActiveByPrimaryId(glpe.getUniversityFiscalYear(), glpe.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL).orElse(null);
+            if (ObjectUtils.isNotNull(offsetDefinition) &&
+                    glpe.getFinancialObjectCode().equalsIgnoreCase(offsetDefinition.getFinancialObjectCode())) {
                 if (ObjectUtils.isNull(glpe.getChart())) {
                     glpe.refreshReferenceObject(KFSPropertyConstants.CHART);
                 }
@@ -277,9 +275,10 @@ public class CUPaymentMethodGeneralLedgerPendingEntryServiceImpl implements CUPa
         if (accountingLines.size() > 0) {
             for (AccountingLine accountingLine : accountingLines) {
                 if (!chartOffsets.containsKey(accountingLine.getChartOfAccountsCode())) {
-                    OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getByPrimaryId(accountingLine.getPostingYear(), accountingLine.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL);
-                    chartOffsets.put(accountingLine.getChartOfAccountsCode(), offsetDefinition.getFinancialObjectCode());
-
+                    OffsetDefinition offsetDefinition = SpringContext.getBean(OffsetDefinitionService.class).getActiveByPrimaryId(accountingLine.getPostingYear(), accountingLine.getChartOfAccountsCode(), documentType, KFSConstants.BALANCE_TYPE_ACTUAL).orElse(null);
+                    if (ObjectUtils.isNotNull(offsetDefinition)) {
+                        chartOffsets.put(accountingLine.getChartOfAccountsCode(), offsetDefinition.getFinancialObjectCode());
+                    }
                 }
             }
         }

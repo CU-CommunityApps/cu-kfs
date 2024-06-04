@@ -18,10 +18,6 @@
  */
 package org.kuali.kfs.kim.impl.identity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.core.api.mo.common.active.MutableInactivatable;
@@ -43,12 +39,14 @@ import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.kim.impl.identity.PersonExtension;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /*
  * CU Customizations:
  * 
  * -- Reintroduced masking of name/phone/etc. based on the user's privacy preferences.
- * -- Backported the FINP-9357 changes into this file.
- * -- Backported the FINP-9387 changes into this file.
  * -- Backported the FINP-9360 changes into this file.
  */
 public class Person extends PersistableBusinessObjectBase implements MutableInactivatable {
@@ -91,9 +89,7 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
 
     private static BusinessObjectService businessObjectService;
     private static PersonService personService;
-    // ==== Start FINP-9357 Backport ====
     private static UiDocumentService uiDocumentService;
-    // ==== End FINP-9357 Backport ====
 
     public String getPrincipalId() {
         return principalId;
@@ -211,7 +207,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressLine1;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressLine1MaskedIfNecessary() {
         if (canViewAddress()) {
@@ -219,9 +214,7 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
-    // ==== End FINP-9357 Backport ====
 
-    // ==== Start FINP-9357, FINP-9387 and FINP-9360 Backports ====
     private boolean canViewAddress() {
         if (StringUtils.equals(addressTypeCode, KimConstants.AddressTypes.WORK)) {
             return true;
@@ -233,11 +226,14 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
             return true;
         }
 
+        // ==== Start FINP-9360 Backport ====
+        
         final String currentUserPrincipalId = userSession.getPrincipalId();
         return StringUtils.equals(currentUserPrincipalId, principalId) ||
                getUiDocumentService().canModifyPerson(currentUserPrincipalId, principalId);
+        
+        // ==== End FINP-9360 Backport ====
     }
-    // ==== End FINP-9357, FINP-9387 and FINP-9360 Backports ====
 
     public void setAddressLine1(final String addressLine1) {
         this.addressLine1 = addressLine1;
@@ -247,7 +243,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressLine2;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressLine2MaskedIfNecessary() {
         if (canViewAddress()) {
@@ -255,7 +250,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
-    // ==== End FINP-9357 Backport ====
 
     public void setAddressLine2(final String addressLine2) {
         this.addressLine2 = addressLine2;
@@ -265,7 +259,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressLine3;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressLine3MaskedIfNecessary() {
         if (canViewAddress()) {
@@ -273,7 +266,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
-    // ==== End FINP-9357 Backport ====
 
     public void setAddressLine3(final String addressLine3) {
         this.addressLine3 = addressLine3;
@@ -283,7 +275,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressCity;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressCityMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -291,7 +282,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
-    // ==== End FINP-9357 Backport ====
 
     public void setAddressCity(final String addressCity) {
         this.addressCity = addressCity;
@@ -301,7 +291,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressStateProvinceCode;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressStateProvinceCodeMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -309,7 +298,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
-    // ==== End FINP-9357 Backport ====
 
     public void setAddressStateProvinceCode(final String addressStateProvinceCode) {
         this.addressStateProvinceCode = addressStateProvinceCode;
@@ -319,7 +307,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressPostalCode;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressPostalCodeMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -327,7 +314,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK_ZIP;
     }
-    // ==== End FINP-9357 Backport ====
 
     public void setAddressPostalCode(final String addressPostalCode) {
         this.addressPostalCode = addressPostalCode;
@@ -337,7 +323,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return addressCountryCode;
     }
 
-    // ==== Start FINP-9357 Backport ====
     // used by Person Inquiry
     public String getAddressCountryCodeMaskedIfNecessary() {
         if (canViewAddress()) {
@@ -345,7 +330,6 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         }
         return KimConstants.RestrictedMasks.RESTRICTED_DATA_MASK;
     }
-    // ==== End FINP-9357 Backport ====
 
     public void setAddressCountryCode(final String addressCountryCode) {
         this.addressCountryCode = addressCountryCode;
@@ -555,13 +539,11 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
         return personService;
     }
 
-    // ==== Start FINP-9357 Backport ====
     private UiDocumentService getUiDocumentService() {
         if (uiDocumentService == null) {
             uiDocumentService = SpringContext.getBean(UiDocumentService.class);
         }
         return uiDocumentService;
     }
-    // ==== End FINP-9357 Backport ====
 
 }

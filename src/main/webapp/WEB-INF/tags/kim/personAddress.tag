@@ -20,7 +20,7 @@
 --%>
 <%--
     CU Customization: Added an extra sub-tab for including our custom Alternate Address fields.
-                      Also backported the FINP-9357 and FINP-9391 changes into this file.
+                      Also backported the FINP-9391 changes into this file.
 --%>
 <style type="text/css">
   select.fixed-size-200-select {
@@ -35,7 +35,6 @@
     <table class="standard side-margins">
         <tr>
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressTypeCode}" noColon="true" />
-            <%-- Start of FINP-9357 changes. --%>
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressLine1MaskedIfNecessary}" noColon="true" />
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressLine2MaskedIfNecessary}" noColon="true" />
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressLine3MaskedIfNecessary}" noColon="true" />
@@ -43,11 +42,10 @@
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressStateProvinceCodeMaskedIfNecessary}" noColon="true" />
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressPostalCodeMaskedIfNecessary}" noColon="true" />
             <kim:cell isLabel="true" textAlign="left" attributeEntry="${personAttributes.addressCountryCodeMaskedIfNecessary}" noColon="true" />
-            <%-- End of FINP-9357 changes. --%>
         </tr>
         <tr>
             <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.addressTypeCode" attributeEntry="${personAttributes.addressTypeCode}" readOnly="${readOnlyEntity}" />
-            <%-- Start of FINP-9357 and FINP-9391 changes. --%>
+            <%-- Start of FINP-9391 changes. --%>
             <c:choose>
                 <c:when test="${readOnlyEntity}">
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.addressLine1MaskedIfNecessary" attributeEntry="${personAttributes.addressLine1MaskedIfNecessary}" readOnly="true" />
@@ -68,7 +66,7 @@
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.addressCountryCode" attributeEntry="${personAttributes.addressCountryCode}" styleClass="fixed-size-200-select" />
                 </c:otherwise>
             </c:choose>
-            <%-- End of FINP-9357 and FINP-9391 changes. --%>
+            <%-- End of FINP-9391 changes. --%>
         </tr>
     </table>
 </kul:subtab>

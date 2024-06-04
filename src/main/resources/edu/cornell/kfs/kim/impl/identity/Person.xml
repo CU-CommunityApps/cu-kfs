@@ -14,7 +14,6 @@
         * Added masking of Base Salary Amount.
         
         * Backported the following KualiCo changes into this file:
-        ** FINP-9357 (can be removed from this file when we upgrade to the 2023-02-22 financials patch)
         ** FINP-9235 (can be removed from this file when we upgrade to the 2023-03-08 financials patch)
      -->
 
@@ -28,15 +27,6 @@
     >
         <property name="attributes">
             <list merge="true">
-                <!-- Start of FINP-9357 backport section. -->
-                <ref bean="Person-addressLine1MaskedIfNecessary"/>
-                <ref bean="Person-addressLine2MaskedIfNecessary"/>
-                <ref bean="Person-addressLine3MaskedIfNecessary"/>
-                <ref bean="Person-addressCityMaskedIfNecessary"/>
-                <ref bean="Person-addressStateProvinceCodeMaskedIfNecessary"/>
-                <ref bean="Person-addressPostalCodeMaskedIfNecessary"/>
-                <ref bean="Person-addressCountryCodeMaskedIfNecessary"/>
-                <!-- End of FINP-9357 backport section. -->
                 <!-- Start of CU-specific property additions to the Person object directly. -->
                 <ref bean="Person-firstNameMaskedIfNecessary"/>
                 <ref bean="Person-lastNameMaskedIfNecessary"/>
@@ -107,85 +97,6 @@
             </bean>
         </property>
     </bean>
-
-    <!-- Start of FINP-9357 backport section. -->
-
-    <bean id="Person-addressLine1MaskedIfNecessary"
-          parent="Person-addressLine1MaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressLine1MaskedIfNecessary-parentBean"
-          parent="Person-addressLine1-parentBean"
-          p:name="addressLine1MaskedIfNecessary"
-    />
-
-    <bean id="Person-addressLine2MaskedIfNecessary"
-          parent="Person-addressLine2MaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressLine2MaskedIfNecessary-parentBean"
-          parent="Person-addressLine2-parentBean"
-          p:name="addressLine2MaskedIfNecessary"
-    />
-
-    <bean id="Person-addressLine3MaskedIfNecessary"
-          parent="Person-addressLine3MaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressLine3MaskedIfNecessary-parentBean"
-          parent="Person-addressLine3-parentBean"
-          p:name="addressLine3MaskedIfNecessary"
-    />
-
-    <bean id="Person-addressCityMaskedIfNecessary"
-          parent="Person-addressCityMaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressCityMaskedIfNecessary-parentBean"
-          parent="Person-addressCity-parentBean"
-          p:name="addressCityMaskedIfNecessary"
-    />
-
-    <bean id="Person-addressStateProvinceCodeMaskedIfNecessary"
-          parent="Person-addressStateProvinceCodeMaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressStateProvinceCodeMaskedIfNecessary-parentBean"
-          parent="Person-addressStateProvinceCode-parentBean"
-          p:name="addressStateProvinceCodeMaskedIfNecessary"
-    >
-        <property name="control">
-            <bean parent="TextControlDefinition"
-                  p:size="10"
-            />
-        </property>
-    </bean>
-
-    <bean id="Person-addressPostalCodeMaskedIfNecessary"
-          parent="Person-addressPostalCodeMaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressPostalCodeMaskedIfNecessary-parentBean"
-          parent="Person-addressPostalCode-parentBean"
-          p:name="addressPostalCodeMaskedIfNecessary"
-    />
-
-    <bean id="Person-addressCountryCodeMaskedIfNecessary"
-          parent="Person-addressCountryCodeMaskedIfNecessary-parentBean"
-    />
-    <bean abstract="true"
-          id="Person-addressCountryCodeMaskedIfNecessary-parentBean"
-          parent="Person-addressCountryCode-parentBean"
-          p:name="addressCountryCodeMaskedIfNecessary"
-    >
-        <property name="control">
-            <bean parent="TextControlDefinition"
-                  p:size="10"
-            />
-        </property>
-    </bean>
-
-    <!-- End of FINP-9357 backport section. -->
 
     <!-- Start of CU-specific non-address masked fields. -->
 
@@ -545,47 +456,6 @@
           p:beanName="Person-inquiryDefinition">
         <property name="fieldOverrides">
             <list>
-                <!-- Start of FINP-9357 backport section. -->
-                <bean parent="Person-FieldOverrideForInquirySectionReplace"
-                      p:element.title="Address"
-                >
-                    <property name="replaceWith">
-                        <bean parent="InquirySectionDefinition"
-                              p:title="Address"
-                              p:numberOfColumns="1"
-                        >
-                            <property name="inquiryFields">
-                                <list>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressTypeCode"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressLine1MaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressLine2MaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressLine3MaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressCityMaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressStateProvinceCodeMaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressPostalCodeMaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                    <bean parent="FieldDefinition"
-                                          p:attributeName="addressCountryCodeMaskedIfNecessary"
-                                          p:noInquiry="true"/>
-                                </list>
-                            </property>
-                        </bean>
-                    </property>
-                </bean>
-                <!-- End of FINP-9357 backport section. -->
                 <bean parent="Person-FieldOverrideForInquirySectionInsert"
                       p:element.title="Affiliation"
                 >

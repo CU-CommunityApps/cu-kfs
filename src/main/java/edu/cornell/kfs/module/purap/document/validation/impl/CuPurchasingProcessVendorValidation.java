@@ -77,7 +77,7 @@ public class CuPurchasingProcessVendorValidation extends PurchasingProcessVendor
         // make sure that the vendor is not debarred
         if (vendorDetail.isVendorDebarred()) {
             if (parameterService.getParameterValueAsBoolean(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE,
-                    "Requisition", PurapParameterConstants.SHOW_DEBARRED_VENDOR_WARNING_IND)) {
+                    "Requisition", PurapParameterConstants.DEBARRED_WARNING_IND)) {
                 if (StringUtils.isEmpty(((PurchasingDocumentBase) purDocument).getJustification())) {
                     errorMap.putWarning(VendorPropertyConstants.VENDOR_NAME, PurapKeyConstants.WARNING_DEBARRED_VENDOR,
                             vendorDetail.getVendorName());

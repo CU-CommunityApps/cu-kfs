@@ -1,7 +1,7 @@
 package edu.cornell.kfs.fp.document.service.impl;
 
 import java.sql.Date;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,9 +20,8 @@ public class CuDisbursementVoucherDefaultDueDateServiceImpl implements CuDisburs
 
     @Override
     public Date findDefaultDueDate() {
-        Calendar calendar = dateTimeService.getCurrentCalendar();
-        calendar.add(Calendar.DAY_OF_MONTH, findNumberOfDaysInTheFuture());
-        return new Date(calendar.getTimeInMillis());
+        LocalDate calculatedDefaultDvDueDate = dateTimeService.getLocalDateNow().plusDays(findNumberOfDaysInTheFuture());
+        return dateTimeService.getSqlDate(calculatedDefaultDvDueDate);
     }
     
     protected int findNumberOfDaysInTheFuture() {

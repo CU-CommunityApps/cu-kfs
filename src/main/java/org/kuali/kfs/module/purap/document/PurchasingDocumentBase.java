@@ -18,7 +18,6 @@
  */
 package org.kuali.kfs.module.purap.document;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -57,7 +56,6 @@ import org.kuali.kfs.module.purap.document.service.PurchasingService;
 import org.kuali.kfs.module.purap.document.service.ReceivingAddressService;
 import org.kuali.kfs.module.purap.util.ItemParser;
 import org.kuali.kfs.module.purap.util.ItemParserBase;
-import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
 import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.LocationService;
@@ -492,7 +490,7 @@ public abstract class PurchasingDocumentBase extends PurchasingAccountsPayableDo
     public boolean isEnablePaymentRequestPositiveApprovalIndicator() {
         return SpringContext.getBean(ParameterService.class).getParameterValueAsBoolean(
                 KfsParameterConstants.PURCHASING_DOCUMENT.class,
-                PurapParameterConstants.PAYMENT_REQUEST_POSITIVE_APPROVAL_IND);
+                PurapParameterConstants.POSITIVE_APPROVAL_IND);
     }
 
     @Override
