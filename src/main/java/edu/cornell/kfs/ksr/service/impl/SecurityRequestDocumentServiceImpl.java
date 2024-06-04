@@ -154,10 +154,10 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
                 KSRConstants.NO_QUALIFIFIER_EDIT_ROLES_ON_KSR_PARAMETER);
         
         if (roleIdsPreventQualificationEdit.contains(roleId)) {
-            LOG.info("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is in parameter returning true", roleId);
+            LOG.debug("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is in parameter returning true", roleId);
             return true;
         } else {
-            LOG.info("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is NOT in parameter returning false", roleId);
+            LOG.debug("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is NOT in parameter returning false", roleId);
             return false;
         }
     }
