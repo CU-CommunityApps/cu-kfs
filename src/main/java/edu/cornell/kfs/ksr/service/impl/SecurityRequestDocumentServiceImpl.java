@@ -1,26 +1,20 @@
 package edu.cornell.kfs.ksr.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.api.role.RoleService;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.impl.type.KimTypeAttribute;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.KRADConstants;
 
-import edu.cornell.kfs.ksr.KSRConstants;
 import edu.cornell.kfs.ksr.KSRPropertyConstants;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroup;
 import edu.cornell.kfs.ksr.businessobject.SecurityGroupTab;
@@ -33,11 +27,10 @@ import edu.cornell.kfs.ksr.service.SecurityRequestDocumentService;
 import edu.cornell.kfs.ksr.util.KSRUtil;
 
 public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocumentService {
-    private static final Logger LOG = LogManager.getLogger();
+    private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SecurityRequestDocumentServiceImpl.class);
 
     private BusinessObjectService businessObjectService;
     private PersonService personService;
-    private ParameterService parameterService;
 
     public List<SecurityGroup> getActiveSecurityGroups() {
         Map<String, Object> hashMap = new HashMap<String, Object>();
@@ -132,7 +125,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
                         requestRole.setDocumentNumber(document.getDocumentNumber());
                         requestRole.setRoleId(provisioningGroup.getRoleId());
                         requestRole.setRoleRequestId(Long.valueOf(roleRequestId));
-                        requestRole.setAllowKSRToManageQualifications(!isKSRAllowedToEditRoleQualifiersForRole(provisioningGroup.getRoleId()));
 
                         buildSecurityRequestRoleQualifications(requestRole, document.getPrincipalId());
 
@@ -144,20 +136,6 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
         }
 
         document.setSecurityRequestRoles(requestRoles);
-    }
-    
-    protected boolean isKSRAllowedToEditRoleQualifiersForRole(String roleId) {
-        Collection<String> roleIdsPreventQualificationEdit = parameterService.getParameterValuesAsString(KSRConstants.KSR_NAMESPACE,
-                KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
-                KSRConstants.NO_QUALIFIFIER_EDIT_ROLES_ON_KSR_PARAMETER);
-        
-        if (roleIdsPreventQualificationEdit.contains(roleId)) {
-            LOG.debug("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is in parameter returning true", roleId);
-            return true;
-        } else {
-            LOG.debug("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is NOT in parameter returning false", roleId);
-            return false;
-        }
     }
     
     protected void buildSecurityRequestRoleQualifications(SecurityRequestRole requestRole, String principalId) {
@@ -212,16 +190,20 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
         requestRole.setCurrentQualifications(currentQualificationsString);
     }
 
+    public BusinessObjectService getBusinessObjectService() {
+        return businessObjectService;
+    }
+
     public void setBusinessObjectService(BusinessObjectService businessObjectService) {
         this.businessObjectService = businessObjectService;
     }
 
-    public void setPersonService(PersonService personService) {
-        this.personService = personService;
+    public PersonService getPersonService() {
+        return personService;
     }
 
-    public void setParameterService(ParameterService parameterService) {
-        this.parameterService = parameterService;
+    public void setPersonService(PersonService personService) {
+        this.personService = personService;
     }
 
 }
