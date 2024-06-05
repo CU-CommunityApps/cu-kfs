@@ -42,7 +42,6 @@
     <bean id="securityRequestDocumentService-parentBean" class="edu.cornell.kfs.ksr.service.impl.SecurityRequestDocumentServiceImpl" abstract="true">
         <property name="businessObjectService" ref="businessObjectService" />
         <property name="personService" ref="personService" />
-        <property name="parameterService" ref="parameterService" />
     </bean>
     
     <bean id="securityRequestRoleTypeService" parent="securityRequestRoleTypeService-parentBean" />
