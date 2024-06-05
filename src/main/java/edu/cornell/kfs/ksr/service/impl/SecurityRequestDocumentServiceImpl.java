@@ -132,7 +132,7 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
                         requestRole.setDocumentNumber(document.getDocumentNumber());
                         requestRole.setRoleId(provisioningGroup.getRoleId());
                         requestRole.setRoleRequestId(Long.valueOf(roleRequestId));
-                        requestRole.setAllowKSRToManageQualifications(!isKSRAllowedToEditRoleQualifiersForRole(provisioningGroup.getRoleId()));
+                        requestRole.setAllowKSRToManageQualifications(!isKSRAllowedToEditRoleQualifersForRole(provisioningGroup.getRoleId()));
 
                         buildSecurityRequestRoleQualifications(requestRole, document.getPrincipalId());
 
@@ -146,16 +146,16 @@ public class SecurityRequestDocumentServiceImpl implements SecurityRequestDocume
         document.setSecurityRequestRoles(requestRoles);
     }
     
-    protected boolean isKSRAllowedToEditRoleQualifiersForRole(String roleId) {
+    protected boolean isKSRAllowedToEditRoleQualifersForRole(String roleId) {
         Collection<String> roleIdsPreventQualificationEdit = parameterService.getParameterValuesAsString(KSRConstants.KSR_NAMESPACE,
                 KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
-                KSRConstants.NO_QUALIFIFIER_EDIT_ROLES_ON_KSR_PARAMETER);
+                KSRConstants.PREVENT_QUALIFICATION_EDIT_BY_ROLE_ON_KSR_PARAMETER);
         
         if (roleIdsPreventQualificationEdit.contains(roleId)) {
-            LOG.debug("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is in parameter returning true", roleId);
+            LOG.debug("isKSRAllowedToEditRoleQualifersForRole, role ID {} is in parameter returning true", roleId);
             return true;
         } else {
-            LOG.debug("isKSRAllowedToEditRoleQualifiersForRole, role ID {} is NOT in parameter returning false", roleId);
+            LOG.debug("isKSRAllowedToEditRoleQualifersForRole, role ID {} is NOT in parameter returning false", roleId);
             return false;
         }
     }
