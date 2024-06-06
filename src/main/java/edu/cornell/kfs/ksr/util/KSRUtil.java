@@ -78,27 +78,30 @@ public class KSRUtil {
 		return KimApiServiceLocator.getKimTypeInfoService().getKimType(roleInfo.getKimTypeId());
 	}
 
-	public static boolean isQualificationChangeRequested(SecurityRequestRole securityRequestRole) {
-		boolean changeRequested = false;
+    public static boolean isQualificationChangeRequested(SecurityRequestRole securityRequestRole) {
+        boolean changeRequested = false;
 
-		List<KimTypeAttribute> typeAttributes = getTypeAttributesForRoleRequest(securityRequestRole);
+        if (securityRequestRole.isAllowKSRToManageQualifications()) {
+            List<KimTypeAttribute> typeAttributes = getTypeAttributesForRoleRequest(securityRequestRole);
 
-		List<Map<String,String>> requestedQualifications = new ArrayList<Map<String,String>>();
-		for (SecurityRequestRoleQualification requestRoleQualification : securityRequestRole.getRequestRoleQualifications()) {
-			requestedQualifications.add(requestRoleQualification.buildQualificationAttributeSet());
-		}
+            List<Map<String, String>> requestedQualifications = new ArrayList<Map<String, String>>();
+            for (SecurityRequestRoleQualification requestRoleQualification : securityRequestRole
+                    .getRequestRoleQualifications()) {
+                requestedQualifications.add(requestRoleQualification.buildQualificationAttributeSet());
+            }
 
-		String qualificationsString = KSRUtil.buildQualificationString(requestedQualifications, typeAttributes);
-		if (StringUtils.isBlank(qualificationsString)) {
-			qualificationsString = null;
-		}
+            String qualificationsString = KSRUtil.buildQualificationString(requestedQualifications, typeAttributes);
+            if (StringUtils.isBlank(qualificationsString)) {
+                qualificationsString = null;
+            }
 
-		if (!StringUtils.equals(qualificationsString, securityRequestRole.getCurrentQualifications())) {
-			changeRequested = true;
-		}
+            if (!StringUtils.equals(qualificationsString, securityRequestRole.getCurrentQualifications())) {
+                changeRequested = true;
+            }
+        }
 
-		return changeRequested;
-	}
+        return changeRequested;
+    }
 
     public static boolean doQualificationsMatch(Map<String,String> qualification1, Map<String,String> qualification2) {
         boolean match = true;

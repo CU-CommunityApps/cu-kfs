@@ -4,6 +4,7 @@ public class KSRConstants {
 
     public static final String KSR_NAMESPACE = "KFS-SR";
     public static final String REQUIRED_QUALIFICATIONS_PARAMETER = "REQUIRED_QUALIFICATIONS";
+    public static final String PREVENT_QUALIFICATION_EDIT_BY_ROLE_ON_KSR_PARAMETER = "PREVENT_QUALIFICATION_EDIT_BY_ROLE_ON_KSR";
     public static final String KSR_PATH = "/ksr/";
     public static final String CREATE_MAINTAIN_SECURITY_PROVISIONING_PERMISSION_NAME = "Create/Maintain Security Provisioning";
 
