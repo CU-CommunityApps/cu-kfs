@@ -34,8 +34,25 @@
           class="edu.cornell.kfs.krad.kim.CuDocumentTypeAndRelationshipToNoteAuthorPermissionTypeService"
           parent="documentTypePermissionTypeService"/>
 
+    <!--
+        CU Customization: Backported the FINP-9525 "uiDocumentWorkflowHelper" beans into this file.
+                          The two "uiDocumentWorkflowHelper" beans should be removed when we upgrade
+                          to the 2023-05-17 financials patch.
+    -->
+    <bean id="uiDocumentWorkflowHelper"
+          parent="uiDocumentWorkflowHelper-parentBean"
+    />
+    <bean class="org.kuali.kfs.kim.service.impl.UiDocumentWorkflowHelper"
+          id="uiDocumentWorkflowHelper-parentBean"
+    />
+
+    <!--
+        NOTE: This bean's "workflowHelper" property setup is part of the FINP-9525 backport.
+              The "workflowHelper" part should be removed when we upgrade to the 2023-05-17 financials patch.
+    -->
     <bean id="kimUiDocumentService" parent="kimUiDocumentService-parentBean"
-          class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"/>
+          class="edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl"
+          p:workflowHelper-ref="uiDocumentWorkflowHelper"/>
 
     <bean class="edu.cornell.kfs.kim.impl.identity.CuPersonServiceImpl"
           id="personService"

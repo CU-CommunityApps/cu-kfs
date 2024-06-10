@@ -3,7 +3,10 @@ package edu.cornell.kfs.coa.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.COAParameterConstants;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.impl.AccountServiceImpl;
@@ -14,7 +17,9 @@ import org.kuali.kfs.krad.util.ObjectUtils;
 import edu.cornell.kfs.coa.service.CuAccountService;
 
 public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccountService{
-    
+
+    private static final Logger LOG = LogManager.getLogger();
+
     protected NoteService noteService;
 
     public String getDefaultLaborBenefitRateCategoryCodeForAccountType(final String accountTypeCode) {
@@ -59,6 +64,25 @@ public class CuAccountServiceImpl extends AccountServiceImpl implements CuAccoun
 		}
 		return notes;
 	}
+
+    /**
+     * CU Customization: Overridden to backport the FINP-9525 document requeue fix.
+     *                   This override should be removed when we upgrade to the 2023-05-17 financials patch.
+     */
+    @Override
+    public void updateRoleAssignmentsForAccountChange(
+            final String docIdToIgnore,
+            final Set<String> accountNumbers,
+            final Set<String> documentTypes
+    ) {
+        if (accountNumbers.isEmpty() && documentTypes.isEmpty()) {
+            LOG.info("updateRoleAssignmentsForAccountChange(String,Set,Set) - no account numbers or document types "
+                     + "affected, skipping action request updating");
+            return;
+        }
+
+        super.updateRoleAssignmentsForAccountChange(docIdToIgnore, accountNumbers, documentTypes);
+    }
 
 	public NoteService getNoteService() {
 		return noteService;
