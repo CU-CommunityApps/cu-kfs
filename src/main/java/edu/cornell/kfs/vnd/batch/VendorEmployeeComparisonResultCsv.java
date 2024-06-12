@@ -1,8 +1,7 @@
 package edu.cornell.kfs.vnd.batch;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 
@@ -15,16 +14,18 @@ import edu.cornell.kfs.vnd.businessobject.VendorEmployeeComparisonResult;
 public enum VendorEmployeeComparisonResultCsv {
     KFS_VENDOR_ID(
             Utils.dtoStringPropertySetter(VendorEmployeeComparisonResult::setVendorId)),
-    EMPLOYEE_ID(
+    Employee_ID(
             Utils.dtoStringPropertySetter(VendorEmployeeComparisonResult::setEmployeeId)),
-    NET_ID(
+    NetID(
             Utils.dtoStringPropertySetter(VendorEmployeeComparisonResult::setNetId)),
-    ACTIVE_STATUS(
+    Active_Status(
             Utils.dtoBooleanPropertySetter(VendorEmployeeComparisonResult::setActive)),
-    HIRE_DATE(
+    Hire_Date(
             Utils.dtoDatePropertySetter(VendorEmployeeComparisonResult::setHireDate)),
-    TERMINATION_DATE(
-            Utils.dtoDatePropertySetter(VendorEmployeeComparisonResult::setTerminationDate));
+    Termination_Date(
+            Utils.dtoDatePropertySetter(VendorEmployeeComparisonResult::setTerminationDate)),
+    Termination_Date_Greater_Than_Processing_Date(
+            Utils.dtoDatePropertySetter(VendorEmployeeComparisonResult::setTerminationDateGreaterThanProcessingDate));
 
     private final BiConsumer<VendorEmployeeComparisonResult, String> dtoPropertySetter;
 
@@ -39,7 +40,7 @@ public enum VendorEmployeeComparisonResultCsv {
 
     public static final class Utils {
         public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(
-                CUKFSConstants.DATE_FORMAT_yyyy_MM_ddxxx, Locale.US);
+                CUKFSConstants.DATE_FORMAT_yyyy_MM_dd, Locale.US);
 
         private static BiConsumer<VendorEmployeeComparisonResult, String> dtoStringPropertySetter(
                 final BiConsumer<VendorEmployeeComparisonResult, String> setter) {
@@ -55,14 +56,13 @@ public enum VendorEmployeeComparisonResultCsv {
         }
 
         private static BiConsumer<VendorEmployeeComparisonResult, String> dtoDatePropertySetter(
-                final BiConsumer<VendorEmployeeComparisonResult, Date> setter) {
+                final BiConsumer<VendorEmployeeComparisonResult, LocalDate> setter) {
             return (resultRow, propertyStringValue) -> {
                 if (StringUtils.isBlank(propertyStringValue)) {
                     setter.accept(resultRow, null);
                 } else {
-                    final ZonedDateTime dateTime = ZonedDateTime.parse(propertyStringValue, DATE_FORMATTER);
-                    final Date propertyDateValue = Date.from(dateTime.toInstant());
-                    setter.accept(resultRow, propertyDateValue);
+                    final LocalDate propertyLocalDateValue = LocalDate.parse(propertyStringValue, DATE_FORMATTER);
+                    setter.accept(resultRow, propertyLocalDateValue);
                 }
             };
         }

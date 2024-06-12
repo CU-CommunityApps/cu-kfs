@@ -1,6 +1,6 @@
 package edu.cornell.kfs.vnd.businessobject;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
@@ -12,8 +12,9 @@ public class VendorEmployeeComparisonResult extends TransientBusinessObjectBase 
     private String employeeId;
     private String netId;
     private boolean active;
-    private Date hireDate;
-    private Date terminationDate;
+    private LocalDate hireDate;
+    private LocalDate terminationDate;
+    private LocalDate terminationDateGreaterThanProcessingDate;
 
     public String getVendorId() {
         return vendorId;
@@ -47,20 +48,28 @@ public class VendorEmployeeComparisonResult extends TransientBusinessObjectBase 
         this.active = active;
     }
 
-    public Date getHireDate() {
+    public LocalDate getHireDate() {
         return hireDate;
     }
 
-    public void setHireDate(Date hireDate) {
+    public void setHireDate(LocalDate hireDate) {
         this.hireDate = hireDate;
     }
 
-    public Date getTerminationDate() {
+    public LocalDate getTerminationDate() {
         return terminationDate;
     }
 
-    public void setTerminationDate(Date terminationDate) {
+    public void setTerminationDate(LocalDate terminationDate) {
         this.terminationDate = terminationDate;
+    }
+
+    public LocalDate getTerminationDateGreaterThanProcessingDate() {
+        return terminationDateGreaterThanProcessingDate;
+    }
+
+    public void setTerminationDateGreaterThanProcessingDate(LocalDate terminationDateGreaterThanProcessingDate) {
+        this.terminationDateGreaterThanProcessingDate = terminationDateGreaterThanProcessingDate;
     }
 
 }

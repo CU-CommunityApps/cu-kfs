@@ -1,5 +1,6 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -18,7 +19,7 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
     public void generateReportForVendorEmployeeComparisonResults(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
         initializeReportTitleAndFileName();
-        buildSummarySection(csvFileName, resultRows);
+        writeSummarySection(csvFileName, resultRows);
         reportWriterService.destroy();
     }
 
@@ -31,9 +32,51 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         reportWriterService.writeNewLines(2);
     }
 
-    private void buildSummarySection(final String csvFileName,
+    private void writeSummarySection(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
-        // TODO: Implement!
+        final long totalActiveEmployees = resultRows.stream()
+                .filter(resultRow -> resultRow.isActive())
+                .count();
+        final long totalEmployeesWithUpcomingTerminations = resultRows.stream()
+                .filter(resultRow -> resultRow.isActive()
+                        && resultRow.getTerminationDateGreaterThanProcessingDate() != null)
+                .count();
+        final long totalRecentEmployees = resultRows.size() - totalActiveEmployees;
+        
+        writeSectionHeader("Summary");
+        writeSummaryLine("Total Vendors Representing Current or Recent Employees", resultRows.size());
+        writeSummaryLine("Total Vendors Representing Active Employees", totalActiveEmployees);
+        writeSummaryLine("Total Vendors Representing Active Employees with Upcoming Termination Dates",
+                totalEmployeesWithUpcomingTerminations);
+        writeSummaryLine("Total Vendors Representing Employees Terminated within the Past Year", totalRecentEmployees);
+        writeSectionFooter();
+        reportWriterService.writeNewLines(2);
+    }
+
+    private void writeSectionHeader(final String sectionTitle) {
+        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_SECTION_OPENING, sectionTitle);
+    }
+
+    private void writeSectionFooter() {
+        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_SECTION_OPENING);
+    }
+
+    private void writeSummaryLine(final String label, final Object value) {
+        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_SUMMARY_LINE, label, value);
+    }
+
+    private void writeDetailSummaryLine(final String label, final String description) {
+        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_DETAIL_SUMMARY, label, description);
+    }
+
+    private void writeDetailItemLine(final String label, final Object value) {
+        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_DETAIL_ITEM, label, value);
+    }
+
+    private void writeMessageLine(final String propertyName, final Object... arguments) {
+        final String linePattern = getProperty(propertyName);
+        final String reportLine = MessageFormat.format(linePattern, arguments);
+        reportWriterService.writeFormattedMessageLine(reportLine);
     }
 
     private String getProperty(final String propertyName) {

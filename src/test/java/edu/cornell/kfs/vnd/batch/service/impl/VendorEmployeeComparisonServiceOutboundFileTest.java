@@ -155,7 +155,6 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
 
         @VendorComparisonRows({
             @VendorComparisonRow(vendorId = "12345-0", taxId = "xxxxx1111"),
-            @VendorComparisonRow(vendorId = "12345-1", taxId = "xxxxx1111"),
             @VendorComparisonRow(vendorId = "44444-0", taxId = "xxxxx2222"),
             @VendorComparisonRow(vendorId = "78787-0", taxId = "xxxxx9876")
         })
@@ -168,7 +167,6 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
 
         @VendorComparisonRows({
             @VendorComparisonRow(vendorId = "12345-0", taxId = "xxxxx1111"),
-            @VendorComparisonRow(vendorId = "12345-1", taxId = "xxxxx1111"),
             @VendorComparisonRow(vendorId = "44444-0", taxId = "xxxxx2222", forceException = true),
             @VendorComparisonRow(vendorId = "78787-0", taxId = "xxxxx9876")
         })

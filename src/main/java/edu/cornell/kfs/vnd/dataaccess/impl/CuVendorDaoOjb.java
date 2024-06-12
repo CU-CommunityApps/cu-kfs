@@ -229,6 +229,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
                 VendorOwnershipCodes.INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC);
         criteria.addEqualTo(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE, VendorConstants.TAX_TYPE_SSN);
         criteria.addNotNull(VendorPropertyConstants.VENDOR_TAX_NUMBER);
+        criteria.addEqualTo(VendorPropertyConstants.VENDOR_PARENT_INDICATOR, KRADConstants.YES_INDICATOR_VALUE);
         criteria.addEqualTo(KFSPropertyConstants.ACTIVE_INDICATOR, KRADConstants.YES_INDICATOR_VALUE);
 
         final ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(VendorDetail.class, criteria);
