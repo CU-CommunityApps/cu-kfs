@@ -56,18 +56,21 @@ public class CUVendorKeyConstants {
 
     public static final String ERROR_VENDOR_TAX_TYPE_AND_NUMBER_COMBO_EXISTS_AND_PRINT_EXISTING = "error.vendorMaint.addVendor.vendor.exists.printExisting";
 
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_FILE_NAME =
-            "vendor.employee.comparison.report.file.name";
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_TITLE =
-            "vendor.employee.comparison.report.title";
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_SECTION_OPENING =
-            "vendor.employee.comparison.report.section.opening";
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_SECTION_CLOSING =
-            "vendor.employee.comparison.report.section.closing";
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_SUMMARY_LINE =
-            "vendor.employee.comparison.report.summary.line";
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_DETAIL_SUMMARY =
-            "vendor.employee.comparison.report.detail.summary";
-    public static final String VENDOR_EMPLOYEE_COMPARISON_REPORT_DETAIL_ITEM =
-            "vendor.employee.comparison.report.detail.item";
+    public static final class EmployeeComparisonReportKeys {
+        public static final String PREFIX = "vendor.employee.comparison.report.";
+        public static final String SUMMARY_LABEL_PREFIX = PREFIX + "summary.label.";
+
+        public static final String FILE_NAME = PREFIX + "file.name";
+        public static final String TITLE = PREFIX + "title";
+        public static final String SECTION_SEPARATOR = PREFIX + "section.separator";
+        public static final String SECTION_HEADER = PREFIX + "section.header";
+        public static final String SUMMARY_SECTION_TITLE = PREFIX + "summary.section.title";
+        public static final String SUMMARY_PROCESSED_FILE_NAME = PREFIX + "summary.processed.file.name";
+        public static final String SUMMARY_LINE = PREFIX + "summary.line";
+        public static final String DETAIL_SECTION_TITLE = PREFIX + "detail.section.title";
+        public static final String DETAIL_TABLE_HEADER = PREFIX + "detail.table.header";
+        public static final String DETAIL_TABLE_SEPARATOR = PREFIX + "detail.table.separator";
+        public static final String DETAIL_TABLE_ROW = PREFIX + "detail.table.row";
+    }
+
 }

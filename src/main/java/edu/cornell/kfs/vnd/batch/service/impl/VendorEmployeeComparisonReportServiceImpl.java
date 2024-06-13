@@ -1,16 +1,38 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
-import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSConstants.OptionLabels;
 
 import edu.cornell.kfs.sys.service.ReportWriterService;
-import edu.cornell.kfs.vnd.CUVendorKeyConstants;
+import edu.cornell.kfs.vnd.CUVendorKeyConstants.EmployeeComparisonReportKeys;
+import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
 import edu.cornell.kfs.vnd.businessobject.VendorEmployeeComparisonResult;
 
 public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployeeComparisonReportService {
+
+    private enum ReportStatistic {
+        TOTAL_EMPLOYEES(resultRow -> true),
+        TOTAL_ACTIVE_EMPLOYEES(resultRow -> resultRow.isActive()),
+        TOTAL_ACTIVE_REHIRED_EMPLOYEES(resultRow -> resultRow.isActive() && resultRow.getTerminationDate() != null),
+        TOTAL_EMPLOYEES_PENDING_TERMINATION(resultRow -> resultRow.isActive()
+                && resultRow.getTerminationDateGreaterThanProcessingDate() != null),
+        TOTAL_EMPLOYEES_RECENTLY_TERMINATED(resultRow -> !resultRow.isActive());
+
+        private final Predicate<VendorEmployeeComparisonResult> rowFilter;
+
+        private ReportStatistic(final Predicate<VendorEmployeeComparisonResult> rowFilter) {
+            this.rowFilter = rowFilter;
+        }
+    }
+
+    private static final int SECTION_TITLE_LENGTH = 49;
 
     private ReportWriterService reportWriterService;
     private ConfigurationService configurationService;
@@ -19,64 +41,100 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
     public void generateReportForVendorEmployeeComparisonResults(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
         initializeReportTitleAndFileName();
+        writeTwoEmptyLines();
         writeSummarySection(csvFileName, resultRows);
+        writePageBreak();
+        writeTwoEmptyLines();
+        writeDetailSection(resultRows);
         reportWriterService.destroy();
     }
 
     private void initializeReportTitleAndFileName() {
         reportWriterService.setFileNamePrefix(
-                getProperty(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_FILE_NAME));
+                getProperty(EmployeeComparisonReportKeys.FILE_NAME));
         reportWriterService.setTitle(
-                getProperty(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_TITLE));
+                getProperty(EmployeeComparisonReportKeys.TITLE));
         reportWriterService.initialize();
-        reportWriterService.writeNewLines(2);
     }
 
     private void writeSummarySection(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
-        final long totalActiveEmployees = resultRows.stream()
-                .filter(resultRow -> resultRow.isActive())
-                .count();
-        final long totalEmployeesWithUpcomingTerminations = resultRows.stream()
-                .filter(resultRow -> resultRow.isActive()
-                        && resultRow.getTerminationDateGreaterThanProcessingDate() != null)
-                .count();
-        final long totalRecentEmployees = resultRows.size() - totalActiveEmployees;
-        
-        writeSectionHeader("Summary");
-        writeSummaryLine("Total Vendors Representing Current or Recent Employees", resultRows.size());
-        writeSummaryLine("Total Vendors Representing Active Employees", totalActiveEmployees);
-        writeSummaryLine("Total Vendors Representing Active Employees with Upcoming Termination Dates",
-                totalEmployeesWithUpcomingTerminations);
-        writeSummaryLine("Total Vendors Representing Employees Terminated within the Past Year", totalRecentEmployees);
-        writeSectionFooter();
-        reportWriterService.writeNewLines(2);
+        writeSectionHeader(EmployeeComparisonReportKeys.SUMMARY_SECTION_TITLE);
+        writeMessageLine(EmployeeComparisonReportKeys.SUMMARY_PROCESSED_FILE_NAME, csvFileName);
+        writeEmptyLine();
+        for (final ReportStatistic statistic : ReportStatistic.values()) {
+            final long computedValue = resultRows.stream()
+                    .filter(statistic.rowFilter)
+                    .count();
+            writeSummaryLine(statistic, computedValue);
+        }
     }
 
-    private void writeSectionHeader(final String sectionTitle) {
-        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_SECTION_OPENING, sectionTitle);
+    private void writeSummaryLine(final ReportStatistic statistic, final long value) {
+        final String lineLabel = getProperty(EmployeeComparisonReportKeys.SUMMARY_LABEL_PREFIX + statistic.name());
+        writeMessageLine(EmployeeComparisonReportKeys.SUMMARY_LINE, lineLabel, value);
     }
 
-    private void writeSectionFooter() {
-        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_SECTION_OPENING);
+    private void writeDetailSection(final List<VendorEmployeeComparisonResult> resultRows) {
+        writeSectionHeader(EmployeeComparisonReportKeys.DETAIL_SECTION_TITLE);
+        writeMessageLine(EmployeeComparisonReportKeys.DETAIL_TABLE_HEADER);
+        writeMessageLine(EmployeeComparisonReportKeys.DETAIL_TABLE_SEPARATOR);
+        writeEmptyLine();
+        for (final VendorEmployeeComparisonResult resultRow : resultRows) {
+            writeDetailRow(resultRow);
+            writeEmptyLine();
+        }
     }
 
-    private void writeSummaryLine(final String label, final Object value) {
-        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_SUMMARY_LINE, label, value);
+    private void writeDetailRow(final VendorEmployeeComparisonResult resultRow) {
+        writeMessageLine(EmployeeComparisonReportKeys.DETAIL_TABLE_ROW,
+                formatStringCell(resultRow.getVendorId()),
+                formatStringCell(resultRow.getEmployeeId()),
+                formatStringCell(resultRow.getNetId()),
+                formatBooleanCell(resultRow.isActive()),
+                formatDateCell(resultRow.getHireDate()),
+                formatDateCell(resultRow.getTerminationDate()),
+                formatDateCell(resultRow.getTerminationDateGreaterThanProcessingDate()));
     }
 
-    private void writeDetailSummaryLine(final String label, final String description) {
-        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_DETAIL_SUMMARY, label, description);
+    private String formatStringCell(String value) {
+        return StringUtils.defaultIfBlank(value, KFSConstants.NOT_AVAILABLE_STRING);
     }
 
-    private void writeDetailItemLine(final String label, final Object value) {
-        writeMessageLine(CUVendorKeyConstants.VENDOR_EMPLOYEE_COMPARISON_REPORT_DETAIL_ITEM, label, value);
+    private String formatBooleanCell(boolean value) {
+        return value ? OptionLabels.YES : OptionLabels.NO;
+    }
+
+    private String formatDateCell(LocalDate value) {
+        return value != null
+                ? value.format(VendorEmployeeComparisonResultCsv.Utils.DATE_FORMATTER)
+                : KFSConstants.NOT_AVAILABLE_STRING;
+    }
+
+    private void writeSectionHeader(final String sectionTitleKey) {
+        final String sectionTitle = getProperty(sectionTitleKey);
+        final String paddedTitle = StringUtils.center(sectionTitle, SECTION_TITLE_LENGTH);
+        writeMessageLine(EmployeeComparisonReportKeys.SECTION_SEPARATOR);
+        writeMessageLine(EmployeeComparisonReportKeys.SECTION_HEADER, paddedTitle);
+        writeMessageLine(EmployeeComparisonReportKeys.SECTION_SEPARATOR);
+        writeTwoEmptyLines();
     }
 
     private void writeMessageLine(final String propertyName, final Object... arguments) {
         final String linePattern = getProperty(propertyName);
-        final String reportLine = MessageFormat.format(linePattern, arguments);
-        reportWriterService.writeFormattedMessageLine(reportLine);
+        reportWriterService.writeFormattedMessageLine(linePattern, arguments);
+    }
+
+    private void writeEmptyLine() {
+        reportWriterService.writeNewLines(1);
+    }
+
+    private void writeTwoEmptyLines() {
+        reportWriterService.writeNewLines(2);
+    }
+
+    private void writePageBreak() {
+        reportWriterService.pageBreak();
     }
 
     private String getProperty(final String propertyName) {
