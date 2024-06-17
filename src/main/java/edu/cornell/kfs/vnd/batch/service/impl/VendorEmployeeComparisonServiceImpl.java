@@ -151,25 +151,29 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     }
 
     @Override
-    public void processResultsOfVendorEmployeeComparison() {
+    public boolean processResultsOfVendorEmployeeComparison() {
         final List<String> resultFiles = batchInputFileService.listInputFileNamesWithDoneFile(
                 vendorEmployeeComparisonResultFileType);
         if (CollectionUtils.isEmpty(resultFiles)) {
             LOG.info("processResultsOfVendorEmployeeComparison, There were no employee comparison result files "
                     + "to process.");
-            return;
+            return true;
         }
+
+        boolean allFilesSucceeded = true;
 
         for (final String resultFile : resultFiles) {
             try {
                 processVendorEmployeeComparisonResultFile(resultFile);
             } catch (Exception e) {
+                allFilesSucceeded = false;
                 LOG.error("processResultsOfVendorEmployeeComparison, Failed to process comparison result file: {}",
                         resultFile, e);
             }
         }
 
         removeDoneFiles(resultFiles);
+        return allFilesSucceeded;
     }
 
     private void processVendorEmployeeComparisonResultFile(final String resultFile) {

@@ -9,6 +9,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.OptionLabels;
 
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants.EmployeeComparisonReportKeys;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv;
@@ -21,8 +22,8 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         TOTAL_EMPLOYEES(resultRow -> true),
         TOTAL_ACTIVE_EMPLOYEES(resultRow -> resultRow.isActive()),
         TOTAL_ACTIVE_REHIRED_EMPLOYEES(resultRow -> resultRow.isActive() && resultRow.getTerminationDate() != null),
-        TOTAL_EMPLOYEES_PENDING_TERMINATION(resultRow -> resultRow.isActive()
-                && resultRow.getTerminationDateGreaterThanProcessingDate() != null),
+        TOTAL_EMPLOYEES_PENDING_TERMINATION(
+                resultRow -> resultRow.isActive() && resultRow.getTerminationDateGreaterThanProcessingDate() != null),
         TOTAL_EMPLOYEES_RECENTLY_TERMINATED(resultRow -> !resultRow.isActive());
 
         private final Predicate<VendorEmployeeComparisonResult> rowFilter;
@@ -43,7 +44,6 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         initializeReportTitleAndFileName();
         writeTwoEmptyLines();
         writeSummarySection(csvFileName, resultRows);
-        writePageBreak();
         writeTwoEmptyLines();
         writeDetailSection(resultRows);
         reportWriterService.destroy();
@@ -59,8 +59,9 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
 
     private void writeSummarySection(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
+        final String csvFileNameWithoutPath = CuBatchFileUtils.getFileNameWithoutPath(csvFileName);
         writeSectionHeader(EmployeeComparisonReportKeys.SUMMARY_SECTION_TITLE);
-        writeMessageLine(EmployeeComparisonReportKeys.SUMMARY_PROCESSED_FILE_NAME, csvFileName);
+        writeMessageLine(EmployeeComparisonReportKeys.SUMMARY_PROCESSED_FILE_NAME, csvFileNameWithoutPath);
         writeEmptyLine();
         for (final ReportStatistic statistic : ReportStatistic.values()) {
             final long computedValue = resultRows.stream()
@@ -131,10 +132,6 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
 
     private void writeTwoEmptyLines() {
         reportWriterService.writeNewLines(2);
-    }
-
-    private void writePageBreak() {
-        reportWriterService.pageBreak();
     }
 
     private String getProperty(final String propertyName) {

@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -37,6 +36,7 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
+import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
@@ -46,6 +46,13 @@ import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 @Execution(ExecutionMode.SAME_THREAD)
+@CreateTestDirectories(
+    baseDirectory = VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_DIRECTORY,
+    subDirectories = {
+        VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY,
+        VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY
+    }
+)
 public class VendorEmployeeComparisonServiceOutboundFileTest {
 
     private static final String TEST_VND_DIRECTORY = "test/vnd_compare_out/";
@@ -65,7 +72,6 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        createTestBatchDirectories();
         vendorEmployeeComparisonService = buildVendorEmployeeComparisonService();
         forceExceptionWithinDaoMethodCall = false;
         streamFromDaoWasClosed = new AtomicBoolean(false);
@@ -75,11 +81,6 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
         final VendorComparisonRows fixture = FixtureUtils.getAnnotationBasedFixture(
                 testCase, VendorComparisonRows.class);
         testCaseFixture = fixture;
-    }
-
-    private void createTestBatchDirectories() throws IOException {
-        final File testBatchDirectory = new File(TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY);
-        FileUtils.forceMkdir(testBatchDirectory);
     }
 
     private VendorEmployeeComparisonServiceImpl buildVendorEmployeeComparisonService() {
@@ -132,14 +133,6 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
         streamFromDaoWasClosed = null;
         testCaseFixture = null;
         vendorEmployeeComparisonService = null;
-        deleteTestBatchDirectories();
-    }
-
-    private void deleteTestBatchDirectories() throws IOException {
-        final File testBatchDirectory = new File(TEST_VND_DIRECTORY);
-        if (testBatchDirectory.exists() && testBatchDirectory.isDirectory()) {
-            FileUtils.forceDelete(testBatchDirectory.getAbsoluteFile());
-        }
     }
 
 

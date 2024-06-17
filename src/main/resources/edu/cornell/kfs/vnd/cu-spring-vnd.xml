@@ -247,7 +247,7 @@
           abstract="true"
           class="edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsvInputFileType"
           p:directoryPath="${staging.directory}/vnd/emplCompareWorkday/result"
-          p:fileExtension=".csv"
+          p:fileExtension="csv"
           p:csvEnumClass="edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv"/>
 
     <bean id="vendorEmployeeComparisonReportService" parent="vendorEmployeeComparisonReportService-parentBean"/>

@@ -4,6 +4,6 @@ public interface VendorEmployeeComparisonService {
 
     void generateFileContainingPotentialVendorEmployees();
 
-    void processResultsOfVendorEmployeeComparison();
+    boolean processResultsOfVendorEmployeeComparison();
 
 }
