@@ -37,7 +37,7 @@ public class BlackListAttachmentServiceImpl implements BlackListAttachmentServic
             int lastIndexOfFileDelimiter = uploadedFileName.lastIndexOf(FILE_EXTENSION_DELIMITER);
             
             if (lastIndexOfFileDelimiter != -1) {
-                fileExtension = uploadedFileName.substring(lastIndexOfFileDelimiter);
+                fileExtension = uploadedFileName.substring(lastIndexOfFileDelimiter + 1);
             }
         }
         return fileExtension;
