@@ -1,5 +1,7 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -7,15 +9,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +35,9 @@ import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.mockito.Mockito;
 
+import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.FixtureUtils;
 import edu.cornell.kfs.sys.util.SpringXmlBeanFactoryMethod;
@@ -57,32 +66,35 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     private static final String TEST_VND_EMPL_RESULTS_DIRECTORY =
             TEST_VND_STAGING_DIRECTORY + "emplCompareWorkday/result/";
 
-    private static final String VND_EMPL_RESULTS_CSV_FILENAME = "empl_result_20240615_123045.csv";
-    private static final String VND_EMPL_RESULTS_DONE_FILENAME = "empl_result_20240615_123045.done";
+    private static final String VND_EMPL_RESULTS_CSV_FILENAME_PATTERN = "empl_result_20240615_1230{0}.csv";
+    private static final String VND_EMPL_RESULTS_DONE_FILENAME_PATTERN = "empl_result_20240615_1230{0}.done";
 
     private static final String BASE_TEST_REPORT_FILE_PATH =
             "classpath:edu/cornell/kfs/vnd/batch/service/impl/empl-compare-report/";
-
-    private static final ZonedDateTime MOCK_CURRENT_DATE = ZonedDateTime.of(
-            2024, 5, 17, 10, 30, 0, 0, ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
 
     @RegisterExtension
     TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
             "edu/cornell/kfs/vnd/batch/service/impl/cu-spring-vnd-empl-comparison-result-test.xml");
 
     private VendorEmployeeComparisonService vendorEmployeeComparisonService;
-    private VendorComparisonResult testCaseFixture;
+    private Map<String, File> resultFileAndReportFilePairs;
 
     @BeforeEach
     void setUp() throws Exception {
+        resultFileAndReportFilePairs = new HashMap<>();
         vendorEmployeeComparisonService = springContextExtension.getBean(
                 VendorSpringBeans.VENDOR_EMPLOYEE_COMPARISON_SERVICE, VendorEmployeeComparisonService.class);
     }
 
-    private void initializeTestCaseFixture(final LocalTestCase testCase) {
-        final VendorComparisonResult fixture = FixtureUtils.getAnnotationBasedFixture(
-                testCase, VendorComparisonResult.class);
-        testCaseFixture = fixture;
+    @SpringXmlBeanFactoryMethod
+    public BiConsumer<String, File> buildTestReportFileTracker() {
+        return this::trackResultFileAndReportFilePair;
+    }
+
+    private void trackResultFileAndReportFilePair(final String resultFile, final File reportFile) {
+        assertFalse(resultFileAndReportFilePairs.containsKey(resultFile),
+                "Unexpected attempt to track the following result file twice: " + resultFile);
+        resultFileAndReportFilePairs.put(resultFile, reportFile);
     }
 
     @SpringXmlBeanFactoryMethod
@@ -91,11 +103,8 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     }
 
     @SpringXmlBeanFactoryMethod
-    public DateTimeService buildMockDateTimeService() {
-        final DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
-        Mockito.when(dateTimeService.getCurrentDate())
-                .then(invocation -> Date.from(MOCK_CURRENT_DATE.toInstant()));
-        return dateTimeService;
+    public DateTimeService buildTestDateTimeService() {
+        return new TestDateTimeServiceImpl();
     }
 
     @SpringXmlBeanFactoryMethod
@@ -103,21 +112,17 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         return Mockito.mock(ParameterService.class);
     }
 
-    private void assertTestCaseFixtureWasInitialized() {
-        assertNotNull(testCaseFixture, "The test case's metadata was not properly initialized");
-    }
-
     @AfterEach
     void tearDown() throws Exception {
-        testCaseFixture = null;
         vendorEmployeeComparisonService = null;
+        resultFileAndReportFilePairs = null;
     }
 
 
 
-    private void createTestCsvFile() throws IOException {
-        assertTestCaseFixtureWasInitialized();
-        final File csvFile = new File(TEST_VND_EMPL_RESULTS_DIRECTORY + VND_EMPL_RESULTS_CSV_FILENAME);
+    private void createTestCsvFile(final VendorComparisonResult testCaseFixture) throws IOException {
+        final String simpleFileName = generateFileName(testCaseFixture, VND_EMPL_RESULTS_CSV_FILENAME_PATTERN);
+        final File csvFile = new File(TEST_VND_EMPL_RESULTS_DIRECTORY + simpleFileName);
         try (
                 final FileOutputStream fileStream = new FileOutputStream(csvFile);
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
@@ -148,19 +153,27 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         } 
     }
 
-    private void createTestDoneFile() throws IOException {
-        final File doneFile = new File(TEST_VND_EMPL_RESULTS_DIRECTORY + VND_EMPL_RESULTS_DONE_FILENAME);
+    private void createTestDoneFile(final VendorComparisonResult testCaseFixture) throws IOException {
+        final String simpleFileName = generateFileName(testCaseFixture, VND_EMPL_RESULTS_DONE_FILENAME_PATTERN);
+        final File doneFile = new File(TEST_VND_EMPL_RESULTS_DIRECTORY + simpleFileName);
         FileUtils.touch(doneFile);
     }
 
-    
-    
+    private String generateFileName(final VendorComparisonResult testCaseFixture, final String fileNamePattern) {
+        final String indexedValue = StringUtils.leftPad(
+                String.valueOf(testCaseFixture.index()), 2, '0');
+        return MessageFormat.format(fileNamePattern, indexedValue);
+    }
+
+
+
     enum LocalTestCase {
         @VendorComparisonResult(
+                index = 1,
                 csvDataRows = {
                         VendorComparisonResultRowFixture.JOHN_DOE,
                 },
-                expectedReportFile = ""
+                expectedReportFile = "rpt-single-active-row.txt"
         )
         FILE_WITH_SINGLE_ACTIVE_ROW;
     }
@@ -169,16 +182,100 @@ public class VendorEmployeeComparisonServiceResultFileTest {
 
     @Test
     void doSomething() throws Exception {
-        initializeTestCaseFixture(LocalTestCase.FILE_WITH_SINGLE_ACTIVE_ROW);
-        createTestCsvFile();
-        createTestDoneFile();
+        final LocalTestCase enumFixture = LocalTestCase.FILE_WITH_SINGLE_ACTIVE_ROW;
+        final VendorComparisonResult testCaseFixture = FixtureUtils.getAnnotationBasedFixture(
+                enumFixture, VendorComparisonResult.class);
+        createTestCsvFile(testCaseFixture);
+        createTestDoneFile(testCaseFixture);
         assertCsvFileProcessingSucceeds();
+        assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixture);
+        assertReportFilesHaveExpectedContent(testCaseFixture);
     }
 
     private void assertCsvFileProcessingSucceeds() throws Exception {
-        assertTestCaseFixtureWasInitialized();
         final boolean csvProcessingResult = vendorEmployeeComparisonService.processResultsOfVendorEmployeeComparison();
         assertTrue(csvProcessingResult, "The results CSV file should have been processed successfully");
+    }
+
+    private void assertReportFilesHaveExpectedContent(final VendorComparisonResult... fixtures) throws Exception {
+        final Map<String, VendorComparisonResult> fixturesExpectingSuccess = Stream.of(fixtures)
+                .filter(fixture -> fixture.expectingSuccess())
+                .collect(Collectors.toUnmodifiableMap(
+                        fixture -> generateFileName(fixture, VND_EMPL_RESULTS_CSV_FILENAME_PATTERN),
+                        fixture -> fixture));
+
+        final File reportFileDirectory = new File(TEST_VND_REPORTS_DIRECTORY);
+        final File[] reportFiles = reportFileDirectory.listFiles();
+        assertNotNull(reportFiles, "Unable to search for files in the reports file directory");
+        assertEquals(fixturesExpectingSuccess.size(), reportFiles.length,
+                "Wrong number of report files were generated");
+        assertEquals(fixturesExpectingSuccess.size(), resultFileAndReportFilePairs.size(),
+                "Wrong number of generated report files were recorded");
+
+        final Set<String> reportFileNames = Arrays.stream(reportFiles)
+                .map(reportFile -> reportFile.getName())
+                .collect(Collectors.toUnmodifiableSet());
+
+        for (final String csvFileName : fixturesExpectingSuccess.keySet()) {
+            final VendorComparisonResult fixture = fixturesExpectingSuccess.get(csvFileName);
+            final File reportFile = resultFileAndReportFilePairs.get(csvFileName);
+            assertNotNull(reportFile, "Could not find report file corresponding to CSV file: " + csvFileName);
+            assertTrue(reportFileNames.contains(reportFile.getName()), "CSV file " + csvFileName
+                    + " has a matching report that's not in the expected reports directory: " + reportFile.getName());
+            assertReportFileHasExpectedContent(fixture, reportFile);
+        }
+    }
+
+    private void assertReportFileHasExpectedContent(final VendorComparisonResult fixture, final File reportFile)
+            throws Exception {
+        final String expectedReportContent = getExpectedReportFileContents(fixture);
+        final String actualReportContent = FileUtils.readFileToString(reportFile, StandardCharsets.UTF_8);
+        final String actualReportContentForCompare = getFileContentWithoutInitialPageMarkerLines(actualReportContent);
+        assertEquals(expectedReportContent, actualReportContentForCompare, "Wrong report file contents");
+    }
+
+    private String getExpectedReportFileContents(final VendorComparisonResult fixture) throws IOException {
+        final String reportFilePath = BASE_TEST_REPORT_FILE_PATH + fixture.expectedReportFile();
+        try (
+                final InputStream reportContent = CuCoreUtilities.getResourceAsStream(reportFilePath);
+        ) {
+            return IOUtils.toString(reportContent, StandardCharsets.UTF_8);
+        }
+    }
+
+    private String getFileContentWithoutInitialPageMarkerLines(final String originalContent) {
+        int lineFeedIndex = StringUtils.indexOf(originalContent, KFSConstants.NEWLINE);
+        lineFeedIndex = StringUtils.indexOf(originalContent, KFSConstants.NEWLINE, lineFeedIndex + 1);
+        if (lineFeedIndex < 0) {
+            return originalContent;
+        }
+        return StringUtils.substring(originalContent, lineFeedIndex + 1);
+    }
+
+    private void assertOnlyCsvFilesRemainInResultsDirectory(final VendorComparisonResult... fixtures) {
+        assertOnlyOneFilePerFixtureRemainsInResultsDirectory(VND_EMPL_RESULTS_CSV_FILENAME_PATTERN, fixtures);
+    }
+
+    private void assertOnlyDoneFilesRemainInResultsDirectory(final VendorComparisonResult... fixtures) {
+        assertOnlyOneFilePerFixtureRemainsInResultsDirectory(VND_EMPL_RESULTS_DONE_FILENAME_PATTERN, fixtures);
+    }
+
+    private void assertOnlyOneFilePerFixtureRemainsInResultsDirectory(
+            final String fileNamePattern, final VendorComparisonResult... fixtures) {
+        final File resultFileDirectory = new File(TEST_VND_EMPL_RESULTS_DIRECTORY);
+        final File[] actualFiles = resultFileDirectory.listFiles();
+        assertNotNull(actualFiles, "Unable to search for files in the results file directory");
+        assertEquals(fixtures.length, actualFiles.length, "Wrong number of remaining files in results file directory");
+
+        final Set<String> expectedFileNames = Stream.of(fixtures)
+                .map(fixture -> generateFileName(fixture, fileNamePattern))
+                .collect(Collectors.toUnmodifiableSet());
+
+        for (final File actualFile : actualFiles) {
+            final String actualFileName = actualFile.getName();
+            assertTrue(expectedFileNames.contains(actualFileName),
+                    "Found an unexpected file in the results directory: " + actualFileName);
+        }
     }
 
 }

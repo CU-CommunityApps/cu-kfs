@@ -65,6 +65,7 @@ public class CUVendorKeyConstants {
         public static final String SECTION_SEPARATOR = PREFIX + "section.separator";
         public static final String SECTION_HEADER = PREFIX + "section.header";
         public static final String SUMMARY_SECTION_TITLE = PREFIX + "summary.section.title";
+        public static final String SUMMARY_PROCESSED_FILE_NAME_LABEL = PREFIX + "summary.processed.file.name.label";
         public static final String SUMMARY_PROCESSED_FILE_NAME = PREFIX + "summary.processed.file.name";
         public static final String SUMMARY_LINE = PREFIX + "summary.line";
         public static final String DETAIL_SECTION_TITLE = PREFIX + "detail.section.title";

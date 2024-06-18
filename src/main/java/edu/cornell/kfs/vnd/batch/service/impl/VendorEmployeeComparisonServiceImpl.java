@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,7 +35,9 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
+import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.util.EnumConfiguredMappingStrategy;
+import edu.cornell.kfs.sys.util.ForUnitTestConvenience;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 import edu.cornell.kfs.vnd.CUVendorConstants;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
@@ -55,6 +58,9 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     private BatchInputFileService batchInputFileService;
     private BatchInputFileType vendorEmployeeComparisonResultFileType;
     private DateTimeService dateTimeService;
+
+    @ForUnitTestConvenience
+    private BiConsumer<String, File> reportFileTracker = (csvRresultFile, reportFile) -> {};
 
     @Override
     public void generateFileContainingPotentialVendorEmployees() {
@@ -177,14 +183,17 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     }
 
     private void processVendorEmployeeComparisonResultFile(final String resultFile) {
+        final String resultFileSimpleName = CuBatchFileUtils.getFileNameWithoutPath(resultFile);
         LOG.info("processVendorEmployeeComparisonResultFile, Processing employee comparison result file: {}",
-                resultFile);
+                resultFileSimpleName);
         final List<VendorEmployeeComparisonResult> parsedResult = parseVendorComparisonResultFile(resultFile);
-        LOG.info("processVendorEmployeeComparisonResultFile, Generating report for result file: {}", parsedResult);
-        vendorEmployeeComparisonReportService.generateReportForVendorEmployeeComparisonResults(
+        LOG.info("processVendorEmployeeComparisonResultFile, Generating report for result file: {}",
+                resultFileSimpleName);
+        final File reportFile = vendorEmployeeComparisonReportService.generateReportForVendorEmployeeComparisonResults(
                 resultFile, parsedResult);
         LOG.info("processVendorEmployeeComparisonResultFile, Finished generating report for result file: {}",
-                parsedResult);
+                resultFileSimpleName);
+        reportFileTracker.accept(resultFileSimpleName, reportFile);
     }
 
     @SuppressWarnings("unchecked")
@@ -241,6 +250,11 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     public void setVendorEmployeeComparisonResultFileType(
             final BatchInputFileType vendorEmployeeComparisonResultFileType) {
         this.vendorEmployeeComparisonResultFileType = vendorEmployeeComparisonResultFileType;
+    }
+
+    @ForUnitTestConvenience
+    public void setReportFileTracker(final BiConsumer<String, File> reportFileTracker) {
+        this.reportFileTracker = reportFileTracker;
     }
 
 }

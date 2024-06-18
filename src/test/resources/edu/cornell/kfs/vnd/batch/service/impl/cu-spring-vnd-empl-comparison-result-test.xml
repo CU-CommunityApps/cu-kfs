@@ -20,11 +20,21 @@
         </property>
     </bean>
 
+    <bean id="vendorEmployeeComparisonService"
+          parent="vendorEmployeeComparisonService-parentBean"
+          p:reportFileTracker-ref="testReportFileTracker"/>
+
+    <bean id="vendorEmployeeComparisonReportWriterService"
+          parent="vendorEmployeeComparisonReportWriterService-parentBean"
+          p:pageLength="999"/>
+
     <!-- NOTE: "testBeanFactory" is initialized by a parent Spring application context, not by the XML. -->
+
+    <bean id="testReportFileTracker" factory-bean="testBeanFactory" factory-method="buildTestReportFileTracker"/>
 
     <bean id="vendorDao" factory-bean="testBeanFactory" factory-method="buildMockVendorDao"/>
 
-    <bean id="dateTimeService" factory-bean="testBeanFactory" factory-method="buildMockDateTimeService"/>
+    <bean id="dateTimeService" factory-bean="testBeanFactory" factory-method="buildTestDateTimeService"/>
 
     <bean id="parameterService" factory-bean="testBeanFactory" factory-method="buildMockParameterService"/>
 
@@ -49,6 +59,7 @@
                 <idref bean="reportWriterService-parentBean"/>
                 <idref bean="batchInputFileService"/>
                 <idref bean="batchInputFileService-parentBean"/>
+                <idref bean="testReportFileTracker"/>
                 <idref bean="vendorDao"/>
                 <idref bean="dateTimeService"/>
                 <idref bean="parameterService"/>

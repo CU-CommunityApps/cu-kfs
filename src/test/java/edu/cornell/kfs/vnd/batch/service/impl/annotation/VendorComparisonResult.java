@@ -13,6 +13,8 @@ import edu.cornell.kfs.vnd.batch.service.impl.fixture.VendorComparisonResultRowF
 @Target(ElementType.FIELD)
 public @interface VendorComparisonResult {
 
+    int index();
+
     boolean expectingSuccess() default true;
 
     boolean writeCsvHeaderLine() default true;

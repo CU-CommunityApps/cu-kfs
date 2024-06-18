@@ -1,5 +1,6 @@
 package edu.cornell.kfs.vnd.batch.service.impl;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Predicate;
@@ -39,7 +40,7 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
     private ConfigurationService configurationService;
 
     @Override
-    public void generateReportForVendorEmployeeComparisonResults(final String csvFileName,
+    public File generateReportForVendorEmployeeComparisonResults(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
         initializeReportTitleAndFileName();
         writeTwoEmptyLines();
@@ -47,6 +48,7 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         writeTwoEmptyLines();
         writeDetailSection(resultRows);
         reportWriterService.destroy();
+        return reportWriterService.getReportFile();
     }
 
     private void initializeReportTitleAndFileName() {
@@ -60,8 +62,10 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
     private void writeSummarySection(final String csvFileName,
             final List<VendorEmployeeComparisonResult> resultRows) {
         final String csvFileNameWithoutPath = CuBatchFileUtils.getFileNameWithoutPath(csvFileName);
+        final String fileNameLabel = getProperty(EmployeeComparisonReportKeys.SUMMARY_PROCESSED_FILE_NAME_LABEL);
         writeSectionHeader(EmployeeComparisonReportKeys.SUMMARY_SECTION_TITLE);
-        writeMessageLine(EmployeeComparisonReportKeys.SUMMARY_PROCESSED_FILE_NAME, csvFileNameWithoutPath);
+        writeMessageLine(EmployeeComparisonReportKeys.SUMMARY_PROCESSED_FILE_NAME,
+                fileNameLabel, csvFileNameWithoutPath);
         writeEmptyLine();
         for (final ReportStatistic statistic : ReportStatistic.values()) {
             final long computedValue = resultRows.stream()
