@@ -196,23 +196,13 @@
           p:paymentMethodGeneralLedgerPendingEntryService-ref="cUPaymentMethodGeneralLedgerPendingEntryService"
     />
     
-    <bean id="iWantDocumentInputFileType" class="edu.cornell.kfs.module.purap.batch.IWantDocumentInputFileType">
-    	<property name="directoryPath">
-	       <value>${staging.directory}/purap/iWantDoc</value>
-	    </property>
-	    <property name="fileExtension">
-	       <value>xml</value>
-	    </property>
-	    <property name="digestorRulesFileName">
-	       <value>edu/cornell/kfs/module/purap/batch/iWantDocumentDigesterRules.xml</value>
-	    </property>
-	    <property name="schemaLocation">
-	       <value>classpath:edu/cornell/kfs/module/purap/batch/iWantDocument.xsd</value>
-	    </property>
-	    <property name="dateTimeService">
-	       <ref bean="dateTimeService"/>
-	    </property>
-	</bean> 
+    <bean id="iWantDocumentInputFileType"
+        class="edu.cornell.kfs.module.purap.batch.IWantDocumentInputFileType"
+        p:directoryPath="${staging.directory}/purap/iWantDoc"
+        p:fileExtension="xml" p:fileNamePrefix="purap_iwantdoc_"
+        p:dateTimeService-ref="dateTimeService"
+        p:digestorRulesFileName="edu/cornell/kfs/module/purap/batch/iWantDocumentDigesterRules.xml"
+        p:schemaLocation="classpath:edu/cornell/kfs/module/purap/batch/iWantDocument.xsd" />
     
     <bean id="iWantDocumentFeedService" class="edu.cornell.kfs.module.purap.batch.service.impl.IWantDocumentFeedServiceImpl">
 		<property name="batchInputFileService" ref="batchInputFileService"/>

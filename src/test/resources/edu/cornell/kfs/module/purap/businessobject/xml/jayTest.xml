@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i_want_doc_file
+    xmlns="http://www.kuali.org/kfs/purap/iWantDocument"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.kuali.org/kfs/purap/iWantDocument iWantDocument.xsd">
+    <iWantDocument>
+        <initiator>ccs1</initiator>
+        <sourceNumber>266504</sourceNumber>
+        <businessPurpose>Commencement 5/25/24 Schoellkopf Field</businessPurpose>
+        <collegeLevelOrganization>IT-5700</collegeLevelOrganization>
+        <departmentLevelOrganization />
+        <sameAsRequestor>N</sameAsRequestor>
+        <deliverToNetID>ccs1</deliverToNetID>
+        <deliverToEmailAddress>ccs1@cornell.edu
+        </deliverToEmailAddress>
+    </iWantDocument>
+</i_want_doc_file>
