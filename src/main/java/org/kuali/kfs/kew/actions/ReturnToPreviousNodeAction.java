@@ -295,31 +295,16 @@ public class ReturnToPreviousNodeAction extends ActionBase {
                         KewApiConstants.ACTION_REQUEST_COMPLETE_REQ);
         final String errorMessage = validateActionRules(actionRequests);
         if (StringUtils.isNotEmpty(errorMessage)) {
-            //throw new InvalidActionTakenException(errorMessage);
+            throw new InvalidActionTakenException(errorMessage);
         }
 
-        final Collection<RouteNodeInstance> activeNodeInstances =
+        final Collection activeNodeInstances =
                 KEWServiceLocator.getRouteNodeService().getActiveNodeInstances(getRouteHeader().getDocumentId());
         final NodeGraphSearchCriteria criteria =
                 new NodeGraphSearchCriteria(NodeGraphSearchCriteria.SEARCH_DIRECTION_BACKWARD, activeNodeInstances,
                         nodeName);
         final NodeGraphSearchResult result = KEWServiceLocator.getRouteNodeService().searchNodeGraph(criteria);
         validateReturnPoint(nodeName, activeNodeInstances, result);
-        
-        for (final RouteNodeInstance nodeInstance : activeNodeInstances) {
-            // mark the node instance as having been revoked
-            KEWServiceLocator.getRouteNodeService().revokeNodeInstance(getRouteHeader(), nodeInstance);
-//            final List<ActionRequest> nodeRequests = getActionRequestService()
-//                    .findRootRequestsByDocIdAtRouteNode(getRouteHeader().getDocumentId(),
-//                            nodeInstance.getRouteNodeInstanceId());
-//            for (final ActionRequest request : nodeRequests) {
-//                if (request.isDone()) {
-//                    doneRequests.add(request);
-//                } else {
-//                    pendingRequests.add(request);
-//                }
-//            }
-        }
 
         LOG.debug("Record the returnToPreviousNode action");
         // determines the highest priority delegator in the list of action requests
@@ -405,10 +390,10 @@ public class ReturnToPreviousNodeAction extends ActionBase {
                 }
             }
         }
-//        if (!inValidBranch) {
-//            throw new InvalidActionTakenException(
-//                    "Returning to an illegal branch, can only return to node within the same branch as an active node or to the primary branch.");
-//        }
+        if (!inValidBranch) {
+            throw new InvalidActionTakenException(
+                    "Returning to an illegal branch, can only return to node within the same branch as an active node or to the primary branch.");
+        }
     }
 
     private void assertValidProcess(final RouteNodeInstance resultNodeInstance, final Collection activeNodeInstances) throws

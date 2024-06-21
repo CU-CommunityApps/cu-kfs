@@ -1,6 +1,10 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import com.thoughtworks.xstream.core.BaseException;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.kfs.core.framework.persistence.jta.TransactionalNoValidationExceptionRollback;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.action.DocumentActionParameters;
@@ -10,6 +14,8 @@ import org.kuali.kfs.kew.api.action.WorkflowDocumentActionsService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.UserSessionUtils;
+import org.kuali.kfs.krad.bo.AdHocRoutePerson;
+import org.kuali.kfs.krad.bo.AdHocRouteWorkgroup;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.MaintainableXMLConversionService;
@@ -92,8 +98,17 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
         if (userSession != null) {
             UserSessionUtils.addWorkflowDocument(userSession, document.getDocumentHeader().getWorkflowDocument());
         }
-        //removeAdHocPersonsAndWorkgroups(document);
+        removeAdHocPersonsAndWorkgroups(document);
         return document;
+    }
+    
+    private void removeAdHocPersonsAndWorkgroups(final Document document) {
+        final List<AdHocRoutePerson> adHocRoutePersons = new ArrayList<>();
+        final List<AdHocRouteWorkgroup> adHocRouteWorkgroups = new ArrayList<>();
+        getBusinessObjectService().delete(document.getAdHocRoutePersons());
+        getBusinessObjectService().delete(document.getAdHocRouteWorkgroups());
+        document.setAdHocRoutePersons(adHocRoutePersons);
+        document.setAdHocRouteWorkgroups(adHocRouteWorkgroups);
     }
     
 
