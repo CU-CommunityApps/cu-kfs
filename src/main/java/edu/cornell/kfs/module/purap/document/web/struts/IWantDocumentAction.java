@@ -1252,6 +1252,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             return forward;
         }
         
+        kualiDocumentFormBase.setAnnotation("Procurement Assistant returned the document to SSC.");
+        iWantDocument.setContractIndicator("N");
         ((CuDocumentServiceImpl)getDocumentService()).returnDocumenToPreviousNode(document, kualiDocumentFormBase.getAnnotation(), "OrganizationHierarchy");
 
         KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);

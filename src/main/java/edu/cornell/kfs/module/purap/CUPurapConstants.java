@@ -559,6 +559,6 @@ public class CUPurapConstants {
     
     public static final class IWantRoles {
         public static final String IWNT_ORG_AUTHORIZER = "IWNT Organization Authorizer";
-        public static final String IWNT_PURCHASING_CONTRACT_ASSISTANT = "Purchasing Contract Assistant(cu)";
+        public static final String IWNT_PROCUREMENT_CONTRACT_ASSISTANT = "Procurement Contract Assistant(cu)";
     }
 }

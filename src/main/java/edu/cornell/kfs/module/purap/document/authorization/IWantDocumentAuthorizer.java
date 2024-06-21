@@ -144,7 +144,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     public boolean canViewContractTab(Document document, Person person) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         return (isInOrgHierarchyOrPurchasingAssistantNode(document) && (isCurrentUserOrgReviewer(person) 
-                || isCurrentUserPurchasingAssistant(person))) || workflowDocument.isFinal();
+                || isCurrentUserProcurementContractAssistant(person))) || workflowDocument.isFinal();
     }
 
     /*
@@ -202,8 +202,8 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         return isCurrentUserInRole(KFSConstants.CoreModuleNamespaces.KFS, CUPurapConstants.IWantRoles.IWNT_ORG_AUTHORIZER, currentUser);
     }
     
-    private boolean isCurrentUserPurchasingAssistant(Person currentUser) {   
-        return isCurrentUserInRole(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.IWantRoles.IWNT_PURCHASING_CONTRACT_ASSISTANT,
+    private boolean isCurrentUserProcurementContractAssistant(Person currentUser) {   
+        return isCurrentUserInRole(KFSConstants.OptionalModuleNamespaces.PURCHASING_ACCOUNTS_PAYABLE, CUPurapConstants.IWantRoles.IWNT_PROCUREMENT_CONTRACT_ASSISTANT,
                 currentUser);
     }
 
