@@ -44,7 +44,7 @@ import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.FixtureUtils;
-import edu.cornell.kfs.sys.util.SpringXmlBeanFactoryMethod;
+import edu.cornell.kfs.sys.util.SpringXmlTestBeanFactoryMethod;
 import edu.cornell.kfs.sys.util.TestSpringContextExtension;
 import edu.cornell.kfs.vnd.CuVendorTestConstants.VendorSpringBeans;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv;
@@ -56,11 +56,11 @@ import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @CreateTestDirectories(
-    baseDirectory = VendorEmployeeComparisonServiceResultFileTest.TEST_VND_DIRECTORY,
-    subDirectories = {
-        VendorEmployeeComparisonServiceResultFileTest.TEST_VND_REPORTS_DIRECTORY,
-        VendorEmployeeComparisonServiceResultFileTest.TEST_VND_EMPL_RESULTS_DIRECTORY
-    }
+        baseDirectory = VendorEmployeeComparisonServiceResultFileTest.TEST_VND_DIRECTORY,
+        subDirectories = {
+                VendorEmployeeComparisonServiceResultFileTest.TEST_VND_REPORTS_DIRECTORY,
+                VendorEmployeeComparisonServiceResultFileTest.TEST_VND_EMPL_RESULTS_DIRECTORY
+        }
 )
 public class VendorEmployeeComparisonServiceResultFileTest {
 
@@ -95,7 +95,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
                 VendorEmployeeComparisonReportServiceImpl.class);
     }
 
-    @SpringXmlBeanFactoryMethod
+    @SpringXmlTestBeanFactoryMethod
     public static BiConsumer<String, File> buildTestReportFileTracker() {
         return (resultFile, reportFile) -> trackResultFileAndReportFilePair(resultFile, reportFile);
     }
@@ -106,17 +106,17 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         resultFileAndReportFilePairs.put(resultFile, reportFile);
     }
 
-    @SpringXmlBeanFactoryMethod
+    @SpringXmlTestBeanFactoryMethod
     public static CuVendorDao buildMockVendorDao() {
         return Mockito.mock(CuVendorDao.class);
     }
 
-    @SpringXmlBeanFactoryMethod
+    @SpringXmlTestBeanFactoryMethod
     public static DateTimeService buildTestDateTimeService() {
         return new TestDateTimeServiceImpl();
     }
 
-    @SpringXmlBeanFactoryMethod
+    @SpringXmlTestBeanFactoryMethod
     public static ParameterService buildMockParameterService() {
         return Mockito.mock(ParameterService.class);
     }
@@ -309,8 +309,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         FILE_WITH_MALFORMED_PENDING_TERMINATION_DATE;
 
         public Arguments toNamedAnnotationFixtureArgument() {
-            final Named<VendorComparisonResult> namedArgument = Named.named(name(), getAnnotationFixture());
-            return Arguments.of(namedArgument);
+            return FixtureUtils.createNamedAnnotationFixtureArgument(this, VendorComparisonResult.class);
         }
 
         public VendorComparisonResult getAnnotationFixture() {

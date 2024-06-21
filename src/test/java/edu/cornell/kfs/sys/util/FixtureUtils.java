@@ -4,7 +4,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
+import org.junit.jupiter.api.Named;
+import org.junit.jupiter.params.provider.Arguments;
+
 public final class FixtureUtils {
+
+    public static <A extends Annotation> Arguments createNamedAnnotationFixtureArgument(
+            final Enum<?> enumConstant, final Class<A> annotationType) {
+        final A annotationBasedFixture = getAnnotationBasedFixture(enumConstant, annotationType);
+        return Arguments.of(Named.of(enumConstant.name(), annotationBasedFixture));
+    }
 
     public static <A extends Annotation> A getAnnotationBasedFixture(
             final Enum<?> enumConstant, final Class<A> annotationType) {

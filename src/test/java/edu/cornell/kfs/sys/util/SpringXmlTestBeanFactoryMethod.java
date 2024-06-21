@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
  * for clarifying the intent of certain unit test methods; it's not actually being used for processing.
  */
 @Target(ElementType.METHOD)
-public @interface SpringXmlBeanFactoryMethod {
+public @interface SpringXmlTestBeanFactoryMethod {
 
 }

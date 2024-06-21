@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
- * JUnit 5 extension for micro-tests that need to use a Spring context for loading some KFS runtime beans,
+ * JUnit extension for micro-tests that need to use a Spring context for loading some KFS runtime beans,
  * yet still avoid loading beans that are out of scope for the test at hand.
  * 
  * This is intended to be used as a *programmatically-configured* extension. To specify which Spring XML file

@@ -94,11 +94,11 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     }
 
     private String fullyQualifyFileNameWithCreationDirectory(final String csvFileName) {
-        return csvEmployeeComparisonFileCreationDirectory + csvFileName;
+        return csvEmployeeComparisonFileCreationDirectory + CUKFSConstants.SLASH + csvFileName;
     }
 
     private String fullyQualifyFileNameWithExportDirectory(final String csvFileName) {
-        return csvEmployeeComparisonFileExportDirectory + csvFileName;
+        return csvEmployeeComparisonFileExportDirectory + CUKFSConstants.SLASH + csvFileName;
     }
 
     private int writeEmployeeComparisonOutboundCsvFile(final String qualifiedCreationDirectoryFileName) {

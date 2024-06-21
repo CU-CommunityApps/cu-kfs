@@ -8,11 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -24,21 +21,26 @@ import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
+import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 import edu.cornell.kfs.sys.util.CreateTestDirectories;
 import edu.cornell.kfs.sys.util.FixtureUtils;
+import edu.cornell.kfs.sys.util.SpringXmlTestBeanFactoryMethod;
+import edu.cornell.kfs.sys.util.TestSpringContextExtension;
+import edu.cornell.kfs.vnd.CuVendorTestConstants.VendorSpringBeans;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonCsv;
+import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsvInputFileType;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonRow;
 import edu.cornell.kfs.vnd.batch.service.impl.annotation.VendorComparisonRows;
@@ -47,92 +49,93 @@ import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @CreateTestDirectories(
-    baseDirectory = VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_DIRECTORY,
-    subDirectories = {
-        VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY,
-        VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY
-    }
+        baseDirectory = VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_DIRECTORY,
+        subDirectories = {
+                VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_REPORTS_DIRECTORY,
+                VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY,
+                VendorEmployeeComparisonServiceOutboundFileTest.TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY
+        }
 )
 public class VendorEmployeeComparisonServiceOutboundFileTest {
 
     private static final String TEST_VND_DIRECTORY = "test/vnd_compare_out/";
+    private static final String TEST_VND_REPORTS_DIRECTORY = TEST_VND_DIRECTORY + "reports/vnd/";
     private static final String TEST_VND_STAGING_DIRECTORY = TEST_VND_DIRECTORY + "staging/vnd/";
     private static final String TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY =
             TEST_VND_STAGING_DIRECTORY + "emplCompareWorkday/outbound/";
     private static final String TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY =
             TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY + "being-written/";
 
-    private static final ZonedDateTime MOCK_CURRENT_DATE = ZonedDateTime.of(
-            2024, 5, 17, 10, 30, 0, 0, ZoneId.of(CUKFSConstants.TIME_ZONE_US_EASTERN));
+    @RegisterExtension
+    static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
+            "edu/cornell/kfs/vnd/batch/service/impl/cu-spring-vnd-empl-comparison-outbound-test.xml");
+
+    private static VendorComparisonRow[] sourceDataRows;
+    private static boolean forceExceptionWithinDaoMethodCall;
+    private static AtomicBoolean streamFromDaoWasClosed;
 
     private VendorEmployeeComparisonServiceImpl vendorEmployeeComparisonService;
-    private VendorComparisonRows testCaseFixture;
-    private boolean forceExceptionWithinDaoMethodCall;
-    private AtomicBoolean streamFromDaoWasClosed;
 
     @BeforeEach
     void setUp() throws Exception {
-        vendorEmployeeComparisonService = buildVendorEmployeeComparisonService();
+        sourceDataRows = new VendorComparisonRow[0];
         forceExceptionWithinDaoMethodCall = false;
         streamFromDaoWasClosed = new AtomicBoolean(false);
+        vendorEmployeeComparisonService = springContextExtension.getBean(
+                VendorSpringBeans.VENDOR_EMPLOYEE_COMPARISON_SERVICE, VendorEmployeeComparisonServiceImpl.class);
     }
 
-    private void initializeTestCaseFixture(LocalTestCase testCase) {
-        final VendorComparisonRows fixture = FixtureUtils.getAnnotationBasedFixture(
-                testCase, VendorComparisonRows.class);
-        testCaseFixture = fixture;
+    private void initializeVendorQuerySourceData(final VendorComparisonRows testCaseFixture) {
+        sourceDataRows = testCaseFixture.value();
     }
 
-    private VendorEmployeeComparisonServiceImpl buildVendorEmployeeComparisonService() {
-        final VendorEmployeeComparisonServiceImpl service = new VendorEmployeeComparisonServiceImpl();
-        service.setCsvEmployeeComparisonFileCreationDirectory(TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY);
-        service.setCsvEmployeeComparisonFileExportDirectory(TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY);
-        service.setVendorDao(buildMockVendorDao());
-        service.setVendorEmployeeComparisonReportService(Mockito.mock(VendorEmployeeComparisonReportService.class));
-        service.setBatchInputFileService(Mockito.mock(BatchInputFileService.class));
-        service.setVendorEmployeeComparisonResultFileType(Mockito.mock(BatchInputFileType.class));
-        service.setDateTimeService(buildMockDateTimeService());
-        return service;
-    }
-
-    private CuVendorDao buildMockVendorDao() {
+    @SpringXmlTestBeanFactoryMethod
+    public static CuVendorDao buildMockVendorDao() {
         final CuVendorDao vendorDao = Mockito.mock(CuVendorDao.class);
         Mockito.when(vendorDao.getPotentialEmployeeVendorsAsCloseableStream())
                 .then(invocation -> getMockDaoSearchResults());
         return vendorDao;
     }
 
-    private Stream<VendorWithTaxId> getMockDaoSearchResults() {
-        assertTestCaseFixtureWasInitialized();
+    private static Stream<VendorWithTaxId> getMockDaoSearchResults() {
         if (forceExceptionWithinDaoMethodCall) {
             throw new RuntimeException("Forcibly throwing exception for "
                     + "getPotentialEmployeeVendorsAsCloseableStream() method call");
         }
-        return Arrays.stream(testCaseFixture.value())
-                .onClose(this::recordClosingOfStream)
+        return Arrays.stream(sourceDataRows)
+                .onClose(() -> recordClosingOfStream())
                 .map(VendorComparisonRow.Converters::toVendorWithTaxId);
     }
 
-    private void recordClosingOfStream() {
+    private static void recordClosingOfStream() {
         streamFromDaoWasClosed.set(true);
     }
 
-    private DateTimeService buildMockDateTimeService() {
-        final DateTimeService dateTimeService = Mockito.mock(DateTimeService.class);
-        Mockito.when(dateTimeService.getCurrentDate())
-                .then(invocation -> Date.from(MOCK_CURRENT_DATE.toInstant()));
-        return dateTimeService;
+    @SpringXmlTestBeanFactoryMethod
+    public static DateTimeService buildTestDateTimeService() {
+        return new TestDateTimeServiceImpl();
     }
 
-    private void assertTestCaseFixtureWasInitialized() {
-        assertNotNull(testCaseFixture, "The test case's metadata was not properly initialized");
+    @SpringXmlTestBeanFactoryMethod
+    public static VendorEmployeeComparisonResultCsvInputFileType buildMockVendorEmployeeComparisonResultFileType() {
+        return Mockito.mock(VendorEmployeeComparisonResultCsvInputFileType.class);
+    }
+
+    @SpringXmlTestBeanFactoryMethod
+    public static VendorEmployeeComparisonReportService buildMockVendorEmployeeComparisonReportService() {
+        return Mockito.mock(VendorEmployeeComparisonReportService.class);
+    }
+
+    @SpringXmlTestBeanFactoryMethod
+    public static BatchInputFileService buildMockBatchInputFileService() {
+        return Mockito.mock(BatchInputFileService.class);
     }
 
     @AfterEach
     void shutDown() throws Exception {
-        streamFromDaoWasClosed = null;
-        testCaseFixture = null;
         vendorEmployeeComparisonService = null;
+        streamFromDaoWasClosed = null;
+        sourceDataRows = null;
     }
 
 
@@ -164,61 +167,70 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
             @VendorComparisonRow(vendorId = "78787-0", taxId = "xxxxx9876")
         })
         MULTIPLE_VENDORS_FORCE_EXCEPTION;
+
+        public Arguments toNamedAnnotationFixtureArgument() {
+            return FixtureUtils.createNamedAnnotationFixtureArgument(this, VendorComparisonRows.class);
+        }
     }
 
-    static Stream<LocalTestCase> standardTestCases() {
+    static Stream<Arguments> allTestCases() {
+        return Arrays.stream(LocalTestCase.values())
+                .map(LocalTestCase::toNamedAnnotationFixtureArgument);
+    }
+
+    static Stream<Arguments> standardTestCases() {
         return Stream.of(
                 LocalTestCase.EMPTY_SOURCE,
                 LocalTestCase.SINGLE_VENDOR,
                 LocalTestCase.MULTIPLE_VENDORS
-        );
+        ).map(LocalTestCase::toNamedAnnotationFixtureArgument);
     }
 
-    static Stream<LocalTestCase> exceptionTestCases() {
+    static Stream<Arguments> exceptionTestCases() {
         return Stream.of(
                 LocalTestCase.SINGLE_VENDOR_FORCE_EXCEPTION,
                 LocalTestCase.MULTIPLE_VENDORS_FORCE_EXCEPTION
-        );
+        ).map(LocalTestCase::toNamedAnnotationFixtureArgument);
     }
 
 
 
     @ParameterizedTest
     @MethodSource("standardTestCases")
-    void testSuccessfulCsvFilePreparation(final LocalTestCase testCase) throws Exception {
-        initializeTestCaseFixture(testCase);
-        assertCsvFilePreparationSucceeds();
+    void testSuccessfulCsvFilePreparation(final VendorComparisonRows testCaseFixture) throws Exception {
+        initializeVendorQuerySourceData(testCaseFixture);
+        assertCsvFilePreparationSucceeds(testCaseFixture);
     }
 
     @ParameterizedTest
     @MethodSource("exceptionTestCases")
-    void testCsvFilePreparationFailureWhileReadingSourceDataFromStream(final LocalTestCase testCase) throws Exception {
-        initializeTestCaseFixture(testCase);
+    void testCsvFilePreparationFailureWhileReadingSourceDataFromStream(
+            final VendorComparisonRows testCaseFixture) throws Exception {
+        initializeVendorQuerySourceData(testCaseFixture);
         assertCsvFilePreparationFails();
     }
 
     @ParameterizedTest
-    @EnumSource(LocalTestCase.class)
-    void testCsvFilePreparationFailureWhileCreatingSourceDataStream(final LocalTestCase testCase) throws Exception {
-        initializeTestCaseFixture(testCase);
+    @MethodSource("allTestCases")
+    void testCsvFilePreparationFailureWhileCreatingSourceDataStream(
+            final VendorComparisonRows testCaseFixture) throws Exception {
+        initializeVendorQuerySourceData(testCaseFixture);
         forceExceptionWithinDaoMethodCall = true;
         assertCsvFilePreparationFails();
     }
 
-    private void assertCsvFilePreparationSucceeds() throws Exception {
-        assertTestCaseFixtureWasInitialized();
+    private void assertCsvFilePreparationSucceeds(final VendorComparisonRows testCaseFixture) throws Exception {
         vendorEmployeeComparisonService.generateFileContainingPotentialVendorEmployees();
 
         assertSourceDataStreamHasExpectedClosingState();
-        if (isCsvFileExpectedToBeNonEmpty()) {
-            assertCsvFileHasExpectedContent();
+        if (isCsvFileExpectedToBeNonEmpty(testCaseFixture)) {
+            assertCsvFileHasExpectedContent(testCaseFixture);
         } else {
             assertCsvFileIsEmptyAndUnstagedOrIsNotPresent();
         }
     }
 
     private void assertCsvFilePreparationFails() throws Exception {
-        assertTestCaseFixtureWasInitialized();
         assertThrows(RuntimeException.class,
                 () -> vendorEmployeeComparisonService.generateFileContainingPotentialVendorEmployees(),
                 "The CSV file generation process should have encountered an exception");
@@ -240,12 +252,12 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
         }
     }
 
-    private boolean isCsvFileExpectedToBeNonEmpty() {
+    private boolean isCsvFileExpectedToBeNonEmpty(final VendorComparisonRows testCaseFixture) {
         final VendorComparisonRow[] expectedRows = testCaseFixture.value();
         return expectedRows.length > 0;
     }
 
-    private void assertCsvFileHasExpectedContent() throws Exception {
+    private void assertCsvFileHasExpectedContent(final VendorComparisonRows testCaseFixture) throws Exception {
         final File csvFile = assertAndGetStagedCsvFile();
         try (
                 final LineIterator csvLineIterator = FileUtils.lineIterator(csvFile, StandardCharsets.UTF_8.name());
@@ -254,11 +266,12 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
             final String expectedHeaderRow = getExpectedCsvHeaderRow();
             final String actualHeaderRow = csvLineIterator.next();
             assertEquals(expectedHeaderRow, actualHeaderRow, "Wrong CSV header row content");
-            assertCsvFileHasExpectedDataRows(csvLineIterator);
+            assertCsvFileHasExpectedDataRows(testCaseFixture, csvLineIterator);
         }
     }
 
-    private void assertCsvFileHasExpectedDataRows(final LineIterator csvLineIterator) throws Exception {
+    private void assertCsvFileHasExpectedDataRows(
+            final VendorComparisonRows testCaseFixture, final LineIterator csvLineIterator) throws Exception {
         final VendorComparisonRow[] expectedRows = testCaseFixture.value();
         int dataLineIndex = 0;
 
