@@ -72,6 +72,7 @@ public class CUVendorKeyConstants {
         public static final String DETAIL_TABLE_HEADER = PREFIX + "detail.table.header";
         public static final String DETAIL_TABLE_SEPARATOR = PREFIX + "detail.table.separator";
         public static final String DETAIL_TABLE_ROW = PREFIX + "detail.table.row";
+        public static final String EMPTY_DETAIL_SECTION_MESSAGE = PREFIX + "empty.detail.section.message";
     }
 
 }

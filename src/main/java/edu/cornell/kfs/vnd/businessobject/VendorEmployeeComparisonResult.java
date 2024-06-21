@@ -11,7 +11,7 @@ public class VendorEmployeeComparisonResult extends TransientBusinessObjectBase 
     private String vendorId;
     private String employeeId;
     private String netId;
-    private boolean active;
+    private Boolean active;
     private LocalDate hireDate;
     private LocalDate terminationDate;
     private LocalDate terminationDateGreaterThanProcessingDate;
@@ -41,10 +41,18 @@ public class VendorEmployeeComparisonResult extends TransientBusinessObjectBase 
     }
 
     public boolean isActive() {
+        return active != null && active.booleanValue();
+    }
+
+    public boolean isInactive() {
+        return active != null && !active.booleanValue();
+    }
+
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

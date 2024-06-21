@@ -1,12 +1,16 @@
 package edu.cornell.kfs.sys.util;
 
+import java.util.Properties;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
  * JUnit 5 extension for micro-tests that need to use a Spring context for loading some KFS runtime beans,
@@ -21,24 +25,33 @@ import org.springframework.context.support.StaticApplicationContext;
  * to preserve for the test, override the "beanFilterPostProcessor" bean and merge-override
  * the "beanWhitelist" property to specify the IDs of the beans to preserve.
  * 
- * In addition, this extension will programmatically register the current unit test instance as a bean
- * named "testBeanFactory". This allows using the unit test as a bean factory in the Spring XML file,
- * making it easier to create mock versions of service beans. Also, to help clarify which methods
- * on the unit test instance are intended to be used as bean factory methods, they can be annotated
- * with the "SpringXmlBeanFactoryMethod" annotation.
+ * This extension's lifecycle behavior depends on what level it is defined at in the unit test class:
+ * 
+ * -- If it's defined at the INSTANCE level, the Spring context will be created at the Before-Each
+ *    phase and destroyed at the After-Each phase.
+ * 
+ * -- If it's defined at the CLASS level, the Spring context will be created at the Before-All phase
+ *    and destroyed at the After-All phase.
+ * 
+ * In both cases, the current unit test classname will be programmatically registered as a property
+ * named "unit.test.classname" (by means of a separate placeholder configurer bean that this class will
+ * automatically set up). This makes it easier for unit test classes to prepare static methods that function
+ * as bean factory methods. To help clarify which methods on the unit test class are intended to be used
+ * as bean factory methods, they can be annotated with the CU-specific "SpringXmlBeanFactoryMethod" annotation.
  * 
  * This implementation currently does not inject Spring beans or Spring contexts into the test class.
- * To retrieve a specific Spring bean, invoke this class's "getBean()" helper method.
+ * To retrieve a specific Spring bean during a test run, invoke this class's "getBean()" helper method.
  */
-public class TestSpringContextExtension implements BeforeEachCallback, AfterEachCallback {
+public class TestSpringContextExtension implements BeforeEachCallback, AfterEachCallback,
+        BeforeAllCallback, AfterAllCallback {
 
-    public static final String TEST_BEAN_FACTORY_NAME = "testBeanFactory";
+    public static final String UNIT_TEST_CLASSNAME_PROPERTY = "unit.test.classname";
     public static final String CLASSPATH_PREFIX = "classpath:";
 
     private final String classPathSpringXmlFile;
 
-    private StaticApplicationContext testBeanFactoryContext;
-    private ClassPathXmlApplicationContext springContext;
+    private ClassPathXmlApplicationContext springXmlContext;
+    private boolean staticExtension;
 
     public TestSpringContextExtension(final String classPathSpringXmlFile) {
         if (StringUtils.isBlank(classPathSpringXmlFile)) {
@@ -55,34 +68,65 @@ public class TestSpringContextExtension implements BeforeEachCallback, AfterEach
         return new TestSpringContextExtension(xmlSpringFile);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public void beforeEach(final ExtensionContext context) throws Exception {
-        final Object testInstance = context.getRequiredTestInstance();
-        final Class<?> testClass = context.getRequiredTestClass();
+    public void beforeAll(final ExtensionContext junitContext) throws Exception {
+        staticExtension = true;
+        initializeSpringContext(junitContext);
+    }
 
-        testBeanFactoryContext = new StaticApplicationContext();
-        testBeanFactoryContext.registerBean(
-                TEST_BEAN_FACTORY_NAME, (Class) testClass, () -> testInstance);
-        testBeanFactoryContext.refresh();
+    @Override
+    public void beforeEach(final ExtensionContext junitContext) throws Exception {
+        if (!staticExtension) {
+            initializeSpringContext(junitContext);
+        }
+    }
 
-        final String[] configLocations = { classPathSpringXmlFile };
-        springContext = new ClassPathXmlApplicationContext(configLocations, testBeanFactoryContext);
+    private void initializeSpringContext(final ExtensionContext junitContext) throws Exception {
+        final Class<?> testClass = junitContext.getRequiredTestClass();
+        final PropertySourcesPlaceholderConfigurer propertyConfigurer =
+                createBeanPostProcessorForResolvingUnitTestClass(testClass);
+
+        springXmlContext = new ClassPathXmlApplicationContext();
+        springXmlContext.addBeanFactoryPostProcessor(propertyConfigurer);
+        springXmlContext.setConfigLocation(classPathSpringXmlFile);
+        springXmlContext.refresh();
+    }
+
+    private PropertySourcesPlaceholderConfigurer createBeanPostProcessorForResolvingUnitTestClass(
+            final Class<?> testClass) throws Exception {
+        final Properties properties = new Properties();
+        properties.setProperty(UNIT_TEST_CLASSNAME_PROPERTY, testClass.getName());
+
+        final PropertySourcesPlaceholderConfigurer propertyConfigurer = new PropertySourcesPlaceholderConfigurer();
+        propertyConfigurer.setProperties(properties);
+        propertyConfigurer.setIgnoreUnresolvablePlaceholders(true);
+        return propertyConfigurer;
     }
 
     public <T> T getBean(final String name, final Class<T> requiredType) {
-        if (springContext == null) {
+        if (springXmlContext == null) {
             throw new IllegalStateException("Extension's Spring context has not been initialized");
         }
-        return springContext.getBean(name, requiredType);
+        return springXmlContext.getBean(name, requiredType);
     }
 
     @Override
-    public void afterEach(final ExtensionContext context) throws Exception {
-        IOUtils.closeQuietly(springContext);
-        IOUtils.closeQuietly(testBeanFactoryContext);
-        springContext = null;
-        testBeanFactoryContext = null;
+    public void afterEach(final ExtensionContext junitContext) throws Exception {
+        if (!staticExtension) {
+            destroySpringContext();
+        }
+    }
+
+    @Override
+    public void afterAll(final ExtensionContext junitContext) throws Exception {
+        if (staticExtension) {
+            destroySpringContext();
+        }
+    }
+
+    private void destroySpringContext() {
+        IOUtils.closeQuietly(springXmlContext);
+        springXmlContext = null;
     }
 
 }

@@ -12,6 +12,7 @@ import org.kuali.kfs.sys.KFSConstants.OptionLabels;
 
 import edu.cornell.kfs.sys.batch.CuBatchFileUtils;
 import edu.cornell.kfs.sys.service.ReportWriterService;
+import edu.cornell.kfs.sys.util.ForUnitTestConvenience;
 import edu.cornell.kfs.vnd.CUVendorKeyConstants.EmployeeComparisonReportKeys;
 import edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv;
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonReportService;
@@ -25,7 +26,11 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
         TOTAL_ACTIVE_REHIRED_EMPLOYEES(resultRow -> resultRow.isActive() && resultRow.getTerminationDate() != null),
         TOTAL_EMPLOYEES_PENDING_TERMINATION(
                 resultRow -> resultRow.isActive() && resultRow.getTerminationDateGreaterThanProcessingDate() != null),
-        TOTAL_EMPLOYEES_RECENTLY_TERMINATED(resultRow -> !resultRow.isActive());
+        TOTAL_EMPLOYEES_RECENTLY_TERMINATED(resultRow -> resultRow.isInactive()),
+        TOTAL_ROWS_WITH_MISSING_DATA(resultRow ->
+                StringUtils.isAnyBlank(resultRow.getVendorId(), resultRow.getEmployeeId(), resultRow.getNetId())
+                         || resultRow.getActive() == null
+                         || resultRow.getHireDate() == null);
 
         private final Predicate<VendorEmployeeComparisonResult> rowFilter;
 
@@ -82,6 +87,11 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
 
     private void writeDetailSection(final List<VendorEmployeeComparisonResult> resultRows) {
         writeSectionHeader(EmployeeComparisonReportKeys.DETAIL_SECTION_TITLE);
+        if (resultRows.isEmpty()) {
+            writeMessageLine(EmployeeComparisonReportKeys.EMPTY_DETAIL_SECTION_MESSAGE);
+            writeEmptyLine();
+            return;
+        }
         writeMessageLine(EmployeeComparisonReportKeys.DETAIL_TABLE_HEADER);
         writeMessageLine(EmployeeComparisonReportKeys.DETAIL_TABLE_SEPARATOR);
         writeEmptyLine();
@@ -96,21 +106,24 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
                 formatStringCell(resultRow.getVendorId()),
                 formatStringCell(resultRow.getEmployeeId()),
                 formatStringCell(resultRow.getNetId()),
-                formatBooleanCell(resultRow.isActive()),
+                formatBooleanCell(resultRow.getActive()),
                 formatDateCell(resultRow.getHireDate()),
                 formatDateCell(resultRow.getTerminationDate()),
                 formatDateCell(resultRow.getTerminationDateGreaterThanProcessingDate()));
     }
 
-    private String formatStringCell(String value) {
+    private String formatStringCell(final String value) {
         return StringUtils.defaultIfBlank(value, KFSConstants.NOT_AVAILABLE_STRING);
     }
 
-    private String formatBooleanCell(boolean value) {
+    private String formatBooleanCell(final Boolean value) {
+        if (value == null) {
+            return KFSConstants.NOT_AVAILABLE_STRING;
+        }
         return value ? OptionLabels.YES : OptionLabels.NO;
     }
 
-    private String formatDateCell(LocalDate value) {
+    private String formatDateCell(final LocalDate value) {
         return value != null
                 ? value.format(VendorEmployeeComparisonResultCsv.Utils.DATE_FORMATTER)
                 : KFSConstants.NOT_AVAILABLE_STRING;
@@ -140,6 +153,11 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
 
     private String getProperty(final String propertyName) {
         return configurationService.getPropertyValueAsString(propertyName);
+    }
+
+    @ForUnitTestConvenience
+    protected void manuallyCleanUpInternalReportWriter() {
+        reportWriterService.destroy();
     }
 
     public void setReportWriterService(final ReportWriterService reportWriterService) {

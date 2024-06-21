@@ -26,10 +26,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -52,11 +56,11 @@ import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 @Execution(ExecutionMode.SAME_THREAD)
 @CreateTestDirectories(
-        baseDirectory = VendorEmployeeComparisonServiceResultFileTest.TEST_VND_DIRECTORY,
-        subDirectories = {
-                VendorEmployeeComparisonServiceResultFileTest.TEST_VND_REPORTS_DIRECTORY,
-                VendorEmployeeComparisonServiceResultFileTest.TEST_VND_EMPL_RESULTS_DIRECTORY
-        }
+    baseDirectory = VendorEmployeeComparisonServiceResultFileTest.TEST_VND_DIRECTORY,
+    subDirectories = {
+        VendorEmployeeComparisonServiceResultFileTest.TEST_VND_REPORTS_DIRECTORY,
+        VendorEmployeeComparisonServiceResultFileTest.TEST_VND_EMPL_RESULTS_DIRECTORY
+    }
 )
 public class VendorEmployeeComparisonServiceResultFileTest {
 
@@ -73,52 +77,73 @@ public class VendorEmployeeComparisonServiceResultFileTest {
             "classpath:edu/cornell/kfs/vnd/batch/service/impl/empl-compare-report/";
 
     @RegisterExtension
-    TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
+    static TestSpringContextExtension springContextExtension = TestSpringContextExtension.forClassPathSpringXmlFile(
             "edu/cornell/kfs/vnd/batch/service/impl/cu-spring-vnd-empl-comparison-result-test.xml");
 
+    private static Map<String, File> resultFileAndReportFilePairs;
+
     private VendorEmployeeComparisonService vendorEmployeeComparisonService;
-    private Map<String, File> resultFileAndReportFilePairs;
+    private VendorEmployeeComparisonReportServiceImpl vendorEmployeeComparisonReportService;
 
     @BeforeEach
     void setUp() throws Exception {
         resultFileAndReportFilePairs = new HashMap<>();
         vendorEmployeeComparisonService = springContextExtension.getBean(
                 VendorSpringBeans.VENDOR_EMPLOYEE_COMPARISON_SERVICE, VendorEmployeeComparisonService.class);
+        vendorEmployeeComparisonReportService = springContextExtension.getBean(
+                VendorSpringBeans.VENDOR_EMPLOYEE_COMPARISON_REPORT_SERVICE,
+                VendorEmployeeComparisonReportServiceImpl.class);
     }
 
     @SpringXmlBeanFactoryMethod
-    public BiConsumer<String, File> buildTestReportFileTracker() {
-        return this::trackResultFileAndReportFilePair;
+    public static BiConsumer<String, File> buildTestReportFileTracker() {
+        return (resultFile, reportFile) -> trackResultFileAndReportFilePair(resultFile, reportFile);
     }
 
-    private void trackResultFileAndReportFilePair(final String resultFile, final File reportFile) {
+    private static void trackResultFileAndReportFilePair(final String resultFile, final File reportFile) {
         assertFalse(resultFileAndReportFilePairs.containsKey(resultFile),
                 "Unexpected attempt to track the following result file twice: " + resultFile);
         resultFileAndReportFilePairs.put(resultFile, reportFile);
     }
 
     @SpringXmlBeanFactoryMethod
-    public CuVendorDao buildMockVendorDao() {
+    public static CuVendorDao buildMockVendorDao() {
         return Mockito.mock(CuVendorDao.class);
     }
 
     @SpringXmlBeanFactoryMethod
-    public DateTimeService buildTestDateTimeService() {
+    public static DateTimeService buildTestDateTimeService() {
         return new TestDateTimeServiceImpl();
     }
 
     @SpringXmlBeanFactoryMethod
-    public ParameterService buildMockParameterService() {
+    public static ParameterService buildMockParameterService() {
         return Mockito.mock(ParameterService.class);
     }
 
     @AfterEach
     void tearDown() throws Exception {
+        cleanUpReportServiceQuietly();
+        vendorEmployeeComparisonReportService = null;
         vendorEmployeeComparisonService = null;
         resultFileAndReportFilePairs = null;
     }
 
+    private void cleanUpReportServiceQuietly() {
+        try {
+            vendorEmployeeComparisonReportService.manuallyCleanUpInternalReportWriter();
+        } catch (Exception e) {
+            // Ignore
+        }
+    }
 
+
+
+    private void createTestCsvFiles(final VendorComparisonResult... testCaseFixtures) throws IOException {
+        for (final VendorComparisonResult testCaseFixture : testCaseFixtures) {
+            createTestCsvFile(testCaseFixture);
+        }
+    }
 
     private void createTestCsvFile(final VendorComparisonResult testCaseFixture) throws IOException {
         final String simpleFileName = generateFileName(testCaseFixture, VND_EMPL_RESULTS_CSV_FILENAME_PATTERN);
@@ -153,6 +178,12 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         } 
     }
 
+    private void createTestDoneFiles(final VendorComparisonResult... testCaseFixtures) throws IOException {
+        for (final VendorComparisonResult testCaseFixture : testCaseFixtures) {
+            createTestDoneFile(testCaseFixture);
+        }
+    }
+
     private void createTestDoneFile(final VendorComparisonResult testCaseFixture) throws IOException {
         final String simpleFileName = generateFileName(testCaseFixture, VND_EMPL_RESULTS_DONE_FILENAME_PATTERN);
         final File doneFile = new File(TEST_VND_EMPL_RESULTS_DIRECTORY + simpleFileName);
@@ -175,16 +206,174 @@ public class VendorEmployeeComparisonServiceResultFileTest {
                 },
                 expectedReportFile = "rpt-single-active-row.txt"
         )
-        FILE_WITH_SINGLE_ACTIVE_ROW;
+        FILE_WITH_SINGLE_ACTIVE_ROW,
+
+        @VendorComparisonResult(
+                index = 2,
+                csvDataRows = {
+                    VendorComparisonResultRowFixture.MARY_SMITH
+                },
+                expectedReportFile = "rpt-single-inactive-row.txt"
+        )
+        FILE_WITH_SINGLE_INACTIVE_ROW,
+
+        @VendorComparisonResult(
+                index = 3,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE,
+                        VendorComparisonResultRowFixture.JANE_DOE,
+                        VendorComparisonResultRowFixture.MARY_SMITH,
+                        VendorComparisonResultRowFixture.DAN_SMITH,
+                        VendorComparisonResultRowFixture.JACK_JONES
+                },
+                expectedReportFile = "rpt-multiple-rows.txt"
+        )
+        FILE_WITH_MULTIPLE_ROWS,
+
+        @VendorComparisonResult(
+                index = 4,
+                expectedReportFile = "rpt-no-data-rows.txt"
+        )
+        FILE_WITH_HEADER_ONLY,
+
+        @VendorComparisonResult(
+                index = 5,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.EMPTY_ROW,
+                },
+                expectedReportFile = "rpt-row-with-missing-data.txt"
+        )
+        FILE_WITH_NON_FATAL_MISSING_DATA,
+
+        @VendorComparisonResult(
+                index = 6,
+                expectingSuccess = false,
+                writeCsvHeaderLine = false
+        )
+        EMPTY_FILE,
+
+        @VendorComparisonResult(
+                index = 7,
+                expectingSuccess = false,
+                writeCsvHeaderLine = false,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE,
+                }
+        )
+        FILE_WITH_MISSING_HEADER,
+       
+        @VendorComparisonResult(
+                index = 8,
+                expectingSuccess = false,
+                csvHeaderLineOverride = "One,Two,Three,Four,Five,Six,Seven",
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE,
+                }
+        )
+        FILE_WITH_INVALID_HEADER,
+
+        @VendorComparisonResult(
+                index = 9,
+                expectingSuccess = false,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE_INVALID_ACTIVE_FLAG,
+                }
+        )
+        FILE_WITH_INVALID_ACTIVE_FLAG,
+
+        @VendorComparisonResult(
+                index = 10,
+                expectingSuccess = false,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE_MALFORMED_HIRE_DATE,
+                }
+        )
+        FILE_WITH_MALFORMED_HIRE_DATE,
+
+        @VendorComparisonResult(
+                index = 11,
+                expectingSuccess = false,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE_MALFORMED_TERMINATION_DATE,
+                }
+        )
+        FILE_WITH_MALFORMED_TERMINATION_DATE,
+
+        @VendorComparisonResult(
+                index = 12,
+                expectingSuccess = false,
+                csvDataRows = {
+                        VendorComparisonResultRowFixture.JOHN_DOE_MALFORMED_PENDING_TERMINATION_DATE,
+                }
+        )
+        FILE_WITH_MALFORMED_PENDING_TERMINATION_DATE;
+
+        public Arguments toNamedAnnotationFixtureArgument() {
+            final Named<VendorComparisonResult> namedArgument = Named.named(name(), getAnnotationFixture());
+            return Arguments.of(namedArgument);
+        }
+
+        public VendorComparisonResult getAnnotationFixture() {
+            return FixtureUtils.getAnnotationBasedFixture(this, VendorComparisonResult.class);
+        }
     }
 
+    static Stream<Arguments> allSingleFileTestCases() {
+        return Arrays.stream(LocalTestCase.values())
+                .map(LocalTestCase::toNamedAnnotationFixtureArgument);
+    }
 
+    static Stream<Arguments> successfulTestCases() {
+        return Stream.of(
+                LocalTestCase.FILE_WITH_SINGLE_ACTIVE_ROW,
+                LocalTestCase.FILE_WITH_SINGLE_INACTIVE_ROW,
+                LocalTestCase.FILE_WITH_MULTIPLE_ROWS,
+                LocalTestCase.FILE_WITH_HEADER_ONLY,
+                LocalTestCase.FILE_WITH_NON_FATAL_MISSING_DATA
+        ).map(LocalTestCase::toNamedAnnotationFixtureArgument);
+    }
+
+    static Stream<Arguments> testCasesWithProcessingErrors() {
+        return Stream.of(
+                LocalTestCase.EMPTY_FILE,
+                LocalTestCase.FILE_WITH_MISSING_HEADER,
+                LocalTestCase.FILE_WITH_INVALID_HEADER,
+                LocalTestCase.FILE_WITH_INVALID_ACTIVE_FLAG,
+                LocalTestCase.FILE_WITH_MALFORMED_HIRE_DATE,
+                LocalTestCase.FILE_WITH_MALFORMED_TERMINATION_DATE,
+                LocalTestCase.FILE_WITH_MALFORMED_PENDING_TERMINATION_DATE
+        ).map(LocalTestCase::toNamedAnnotationFixtureArgument);
+    }
+
+    static Stream<Arguments> testCasesWithMultipleFiles() {
+        return Stream.of(
+                namedMultiFileArgument("Two Successful Files", LocalTestCase.FILE_WITH_SINGLE_ACTIVE_ROW,
+                        LocalTestCase.FILE_WITH_MULTIPLE_ROWS),
+                namedMultiFileArgument("Two Bad Files", LocalTestCase.FILE_WITH_MISSING_HEADER,
+                        LocalTestCase.FILE_WITH_MALFORMED_TERMINATION_DATE),
+                namedMultiFileArgument("Two Successful Files and One Bad File",
+                        LocalTestCase.FILE_WITH_NON_FATAL_MISSING_DATA, LocalTestCase.EMPTY_FILE,
+                        LocalTestCase.FILE_WITH_SINGLE_INACTIVE_ROW)
+        );
+    }
+
+    private static Arguments namedMultiFileArgument(final String name, final LocalTestCase... enumFixtures) {
+        final VendorComparisonResult[] testCaseFixtures = Stream.of(enumFixtures)
+                .map(LocalTestCase::getAnnotationFixture)
+                .toArray(VendorComparisonResult[]::new);
+        return Arguments.of(Named.named(name, testCaseFixtures));
+    }
 
     @Test
-    void doSomething() throws Exception {
-        final LocalTestCase enumFixture = LocalTestCase.FILE_WITH_SINGLE_ACTIVE_ROW;
-        final VendorComparisonResult testCaseFixture = FixtureUtils.getAnnotationBasedFixture(
-                enumFixture, VendorComparisonResult.class);
+    void testEmptyStagingDirectory() throws Exception {
+        assertCsvFileProcessingSucceeds();
+        assertDirectoryIsEmpty(TEST_VND_EMPL_RESULTS_DIRECTORY);
+        assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
+    }
+
+    @ParameterizedTest
+    @MethodSource("successfulTestCases")
+    void testSuccessfulFileProcessing(final VendorComparisonResult testCaseFixture) throws Exception {
         createTestCsvFile(testCaseFixture);
         createTestDoneFile(testCaseFixture);
         assertCsvFileProcessingSucceeds();
@@ -192,9 +381,68 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         assertReportFilesHaveExpectedContent(testCaseFixture);
     }
 
+    @ParameterizedTest
+    @MethodSource("testCasesWithProcessingErrors")
+    void testFilesResultingInProcessingErrors(final VendorComparisonResult testCaseFixture) throws Exception {
+        createTestCsvFile(testCaseFixture);
+        createTestDoneFile(testCaseFixture);
+        assertCsvFileProcessingFails();
+        assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixture);
+        assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
+    }
+
+    @ParameterizedTest
+    @MethodSource("testCasesWithMultipleFiles")
+    void testProcessingMultipleResultFiles(final VendorComparisonResult[] testCaseFixtures) throws Exception {
+        final boolean atLeastOneFileShouldSucceed = Arrays.stream(testCaseFixtures)
+                .anyMatch(fixture -> fixture.expectingSuccess());
+        final boolean atLeastOneFileShouldFail = Arrays.stream(testCaseFixtures)
+                .anyMatch(fixture -> !fixture.expectingSuccess());
+        createTestCsvFiles(testCaseFixtures);
+        createTestDoneFiles(testCaseFixtures);
+
+        if (atLeastOneFileShouldFail) {
+            assertCsvFileProcessingFails();
+        } else {
+            assertCsvFileProcessingSucceeds();
+        }
+
+        assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixtures);
+        if (atLeastOneFileShouldSucceed) {
+            assertReportFilesHaveExpectedContent(testCaseFixtures);
+        } else {
+            assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("allSingleFileTestCases")
+    void testSkipProcessingWhenCsvFileIsPresentButDoneFileIsAbsent(final VendorComparisonResult testCaseFixture)
+            throws Exception {
+        createTestCsvFiles(testCaseFixture);
+        assertCsvFileProcessingSucceeds();
+        assertOnlyCsvFilesRemainInResultsDirectory(testCaseFixture);
+        assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
+    }
+
+    @ParameterizedTest
+    @MethodSource("allSingleFileTestCases")
+    void testSkipProcessingWhenCsvFileIsAbsentButDoneFileIsPresent(final VendorComparisonResult testCaseFixture)
+            throws Exception {
+        createTestDoneFiles(testCaseFixture);
+        assertCsvFileProcessingSucceeds();
+        assertOnlyDoneFilesRemainInResultsDirectory(testCaseFixture);
+        assertDirectoryIsEmpty(TEST_VND_REPORTS_DIRECTORY);
+    }
+
     private void assertCsvFileProcessingSucceeds() throws Exception {
         final boolean csvProcessingResult = vendorEmployeeComparisonService.processResultsOfVendorEmployeeComparison();
-        assertTrue(csvProcessingResult, "The results CSV file should have been processed successfully");
+        assertTrue(csvProcessingResult, "The results CSV file(s) should have been processed successfully");
+    }
+
+    private void assertCsvFileProcessingFails() throws Exception {
+        final boolean csvProcessingResult = vendorEmployeeComparisonService.processResultsOfVendorEmployeeComparison();
+        assertFalse(csvProcessingResult, "One or more results CSV files should have encountered processing errors");
     }
 
     private void assertReportFilesHaveExpectedContent(final VendorComparisonResult... fixtures) throws Exception {
@@ -276,6 +524,13 @@ public class VendorEmployeeComparisonServiceResultFileTest {
             assertTrue(expectedFileNames.contains(actualFileName),
                     "Found an unexpected file in the results directory: " + actualFileName);
         }
+    }
+
+    private void assertDirectoryIsEmpty(final String directoryPath) {
+        final File directory = new File(directoryPath);
+        final File[] directoryContents = directory.listFiles();
+        assertNotNull(directoryContents, "Could not find or access directory: " + directoryPath);
+        assertEquals(0, directoryContents.length, "Directory was not empty: " + directoryPath);
     }
 
 }
