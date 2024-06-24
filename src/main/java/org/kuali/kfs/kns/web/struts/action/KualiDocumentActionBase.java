@@ -104,6 +104,8 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.springmodules.orm.ojb.OjbOperationException;
 
+import edu.cornell.kfs.krad.service.BlackListAttachmentService;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -122,6 +124,8 @@ import java.util.Set;
  * 
  * CU customization: fix issue introduced with 11/17/2021.
  *
+ * CU customization: Added blacklist attachment processing so that failure-to-create-attachment
+ *                   can be treated as a validation failure with a user friendly error message.
  */
 public class KualiDocumentActionBase extends KualiAction {
 
@@ -173,6 +177,10 @@ public class KualiDocumentActionBase extends KualiAction {
     private BusinessObjectMetaDataService businessObjectMetaDataService;
     private AdHocRoutingService adHocRoutingService;
     private WorkflowDocumentService workflowDocumentService;
+    
+    //CU customization: Added blacklist attachment processing
+    private static final String ERROR_UPLOADFILE_EXTENSION = "error.uploadFile.extension";
+    private BlackListAttachmentService blackListAttachmentService;
 
     @Override
     protected void checkAuthorization(final ActionForm form, final String methodToCall) throws AuthorizationException {
@@ -1329,6 +1337,15 @@ public class KualiDocumentActionBase extends KualiAction {
                         KRADConstants.NOTE_ATTACHMENT_FILE_PROPERTY_NAME),
                     ERROR_UPLOADFILE_EMPTY,
                     attachmentFile.getFileName());
+                
+              //CU customization: Added blacklist attachment processing  
+            } else if (getBlackListAttachmentService().attachmentFileExtensionIsDisallowed(attachmentFile.getFileName())) {
+                GlobalVariables.getMessageMap().putError(String.format("%s.%s",
+                        KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
+                        KRADConstants.NOTE_ATTACHMENT_FILE_PROPERTY_NAME),
+                    ERROR_UPLOADFILE_EXTENSION,
+                    attachmentFile.getFileName());
+                
             } else {
                 String attachmentType = null;
                 final Attachment newAttachment = kualiDocumentFormBase.getNewNote().getAttachment();
@@ -1858,6 +1875,15 @@ public class KualiDocumentActionBase extends KualiAction {
             personService = SpringContext.getBean(PersonService.class);
         }
         return personService;
+    }
+    
+
+    //CU customization: Added blacklist attachment processing
+    public BlackListAttachmentService getBlackListAttachmentService() {
+        if (blackListAttachmentService == null) {
+            blackListAttachmentService = SpringContext.getBean(BlackListAttachmentService.class);
+        }
+        return blackListAttachmentService;
     }
 
     @Override

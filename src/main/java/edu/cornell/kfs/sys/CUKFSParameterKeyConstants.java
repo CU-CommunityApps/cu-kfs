@@ -54,4 +54,8 @@ public class CUKFSParameterKeyConstants {
         public static final String DEFAULT_COMPONENT = "PurgeTablesStep";
         public static final String DEFAULT_PARAMETER_NAME = "DEFAULT_NUMBER_OF_DAYS_OLD";
     }
+    
+    public static class SysParameterConstants {
+        public static final String DISALLOWED_ATTACHMENT_FILE_EXTENSIONS = "DISALLOWED_ATTACHMENT_FILE_EXTENSIONS";
+    }
 }
