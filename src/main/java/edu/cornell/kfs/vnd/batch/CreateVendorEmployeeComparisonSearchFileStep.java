@@ -6,7 +6,7 @@ import org.kuali.kfs.sys.batch.AbstractStep;
 
 import edu.cornell.kfs.vnd.batch.service.VendorEmployeeComparisonService;
 
-public class WriteVendorEmployeeComparisonSearchFileStep extends AbstractStep {
+public class CreateVendorEmployeeComparisonSearchFileStep extends AbstractStep {
 
     private VendorEmployeeComparisonService vendorEmployeeComparisonService;
 

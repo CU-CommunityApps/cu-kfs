@@ -58,12 +58,12 @@ import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 )
 public class VendorEmployeeComparisonServiceOutboundFileTest {
 
-    private static final String TEST_VND_DIRECTORY = "test/vnd_compare_out/";
-    private static final String TEST_VND_REPORTS_DIRECTORY = TEST_VND_DIRECTORY + "reports/vnd/";
-    private static final String TEST_VND_STAGING_DIRECTORY = TEST_VND_DIRECTORY + "staging/vnd/";
-    private static final String TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY =
+    static final String TEST_VND_DIRECTORY = "test/vnd_compare_out/";
+    static final String TEST_VND_REPORTS_DIRECTORY = TEST_VND_DIRECTORY + "reports/vnd/";
+    static final String TEST_VND_STAGING_DIRECTORY = TEST_VND_DIRECTORY + "staging/vnd/";
+    static final String TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY =
             TEST_VND_STAGING_DIRECTORY + "emplCompareWorkday/outbound/";
-    private static final String TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY =
+    static final String TEST_VND_OUTBOUND_FILE_CREATION_DIRECTORY =
             TEST_VND_OUTBOUND_FILE_EXPORT_DIRECTORY + "being-written/";
 
     @RegisterExtension

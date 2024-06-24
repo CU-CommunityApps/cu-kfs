@@ -29,13 +29,17 @@
 			<list merge="true">
 				<value>commodityCodeUpdateJob</value>
 				<value>vendorInactivateConvertBatchJob</value>
-				<value>writeVendorEmployeeComparisonSearchFileJob</value>
+				<value>createVendorEmployeeComparisonSearchFileJob</value>
 				<value>processVendorEmployeeComparisonResultFileJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
           <list merge="true">
             <value>${staging.directory}/vnd</value>
+            <value>${staging.directory}/vnd/emplCompareWorkday</value>
+            <value>${staging.directory}/vnd/emplCompareWorkday/outbound</value>
+            <value>${staging.directory}/vnd/emplCompareWorkday/outbound/being-written</value>
+            <value>${staging.directory}/vnd/emplCompareWorkday/result</value>
           </list>
         </property>
 	</bean>
@@ -204,16 +208,16 @@
         </property>
     </bean>
 
-    <bean id="writeVendorEmployeeComparisonSearchFileJob" parent="unscheduledJobDescriptor">
+    <bean id="createVendorEmployeeComparisonSearchFileJob" parent="unscheduledJobDescriptor">
         <property name="steps">
             <list>
-                <ref bean="writeVendorEmployeeComparisonSearchFileStep" />
+                <ref bean="createVendorEmployeeComparisonSearchFileStep" />
             </list>
         </property>
     </bean>
 
-    <bean id="writeVendorEmployeeComparisonSearchFileStep"
-          class="edu.cornell.kfs.vnd.batch.WriteVendorEmployeeComparisonSearchFileStep"
+    <bean id="createVendorEmployeeComparisonSearchFileStep"
+          class="edu.cornell.kfs.vnd.batch.CreateVendorEmployeeComparisonSearchFileStep"
           parent="step"
           p:vendorEmployeeComparisonService-ref="vendorEmployeeComparisonService"/>
 

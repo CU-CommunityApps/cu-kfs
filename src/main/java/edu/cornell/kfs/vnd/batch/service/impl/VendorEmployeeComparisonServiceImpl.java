@@ -27,6 +27,7 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -62,6 +63,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     @ForUnitTestConvenience
     private BiConsumer<String, File> reportFileTracker = (csvRresultFile, reportFile) -> {};
 
+    @Transactional
     @Override
     public void generateFileContainingPotentialVendorEmployees() {
         final String csvFileName = generateEmployeeComparisonCsvOutboundFileName();
@@ -156,6 +158,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
         return qualifiedFile.toPath();
     }
 
+    @Transactional
     @Override
     public boolean processResultsOfVendorEmployeeComparison() {
         final List<String> resultFiles = batchInputFileService.listInputFileNamesWithDoneFile(

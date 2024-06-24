@@ -64,10 +64,10 @@ import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 )
 public class VendorEmployeeComparisonServiceResultFileTest {
 
-    private static final String TEST_VND_DIRECTORY = "test/vnd_empl_results/";
-    private static final String TEST_VND_REPORTS_DIRECTORY = TEST_VND_DIRECTORY + "reports/vnd/";
-    private static final String TEST_VND_STAGING_DIRECTORY = TEST_VND_DIRECTORY + "staging/vnd/";
-    private static final String TEST_VND_EMPL_RESULTS_DIRECTORY =
+    static final String TEST_VND_DIRECTORY = "test/vnd_empl_results/";
+    static final String TEST_VND_REPORTS_DIRECTORY = TEST_VND_DIRECTORY + "reports/vnd/";
+    static final String TEST_VND_STAGING_DIRECTORY = TEST_VND_DIRECTORY + "staging/vnd/";
+    static final String TEST_VND_EMPL_RESULTS_DIRECTORY =
             TEST_VND_STAGING_DIRECTORY + "emplCompareWorkday/result/";
 
     private static final String VND_EMPL_RESULTS_CSV_FILENAME_PATTERN = "empl_result_20240615_1230{0}.csv";
