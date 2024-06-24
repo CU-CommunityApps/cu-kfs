@@ -1,0 +1,27 @@
+
+
+***********************************************************************************************************************
+***********************************                     SUMMARY                     ***********************************
+***********************************************************************************************************************
+
+
+                                   Workday File Name: empl_result_20240615_123005.csv
+
+         Total Vendors Representing Active or Recently Terminated Employees: 1
+                                Total Vendors Representing Active Employees: 0
+                       Total Vendors Representing Active Re-Hired Employees: 0
+Total Vendors Representing Active Employees with Upcoming Termination Dates: 0
+       Total Vendors Representing Employees Terminated within the Past Year: 0
+                                    Total Rows with Unexpected Missing Data: 1
+
+
+***********************************************************************************************************************
+***********************************                     DETAILS                     ***********************************
+***********************************************************************************************************************
+
+
+Vendor ID        Employee ID    NetID         Active    Last Hired    Last Terminated    Pending Termination Date
+-------------    -----------    ----------    ------    ----------    ---------------    ------------------------
+
+N/A              N/A            N/A           N/A       N/A           N/A                N/A                     
+

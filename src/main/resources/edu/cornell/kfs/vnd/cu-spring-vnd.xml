@@ -29,6 +29,8 @@
 			<list merge="true">
 				<value>commodityCodeUpdateJob</value>
 				<value>vendorInactivateConvertBatchJob</value>
+				<value>writeVendorEmployeeComparisonSearchFileJob</value>
+				<value>processVendorEmployeeComparisonResultFileJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -201,5 +203,66 @@
             </list>
         </property>
     </bean>
+
+    <bean id="writeVendorEmployeeComparisonSearchFileJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="writeVendorEmployeeComparisonSearchFileStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="writeVendorEmployeeComparisonSearchFileStep"
+          class="edu.cornell.kfs.vnd.batch.WriteVendorEmployeeComparisonSearchFileStep"
+          parent="step"
+          p:vendorEmployeeComparisonService-ref="vendorEmployeeComparisonService"/>
+
+    <bean id="processVendorEmployeeComparisonResultFileJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="processVendorEmployeeComparisonResultFileStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="processVendorEmployeeComparisonResultFileStep"
+          class="edu.cornell.kfs.vnd.batch.ProcessVendorEmployeeComparisonResultFileStep"
+          parent="step"
+          p:vendorEmployeeComparisonService-ref="vendorEmployeeComparisonService"/>
+
+    <bean id="vendorEmployeeComparisonService" parent="vendorEmployeeComparisonService-parentBean"/>
+    <bean id="vendorEmployeeComparisonService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.vnd.batch.service.impl.VendorEmployeeComparisonServiceImpl"
+          p:csvEmployeeComparisonFileCreationDirectory="${staging.directory}/vnd/emplCompareWorkday/outbound/being-written"
+          p:csvEmployeeComparisonFileExportDirectory="${staging.directory}/vnd/emplCompareWorkday/outbound"
+          p:vendorDao-ref="vendorDao"
+          p:vendorEmployeeComparisonReportService-ref="vendorEmployeeComparisonReportService"
+          p:batchInputFileService-ref="batchInputFileService"
+          p:vendorEmployeeComparisonResultFileType-ref="vendorEmployeeComparisonResultFileType"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="vendorEmployeeComparisonResultFileType" parent="vendorEmployeeComparisonResultFileType-parentBean"/>
+    <bean id="vendorEmployeeComparisonResultFileType-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsvInputFileType"
+          p:directoryPath="${staging.directory}/vnd/emplCompareWorkday/result"
+          p:fileExtension="csv"
+          p:csvEnumClass="edu.cornell.kfs.vnd.batch.VendorEmployeeComparisonResultCsv"/>
+
+    <bean id="vendorEmployeeComparisonReportService" parent="vendorEmployeeComparisonReportService-parentBean"/>
+    <bean id="vendorEmployeeComparisonReportService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.vnd.batch.service.impl.VendorEmployeeComparisonReportServiceImpl"
+          p:reportWriterService-ref="vendorEmployeeComparisonReportWriterService"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="vendorEmployeeComparisonReportWriterService"
+          parent="vendorEmployeeComparisonReportWriterService-parentBean"/>
+    <bean id="vendorEmployeeComparisonReportWriterService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl"
+          parent="reportWriterService"
+          p:filePath="${reports.directory}/vnd"/>
 
 </beans>
