@@ -1252,12 +1252,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
             return forward;
         }
         
-        kualiDocumentFormBase.setAnnotation(getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
+        kualiDocumentFormBase.setAnnotation(
+                getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
         iWantDocument.setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
-        ((CuDocumentServiceImpl)getDocumentService()).returnDocumenToPreviousNode(document, kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
+        ((CuDocumentServiceImpl) getDocumentService()).returnDocumenToPreviousNode(document,
+                kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
 
         KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
-        kualiDocumentFormBase.setAnnotation("");
 
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
