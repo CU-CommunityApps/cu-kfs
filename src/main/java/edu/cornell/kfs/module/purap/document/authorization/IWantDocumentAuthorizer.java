@@ -76,6 +76,10 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
             result.remove(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
         }
         
+        if(!isInPurchasingAssistantNode(document)) {
+            result.remove(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC);
+        }
+        
         return result;
     }
 
@@ -186,6 +190,16 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         if (CollectionUtils.isNotEmpty(nodeNames)) {
             return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY)
                     || nodeNames.contains(CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
+        }
+        return false;
+    }
+    
+    private boolean isInPurchasingAssistantNode(Document document) {
+        WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
+        Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
+        
+        if (CollectionUtils.isNotEmpty(nodeNames)) {
+            return nodeNames.contains(CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
         }
         return false;
     }
