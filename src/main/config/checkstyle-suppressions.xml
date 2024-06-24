@@ -31,6 +31,7 @@
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]fp[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]gl[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]integration[\\/].*" />
+    <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]kew[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]kim[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]krad[\\/].*" />
     <suppress checks=".*" files="src[\\/]main[\\/]java[\\/]edu[\\/]cornell[\\/]kfs[\\/]ksr[\\/].*" />

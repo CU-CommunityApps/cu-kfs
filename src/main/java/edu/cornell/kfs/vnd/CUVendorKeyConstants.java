@@ -55,4 +55,24 @@ public class CUVendorKeyConstants {
     public static final String ERROR_DOCUMENT_VENDOR_TYPE_IS_REQUIRED_FOR_ADD_VENDORADRESS = "error.document.vendortype.isrequired.for.add.vendoraddress";
 
     public static final String ERROR_VENDOR_TAX_TYPE_AND_NUMBER_COMBO_EXISTS_AND_PRINT_EXISTING = "error.vendorMaint.addVendor.vendor.exists.printExisting";
+
+    public static final class EmployeeComparisonReportKeys {
+        public static final String PREFIX = "vendor.employee.comparison.report.";
+        public static final String SUMMARY_LABEL_PREFIX = PREFIX + "summary.label.";
+
+        public static final String FILE_NAME = PREFIX + "file.name";
+        public static final String TITLE = PREFIX + "title";
+        public static final String SECTION_SEPARATOR = PREFIX + "section.separator";
+        public static final String SECTION_HEADER = PREFIX + "section.header";
+        public static final String SUMMARY_SECTION_TITLE = PREFIX + "summary.section.title";
+        public static final String SUMMARY_PROCESSED_FILE_NAME_LABEL = PREFIX + "summary.processed.file.name.label";
+        public static final String SUMMARY_PROCESSED_FILE_NAME = PREFIX + "summary.processed.file.name";
+        public static final String SUMMARY_LINE = PREFIX + "summary.line";
+        public static final String DETAIL_SECTION_TITLE = PREFIX + "detail.section.title";
+        public static final String DETAIL_TABLE_HEADER = PREFIX + "detail.table.header";
+        public static final String DETAIL_TABLE_SEPARATOR = PREFIX + "detail.table.separator";
+        public static final String DETAIL_TABLE_ROW = PREFIX + "detail.table.row";
+        public static final String EMPTY_DETAIL_SECTION_MESSAGE = PREFIX + "empty.detail.section.message";
+    }
+
 }
