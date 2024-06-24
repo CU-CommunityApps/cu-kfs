@@ -33,7 +33,6 @@ import org.mockito.invocation.InvocationOnMock;
 import edu.cornell.kfs.krad.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.antivirus.service.impl.DummyAntiVirusServiceImpl;
 import edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb;
-import edu.cornell.kfs.krad.service.BlackListAttachmentService;
 
 public class CuAttachmentServiceImplTest {
 
@@ -68,7 +67,6 @@ public class CuAttachmentServiceImplTest {
         attachmentService.setKualiConfigurationService(buildMockConfigurationService());
         attachmentService.setAttachmentDao(buildMockAttachmentDao());
         attachmentService.setNoteService(buildMockNoteService());
-        attachmentService.setBlackListAttachmentService(buildBlackListAttachmentService());
         attachmentService.setAntiVirusService(new DummyAntiVirusServiceImpl(ScanResult.Status.PASSED.toString()));
 
         attachment = new Attachment();
@@ -93,12 +91,6 @@ public class CuAttachmentServiceImplTest {
         errorInputStream = null;
         noteVirus = null;
         attachmentService = null;
-    }
-    
-    private BlackListAttachmentService buildBlackListAttachmentService() {
-        BlackListAttachmentService mockBlackListAttachmentService = Mockito.mock(BlackListAttachmentService.class);
-        Mockito.when(mockBlackListAttachmentService.attachmentFileExtensionIsDisallowed(Mockito.anyString())).thenReturn(false);
-        return mockBlackListAttachmentService;
     }
     
     private NoteService buildMockNoteService() {
