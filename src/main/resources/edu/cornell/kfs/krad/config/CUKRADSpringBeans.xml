@@ -7,12 +7,6 @@
 
     <bean id="cuAttachmentDaoOjb" parent="platformAwareDao" class="edu.cornell.kfs.krad.dao.impl.CuAttachmentDaoOjb"/>
     
-    <bean id="blackListAttachmentService" parent="blackListAttachmentService-parentBean"/>
-    <bean id="blackListAttachmentService-parentBean" abstract="true"
-          class="edu.cornell.kfs.krad.service.impl.BlackListAttachmentServiceImpl" 
-          p:parameterService-ref="parameterService">
-    </bean>
-    
     <!--
         This bean is injected via institutional-config.properties file configuration and can be overridden
         by developers in their local configuration properties.
@@ -46,9 +40,6 @@
         </property>
         <property name="noteService">
             <ref bean="noteService" />
-        </property>
-        <property name="blackListAttachmentService">
-            <ref bean="blackListAttachmentService"/>
         </property>
     </bean>
 
