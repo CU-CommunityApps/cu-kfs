@@ -1247,7 +1247,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         final Document document = kualiDocumentFormBase.getDocument();
 
         final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
-                KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "route", "");
+                KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "returnToSSC", "");
         if (forward != null) {
             return forward;
         }
