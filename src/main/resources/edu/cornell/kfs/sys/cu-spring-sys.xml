@@ -304,6 +304,7 @@
                   <ref bean="positionDataWorkdayTableDetailsForPurge"/>
                   <ref bean="paymentWorksVendorTableDetailsForPurge"/>
                   <ref bean="payeeAchAccountExtractTableDetailsForPurge"/>
+                  <ref bean="documentRouteHeaderValueTableDetailsForPurge"/>
               </list>
           </property>
     </bean>
@@ -331,6 +332,18 @@
           p:component="PurgeTablesStep"
           p:parameterName="PS_POSITION_DATA_WD_NUMBER_OF_DAYS_OLD"
           p:serviceImplForPurgeTableLookupCriteria-ref="positionDataWorkdayLookupCriteriaPurgeService"/>
+          
+    <bean id="documentRouteHeaderValueLookupCriteriaPurgeService"
+          class="edu.cornell.kfs.sys.batch.service.impl.DocumentRouteHeaderValueLookupCriteriaPurgeServiceImpl"/>
+          
+    <bean id="documentRouteHeaderValueTableDetailsForPurge" class="edu.cornell.kfs.sys.businessobject.TableDetailsForPurge"
+          p:businessObjectForRecordsTablePurge="org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue"
+          p:tableToPurge="KREW_DOC_HDR_T"
+          p:useDefaultDaysBeforePurgeParameter="false"
+          p:nameSpaceCode="KFS-SYS"
+          p:component="PurgeTablesStep"
+          p:parameterName="KREW_DOC_HDR_T_INITIATED_NUMBER_OF_DAYS_OLD"
+          p:serviceImplForPurgeTableLookupCriteria-ref="documentRouteHeaderValueLookupCriteriaPurgeService"/>
     
     <bean id="paymentWorksVendorLookupCriteriaPurgeService"
           class="edu.cornell.kfs.sys.batch.service.impl.PaymentWorksVendorLookupCriteriaPurgeServiceImpl"/>      
