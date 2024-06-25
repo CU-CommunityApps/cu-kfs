@@ -1,6 +1,7 @@
 package edu.cornell.kfs.krad.service.impl;
 
 import edu.cornell.kfs.krad.dao.CuAttachmentDao;
+import edu.cornell.kfs.krad.service.BlackListAttachmentService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.krad.antivirus.service.ScanResult;
 import edu.cornell.kfs.krad.antivirus.service.AntiVirusService;
@@ -26,6 +27,7 @@ import java.io.InputStream;
  * Custom subclass of AttachmentServiceImpl featuring the following enhancements:
  * Added anti-virus scanning for attachments.
  * Added the ability to retrieve attachments by attachment ID.
+ * Added attachment file extension black list parameter processing.
  */
 @Transactional
 public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
@@ -34,6 +36,7 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
 
     private AntiVirusService antiVirusService;
     private NoteService noteService;
+    private BlackListAttachmentService blackListAttachmentService;
 
     /**
      * Overridden to get attachment by attachment ID if necessary.
@@ -76,6 +79,11 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
             throw new IllegalArgumentException("invalid (null or uninitialized) document");
         } else if(StringUtils.isBlank(uploadedFileName)) {
             throw new IllegalArgumentException("invalid (blank) fileName");
+        } else if (blackListAttachmentService.attachmentFileExtensionIsDisallowed(uploadedFileName)) {
+            LOG.error("createAttachment: ATTACHMENTS WITH THIS EXTENSION ARE NOT ALLOWED!  uploadedFileName:{} "
+                    + " mimeType:{}  attachmentTypeCode:{}  parent object:{} ", 
+                        uploadedFileName, mimeType, attachmentTypeCode, parent);
+            throw new IllegalArgumentException(CUKFSConstants.DISALLOWED_FILE_EXTENSION_MESSAGE + uploadedFileName);
         } else if(StringUtils.isBlank(mimeType)) {
             throw new IllegalArgumentException("invalid (blank) mimeType");
         } else if(fileSize <= 0) {
@@ -121,5 +129,13 @@ public class CuAttachmentServiceImpl extends AttachmentServiceImpl {
 
     public void setNoteService(final NoteService noteService) {
         this.noteService = noteService;
+    }
+
+    public BlackListAttachmentService getBlackListAttachmentService() {
+        return blackListAttachmentService;
+    }
+
+    public void setBlackListAttachmentService(BlackListAttachmentService blackListAttachmentService) {
+        this.blackListAttachmentService = blackListAttachmentService;
     }
 }
