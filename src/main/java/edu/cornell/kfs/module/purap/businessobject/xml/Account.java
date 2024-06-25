@@ -1,33 +1,50 @@
 package edu.cornell.kfs.module.purap.businessobject.xml;
 
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "chartOfAccountsCode", "accountNumber", "financialObjectCode", "subAccountNumber",
         "financialSubObjectCode", "projectCode", "organizationReferenceId", "amountOrPercent", "useAmountOrPercent" })
-@XmlRootElement(name = "account")
+@XmlRootElement(name = "account", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
 public class Account {
 
+    @XmlElement(name = "chartOfAccountsCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String chartOfAccountsCode;
+
+    @XmlElement(name = "accountNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String accountNumber;
+
+    @XmlElement(name = "financialObjectCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String financialObjectCode;
+
+    @XmlElement(name = "subAccountNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String subAccountNumber;
+
+    @XmlElement(name = "financialSubObjectCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String financialSubObjectCode;
+
+    @XmlElement(name = "projectCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String projectCode;
+
+    @XmlElement(name = "organizationReferenceId", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String organizationReferenceId;
+
+    @XmlElement(name = "amountOrPercent", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private BigDecimal amountOrPercent;
+
+    @XmlElement(name = "useAmountOrPercent", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private String useAmountOrPercent;
+    private AmountOrPercentType useAmountOrPercent;
 
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
@@ -93,11 +110,11 @@ public class Account {
         this.amountOrPercent = amountOrPercent;
     }
 
-    public String getUseAmountOrPercent() {
+    public AmountOrPercentType getUseAmountOrPercent() {
         return useAmountOrPercent;
     }
 
-    public void setUseAmountOrPercent(String useAmountOrPercent) {
+    public void setUseAmountOrPercent(AmountOrPercentType useAmountOrPercent) {
         this.useAmountOrPercent = useAmountOrPercent;
     }
 
@@ -106,4 +123,5 @@ public class Account {
         ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         return builder.build();
     }
+
 }

@@ -2,60 +2,107 @@ package edu.cornell.kfs.module.purap.businessobject.xml;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "initiator", "sourceNumber", "businessPurpose", "collegeLevelOrganization",
         "departmentLevelOrganization", "requestorNetID", "requestorEmailAddress", "requestorPhoneNumber",
         "requestorAddress", "sameAsRequestor", "deliverToNetID", "deliverToEmailAddress", "deliverToPhoneNumber",
-        "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "item", "account", "accountDescriptionTxt",
-        "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus", "adHocRouteToNetID", "note",
-        "attachment" })
-@XmlRootElement(name = "iWantDocument")
+        "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "items", "accounts", "accountDescriptionTxt",
+        "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus", "adHocRouteToNetID", "notes",
+        "attachments" })
+@XmlRootElement(name = "iWantDocument", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
 public class IWantDocument {
 
-    @XmlElement(required = true)
+    @XmlElement(name = "initiator", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String initiator;
-    @XmlElement(required = true)
+
+    @XmlElement(name = "sourceNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String sourceNumber;
-    @XmlElement(required = true)
+
+    @XmlElement(name = "businessPurpose", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String businessPurpose;
-    @XmlElement(required = true)
+
+    @XmlElement(name = "collegeLevelOrganization", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String collegeLevelOrganization;
-    @XmlElement(required = true)
+
+    @XmlElement(name = "requestorNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String departmentLevelOrganization;
+
+    @XmlElement(name = "", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String requestorNetID;
+
+    @XmlElement(name = "requestorEmailAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String requestorEmailAddress;
+
+    @XmlElement(name = "requestorPhoneNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String requestorPhoneNumber;
+
+    @XmlElement(name = "requestorAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String requestorAddress;
+
+    @XmlElement(name = "sameAsRequestor", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private String sameAsRequestor;
+    private IndicatorType sameAsRequestor;
+
+    @XmlElement(name = "deliverToNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToNetID;
+
+    @XmlElement(name = "deliverToEmailAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToEmailAddress;
+
+    @XmlElement(name = "deliverToAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToPhoneNumber;
+
+    @XmlElement(name = "", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToAddress;
+
+    @XmlElement(name = "vendorId", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String vendorId;
+
+    @XmlElement(name = "vendorName", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String vendorName;
+
+    @XmlElement(name = "vendorDescription", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String vendorDescription;
-    private List<Item> item;
-    private List<Account> account;
+
+    @XmlElement(name = "item", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    private List<Item> items;
+
+    @XmlElement(name = "account", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    private List<Account> accounts;
+
+    @XmlElement(name = "accountDescriptionTxt", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String accountDescriptionTxt;
+
+    @XmlElement(name = "commentsAndSpecialInstructions", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String commentsAndSpecialInstructions;
+
+    @XmlElement(name = "goods", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private String goods;
+    private IndicatorType goods;
+
+    @XmlElement(name = "servicePerformedOnCampus", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private String servicePerformedOnCampus;
+    private IndicatorType servicePerformedOnCampus;
+
+    @XmlElement(name = "adHocRouteToNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String adHocRouteToNetID;
-    private List<Note> note;
-    private List<Attachment> attachment;
+
+    @XmlElement(name = "note", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    private List<Note> notes;
+
+    @XmlElement(name = "attachment", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    private List<Attachment> attachments;
 
     public String getInitiator() {
         return initiator;
@@ -129,11 +176,11 @@ public class IWantDocument {
         this.requestorAddress = requestorAddress;
     }
 
-    public String getSameAsRequestor() {
+    public IndicatorType getSameAsRequestor() {
         return sameAsRequestor;
     }
 
-    public void setSameAsRequestor(String sameAsRequestor) {
+    public void setSameAsRequestor(IndicatorType sameAsRequestor) {
         this.sameAsRequestor = sameAsRequestor;
     }
 
@@ -193,20 +240,6 @@ public class IWantDocument {
         this.vendorDescription = vendorDescription;
     }
 
-    public List<Item> getItem() {
-        if (item == null) {
-            item = new ArrayList<Item>();
-        }
-        return item;
-    }
-
-    public List<Account> getAccount() {
-        if (account == null) {
-            account = new ArrayList<Account>();
-        }
-        return account;
-    }
-
     public String getAccountDescriptionTxt() {
         return accountDescriptionTxt;
     }
@@ -223,19 +256,19 @@ public class IWantDocument {
         this.commentsAndSpecialInstructions = commentsAndSpecialInstructions;
     }
 
-    public String getGoods() {
+    public IndicatorType getGoods() {
         return goods;
     }
 
-    public void setGoods(String goods) {
+    public void setGoods(IndicatorType goods) {
         this.goods = goods;
     }
 
-    public String getServicePerformedOnCampus() {
+    public IndicatorType getServicePerformedOnCampus() {
         return servicePerformedOnCampus;
     }
 
-    public void setServicePerformedOnCampus(String servicePerformedOnCampus) {
+    public void setServicePerformedOnCampus(IndicatorType servicePerformedOnCampus) {
         this.servicePerformedOnCampus = servicePerformedOnCampus;
     }
 
@@ -247,19 +280,32 @@ public class IWantDocument {
         this.adHocRouteToNetID = adHocRouteToNetID;
     }
 
-    public List<Note> getNote() {
-        return note;
-    }
-
-    public void setNote(List<Note> note) {
-        this.note = note;
-    }
-
-    public List<Attachment> getAttachment() {
-        if (attachment == null) {
-            attachment = new ArrayList<Attachment>();
+    public List<Item> getItems() {
+        if (items == null) {
+            items = new ArrayList<Item>();
         }
-        return attachment;
+        return items;
+    }
+
+    public List<Account> getAccounts() {
+        if (accounts == null) {
+            accounts = new ArrayList<Account>();
+        }
+        return accounts;
+    }
+
+    public List<Note> getNotes() {
+        if (notes == null) {
+            notes = new ArrayList<Note>();
+        }
+        return notes;
+    }
+
+    public List<Attachment> getAttachments() {
+        if (attachments == null) {
+            attachments = new ArrayList<Attachment>();
+        }
+        return attachments;
     }
 
     @Override

@@ -2,37 +2,35 @@ package edu.cornell.kfs.module.purap.businessobject.xml;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = { "iWantDocument" })
-@XmlRootElement(name = "i_want_doc_file", namespace="http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlType(name = "", propOrder = { "iWantDocuments" })
+@XmlRootElement(name = "i_want_doc_file", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
 public class IWantDocFile {
 
-    @XmlElement(required = true)
-    private List<IWantDocument> iWantDocument;
+    @XmlElement(name = "iWantDocument", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    private List<IWantDocument> iWantDocuments;
 
-    public List<IWantDocument> getiWantDocument() {
-        if (iWantDocument == null) {
-            iWantDocument = new ArrayList<IWantDocument>();
+    public List<IWantDocument> getiWantDocuments() {
+        if (iWantDocuments == null) {
+            iWantDocuments = new ArrayList<IWantDocument>();
         }
-        return iWantDocument;
+        return iWantDocuments;
     }
 
-    public void setiWantDocument(List<IWantDocument> iWantDocument) {
-        this.iWantDocument = iWantDocument;
-    }
-    
     @Override
     public String toString() {
         ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         return builder.build();
     }
+
 }

@@ -32,7 +32,7 @@ public class TestIWantDocFile {
         marshalservice = null;
     }
 
-    //@Test
+    @Test
     public void testMaximoExample() throws JAXBException {
         File maximoFile = new File(INPUT_FILE_PATH + MAXIMO_EXAMPLE_FILE_NAME);
         IWantDocFile iWantDocFile = marshalservice.unmarshalFile(maximoFile, IWantDocFile.class);
@@ -48,14 +48,19 @@ public class TestIWantDocFile {
     
     @Test
     public void testCreateFromPojo() throws JAXBException {
-        IWantDocFile iWant = new IWantDocFile();
-        IWantDocument iWantDoc = new IWantDocument();
-        iWantDoc.setAccountDescriptionTxt("account Description");
-        iWantDoc.setAdHocRouteToNetID("jdh34");
-        iWantDoc.setBusinessPurpose("busiess purpose");
-        iWant.getiWantDocument().add(iWantDoc);
-        String xmlOutput = marshalservice.marshalObjectToXmlString(iWant);
-        LOG.info("testCreateFromPojo, xmlOutput: " + xmlOutput);
+        ObjectFactory of = new ObjectFactory();
+        IWantDocFile file = of.createIWantDocFile();
+        
+        IWantDocument doc = of.createIWantDocument();
+        doc.setAccountDescriptionTxt("account description");
+        doc.setAdHocRouteToNetID("jdh34");
+        doc.setBusinessPurpose("busniess purpose");
+        
+        file.getiWantDocuments().add(doc);
+        
+        String outputXml = marshalservice.marshalObjectToXmlString(file);
+        
+        LOG.info("testCreateFromPojo, outputXml: " + outputXml);
     }
     
     

@@ -1,23 +1,26 @@
 package edu.cornell.kfs.module.purap.businessobject.xml;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "mimeTypeCode", "fileName", "attachmentType" })
-@XmlRootElement(name = "attachment")
+@XmlRootElement(name = "attachment", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
 public class Attachment {
 
+    @XmlElement(name = "mimeTypeCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String mimeTypeCode;
-    @XmlElement(required = true)
+
+    @XmlElement(name = "fileName", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String fileName;
-    @XmlElement(required = true)
+
+    @XmlElement(name = "attachmentType", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String attachmentType;
 
     public String getMimeTypeCode() {
@@ -43,10 +46,11 @@ public class Attachment {
     public void setAttachmentType(String attachmentType) {
         this.attachmentType = attachmentType;
     }
-    
+
     @Override
     public String toString() {
         ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         return builder.build();
     }
+
 }

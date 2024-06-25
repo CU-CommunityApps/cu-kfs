@@ -1,20 +1,20 @@
 package edu.cornell.kfs.module.purap.businessobject.xml;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "noteText" })
-@XmlRootElement(name = "note")
+@XmlRootElement(name = "note", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
 public class Note {
 
-    @XmlElement(required = true)
+    @XmlElement(name = "noteText", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String noteText;
 
     public String getNoteText() {
