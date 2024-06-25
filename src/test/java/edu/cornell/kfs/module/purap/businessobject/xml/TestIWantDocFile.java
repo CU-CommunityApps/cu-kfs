@@ -18,7 +18,6 @@ public class TestIWantDocFile {
     
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/businessobject/xml/";
     private static final String MAXIMO_EXAMPLE_FILE_NAME = "IWantFeed-maximo-example.xml";
-    private static final String TEST_FILE_NAME = "iwant-test.xml";
     
     private CUMarshalServiceImpl marshalservice;
 
@@ -36,13 +35,6 @@ public class TestIWantDocFile {
     public void testMaximoExample() throws JAXBException {
         File maximoFile = new File(INPUT_FILE_PATH + MAXIMO_EXAMPLE_FILE_NAME);
         IWantDocFile iWantDocFile = marshalservice.unmarshalFile(maximoFile, IWantDocFile.class);
-        LOG.info("testMaximoExample, iWantDocFile: " + iWantDocFile.toString());
-    }
-    
-    //@Test
-    public void testExample() throws JAXBException {
-        File testFile = new File(INPUT_FILE_PATH + TEST_FILE_NAME);
-        IWantDocFile iWantDocFile = marshalservice.unmarshalFile(testFile, IWantDocFile.class);
         LOG.info("testMaximoExample, iWantDocFile: " + iWantDocFile.toString());
     }
     
