@@ -105,6 +105,7 @@ import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 import org.springmodules.orm.ojb.OjbOperationException;
 
 import edu.cornell.kfs.krad.service.BlackListAttachmentService;
+import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -179,7 +180,6 @@ public class KualiDocumentActionBase extends KualiAction {
     private WorkflowDocumentService workflowDocumentService;
     
     //CU customization: Added blacklist attachment processing
-    private static final String ERROR_UPLOADFILE_EXTENSION = "error.uploadFile.extension";
     private BlackListAttachmentService blackListAttachmentService;
 
     @Override
@@ -1343,7 +1343,7 @@ public class KualiDocumentActionBase extends KualiAction {
                 GlobalVariables.getMessageMap().putError(String.format("%s.%s",
                         KRADConstants.NEW_DOCUMENT_NOTE_PROPERTY_NAME,
                         KRADConstants.NOTE_ATTACHMENT_FILE_PROPERTY_NAME),
-                    ERROR_UPLOADFILE_EXTENSION,
+                        CUKFSKeyConstants.ERROR_UPLOADFILE_EXTENSION,
                     attachmentFile.getFileName());
                 
             } else {
