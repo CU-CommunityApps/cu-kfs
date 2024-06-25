@@ -375,6 +375,7 @@ public class Iso20022FormatExtractor {
                     message.setCstmrCdtTrfInitn(customerCreditTransferInitiation);
 
                     final String filename = determineFilename(directoryName, extractTypeContext);
+                    LOG.info("extractChecks writing file " + filename);
                     writeMessageToFile(message, filename);
 
                     createDoneFile(filename);
@@ -1815,7 +1816,7 @@ public class Iso20022FormatExtractor {
         }
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US);
         final String filename =
                 directoryName
                 + File.separator

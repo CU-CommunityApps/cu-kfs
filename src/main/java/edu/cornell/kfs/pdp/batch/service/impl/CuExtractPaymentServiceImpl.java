@@ -98,12 +98,14 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });
     
         String filename = getOutputFile(achFilePrefix, processDate);
-        LOG.debug("MOD: extractAchPayments() filename = " + filename);
 
         /** 
         * MOD: This is the only section in the method that is changed.  This mod calls a new method that bundles 
         * ACHs into single disbursements if the flag to do so is turned on.
+        * Modified the SimpleDateFormat to have milliseconds to prevent files being overwritten
         */
+        sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US);
+        LOG.info("extractAchPayments writing file " + filename);
         if (getAchBundlerHelperService().shouldBundleAchPayments()) {
             writeExtractBundledAchFile(extractedStatus, filename, processDate, sdf);
         } else {
