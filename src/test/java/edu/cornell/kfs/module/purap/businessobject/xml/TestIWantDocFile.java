@@ -48,10 +48,9 @@ public class TestIWantDocFile {
     
     @Test
     public void testCreateFromPojo() throws JAXBException {
-        ObjectFactory of = new ObjectFactory();
-        IWantDocFile file = of.createIWantDocFile();
+        IWantDocFile file = new IWantDocFile();
         
-        IWantDocument doc = of.createIWantDocument();
+        IWantDocument doc = new IWantDocument();
         doc.setAccountDescriptionTxt("account description");
         doc.setAdHocRouteToNetID("jdh34");
         doc.setBusinessPurpose("busniess purpose");
