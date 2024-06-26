@@ -59,7 +59,15 @@ public class CuDisbursementVoucherExtractionHelperServiceImpl extends Disburseme
         LOG.debug("createPaymentGroupForDisbursementVoucher() started");
 
         final PaymentGroup pg = new PaymentGroup();
-        pg.setCombineGroups(Boolean.TRUE);
+        final List<String> nonCombinablePaymentMethods = List.of(
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE,
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT,
+                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_EXTERNAL
+        );
+
+        if (!nonCombinablePaymentMethods.contains(document.getDisbVchrPaymentMethodCode())) {
+            pg.setCombineGroups(Boolean.TRUE);
+        }
         pg.setCampusAddress(Boolean.FALSE);
 
         final CuDisbursementVoucherPayeeDetail pd = 

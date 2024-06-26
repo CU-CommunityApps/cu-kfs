@@ -132,7 +132,8 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                             fiscalMonth, 
                             documentNos, 
                             depreciationTransactions,
-                            universityDate);
+                            universityDate
+                            );
                 } else {
                     throw new IllegalStateException(
                             kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.NO_ELIGIBLE_FOR_DEPRECIATION_ASSETS_FOUND));
