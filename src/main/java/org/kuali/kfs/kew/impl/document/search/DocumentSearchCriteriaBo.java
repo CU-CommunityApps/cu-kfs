@@ -19,6 +19,7 @@
 package org.kuali.kfs.kew.impl.document.search;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.api.document.search.DocumentSearchResult;
 import org.kuali.kfs.kew.doctype.bo.DocumentType;
@@ -321,7 +322,7 @@ public class DocumentSearchCriteriaBo implements BusinessObject {
         title = document.getTitle();
         initiatorPrincipalName = principalIdToName(document.getInitiatorPrincipalId());
         initiatorPrincipalId = document.getInitiatorPrincipalId();
-        dateCreated = new Timestamp(document.getDateCreated().getLong(ChronoField.MILLI_OF_DAY));
+        dateCreated = SpringContext.getBean(DateTimeService.class).getTimestamp(document.getDateCreated());
     }
 
     /**

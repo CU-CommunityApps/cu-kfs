@@ -103,6 +103,7 @@ public final class ArConstants {
     public static final String TRANSMIT_GENERATE_BUTTON_FILE_NAME = "buttonsmall_transmitgenerate.gif";
     public static final String TRANSMIT_GENERATE_BUTTON_ALT_TEXT = "Transmit/Generate Print File";
     public static final String UPDATE_FINAL_BILL_IND_BUTTON_METHOD = "methodToCall.updateFinalBillIndicator";
+    public static final String ADJUST_BILLING_PERIOD_BUTTON_METHOD = "methodToCall.adjustBillingPeriod";
 
     // Agency Address
     public static final String AGENCY_PRIMARY_ADDRESSES_TYPE_CODE = "P";
@@ -169,7 +170,12 @@ public final class ArConstants {
     public static final String LETTER_OF_CREDIT_REVIEW_DOCUMENT = "Letter Of Credit Review Document.";
 
     public static final String UPDATE_FINAL_BILL_INDICATOR_QUESTION = "FinalBillIndicatorUpdateQuestion";
-
+    
+    public static final String BILLING_PERIOD_ADJUST_INTRO = "Billing Period adjustment reason: ";
+    public static final String ADJUST_BILLING_PERIOD_BUTTON_TXT = "Adjust Billing Period";
+    public static final String BILLING_PERIOD_ADJUSTMENT_QUESTION_ID = "BillingPeriodAdjustment";
+    public static final String CINV_FINAL_BILL_INDICATOR_CONFIRMATION_QUESTION = "ConfirmationForFinalBillIndicatorOnCINV";
+    
     // Agency Collections Maintenance
     public static final String CHAPTER7_CODE = "C7";
     public static final String CHAPTER11_CODE = "C11";

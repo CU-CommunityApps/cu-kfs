@@ -315,7 +315,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
   </bean>
   
   <bean id="checkReconSrcValuesFinder" class="com.rsmart.kuali.kfs.cr.businessobject.options.CheckReconSrcValuesFinder"
-        p:keyValuesService-ref="grl.keyValuesService"/>
+        p:keyValuesService-ref="keyValuesService"/>
         
   <bean id="checkReconStatusValuesFinder"
         class="com.rsmart.kuali.kfs.cr.businessobject.options.StatusValuesFinder"/>

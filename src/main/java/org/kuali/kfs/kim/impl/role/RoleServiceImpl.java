@@ -77,7 +77,6 @@ import static java.util.Map.entry;
 /**
  * CU Customization:
  * Updated the member-removal methods to properly convert the qualifiers where needed.
- * Also backported the FINP-9235 changes into this file.
  */
 public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 

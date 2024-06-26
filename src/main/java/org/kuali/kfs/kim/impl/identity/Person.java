@@ -47,7 +47,6 @@ import java.util.Map;
  * CU Customizations:
  * 
  * -- Reintroduced masking of name/phone/etc. based on the user's privacy preferences.
- * -- Backported the FINP-9360 changes into this file.
  */
 public class Person extends PersistableBusinessObjectBase implements MutableInactivatable {
 
@@ -226,13 +225,9 @@ public class Person extends PersistableBusinessObjectBase implements MutableInac
             return true;
         }
 
-        // ==== Start FINP-9360 Backport ====
-        
         final String currentUserPrincipalId = userSession.getPrincipalId();
         return StringUtils.equals(currentUserPrincipalId, principalId) ||
                getUiDocumentService().canModifyPerson(currentUserPrincipalId, principalId);
-        
-        // ==== End FINP-9360 Backport ====
     }
 
     public void setAddressLine1(final String addressLine1) {
