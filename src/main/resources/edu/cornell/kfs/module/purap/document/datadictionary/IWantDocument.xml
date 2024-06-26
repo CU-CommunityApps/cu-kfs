@@ -925,7 +925,7 @@
           class="edu.cornell.kfs.module.purap.businessobject.options.AttachmentDescriptionValuesFinder"/>
     <bean id="favoriteAccountValuesFinder"
           class="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder" 
-          p:businessObjectService-ref="grl.businessObjectService"/>
+          p:businessObjectService-ref="businessObjectService"/>
     <bean id="iWantNoteDropdownValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.IWantNoteDropdownValuesFinder"
           p:keyValuesService-ref="keyValuesService"/>
           

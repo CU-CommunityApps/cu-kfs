@@ -7,16 +7,16 @@
          
     <bean id="Requisition-commodityCodeValidation" parent="Requisition-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="Requisition-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuRequisitionCommodityCodeValidation" abstract="true">
-		<property name="businessObjectDictionaryService" ref="grl.businessObjectDictionaryService" />
-		<property name="businessObjectService" ref="grl.businessObjectService" />	
-		<property name="parameterService" ref="grl.parameterService" />	
+		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
 	</bean> 
 	
 	<bean id="PurchaseOrderAmendment-commodityCodeValidation" parent="PurchaseOrderAmendment-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="PurchaseOrderAmendment-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentCommodityCodeValidation" abstract="true">
-		<property name="businessObjectDictionaryService" ref="grl.businessObjectDictionaryService" />
-		<property name="businessObjectService" ref="grl.businessObjectService" />	
-		<property name="parameterService" ref="grl.parameterService" />	
+		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
+		<property name="parameterService" ref="parameterService" />	
 	</bean>
 
 	<bean id="PurchaseOrderAmendment-accountValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchaseOrderAmendmentAccountValidation" abstract="true"
@@ -48,14 +48,14 @@
     
     <bean id="Purchasing-commodityCodeValidation" scope="prototype"
     	class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation"
-    	abstract="false" p:businessObjectDictionaryService-ref="grl.businessObjectDictionaryService"
-    	p:businessObjectService-ref="grl.businessObjectService" p:parameterService-ref="grl.parameterService"/>
+    	abstract="false" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+    	p:businessObjectService-ref="businessObjectService" p:parameterService-ref="grl.parameterService"/>
 
     <bean id="Purchasing-newIndividualItemValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation"
           abstract="true" parent="PurchasingAccountsPayable-newIndividualItemValidation"
-          p:businessObjectDictionaryService-ref="grl.businessObjectDictionaryService"
-          p:businessObjectService-ref="grl.businessObjectService"
+          p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+          p:businessObjectService-ref="businessObjectService"
           p:capitalAssetManagementModuleService-ref="capitalAssetManagementModuleService"
           p:unitOfMeasureValidation-ref="Purchasing-unitOfMeasureValidation"
           p:itemUnitPriceValidation-ref="Purchasing-itemUnitPriceValidation"
@@ -66,29 +66,29 @@
 	
 	<bean id="PurchaseOrder-commodityCodeValidation" parent="PurchaseOrder-commodityCodeValidation-parentBean" scope="prototype" />
 	<bean id="PurchaseOrder-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchaseOrderCommodityCodeValidation" abstract="true">
-		<property name="businessObjectDictionaryService" ref="grl.businessObjectDictionaryService" />
-		<property name="businessObjectService" ref="grl.businessObjectService" />	
+		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
+		<property name="businessObjectService" ref="businessObjectService" />	
 		<property name="parameterService" ref="grl.parameterService" />	
 	</bean>
 	
 	<bean id="Purchasing-addItemValidation"
 		class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingAddItemValidation" abstract="true"
-		p:businessObjectDictionaryService-ref="grl.businessObjectDictionaryService"
+		p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
 		p:dictionaryValidationService-ref="dictionaryValidationService"
-		p:businessObjectService-ref="grl.businessObjectService" 
+		p:businessObjectService-ref="businessObjectService" 
 		p:commodityCodeValidation-ref="Purchasing-commodityCodeValidation"/>
 	
 	<bean id="Purchasing-importItemValidation"
            class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingImportItemValidation" abstract="true"
-           p:businessObjectDictionaryService-ref="grl.businessObjectDictionaryService"
+           p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
            p:dictionaryValidationService-ref="dictionaryValidationService"
-           p:businessObjectService-ref="grl.businessObjectService"
+           p:businessObjectService-ref="businessObjectService"
            p:commodityCodeValidation-ref="Purchasing-commodityCodeValidation"/>
 	
 	<bean id="Purchasing-processVendorValidation"
           class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingProcessVendorValidation"
-          abstract="true" p:businessObjectDictionaryService-ref="grl.businessObjectDictionaryService"
-          p:businessObjectService-ref="grl.businessObjectService" p:dateTimeService-ref="grl.dateTimeService"
+          abstract="true" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
+          p:businessObjectService-ref="businessObjectService" p:dateTimeService-ref="grl.dateTimeService"
           p:vendorService-ref="vendorService" p:parameterService-ref="grl.parameterService"
           p:postalCodeValidationService-ref="postalCodeValidationService"
           p:purchaseOrderTransmissionMethodDataRulesService-ref="purchaseOrderTransmissionMethodDataRulesService"
@@ -111,7 +111,7 @@
           p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
     <bean id="PaymentRequest-taxAreaValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestTaxAreaValidation" scope="prototype">
-        <property name="businessObjectService" ref="grl.businessObjectService" />
+        <property name="businessObjectService" ref="businessObjectService" />
     </bean>
     
     <bean id="PurchasingAccountsPayable-bankCodeValidation" 
