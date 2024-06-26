@@ -35,10 +35,10 @@ public class IWantDocument {
     @XmlElement(name = "collegeLevelOrganization", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String collegeLevelOrganization;
 
-    @XmlElement(name = "requestorNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "departmentLevelOrganization", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String departmentLevelOrganization;
 
-    @XmlElement(name = "", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "requestorNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String requestorNetID;
 
     @XmlElement(name = "requestorEmailAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
@@ -60,10 +60,10 @@ public class IWantDocument {
     @XmlElement(name = "deliverToEmailAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToEmailAddress;
 
-    @XmlElement(name = "deliverToAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "deliverToPhoneNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToPhoneNumber;
 
-    @XmlElement(name = "", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "deliverToAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToAddress;
 
     @XmlElement(name = "vendorId", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
