@@ -127,7 +127,12 @@ public class CuAssetDepreciationServiceImpl extends AssetDepreciationServiceImpl
                 if (depreciableAssetsCollection != null && !depreciableAssetsCollection.isEmpty()) {
                     SortedMap<String, AssetDepreciationTransaction> depreciationTransactions = this.calculateDepreciation(fiscalYear, fiscalMonth,
                             depreciableAssetsCollection, depreciationDate, assetObjectCodes);
-                    processGeneralLedgerPendingEntry(fiscalYear, fiscalMonth, documentNos, depreciationTransactions);
+                    processGeneralLedgerPendingEntry(
+                            fiscalYear, 
+                            fiscalMonth, 
+                            documentNos, 
+                            depreciationTransactions,
+                            universityDate);
                 } else {
                     throw new IllegalStateException(
                             kualiConfigurationService.getPropertyValueAsString(CamsKeyConstants.Depreciation.NO_ELIGIBLE_FOR_DEPRECIATION_ASSETS_FOUND));

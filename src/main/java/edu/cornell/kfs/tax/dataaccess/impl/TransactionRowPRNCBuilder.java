@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -278,7 +279,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
                     initiatorPrincipalId = document.getInitiatorPrincipalId();
                     documentStatus = document.getStatus();
                     if (document.getDateFinalized() != null) {
-                        dateFinalized = new java.sql.Date(document.getDateFinalized().getMillis());
+                        dateFinalized = new java.sql.Date(document.getDateFinalized().getLong(ChronoField.MILLI_OF_DAY));
                     }
                 }
                 

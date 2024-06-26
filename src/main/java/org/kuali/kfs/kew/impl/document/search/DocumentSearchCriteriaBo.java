@@ -32,6 +32,7 @@ import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import java.sql.Timestamp;
+import java.time.temporal.ChronoField;
 
 /**
  * ====
@@ -320,7 +321,7 @@ public class DocumentSearchCriteriaBo implements BusinessObject {
         title = document.getTitle();
         initiatorPrincipalName = principalIdToName(document.getInitiatorPrincipalId());
         initiatorPrincipalId = document.getInitiatorPrincipalId();
-        dateCreated = new Timestamp(document.getDateCreated().getMillis());
+        dateCreated = new Timestamp(document.getDateCreated().getLong(ChronoField.MILLI_OF_DAY));
     }
 
     /**

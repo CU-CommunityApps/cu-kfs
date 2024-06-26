@@ -23,11 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.kuali.kfs.core.api.cache.CacheKeyUtils;
 import org.kuali.kfs.core.api.criteria.GenericQueryResults;
 import org.kuali.kfs.core.api.criteria.LookupCustomizer;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.delegation.DelegationType;
 import org.kuali.kfs.core.api.membership.MemberType;
 import org.kuali.kfs.kim.api.KimConstants;
@@ -87,6 +87,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
     private RoleService proxiedRoleService;
     private CacheManager cacheManager;
     private PersonService personService;
+    private DateTimeService dateTimeService;
 
     private KimTypeInfoService kimTypeInfoService;
 
@@ -994,7 +995,8 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
                 final DelegationTypeService delegationTypeService = getDelegationTypeService(delegation.getDelegationId());
                 for (final DelegateMember delegationMember : delegation.getMembers()) {
                     // Make sure that the delegation member is active
-                    if (delegationMember.isActive(DateTime.now()) && (delegationTypeService == null ||
+                    if (delegationMember.isActive(dateTimeService.getLocalDateTimeNow()) &&
+                        (delegationTypeService == null ||
                             delegationTypeService.doesDelegationQualifierMatchQualification(qualification,
                                     delegationMember.getQualifier()))) {
                         // if the member has no role member id, check qualifications and apply to all matching role
@@ -1424,9 +1426,9 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         }
 
         // Build a map from a role ID to the delegations for that role ID
-        Map<String, List<DelegateType>> roleToDelegations = new HashMap<>();
-        for (DelegateType delegation : delegations.values()) {
-            List<DelegateType> roleDelegations =
+        final Map<String, List<DelegateType>> roleToDelegations = new HashMap<>();
+        for (final DelegateType delegation : delegations.values()) {
+            final List<DelegateType> roleDelegations =
                     roleToDelegations.computeIfAbsent(delegation.getRoleId(), k -> new ArrayList<>());
             roleDelegations.add(delegation);
         }
@@ -2501,6 +2503,10 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
 
     public void setPersonService(final PersonService personService) {
         this.personService = personService;
+    }
+
+    public void setDateTimeService(final DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
     }
 
     /**
