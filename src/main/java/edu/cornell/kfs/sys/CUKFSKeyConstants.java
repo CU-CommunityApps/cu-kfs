@@ -257,7 +257,4 @@ public class CUKFSKeyConstants {
     public static final String ACTIVE_MAP_ERROR_COUNTRY_DOES_NOT_EXIST = "active.map.error.country.does.not.exist";
     public static final String NAME_NOT_FOUND_FOR_COUNTRY_CODE = "name.not.found.for.country.code";
     public static final String NULL_OR_BLANK_CODE_PARAMETER = "null.or.blank.code.parameter";
-    
-    //CU customization: Added blacklist attachment processing
-    public static final String ERROR_UPLOADFILE_EXTENSION = "error.uploadFile.extension";
 }
