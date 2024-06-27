@@ -25,5 +25,37 @@ public class IWantXmlConstants {
         }
 
     }
+    
+    @XmlType(name = "indicatorType", namespace = "http://www.kuali.org/kfs/sys/types")
+    @XmlEnum
+    public enum IWantIndicatorTypeXml {
+
+        Y, N;
+
+        public String value() {
+            return name();
+        }
+
+        public static IWantIndicatorTypeXml fromValue(String v) {
+            return valueOf(v);
+        }
+
+    }
+    
+    @XmlType(name = "debitCreditCodeType", namespace = "http://www.kuali.org/kfs/sys/types")
+    @XmlEnum
+    public enum IWantDebitCreditCodeTypeXml {
+
+        D, C;
+
+        public String value() {
+            return name();
+        }
+
+        public static IWantDebitCreditCodeTypeXml fromValue(String v) {
+            return valueOf(v);
+        }
+
+    }
 
 }

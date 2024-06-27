@@ -96,14 +96,14 @@ public class TestIWantXmlObjects {
         doc.setDeliverToNetID("ccs1");
         doc.setDeliverToPhoneNumber("607-255-9900");
         doc.setDepartmentLevelOrganization("department org");
-        doc.setGoods(IWantIndicatorTypeXml.Y);
+        doc.setGoods(IWantXmlConstants.IWantIndicatorTypeXml.Y);
         doc.setInitiator("ccs1");
         doc.setRequestorAddress("req address");
         doc.setRequestorEmailAddress("jdh34@cornell.edu");
         doc.setRequestorNetID("jdh34");
         doc.setRequestorPhoneNumber("6072559900");
-        doc.setSameAsRequestor(IWantIndicatorTypeXml.N);
-        doc.setServicePerformedOnCampus(IWantIndicatorTypeXml.Y);
+        doc.setSameAsRequestor(IWantXmlConstants.IWantIndicatorTypeXml.N);
+        doc.setServicePerformedOnCampus(IWantXmlConstants.IWantIndicatorTypeXml.Y);
         doc.setSourceNumber("source number");
         doc.setVendorDescription("vendor description");
         doc.setVendorId("vendor id");

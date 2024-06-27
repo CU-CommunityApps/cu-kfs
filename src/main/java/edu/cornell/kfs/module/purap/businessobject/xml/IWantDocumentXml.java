@@ -52,7 +52,7 @@ public class IWantDocumentXml {
 
     @XmlElement(name = "sameAsRequestor", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
-    private IWantIndicatorTypeXml sameAsRequestor;
+    private IWantXmlConstants.IWantIndicatorTypeXml sameAsRequestor;
 
     @XmlElement(name = "deliverToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String deliverToNetID;
@@ -89,11 +89,11 @@ public class IWantDocumentXml {
 
     @XmlElement(name = "goods", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
-    private IWantIndicatorTypeXml goods;
+    private IWantXmlConstants.IWantIndicatorTypeXml goods;
 
     @XmlElement(name = "servicePerformedOnCampus", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
-    private IWantIndicatorTypeXml servicePerformedOnCampus;
+    private IWantXmlConstants.IWantIndicatorTypeXml servicePerformedOnCampus;
 
     @XmlElement(name = "adHocRouteToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String adHocRouteToNetID;
@@ -176,11 +176,11 @@ public class IWantDocumentXml {
         this.requestorAddress = requestorAddress;
     }
 
-    public IWantIndicatorTypeXml getSameAsRequestor() {
+    public IWantXmlConstants.IWantIndicatorTypeXml getSameAsRequestor() {
         return sameAsRequestor;
     }
 
-    public void setSameAsRequestor(IWantIndicatorTypeXml sameAsRequestor) {
+    public void setSameAsRequestor(IWantXmlConstants.IWantIndicatorTypeXml sameAsRequestor) {
         this.sameAsRequestor = sameAsRequestor;
     }
 
@@ -256,19 +256,19 @@ public class IWantDocumentXml {
         this.commentsAndSpecialInstructions = commentsAndSpecialInstructions;
     }
 
-    public IWantIndicatorTypeXml getGoods() {
+    public IWantXmlConstants.IWantIndicatorTypeXml getGoods() {
         return goods;
     }
 
-    public void setGoods(IWantIndicatorTypeXml goods) {
+    public void setGoods(IWantXmlConstants.IWantIndicatorTypeXml goods) {
         this.goods = goods;
     }
 
-    public IWantIndicatorTypeXml getServicePerformedOnCampus() {
+    public IWantXmlConstants.IWantIndicatorTypeXml getServicePerformedOnCampus() {
         return servicePerformedOnCampus;
     }
 
-    public void setServicePerformedOnCampus(IWantIndicatorTypeXml servicePerformedOnCampus) {
+    public void setServicePerformedOnCampus(IWantXmlConstants.IWantIndicatorTypeXml servicePerformedOnCampus) {
         this.servicePerformedOnCampus = servicePerformedOnCampus;
     }
 
