@@ -125,7 +125,7 @@ public class TestIWantXmlObjects {
         account.setOrganizationReferenceId("reference id");
         account.setProjectCode("project code");
         account.setSubAccountNumber("sub account");
-        account.setUseAmountOrPercent(IWantAmountOrPercentTypeXml.A);
+        account.setUseAmountOrPercent(IWantXmlConstants.IWantAmountOrPercentTypeXml.A);
         return account;
     }
     

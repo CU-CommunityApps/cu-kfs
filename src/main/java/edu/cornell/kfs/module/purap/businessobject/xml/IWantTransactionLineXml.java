@@ -44,7 +44,7 @@ public class IWantTransactionLineXml {
 
     @XmlElement(name = "useAmountOrPercent", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
-    private IWantAmountOrPercentTypeXml useAmountOrPercent;
+    private IWantXmlConstants.IWantAmountOrPercentTypeXml useAmountOrPercent;
 
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
@@ -110,11 +110,11 @@ public class IWantTransactionLineXml {
         this.amountOrPercent = amountOrPercent;
     }
 
-    public IWantAmountOrPercentTypeXml getUseAmountOrPercent() {
+    public IWantXmlConstants.IWantAmountOrPercentTypeXml getUseAmountOrPercent() {
         return useAmountOrPercent;
     }
 
-    public void setUseAmountOrPercent(IWantAmountOrPercentTypeXml useAmountOrPercent) {
+    public void setUseAmountOrPercent(IWantXmlConstants.IWantAmountOrPercentTypeXml useAmountOrPercent) {
         this.useAmountOrPercent = useAmountOrPercent;
     }
 
