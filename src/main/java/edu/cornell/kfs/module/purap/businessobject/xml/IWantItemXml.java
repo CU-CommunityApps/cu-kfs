@@ -15,7 +15,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = { "itemUnitOfMeasureCode", "itemCatalogNumber", "itemDescription", "itemUnitPrice",
         "purchasingCommodityCode", "itemQuantity" })
 @XmlRootElement(name = "item", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-public class Item {
+public class IWantItemXml {
 
     @XmlElement(name = "itemUnitOfMeasureCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String itemUnitOfMeasureCode;

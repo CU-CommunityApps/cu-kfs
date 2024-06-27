@@ -19,14 +19,14 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "iWantDocuments" })
 @XmlRootElement(name = "i_want_doc_file", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-public class IWantDocFile implements XmlFragmentable{
+public class IWantDocumentWrapperXml implements XmlFragmentable{
 
     @XmlElement(name = "iWantDocument", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
-    private List<IWantDocument> iWantDocuments;
+    private List<IWantDocumentXml> iWantDocuments;
 
-    public List<IWantDocument> getiWantDocuments() {
+    public List<IWantDocumentXml> getiWantDocuments() {
         if (iWantDocuments == null) {
-            iWantDocuments = new ArrayList<IWantDocument>();
+            iWantDocuments = new ArrayList<IWantDocumentXml>();
         }
         return iWantDocuments;
     }

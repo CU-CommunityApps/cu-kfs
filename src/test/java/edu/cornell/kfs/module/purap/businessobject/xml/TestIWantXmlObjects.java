@@ -21,7 +21,7 @@ import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
-public class TestIWantDocFile {
+public class TestIWantXmlObjects {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/businessobject/xml/";
@@ -52,7 +52,7 @@ public class TestIWantDocFile {
     @Test
     public void testMaximoExample() throws JAXBException, IOException {
         File maximoFile = new File(INPUT_FILE_PATH + MAXIMO_INPUT_FILE_NAME);
-        IWantDocFile iWantDocFile = marshalservice.unmarshalFile(maximoFile, IWantDocFile.class);
+        IWantDocumentWrapperXml iWantDocFile = marshalservice.unmarshalFile(maximoFile, IWantDocumentWrapperXml.class);
         LOG.info("testMaximoExample, iWantDocFile: " + iWantDocFile.toString());
         String outputFileName = OUTPUT_FILE_PATH + MAXIMO_OUTPUT_FILE_NAME;
         marshalservice.marshalObjectToXMLFragment(iWantDocFile, outputFileName);
@@ -66,7 +66,7 @@ public class TestIWantDocFile {
     public void testIwantDocFromObject() throws JAXBException, IOException {
         File iwantExampleFile = new File(INPUT_FILE_PATH + IWANT_INPUT_FILE_NAME);
         
-        IWantDocFile docFile = buildIWantDocFile();
+        IWantDocumentWrapperXml docFile = buildIWantDocFile();
         LOG.info("testIwantDocFromObject. docFile : " + docFile.toString());
         
         String outputFileName = OUTPUT_FILE_PATH + IWANT_OUTPUT_FILE_NAME;
@@ -78,14 +78,14 @@ public class TestIWantDocFile {
         
     }
     
-    private IWantDocFile buildIWantDocFile() {
-        IWantDocFile file = new IWantDocFile();
+    private IWantDocumentWrapperXml buildIWantDocFile() {
+        IWantDocumentWrapperXml file = new IWantDocumentWrapperXml();
         file.getiWantDocuments().add(buildIWantDocument());
         return file;
     }
     
-    private IWantDocument buildIWantDocument() {
-        IWantDocument doc = new IWantDocument();
+    private IWantDocumentXml buildIWantDocument() {
+        IWantDocumentXml doc = new IWantDocumentXml();
         doc.setAccountDescriptionTxt("account description");
         doc.setAdHocRouteToNetID("se12");
         doc.setBusinessPurpose("business purpose");
@@ -96,14 +96,14 @@ public class TestIWantDocFile {
         doc.setDeliverToNetID("ccs1");
         doc.setDeliverToPhoneNumber("607-255-9900");
         doc.setDepartmentLevelOrganization("department org");
-        doc.setGoods(IndicatorType.Y);
+        doc.setGoods(IWantIndicatorTypeXml.Y);
         doc.setInitiator("ccs1");
         doc.setRequestorAddress("req address");
         doc.setRequestorEmailAddress("jdh34@cornell.edu");
         doc.setRequestorNetID("jdh34");
         doc.setRequestorPhoneNumber("6072559900");
-        doc.setSameAsRequestor(IndicatorType.N);
-        doc.setServicePerformedOnCampus(IndicatorType.Y);
+        doc.setSameAsRequestor(IWantIndicatorTypeXml.N);
+        doc.setServicePerformedOnCampus(IWantIndicatorTypeXml.Y);
         doc.setSourceNumber("source number");
         doc.setVendorDescription("vendor description");
         doc.setVendorId("vendor id");
@@ -115,8 +115,8 @@ public class TestIWantDocFile {
         return doc;
     }
     
-    private Account buildAccount() {
-        Account account = new Account();
+    private IWantTransactionLineXml buildAccount() {
+        IWantTransactionLineXml account = new IWantTransactionLineXml();
         account.setAccountNumber("account");
         account.setAmountOrPercent(BigDecimal.valueOf(666.66));
         account.setChartOfAccountsCode("chart");
@@ -125,20 +125,20 @@ public class TestIWantDocFile {
         account.setOrganizationReferenceId("reference id");
         account.setProjectCode("project code");
         account.setSubAccountNumber("sub account");
-        account.setUseAmountOrPercent(AmountOrPercentType.A);
+        account.setUseAmountOrPercent(IWantAmountOrPercentTypeXml.A);
         return account;
     }
     
-    private Attachment buildAttachment() {
-        Attachment attach = new Attachment();
+    private IWantAttachmentXml buildAttachment() {
+        IWantAttachmentXml attach = new IWantAttachmentXml();
         attach.setAttachmentType("attachment type");
         attach.setFileName("file name");
         attach.setMimeTypeCode("mime type");
         return attach;
     }
     
-    private Item buildItem() {
-        Item item = new Item();
+    private IWantItemXml buildItem() {
+        IWantItemXml item = new IWantItemXml();
         item.setItemCatalogNumber("cat number");
         item.setItemDescription("item description");
         item.setItemQuantity(BigDecimal.valueOf(2.0));
@@ -148,8 +148,8 @@ public class TestIWantDocFile {
         return item;
     }
     
-    private Note buildNote() {
-        Note note = new Note();
+    private IWantNoteXml buildNote() {
+        IWantNoteXml note = new IWantNoteXml();
         note.setNoteText("note text");
         return note;
     }

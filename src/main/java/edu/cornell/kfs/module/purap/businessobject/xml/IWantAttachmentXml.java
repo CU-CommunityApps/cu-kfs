@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "mimeTypeCode", "fileName", "attachmentType" })
 @XmlRootElement(name = "attachment", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-public class Attachment {
+public class IWantAttachmentXml {
 
     @XmlElement(name = "mimeTypeCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String mimeTypeCode;

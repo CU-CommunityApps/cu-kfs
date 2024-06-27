@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "noteText" })
 @XmlRootElement(name = "note", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-public class Note {
+public class IWantNoteXml {
 
     @XmlElement(name = "noteText", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String noteText;

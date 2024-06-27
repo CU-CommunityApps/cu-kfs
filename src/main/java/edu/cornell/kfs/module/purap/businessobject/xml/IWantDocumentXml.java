@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlType;
         "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus", "adHocRouteToNetID", "notes",
         "attachments" })
 @XmlRootElement(name = "iWantDocument", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-public class IWantDocument {
+public class IWantDocumentXml {
 
     @XmlElement(name = "initiator", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
     private String initiator;
@@ -52,7 +52,7 @@ public class IWantDocument {
 
     @XmlElement(name = "sameAsRequestor", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private IndicatorType sameAsRequestor;
+    private IWantIndicatorTypeXml sameAsRequestor;
 
     @XmlElement(name = "deliverToNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String deliverToNetID;
@@ -76,10 +76,10 @@ public class IWantDocument {
     private String vendorDescription;
 
     @XmlElement(name = "item", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-    private List<Item> items;
+    private List<IWantItemXml> items;
 
     @XmlElement(name = "account", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-    private List<Account> accounts;
+    private List<IWantTransactionLineXml> accounts;
 
     @XmlElement(name = "accountDescriptionTxt", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String accountDescriptionTxt;
@@ -89,20 +89,20 @@ public class IWantDocument {
 
     @XmlElement(name = "goods", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private IndicatorType goods;
+    private IWantIndicatorTypeXml goods;
 
     @XmlElement(name = "servicePerformedOnCampus", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private IndicatorType servicePerformedOnCampus;
+    private IWantIndicatorTypeXml servicePerformedOnCampus;
 
     @XmlElement(name = "adHocRouteToNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String adHocRouteToNetID;
 
     @XmlElement(name = "note", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-    private List<Note> notes;
+    private List<IWantNoteXml> notes;
 
     @XmlElement(name = "attachment", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-    private List<Attachment> attachments;
+    private List<IWantAttachmentXml> attachments;
 
     public String getInitiator() {
         return initiator;
@@ -176,11 +176,11 @@ public class IWantDocument {
         this.requestorAddress = requestorAddress;
     }
 
-    public IndicatorType getSameAsRequestor() {
+    public IWantIndicatorTypeXml getSameAsRequestor() {
         return sameAsRequestor;
     }
 
-    public void setSameAsRequestor(IndicatorType sameAsRequestor) {
+    public void setSameAsRequestor(IWantIndicatorTypeXml sameAsRequestor) {
         this.sameAsRequestor = sameAsRequestor;
     }
 
@@ -256,19 +256,19 @@ public class IWantDocument {
         this.commentsAndSpecialInstructions = commentsAndSpecialInstructions;
     }
 
-    public IndicatorType getGoods() {
+    public IWantIndicatorTypeXml getGoods() {
         return goods;
     }
 
-    public void setGoods(IndicatorType goods) {
+    public void setGoods(IWantIndicatorTypeXml goods) {
         this.goods = goods;
     }
 
-    public IndicatorType getServicePerformedOnCampus() {
+    public IWantIndicatorTypeXml getServicePerformedOnCampus() {
         return servicePerformedOnCampus;
     }
 
-    public void setServicePerformedOnCampus(IndicatorType servicePerformedOnCampus) {
+    public void setServicePerformedOnCampus(IWantIndicatorTypeXml servicePerformedOnCampus) {
         this.servicePerformedOnCampus = servicePerformedOnCampus;
     }
 
@@ -280,30 +280,30 @@ public class IWantDocument {
         this.adHocRouteToNetID = adHocRouteToNetID;
     }
 
-    public List<Item> getItems() {
+    public List<IWantItemXml> getItems() {
         if (items == null) {
-            items = new ArrayList<Item>();
+            items = new ArrayList<IWantItemXml>();
         }
         return items;
     }
 
-    public List<Account> getAccounts() {
+    public List<IWantTransactionLineXml> getAccounts() {
         if (accounts == null) {
-            accounts = new ArrayList<Account>();
+            accounts = new ArrayList<IWantTransactionLineXml>();
         }
         return accounts;
     }
 
-    public List<Note> getNotes() {
+    public List<IWantNoteXml> getNotes() {
         if (notes == null) {
-            notes = new ArrayList<Note>();
+            notes = new ArrayList<IWantNoteXml>();
         }
         return notes;
     }
 
-    public List<Attachment> getAttachments() {
+    public List<IWantAttachmentXml> getAttachments() {
         if (attachments == null) {
-            attachments = new ArrayList<Attachment>();
+            attachments = new ArrayList<IWantAttachmentXml>();
         }
         return attachments;
     }

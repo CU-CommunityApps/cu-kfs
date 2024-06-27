@@ -5,7 +5,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "amountOrPercentType", namespace = "http://www.kuali.org/kfs/purap/types")
 @XmlEnum
-public enum AmountOrPercentType {
+public enum IWantAmountOrPercentTypeXml {
 
     A, P;
 
@@ -13,7 +13,7 @@ public enum AmountOrPercentType {
         return name();
     }
 
-    public static AmountOrPercentType fromValue(String v) {
+    public static IWantAmountOrPercentTypeXml fromValue(String v) {
         return valueOf(v);
     }
 

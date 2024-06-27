@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = { "chartOfAccountsCode", "accountNumber", "financialObjectCode", "subAccountNumber",
         "financialSubObjectCode", "projectCode", "organizationReferenceId", "amountOrPercent", "useAmountOrPercent" })
 @XmlRootElement(name = "account", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
-public class Account {
+public class IWantTransactionLineXml {
 
     @XmlElement(name = "chartOfAccountsCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     private String chartOfAccountsCode;
@@ -44,7 +44,7 @@ public class Account {
 
     @XmlElement(name = "useAmountOrPercent", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
     @XmlSchemaType(name = "string")
-    private AmountOrPercentType useAmountOrPercent;
+    private IWantAmountOrPercentTypeXml useAmountOrPercent;
 
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
@@ -110,11 +110,11 @@ public class Account {
         this.amountOrPercent = amountOrPercent;
     }
 
-    public AmountOrPercentType getUseAmountOrPercent() {
+    public IWantAmountOrPercentTypeXml getUseAmountOrPercent() {
         return useAmountOrPercent;
     }
 
-    public void setUseAmountOrPercent(AmountOrPercentType useAmountOrPercent) {
+    public void setUseAmountOrPercent(IWantAmountOrPercentTypeXml useAmountOrPercent) {
         this.useAmountOrPercent = useAmountOrPercent;
     }
 
