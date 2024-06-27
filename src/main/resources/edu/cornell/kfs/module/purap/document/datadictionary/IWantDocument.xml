@@ -914,10 +914,10 @@
     	<bean id="yesNoValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder"/>
     
-    <bean id="grl.iWantDocumentService" p:serviceName="iWantDocumentService" parent="grlBeanImporter"/>
+    <bean id="iWantDocumentService" p:serviceName="iWantDocumentService" parent="grlBeanImporter"/>
     <bean id="collegeLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.CollegeLevelOrganizationValuesFinder"
-          p:iWantDocumentService-ref="grl.iWantDocumentService"/>
+          p:iWantDocumentService-ref="iWantDocumentService"/>
     
     <bean id="departmentLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.DepartmentLevelOrganizationValuesFinder"/>

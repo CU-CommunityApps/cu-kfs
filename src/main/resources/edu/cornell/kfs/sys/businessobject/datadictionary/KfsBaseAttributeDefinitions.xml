@@ -6,12 +6,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
                 
-	<bean id="grl.financialSystemUserService" p:serviceName="financialSystemUserService" parent="grlBeanImporter"/>
+	<bean id="financialSystemUserService" p:serviceName="financialSystemUserService" parent="grlBeanImporter"/>
 	
 	<bean id="simpleChartValuesFinder" class="edu.cornell.kfs.coa.businessobject.options.CuSimpleChartValuesFinder"
-		p:parameterService-ref="grl.parameterService"
+		p:parameterService-ref="parameterService"
 		p:keyValuesService-ref="keyValuesService"
-		p:financialSystemUserService-ref="grl.financialSystemUserService"/>
+		p:financialSystemUserService-ref="financialSystemUserService"/>
 	
 	<!-- Temporary alias to allow legacy Struts pages to work properly, due to class change in bean override above. -->
 	<alias name="simpleChartValuesFinder" alias="cuSimpleChartValuesFinder"/>

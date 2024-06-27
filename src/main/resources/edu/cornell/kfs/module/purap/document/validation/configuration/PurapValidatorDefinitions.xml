@@ -49,7 +49,7 @@
     <bean id="Purchasing-commodityCodeValidation" scope="prototype"
     	class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingCommodityCodeValidation"
     	abstract="false" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
-    	p:businessObjectService-ref="businessObjectService" p:parameterService-ref="grl.parameterService"/>
+    	p:businessObjectService-ref="businessObjectService" p:parameterService-ref="parameterService"/>
 
     <bean id="Purchasing-newIndividualItemValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PurchasingNewIndividualItemValidation"
@@ -68,7 +68,7 @@
 	<bean id="PurchaseOrder-commodityCodeValidation-parentBean" class="edu.cornell.kfs.module.purap.document.validation.impl.PurchaseOrderCommodityCodeValidation" abstract="true">
 		<property name="businessObjectDictionaryService" ref="businessObjectDictionaryService" />
 		<property name="businessObjectService" ref="businessObjectService" />	
-		<property name="parameterService" ref="grl.parameterService" />	
+		<property name="parameterService" ref="parameterService" />	
 	</bean>
 	
 	<bean id="Purchasing-addItemValidation"
@@ -88,8 +88,8 @@
 	<bean id="Purchasing-processVendorValidation"
           class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingProcessVendorValidation"
           abstract="true" p:businessObjectDictionaryService-ref="businessObjectDictionaryService"
-          p:businessObjectService-ref="businessObjectService" p:dateTimeService-ref="grl.dateTimeService"
-          p:vendorService-ref="vendorService" p:parameterService-ref="grl.parameterService"
+          p:businessObjectService-ref="businessObjectService" p:dateTimeService-ref="dateTimeService"
+          p:vendorService-ref="vendorService" p:parameterService-ref="parameterService"
           p:postalCodeValidationService-ref="postalCodeValidationService"
           p:purchaseOrderTransmissionMethodDataRulesService-ref="purchaseOrderTransmissionMethodDataRulesService"
           p:financialSystemWorkflowHelperService-ref="financialSystemWorkflowHelperService"/>
@@ -100,13 +100,13 @@
 
 	<bean id="PaymentRequest-totalsValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestTotalsValidation" abstract="true"/>
 	<bean id="PaymentRequest-processItemValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestProcessItemValidation" abstract="true"
-		p:purapService-ref="purapService" p:parameterService-ref="grl.parameterService"
+		p:purapService-ref="purapService" p:parameterService-ref="parameterService"
 	    p:reviewAccountingLineValidation-ref="PaymentRequest-reviewAccountingLine" />		
     <bean id="PaymentRequest-lineItemQuantityNotZero" class="edu.cornell.kfs.module.purap.document.validation.impl.CuLineItemQuantityNotZero" abstract="true" />
     
     <bean id="PurchasingAccountsPayable-objectCodeOverrideBranchingValidation" 
           class="edu.cornell.kfs.module.purap.document.validation.impl.CuPurchasingAccountsPayableObjectCodeOverrideBranchingValidation"          
-          abstract="true" p:parameterService-ref="grl.parameterService" p:responsibleProperty="financialObjectCode"
+          abstract="true" p:parameterService-ref="parameterService" p:responsibleProperty="financialObjectCode"
           p:propertyPath="financialObjectCode" p:parameterToCheckAgainst="OBJECT_CODES_OVERRIDING_RESTRICTIONS"
           p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
