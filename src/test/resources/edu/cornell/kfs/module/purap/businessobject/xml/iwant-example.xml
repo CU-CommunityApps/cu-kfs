@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<i_want_doc_file xsi:schemaLocation="http://www.kuali.org/kfs/purap/iWantDocument iWantDocument.xsd" xmlns="http://www.kuali.org/kfs/purap/iWantDocument" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <iWantDocument>
+        <initiator>ccs1</initiator>
+        <sourceNumber>source number</sourceNumber>
+        <businessPurpose>business purpose</businessPurpose>
+        <collegeLevelOrganization>college org</collegeLevelOrganization>
+        <departmentLevelOrganization>department org</departmentLevelOrganization>
+        <requestorNetID>jdh34</requestorNetID>
+        <requestorEmailAddress>jdh34@cornell.edu</requestorEmailAddress>
+        <requestorPhoneNumber>6072559900</requestorPhoneNumber>
+        <requestorAddress>req address</requestorAddress>
+        <sameAsRequestor>N</sameAsRequestor>
+        <deliverToNetID>ccs1</deliverToNetID>
+        <deliverToEmailAddress>ccs1@cornell.edu</deliverToEmailAddress>
+        <deliverToPhoneNumber>607-255-9900</deliverToPhoneNumber>
+        <deliverToAddress>deliver address</deliverToAddress>
+        <vendorId>vendor id</vendorId>
+        <vendorName>vendor name</vendorName>
+        <vendorDescription>vendor description</vendorDescription>
+        <item>
+            <itemUnitOfMeasureCode>unit of measure</itemUnitOfMeasureCode>
+            <itemCatalogNumber>cat number</itemCatalogNumber>
+            <itemDescription>item description</itemDescription>
+            <itemUnitPrice>5.29</itemUnitPrice>
+            <purchasingCommodityCode>code</purchasingCommodityCode>
+            <itemQuantity>2.0</itemQuantity>
+        </item>
+        <account>
+            <chartOfAccountsCode>chart</chartOfAccountsCode>
+            <accountNumber>account</accountNumber>
+            <financialObjectCode>object code</financialObjectCode>
+            <subAccountNumber>sub account</subAccountNumber>
+            <financialSubObjectCode>sub object code</financialSubObjectCode>
+            <projectCode>project code</projectCode>
+            <organizationReferenceId>reference id</organizationReferenceId>
+            <amountOrPercent>666.66</amountOrPercent>
+            <useAmountOrPercent>A</useAmountOrPercent>
+        </account>
+        <accountDescriptionTxt>account description</accountDescriptionTxt>
+        <commentsAndSpecialInstructions>special instructions</commentsAndSpecialInstructions>
+        <goods>Y</goods>
+        <servicePerformedOnCampus>Y</servicePerformedOnCampus>
+        <adHocRouteToNetID>se12</adHocRouteToNetID>
+        <note>
+            <noteText>note text</noteText>
+        </note>
+        <attachment>
+            <mimeTypeCode>mime type</mimeTypeCode>
+            <fileName>file name</fileName>
+            <attachmentType>attachment type</attachmentType>
+        </attachment>
+    </iWantDocument>
+</i_want_doc_file>

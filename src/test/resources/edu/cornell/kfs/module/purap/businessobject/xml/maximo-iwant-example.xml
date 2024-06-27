@@ -6,11 +6,12 @@
     <iWantDocument>
         <initiator>ccs1</initiator>
         <sourceNumber>266504</sourceNumber>
-        <businessPurpose>Commencement 5/25/24 Schoellkopf Field</businessPurpose>
+        <businessPurpose>Commencement 5/25/24 Schoellkopf Field
+        </businessPurpose>
         <collegeLevelOrganization>IT-5700</collegeLevelOrganization>
         <departmentLevelOrganization />
         <sameAsRequestor>N</sameAsRequestor>
-        <deliverToNetID>ccs1</deliverToNetID>
+        <deliverToNetID>jh252</deliverToNetID>
         <deliverToEmailAddress>ccs1@cornell.edu
         </deliverToEmailAddress>
         <deliverToPhoneNumber />
@@ -18,7 +19,8 @@
 
             Ithaca
             NY
-            14850-4825</deliverToAddress>
+            14850-4825
+        </deliverToAddress>
         <vendorId />
         <vendorName>Rentals To Go</vendorName>
         <vendorDescription>6108 County Road 32
@@ -26,12 +28,14 @@
             NY
             13815
             Phone:877-929-1919
-            Fax:</vendorDescription>
+            Fax:
+        </vendorDescription>
         <item>
             <itemUnitOfMeasureCode>EA</itemUnitOfMeasureCode>
             <itemCatalogNumber />
             <itemDescription>Proposal 1124 4/30/24 - ***NEW POLICY
-                ALERT: 50% DEPOSIT REQUIRED UPON ACCEPTANCE OF PROPOSAL</itemDescription>
+                ALERT: 50% DEPOSIT REQUIRED UPON ACCEPTANCE OF PROPOSAL
+            </itemDescription>
             <itemUnitPrice>1085.0</itemUnitPrice>
             <purchasingCommodityCode>CODE</purchasingCommodityCode>
             <itemQuantity>1.0</itemQuantity>
@@ -48,7 +52,8 @@
         <item>
             <itemUnitOfMeasureCode>EA</itemUnitOfMeasureCode>
             <itemCatalogNumber />
-            <itemDescription>RENTALS STANDARD PORTABLE TOILETS</itemDescription>
+            <itemDescription>RENTALS STANDARD PORTABLE TOILETS
+            </itemDescription>
             <itemUnitPrice>0.0</itemUnitPrice>
             <purchasingCommodityCode>CODE</purchasingCommodityCode>
             <itemQuantity>12.0</itemQuantity>
