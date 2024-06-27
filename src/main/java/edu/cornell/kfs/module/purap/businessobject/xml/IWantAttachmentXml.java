@@ -11,16 +11,16 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "mimeTypeCode", "fileName", "attachmentType" })
-@XmlRootElement(name = "attachment", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlRootElement(name = "attachment", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantAttachmentXml {
 
-    @XmlElement(name = "mimeTypeCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "mimeTypeCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String mimeTypeCode;
 
-    @XmlElement(name = "fileName", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "fileName", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String fileName;
 
-    @XmlElement(name = "attachmentType", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "attachmentType", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String attachmentType;
 
     public String getMimeTypeCode() {

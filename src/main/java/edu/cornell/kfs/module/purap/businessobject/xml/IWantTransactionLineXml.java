@@ -15,34 +15,34 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "chartOfAccountsCode", "accountNumber", "financialObjectCode", "subAccountNumber",
         "financialSubObjectCode", "projectCode", "organizationReferenceId", "amountOrPercent", "useAmountOrPercent" })
-@XmlRootElement(name = "account", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlRootElement(name = "account", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantTransactionLineXml {
 
-    @XmlElement(name = "chartOfAccountsCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "chartOfAccountsCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String chartOfAccountsCode;
 
-    @XmlElement(name = "accountNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "accountNumber", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String accountNumber;
 
-    @XmlElement(name = "financialObjectCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "financialObjectCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String financialObjectCode;
 
-    @XmlElement(name = "subAccountNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "subAccountNumber", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String subAccountNumber;
 
-    @XmlElement(name = "financialSubObjectCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "financialSubObjectCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String financialSubObjectCode;
 
-    @XmlElement(name = "projectCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "projectCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String projectCode;
 
-    @XmlElement(name = "organizationReferenceId", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "organizationReferenceId", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String organizationReferenceId;
 
-    @XmlElement(name = "amountOrPercent", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "amountOrPercent", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private BigDecimal amountOrPercent;
 
-    @XmlElement(name = "useAmountOrPercent", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "useAmountOrPercent", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
     private IWantAmountOrPercentTypeXml useAmountOrPercent;
 

@@ -20,88 +20,88 @@ import jakarta.xml.bind.annotation.XmlType;
         "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "items", "accounts", "accountDescriptionTxt",
         "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus", "adHocRouteToNetID", "notes",
         "attachments" })
-@XmlRootElement(name = "iWantDocument", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlRootElement(name = "iWantDocument", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantDocumentXml {
 
-    @XmlElement(name = "initiator", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "initiator", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String initiator;
 
-    @XmlElement(name = "sourceNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "sourceNumber", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String sourceNumber;
 
-    @XmlElement(name = "businessPurpose", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "businessPurpose", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String businessPurpose;
 
-    @XmlElement(name = "collegeLevelOrganization", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "collegeLevelOrganization", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String collegeLevelOrganization;
 
-    @XmlElement(name = "departmentLevelOrganization", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "departmentLevelOrganization", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String departmentLevelOrganization;
 
-    @XmlElement(name = "requestorNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "requestorNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String requestorNetID;
 
-    @XmlElement(name = "requestorEmailAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "requestorEmailAddress", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String requestorEmailAddress;
 
-    @XmlElement(name = "requestorPhoneNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "requestorPhoneNumber", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String requestorPhoneNumber;
 
-    @XmlElement(name = "requestorAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "requestorAddress", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String requestorAddress;
 
-    @XmlElement(name = "sameAsRequestor", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "sameAsRequestor", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
     private IWantIndicatorTypeXml sameAsRequestor;
 
-    @XmlElement(name = "deliverToNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "deliverToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String deliverToNetID;
 
-    @XmlElement(name = "deliverToEmailAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "deliverToEmailAddress", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String deliverToEmailAddress;
 
-    @XmlElement(name = "deliverToPhoneNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "deliverToPhoneNumber", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String deliverToPhoneNumber;
 
-    @XmlElement(name = "deliverToAddress", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "deliverToAddress", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String deliverToAddress;
 
-    @XmlElement(name = "vendorId", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "vendorId", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String vendorId;
 
-    @XmlElement(name = "vendorName", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "vendorName", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String vendorName;
 
-    @XmlElement(name = "vendorDescription", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "vendorDescription", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String vendorDescription;
 
-    @XmlElement(name = "item", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "item", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private List<IWantItemXml> items;
 
-    @XmlElement(name = "account", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "account", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private List<IWantTransactionLineXml> accounts;
 
-    @XmlElement(name = "accountDescriptionTxt", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "accountDescriptionTxt", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String accountDescriptionTxt;
 
-    @XmlElement(name = "commentsAndSpecialInstructions", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "commentsAndSpecialInstructions", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String commentsAndSpecialInstructions;
 
-    @XmlElement(name = "goods", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "goods", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
     private IWantIndicatorTypeXml goods;
 
-    @XmlElement(name = "servicePerformedOnCampus", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "servicePerformedOnCampus", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     @XmlSchemaType(name = "string")
     private IWantIndicatorTypeXml servicePerformedOnCampus;
 
-    @XmlElement(name = "adHocRouteToNetID", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "adHocRouteToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String adHocRouteToNetID;
 
-    @XmlElement(name = "note", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "note", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private List<IWantNoteXml> notes;
 
-    @XmlElement(name = "attachment", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "attachment", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private List<IWantAttachmentXml> attachments;
 
     public String getInitiator() {

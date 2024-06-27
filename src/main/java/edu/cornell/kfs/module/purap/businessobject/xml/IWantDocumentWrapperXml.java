@@ -18,10 +18,10 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "iWantDocuments" })
-@XmlRootElement(name = "i_want_doc_file", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlRootElement(name = "i_want_doc_file", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantDocumentWrapperXml implements XmlFragmentable{
 
-    @XmlElement(name = "iWantDocument", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "iWantDocument", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private List<IWantDocumentXml> iWantDocuments;
 
     public List<IWantDocumentXml> getiWantDocuments() {
@@ -39,7 +39,7 @@ public class IWantDocumentWrapperXml implements XmlFragmentable{
 
     @Override
     public String getXmlPrefix() {
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        return IWantXmlConstants.IWANT_XML_WRAPPER_XML_PREFIX;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class IWantDocumentWrapperXml implements XmlFragmentable{
     @Override
     public Map<String, Object> getAdditionalJAXBProperties() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.kuali.org/kfs/purap/iWantDocument iWantDocument.xsd");
+        properties.put(Marshaller.JAXB_SCHEMA_LOCATION, IWantXmlConstants.IWANT_DOCUMENT_SCHEMA_LOCATION);
         return properties;
     }
 

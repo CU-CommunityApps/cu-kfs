@@ -14,25 +14,25 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "itemUnitOfMeasureCode", "itemCatalogNumber", "itemDescription", "itemUnitPrice",
         "purchasingCommodityCode", "itemQuantity" })
-@XmlRootElement(name = "item", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlRootElement(name = "item", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantItemXml {
 
-    @XmlElement(name = "itemUnitOfMeasureCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "itemUnitOfMeasureCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String itemUnitOfMeasureCode;
 
-    @XmlElement(name = "itemCatalogNumber", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "itemCatalogNumber", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String itemCatalogNumber;
 
-    @XmlElement(name = "itemDescription", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "itemDescription", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String itemDescription;
 
-    @XmlElement(name = "itemUnitPrice", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "itemUnitPrice", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private BigDecimal itemUnitPrice;
 
-    @XmlElement(name = "purchasingCommodityCode", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "purchasingCommodityCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String purchasingCommodityCode;
 
-    @XmlElement(name = "itemQuantity", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+    @XmlElement(name = "itemQuantity", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private BigDecimal itemQuantity;
 
     public String getItemUnitOfMeasureCode() {

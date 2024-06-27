@@ -11,10 +11,10 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "noteText" })
-@XmlRootElement(name = "note", namespace = "http://www.kuali.org/kfs/purap/iWantDocument")
+@XmlRootElement(name = "note", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantNoteXml {
 
-    @XmlElement(name = "noteText", namespace = "http://www.kuali.org/kfs/purap/iWantDocument", required = true)
+    @XmlElement(name = "noteText", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private String noteText;
 
     public String getNoteText() {
