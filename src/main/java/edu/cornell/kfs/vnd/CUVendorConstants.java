@@ -83,4 +83,14 @@ public class CUVendorConstants {
         public static final String VNDR_ADDR_INTL_PROV_NM = "VNDR_ADDR_INTL_PROV_NM";
         public static final String VNDR_ZIP_CD = "VNDR_ZIP_CD";
     }
+
+    public static final class VendorOwnershipCodes {
+        public static final String INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC = "ID";
+    }
+
+    public static final String VENDOR_EMPLOYEE_COMPARISON_RESULT_FILE_TYPE_ID = "vendorEmployeeComparisonResult_kfs";
+
+    public static final String EMPLOYEE_COMPARISON_OUTBOUND_FILE_PREFIX = "empl_compare_";
+    public static final String EMPLOYEE_COMPARISON_RESULT_FILE_PREFIX = "empl_result_";
+
 }
