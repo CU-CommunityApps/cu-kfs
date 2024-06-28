@@ -913,8 +913,7 @@
           class="edu.cornell.kfs.module.purap.businessobject.options.OrderCompletedValuesFinder"/>
     	<bean id="yesNoValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder"/>
-    
-    <bean id="iWantDocumentService" p:serviceName="iWantDocumentService" parent="grlBeanImporter"/>
+
     <bean id="collegeLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.CollegeLevelOrganizationValuesFinder"
           p:iWantDocumentService-ref="iWantDocumentService"/>

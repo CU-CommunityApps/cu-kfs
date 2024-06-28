@@ -261,6 +261,75 @@
        </property>
    </bean>
    
+    <bean id="Account-lookupDefinition"
+          parent="Account-lookupDefinition-parentBean"/>
+    <bean abstract="true"
+          id="Account-lookupDefinition-parentBean"
+          parent="Account-lookupDefinition-base-parentBean"/>
+    <bean abstract="true"
+          id="Account-lookupDefinition-base-parentBean"
+          parent="LookupDefinition"
+          p:lookupableID="accountLookupable"
+          p:multipleValuesResultSetLimit="-1"
+          p:title="Account Lookup">
+        <property name="defaultSort">
+            <bean parent="SortDefinition">
+                <property name="attributeNames">
+                    <list>
+                        <value>accountNumber</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="displayAttributeDefinitions">
+            <list>
+                <ref bean="Account-chartOfAccountsCode"/>
+                <ref bean="Account-accountNumber"/>
+                <ref bean="Account-accountName"/>
+                <ref bean="Account-organizationCode"/>
+                <ref bean="Account-responsibilityCenterCode"/>
+                <ref bean="Account-reportsToOrganizationCode"/>
+                <ref bean="Account-accountTypeCode"/>
+                <ref bean="Account-subFundGroup.fundGroupCode"/>
+                <ref bean="Account-extension-programCode"/>
+                <ref bean="Account-extension-appropriationAccountNumber"/>
+                <ref bean="Account-extension-majorReportingCategoryCode"/>
+                <ref bean="Account-subFundGroupCode"/>
+                <ref bean="Account-accountFiscalOfficerUser.name"/>
+                <ref bean="Account-accountManagerUser.name"/>
+                <ref bean="Account-accountSupervisoryUser.name"/>
+                <ref bean="Account-closedInactive"/>
+                <ref bean="Account-accountCreateDate"/>
+                <ref bean="Account-accountExpirationDate"/>
+            </list>
+        </property>
+        <property name="formAttributeDefinitions">
+            <list>
+                <bean parent="Account-chartOfAccountsCode"
+                      p:disableLookup="true"/>
+                <bean parent="Account-accountNumber"
+                      p:disableLookup="true"/>
+                <ref bean="Account-accountName"/>
+                <ref bean="Account-organizationCode"/>
+                <ref bean="Account-responsibilityCenterCode"/>
+                <ref bean="Account-reportsToOrganizationCode"/>
+                <bean parent="Account-reportsToCOACode"
+                      p:disableLookup="true"/>
+                <bean parent="Account-accountTypeCode"
+                      p:disableLookup="true"/>
+                <ref bean="Account-subFundGroup.fundGroupCode"/>
+                <ref bean="Account-extension-programCode"/>
+                <ref bean="Account-extension-appropriationAccountNumber"/>
+                <ref bean="Account-extension-majorReportingCategoryCode"/>
+                <ref bean="Account-subFundGroupCode"/>
+                <ref bean="Account-accountFiscalOfficerUser.principalName" />
+                <ref bean="Account-accountManagerUser.principalName" />
+                <ref bean="Account-accountSupervisoryUser.principalName" />
+                <ref bean="Account-closedInactive"/>
+            </list>
+        </property>
+    </bean>
+   
    	<bean id="Account-inquirySectionDefinition-notes" parent="Account-inquirySectionDefinition-notes-parentBean" />
 	<bean id="Account-inquirySectionDefinition-notes-parentBean"
 		parent="InquirySectionDefinition" abstract="true">
