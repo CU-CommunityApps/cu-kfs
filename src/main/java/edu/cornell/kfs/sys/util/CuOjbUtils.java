@@ -52,7 +52,7 @@ public final class CuOjbUtils {
         }
     }
 
-    public static void closeOJBIteratorQuietly(OJBIterator ojbIterator) {
+    public static void closeOJBIteratorQuietly(final OJBIterator ojbIterator) {
         try {
             if (ojbIterator != null) {
                 ojbIterator.releaseDbResources();
