@@ -1,5 +1,6 @@
 package edu.cornell.kfs.module.ld.identity;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -113,9 +114,9 @@ public class CuContractsAndGrantsResponsibilityPlusPayPeriodRoleTypeServiceImpl 
                 final int FY_OFFSET = 6;
                 
                 // Get the creation date, and calculate its corresponding fiscal year and pay period.
-                DateTime dateCreated = document.getDocumentHeader().getWorkflowDocument().getDateCreated();
+                LocalDateTime dateCreated = document.getDocumentHeader().getWorkflowDocument().getDateCreated();
                 int dateCreatedFiscalYear;
-                int dateCreatedPayPeriod = dateCreated.getMonthOfYear() + FY_OFFSET;
+                int dateCreatedPayPeriod = dateCreated.getMonthValue() + FY_OFFSET;
                 if (dateCreatedPayPeriod > NUM_MONTHS) {
                     dateCreatedPayPeriod -= NUM_MONTHS;
                 }

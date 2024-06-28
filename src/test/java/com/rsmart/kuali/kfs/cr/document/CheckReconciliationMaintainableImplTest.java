@@ -16,10 +16,10 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
 import org.kuali.kfs.kns.maintenance.Maintainable;
 import org.kuali.kfs.kns.maintenance.MaintainableImpl;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
+import org.kuali.kfs.sys.document.FinancialSystemMaintenanceDocument;
 
 import com.rsmart.kuali.kfs.cr.businessobject.CheckReconciliation;
 
@@ -62,7 +62,7 @@ public class CheckReconciliationMaintainableImplTest {
     }
 
     private MaintenanceDocument prepareMaintenanceDocument(String checkNumberString, String startingOrgRefId) {
-        MaintenanceDocument document = new MaintenanceDocumentBase();
+        MaintenanceDocument document = new FinancialSystemMaintenanceDocument();
         DocumentHeader dh = new DocumentHeader();
         dh.setOrganizationDocumentNumber(startingOrgRefId);
         document.setDocumentHeader(dh);

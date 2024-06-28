@@ -120,6 +120,8 @@
 			<link rel="stylesheet" href="${pageContext.request.contextPath}/css/remodal.min.css">
 		</c:if>
 		<kul:analytics />
+		<script src="https://unpkg.com/@reduxjs/toolkit@1.9.3/dist/redux-toolkit.umd.min.js"></script>
+		<script src="${pageContext.request.contextPath}/scripts/redux-shim/redux-shim.js"></script>
 	</head>
 	<c:choose>
 		<c:when test="${lookup}" >

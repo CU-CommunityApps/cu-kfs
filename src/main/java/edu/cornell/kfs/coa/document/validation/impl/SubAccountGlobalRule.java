@@ -733,7 +733,6 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         boolean success = checkCostShareSourceChartAndAccountAreFilledIn(a21SubAccount);
         if (success) {
             success &= checkCgCostSharingRules(subAccountGlobal.getNewSubAccountTypeCode());
-            success &= checkCostShareAccountIsNotForContractsAndGrants(a21SubAccount);
         }
         success &= checkIcrFieldsAreEmptyForCostShareSubAccount(subAccountGlobal);
         return success;
@@ -750,15 +749,6 @@ public class SubAccountGlobalRule extends GlobalIndirectCostRecoveryAccountsRule
         return success;
     }
     
-    protected boolean checkCostShareAccountIsNotForContractsAndGrants(A21SubAccountChange a21SubAccount) {
-        if (accountIsForContractsAndGrants(a21SubAccount)) {
-            putFieldErrorForMessageWithCgDenotingLabelAndValue(
-                    CUKFSPropertyConstants.A21_COST_SHARE_SOURCE_ACCOUNT_NUMBER,
-                    COAKeyConstants.ERROR_DOCUMENT_SUBACCTMAINT_COST_SHARE_ACCOUNT_MAY_NOT_BE_CG_FUND_GROUP);
-            return false;
-        }
-        return true;
-    }
     
     protected boolean checkIcrFieldsAreEmptyForCostShareSubAccount(SubAccountGlobal subAccountGlobal) {
         if (!checkCgIcrIsEmpty() || !subAccountGlobal.getIndirectCostRecoveryAccounts().isEmpty()) {

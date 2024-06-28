@@ -95,20 +95,6 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
     }
 
     /**
-     * Overridden to backport the FINP-9360 changes.
-     * This override (and the setPermissionService() override) can be removed for our 2023-03-08 financials upgrade.
-     */
-    @Override
-    public boolean canModifyPerson(final String currentUserPrincipalId, final String toModifyPrincipalId) {
-        return permissionService.isAuthorized(
-                currentUserPrincipalId,
-                KimConstants.NAMESPACE_CODE,
-                KimConstants.PermissionNames.MODIFY_PERSON,
-                Collections.singletonMap(KimConstants.AttributeConstants.PRINCIPAL_ID, currentUserPrincipalId)
-        );
-    }
-
-    /**
      * Overridden to also handle CU-specific Person fields when adding/updating a Person.
      */
     @CacheEvict(

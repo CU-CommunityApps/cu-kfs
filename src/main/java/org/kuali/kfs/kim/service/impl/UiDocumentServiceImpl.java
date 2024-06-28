@@ -22,7 +22,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.criteria.Predicate;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
@@ -98,7 +97,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.cache.annotation.CacheEvict;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -341,12 +339,10 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                                     && KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.equals(groupMember.getType())) {
                                 docGroup.setGroupMemberId(groupMember.getId());
                                 if (groupMember.getActiveFromDate() != null) {
-                                    docGroup.setActiveFromDate(groupMember.getActiveFromDate() == null ? null :
-                                            new Timestamp(groupMember.getActiveFromDate().getMillis()));
+                                    docGroup.setActiveFromDate(dateTimeService.getTimestamp(groupMember.getActiveFromDate()));
                                 }
                                 if (groupMember.getActiveToDate() != null) {
-                                    docGroup.setActiveToDate(groupMember.getActiveToDate() == null ? null :
-                                            new Timestamp(groupMember.getActiveToDate().getMillis()));
+                                    docGroup.setActiveToDate(dateTimeService.getTimestamp(groupMember.getActiveToDate()));
                                 }
                             }
                         }
@@ -613,7 +609,7 @@ public class UiDocumentServiceImpl implements UiDocumentService {
 
     @Override
     public boolean canModifyPerson(final String currentUserPrincipalId, final String toModifyPrincipalId) {
-        return StringUtils.equals(currentUserPrincipalId, toModifyPrincipalId) || permissionService.isAuthorized(
+        return permissionService.isAuthorized(
                 currentUserPrincipalId,
                 KimConstants.NAMESPACE_CODE,
                 KimConstants.PermissionNames.MODIFY_PERSON,
@@ -719,7 +715,7 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                         Collections.singletonList(group.getGroupId()));
                 if (ObjectUtils.isNotNull(currGroupMembers)) {
                     for (final GroupMember origGroupMember : currGroupMembers) {
-                        if (origGroupMember.isActive(new DateTime(System.currentTimeMillis()))
+                        if (origGroupMember.isActive(dateTimeService.getLocalDateTimeNow())
                                 && KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE.equals(origGroupMember.getType())) {
                             if (origGroupMember.getId() != null
                                     && StringUtils.equals(origGroupMember.getId(), group.getGroupMemberId())) {
@@ -2330,11 +2326,8 @@ public class UiDocumentServiceImpl implements UiDocumentService {
         if (ObjectUtils.isNotNull(members)) {
             for (final GroupMember member : members) {
                 final GroupDocumentMember pndMember = new GroupDocumentMember();
-
-                pndMember.setActiveFromDate(member.getActiveFromDate() == null ? null :
-                        new Timestamp(member.getActiveFromDate().getMillis()));
-                pndMember.setActiveToDate(member.getActiveToDate() == null ? null :
-                        new Timestamp(member.getActiveToDate().getMillis()));
+                pndMember.setActiveFromDate(dateTimeService.getTimestamp(member.getActiveFromDate()));
+                pndMember.setActiveToDate(dateTimeService.getTimestamp(member.getActiveToDate()));
                 pndMember.setGroupMemberId(member.getMemberId());
                 pndMember.setGroupId(member.getGroupId());
                 pndMember.setMemberId(member.getMemberId());

@@ -316,6 +316,6 @@
         
   <bean id="vendorPaymentMethodValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
           
 </beans>

@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
 /**
  * CU Customization:
  * Updated this class to include improved KIM attribute handling.
- * Also backported the FINP-9235 changes into this file.
  */
 abstract class RoleServiceBase {
 

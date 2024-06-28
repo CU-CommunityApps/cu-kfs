@@ -27,5 +27,5 @@
 
     <bean id="paymentMethodsForVendorValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder"
-          p:businessObjectService-ref="grl.businessObjectService"/>
+          p:businessObjectService-ref="businessObjectService"/>
 </beans>

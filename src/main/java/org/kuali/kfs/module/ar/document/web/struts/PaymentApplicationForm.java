@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionMapping;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kim.api.KimConstants;
@@ -89,6 +90,8 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     protected List<NonAppliedHolding> nonAppliedControlHoldings = new ArrayList<>();
     protected Map<String, KualiDecimal> nonAppliedControlAllocations = new HashMap<>();
     protected Map<String, KualiDecimal> distributionsFromControlDocs = new HashMap<>();
+
+    private DateTimeService dateTimeService;
 
     @Override
     public List<ExtraButton> getExtraButtons() {
@@ -729,8 +732,11 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
         final EntryHolderComparator entryHolderComparator = new EntryHolderComparator();
         final List<EntryHolder> entryHoldings = new ArrayList<>();
         for (final NonAppliedHolding nonAppliedControlHolding : nonAppliedControlHoldings) {
-            entryHoldings.add(new EntryHolder(nonAppliedControlHolding.getDocumentHeader().getWorkflowDocument()
-                    .getDateCreated().toDate(), nonAppliedControlHolding));
+            final Date dateCreated = getDateTimeService().getUtilDate(nonAppliedControlHolding
+                    .getDocumentHeader()
+                    .getWorkflowDocument()
+                    .getDateCreated());
+            entryHoldings.add(new EntryHolder(dateCreated, nonAppliedControlHolding));
         }
         if (entryHoldings.size() > 0) {
             entryHoldings.sort(entryHolderComparator);
@@ -825,6 +831,13 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     }
 
     // End CU Customization
+
+    public DateTimeService getDateTimeService() {
+        if (dateTimeService == null) {
+            dateTimeService = SpringContext.getBean(DateTimeService.class);
+        }
+        return dateTimeService;
+    }
 
     /**
      * An inner class to point to a specific entry in a group

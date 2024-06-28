@@ -913,11 +913,10 @@
           class="edu.cornell.kfs.module.purap.businessobject.options.OrderCompletedValuesFinder"/>
     	<bean id="yesNoValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.YesNoValuesFinder"/>
-    
-    <bean id="grl.iWantDocumentService" p:serviceName="iWantDocumentService" parent="grlBeanImporter"/>
+
     <bean id="collegeLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.CollegeLevelOrganizationValuesFinder"
-          p:iWantDocumentService-ref="grl.iWantDocumentService"/>
+          p:iWantDocumentService-ref="iWantDocumentService"/>
     
     <bean id="departmentLevelOrganizationValuesFinder"
           class="edu.cornell.kfs.module.purap.businessobject.options.DepartmentLevelOrganizationValuesFinder"/>
@@ -925,8 +924,8 @@
           class="edu.cornell.kfs.module.purap.businessobject.options.AttachmentDescriptionValuesFinder"/>
     <bean id="favoriteAccountValuesFinder"
           class="edu.cornell.kfs.sys.businessobject.options.FavoriteAccountValuesFinder" 
-          p:businessObjectService-ref="grl.businessObjectService"/>
+          p:businessObjectService-ref="businessObjectService"/>
     <bean id="iWantNoteDropdownValuesFinder" class="edu.cornell.kfs.module.purap.businessobject.options.IWantNoteDropdownValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
           
 </beans>

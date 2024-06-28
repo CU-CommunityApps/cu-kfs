@@ -27,7 +27,7 @@
 
     <bean id="accountReversionCategoryValuesFinder"
           class="edu.cornell.kfs.coa.businessobject.options.ReversionCategoryValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
 
     <bean id="accountReversionCodeValuesFinder"
           class="edu.cornell.kfs.coa.businessobject.options.ReversionCodeValuesFinder"/>

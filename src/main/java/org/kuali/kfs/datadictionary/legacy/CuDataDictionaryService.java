@@ -52,10 +52,6 @@ public class CuDataDictionaryService extends DataDictionaryService {
         super();
     }
 
-    public CuDataDictionaryService(final DataDictionary dataDictionary) {
-        super(dataDictionary);
-    }
-
     @Override
     public void parseDataDictionaryConfigurationFiles() {
         super.parseDataDictionaryConfigurationFiles();

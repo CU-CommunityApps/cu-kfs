@@ -25,6 +25,7 @@
 <c:set var="invoiceGeneralDetailAttributes" value="${DataDictionary.InvoiceGeneralDetail.attributes}" />
 <c:set var="documentAttributes" value="${DataDictionary.ContractsGrantsInvoiceDocument.attributes}" />
 <c:set var="readOnlyForFinal" value="${readOnly or !KualiForm.document.finalizable}" />
+<c:set var="readOnlyForBillignPeriodAdjustment" value="${readOnly or !KualiForm.document.billingPeriodAdjusted}" />
 <c:set var="arDocHeaderAttributes" value="${DataDictionary.AccountsReceivableDocumentHeader.attributes}" />
 <kul:tab tabTitle="General" defaultOpen="true" tabErrorKey="${KFSConstants.CUSTOMER_INVOICE_DOCUMENT_GENERAL_ERRORS}">
     <div class="tab-container" align=center>
@@ -243,7 +244,7 @@
                             <kul:htmlControlAttribute
                                     attributeEntry="${invoiceGeneralDetailAttributes.billingPeriod}"
                                     property="document.invoiceGeneralDetail.billingPeriod"
-                                    readOnly="${readOnly}" />  <!-- CU Customization -->
+                                    readOnly="${readOnlyForBillignPeriodAdjustment}" />
                         </div>
                     </td>
                     <th class="right" style="width: 25%;">

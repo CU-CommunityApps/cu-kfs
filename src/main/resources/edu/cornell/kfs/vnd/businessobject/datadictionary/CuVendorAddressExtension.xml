@@ -61,7 +61,7 @@
                                                                            
   <bean id="purchaseOrderTransmissionMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.PurchaseOrderTransmissionMethodValuesFinder"
-        p:keyValuesService-ref="grl.keyValuesService"/>
+        p:keyValuesService-ref="keyValuesService"/>
 
 
 </beans>

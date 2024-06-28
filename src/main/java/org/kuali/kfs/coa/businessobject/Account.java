@@ -18,6 +18,7 @@
  */
 package org.kuali.kfs.coa.businessobject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import edu.cornell.kfs.coa.service.CuAccountService;
 import org.apache.commons.lang3.StringUtils;
@@ -163,6 +164,7 @@ public class Account extends PersistableBusinessObjectBase implements AccountInt
     protected String laborBenefitRateCategoryCode;
     protected LaborBenefitRateCategory laborBenefitRateCategory;
 
+    @JsonIgnore
     private transient PersonService personService;
 
     public Account() {
