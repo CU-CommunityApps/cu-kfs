@@ -16,6 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantAttachmentFixture;
+import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantDocumentFixture;
+import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantItemFixture;
+import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantNoteFixture;
+import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantTransactionLineFixture;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
@@ -85,73 +90,29 @@ public class TestIWantXmlObjects {
     }
     
     private IWantDocumentXml buildIWantDocument() {
-        IWantDocumentXml doc = new IWantDocumentXml();
-        doc.setAccountDescriptionTxt("account description");
-        doc.setAdHocRouteToNetID("se12");
-        doc.setBusinessPurpose("business purpose");
-        doc.setCollegeLevelOrganization("college org");
-        doc.setCommentsAndSpecialInstructions("special instructions");
-        doc.setDeliverToAddress("deliver address");
-        doc.setDeliverToEmailAddress("ccs1@cornell.edu");
-        doc.setDeliverToNetID("ccs1");
-        doc.setDeliverToPhoneNumber("607-255-9900");
-        doc.setDepartmentLevelOrganization("department org");
-        doc.setGoods(IWantXmlConstants.IWantIndicatorTypeXml.Y);
-        doc.setInitiator("ccs1");
-        doc.setRequestorAddress("req address");
-        doc.setRequestorEmailAddress("jdh34@cornell.edu");
-        doc.setRequestorNetID("jdh34");
-        doc.setRequestorPhoneNumber("6072559900");
-        doc.setSameAsRequestor(IWantXmlConstants.IWantIndicatorTypeXml.N);
-        doc.setServicePerformedOnCampus(IWantXmlConstants.IWantIndicatorTypeXml.Y);
-        doc.setSourceNumber("source number");
-        doc.setVendorDescription("vendor description");
-        doc.setVendorId("vendor id");
-        doc.setVendorName("vendor name");
+        IWantDocumentXml doc = IWantDocumentFixture.FULL_EXAMPLE.toIWantDocumentXml();
         doc.getAccounts().add(buildAccount());
         doc.getAttachments().add(buildAttachment());
         doc.getItems().add(buildItem());
         doc.getNotes().add(buildNote());
         return doc;
+        
     }
     
     private IWantTransactionLineXml buildAccount() {
-        IWantTransactionLineXml account = new IWantTransactionLineXml();
-        account.setAccountNumber("account");
-        account.setAmountOrPercent(BigDecimal.valueOf(666.66));
-        account.setChartOfAccountsCode("chart");
-        account.setFinancialObjectCode("object code");
-        account.setFinancialSubObjectCode("sub object code");
-        account.setOrganizationReferenceId("reference id");
-        account.setProjectCode("project code");
-        account.setSubAccountNumber("sub account");
-        account.setUseAmountOrPercent(IWantXmlConstants.IWantAmountOrPercentTypeXml.A);
-        return account;
+        return IWantTransactionLineFixture.TEST_LINE.toIWantTransactionLineXml();
     }
     
     private IWantAttachmentXml buildAttachment() {
-        IWantAttachmentXml attach = new IWantAttachmentXml();
-        attach.setAttachmentType("attachment type");
-        attach.setFileName("file name");
-        attach.setMimeTypeCode("mime type");
-        return attach;
+        return IWantAttachmentFixture.ATTACH_TEST.toIWantAttachmentXml();
     }
     
     private IWantItemXml buildItem() {
-        IWantItemXml item = new IWantItemXml();
-        item.setItemCatalogNumber("cat number");
-        item.setItemDescription("item description");
-        item.setItemQuantity(BigDecimal.valueOf(2.0));
-        item.setItemUnitOfMeasureCode("unit of measure");
-        item.setItemUnitPrice(BigDecimal.valueOf(5.29));
-        item.setPurchasingCommodityCode("code");
-        return item;
+        return IWantItemFixture.ITEM_TEST.toIWantItemXml();
     }
     
     private IWantNoteXml buildNote() {
-        IWantNoteXml note = new IWantNoteXml();
-        note.setNoteText("note text");
-        return note;
+        return IWantNoteFixture.NOTE_TEXT.toIWantNoteXml();
     }
 
 }
