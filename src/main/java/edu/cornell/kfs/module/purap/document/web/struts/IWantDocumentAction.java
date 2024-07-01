@@ -1255,7 +1255,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         kualiDocumentFormBase.setAnnotation(
                 getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
         iWantDocument.setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
-        ((CuDocumentServiceImpl) getDocumentService()).returnDocumenToPreviousNode(document,
+        ((CuDocumentServiceImpl) getDocumentService()).returnDocumentToPreviousNode(document,
                 kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
 
         KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
