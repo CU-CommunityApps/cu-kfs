@@ -1,11 +1,7 @@
 package edu.cornell.kfs.module.purap.businessobject.xml;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.MathContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -16,11 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantAttachmentFixture;
-import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantDocumentFixture;
-import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantItemFixture;
-import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantNoteFixture;
-import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantTransactionLineFixture;
+import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantDocumentWrapperFixture;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;
@@ -71,7 +63,7 @@ public class TestIWantXmlObjects {
     public void testIwantDocFromObject() throws JAXBException, IOException {
         File iwantExampleFile = new File(INPUT_FILE_PATH + IWANT_INPUT_FILE_NAME);
         
-        IWantDocumentWrapperXml docFile = buildIWantDocFile();
+        IWantDocumentWrapperXml docFile = IWantDocumentWrapperFixture.FULL_EXAMPLE.toIWantDocumentWrapperXml();
         LOG.info("testIwantDocFromObject. docFile : " + docFile.toString());
         
         String outputFileName = OUTPUT_FILE_PATH + IWANT_OUTPUT_FILE_NAME;
@@ -81,38 +73,6 @@ public class TestIWantXmlObjects {
         
         CuXMLUnitTestUtils.compareXML(iwantExampleFile, outputMaximoFile);
         
-    }
-    
-    private IWantDocumentWrapperXml buildIWantDocFile() {
-        IWantDocumentWrapperXml file = new IWantDocumentWrapperXml();
-        file.getiWantDocuments().add(buildIWantDocument());
-        return file;
-    }
-    
-    private IWantDocumentXml buildIWantDocument() {
-        IWantDocumentXml doc = IWantDocumentFixture.FULL_EXAMPLE.toIWantDocumentXml();
-        doc.getAccounts().add(buildAccount());
-        doc.getAttachments().add(buildAttachment());
-        doc.getItems().add(buildItem());
-        doc.getNotes().add(buildNote());
-        return doc;
-        
-    }
-    
-    private IWantTransactionLineXml buildAccount() {
-        return IWantTransactionLineFixture.TEST_LINE.toIWantTransactionLineXml();
-    }
-    
-    private IWantAttachmentXml buildAttachment() {
-        return IWantAttachmentFixture.ATTACH_TEST.toIWantAttachmentXml();
-    }
-    
-    private IWantItemXml buildItem() {
-        return IWantItemFixture.ITEM_TEST.toIWantItemXml();
-    }
-    
-    private IWantNoteXml buildNote() {
-        return IWantNoteFixture.NOTE_TEXT.toIWantNoteXml();
     }
 
 }
