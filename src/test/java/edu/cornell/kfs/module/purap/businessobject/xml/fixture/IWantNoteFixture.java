@@ -3,9 +3,8 @@ package edu.cornell.kfs.module.purap.businessobject.xml.fixture;
 import edu.cornell.kfs.module.purap.businessobject.xml.IWantNoteXml;
 
 public enum IWantNoteFixture {
-    NOTE_TEXT("note text"),
-    ANOTHER_NOTE_TEXT("another note text");
-    
+    NOTE_TEXT("note text"), ANOTHER_NOTE_TEXT("another note text");
+
     public final String noteText;
 
     private IWantNoteFixture(String noteText) {
@@ -17,6 +16,5 @@ public enum IWantNoteFixture {
         note.setNoteText(noteText);
         return note;
     }
-    
 
 }

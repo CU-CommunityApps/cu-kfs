@@ -82,12 +82,11 @@ public class IWantItemXml {
     public void setItemQuantity(BigDecimal itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
-    
+
     @Override
     public String toString() {
         ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         return builder.build();
     }
-
 
 }

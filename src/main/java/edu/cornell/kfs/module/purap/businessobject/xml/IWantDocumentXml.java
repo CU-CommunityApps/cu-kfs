@@ -17,9 +17,9 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = { "initiator", "sourceNumber", "businessPurpose", "collegeLevelOrganization",
         "departmentLevelOrganization", "requestorNetID", "requestorEmailAddress", "requestorPhoneNumber",
         "requestorAddress", "sameAsRequestor", "deliverToNetID", "deliverToEmailAddress", "deliverToPhoneNumber",
-        "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "items", "accounts", "accountDescriptionTxt",
-        "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus", "adHocRouteToNetID", "notes",
-        "attachments" })
+        "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "items", "transactionLines",
+        "accountDescriptionTxt", "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus",
+        "adHocRouteToNetID", "notes", "attachments" })
 @XmlRootElement(name = "iWantDocument", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantDocumentXml {
 
@@ -79,7 +79,7 @@ public class IWantDocumentXml {
     private List<IWantItemXml> items;
 
     @XmlElement(name = "account", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    private List<IWantTransactionLineXml> accounts;
+    private List<IWantTransactionLineXml> transactionLines;
 
     @XmlElement(name = "accountDescriptionTxt", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String accountDescriptionTxt;
@@ -287,11 +287,11 @@ public class IWantDocumentXml {
         return items;
     }
 
-    public List<IWantTransactionLineXml> getAccounts() {
-        if (accounts == null) {
-            accounts = new ArrayList<IWantTransactionLineXml>();
+    public List<IWantTransactionLineXml> getTransactionLines() {
+        if (transactionLines == null) {
+            transactionLines = new ArrayList<IWantTransactionLineXml>();
         }
-        return accounts;
+        return transactionLines;
     }
 
     public List<IWantNoteXml> getNotes() {

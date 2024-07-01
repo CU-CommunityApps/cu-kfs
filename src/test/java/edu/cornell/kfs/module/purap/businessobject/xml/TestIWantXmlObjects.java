@@ -49,6 +49,7 @@ public class TestIWantXmlObjects {
     @Test
     public void testMaximoExample() throws JAXBException, IOException {
         File maximoFile = new File(INPUT_FILE_PATH + MAXIMO_INPUT_FILE_NAME);
+
         IWantDocumentWrapperXml iWantDocFile = marshalservice.unmarshalFile(maximoFile, IWantDocumentWrapperXml.class);
         LOG.info("testMaximoExample, iWantDocFile: " + iWantDocFile.toString());
         String outputFileName = OUTPUT_FILE_PATH + MAXIMO_OUTPUT_FILE_NAME;
@@ -69,9 +70,9 @@ public class TestIWantXmlObjects {
         String outputFileName = OUTPUT_FILE_PATH + IWANT_OUTPUT_FILE_NAME;
         marshalservice.marshalObjectToXMLFragment(docFile, outputFileName);
         
-        File outputMaximoFile = new File(outputFileName);
+        File outputIwantFullExample = new File(outputFileName);
         
-        CuXMLUnitTestUtils.compareXML(iwantExampleFile, outputMaximoFile);
+        CuXMLUnitTestUtils.compareXML(iwantExampleFile, outputIwantFullExample);
         
     }
 

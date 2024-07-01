@@ -5,18 +5,17 @@ import java.math.BigDecimal;
 import edu.cornell.kfs.module.purap.businessobject.xml.IWantItemXml;
 
 public enum IWantItemFixture {
-    
-    ITEM_TEST("unit of measure", "cat number", "item description", BigDecimal.valueOf(5.29), "code", BigDecimal.valueOf(2.0));
-    
+
+    ITEM_TEST("unit of measure", "cat number", "item description", BigDecimal.valueOf(5.29), "code",
+            BigDecimal.valueOf(2.0));
+
     public final String itemUnitOfMeasureCode;
     public final String itemCatalogNumber;
     public final String itemDescription;
     public final BigDecimal itemUnitPrice;
     public final String purchasingCommodityCode;
     public final BigDecimal itemQuantity;
-    
 
-    
     private IWantItemFixture(String itemUnitOfMeasureCode, String itemCatalogNumber, String itemDescription,
             BigDecimal itemUnitPrice, String purchasingCommodityCode, BigDecimal itemQuantity) {
         this.itemUnitOfMeasureCode = itemUnitOfMeasureCode;
@@ -26,8 +25,6 @@ public enum IWantItemFixture {
         this.purchasingCommodityCode = purchasingCommodityCode;
         this.itemQuantity = itemQuantity;
     }
-
-
 
     public IWantItemXml toIWantItemXml() {
         IWantItemXml item = new IWantItemXml();

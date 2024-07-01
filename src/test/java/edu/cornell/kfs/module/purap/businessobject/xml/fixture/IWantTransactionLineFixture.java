@@ -6,10 +6,10 @@ import edu.cornell.kfs.module.purap.businessobject.xml.IWantTransactionLineXml;
 import edu.cornell.kfs.module.purap.businessobject.xml.IWantXmlConstants.IWantAmountOrPercentTypeXml;
 
 public enum IWantTransactionLineFixture {
-    
-    TEST_LINE("chart", "account", "object code", "sub account", "sub object code", "project code", "reference id",
-            BigDecimal.valueOf(666.66), IWantAmountOrPercentTypeXml.A);
-    
+
+    TRANSACTION_LINE_TEST("chart", "account", "object code", "sub account", "sub object code", "project code",
+            "reference id", BigDecimal.valueOf(666.66), IWantAmountOrPercentTypeXml.A);
+
     public final String chartOfAccountsCode;
     public final String accountNumber;
     public final String financialObjectCode;
@@ -19,7 +19,7 @@ public enum IWantTransactionLineFixture {
     public final String organizationReferenceId;
     public final BigDecimal amountOrPercent;
     public final IWantAmountOrPercentTypeXml useAmountOrPercent;
-    
+
     private IWantTransactionLineFixture(String chartOfAccountsCode, String accountNumber, String financialObjectCode,
             String subAccountNumber, String financialSubObjectCode, String projectCode, String organizationReferenceId,
             BigDecimal amountOrPercent, IWantAmountOrPercentTypeXml useAmountOrPercent) {
@@ -33,7 +33,7 @@ public enum IWantTransactionLineFixture {
         this.amountOrPercent = amountOrPercent;
         this.useAmountOrPercent = useAmountOrPercent;
     }
-    
+
     public IWantTransactionLineXml toIWantTransactionLineXml() {
         IWantTransactionLineXml line = new IWantTransactionLineXml();
         line.setAccountNumber(accountNumber);

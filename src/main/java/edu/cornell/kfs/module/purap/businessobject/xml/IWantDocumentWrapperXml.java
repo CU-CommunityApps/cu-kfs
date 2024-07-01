@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "iWantDocuments" })
 @XmlRootElement(name = "i_want_doc_file", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-public class IWantDocumentWrapperXml implements XmlFragmentable{
+public class IWantDocumentWrapperXml implements XmlFragmentable {
 
     @XmlElement(name = "iWantDocument", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE, required = true)
     private List<IWantDocumentXml> iWantDocuments;
@@ -46,7 +46,7 @@ public class IWantDocumentWrapperXml implements XmlFragmentable{
     public boolean shouldMarshalAsFragment() {
         return true;
     }
-    
+
     @Override
     public Map<String, Object> getAdditionalJAXBProperties() {
         Map<String, Object> properties = new HashMap<>();
