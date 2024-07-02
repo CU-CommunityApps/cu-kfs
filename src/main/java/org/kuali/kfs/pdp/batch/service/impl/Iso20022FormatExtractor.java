@@ -1815,14 +1815,14 @@ public class Iso20022FormatExtractor {
         }
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();
-        final String filename = buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, null);
+        final String filename = buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, 0);
 
         LOG.debug("determineFilename(...) - : filename={}", filename);
         return filename;
     }
     
     /* MOD: buildUniqueFilename helper function to ensure file uniqueness to prevent overwriting */
-    private String buildUniqueFilename(String directoryName, String finalFormattedCheckFilePrefix, Date disbursementDate, Integer uniquenessSuffix) {
+    private String buildUniqueFilename(String directoryName, String finalFormattedCheckFilePrefix, Date disbursementDate, int fileIndex) {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US);
 
         final String filename =
@@ -1831,13 +1831,12 @@ public class Iso20022FormatExtractor {
                 + finalFormattedCheckFilePrefix
                 + "_"
                 + sdf.format(disbursementDate)
-                + (uniquenessSuffix != null ? "-" + uniquenessSuffix : "")
+                + (fileIndex == 0 ? "" : ("-" + fileIndex ))
                 + ".xml";
 
         if (new File(filename).exists()) {
             LOG.info("buildUniqueFilename filename={} already exists, adding uniqueness suffix", filename);
-            int suffixCounter = uniquenessSuffix == null ? 0 : ++uniquenessSuffix;
-            return buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, suffixCounter);
+            return buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, ++fileIndex);
         }
 
         return filename;
