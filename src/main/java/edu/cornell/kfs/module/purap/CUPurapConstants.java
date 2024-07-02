@@ -122,6 +122,7 @@ public class CUPurapConstants {
     
     public static final class IWantRouteNodes {
         public static final String IS_ORDER_COMPLETED = "IsOrderCompleted";
+        public static final String NO_OP_NODE  = "NoOpNode";
         public static final String IS_CONTRACT_INDICATOR_CHECKED = "IsContractIndicatorChecked";
         public static final String PURCHASING_CONTRACT_ASSISTANT  = "PurchasingContractAssistant";
     }
@@ -151,6 +152,7 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_CREATE_DV = "createDV";
     public static final String IWNT_DOC_USE_LOOKUPS = "iwntUseLookups";
     public static final String IWNT_DOC_DISPLAY_NOTE_OPTIONS = "displayNoteOptions";
+    public static final String IWNT_DOC_RETURN_TO_SSC = "returnToSSC";
     
     public static final String IWNT_DOC_DISPLAY_CONTRACT_TAB = "displayContractTab";
     public static final String IWNT_DOC_EDIT_CONTRACT_INDICATOR = "editContractIndicator";
@@ -563,6 +565,6 @@ public class CUPurapConstants {
     
     public static final class IWantRoles {
         public static final String IWNT_ORG_AUTHORIZER = "IWNT Organization Authorizer";
-        public static final String IWNT_PURCHASING_CONTRACT_ASSISTANT = "Purchasing Contract Assistant(cu)";
+        public static final String IWNT_PROCUREMENT_CONTRACT_ASSISTANT = "Procurement Contract Assistant(cu)";
     }
 }
