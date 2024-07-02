@@ -43,6 +43,7 @@ public class CUPurapKeyConstants {
 
     public static final String IWNT_NOTE_CREATE_DV = "iwnt.note.create.dv";
     public static final String IWNT_NOTE_CREATE_REQS = "iwnt.note.create.reqs";
+    public static final String IWNT_RETURN_TO_SSC_ANNOTATION = "iwnt.return.to.ssc.annotation";
     
     public static final String JAGGAER_UPLOAD_XML_ERROR_MESSAGE = "jaggaer.upload.xml.error.message";
     public static final String JAGGAER_UPLOAD_WEBSERVICE_ERROR = "jaggaer.upload.webservice.error";
