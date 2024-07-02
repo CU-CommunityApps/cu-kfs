@@ -1820,7 +1820,8 @@ public class Iso20022FormatExtractor {
         LOG.debug("determineFilename(...) - : filename={}", filename);
         return filename;
     }
-
+    
+    /* MOD: buildUniqueFilename helper function to ensure file uniqueness to prevent overwriting */
     private String buildUniqueFilename(String directoryName, String finalFormattedCheckFilePrefix, Date disbursementDate, Integer uniquenessSuffix) {
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US);
 
@@ -1833,9 +1834,10 @@ public class Iso20022FormatExtractor {
                 + (uniquenessSuffix != null ? "-" + uniquenessSuffix : "")
                 + ".xml";
 
-        if ((new File(filename).exists())) {
+        if (new File(filename).exists()) {
             LOG.info("buildUniqueFilename filename={} already exists, adding uniqueness suffix", filename);
-            return buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, ++uniquenessSuffix);
+            int suffixCounter = uniquenessSuffix == null ? 0 : ++uniquenessSuffix;
+            return buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, suffixCounter);
         }
 
         return filename;
