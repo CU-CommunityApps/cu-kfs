@@ -49,7 +49,6 @@ import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.kim.service.impl.CuUiDocumentServiceImpl;
 import edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
