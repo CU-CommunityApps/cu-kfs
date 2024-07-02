@@ -9,7 +9,8 @@
             <docHandler>${application.url}/purapIWant.do?methodToCall=docHandler</docHandler>
             <routePaths>
                 <routePath>
-                    <start name="AdHoc" nextNode="IsOrderCompleted"/>
+                    <start name="AdHoc" nextNode="NoOpNode"/>
+                    <simple name="NoOpNode" nextNode="IsOrderCompleted"/>
                     <split name="IsOrderCompleted" nextNode="IsContractIndicatorChecked">
                         <branch name="True">
                             <simple name="NoOpIsOrderCompleted" nextNode="JoinIsOrderCompleted"/>
@@ -56,6 +57,9 @@
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
                 <simple name="NoOpComplete">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <simple name="NoOpNode">
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
                 <join name="JoinIsOrderCompleted"/>
