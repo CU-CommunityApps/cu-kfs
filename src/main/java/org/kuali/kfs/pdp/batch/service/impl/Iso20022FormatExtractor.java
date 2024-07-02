@@ -1910,7 +1910,7 @@ public class Iso20022FormatExtractor {
              * of changing/removing the namespace prefixes, rather than performing String.replaceAll() substitution.
              * Also added setup of a CU-specific EscapeHandler to customize the XML-escaping process.
              */
-            LOG.info("writeMessageToFile writing file " + filename);
+            LOG.info("writeMessageToFile writing file {}", filename);
             final MxWriteConfiguration writeConfig = new MxWriteConfiguration();
             writeConfig.includeXMLDeclaration = true;
             writeConfig.escapeHandler = new CuEscapeHandler();
