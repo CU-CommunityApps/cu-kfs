@@ -211,9 +211,7 @@
 		<property name="personService" ref="personService" />
 		<property name="iWantDocumentService" ref="iWantDocumentService" />
 		<property name="ruleService" ref="kualiRuleService"/>
-		<property name="attachmentService" ref="attachmentService" />
 		<property name="vendorService" ref="vendorService" />
-		<property name="mimeTypeProperties" ref="mimeTypeProperties" />
         <property name="cuMarshalService" ref="cuMarshalService" />
 	</bean>
 
