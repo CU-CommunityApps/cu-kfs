@@ -46,7 +46,6 @@ import org.springframework.util.AutoPopulatingList;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
-import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
@@ -367,9 +366,6 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 					// add notes
 					addNotes(iWantDocument, batchIWantDocument);
 
-					// add attachments
-					loadDocumentAttachments(iWantDocument, batchIWantDocument.getAttachments(), incomingFileName);
-
 					boolean rulePassed = true;
 
 					// call business rules
@@ -642,65 +638,6 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
             document.addNote(note); 
         }
 
-    }
-
-    /**
-     * Adds attachments to the I Want document.
-     * @param document
-     * @param attachments
-     */
-    private void loadDocumentAttachments(IWantDocument document, List<BatchIWantAttachment> attachments, String incomingFileName) {
-        String attachmentsPath = new File(iWantDocumentInputFileType.getDirectoryPath()).toString() + "/attachment/";
-
-        for (BatchIWantAttachment attachment : attachments) {
-            Note note = new Note();
-
-            note.setNoteText(attachment.getAttachmentType());
-            note.setRemoteObjectIdentifier(document.getObjectId());
-            note.setAuthorUniversalIdentifier(document.getDocumentHeader().getWorkflowDocument().getPrincipalId());
-            note.setNoteTypeCode(KFSConstants.NoteTypeEnum.DOCUMENT_HEADER_NOTE_TYPE.getCode());
-            note.setNotePostedTimestampToCurrent();
-
-            // attempt to load file
-            String fileName = attachmentsPath + "/" + attachment.getAttachmentFileName();
-            File attachmentFile = new File(fileName);
-            if (!attachmentFile.exists()) {
-                continue;
-            }
-
-            FileInputStream fileInputStream = null;
-            try {
-                fileInputStream = new FileInputStream(fileName);
-                Integer fileSize = Integer.parseInt(Long.toString(attachmentFile.length()));
-
-                String mimeTypeCode = attachment.getAttachmentMimeTypeCode();
-                String fileExtension = "." + StringUtils.substringAfterLast(fileName, ".");
-                if (StringUtils.isNotBlank(fileExtension) && mimeTypeProperties.containsKey(fileExtension)) {
-                    if (StringUtils.isBlank(mimeTypeCode)) {
-                        mimeTypeCode = mimeTypeProperties.getProperty(fileExtension);
-                    }
-                }
-                else {
-                	LOG.error("Mime type error" + fileName + " " + mimeTypeCode);
-                }
-
-                LOG.info("Mime type " + fileName + " " + mimeTypeCode);
-                String attachType = KFSConstants.EMPTY_STRING;
-
-                Attachment noteAttachment = attachmentService.createAttachment(document.getDocumentHeader(), attachment.getAttachmentFileName(), mimeTypeCode, fileSize, fileInputStream, attachType);
-
-                note.addAttachment(noteAttachment);
-                document.addNote(note);
-            } catch (FileNotFoundException e) {
-                continue;
-            } catch (IOException e1) {
-                throw new RuntimeException("Unable to create attachment for File: " + fileName, e1);
-            }
-            finally{
-            	IOUtils.closeQuietly(fileInputStream);
-            }
-
-        }
     }
 
     /**
