@@ -99,15 +99,10 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     }
 
     public void loadIWantDocuments(IWantDocumentBatchFeed batchFeed, String incomingFileName, MessageMap MessageMap) {
-
-        LOG.info("Loading I Want documents from incoming file file: " + incomingFileName);
-
+        LOG.info("loadIWantDocuments(), Loading I Want documents from incoming file: " + incomingFileName);
         for (BatchIWantDocument batchIWantDocument : batchFeed.getBatchIWantDocuments()) {
-
             populateIWantDocument(batchIWantDocument, incomingFileName);
-
         }
-
     }
 
     private void populateIWantDocument(BatchIWantDocument batchIWantDocument, String incomingFileName) {

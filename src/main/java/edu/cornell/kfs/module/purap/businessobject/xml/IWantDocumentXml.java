@@ -323,7 +323,7 @@ public class IWantDocumentXml {
         doc.setCommentsAndSpecialInstructions(commentsAndSpecialInstructions);
         doc.setGoods(goods.toBoolean());
         doc.setServicePerformedOnCampus(servicePerformedOnCampus.value());
-        this.setAdHocRouteToNetID(adHocRouteToNetID);
+        doc.setCurrentRouteToNetId(adHocRouteToNetID);
         
         for (IWantItemXml item : getItems()) {
             doc.getItems().add(item.toBatchIWantItem());

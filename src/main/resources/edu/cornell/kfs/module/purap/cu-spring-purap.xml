@@ -203,17 +203,17 @@
         p:dateTimeService-ref="dateTimeService"
         p:schemaLocation="classpath:edu/cornell/kfs/module/purap/batch/iWantDocument.xsd" />
     
-    <bean id="iWantDocumentFeedService" class="edu.cornell.kfs.module.purap.batch.service.impl.IWantDocumentFeedServiceImpl">
-		<property name="batchInputFileService" ref="batchInputFileService"/>
-		<property name="iWantDocumentInputFileType" ref="iWantDocumentInputFileType" />
-		<property name="businessObjectService" ref="businessObjectService"/>
-		<property name="documentService" ref="documentService" />
-		<property name="personService" ref="personService" />
-		<property name="iWantDocumentService" ref="iWantDocumentService" />
-		<property name="ruleService" ref="kualiRuleService"/>
-		<property name="vendorService" ref="vendorService" />
-        <property name="cuMarshalService" ref="cuMarshalService" />
-	</bean>
+    <bean id="iWantDocumentFeedService"
+        class="edu.cornell.kfs.module.purap.batch.service.impl.IWantDocumentFeedServiceImpl"
+        p:batchInputFileService-ref="batchInputFileService"
+        p:iWantDocumentInputFileType-ref="iWantDocumentInputFileType"
+        p:businessObjectService-ref="businessObjectService"
+        p:documentService-ref="documentService"
+        p:personService-ref="personService"
+        p:iWantDocumentService-ref="iWantDocumentService"
+        p:ruleService-ref="kualiRuleService"
+        p:vendorService-ref="vendorService"
+        p:cuMarshalService-ref="cuMarshalService" />
 
 	<bean id="autoClosePurchaseOrderService" parent="autoClosePurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.batch.service.impl.CuAutoClosePurchaseOrderServiceImpl" />
 	<bean id="purchaseOrderDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuPurchaseOrderDaoOjb" />
