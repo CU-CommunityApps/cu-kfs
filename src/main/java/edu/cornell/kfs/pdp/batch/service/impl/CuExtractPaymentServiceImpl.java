@@ -73,6 +73,20 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     	super(iso20022FormatExtractor);
     	this.iso20022FormatExtractor = iso20022FormatExtractor;
     }
+
+    /** MOD: Overridden to make filename unique by adding milliseconds to filename **/
+    @Override
+    protected String getOutputFile(final String fileprefix, final Date runDate) {
+        //add a step to check for directory paths
+        prepareDirectories(getRequiredDirectoryNames());
+
+        String filename = directoryName + "/" + fileprefix + "_";
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US);
+        filename = filename + sdf.format(runDate);
+        filename = filename + ".xml";
+
+        return filename;
+    }
     
     /**
     * MOD: Overridden to detect if the Bundle ACH Payments system parameter is on and if so, to 
@@ -98,12 +112,12 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         achFilePrefix = MessageFormat.format(achFilePrefix, new Object[] { null });
     
         String filename = getOutputFile(achFilePrefix, processDate);
-        LOG.debug("MOD: extractAchPayments() filename = " + filename);
 
         /** 
         * MOD: This is the only section in the method that is changed.  This mod calls a new method that bundles 
         * ACHs into single disbursements if the flag to do so is turned on.
         */
+        LOG.info("extractAchPayments writing file " + filename);
         if (getAchBundlerHelperService().shouldBundleAchPayments()) {
             writeExtractBundledAchFile(extractedStatus, filename, processDate, sdf);
         } else {

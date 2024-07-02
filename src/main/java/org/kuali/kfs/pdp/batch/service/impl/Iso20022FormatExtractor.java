@@ -1815,16 +1815,30 @@ public class Iso20022FormatExtractor {
         }
 
         final Date disbursementDate = extractTypeContext.getDisbursementDate();
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+        final String filename = buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, 0);
+
+        LOG.debug("determineFilename(...) - : filename={}", filename);
+        return filename;
+    }
+    
+    /* MOD: buildUniqueFilename helper function to ensure file uniqueness to prevent overwriting */
+    private String buildUniqueFilename(String directoryName, String finalFormattedCheckFilePrefix, Date disbursementDate, int fileIndex) {
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US);
+
         final String filename =
                 directoryName
                 + File.separator
                 + finalFormattedCheckFilePrefix
                 + "_"
                 + sdf.format(disbursementDate)
+                + (fileIndex == 0 ? "" : ("-" + fileIndex))
                 + ".xml";
 
-        LOG.debug("determineFilename(...) - : filename={}", filename);
+        if (new File(filename).exists()) {
+            LOG.info("buildUniqueFilename filename={} already exists, adding uniqueness suffix", filename);
+            return buildUniqueFilename(directoryName, finalFormattedCheckFilePrefix, disbursementDate, ++fileIndex);
+        }
+
         return filename;
     }
 
@@ -1895,6 +1909,7 @@ public class Iso20022FormatExtractor {
              * of changing/removing the namespace prefixes, rather than performing String.replaceAll() substitution.
              * Also added setup of a CU-specific EscapeHandler to customize the XML-escaping process.
              */
+            LOG.info("writeMessageToFile writing file {}", filename);
             final MxWriteConfiguration writeConfig = new MxWriteConfiguration();
             writeConfig.includeXMLDeclaration = true;
             writeConfig.escapeHandler = new CuEscapeHandler();
