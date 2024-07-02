@@ -48,10 +48,5 @@
         <note>
             <noteText>another note text</noteText>
         </note>
-        <attachment>
-            <mimeTypeCode>mime type</mimeTypeCode>
-            <fileName>file name</fileName>
-            <attachmentType>attachment type</attachmentType>
-        </attachment>
     </iWantDocument>
 </i_want_doc_file>

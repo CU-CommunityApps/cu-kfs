@@ -11,7 +11,7 @@ public enum IWantDocumentFixture {
             "jdh34@cornell.edu", "6072559900", "req address", IWantIndicatorTypeXml.N, "ccs1", "ccs1@cornell.edu",
             "607-255-9900", "deliver address", "vendor id", "vendor name", "vendor description", "account description",
             "special instructions", IWantIndicatorTypeXml.Y, IWantIndicatorTypeXml.Y, "se12",
-            attachmentLines(IWantAttachmentFixture.ATTACH_TEST), itemLines(IWantItemFixture.ITEM_TEST),
+            itemLines(IWantItemFixture.ITEM_TEST),
             transactionLines(IWantTransactionLineFixture.TRANSACTION_LINE_TEST),
             noteLines(IWantNoteFixture.NOTE_TEXT, IWantNoteFixture.ANOTHER_NOTE_TEXT));
 
@@ -37,7 +37,6 @@ public enum IWantDocumentFixture {
     public final IWantIndicatorTypeXml goods;
     public final IWantIndicatorTypeXml servicePerformedOnCampus;
     public final String adHocRouteToNetID;
-    public final List<IWantAttachmentFixture> attachments;
     public final List<IWantItemFixture> items;
     public final List<IWantTransactionLineFixture> transactions;
     public final List<IWantNoteFixture> notes;
@@ -49,7 +48,7 @@ public enum IWantDocumentFixture {
             String deliverToPhoneNumber, String deliverToAddress, String vendorId, String vendorName,
             String vendorDescription, String accountDescriptionTxt, String commentsAndSpecialInstructions,
             IWantIndicatorTypeXml goods, IWantIndicatorTypeXml servicePerformedOnCampus, String adHocRouteToNetID,
-            IWantAttachmentFixture[] attachmentsArray, IWantItemFixture[] itemsArray,
+            IWantItemFixture[] itemsArray,
             IWantTransactionLineFixture[] transactionsArray, IWantNoteFixture[] noteArray) {
         this.initiator = initiator;
         this.sourceNumber = sourceNumber;
@@ -73,7 +72,6 @@ public enum IWantDocumentFixture {
         this.goods = goods;
         this.servicePerformedOnCampus = servicePerformedOnCampus;
         this.adHocRouteToNetID = adHocRouteToNetID;
-        this.attachments = XmlDocumentFixtureUtils.toImmutableList(attachmentsArray);
         this.items = XmlDocumentFixtureUtils.toImmutableList(itemsArray);
         this.transactions = XmlDocumentFixtureUtils.toImmutableList(transactionsArray);
         this.notes = XmlDocumentFixtureUtils.toImmutableList(noteArray);
@@ -104,10 +102,6 @@ public enum IWantDocumentFixture {
         doc.setServicePerformedOnCampus(servicePerformedOnCampus);
         doc.setAdHocRouteToNetID(adHocRouteToNetID);
 
-        for (IWantAttachmentFixture attach : attachments) {
-            doc.getAttachments().add(attach.toIWantAttachmentXml());
-        }
-
         for (IWantItemFixture item : items) {
             doc.getItems().add(item.toIWantItemXml());
         }
@@ -121,10 +115,6 @@ public enum IWantDocumentFixture {
         }
 
         return doc;
-    }
-
-    private static IWantAttachmentFixture[] attachmentLines(IWantAttachmentFixture... fixtures) {
-        return fixtures;
     }
 
     private static IWantItemFixture[] itemLines(IWantItemFixture... fixtures) {

@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlType;
         "requestorAddress", "sameAsRequestor", "deliverToNetID", "deliverToEmailAddress", "deliverToPhoneNumber",
         "deliverToAddress", "vendorId", "vendorName", "vendorDescription", "items", "transactionLines",
         "accountDescriptionTxt", "commentsAndSpecialInstructions", "goods", "servicePerformedOnCampus",
-        "adHocRouteToNetID", "notes", "attachments" })
+        "adHocRouteToNetID", "notes" })
 @XmlRootElement(name = "iWantDocument", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
 public class IWantDocumentXml {
 
@@ -101,9 +101,6 @@ public class IWantDocumentXml {
 
     @XmlElement(name = "note", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private List<IWantNoteXml> notes;
-
-    @XmlElement(name = "attachment", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    private List<IWantAttachmentXml> attachments;
 
     public String getInitiator() {
         return initiator;
@@ -301,13 +298,6 @@ public class IWantDocumentXml {
         }
         return notes;
     }
-
-    public List<IWantAttachmentXml> getAttachments() {
-        if (attachments == null) {
-            attachments = new ArrayList<IWantAttachmentXml>();
-        }
-        return attachments;
-    }
     
     public BatchIWantDocument toBatchIWantDocument() {
         BatchIWantDocument doc = new BatchIWantDocument();
@@ -345,10 +335,6 @@ public class IWantDocumentXml {
         
         for (IWantNoteXml note : getNotes()) {
             doc.getNotes().add(note.toNote());
-        }
-        
-        for (IWantAttachmentXml attachment : getAttachments()) {
-            doc.getAttachments().add(attachment.toBatchIWantAttachment());
         }
         
         return doc;
