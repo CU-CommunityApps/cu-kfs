@@ -1831,7 +1831,7 @@ public class Iso20022FormatExtractor {
                 + finalFormattedCheckFilePrefix
                 + "_"
                 + sdf.format(disbursementDate)
-                + (fileIndex == 0 ? "" : ("-" + fileIndex ))
+                + (fileIndex == 0 ? "" : ("-" + fileIndex))
                 + ".xml";
 
         if (new File(filename).exists()) {
