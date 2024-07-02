@@ -2,10 +2,10 @@ package edu.cornell.kfs.module.purap.batch;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
+import edu.cornell.kfs.module.purap.businessobject.xml.IWantDocumentWrapperXml;
 import edu.cornell.kfs.sys.batch.CuXmlBatchInputFileTypeBase;
 
-public class IWantDocumentInputFileType extends CuXmlBatchInputFileTypeBase<IWantDocumentBatchFeed> {
+public class IWantDocumentInputFileType extends CuXmlBatchInputFileTypeBase<IWantDocumentWrapperXml> {
     
     @Override
     public String getFileTypeIdentifier() {

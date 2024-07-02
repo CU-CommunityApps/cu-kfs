@@ -3,6 +3,7 @@ package edu.cornell.kfs.module.purap.businessobject.xml;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -45,6 +46,14 @@ public class IWantAttachmentXml {
 
     public void setAttachmentType(String attachmentType) {
         this.attachmentType = attachmentType;
+    }
+    
+    public BatchIWantAttachment toBatchIWantAttachment() {
+        BatchIWantAttachment attachment = new BatchIWantAttachment();
+        attachment.setAttachmentMimeTypeCode(mimeTypeCode);
+        attachment.setAttachmentFileName(fileName);
+        attachment.setAttachmentType(attachmentType);
+        return attachment;
     }
 
     @Override

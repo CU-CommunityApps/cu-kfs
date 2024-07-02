@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import edu.cornell.kfs.module.purap.batch.IWantDocumentInputFileType;
+import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -29,6 +31,14 @@ public class IWantDocumentWrapperXml implements XmlFragmentable {
             iWantDocuments = new ArrayList<IWantDocumentXml>();
         }
         return iWantDocuments;
+    }
+    
+    public IWantDocumentBatchFeed toIWantDocumentBatchFeed() {
+        IWantDocumentBatchFeed batchFeed = new IWantDocumentBatchFeed();
+        for (IWantDocumentXml xmlDocs : iWantDocuments) {
+            batchFeed.getBatchIWantDocuments().add(xmlDocs.toBatchIWantDocument());
+        }
+        return batchFeed;
     }
 
     @Override

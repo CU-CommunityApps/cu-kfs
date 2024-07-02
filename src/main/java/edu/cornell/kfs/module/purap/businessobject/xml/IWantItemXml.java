@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import edu.cornell.kfs.module.purap.businessobject.BatchIWantItem;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -81,6 +82,17 @@ public class IWantItemXml {
 
     public void setItemQuantity(BigDecimal itemQuantity) {
         this.itemQuantity = itemQuantity;
+    }
+    
+    public BatchIWantItem toBatchIWantItem() {
+        BatchIWantItem item = new BatchIWantItem();
+        item.setItemUnitOfMeasureCode(itemUnitOfMeasureCode);
+        item.setItemCatalogNumber(itemCatalogNumber);
+        item.setItemDescription(itemDescription);
+        item.setItemUnitPrice(itemUnitPrice);
+        item.setPurchasingCommodityCode(purchasingCommodityCode);
+        item.setItemQuantity(String.valueOf(itemQuantity));
+        return item;
     }
 
     @Override

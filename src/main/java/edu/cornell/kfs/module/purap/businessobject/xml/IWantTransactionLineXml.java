@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import edu.cornell.kfs.module.purap.businessobject.BatchIWantAccount;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -116,6 +117,20 @@ public class IWantTransactionLineXml {
 
     public void setUseAmountOrPercent(IWantXmlConstants.IWantAmountOrPercentTypeXml useAmountOrPercent) {
         this.useAmountOrPercent = useAmountOrPercent;
+    }
+    
+    public BatchIWantAccount toBatchIWantAccount() {
+        BatchIWantAccount account = new BatchIWantAccount();
+        account.setChartOfAccountsCode(chartOfAccountsCode);
+        account.setAccountNumber(accountNumber);
+        account.setFinancialObjectCode(financialObjectCode);
+        account.setSubAccountNumber(subAccountNumber);
+        account.setFinancialSubObjectCode(financialSubObjectCode);
+        account.setProjectCode(projectCode);
+        account.setOrganizationReferenceId(organizationReferenceId);
+        account.setAmountOrPercent(String.valueOf(amountOrPercent));
+        account.setUseAmountOrPercent(useAmountOrPercent.value());
+        return account;
     }
 
     @Override

@@ -2,6 +2,7 @@ package edu.cornell.kfs.module.purap.businessobject.xml;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.kuali.kfs.krad.bo.Note;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +24,12 @@ public class IWantNoteXml {
 
     public void setNoteText(String noteText) {
         this.noteText = noteText;
+    }
+    
+    public Note toNote() {
+        Note note = new Note();
+        note.setNoteText(noteText);
+        return note;
     }
 
     @Override

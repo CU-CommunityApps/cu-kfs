@@ -39,6 +39,10 @@ public class IWantXmlConstants {
         public static IWantIndicatorTypeXml fromValue(String v) {
             return valueOf(v);
         }
+        
+        public boolean toBoolean() {
+            return this == Y;
+        }
 
     }
 

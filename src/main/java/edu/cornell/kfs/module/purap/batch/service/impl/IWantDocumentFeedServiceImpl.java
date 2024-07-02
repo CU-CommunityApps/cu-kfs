@@ -50,10 +50,13 @@ import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
+import edu.cornell.kfs.module.purap.businessobject.xml.IWantDocumentWrapperXml;
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
+import edu.cornell.kfs.sys.service.CUMarshalService;
+import jakarta.xml.bind.JAXBException;
 
 @Transactional
 public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
@@ -70,34 +73,38 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     protected AttachmentService attachmentService;
     protected Properties mimeTypeProperties;
     protected VendorService vendorService;
+    protected CUMarshalService cuMarshalService;
 
 	/**
      * @see edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService#processIWantDocumentFiles()
      */
     @Override
     public boolean processIWantDocumentFiles() {
-
         List<String> fileNamesToLoad = batchInputFileService.listInputFileNamesWithDoneFile(iWantDocumentInputFileType);
 
         List<String> processedFiles = new ArrayList<String>();
 
         for (String incomingFileName : fileNamesToLoad) {
-            try {           	
-                LOG.debug("processIWantDocumentFiles  () Processing " + incomingFileName);                
-                IWantDocumentBatchFeed batchFeed = parseInputFile(incomingFileName);
+            try {   
+                //LOG.debug("processIWantDocumentFiles  () Processing " + incomingFileName);                
+                //IWantDocumentBatchFeed batchFeed = parseInputFile(incomingFileName);
+                LOG.info("processIWantDocumentFiles() Processing " + incomingFileName);
+                File xmlFile = new File(incomingFileName);
+                IWantDocumentWrapperXml documentWrapper = cuMarshalService.unmarshalFile(xmlFile, IWantDocumentWrapperXml.class);
+                IWantDocumentBatchFeed batchFeed = documentWrapper.toIWantDocumentBatchFeed();
 
                 if (batchFeed != null && !batchFeed.getBatchIWantDocuments().isEmpty()) {
                     loadIWantDocuments(batchFeed, incomingFileName, GlobalVariables.getMessageMap());      
                     processedFiles.add(incomingFileName);
                 }
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | JAXBException e) {
                 LOG.error("Caught exception trying to load i want document file: " + incomingFileName, e);
                 // remove done files
                 List<String> badFiles = new ArrayList<String>();
                 badFiles.add(incomingFileName);
             	removeDoneFiles(badFiles);
                 throw new RuntimeException("Caught exception trying to load i want document file: " + incomingFileName, e);
-            }
+            } 
         }
         
         // remove done files
@@ -108,11 +115,12 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
     }
 
     /**
+     * @TODO remove this
      * Parses the input file.
      * 
      * @param incomingFileName
      * @return an IWantDocumentBatchFeed containing input data
-     */
+     
     protected IWantDocumentBatchFeed parseInputFile(String incomingFileName) {
         LOG.info("Parsing file: " + incomingFileName);
 
@@ -142,7 +150,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 
         return (IWantDocumentBatchFeed) parsed;
 
-    }
+    }*/
 
     /**
      * Creates I Wantd documents from the data in the input files.
@@ -875,5 +883,9 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
 	public void setVendorService(VendorService vendorService) {
 		this.vendorService = vendorService;
 	}
+
+    public void setCuMarshalService(CUMarshalService cuMarshalService) {
+        this.cuMarshalService = cuMarshalService;
+    }
 
 }

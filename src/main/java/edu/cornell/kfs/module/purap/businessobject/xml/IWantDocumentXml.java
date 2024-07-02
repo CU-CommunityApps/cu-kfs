@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -306,6 +307,51 @@ public class IWantDocumentXml {
             attachments = new ArrayList<IWantAttachmentXml>();
         }
         return attachments;
+    }
+    
+    public BatchIWantDocument toBatchIWantDocument() {
+        BatchIWantDocument doc = new BatchIWantDocument();
+        
+        doc.setInitiator(initiator);
+        doc.setSourceNumber(sourceNumber);
+        doc.setBusinessPurpose(businessPurpose);
+        doc.setCollegeLevelOrganization(collegeLevelOrganization);
+        doc.setDepartmentLevelOrganization(departmentLevelOrganization);
+        doc.setInitiatorNetID(requestorNetID);
+        doc.setInitiatorEmailAddress(requestorEmailAddress);
+        doc.setInitiatorPhoneNumber(requestorPhoneNumber);
+        doc.setInitiatorAddress(requestorAddress);
+        doc.setSameAsInitiator(sameAsRequestor.toBoolean());
+        doc.setDeliverToNetID(deliverToNetID);
+        doc.setDeliverToEmailAddress(deliverToEmailAddress);
+        doc.setDeliverToPhoneNumber(deliverToPhoneNumber);
+        doc.setDeliverToAddress(deliverToAddress);
+        doc.setVendorNumber(vendorId);
+        doc.setVendorName(vendorName);
+        doc.setVendorDescription(vendorDescription);
+        doc.setAccountDescriptionTxt(accountDescriptionTxt);
+        doc.setCommentsAndSpecialInstructions(commentsAndSpecialInstructions);
+        doc.setGoods(goods.toBoolean());
+        doc.setServicePerformedOnCampus(servicePerformedOnCampus.value());
+        this.setAdHocRouteToNetID(adHocRouteToNetID);
+        
+        for (IWantItemXml item : getItems()) {
+            doc.getItems().add(item.toBatchIWantItem());
+        }
+        
+        for (IWantTransactionLineXml transaction : getTransactionLines()) {
+            doc.getAccounts().add(transaction.toBatchIWantAccount());
+        }
+        
+        for (IWantNoteXml note : getNotes()) {
+            doc.getNotes().add(note.toNote());
+        }
+        
+        for (IWantAttachmentXml attachment : getAttachments()) {
+            doc.getAttachments().add(attachment.toBatchIWantAttachment());
+        }
+        
+        return doc;
     }
 
     @Override

@@ -201,7 +201,6 @@
         p:directoryPath="${staging.directory}/purap/iWantDoc"
         p:fileExtension="xml" p:fileNamePrefix="purap_iwantdoc_"
         p:dateTimeService-ref="dateTimeService"
-        p:digestorRulesFileName="edu/cornell/kfs/module/purap/batch/iWantDocumentDigesterRules.xml"
         p:schemaLocation="classpath:edu/cornell/kfs/module/purap/batch/iWantDocument.xsd" />
     
     <bean id="iWantDocumentFeedService" class="edu.cornell.kfs.module.purap.batch.service.impl.IWantDocumentFeedServiceImpl">
@@ -215,6 +214,7 @@
 		<property name="attachmentService" ref="attachmentService" />
 		<property name="vendorService" ref="vendorService" />
 		<property name="mimeTypeProperties" ref="mimeTypeProperties" />
+        <property name="cuMarshalService" ref="cuMarshalService" />
 	</bean>
 
 	<bean id="autoClosePurchaseOrderService" parent="autoClosePurchaseOrderService-parentBean" class="edu.cornell.kfs.module.purap.batch.service.impl.CuAutoClosePurchaseOrderServiceImpl" />
