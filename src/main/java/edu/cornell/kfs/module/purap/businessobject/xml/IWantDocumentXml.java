@@ -5,7 +5,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.kuali.kfs.core.api.impex.xml.XmlConstants;
+import org.kuali.kfs.kew.xml.BooleanJaxbAdapter;
+import org.kuali.kfs.sys.KFSConstants;
 
+import edu.cornell.kfs.module.purap.businessobject.xml.IWantXmlConstants.IWantIndicatorTypeXml;
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -13,6 +17,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "initiator", "sourceNumber", "businessPurpose", "collegeLevelOrganization",
@@ -52,8 +57,8 @@ public class IWantDocumentXml {
     private String requestorAddress;
 
     @XmlElement(name = "sameAsRequestor", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    @XmlSchemaType(name = "string")
-    private IWantXmlConstants.IWantIndicatorTypeXml sameAsRequestor;
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean sameAsRequestor;
 
     @XmlElement(name = "deliverToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String deliverToNetID;
@@ -89,12 +94,12 @@ public class IWantDocumentXml {
     private String commentsAndSpecialInstructions;
 
     @XmlElement(name = "goods", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    @XmlSchemaType(name = "string")
-    private IWantXmlConstants.IWantIndicatorTypeXml goods;
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean goods;
 
     @XmlElement(name = "servicePerformedOnCampus", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    @XmlSchemaType(name = "string")
-    private IWantXmlConstants.IWantIndicatorTypeXml servicePerformedOnCampus;
+    @XmlJavaTypeAdapter(BooleanJaxbAdapter.class)
+    private Boolean servicePerformedOnCampus;
 
     @XmlElement(name = "adHocRouteToNetID", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String adHocRouteToNetID;
@@ -174,11 +179,11 @@ public class IWantDocumentXml {
         this.requestorAddress = requestorAddress;
     }
 
-    public IWantXmlConstants.IWantIndicatorTypeXml getSameAsRequestor() {
+    public Boolean getSameAsRequestor() {
         return sameAsRequestor;
     }
 
-    public void setSameAsRequestor(IWantXmlConstants.IWantIndicatorTypeXml sameAsRequestor) {
+    public void setSameAsRequestor(Boolean sameAsRequestor) {
         this.sameAsRequestor = sameAsRequestor;
     }
 
@@ -254,19 +259,19 @@ public class IWantDocumentXml {
         this.commentsAndSpecialInstructions = commentsAndSpecialInstructions;
     }
 
-    public IWantXmlConstants.IWantIndicatorTypeXml getGoods() {
+    public Boolean getGoods() {
         return goods;
     }
 
-    public void setGoods(IWantXmlConstants.IWantIndicatorTypeXml goods) {
+    public void setGoods(Boolean goods) {
         this.goods = goods;
     }
 
-    public IWantXmlConstants.IWantIndicatorTypeXml getServicePerformedOnCampus() {
+    public Boolean getServicePerformedOnCampus() {
         return servicePerformedOnCampus;
     }
 
-    public void setServicePerformedOnCampus(IWantXmlConstants.IWantIndicatorTypeXml servicePerformedOnCampus) {
+    public void setServicePerformedOnCampus(Boolean servicePerformedOnCampus) {
         this.servicePerformedOnCampus = servicePerformedOnCampus;
     }
 
@@ -311,7 +316,7 @@ public class IWantDocumentXml {
         doc.setInitiatorEmailAddress(requestorEmailAddress);
         doc.setInitiatorPhoneNumber(requestorPhoneNumber);
         doc.setInitiatorAddress(requestorAddress);
-        doc.setSameAsInitiator(sameAsRequestor.toBoolean());
+        doc.setSameAsInitiator(sameAsRequestor);
         doc.setDeliverToNetID(deliverToNetID);
         doc.setDeliverToEmailAddress(deliverToEmailAddress);
         doc.setDeliverToPhoneNumber(deliverToPhoneNumber);
@@ -321,8 +326,8 @@ public class IWantDocumentXml {
         doc.setVendorDescription(vendorDescription);
         doc.setAccountDescriptionTxt(accountDescriptionTxt);
         doc.setCommentsAndSpecialInstructions(commentsAndSpecialInstructions);
-        doc.setGoods(goods.toBoolean());
-        doc.setServicePerformedOnCampus(servicePerformedOnCampus.value());
+        doc.setGoods(goods);
+        doc.setServicePerformedOnCampus(IWantIndicatorTypeXml.fromBoolean(servicePerformedOnCampus));
         doc.setCurrentRouteToNetId(adHocRouteToNetID);
         
         for (IWantItemXml item : getItems()) {

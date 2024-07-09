@@ -26,24 +26,24 @@ public class IWantXmlConstants {
 
     }
 
-    @XmlType(name = "indicatorType", namespace = "http://www.kuali.org/kfs/sys/types")
-    @XmlEnum
     public enum IWantIndicatorTypeXml {
-
         Y, N;
 
         public String value() {
             return name();
-        }
-
-        public static IWantIndicatorTypeXml fromValue(String v) {
-            return valueOf(v);
         }
         
         public boolean toBoolean() {
             return this == Y;
         }
 
+        public static IWantIndicatorTypeXml fromValue(String v) {
+            return valueOf(v);
+        }
+        
+        public static String fromBoolean(boolean booleanVal) {
+            return booleanVal ? Y.toString() : N.toString();
+        }
     }
 
 }
