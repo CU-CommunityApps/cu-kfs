@@ -41,11 +41,11 @@ import edu.cornell.kfs.module.purap.batch.service.IWantDocumentFeedService;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
-import edu.cornell.kfs.module.purap.businessobject.xml.IWantDocumentWrapperXml;
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
 import edu.cornell.kfs.module.purap.document.validation.event.AddIWantItemEvent;
+import edu.cornell.kfs.module.purap.iwant.xml.IWantDocumentWrapperXml;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import jakarta.xml.bind.JAXBException;
 

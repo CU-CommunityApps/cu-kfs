@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.businessobject.xml;
+package edu.cornell.kfs.module.purap.iwant.xml;
 
 import java.math.BigDecimal;
 

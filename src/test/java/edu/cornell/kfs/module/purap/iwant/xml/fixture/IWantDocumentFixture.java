@@ -1,8 +1,8 @@
-package edu.cornell.kfs.module.purap.businessobject.xml.fixture;
+package edu.cornell.kfs.module.purap.iwant.xml.fixture;
 
 import java.util.List;
 
-import edu.cornell.kfs.module.purap.businessobject.xml.IWantDocumentXml;
+import edu.cornell.kfs.module.purap.iwant.xml.IWantDocumentXml;
 import edu.cornell.kfs.sys.fixture.XmlDocumentFixtureUtils;
 
 public enum IWantDocumentFixture {

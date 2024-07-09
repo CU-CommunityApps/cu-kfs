@@ -1,9 +1,9 @@
-package edu.cornell.kfs.module.purap.businessobject.xml.fixture;
+package edu.cornell.kfs.module.purap.iwant.xml.fixture;
 
 import java.math.BigDecimal;
 
-import edu.cornell.kfs.module.purap.businessobject.xml.IWantTransactionLineXml;
-import edu.cornell.kfs.module.purap.businessobject.xml.IWantXmlConstants.IWantAmountOrPercentTypeXml;
+import edu.cornell.kfs.module.purap.iwant.xml.IWantTransactionLineXml;
+import edu.cornell.kfs.module.purap.iwant.xml.IWantXmlConstants.IWantAmountOrPercentTypeXml;
 
 public enum IWantTransactionLineFixture {
 

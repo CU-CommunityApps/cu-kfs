@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.businessobject.xml;
+package edu.cornell.kfs.module.purap.iwant.xml;
 
 import jakarta.xml.bind.annotation.XmlEnum;
 import jakarta.xml.bind.annotation.XmlType;

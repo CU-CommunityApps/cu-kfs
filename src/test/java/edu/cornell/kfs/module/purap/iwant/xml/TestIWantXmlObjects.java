@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.businessobject.xml;
+package edu.cornell.kfs.module.purap.iwant.xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import edu.cornell.kfs.module.purap.businessobject.xml.fixture.IWantDocumentWrapperFixture;
+import edu.cornell.kfs.module.purap.iwant.xml.fixture.IWantDocumentWrapperFixture;
 import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
 import edu.cornell.kfs.sys.util.CuXMLUnitTestUtils;
 import jakarta.xml.bind.JAXBException;

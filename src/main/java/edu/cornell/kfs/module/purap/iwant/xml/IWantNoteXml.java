@@ -1,4 +1,4 @@
-package edu.cornell.kfs.module.purap.businessobject.xml;
+package edu.cornell.kfs.module.purap.iwant.xml;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
