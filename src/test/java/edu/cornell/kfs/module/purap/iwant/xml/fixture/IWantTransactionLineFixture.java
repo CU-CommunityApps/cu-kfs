@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.iwant.xml.fixture;
 
-import java.math.BigDecimal;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.iwant.xml.IWantTransactionLineXml;
 import edu.cornell.kfs.module.purap.iwant.xml.IWantXmlConstants.IWantAmountOrPercentTypeXml;
@@ -8,7 +8,7 @@ import edu.cornell.kfs.module.purap.iwant.xml.IWantXmlConstants.IWantAmountOrPer
 public enum IWantTransactionLineFixture {
 
     TRANSACTION_LINE_TEST("chart", "account", "object code", "sub account", "sub object code", "project code",
-            "reference id", BigDecimal.valueOf(666.66), IWantAmountOrPercentTypeXml.A);
+            "reference id", new KualiDecimal(666.66), IWantAmountOrPercentTypeXml.A);
 
     public final String chartOfAccountsCode;
     public final String accountNumber;
@@ -17,12 +17,12 @@ public enum IWantTransactionLineFixture {
     public final String financialSubObjectCode;
     public final String projectCode;
     public final String organizationReferenceId;
-    public final BigDecimal amountOrPercent;
+    public final KualiDecimal amountOrPercent;
     public final IWantAmountOrPercentTypeXml useAmountOrPercent;
 
     private IWantTransactionLineFixture(String chartOfAccountsCode, String accountNumber, String financialObjectCode,
             String subAccountNumber, String financialSubObjectCode, String projectCode, String organizationReferenceId,
-            BigDecimal amountOrPercent, IWantAmountOrPercentTypeXml useAmountOrPercent) {
+            KualiDecimal amountOrPercent, IWantAmountOrPercentTypeXml useAmountOrPercent) {
         this.chartOfAccountsCode = chartOfAccountsCode;
         this.accountNumber = accountNumber;
         this.financialObjectCode = financialObjectCode;
