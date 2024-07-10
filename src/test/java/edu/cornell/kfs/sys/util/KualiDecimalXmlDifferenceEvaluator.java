@@ -7,7 +7,6 @@ import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
 import org.xmlunit.diff.DifferenceEvaluator;
 
-
 public class KualiDecimalXmlDifferenceEvaluator implements DifferenceEvaluator {
     private static final Logger LOG = LogManager.getLogger();
 

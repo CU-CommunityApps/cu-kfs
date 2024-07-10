@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.iwant.xml.fixture;
 
-import java.math.BigDecimal;
-
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.iwant.xml.IWantItemXml;
@@ -9,17 +7,17 @@ import edu.cornell.kfs.module.purap.iwant.xml.IWantItemXml;
 public enum IWantItemFixture {
 
     ITEM_TEST("unit of measure", "cat number", "item description", new KualiDecimal(5.29), "code",
-            BigDecimal.valueOf(2.0));
+            new KualiDecimal(2.0));
 
     public final String itemUnitOfMeasureCode;
     public final String itemCatalogNumber;
     public final String itemDescription;
     public final KualiDecimal itemUnitPrice;
     public final String purchasingCommodityCode;
-    public final BigDecimal itemQuantity;
+    public final KualiDecimal itemQuantity;
 
     private IWantItemFixture(String itemUnitOfMeasureCode, String itemCatalogNumber, String itemDescription,
-            KualiDecimal itemUnitPrice, String purchasingCommodityCode, BigDecimal itemQuantity) {
+            KualiDecimal itemUnitPrice, String purchasingCommodityCode, KualiDecimal itemQuantity) {
         this.itemUnitOfMeasureCode = itemUnitOfMeasureCode;
         this.itemCatalogNumber = itemCatalogNumber;
         this.itemDescription = itemDescription;

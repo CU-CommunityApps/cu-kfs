@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.kuali.kfs.core.api.impex.xml.XmlConstants;
 import org.kuali.kfs.kew.xml.BooleanJaxbAdapter;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import edu.cornell.kfs.module.purap.iwant.xml.IWantXmlConstants.IWantIndicatorTypeXml;
@@ -15,7 +13,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 

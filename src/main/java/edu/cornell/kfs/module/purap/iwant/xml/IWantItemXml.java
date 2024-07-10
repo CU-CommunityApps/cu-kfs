@@ -1,7 +1,5 @@
 package edu.cornell.kfs.module.purap.iwant.xml;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -38,7 +36,8 @@ public class IWantItemXml {
     private String purchasingCommodityCode;
 
     @XmlElement(name = "itemQuantity", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    private BigDecimal itemQuantity;
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
+    private KualiDecimal itemQuantity;
 
     public String getItemUnitOfMeasureCode() {
         return itemUnitOfMeasureCode;
@@ -80,11 +79,11 @@ public class IWantItemXml {
         this.purchasingCommodityCode = purchasingCommodityCode;
     }
 
-    public BigDecimal getItemQuantity() {
+    public KualiDecimal getItemQuantity() {
         return itemQuantity;
     }
 
-    public void setItemQuantity(BigDecimal itemQuantity) {
+    public void setItemQuantity(KualiDecimal itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
     

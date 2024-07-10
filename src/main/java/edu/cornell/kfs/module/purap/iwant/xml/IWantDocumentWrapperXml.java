@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import edu.cornell.kfs.module.purap.batch.IWantDocumentInputFileType;
 import edu.cornell.kfs.module.purap.businessobject.IWantDocumentBatchFeed;
 import edu.cornell.kfs.sys.businessobject.XmlFragmentable;
 import jakarta.xml.bind.Marshaller;
