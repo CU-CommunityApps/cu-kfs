@@ -57,7 +57,7 @@ public class TestIWantXmlObjects {
         
         File outputMaximoFile = new File(outputFileName);
         
-        CuXMLUnitTestUtils.compareXML(maximoFile, outputMaximoFile);
+        CuXMLUnitTestUtils.compareXMLWithKualiDecimalEvaluator(maximoFile, outputMaximoFile);
     }
     
     @Test
@@ -72,7 +72,7 @@ public class TestIWantXmlObjects {
         
         File outputIwantFullExample = new File(outputFileName);
         
-        CuXMLUnitTestUtils.compareXML(iwantExampleFile, outputIwantFullExample);
+        CuXMLUnitTestUtils.compareXMLWithKualiDecimalEvaluator(iwantExampleFile, outputIwantFullExample);
         
     }
 

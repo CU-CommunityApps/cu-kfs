@@ -2,22 +2,24 @@ package edu.cornell.kfs.module.purap.iwant.xml.fixture;
 
 import java.math.BigDecimal;
 
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+
 import edu.cornell.kfs.module.purap.iwant.xml.IWantItemXml;
 
 public enum IWantItemFixture {
 
-    ITEM_TEST("unit of measure", "cat number", "item description", BigDecimal.valueOf(5.29), "code",
+    ITEM_TEST("unit of measure", "cat number", "item description", new KualiDecimal(5.29), "code",
             BigDecimal.valueOf(2.0));
 
     public final String itemUnitOfMeasureCode;
     public final String itemCatalogNumber;
     public final String itemDescription;
-    public final BigDecimal itemUnitPrice;
+    public final KualiDecimal itemUnitPrice;
     public final String purchasingCommodityCode;
     public final BigDecimal itemQuantity;
 
     private IWantItemFixture(String itemUnitOfMeasureCode, String itemCatalogNumber, String itemDescription,
-            BigDecimal itemUnitPrice, String purchasingCommodityCode, BigDecimal itemQuantity) {
+            KualiDecimal itemUnitPrice, String purchasingCommodityCode, BigDecimal itemQuantity) {
         this.itemUnitOfMeasureCode = itemUnitOfMeasureCode;
         this.itemCatalogNumber = itemCatalogNumber;
         this.itemDescription = itemDescription;

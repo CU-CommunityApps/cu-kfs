@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.Difference;
+import org.xmlunit.diff.DifferenceEvaluators;
 
 import liquibase.repackaged.org.apache.commons.collections4.IterableUtils;
 
@@ -26,6 +27,25 @@ public class CuXMLUnitTestUtils {
 
         for (Difference dff : xmlDiff.getDifferences()) {
             LOG.info("compareXML, difference: " + dff);
+        }
+
+        assertEquals(IterableUtils.size(xmlDiff.getDifferences()), 0);
+    }
+    
+    public static void compareXMLWithKualiDecimalEvaluator(File expectedXmlFile, File actualXmlFile) {
+        Diff xmlDiff = DiffBuilder.compare(expectedXmlFile)
+                .withTest(actualXmlFile)
+                .checkForIdentical()
+                .ignoreComments()
+                .ignoreWhitespace()
+                .withDifferenceEvaluator(
+                        DifferenceEvaluators.chain(
+                                DifferenceEvaluators.Default,
+                                new KualiDecimalXmlDifferenceEvaluator()))
+                .build();
+
+        for (Difference dff : xmlDiff.getDifferences()) {
+            LOG.info("compareXMLWithKualiDecimalEvaluator, difference: " + dff);
         }
 
         assertEquals(IterableUtils.size(xmlDiff.getDifferences()), 0);

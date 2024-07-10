@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantItem;
+import edu.cornell.kfs.sys.xmladapters.KualiDecimalNullPossibleXmlAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "itemUnitOfMeasureCode", "itemCatalogNumber", "itemDescription", "itemUnitPrice",
@@ -28,7 +31,8 @@ public class IWantItemXml {
     private String itemDescription;
 
     @XmlElement(name = "itemUnitPrice", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    private BigDecimal itemUnitPrice;
+    @XmlJavaTypeAdapter(KualiDecimalNullPossibleXmlAdapter.class)
+    private KualiDecimal itemUnitPrice;
 
     @XmlElement(name = "purchasingCommodityCode", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
     private String purchasingCommodityCode;
@@ -60,11 +64,11 @@ public class IWantItemXml {
         this.itemDescription = itemDescription;
     }
 
-    public BigDecimal getItemUnitPrice() {
+    public KualiDecimal getItemUnitPrice() {
         return itemUnitPrice;
     }
 
-    public void setItemUnitPrice(BigDecimal itemUnitPrice) {
+    public void setItemUnitPrice(KualiDecimal itemUnitPrice) {
         this.itemUnitPrice = itemUnitPrice;
     }
 
@@ -89,7 +93,7 @@ public class IWantItemXml {
         item.setItemUnitOfMeasureCode(itemUnitOfMeasureCode);
         item.setItemCatalogNumber(itemCatalogNumber);
         item.setItemDescription(itemDescription);
-        item.setItemUnitPrice(itemUnitPrice);
+        item.setItemUnitPrice(itemUnitPrice != null ? itemUnitPrice.bigDecimalValue() : null);
         item.setPurchasingCommodityCode(purchasingCommodityCode);
         item.setItemQuantity(String.valueOf(itemQuantity));
         return item;
