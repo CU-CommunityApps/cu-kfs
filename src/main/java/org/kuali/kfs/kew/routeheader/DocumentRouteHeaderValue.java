@@ -804,33 +804,21 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
 
     @Override
     public LocalDateTime getDateCreated() {
-        if (createDate == null) {
-            return null;
-        }
         return getDateTimeService().getLocalDateTime(createDate);
     }
 
     @Override
     public LocalDateTime getDateLastModified() {
-        if (dateModified == null) {
-            return null;
-        }
         return getDateTimeService().getLocalDateTime(dateModified);
     }
 
     @Override
     public LocalDateTime getDateApproved() {
-        if (approvedDate == null) {
-            return null;
-        }
         return getDateTimeService().getLocalDateTime(approvedDate);
     }
 
     @Override
     public LocalDateTime getDateFinalized() {
-        if (finalizedDate == null) {
-            return null;
-        }
         return getDateTimeService().getLocalDateTime(finalizedDate);
     }
 
