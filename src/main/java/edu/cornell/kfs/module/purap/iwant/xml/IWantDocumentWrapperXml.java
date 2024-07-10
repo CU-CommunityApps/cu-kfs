@@ -29,7 +29,7 @@ public class IWantDocumentWrapperXml implements XmlFragmentable {
 
     public List<IWantDocumentXml> getiWantDocuments() {
         if (iWantDocuments == null) {
-            iWantDocuments = new ArrayList<IWantDocumentXml>();
+            iWantDocuments = new ArrayList<>();
         }
         return iWantDocuments;
     }

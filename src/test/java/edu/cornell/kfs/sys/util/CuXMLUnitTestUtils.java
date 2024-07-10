@@ -19,23 +19,21 @@ public class CuXMLUnitTestUtils {
     private static final Logger LOG = LogManager.getLogger();
 
     public static void compareXML(File expectedXmlFile, File actualXmlFile) {
-        compareXMLWithEvaluatorors(expectedXmlFile, actualXmlFile, DifferenceEvaluators.Default);
+        compareXMLWithEvaluators(expectedXmlFile, actualXmlFile, DifferenceEvaluators.Default);
     }
     
-    public static void compareXMLWithEvaluatorors(File expectedXmlFile, File actualXmlFile, DifferenceEvaluator... evaluators) {
+    public static void compareXMLWithEvaluators(File expectedXmlFile, File actualXmlFile, DifferenceEvaluator... evaluators) {
         Diff xmlDiff = DiffBuilder.compare(expectedXmlFile)
                 .withTest(actualXmlFile)
                 .checkForIdentical()
                 .ignoreComments()
                 .ignoreWhitespace()
                 .withDifferenceEvaluator(
-                        DifferenceEvaluators.chain(
-                                DifferenceEvaluators.Default,
-                                new KualiDecimalXmlDifferenceEvaluator()))
+                        DifferenceEvaluators.chain(evaluators))
                 .build();
 
         for (Difference dff : xmlDiff.getDifferences()) {
-            LOG.info("compareXMLWithKualiDecimalEvaluator, difference: " + dff);
+            LOG.info("compareXMLWithEvaluators, difference: " + dff);
         }
 
         assertEquals(IterableUtils.size(xmlDiff.getDifferences()), 0);

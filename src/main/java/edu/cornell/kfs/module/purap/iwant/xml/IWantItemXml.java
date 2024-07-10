@@ -96,7 +96,7 @@ public class IWantItemXml {
         item.setItemDescription(itemDescription);
         item.setItemUnitPrice(itemUnitPrice != null ? itemUnitPrice.bigDecimalValue() : null);
         item.setPurchasingCommodityCode(purchasingCommodityCode);
-        item.setItemQuantity(String.valueOf(itemQuantity));
+        item.setItemQuantity(itemQuantity);
         return item;
     }
 

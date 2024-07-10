@@ -81,7 +81,7 @@ public class TestIWantXmlObjects {
     }
 
     private void compareXmlFiles(File iwantExampleFile, File outputIwantFullExample) {
-        CuXMLUnitTestUtils.compareXMLWithEvaluatorors(iwantExampleFile, outputIwantFullExample, 
+        CuXMLUnitTestUtils.compareXMLWithEvaluators(iwantExampleFile, outputIwantFullExample, 
                 DifferenceEvaluators.Default, new KualiDecimalXmlDifferenceEvaluator());
     }
     

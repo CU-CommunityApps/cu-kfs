@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.kew.xml.BooleanJaxbAdapter;
-import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -284,21 +284,21 @@ public class IWantDocumentXml {
 
     public List<IWantItemXml> getItems() {
         if (items == null) {
-            items = new ArrayList<IWantItemXml>();
+            items = new ArrayList<>();
         }
         return items;
     }
 
     public List<IWantTransactionLineXml> getTransactionLines() {
         if (transactionLines == null) {
-            transactionLines = new ArrayList<IWantTransactionLineXml>();
+            transactionLines = new ArrayList<>();
         }
         return transactionLines;
     }
 
     public List<IWantNoteXml> getNotes() {
         if (notes == null) {
-            notes = new ArrayList<IWantNoteXml>();
+            notes = new ArrayList<>();
         }
         return notes;
     }
@@ -327,7 +327,7 @@ public class IWantDocumentXml {
         doc.setCommentsAndSpecialInstructions(commentsAndSpecialInstructions);
         doc.setGoods(goods);
         
-        String servicePerformedOnCampusString = servicePerformedOnCampus ? IWantXmlConstants.SERVICE_PERFORMED_ON_CAMPUS_YES : IWantXmlConstants.SERVICE_PERFORMED_ON_CAMPUS_NO;
+        String servicePerformedOnCampusString = servicePerformedOnCampus ? KRADConstants.YES_INDICATOR_VALUE : KRADConstants.NO_INDICATOR_VALUE;
         doc.setServicePerformedOnCampus(servicePerformedOnCampusString);
         
         doc.setCurrentRouteToNetId(adHocRouteToNetID);

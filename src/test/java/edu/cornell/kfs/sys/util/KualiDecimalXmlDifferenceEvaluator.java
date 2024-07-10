@@ -19,7 +19,7 @@ public class KualiDecimalXmlDifferenceEvaluator implements DifferenceEvaluator {
                 try {
                     KualiDecimal controlAmount = new KualiDecimal(control);
                     KualiDecimal testAmount = new KualiDecimal(test);
-                    if(controlAmount.equals(testAmount)) {
+                    if (controlAmount.equals(testAmount)) {
                         outcome = ComparisonResult.EQUAL;
                         LOG.debug("evaluate, found equal control ({}) and test ({}) amounts", control, test);
                     } else {

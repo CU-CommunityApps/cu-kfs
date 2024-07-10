@@ -132,7 +132,7 @@ public class IWantTransactionLineXml {
         account.setFinancialSubObjectCode(financialSubObjectCode);
         account.setProjectCode(projectCode);
         account.setOrganizationReferenceId(organizationReferenceId);
-        account.setAmountOrPercent(String.valueOf(amountOrPercent));
+        account.setAmountOrPercent(amountOrPercent);
         account.setUseAmountOrPercent(useAmountOrPercent);
         return account;
     }
