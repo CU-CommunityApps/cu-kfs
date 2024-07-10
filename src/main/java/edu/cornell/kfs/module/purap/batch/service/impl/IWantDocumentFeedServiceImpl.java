@@ -497,13 +497,7 @@ public class IWantDocumentFeedServiceImpl implements IWantDocumentFeedService {
                 addAccount.setOrganizationReferenceId(account.getOrganizationReferenceId());
                 addAccount.setProjectCode(account.getProjectCode());
                 addAccount.setAmountOrPercent(account.getAmountOrPercent());
-                
-                if("P".equalsIgnoreCase(account.getUseAmountOrPercent())){
-                	addAccount.setUseAmountOrPercent(CUPurapConstants.PERCENT);    	
-                }
-                if("A".equalsIgnoreCase(account.getUseAmountOrPercent())){
-                	addAccount.setUseAmountOrPercent(CUPurapConstants.AMOUNT);  
-                }
+                addAccount.setUseAmountOrPercent(account.getUseAmountOrPercent());
 
                 boolean rulePassed = ruleService.applyRules(new KualiAddLineEvent(iWantDocument, "accounts", addAccount));
 

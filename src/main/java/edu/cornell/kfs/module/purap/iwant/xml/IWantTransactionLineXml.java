@@ -5,12 +5,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantAccount;
+import edu.cornell.kfs.sys.xmladapters.IWantAmountOrPercentXmlAdapter;
 import edu.cornell.kfs.sys.xmladapters.KualiDecimalNullPossibleXmlAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -46,8 +46,8 @@ public class IWantTransactionLineXml {
     private KualiDecimal amountOrPercent;
 
     @XmlElement(name = "useAmountOrPercent", namespace = IWantXmlConstants.IWANT_DOCUMENT_NAMESPACE)
-    @XmlSchemaType(name = "string")
-    private IWantXmlConstants.IWantAmountOrPercentTypeXml useAmountOrPercent;
+    @XmlJavaTypeAdapter(IWantAmountOrPercentXmlAdapter.class)
+    private String useAmountOrPercent;
 
     public String getChartOfAccountsCode() {
         return chartOfAccountsCode;
@@ -113,11 +113,11 @@ public class IWantTransactionLineXml {
         this.amountOrPercent = amountOrPercent;
     }
 
-    public IWantXmlConstants.IWantAmountOrPercentTypeXml getUseAmountOrPercent() {
+    public String getUseAmountOrPercent() {
         return useAmountOrPercent;
     }
 
-    public void setUseAmountOrPercent(IWantXmlConstants.IWantAmountOrPercentTypeXml useAmountOrPercent) {
+    public void setUseAmountOrPercent(String useAmountOrPercent) {
         this.useAmountOrPercent = useAmountOrPercent;
     }
     
@@ -131,7 +131,7 @@ public class IWantTransactionLineXml {
         account.setProjectCode(projectCode);
         account.setOrganizationReferenceId(organizationReferenceId);
         account.setAmountOrPercent(String.valueOf(amountOrPercent));
-        account.setUseAmountOrPercent(useAmountOrPercent.value());
+        account.setUseAmountOrPercent(useAmountOrPercent);
         return account;
     }
 

@@ -2,13 +2,13 @@ package edu.cornell.kfs.module.purap.iwant.xml.fixture;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
+import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.iwant.xml.IWantTransactionLineXml;
-import edu.cornell.kfs.module.purap.iwant.xml.IWantXmlConstants.IWantAmountOrPercentTypeXml;
 
 public enum IWantTransactionLineFixture {
 
     TRANSACTION_LINE_TEST("chart", "account", "object code", "sub account", "sub object code", "project code",
-            "reference id", new KualiDecimal(666.66), IWantAmountOrPercentTypeXml.A);
+            "reference id", new KualiDecimal(666.66), CUPurapConstants.AMOUNT);
 
     public final String chartOfAccountsCode;
     public final String accountNumber;
@@ -18,11 +18,11 @@ public enum IWantTransactionLineFixture {
     public final String projectCode;
     public final String organizationReferenceId;
     public final KualiDecimal amountOrPercent;
-    public final IWantAmountOrPercentTypeXml useAmountOrPercent;
+    public final String useAmountOrPercent;
 
     private IWantTransactionLineFixture(String chartOfAccountsCode, String accountNumber, String financialObjectCode,
             String subAccountNumber, String financialSubObjectCode, String projectCode, String organizationReferenceId,
-            KualiDecimal amountOrPercent, IWantAmountOrPercentTypeXml useAmountOrPercent) {
+            KualiDecimal amountOrPercent, String useAmountOrPercent) {
         this.chartOfAccountsCode = chartOfAccountsCode;
         this.accountNumber = accountNumber;
         this.financialObjectCode = financialObjectCode;

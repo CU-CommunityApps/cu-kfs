@@ -13,17 +13,21 @@ public class KualiDecimalXmlDifferenceEvaluator implements DifferenceEvaluator {
     @Override
     public ComparisonResult evaluate(Comparison comparison, ComparisonResult outcome) {
         if (outcome != ComparisonResult.EQUAL) {
-            String control = (String) comparison.getControlDetails().getValue();
-            String test = (String) comparison.getTestDetails().getValue();
-            try {
-                KualiDecimal controlAmount = new KualiDecimal(control);
-                KualiDecimal testAmount = new KualiDecimal(test);
-                if(controlAmount.equals(testAmount)) {
-                    outcome = ComparisonResult.EQUAL;
-                    LOG.debug("evaluate, found equal control ({}) and test ({}) amounts", control, test);
+            if (comparison.getControlDetails() != null && comparison.getTestDetails() != null) {
+                String control = String.valueOf(comparison.getControlDetails().getValue());
+                String test = String.valueOf(comparison.getTestDetails().getValue());
+                try {
+                    KualiDecimal controlAmount = new KualiDecimal(control);
+                    KualiDecimal testAmount = new KualiDecimal(test);
+                    if(controlAmount.equals(testAmount)) {
+                        outcome = ComparisonResult.EQUAL;
+                        LOG.debug("evaluate, found equal control ({}) and test ({}) amounts", control, test);
+                    } else {
+                        LOG.debug("evaluate, found UNEQUAL control ({}) and test ({}) amounts", control, test);
+                    }
+                } catch (Exception e) {
+                    LOG.debug("evaluate, found non-numeric control ({}) and test ({}) amounts", control, test);
                 }
-            } catch (Exception e) {
-                LOG.debug("evaluate, found non-numeric control ({}) and test ({}) amounts", control, test);
             }
         }
         
