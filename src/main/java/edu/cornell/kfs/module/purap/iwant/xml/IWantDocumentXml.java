@@ -8,9 +8,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.kew.xml.BooleanJaxbAdapter;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.module.purap.document.BatchIWantDocument;
-import edu.cornell.kfs.module.purap.iwant.xml.IWantXmlConstants.IWantIndicatorTypeXml;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -326,7 +326,10 @@ public class IWantDocumentXml {
         doc.setAccountDescriptionTxt(accountDescriptionTxt);
         doc.setCommentsAndSpecialInstructions(commentsAndSpecialInstructions);
         doc.setGoods(goods);
-        doc.setServicePerformedOnCampus(IWantIndicatorTypeXml.fromBoolean(servicePerformedOnCampus));
+        
+        String servicePerformedOnCampusString = servicePerformedOnCampus ? IWantXmlConstants.SERVICE_PERFORMED_ON_CAMPUS_YES : IWantXmlConstants.SERVICE_PERFORMED_ON_CAMPUS_NO;
+        doc.setServicePerformedOnCampus(servicePerformedOnCampusString);
+        
         doc.setCurrentRouteToNetId(adHocRouteToNetID);
         
         for (IWantItemXml item : getItems()) {

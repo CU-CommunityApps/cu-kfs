@@ -115,7 +115,7 @@ public class AccountingXmlDocumentAccountingLine {
     @XmlElement(name = "credit_amount", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(KualiDecimalXmlAdapter.class)
     protected KualiDecimal creditAmount;
-
+    
     @XmlElement(name = "reference_number", namespace = StringUtils.EMPTY, required = false)
     @XmlJavaTypeAdapter(TrimmedStringXmlAdapter.class)
     protected String referenceNumber;
@@ -319,7 +319,7 @@ public class AccountingXmlDocumentAccountingLine {
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(obj, this);
@@ -329,7 +329,7 @@ public class AccountingXmlDocumentAccountingLine {
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
-
+    
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
