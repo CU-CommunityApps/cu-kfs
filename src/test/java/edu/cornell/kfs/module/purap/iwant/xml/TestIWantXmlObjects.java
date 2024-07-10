@@ -1,5 +1,7 @@
 package edu.cornell.kfs.module.purap.iwant.xml;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -49,7 +51,7 @@ public class TestIWantXmlObjects {
     }
 
     @Test
-    public void testMaximoExample() throws JAXBException, IOException {
+    public void testIWantMaximoFileAgainstMarshalledFile() throws JAXBException, IOException {
         File maximoFile = new File(INPUT_FILE_PATH + MAXIMO_INPUT_FILE_NAME);
 
         IWantDocumentWrapperXml iWantDocFile = marshalservice.unmarshalFile(maximoFile, IWantDocumentWrapperXml.class);
@@ -63,7 +65,7 @@ public class TestIWantXmlObjects {
     }
     
     @Test
-    public void testIwantDocFromObject() throws JAXBException, IOException {
+    public void testIWantExampleFileAgainstMarshalledFile() throws JAXBException, IOException {
         File iwantExampleFile = new File(INPUT_FILE_PATH + IWANT_INPUT_FILE_NAME);
         
         IWantDocumentWrapperXml docFile = IWantDocumentWrapperFixture.FULL_EXAMPLE.toIWantDocumentWrapperXml();
@@ -82,5 +84,17 @@ public class TestIWantXmlObjects {
         CuXMLUnitTestUtils.compareXMLWithEvaluatorors(iwantExampleFile, outputIwantFullExample, 
                 DifferenceEvaluators.Default, new KualiDecimalXmlDifferenceEvaluator());
     }
+    
+    @Test
+    public void testIWantExamplePojoForUnmarshalledFile() throws JAXBException {
+        File iwantExampleFile = new File(INPUT_FILE_PATH + IWANT_INPUT_FILE_NAME);
+        IWantDocumentWrapperXml actualDocumentWrapper = marshalservice.unmarshalFile(iwantExampleFile, IWantDocumentWrapperXml.class);
+        
+        IWantDocumentWrapperXml expectedDocumentWrapper = IWantDocumentWrapperFixture.FULL_EXAMPLE.toIWantDocumentWrapperXml();
+        
+        assertTrue(actualDocumentWrapper.equals(expectedDocumentWrapper));
+        
+    }
+    
 
 }

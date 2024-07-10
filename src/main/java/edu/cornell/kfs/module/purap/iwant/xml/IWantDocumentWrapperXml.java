@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -61,6 +63,16 @@ public class IWantDocumentWrapperXml implements XmlFragmentable {
         Map<String, Object> properties = new HashMap<>();
         properties.put(Marshaller.JAXB_SCHEMA_LOCATION, IWantXmlConstants.IWANT_DOCUMENT_SCHEMA_LOCATION);
         return properties;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(obj, this);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
 }
