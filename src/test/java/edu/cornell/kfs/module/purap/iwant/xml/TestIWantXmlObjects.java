@@ -1,6 +1,6 @@
 package edu.cornell.kfs.module.purap.iwant.xml;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +92,7 @@ public class TestIWantXmlObjects {
         
         IWantDocumentWrapperXml expectedDocumentWrapper = IWantDocumentWrapperFixture.FULL_EXAMPLE.toIWantDocumentWrapperXml();
         
-        assertTrue(actualDocumentWrapper.equals(expectedDocumentWrapper));
+        assertEquals(actualDocumentWrapper, expectedDocumentWrapper);
         
     }
     
