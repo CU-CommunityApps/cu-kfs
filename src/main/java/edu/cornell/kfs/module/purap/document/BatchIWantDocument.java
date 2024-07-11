@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.core.web.format.BooleanFormatter;
 import org.kuali.kfs.krad.bo.Attachment;
 
-import edu.cornell.kfs.module.purap.businessobject.BatchIWantAttachment;
 import edu.cornell.kfs.module.purap.businessobject.BatchIWantNote;
 
 public class BatchIWantDocument extends IWantDocument {
@@ -15,11 +14,9 @@ public class BatchIWantDocument extends IWantDocument {
 	protected String initiator;
 	protected String sourceNumber;
 	protected String businessPurpose;
-	private List<BatchIWantAttachment> attachments;
 	
 	public BatchIWantDocument() {
 	    super();
-	    attachments = new ArrayList<BatchIWantAttachment>();
 	    
     }
 	
@@ -61,17 +58,5 @@ public class BatchIWantDocument extends IWantDocument {
 	    super.setSameAsInitiator(sameAsInitiatorB);
 	    }
 	}
-
-	public List<BatchIWantAttachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<BatchIWantAttachment> attachments) {
-		this.attachments = attachments;
-	}
-    
-    public void addAttachment(BatchIWantAttachment attachment) {
-        getAttachments().add(attachment);
-    }
 
 }

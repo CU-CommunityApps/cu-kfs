@@ -54,11 +54,6 @@
    <xsd:element name="adHocRouteToNetID" type="kfs:zeroToThirtyCharType"/> 
    
    <xsd:element name="noteText" type="purap:zeroToEightHundredCharType"/>
-   
-   <xsd:element name="mimeTypeCode" type="purap:zeroToFortyCharType"/>
-   <xsd:element name="fileName" type="purap:zeroToTwoHundredFiftyCharType"/>
-   <xsd:element name="attachmentType" type="purap:zeroToEightHundredCharType"/>
-   
        
     <!-- definition of attributes -->
     
@@ -107,17 +102,7 @@
                 <xsd:element maxOccurs="1" minOccurs="1" ref="noteText"/>
             </xsd:sequence>
         </xsd:complexType>
-    </xsd:element> 
-    
-    <xsd:element name="attachment">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element maxOccurs="1" minOccurs="0" ref="mimeTypeCode"/>
-                <xsd:element maxOccurs="1" minOccurs="1" ref="fileName"/>
-                <xsd:element maxOccurs="1" minOccurs="1" ref="attachmentType"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>  
+    </xsd:element>
 
     <xsd:element name="iWantDocument">
         <xsd:complexType>
@@ -159,8 +144,6 @@
             	<xsd:element maxOccurs="1" minOccurs="0" ref="adHocRouteToNetID"/>
             	
             	<xsd:element maxOccurs="unbounded" minOccurs="0" ref="note"/>
-            	
-            	<xsd:element maxOccurs="unbounded" minOccurs="0" ref="attachment"/>
             	
             </xsd:sequence>
         </xsd:complexType>
