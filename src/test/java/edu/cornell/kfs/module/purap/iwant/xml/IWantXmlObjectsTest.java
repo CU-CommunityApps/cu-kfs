@@ -22,7 +22,7 @@ import edu.cornell.kfs.sys.util.KualiDecimalXmlDifferenceEvaluator;
 import jakarta.xml.bind.JAXBException;
 
 @Execution(ExecutionMode.SAME_THREAD)
-public class TestIWantXmlObjects {
+public class IWantXmlObjectsTest {
     private static final Logger LOG = LogManager.getLogger();
     
     private static final String INPUT_FILE_PATH = "src/test/resources/edu/cornell/kfs/module/purap/businessobject/xml/";
@@ -92,7 +92,7 @@ public class TestIWantXmlObjects {
         
         IWantDocumentWrapperXml expectedDocumentWrapper = IWantDocumentWrapperFixture.FULL_EXAMPLE.toIWantDocumentWrapperXml();
         
-        assertEquals(actualDocumentWrapper, expectedDocumentWrapper);
+        assertEquals(expectedDocumentWrapper, actualDocumentWrapper);
         
     }
     
