@@ -48,10 +48,6 @@ public class CuDataDictionaryService extends DataDictionaryService {
 
     private static final Logger LOG = LogManager.getLogger();
 
-    public CuDataDictionaryService() {
-        super();
-    }
-
     @Override
     public void parseDataDictionaryConfigurationFiles() {
         super.parseDataDictionaryConfigurationFiles();

@@ -398,7 +398,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                     initiatorPrincipalId = document.getInitiatorPrincipalId();
                     documentStatus = document.getStatus();
                     if (document.getDateFinalized() != null) {
-                        dateFinalized = new java.sql.Date(document.getDateFinalized().getLong(ChronoField.MILLI_OF_DAY ));
+                        dateFinalized = new java.sql.Date(document.getFinalizedDate().getTime());
                     }
                 }
                 // Retrieve payment method, which is temporarily stored in the doc title field.

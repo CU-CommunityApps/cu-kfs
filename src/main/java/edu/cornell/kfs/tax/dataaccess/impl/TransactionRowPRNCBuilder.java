@@ -279,7 +279,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
                     initiatorPrincipalId = document.getInitiatorPrincipalId();
                     documentStatus = document.getStatus();
                     if (document.getDateFinalized() != null) {
-                        dateFinalized = new java.sql.Date(document.getDateFinalized().getLong(ChronoField.MILLI_OF_DAY));
+                        dateFinalized = new java.sql.Date(document.getFinalizedDate().getTime());
                     }
                 }
                 
