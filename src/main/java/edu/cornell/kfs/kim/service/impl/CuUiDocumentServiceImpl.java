@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ojb.broker.core.proxy.CollectionProxyDefaultImpl;
 import org.kuali.kfs.kim.api.KimConstants;
 import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.api.permission.PermissionService;
 import org.kuali.kfs.kim.bo.ui.KimDocumentRoleMember;
 import org.kuali.kfs.kim.document.IdentityManagementPersonDocument;
 import org.kuali.kfs.kim.document.IdentityManagementRoleDocument;
@@ -36,7 +35,6 @@ import edu.cornell.kfs.kim.impl.identity.PersonExtension;
 
 public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
 
-    private PermissionService permissionService;
     private PersonService personService;
     private RoleInternalService roleInternalService;
 
@@ -296,12 +294,6 @@ public class CuUiDocumentServiceImpl extends UiDocumentServiceImpl {
             docAffiliation.setPrimary(personAffiliation.isPrimary());
             docAffiliations.add(docAffiliation);
         }
-    }
-
-    @Override
-    public void setPermissionService(final PermissionService permissionService) {
-        super.setPermissionService(permissionService);
-        this.permissionService = permissionService;
     }
 
     @Override
