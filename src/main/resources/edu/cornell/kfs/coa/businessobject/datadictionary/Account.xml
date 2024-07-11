@@ -251,9 +251,9 @@
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <ref bean="Account-extension-programCode"/>
-                           <ref bean="Account-extension-appropriationAccountNumber"/>
-                           <ref bean="Account-extension-majorReportingCategoryCode"/>
+                           <bean parent="FieldDefinition" p:attributeName="extension.programCode" p:maxLength="2048" />
+                           <bean parent="FieldDefinition" p:attributeName="extension.appropriationAccountNumber" p:maxLength="2048" />
+                           <bean parent="FieldDefinition" p:attributeName="extension.majorReportingCategoryCode" p:maxLength="2048" />
                        </list>
                    </property>
                </bean>
@@ -265,9 +265,9 @@
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean parent="FieldDefinition" p:attributeName="extension.programCode" p:maxLength="2048" />
-                           <bean parent="FieldDefinition" p:attributeName="extension.appropriationAccountNumber" p:maxLength="2048" />
-                           <bean parent="FieldDefinition" p:attributeName="extension.majorReportingCategoryCode" p:maxLength="2048" />
+                           <bean parent="Account-extension-programCode" p:maxLength="2048"/>
+                           <bean parent="Account-extension-appropriationAccountNumber" p:maxLength="2048"/>
+                           <bean parent="Account-extension-majorReportingCategoryCode" p:maxLength="2048"/>
                        </list>
                    </property>
                </bean>
@@ -279,9 +279,9 @@
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean parent="Account-extension-programCode" p:maxLength="2048"/>
-                           <bean parent="Account-extension-appropriationAccountNumber" p:maxLength="2048"/>
-                           <bean parent="Account-extension-majorReportingCategoryCode" p:maxLength="2048"/>
+                           <ref bean="Account-extension-programCode"/>
+                           <ref bean="Account-extension-appropriationAccountNumber"/>
+                           <ref bean="Account-extension-majorReportingCategoryCode"/>
                        </list>
                    </property>
                </bean>
