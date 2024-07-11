@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.xml.stream.XMLInputFactory;
@@ -107,6 +108,12 @@ public class CUMarshalServiceImpl implements CUMarshalService {
         if (objectToMarshal.shouldMarshalAsFragment()) {
             jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         }
+        
+        Map<String, Object> additionalProperties = objectToMarshal.getAdditionalJAXBProperties();
+        for (String key : additionalProperties.keySet()) {
+            jaxbMarshaller.setProperty(key, additionalProperties.get(key));
+        }
+        
         StringWriter stringWriter = new StringWriter();
         jaxbMarshaller.marshal(objectToMarshal, stringWriter);
         String marshalledXml = stringWriter.toString();
