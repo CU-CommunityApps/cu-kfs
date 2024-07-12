@@ -12,18 +12,13 @@
         * Configured an alternate validation pattern for phone numbers.
         
         * Added masking of Base Salary Amount.
-        
-        * Backported the following KualiCo changes into this file:
-        ** FINP-9235 (can be removed from this file when we upgrade to the 2023-03-08 financials patch)
      -->
 
     <import resource="classpath:edu/cornell/kfs/kim/cu-kim-attribute-beans.xml"/>
     <import resource="classpath:edu/cornell/kfs/kim/cu-kim-lookup-beans.xml"/>
 
-    <!-- NOTE: The "searchService" property override is part of the FINP-9235 backport. -->
     <bean id="Person"
           parent="Person-parentBean"
-          p:searchService-ref="personSearchService"
     >
         <property name="attributes">
             <list merge="true">
@@ -76,17 +71,6 @@
             </list>
         </property>
     </bean>
-
-    <!-- Start of FINP-9235 backport section. -->
-
-    <bean id="Person-lookupRoleNamespaceCode"
-          parent="Namespace-code"
-          p:label="Role Namespace Code"
-          p:name="lookupRoleNamespaceCode"
-          p:required="false"
-    />
-
-    <!-- End of FINP-9235 backport section. -->
 
     <bean id="Person-baseSalaryAmount" parent="Person-baseSalaryAmount-parentBean">
         <property name="attributeSecurity">
@@ -674,20 +658,5 @@
     </bean>
 
     <!-- End of Person Lookup overrides. -->
-
-    <!-- The following 2 beans can be reworked or removed when the FINP-9235 backport is ready to be removed. -->
-    <bean id="grl.personService" p:serviceName="personService" parent="grlBeanImporter"/>
-    <bean id="grl.roleService" p:serviceName="roleService" parent="grlBeanImporter"/>
-
-    <!-- Start of (modified) FINP-9235 backport section. -->
-
-    <bean class="org.kuali.kfs.kim.impl.identity.PersonSearchService"
-          id="personSearchService"
-          parent="defaultSearchService"
-          p:personService-ref="grl.personService"
-          p:roleService-ref="grl.roleService"
-    />
-
-    <!-- End of FINP-9235 backport section. -->
 
 </beans>

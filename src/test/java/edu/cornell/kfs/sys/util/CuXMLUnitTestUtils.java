@@ -12,7 +12,7 @@ import org.xmlunit.diff.Difference;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.DifferenceEvaluators;
 
-import liquibase.repackaged.org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.collections4.IterableUtils;
 
 public class CuXMLUnitTestUtils {
 

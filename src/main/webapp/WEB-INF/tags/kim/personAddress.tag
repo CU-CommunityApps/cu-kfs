@@ -20,7 +20,6 @@
 --%>
 <%--
     CU Customization: Added an extra sub-tab for including our custom Alternate Address fields.
-                      Also backported the FINP-9391 changes into this file.
 --%>
 <style type="text/css">
   select.fixed-size-200-select {
@@ -45,7 +44,6 @@
         </tr>
         <tr>
             <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.addressTypeCode" attributeEntry="${personAttributes.addressTypeCode}" readOnly="${readOnlyEntity}" />
-            <%-- Start of FINP-9391 changes. --%>
             <c:choose>
                 <c:when test="${readOnlyEntity}">
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.addressLine1MaskedIfNecessary" attributeEntry="${personAttributes.addressLine1MaskedIfNecessary}" readOnly="true" />
@@ -66,7 +64,6 @@
                     <kim:cell valign="middle" cellClass="infoline" textAlign="left" property="document.addressCountryCode" attributeEntry="${personAttributes.addressCountryCode}" styleClass="fixed-size-200-select" />
                 </c:otherwise>
             </c:choose>
-            <%-- End of FINP-9391 changes. --%>
         </tr>
     </table>
 </kul:subtab>

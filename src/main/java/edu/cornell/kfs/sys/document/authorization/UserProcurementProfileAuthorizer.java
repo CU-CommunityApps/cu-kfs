@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.AuthorizationException;
 import org.kuali.kfs.krad.util.GlobalVariables;
@@ -33,7 +33,7 @@ public class UserProcurementProfileAuthorizer  extends MaintenanceDocumentAuthor
 		}
 
 		if (documentActions1.contains(KRADConstants.KUALI_ACTION_CAN_EDIT)) {
-			MaintenanceDocumentBase maintDoc = (MaintenanceDocumentBase)document;
+			MaintenanceDocument maintDoc = (MaintenanceDocument)document;
 			if (StringUtils.equals(maintDoc.getNewMaintainableObject().getMaintenanceAction(),KRADConstants.MAINTENANCE_EDIT_ACTION)
 					|| StringUtils.equals(maintDoc.getNewMaintainableObject().getMaintenanceAction(),KRADConstants.MAINTENANCE_COPY_ACTION)) {
 				boolean hasRole = SpringContext.getBean(UserProcurementProfileValidationService.class).canMaintainUserProcurementProfile();

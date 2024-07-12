@@ -34,6 +34,7 @@ import org.kuali.kfs.coa.businessobject.ProjectCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
@@ -115,6 +116,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     private String headerFieldsJson;
     private List<PaymentApplicationAdjustmentNonAppliedHolding> nonAppliedHoldings = new ArrayList<>();
     private List<CustomerInvoiceDocument> invoices = new ArrayList<>();
+    private DateTimeService dateTimeService;
 
     @Override
     public void populate(final HttpServletRequest request) {
@@ -504,7 +506,7 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
                 routeHeaderValue.getDocRouteStatusLabel(),
                 routeHeaderValue.getCurrentNodeNames(),
                 routeHeaderValue.getCreateDate(),
-                routeHeaderValue.getDateLastModified().toDate(),
+                getDateTimeService().getUtilDate(routeHeaderValue.getDateLastModified()),
                 routeHeaderValue.getApprovedDate(),
                 routeHeaderValue.getFinalizedDate(),
                 takenActionsResponses,
@@ -796,6 +798,13 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
             personService = SpringContext.getBean(PersonService.class);
         }
         return personService;
+    }
+
+    private DateTimeService getDateTimeService() {
+        if (dateTimeService == null) {
+            dateTimeService = SpringContext.getBean(DateTimeService.class);
+        }
+        return dateTimeService;
     }
 
 }

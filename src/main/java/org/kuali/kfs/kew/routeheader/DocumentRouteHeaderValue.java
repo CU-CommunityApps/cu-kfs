@@ -21,7 +21,6 @@ package org.kuali.kfs.kew.routeheader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.kuali.kfs.kew.actionitem.ActionItem;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
@@ -47,6 +46,7 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -803,35 +803,23 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
     }
 
     @Override
-    public DateTime getDateCreated() {
-        if (createDate == null) {
-            return null;
-        }
-        return new DateTime(createDate.getTime());
+    public LocalDateTime getDateCreated() {
+        return getDateTimeService().getLocalDateTime(createDate);
     }
 
     @Override
-    public DateTime getDateLastModified() {
-        if (dateModified == null) {
-            return null;
-        }
-        return new DateTime(dateModified.getTime());
+    public LocalDateTime getDateLastModified() {
+        return getDateTimeService().getLocalDateTime(dateModified);
     }
 
     @Override
-    public DateTime getDateApproved() {
-        if (approvedDate == null) {
-            return null;
-        }
-        return new DateTime(approvedDate.getTime());
+    public LocalDateTime getDateApproved() {
+        return getDateTimeService().getLocalDateTime(approvedDate);
     }
 
     @Override
-    public DateTime getDateFinalized() {
-        if (finalizedDate == null) {
-            return null;
-        }
-        return new DateTime(finalizedDate.getTime());
+    public LocalDateTime getDateFinalized() {
+        return getDateTimeService().getLocalDateTime(finalizedDate);
     }
 
     @Override
@@ -870,11 +858,11 @@ public class DocumentRouteHeaderValue extends PersistableBusinessObjectBase impl
     }
 
     @Override
-    public DateTime getApplicationDocumentStatusDate() {
+    public LocalDateTime getApplicationDocumentStatusDate() {
         if (appDocStatusDate == null) {
             return null;
         }
-        return new DateTime(appDocStatusDate.getTime());
+        return getDateTimeService().getLocalDateTime(appDocStatusDate);
     }
 
     @Override

@@ -144,6 +144,6 @@
 	
     <bean id="recurringDisbursementVoucherPaymentMethodValuesFinder"
           class="edu.cornell.kfs.fp.businessobject.options.RecurringDisbursementVoucherPaymentMethodValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
 
 </beans>

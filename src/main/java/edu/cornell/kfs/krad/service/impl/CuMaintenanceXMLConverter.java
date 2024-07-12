@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
-import org.kuali.kfs.kns.document.MaintenanceDocumentBase;
+import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -130,6 +130,10 @@ import edu.cornell.kfs.sys.util.CuXMLStreamUtils;
  */
 public class CuMaintenanceXMLConverter {
 
+    private static final String OLD_MAINTAINABLE_TAG_NAME = "oldMaintainableObject";
+    private static final String NEW_MAINTAINABLE_TAG_NAME = "newMaintainableObject";
+    private static final String MAINTENANCE_ACTION_TAG_NAME = "maintenanceAction";
+    private static final String NOTES_TAG_NAME = "notes";
     public static final String ROOT_ELEMENT = "maintainableDocumentContents";
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String DEFINED_IN_ATTRIBUTE = "defined-in";
@@ -183,9 +187,9 @@ public class CuMaintenanceXMLConverter {
 
     protected Set<String> createSectionStartTagsSet() {
         return Set.of(
-                MaintenanceDocumentBase.OLD_MAINTAINABLE_TAG_NAME,
-                MaintenanceDocumentBase.NEW_MAINTAINABLE_TAG_NAME,
-                MaintenanceDocumentBase.NOTES_TAG_NAME);
+                OLD_MAINTAINABLE_TAG_NAME,
+                NEW_MAINTAINABLE_TAG_NAME,
+                NOTES_TAG_NAME);
     }
 
     public void initialize(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter) {
@@ -551,7 +555,7 @@ public class CuMaintenanceXMLConverter {
             ruleMapStackTop = new XMLStreamStackElement(
                     ruleMapStackTop, relativeDepth, Collections.emptyMap(), OutputMode.CONVERT_LEGACY_NOTES);
             
-            xmlWriter.writeStartElement(MaintenanceDocumentBase.NOTES_TAG_NAME);
+            xmlWriter.writeStartElement(NOTES_TAG_NAME);
             xmlWriter.writeStartElement(LIST_WRAPPER_ELEMENT_FOR_CONVERTED_BO_NOTES);
             
             do {

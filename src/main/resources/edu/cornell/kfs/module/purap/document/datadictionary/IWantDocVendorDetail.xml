@@ -1384,6 +1384,6 @@
   
   <bean id="inactiveReasonValuesFinder"
         class="org.kuali.kfs.vnd.businessobject.options.InactiveReasonValuesFinder"
-        p:keyValuesService-ref="grl.keyValuesService"/>
+        p:keyValuesService-ref="keyValuesService"/>
   
 </beans>

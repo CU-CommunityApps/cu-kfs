@@ -23,7 +23,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     
-  <bean id="Account" parent="Account-parentBean">
+  <bean id="Account" 
+        parent="Account-parentBean">
   <property name="boNotesEnabled" value="true" />
     <property name="attributes">
       <list merge="true">
@@ -256,9 +257,38 @@
                        </list>
                    </property>
                </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="displayAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <ref bean="Account-subFundGroupCode"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <bean parent="Account-extension-programCode" p:maxLength="2048"/>
+                           <bean parent="Account-extension-appropriationAccountNumber" p:maxLength="2048"/>
+                           <bean parent="Account-extension-majorReportingCategoryCode" p:maxLength="2048"/>
+                       </list>
+                   </property>
+               </bean>
+               <bean parent="FieldOverrideForListElementInsert">
+                   <property name="propertyName" value="formAttributeDefinitions" />
+                   <property name="propertyNameForElementCompare" value="name" />
+                   <property name="element">
+                       <ref bean="Account-subFundGroupCode"/>
+                   </property>
+                   <property name="insertAfter">
+                       <list>
+                           <ref bean="Account-extension-programCode"/>
+                           <ref bean="Account-extension-appropriationAccountNumber"/>
+                           <ref bean="Account-extension-majorReportingCategoryCode"/>
+                       </list>
+                   </property>
+               </bean>
            </list>
        </property>
    </bean>
+   
    
    	<bean id="Account-inquirySectionDefinition-notes" parent="Account-inquirySectionDefinition-notes-parentBean" />
 	<bean id="Account-inquirySectionDefinition-notes-parentBean"
@@ -298,10 +328,10 @@
 	
  	<bean id="invoiceFrequencyValuesFinder"
           class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceFrequencyValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
     <bean id="invoiceTypeValuesFinder"
           class="edu.cornell.kfs.module.cg.businessobject.options.InvoiceTypeValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
       
 </beans>
 

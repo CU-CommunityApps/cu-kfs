@@ -59,6 +59,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -804,8 +805,14 @@ public class PaymentApplicationAction extends FinancialSystemTransactionalDocume
         final EntryHolderComparator entryHolderComparator = new EntryHolderComparator();
         final List<EntryHolder> entryHoldings = new ArrayList<>();
         for (final PaymentApplicationInvoiceApply paymentApplicationInvoiceApply : invoiceApplications) {
-            entryHoldings.add(new EntryHolder(paymentApplicationInvoiceApply.getInvoice().getDocumentHeader()
-                    .getWorkflowDocument().getDateCreated().toDate(), paymentApplicationInvoiceApply));
+            final LocalDateTime dateCreated = paymentApplicationInvoiceApply
+                    .getInvoice().getDocumentHeader()
+                    .getWorkflowDocument()
+                    .getDateCreated();
+            entryHoldings.add(new EntryHolder(
+                    getDateTimeService().getUtilDate(dateCreated),
+                    paymentApplicationInvoiceApply
+            ));
         }
         if (entryHoldings.size() > 0) {
             entryHoldings.sort(entryHolderComparator);
