@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -396,8 +397,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
                 if (document != null) {
                     initiatorPrincipalId = document.getInitiatorPrincipalId();
                     documentStatus = document.getStatus();
-                    if (document.getDateFinalized() != null) {
-                        dateFinalized = new java.sql.Date(document.getDateFinalized().getMillis());
+                    if (document.getFinalizedDate() != null) {
+                        dateFinalized = new java.sql.Date(document.getFinalizedDate().getTime());
                     }
                 }
                 // Retrieve payment method, which is temporarily stored in the doc title field.

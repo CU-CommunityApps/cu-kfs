@@ -158,7 +158,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
 
         try {
             document = SpringContext.getBean(DocumentService.class).getByDocumentHeaderId(documentHeaderId);
-        } catch (UnknownDocumentTypeException ex) {
+        } catch (final UnknownDocumentTypeException ex) {
             LOG.error("Exception encountered on finding the document: {}", documentHeaderId, ex);
         }
 
@@ -166,8 +166,7 @@ public abstract class AbstractRelatedView extends PersistableBusinessObjectBase 
     }
 
     public LocalDateTime getCreateDate() {
-        DocumentRouteHeaderValue document = findWorkflowDocument(getDocumentNumber());
-        return getDateTimeService().getLocalDateTime(document.getDateCreated());
+        return findWorkflowDocument(getDocumentNumber()).getDateCreated();
 
     }
 }

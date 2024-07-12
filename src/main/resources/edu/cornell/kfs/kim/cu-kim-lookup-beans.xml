@@ -10,6 +10,6 @@
 
     <bean id="affiliationTypeForListItemValuesFinder"
           class="edu.cornell.kfs.kim.businessobject.options.AffiliationTypeForListItemValuesFinder"
-          p:keyValuesService-ref="grl.keyValuesService"/>
+          p:keyValuesService-ref="keyValuesService"/>
 
 </beans>
