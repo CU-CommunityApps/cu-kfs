@@ -81,7 +81,7 @@ public class TestSpringContextExtension implements BeforeEachCallback, AfterEach
         }
     }
 
-    private void initializeSpringContext(final ExtensionContext junitContext) throws Exception {
+    private void initializeSpringContext(final ExtensionContext junitContext) {
         final Class<?> testClass = junitContext.getRequiredTestClass();
         final PropertySourcesPlaceholderConfigurer propertyConfigurer =
                 createBeanPostProcessorForResolvingUnitTestClass(testClass);
@@ -93,7 +93,7 @@ public class TestSpringContextExtension implements BeforeEachCallback, AfterEach
     }
 
     private PropertySourcesPlaceholderConfigurer createBeanPostProcessorForResolvingUnitTestClass(
-            final Class<?> testClass) throws Exception {
+            final Class<?> testClass) {
         final Properties properties = new Properties();
         properties.setProperty(UNIT_TEST_CLASSNAME_PROPERTY, testClass.getName());
 

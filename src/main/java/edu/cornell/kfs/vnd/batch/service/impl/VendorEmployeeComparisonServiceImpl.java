@@ -61,7 +61,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
     private DateTimeService dateTimeService;
 
     @ForUnitTestConvenience
-    private BiConsumer<String, File> reportFileTracker = (csvRresultFile, reportFile) -> {};
+    private BiConsumer<String, File> reportFileTracker = (csvResultFile, reportFile) -> {};
 
     @Transactional
     @Override

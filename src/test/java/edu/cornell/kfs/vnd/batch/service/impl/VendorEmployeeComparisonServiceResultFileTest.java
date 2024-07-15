@@ -460,7 +460,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
                 "Wrong number of generated report files were recorded");
 
         final Set<String> reportFileNames = Arrays.stream(reportFiles)
-                .map(reportFile -> reportFile.getName())
+                .map(File::getName)
                 .collect(Collectors.toUnmodifiableSet());
 
         for (final String csvFileName : fixturesExpectingSuccess.keySet()) {

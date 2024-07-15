@@ -22,11 +22,11 @@ public class VendorEmployeeComparisonReportServiceImpl implements VendorEmployee
 
     private enum ReportStatistic {
         TOTAL_EMPLOYEES(resultRow -> true),
-        TOTAL_ACTIVE_EMPLOYEES(resultRow -> resultRow.isActive()),
+        TOTAL_ACTIVE_EMPLOYEES(VendorEmployeeComparisonResult::isActive),
         TOTAL_ACTIVE_REHIRED_EMPLOYEES(resultRow -> resultRow.isActive() && resultRow.getTerminationDate() != null),
         TOTAL_EMPLOYEES_PENDING_TERMINATION(
                 resultRow -> resultRow.isActive() && resultRow.getTerminationDateGreaterThanProcessingDate() != null),
-        TOTAL_EMPLOYEES_RECENTLY_TERMINATED(resultRow -> resultRow.isInactive()),
+        TOTAL_EMPLOYEES_RECENTLY_TERMINATED(VendorEmployeeComparisonResult::isInactive),
         TOTAL_ROWS_WITH_MISSING_DATA(resultRow ->
                 StringUtils.isAnyBlank(resultRow.getVendorId(), resultRow.getEmployeeId(), resultRow.getNetId())
                          || resultRow.getActive() == null

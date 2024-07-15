@@ -34,7 +34,7 @@ public class CreateTestDirectoriesExtension
         }
     }
 
-    private CreateTestDirectories getAndValidateTestAnnotation(final ExtensionContext context) throws Exception {
+    private CreateTestDirectories getAndValidateTestAnnotation(final ExtensionContext context) {
         final Class<?> testClass = context.getRequiredTestClass();
         final CreateTestDirectories annotation = testClass.getAnnotation(CreateTestDirectories.class);
         if (annotation == null) {
