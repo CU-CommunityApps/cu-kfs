@@ -4,15 +4,13 @@ import org.apache.ojb.broker.query.Criteria;
 import org.kuali.kfs.kew.api.KewApiConstants;
 
 import edu.cornell.kfs.sys.CUKFSPropertyConstants;
-import edu.cornell.kfs.sys.batch.service.HistoricalTableLookupCriteriaPurgeService;
 
 /**
  * CU Customization: Historical Purge Table Job : short lived batch job to clear backlog of Initiated documents.
  *
  */
 
-public class HistoricalDocumentRouteHeaderValueLookupCriteriaPurgeServiceImpl 
-    extends HistoricalTableLookupCriteriaPurgeServiceImpl implements HistoricalTableLookupCriteriaPurgeService {
+public class HistoricalDocumentRouteHeaderValueLookupCriteriaPurgeServiceImpl extends HistoricalTableLookupCriteriaPurgeServiceImpl {
 
     private static final String DOCUMENT_ROUTE_STATUS = "docRouteStatus";
 
