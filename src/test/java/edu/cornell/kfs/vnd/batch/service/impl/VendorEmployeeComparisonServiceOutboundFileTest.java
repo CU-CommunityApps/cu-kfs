@@ -260,7 +260,7 @@ public class VendorEmployeeComparisonServiceOutboundFileTest {
     private void assertCsvFileHasExpectedContent(final VendorComparisonRows testCaseFixture) throws Exception {
         final File csvFile = assertAndGetStagedCsvFile();
         try (
-                final LineIterator csvLineIterator = FileUtils.lineIterator(csvFile, StandardCharsets.UTF_8.name());
+                final LineIterator csvLineIterator = FileUtils.lineIterator(csvFile, StandardCharsets.UTF_8.name())
         ) {
             assertTrue(csvLineIterator.hasNext(), "The CSV file should not have been empty");
             final String expectedHeaderRow = getExpectedCsvHeaderRow();

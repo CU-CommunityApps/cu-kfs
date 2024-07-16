@@ -43,7 +43,7 @@ public class CuDocumentRouteHeaderDAOOjbImpl extends DocumentRouteHeaderDAOOjbIm
 
         try (
             final Stream<Object[]> resultsStream = CuOjbUtils.buildCloseableStreamForReportQueryResults(
-                    () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery));
+                    () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery))
         ) {
             return resultsStream.collect(
                     Collectors.toUnmodifiableMap(fieldArray -> (String) fieldArray[0], fieldArray -> (Timestamp) fieldArray[1]));

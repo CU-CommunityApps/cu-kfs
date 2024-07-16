@@ -151,7 +151,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
         try (
                 final FileOutputStream fileStream = new FileOutputStream(csvFile);
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
-                final BufferedWriter fileWriter = new BufferedWriter(streamWriter);
+                final BufferedWriter fileWriter = new BufferedWriter(streamWriter)
         ) {
             if (testCaseFixture.writeCsvHeaderLine()) {
                 if (StringUtils.isNotBlank(testCaseFixture.csvHeaderLineOverride())) {
@@ -484,7 +484,7 @@ public class VendorEmployeeComparisonServiceResultFileTest {
     private String getExpectedReportFileContents(final VendorComparisonResult fixture) throws IOException {
         final String reportFilePath = BASE_TEST_REPORT_FILE_PATH + fixture.expectedReportFile();
         try (
-                final InputStream reportContent = CuCoreUtilities.getResourceAsStream(reportFilePath);
+                final InputStream reportContent = CuCoreUtilities.getResourceAsStream(reportFilePath)
         ) {
             return IOUtils.toString(reportContent, StandardCharsets.UTF_8);
         }

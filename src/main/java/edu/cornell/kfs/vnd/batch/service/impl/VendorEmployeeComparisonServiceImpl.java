@@ -108,7 +108,7 @@ public class VendorEmployeeComparisonServiceImpl implements VendorEmployeeCompar
                 final Stream<VendorWithTaxId> ssnVendors = vendorDao.getPotentialEmployeeVendorsAsCloseableStream();
                 final FileOutputStream fileStream = new FileOutputStream(qualifiedCreationDirectoryFileName);
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(fileStream, StandardCharsets.UTF_8);
-                final BufferedWriter bufferedWriter = new BufferedWriter(streamWriter);
+                final BufferedWriter bufferedWriter = new BufferedWriter(streamWriter)
         ) {
             final int ssnVendorCount = writeSsnVendorsToCsvFile(ssnVendors, bufferedWriter);
             bufferedWriter.flush();
