@@ -10,7 +10,8 @@ import edu.cornell.kfs.sys.CUKFSPropertyConstants;
  *
  */
 
-public class HistoricalDocumentRouteHeaderValueLookupCriteriaPurgeServiceImpl extends HistoricalTableLookupCriteriaPurgeServiceImpl {
+public class HistoricalDocumentRouteHeaderValueLookupCriteriaPurgeServiceImpl 
+    extends HistoricalTableLookupCriteriaPurgeServiceImpl {
 
     private static final String DOCUMENT_ROUTE_STATUS = "docRouteStatus";
 

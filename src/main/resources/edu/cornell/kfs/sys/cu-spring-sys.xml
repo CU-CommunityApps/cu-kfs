@@ -470,8 +470,9 @@
     <!-- CU Customization: Historical Purge Table Job beans : starting point -->
     
     <bean id="historicalTablePurgeRecordIdentifiersDao" parent="platformAwareDaoJdbc" 
-          class="edu.cornell.kfs.sys.dataaccess.impl.HistoricalTablePurgeRecordIdentifiersDaoJdbc">
-        <property name="dataSource" ref="dataSource" />
+          class="edu.cornell.kfs.sys.dataaccess.impl.HistoricalTablePurgeRecordIdentifiersDaoJdbc"
+          p:dataSource-ref="dataSource"
+          p:dateTimeService-ref="dateTimeService">
     </bean>
     
     <bean id="historicalTablePurgeRecordsDao" parent="historicalTablePurgeRecordsDao-parentBean"/>
