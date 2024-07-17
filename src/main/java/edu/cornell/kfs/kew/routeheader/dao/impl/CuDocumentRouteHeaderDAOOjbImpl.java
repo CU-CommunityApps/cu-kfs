@@ -2,9 +2,9 @@ package edu.cornell.kfs.kew.routeheader.dao.impl;
 
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryFactory;
@@ -40,10 +40,14 @@ public class CuDocumentRouteHeaderDAOOjbImpl extends DocumentRouteHeaderDAOOjbIm
         reportQuery.setAttributes(
                 new String[] {CUKFSPropertyConstants.DOCUMENT_ID, CUKFSPropertyConstants.FINALIZED_DATE});
         reportQuery.setJdbcTypes(new int[] {Types.VARCHAR, Types.TIMESTAMP});
-        
-        final Iterator<?> resultsIterator = getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery);
-        return CuOjbUtils.buildStreamForReportQueryResults(resultsIterator).collect(
-                Collectors.toUnmodifiableMap(fieldArray -> (String) fieldArray[0], fieldArray -> (Timestamp) fieldArray[1]));
+
+        try (
+            final Stream<Object[]> resultsStream = CuOjbUtils.buildCloseableStreamForReportQueryResults(
+                    () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery))
+        ) {
+            return resultsStream.collect(
+                    Collectors.toUnmodifiableMap(fieldArray -> (String) fieldArray[0], fieldArray -> (Timestamp) fieldArray[1]));
+        }
     }
 
 }

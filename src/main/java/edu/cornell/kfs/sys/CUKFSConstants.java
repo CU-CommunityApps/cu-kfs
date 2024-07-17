@@ -30,6 +30,7 @@ public class CUKFSConstants {
     public static final String DATE_FORMAT_yyyyMMdd_HH_mm_ss_S = "yyyyMMdd-HH-mm-ss-S";
     public static final String DATE_FORMAT_yyyy_MM_dd_T_HH_mm_ss_SSS_Z = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String TIME_ZONE_UTC = "UTC";
+    public static final String TIME_ZONE_US_EASTERN = "US/Eastern";
     public static final String ANTIVIRUS_FAILED_MESSAGE = "file contents failed virus scan";
     public static final String DISALLOWED_FILE_EXTENSION_MESSAGE = "Files with this extension are not allowed as attachments : ";
     
@@ -177,6 +178,7 @@ public class CUKFSConstants {
     public static final String ELLIPSIS = "...";
     public static final String PADDED_HYPHEN = " - ";
     public static final String COMMA_AND_SPACE = ", ";
+    public static final String COMMA_WITH_QUOTES = "\",\"";
     public static final String NULL = "NULL";
     
     public static final String DOCUMENT_ID = "documentId";

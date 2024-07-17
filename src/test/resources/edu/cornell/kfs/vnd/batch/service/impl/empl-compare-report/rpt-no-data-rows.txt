@@ -1,0 +1,24 @@
+
+
+***********************************************************************************************************************
+***********************************                     SUMMARY                     ***********************************
+***********************************************************************************************************************
+
+
+                                   Workday File Name: empl_result_20240615_123004.csv
+
+         Total Vendors Representing Active or Recently Terminated Employees: 0
+                                Total Vendors Representing Active Employees: 0
+                       Total Vendors Representing Active Re-Hired Employees: 0
+Total Vendors Representing Active Employees with Upcoming Termination Dates: 0
+       Total Vendors Representing Employees Terminated within the Past Year: 0
+                                    Total Rows with Unexpected Missing Data: 0
+
+
+***********************************************************************************************************************
+***********************************                     DETAILS                     ***********************************
+***********************************************************************************************************************
+
+
+There were no vendors representing employees that are currently active or were terminated within the past year.
+

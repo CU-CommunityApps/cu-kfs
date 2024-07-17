@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
+    <import resource="classpath:org/kuali/kfs/vnd/spring-vnd.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/vnd/cu-spring-vnd.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="reports.directory">test/vnd_empl_results/reports</prop>
+                <prop key="report.writer.service.new.line.characters">#{ T(org.kuali.kfs.sys.KFSConstants).NEWLINE }</prop>
+                <prop key="staging.directory">test/vnd_empl_results/staging</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="vendorEmployeeComparisonService"
+          parent="vendorEmployeeComparisonService-parentBean"
+          p:reportFileTracker-ref="testReportFileTracker"/>
+
+    <bean id="vendorEmployeeComparisonReportWriterService"
+          parent="vendorEmployeeComparisonReportWriterService-parentBean"
+          p:pageLength="999"/>
+
+    <bean id="testReportFileTracker" class="${unit.test.classname}" factory-method="buildTestReportFileTracker"/>
+
+    <bean id="vendorDao" class="${unit.test.classname}" factory-method="buildMockVendorDao"/>
+
+    <bean id="dateTimeService" class="${unit.test.classname}" factory-method="buildTestDateTimeService"/>
+
+    <bean id="parameterService" class="${unit.test.classname}" factory-method="buildMockParameterService"/>
+
+    <bean id="configurationService" class="edu.cornell.kfs.sys.service.impl.TestConfigurationServiceImpl"
+          p:properties-ref="cuVendorResources"/>
+
+    <bean id="cuVendorResources" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+          p:location="classpath:edu/cornell/kfs/vnd/cu-vnd-resources.properties"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="vendorEmployeeComparisonService"/>
+                <idref bean="vendorEmployeeComparisonService-parentBean"/>
+                <idref bean="vendorEmployeeComparisonResultFileType"/>
+                <idref bean="vendorEmployeeComparisonResultFileType-parentBean"/>
+                <idref bean="vendorEmployeeComparisonReportService"/>
+                <idref bean="vendorEmployeeComparisonReportService-parentBean"/>
+                <idref bean="vendorEmployeeComparisonReportWriterService"/>
+                <idref bean="vendorEmployeeComparisonReportWriterService-parentBean"/>
+                <idref bean="reportWriterService"/>
+                <idref bean="reportWriterService-parentBean"/>
+                <idref bean="batchInputFileService"/>
+                <idref bean="batchInputFileService-parentBean"/>
+                <idref bean="testReportFileTracker"/>
+                <idref bean="vendorDao"/>
+                <idref bean="dateTimeService"/>
+                <idref bean="parameterService"/>
+                <idref bean="configurationService"/>
+                <idref bean="cuVendorResources"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
