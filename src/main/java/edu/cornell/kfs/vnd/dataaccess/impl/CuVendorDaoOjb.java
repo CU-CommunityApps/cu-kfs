@@ -1,6 +1,7 @@
 package edu.cornell.kfs.vnd.dataaccess.impl;
 
 import java.sql.Date;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,17 +19,24 @@ import org.apache.logging.log4j.Logger;
 import org.apache.ojb.broker.query.Criteria;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.apache.ojb.broker.query.QueryFactory;
+import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.apache.ojb.broker.util.collections.RemovalAwareCollection;
+import org.kuali.kfs.kns.lookup.CollectionIncomplete;
+import org.kuali.kfs.kns.lookup.LookupUtils;
+import org.kuali.kfs.krad.bo.BusinessObject;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.businessobject.VendorContract;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.vnd.dataaccess.impl.VendorDaoOjb;
-import org.kuali.kfs.kns.lookup.LookupUtils;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.krad.bo.BusinessObject;
-import org.kuali.kfs.kns.lookup.CollectionIncomplete;
 
+import edu.cornell.kfs.sys.util.CuOjbUtils;
+import edu.cornell.kfs.vnd.CUVendorConstants.VendorOwnershipCodes;
 import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
+import edu.cornell.kfs.vnd.businessobject.VendorWithTaxId;
 import edu.cornell.kfs.vnd.dataaccess.CuVendorDao;
 
 public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
@@ -211,6 +220,40 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         	resultsTruncated.setActualSizeIfTruncated(new Long(-1));
         }
         return resultsTruncated;
+    }
+
+    @Override
+    public Stream<VendorWithTaxId> getPotentialEmployeeVendorsAsCloseableStream() {
+        final Criteria criteria = new Criteria();
+        criteria.addEqualTo(VendorPropertyConstants.VENDOR_OWNERSHIP_CODE,
+                VendorOwnershipCodes.INDIVIDUAL_OR_SOLE_PROPRIETOR_OR_SMLLC);
+        criteria.addEqualTo(VendorPropertyConstants.VENDOR_TAX_TYPE_CODE, VendorConstants.TAX_TYPE_SSN);
+        criteria.addNotNull(VendorPropertyConstants.VENDOR_TAX_NUMBER);
+        criteria.addEqualTo(VendorPropertyConstants.VENDOR_PARENT_INDICATOR, KRADConstants.YES_INDICATOR_VALUE);
+        criteria.addEqualTo(KFSPropertyConstants.ACTIVE_INDICATOR, KRADConstants.YES_INDICATOR_VALUE);
+
+        final ReportQueryByCriteria reportQuery = QueryFactory.newReportQuery(VendorDetail.class, criteria);
+        reportQuery.setAttributes(new String[] {
+                VendorPropertyConstants.VENDOR_HEADER_GENERATED_ID,
+                VendorPropertyConstants.VENDOR_DETAIL_ASSIGNED_ID,
+                VendorPropertyConstants.VENDOR_TAX_NUMBER
+        });
+        reportQuery.setJdbcTypes(new int[] {
+                Types.INTEGER, Types.INTEGER, Types.VARCHAR
+        });
+
+        return CuOjbUtils.buildCloseableStreamForReportQueryResults(
+                () -> getPersistenceBrokerTemplate().getReportQueryIteratorByQuery(reportQuery),
+                this::mapToVendorWithTaxId);
+    }
+
+    private VendorWithTaxId mapToVendorWithTaxId(final Object[] queryResultRow) {
+        final String vendorId = StringUtils.join(
+                (Integer) queryResultRow[0], KFSConstants.DASH, (Integer) queryResultRow[1]);
+        final VendorWithTaxId vendor = new VendorWithTaxId();
+        vendor.setVendorId(vendorId);
+        vendor.setVendorTaxNumber((String) queryResultRow[2]);
+        return vendor;
     }
 
 }

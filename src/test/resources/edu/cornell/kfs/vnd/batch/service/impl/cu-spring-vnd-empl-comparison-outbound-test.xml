@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath:org/kuali/kfs/sys/spring-sys.xml"/>
+    <import resource="classpath:org/kuali/kfs/vnd/spring-vnd.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-sys.xml"/>
+    <import resource="classpath:edu/cornell/kfs/vnd/cu-spring-vnd.xml"/>
+    <import resource="classpath:edu/cornell/kfs/sys/cu-spring-base-test-beans.xml"/>
+
+    <bean id="propertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer-parentBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="reports.directory">test/vnd_compare_out/reports</prop>
+                <prop key="staging.directory">test/vnd_compare_out/staging</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="vendorDao" class="${unit.test.classname}" factory-method="buildMockVendorDao"/>
+
+    <bean id="dateTimeService" class="${unit.test.classname}" factory-method="buildTestDateTimeService"/>
+
+    <bean id="vendorEmployeeComparisonResultFileType" class="${unit.test.classname}"
+          factory-method="buildMockVendorEmployeeComparisonResultFileType"/>
+
+    <bean id="vendorEmployeeComparisonReportService" class="${unit.test.classname}"
+          factory-method="buildMockVendorEmployeeComparisonReportService"/>
+
+    <bean id="batchInputFileService" class="${unit.test.classname}" factory-method="buildMockBatchInputFileService"/>
+
+    <bean id="beanFilterPostProcessor" parent="beanFilterPostProcessor-parentBean">
+        <property name="beanWhitelist">
+            <set merge="true">
+                <idref bean="vendorEmployeeComparisonService"/>
+                <idref bean="vendorEmployeeComparisonService-parentBean"/>
+                <idref bean="vendorEmployeeComparisonResultFileType"/>
+                <idref bean="vendorEmployeeComparisonReportService"/>
+                <idref bean="batchInputFileService"/>
+                <idref bean="vendorDao"/>
+                <idref bean="dateTimeService"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
