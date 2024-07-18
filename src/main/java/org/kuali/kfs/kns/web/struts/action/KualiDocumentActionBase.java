@@ -127,6 +127,8 @@ import java.util.Set;
  *
  * CU customization: Added blacklist attachment processing so that failure-to-create-attachment
  *                   can be treated as a validation failure with a user friendly error message.
+ * 
+ * CU Customization: Increase the visibility of the internal ReasonPrompt class and its related fields/methods/etc.
  */
 public class KualiDocumentActionBase extends KualiAction {
 
@@ -2098,7 +2100,8 @@ public class KualiDocumentActionBase extends KualiAction {
     /**
      * Class that encapsulates the workflow for obtaining an reason from an action prompt.
      */
-    private final class ReasonPrompt {
+    // CU Customization: Increased class's visibility to protected.
+    protected final class ReasonPrompt {
         final String questionId;
         final String questionTextKey;
         final String questionType;
@@ -2115,7 +2118,8 @@ public class KualiDocumentActionBase extends KualiAction {
          * @param abortButton           button value considered to abort the prompt and return (optional, may be null)
          * @param noteIntroKey          application resources key for question text prefix (optional, may be null)
          */
-        private ReasonPrompt(
+        // CU Customization: Increased method's visibility to public.
+        public ReasonPrompt(
                 final String questionId, final String questionTextKey, final String questionType, final String missingReasonKey,
                 final String questionCallerMapping, final String abortButton, final String noteIntroKey) {
             this.questionId = questionId;
@@ -2226,11 +2230,12 @@ public class KualiDocumentActionBase extends KualiAction {
             return new Response(question, disapprovalNoteText, buttonClicked);
         }
 
-        private class Response {
-            final String question;
-            final ActionForward forward;
-            final String reason;
-            final String button;
+        // CU Customization: Increased visibility of this class and its fields to protected.
+        protected class Response {
+            protected final String question;
+            protected final ActionForward forward;
+            protected final String reason;
+            protected final String button;
 
             Response(final String question, final ActionForward forward) {
                 this(question, forward, null, null);

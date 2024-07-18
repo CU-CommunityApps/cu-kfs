@@ -27,6 +27,7 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
@@ -247,10 +248,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 iWantDocumentService.setIWantDocumentDescription(iWantDocument);
             }
             
-            if (StringUtils.isNotBlank(iWantDocument.getPurchasingAssistantNetId())) {
-                PersonData purchasingAssistant = iWantDocumentService.getPersonData(iWantDocument.getPurchasingAssistantNetId());
-                if (ObjectUtils.isNotNull(purchasingAssistant)) {
-                    iWantDocument.setPurchasingAssistantName(purchasingAssistant.getPersonName());
+            if (StringUtils.isNotBlank(iWantDocument.getProcurementAssistantNetId())) {
+                PersonData procurementAssistant = iWantDocumentService.getPersonData(iWantDocument.getProcurementAssistantNetId());
+                if (ObjectUtils.isNotNull(procurementAssistant)) {
+                    iWantDocument.setProcurementAssistantName(procurementAssistant.getPersonName());
                 }
             }
         }
@@ -1230,18 +1231,13 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     
     public ActionForward returnToSSC(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-
-        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
-        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
+        final ReasonPrompt prompt = new ReasonPrompt(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION,
+                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_QUESTION, KRADConstants.CONFIRMATION_QUESTION,
+                CUPurapKeyConstants.ERROR_IWNT_RETURN_TO_SSC_REASON_REQUIRED, CUPurapConstants.MAPPING_RETURN_TO_SSC,
+                ConfirmationQuestion.NO, CUPurapKeyConstants.IWNT_RETURN_TO_SSC_NOTE_TEXT_INTRO);
         
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
-
-        kualiDocumentFormBase.setDerivedValuesOnForm(request);
-        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
-        if (preRulesForward != null) {
-            return preRulesForward;
-        }
 
         final Document document = kualiDocumentFormBase.getDocument();
 
@@ -1253,16 +1249,21 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
         
         kualiDocumentFormBase.setAnnotation(
                 getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
-        iWantDocument.setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
         ((CuDocumentServiceImpl) getDocumentService()).returnDocumentToPreviousNode(document,
                 kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
 
         KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
-
+        kualiDocumentFormBase.setAnnotation("");
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-    
-    
+
+    private ActionForward handleConfirmationOfReturnToSSC(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
+        final String question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
+        
+        return null;
+    }
+
     private boolean confirmationNeeded(IWantDocument document, String contractIndicator) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
