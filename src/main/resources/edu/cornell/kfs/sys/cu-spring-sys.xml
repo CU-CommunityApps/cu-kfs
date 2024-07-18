@@ -38,6 +38,7 @@
 				<value>kimFeedV2Job</value>
 				<value>awsSecretValidationJob</value>
                 <value>testISOFIPSConversionMappingsJob</value>
+                <value>historicalPurgeJob</value>
             </list>
         </property>
 		<property name="batchFileDirectories">
@@ -478,5 +479,60 @@
           p:isoFipsConversionService-ref="isoFipsConversionService"
     />
     <!-- CU Generic ISO-FIPS Country modification beans -->
+    
+    <!-- CU Customization: Historical Purge Table Job beans : starting point -->
+    
+    <bean id="historicalTablePurgeRecordIdentifiersDao" parent="platformAwareDaoJdbc" 
+          class="edu.cornell.kfs.sys.dataaccess.impl.HistoricalTablePurgeRecordIdentifiersDaoJdbc"
+          p:dataSource-ref="dataSource"
+          p:dateTimeService-ref="dateTimeService">
+    </bean>
+    
+    <bean id="historicalTablePurgeRecordsDao" parent="historicalTablePurgeRecordsDao-parentBean"/>
+    <bean id="historicalTablePurgeRecordsDao-parentBean" parent="platformAwareDao"
+          class="edu.cornell.kfs.sys.dataaccess.impl.HistoricalTablePurgeRecordsDaoOjb" abstract="true"
+          p:businessObjectService-ref="businessObjectService"
+          p:parameterService-ref="parameterService"
+          p:historicalTablePurgeRecordIdentifiersDao-ref="historicalTablePurgeRecordIdentifiersDao"> 
+    </bean>
+    
+    <bean id="historicalPurgeJob" parent="historicalPurgeJob-parentBean"/>
+    <bean id="historicalPurgeJob-parentBean" parent="scheduledJobDescriptor" abstract="true">
+        <property name="steps">
+            <list>
+                <ref bean="historicalPurgeTablesStep"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="historicalPurgeTablesStep" parent="historicalPurgeTablesStep-parentBean"/>
+    <bean id="historicalPurgeTablesStep-parentBean" class="edu.cornell.kfs.sys.batch.HistoricalPurgeTablesStep"
+          parent="step" abstract="true" p:historicalTablesPurgeService-ref="historicalTablesPurgeService">
+    </bean>
 
+    <bean id="historicalTablesPurgeService" parent="historicalTablesPurgeService-parentBean"/>
+    <bean id="historicalTablesPurgeService-parentBean" class="edu.cornell.kfs.sys.batch.service.impl.HistoricalTablesPurgeServiceImpl"
+          abstract="true" p:historicalTablePurgeRecordsDao-ref="historicalTablePurgeRecordsDao">
+          <property name="historicalTablesDetailsForPurge">
+              <list>
+                  <ref bean="historicalDocumentRouteHeaderValueTableDetailsForPurge"/>
+              </list>
+          </property>
+    </bean>
+    
+    <bean id="historicalDocumentRouteHeaderValueLookupCriteriaPurgeService"
+          class="edu.cornell.kfs.sys.batch.service.impl.HistoricalDocumentRouteHeaderValueLookupCriteriaPurgeServiceImpl"/>
+          
+    <bean id="historicalDocumentRouteHeaderValueTableDetailsForPurge" class="edu.cornell.kfs.sys.businessobject.HistoricalTableDetailsForPurge"
+          p:businessObjectForRecordsTablePurge="org.kuali.kfs.kew.routeheader.DocumentRouteHeaderValue"
+          p:tableToPurge="KREW_DOC_HDR_T"
+          p:useDefaultDaysBeforePurgeParameter="false"
+          p:nameSpaceCode="KFS-SYS"
+          p:component="HistoricalPurgeTablesStep"
+          p:parameterName="HISTORICAL_KREW_DOC_HDR_NUMBER_OF_DAYS_OLD"
+          p:serviceImplForPurgeTableLookupCriteria-ref="historicalDocumentRouteHeaderValueLookupCriteriaPurgeService"
+          p:fetchRowCountToPurgeParameterName="HISTORICAL_KREW_DOC_HDR_PURGE_FETCH_COUNT"/>
+          
+    <!-- CU Customization: Historical Purge Table Job beans : ending point -->
+    
 </beans>
