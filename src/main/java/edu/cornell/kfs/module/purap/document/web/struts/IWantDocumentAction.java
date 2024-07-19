@@ -30,16 +30,15 @@ import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -50,7 +49,7 @@ import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl;
+import edu.cornell.kfs.krad.service.CuDocumentService;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -1228,40 +1227,31 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
        
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-    
+
     public ActionForward returnToSSC(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        final ReasonPrompt prompt = new ReasonPrompt(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION,
-                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_QUESTION, KRADConstants.CONFIRMATION_QUESTION,
+        final ReasonPrompt sscPrompt = new ReasonPrompt(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION_ID,
+                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_QUESTION, CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION_TYPE,
                 CUPurapKeyConstants.ERROR_IWNT_RETURN_TO_SSC_REASON_REQUIRED, CUPurapConstants.MAPPING_RETURN_TO_SSC,
                 ConfirmationQuestion.NO, CUPurapKeyConstants.IWNT_RETURN_TO_SSC_NOTE_TEXT_INTRO);
-        
+        final ReasonPrompt.Response sscResponse = sscPrompt.ask(mapping, form, request, response);
+
+        if (sscResponse.forward != null) {
+            return sscResponse.forward;
+        }
+
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
+        ((CuDocumentService) getDocumentService()).returnDocumentToPreviousNode(kualiDocumentFormBase.getDocument(),
+                sscResponse.reason, CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
 
-        final Document document = kualiDocumentFormBase.getDocument();
-
-        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
-                KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "returnToSSC", "");
-        if (forward != null) {
-            return forward;
-        }
-        
-        kualiDocumentFormBase.setAnnotation(
-                getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
-        ((CuDocumentServiceImpl) getDocumentService()).returnDocumentToPreviousNode(document,
-                kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
-
-        KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
+        final ActionForward actionForward = reload(mapping, form, request, response);
+        KNSGlobalVariables.getMessageList().removeIf(
+                message -> StringUtils.equals(message.getErrorKey(), KualiDocumentActionBase.MESSAGE_RELOADED));
+        KNSGlobalVariables.getMessageList().add(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_RETURNED_TO_SSC);
         kualiDocumentFormBase.setAnnotation("");
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
-    }
 
-    private ActionForward handleConfirmationOfReturnToSSC(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        final String question = request.getParameter(KFSConstants.QUESTION_INST_ATTRIBUTE_NAME);
-        
-        return null;
+        return actionForward;
     }
 
     private boolean confirmationNeeded(IWantDocument document, String contractIndicator) {

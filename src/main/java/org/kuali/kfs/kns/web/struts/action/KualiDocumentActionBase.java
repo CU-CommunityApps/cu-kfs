@@ -128,7 +128,9 @@ import java.util.Set;
  * CU customization: Added blacklist attachment processing so that failure-to-create-attachment
  *                   can be treated as a validation failure with a user friendly error message.
  * 
- * CU Customization: Increase the visibility of the internal ReasonPrompt class and its related fields/methods/etc.
+ * CU Customization: Increased the visibility of the MESSAGE_RELOADED key constant to protected.
+ * 
+ * CU Customization: Increased the visibility of the internal ReasonPrompt class and its related fields/methods/etc.
  */
 public class KualiDocumentActionBase extends KualiAction {
 
@@ -144,7 +146,8 @@ public class KualiDocumentActionBase extends KualiAction {
     private static final String ERROR_UPLOADFILE_EMPTY = "error.uploadFile.empty";
     private static final String MESSAGE_DISAPPROVAL_NOTE_TEXT_INTRO = "message.disapprove.noteTextIntro";
     private static final String MESSAGE_RECALL_NOTE_TEXT_INTRO = "message.recall.noteTextIntro";
-    private static final String MESSAGE_RELOADED = "message.document.reloaded";
+    // CU Customization: Increased visibility of this constant to protected.
+    protected static final String MESSAGE_RELOADED = "message.document.reloaded";
     private static final String MESSAGE_ROUTE_APPROVED = "message.route.approved";
     private static final String MESSAGE_ROUTE_DISAPPROVED = "message.route.disapproved";
     private static final String MESSAGE_ROUTE_ACKNOWLEDGED = "message.route.acknowledged";
@@ -2230,12 +2233,12 @@ public class KualiDocumentActionBase extends KualiAction {
             return new Response(question, disapprovalNoteText, buttonClicked);
         }
 
-        // CU Customization: Increased visibility of this class and its fields to protected.
-        protected class Response {
-            protected final String question;
-            protected final ActionForward forward;
-            protected final String reason;
-            protected final String button;
+        // CU Customization: Increased visibility of this class and its fields to public.
+        public class Response {
+            public final String question;
+            public final ActionForward forward;
+            public final String reason;
+            public final String button;
 
             Response(final String question, final ActionForward forward) {
                 this(question, forward, null, null);

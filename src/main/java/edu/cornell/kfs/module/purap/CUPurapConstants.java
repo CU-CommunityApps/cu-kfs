@@ -158,7 +158,8 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_EDIT_CONTRACT_INDICATOR = "editContractIndicator";
     public static final String IWNT_DOC_DISPLAY_CONFIRMATION = "displayConfirmation";
 
-    public static final String IWNT_DOC_RETURN_TO_SSC_QUESTION = "IWNTReturnToSSC";
+    public static final String IWNT_DOC_RETURN_TO_SSC_QUESTION_ID = "IWNTReturnToSSC";
+    public static final String IWNT_DOC_RETURN_TO_SSC_QUESTION_TYPE = "iwntReturnToSSCQuestion";
 
     public static final String MAPPING_RETURN_TO_SSC = "returnToSSC";
 

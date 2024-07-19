@@ -1023,13 +1023,13 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     @Override
     public void doRouteLevelChange(final DocumentRouteLevelChange levelChangeEvent) {
-        if (documentWasReturnedToSSC(levelChangeEvent)) {
+        if (documentIsBeingReturnedToSSC(levelChangeEvent)) {
             contractIndicator = KRADConstants.NO_INDICATOR_VALUE;
             SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
         }
     }
 
-    private boolean documentWasReturnedToSSC(final DocumentRouteLevelChange levelChangeEvent) {
+    private boolean documentIsBeingReturnedToSSC(final DocumentRouteLevelChange levelChangeEvent) {
         return StringUtils.equals(levelChangeEvent.getNewNodeName(), IWantRouteNodes.NO_OP_NODE)
                 && !StringUtils.equals(levelChangeEvent.getOldNodeName(), RouteLevelNames.ADHOC);
     }
