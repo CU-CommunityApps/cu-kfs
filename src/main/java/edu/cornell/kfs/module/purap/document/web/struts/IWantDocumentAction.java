@@ -1231,7 +1231,7 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
     public ActionForward returnToSSC(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         final ReasonPrompt sscPrompt = new ReasonPrompt(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION_ID,
-                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_QUESTION, CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION_TYPE,
+                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_QUESTION, KRADConstants.CONFIRMATION_QUESTION,
                 CUPurapKeyConstants.ERROR_IWNT_RETURN_TO_SSC_REASON_REQUIRED, CUPurapConstants.MAPPING_RETURN_TO_SSC,
                 ConfirmationQuestion.NO, CUPurapKeyConstants.IWNT_RETURN_TO_SSC_NOTE_TEXT_INTRO);
         final ReasonPrompt.Response sscResponse = sscPrompt.ask(mapping, form, request, response);

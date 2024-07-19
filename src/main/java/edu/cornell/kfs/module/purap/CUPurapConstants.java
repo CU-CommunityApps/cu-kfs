@@ -159,8 +159,6 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_DISPLAY_CONFIRMATION = "displayConfirmation";
 
     public static final String IWNT_DOC_RETURN_TO_SSC_QUESTION_ID = "IWNTReturnToSSC";
-    public static final String IWNT_DOC_RETURN_TO_SSC_QUESTION_TYPE = "iwntReturnToSSCQuestion";
-
     public static final String MAPPING_RETURN_TO_SSC = "returnToSSC";
 
     public static final String USER_OPTIONS_PRINCIPAL_ID = "principalId";
