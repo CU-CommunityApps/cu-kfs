@@ -265,6 +265,7 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
         returnToSSCButton.setExtraButtonProperty("methodToCall.returnToSSC");
         returnToSSCButton.setExtraButtonSource("${" + KFSConstants.EXTERNALIZABLE_IMAGES_URL_KEY + "}buttonsmall_continue.gif");
         returnToSSCButton.setExtraButtonAltText("Return To Shared Service Center");
+        returnToSSCButton.setExtraButtonOnclick("resetScrollPosition();");
         return returnToSSCButton;
     }
 
