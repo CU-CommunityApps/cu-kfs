@@ -6,17 +6,30 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
 import org.kuali.kfs.coa.businessobject.Organization;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kew.api.exception.WorkflowException;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteLevelChange;
+import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
+import org.kuali.kfs.krad.document.Copyable;
+import org.kuali.kfs.krad.exception.ValidationException;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.module.purap.businessobject.PurApItem;
 import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
+import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.KFSConstants.RouteLevelNames;
 import org.kuali.kfs.sys.businessobject.AccountingLineParser;
+import org.kuali.kfs.sys.businessobject.Country;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
@@ -29,18 +42,9 @@ import org.kuali.kfs.sys.document.AmountTotaling;
 import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.kew.api.exception.WorkflowException;
-import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
-import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
-import org.kuali.kfs.krad.document.Copyable;
-import org.kuali.kfs.krad.exception.ValidationException;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.businessobject.Country;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapConstants.IWantRouteNodes;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
@@ -100,8 +104,8 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private boolean completed;
     private String processorNetId;
     private String processorName;
-    private String purchasingAssistantNetId;
-    transient private String purchasingAssistantName;
+    private String procurementAssistantNetId;
+    private transient String procurementAssistantName;
 
     private String contractIndicator;
 
@@ -1017,6 +1021,19 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
 
     }
 
+    @Override
+    public void doRouteLevelChange(final DocumentRouteLevelChange levelChangeEvent) {
+        if (documentIsBeingReturnedToSSC(levelChangeEvent)) {
+            contractIndicator = KRADConstants.NO_INDICATOR_VALUE;
+            SpringContext.getBean(PurapService.class).saveDocumentNoValidation(this);
+        }
+    }
+
+    private boolean documentIsBeingReturnedToSSC(final DocumentRouteLevelChange levelChangeEvent) {
+        return StringUtils.equals(levelChangeEvent.getNewNodeName(), IWantRouteNodes.NO_OP_NODE)
+                && !StringUtils.equals(levelChangeEvent.getOldNodeName(), RouteLevelNames.ADHOC);
+    }
+
     // The following link identifier getter and setter are needed for viewing the IWNT with other related PURAP docs.
 
     @Override
@@ -1572,20 +1589,20 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         return contractIndicator;
     }
 
-    public String getPurchasingAssistantNetId() {
-        return purchasingAssistantNetId;
+    public String getProcurementAssistantNetId() {
+        return procurementAssistantNetId;
     }
 
-    public void setPurchasingAssistantNetId(String purchasingAssistantNetId) {
-        this.purchasingAssistantNetId = purchasingAssistantNetId;
+    public void setProcurementAssistantNetId(String procurementAssistantNetId) {
+        this.procurementAssistantNetId = procurementAssistantNetId;
     }
 
-    public String getPurchasingAssistantName() {
-        return purchasingAssistantName;
+    public String getProcurementAssistantName() {
+        return procurementAssistantName;
     }
 
-    public void setPurchasingAssistantName(String purchasingAssistantName) {
-        this.purchasingAssistantName = purchasingAssistantName;
+    public void setProcurementAssistantName(String procurementAssistantName) {
+        this.procurementAssistantName = procurementAssistantName;
     }
 
 }

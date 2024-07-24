@@ -76,7 +76,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
             result.remove(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
         }
         
-        if(!isInPurchasingAssistantNode(document)) {
+        if (!isInProcurementAssistantNode(document)) {
             result.remove(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC);
         }
         
@@ -147,20 +147,20 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     
     public boolean canViewContractTab(Document document, Person person) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return (isInOrgHierarchyOrPurchasingAssistantNode(document) && (isCurrentUserOrgReviewer(person) 
+        return (isInOrgHierarchyOrProcurementAssistantNode(document) && (isCurrentUserOrgReviewer(person) 
                 || isCurrentUserProcurementContractAssistant(person))) || workflowDocument.isFinal();
     }
 
     /*
      * We restrict the editing of the Contract Tab contents on IWNT docs to enroute status at the
-     * OrganizationHierarchy node and PurchasingContractAssistant node.
+     * OrganizationHierarchy node and ProcurementContractAssistant node.
      */
     public boolean canEditContractIndicator(Document document, Person user) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         boolean isInApproversNode = isInApproversNode(document, user);
         
         return workflowDocument.isEnroute()
-                && isInOrgHierarchyOrPurchasingAssistantNode(document)
+                && isInOrgHierarchyOrProcurementAssistantNode(document)
                 && isInApproversNode;
     }
     
@@ -183,23 +183,23 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
         return false;
     }
     
-    private boolean isInOrgHierarchyOrPurchasingAssistantNode(Document document) {
+    private boolean isInOrgHierarchyOrProcurementAssistantNode(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
         
         if (CollectionUtils.isNotEmpty(nodeNames)) {
             return nodeNames.contains(KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY)
-                    || nodeNames.contains(CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
+                    || nodeNames.contains(CUPurapConstants.IWantRouteNodes.PROCUREMENT_CONTRACT_ASSISTANT);
         }
         return false;
     }
     
-    private boolean isInPurchasingAssistantNode(Document document) {
+    private boolean isInProcurementAssistantNode(Document document) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
         
         if (CollectionUtils.isNotEmpty(nodeNames)) {
-            return nodeNames.contains(CUPurapConstants.IWantRouteNodes.PURCHASING_CONTRACT_ASSISTANT);
+            return nodeNames.contains(CUPurapConstants.IWantRouteNodes.PROCUREMENT_CONTRACT_ASSISTANT);
         }
         return false;
     }
