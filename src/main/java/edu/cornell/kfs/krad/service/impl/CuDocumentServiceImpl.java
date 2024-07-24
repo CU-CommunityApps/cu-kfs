@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.kuali.kfs.core.framework.persistence.jta.TransactionalNoValidationExceptionRollback;
 import org.kuali.kfs.kew.api.WorkflowDocument;
-import org.kuali.kfs.kew.api.action.WorkflowDocumentActionsService;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.UserSessionUtils;
@@ -16,8 +15,11 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.service.MaintainableXMLConversionService;
 import org.kuali.kfs.krad.service.impl.DocumentServiceImpl;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.NoteType;
 
 import com.thoughtworks.xstream.core.BaseException;
+
+import edu.cornell.kfs.krad.service.CuDocumentService;
 
 /**
  * Custom DocumentServiceImpl subclass that performs its own handling
@@ -32,7 +34,7 @@ import com.thoughtworks.xstream.core.BaseException;
  * This allows for adding the features without overlaying KFS code.
  */
 @TransactionalNoValidationExceptionRollback
-public class CuDocumentServiceImpl extends DocumentServiceImpl {
+public class CuDocumentServiceImpl extends DocumentServiceImpl implements CuDocumentService {
 
     protected MaintainableXMLConversionService maintainableXMLConversionService;
 
@@ -79,15 +81,23 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
                 && document instanceof MaintenanceDocument
                 && BaseException.class.isAssignableFrom(e.getClass());
     }
-    
-    public Document returnDocumentToPreviousNode(Document document, String annotation, String nodeName) {
+
+    /*
+     * This method is modeled after base code's implementations of "disapprove" and "recall" action handling.
+     */
+    @Override
+    public Document returnDocumentToPreviousNode(final Document document, final String annotation,
+            final String nodeName) {
         checkForNulls(document);
 
-        Note note = createNoteFromDocument(document, annotation);
+        final Note note = createNoteFromDocument(document, annotation);
+        if (document.getNoteType() == NoteType.BUSINESS_OBJECT) {
+            note.setNoteTypeCode(NoteType.DOCUMENT_HEADER.getCode());
+            note.setRemoteObjectIdentifier(document.getDocumentHeader().getObjectId());
+        }
         document.addNote(note);
         getNoteService().save(note);
 
-        getDocumentDao().save(document);
         prepareWorkflowDocument(document);
         document.getDocumentHeader().getWorkflowDocument().returnToPreviousNode(annotation, nodeName);
         final UserSession userSession = GlobalVariables.getUserSession();
@@ -97,7 +107,8 @@ public class CuDocumentServiceImpl extends DocumentServiceImpl {
         removeAdHocPersonsAndWorkgroups(document);
         return document;
     }
-    
+
+    // Copied this private method from the superclass.
     private void removeAdHocPersonsAndWorkgroups(final Document document) {
         final List<AdHocRoutePerson> adHocRoutePersons = new ArrayList<>();
         final List<AdHocRouteWorkgroup> adHocRouteWorkgroups = new ArrayList<>();

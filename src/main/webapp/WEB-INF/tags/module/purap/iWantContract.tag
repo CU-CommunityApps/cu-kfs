@@ -8,8 +8,8 @@
 <c:set var="displayContractTab" value="${(not empty KualiForm.editingMode['displayContractTab'])}" scope="request"/>
 <c:set var="contractIndicatorReadOnly" value="${(empty KualiForm.editingMode['editContractIndicator'])}" scope="request"/>
 <c:set var="docEnroute" value="${KualiForm.docEnroute}"/>
-<c:set var="canEditProcessingAssistantNetId" value="${(not empty KualiForm.editingMode['editPurchasingAssistantNetId'])}" scope="request"/>
-<c:set var="purchasingAssistantNetIdReadOnly" value="${!fullEntryMode || !canEditProcessingAssistantNetId || !docEnroute}" scope="request"/>
+<c:set var="canEditProcessingAssistantNetId" value="${(not empty KualiForm.editingMode['editProcurementAssistantNetId'])}" scope="request"/>
+<c:set var="procurementAssistantNetIdReadOnly" value="${!fullEntryMode || !canEditProcessingAssistantNetId || !docEnroute}" scope="request"/>
 
 <c:if test="${displayContractTab}">
     <kul:tab tabTitle="Jaggaer Contract" defaultOpen="true">
@@ -33,23 +33,23 @@
                             tabindexOverride="${tabindexOverrideBase + 0}"/>
             </td>
             <kul:htmlAttributeHeaderCell
-                    labelFor="document.purchasingAssistantNetId"
-                    attributeEntry="${documentAttributes.purchasingAssistantNetId}"
+                    labelFor="document.procurementAssistantNetId"
+                    attributeEntry="${documentAttributes.procurementAssistantNetId}"
                     horizontal="true"
                     rowspan="1"
                     addClass="right top"
                     width="25%"/>
             <td rowspan="1" class="top" width="25%">
-                <kul:user userIdFieldName="document.purchasingAssistantNetId"
-                          userId="${KualiForm.document.purchasingAssistantNetId}"
+                <kul:user userIdFieldName="document.procurementAssistantNetId"
+                          userId="${KualiForm.document.procurementAssistantNetId}"
                           universalIdFieldName=""
                           universalId=""
-                          userNameFieldName="document.purchasingAssistantName"
-                          userName="${KualiForm.document.purchasingAssistantName}"
-                          readOnly="${purchasingAssistantNetIdReadOnly}"
-                          fieldConversions="principalName:document.purchasingAssistantNetId,name:document.purchasingAssistantName"
+                          userNameFieldName="document.procurementAssistantName"
+                          userName="${KualiForm.document.procurementAssistantName}"
+                          readOnly="${procurementAssistantNetIdReadOnly}"
+                          fieldConversions="principalName:document.procurementAssistantNetId,name:document.procurementAssistantName"
                           hasErrors="${hasErrors}"
-                          onblur="loadProcessorInfo('document.purchasingAssistantNetId', 'document.purchasingAssistantName')"/>
+                          onblur="loadProcessorInfo('document.procurementAssistantNetId', 'document.procurementAssistantName')"/>
             </td>
         </tr>
     </table>

@@ -124,7 +124,7 @@ public class CUPurapConstants {
         public static final String IS_ORDER_COMPLETED = "IsOrderCompleted";
         public static final String NO_OP_NODE  = "NoOpNode";
         public static final String IS_CONTRACT_INDICATOR_CHECKED = "IsContractIndicatorChecked";
-        public static final String PURCHASING_CONTRACT_ASSISTANT  = "PurchasingContractAssistant";
+        public static final String PROCUREMENT_CONTRACT_ASSISTANT  = "ProcurementContractAssistant";
     }
     
     public static final class IWantDocumentAttributes {
@@ -143,7 +143,7 @@ public class CUPurapConstants {
     public static final String I_WANT_DOC_MULTIPLE_PAGE_IS_ALLOWED = "multiplePageIsAllowed";
     public static final String I_WANT_DOC_FULL_PAGE_IS_ALLOWED = "fullPageIsAllowed";
     public static final String I_WANT_DOC_EDIT_PROC_NET_ID = "editProcessorNetId";
-    public static final String I_WANT_DOC_EDIT_PUR_ASSISTANT_NET_ID = "editPurchasingAssistantNetId";
+    public static final String I_WANT_DOC_EDIT_PROCUREMENT_ASSISTANT_NET_ID = "editProcurementAssistantNetId";
     
     public static final String IWNT_DOC_TYPE = "IWNT";
     public static final String IWNT_STEP_PARAMETER = "step";
@@ -157,7 +157,10 @@ public class CUPurapConstants {
     public static final String IWNT_DOC_DISPLAY_CONTRACT_TAB = "displayContractTab";
     public static final String IWNT_DOC_EDIT_CONTRACT_INDICATOR = "editContractIndicator";
     public static final String IWNT_DOC_DISPLAY_CONFIRMATION = "displayConfirmation";
-    
+
+    public static final String IWNT_DOC_RETURN_TO_SSC_QUESTION_ID = "IWNTReturnToSSC";
+    public static final String MAPPING_RETURN_TO_SSC = "returnToSSC";
+
     public static final String USER_OPTIONS_PRINCIPAL_ID = "principalId";
     public static final String USER_OPTIONS_OPTION_ID = "optionId";
     

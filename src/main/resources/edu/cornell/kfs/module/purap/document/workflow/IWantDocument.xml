@@ -22,7 +22,7 @@
                     </split>
                     <split name="IsContractIndicatorChecked" nextNode="NoOpComplete">
                         <branch name="True">
-                            <role name="PurchasingContractAssistant" nextNode="JoinIsContractIndicatorChecked"/>
+                            <role name="ProcurementContractAssistant" nextNode="JoinIsContractIndicatorChecked"/>
                         </branch>
                         <branch name="False">
                             <simple name="NoOpNoContractIndicator" nextNode="JoinIsContractIndicatorChecked"/>
@@ -46,7 +46,7 @@
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
-                <role name="PurchasingContractAssistant">
+                <role name="ProcurementContractAssistant">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>

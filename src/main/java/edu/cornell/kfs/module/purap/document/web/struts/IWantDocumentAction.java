@@ -27,18 +27,18 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
+import org.kuali.kfs.kns.question.ConfirmationQuestion;
 import org.kuali.kfs.kns.rule.event.KualiAddLineEvent;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
+import org.kuali.kfs.kns.web.struts.action.KualiDocumentActionBase;
 import org.kuali.kfs.kns.web.struts.form.KualiDocumentFormBase;
 import org.kuali.kfs.krad.UserSessionUtils;
 import org.kuali.kfs.krad.bo.Note;
-import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.rules.rule.event.RouteDocumentEvent;
 import org.kuali.kfs.krad.service.KualiRuleService;
 import org.kuali.kfs.krad.service.NoteService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.sys.KFSConstants;
@@ -49,7 +49,7 @@ import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.vnd.businessobject.VendorPhoneNumber;
 
 import edu.cornell.kfs.fp.CuFPConstants;
-import edu.cornell.kfs.krad.service.impl.CuDocumentServiceImpl;
+import edu.cornell.kfs.krad.service.CuDocumentService;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -247,10 +247,10 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
                 iWantDocumentService.setIWantDocumentDescription(iWantDocument);
             }
             
-            if (StringUtils.isNotBlank(iWantDocument.getPurchasingAssistantNetId())) {
-                PersonData purchasingAssistant = iWantDocumentService.getPersonData(iWantDocument.getPurchasingAssistantNetId());
-                if (ObjectUtils.isNotNull(purchasingAssistant)) {
-                    iWantDocument.setPurchasingAssistantName(purchasingAssistant.getPersonName());
+            if (StringUtils.isNotBlank(iWantDocument.getProcurementAssistantNetId())) {
+                PersonData procurementAssistant = iWantDocumentService.getPersonData(iWantDocument.getProcurementAssistantNetId());
+                if (ObjectUtils.isNotNull(procurementAssistant)) {
+                    iWantDocument.setProcurementAssistantName(procurementAssistant.getPersonName());
                 }
             }
         }
@@ -1227,42 +1227,33 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
        
         return mapping.findForward(KFSConstants.MAPPING_BASIC);
     }
-    
+
     public ActionForward returnToSSC(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        final ReasonPrompt sscPrompt = new ReasonPrompt(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC_QUESTION_ID,
+                CUPurapKeyConstants.IWNT_RETURN_TO_SSC_QUESTION, KRADConstants.CONFIRMATION_QUESTION,
+                CUPurapKeyConstants.ERROR_IWNT_RETURN_TO_SSC_REASON_REQUIRED, CUPurapConstants.MAPPING_RETURN_TO_SSC,
+                ConfirmationQuestion.NO, CUPurapKeyConstants.IWNT_RETURN_TO_SSC_NOTE_TEXT_INTRO);
+        final ReasonPrompt.Response sscResponse = sscPrompt.ask(mapping, form, request, response);
 
-        IWantDocumentForm iWantDocForm = (IWantDocumentForm) form;
-        IWantDocument iWantDocument = iWantDocForm.getIWantDocument();
-        
+        if (sscResponse.forward != null) {
+            return sscResponse.forward;
+        }
+
         final KualiDocumentFormBase kualiDocumentFormBase = (KualiDocumentFormBase) form;
         doProcessingAfterPost(kualiDocumentFormBase, request);
+        ((CuDocumentService) getDocumentService()).returnDocumentToPreviousNode(kualiDocumentFormBase.getDocument(),
+                sscResponse.reason, CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
 
-        kualiDocumentFormBase.setDerivedValuesOnForm(request);
-        final ActionForward preRulesForward = promptBeforeValidation(mapping, form, request, response);
-        if (preRulesForward != null) {
-            return preRulesForward;
-        }
+        final ActionForward actionForward = reload(mapping, form, request, response);
+        KNSGlobalVariables.getMessageList().removeIf(
+                message -> StringUtils.equals(message.getErrorKey(), KualiDocumentActionBase.MESSAGE_RELOADED));
+        KNSGlobalVariables.getMessageList().add(CUPurapKeyConstants.MESSAGE_IWANT_DOCUMENT_RETURNED_TO_SSC);
+        kualiDocumentFormBase.setAnnotation("");
 
-        final Document document = kualiDocumentFormBase.getDocument();
-
-        final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,
-                KRADPropertyConstants.DOCUMENT_EXPLANATION, document.getDocumentHeader().getExplanation(), "returnToSSC", "");
-        if (forward != null) {
-            return forward;
-        }
-        
-        kualiDocumentFormBase.setAnnotation(
-                getConfigurationService().getPropertyValueAsString(CUPurapKeyConstants.IWNT_RETURN_TO_SSC_ANNOTATION));
-        iWantDocument.setContractIndicator(KRADConstants.NO_INDICATOR_VALUE);
-        ((CuDocumentServiceImpl) getDocumentService()).returnDocumentToPreviousNode(document,
-                kualiDocumentFormBase.getAnnotation(), CUPurapConstants.IWantRouteNodes.NO_OP_NODE);
-
-        KNSGlobalVariables.getMessageList().add(KFSKeyConstants.MESSAGE_ROUTE_SUCCESSFUL);
-
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+        return actionForward;
     }
-    
-    
+
     private boolean confirmationNeeded(IWantDocument document, String contractIndicator) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
         Set<String> nodeNames = workflowDocument.getCurrentNodeNames();
