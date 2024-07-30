@@ -242,10 +242,8 @@
                             <td class="datacell">
                                 <c:choose>
                                     <c:when test="${(!empty note.attachment) and (note.attachment.complete)}">
-                                        <c:set var="notePostTime" value="${note.notePostedTimestamp.time}"/>
-                                        <c:set var="docStatusTime" value="${kfsfunc:convertLocalDateTimeToMilliseconds(KualiForm.document.documentHeader.workflowDocument.document.applicationDocumentStatusDate)}"/>
                                         <c:choose>
-                                            <c:when test="${!poCreated or (notePostTime lt docStatusTime)}">
+                                            <c:when test="${!poCreated or (note.notePostedTimestamp.time lt kfsfunc:convertLocalDateTimeToMilliseconds(KualiForm.document.documentHeader.workflowDocument.document.applicationDocumentStatusDate))}">
                                                 Yes
                                             </c:when>
                                             <c:otherwise>

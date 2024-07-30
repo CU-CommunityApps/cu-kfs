@@ -103,9 +103,7 @@
     </function>
     
     <function>
-        <description>
-            Converts LocalDateTime To Milliseconds
-        </description>
+        <description>Converts LocalDateTime To Milliseconds</description>
         <name>convertLocalDateTimeToMilliseconds</name>
         <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
         <function-signature>long convertLocalDateTimeToMilliseconds(java.time.LocalDateTime)</function-signature>
