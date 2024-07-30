@@ -108,7 +108,7 @@
         <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
         <function-signature>long convertLocalDateTimeToMilliseconds(java.time.LocalDateTime)</function-signature>
         <example>
-            &lt;c:set var="timeInMillis" value="${kfsfunc:convertLocalDateTimeToMilliseconds(localdateTime)}"/&gt;
+            &lt;c:set var="timeInMillis" value="${kfsfunc:convertLocalDateTimeToMilliseconds(localDateTime)}"/&gt;
         </example>
     </function>
 

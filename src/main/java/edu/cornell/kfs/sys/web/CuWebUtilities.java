@@ -102,8 +102,8 @@ public final class CuWebUtilities {
         return StringUtils.join(formFieldName, CUKFSConstants.COLON, personFieldName);
     }
     
-    public static long convertLocalDateTimeToMilliseconds(LocalDateTime localdateTime) {
-        long milliseconds = localdateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    public static long convertLocalDateTimeToMilliseconds(LocalDateTime localDateTime) {
+        long milliseconds = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return milliseconds;
     }
 
