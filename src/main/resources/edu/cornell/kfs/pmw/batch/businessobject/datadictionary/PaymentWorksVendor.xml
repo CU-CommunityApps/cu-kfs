@@ -5,12 +5,18 @@
 
     <bean id="PaymentWorksVendor" parent="PaymentWorksVendor-parentBean" />
 
-    <bean id="PaymentWorksVendor-parentBean" abstract="true" parent="BusinessObjectEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor" />
-        <property name="objectLabel" value="PaymentWorks Vendor" />
-        <property name="titleAttribute" value="pmwVendorRequestId" />
-        <property name="lookupDefinition" ref="PaymentWorksVendor-lookupDefinition" />
-        <property name="inquiryDefinition" ref="PaymentWorksVendor-inquiryDefinition" />
+    <bean id="PaymentWorksVendor-parentBean"
+          abstract="true"
+          parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor"
+          p:objectLabel="PaymentWorks Vendor"
+          p:titleAttribute="pmwVendorRequestId"
+          p:lookupDefinition-ref="PaymentWorksVendor-lookupDefinition"
+          p:inquiryDefinition-ref="PaymentWorksVendor-inquiryDefinition"
+          p:actionsProvider-ref="paymentWorksVendorActionsProvider"
+          p:businessObjectAdminService-ref="paymentWorksVendorAdminService"
+          p:searchService-ref="defaultSearchService"
+    >
         <property name="attributes">
             <list>
                 <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus" />
@@ -1126,23 +1132,25 @@
                 </property>
             </bean>
         </property>
-        <property name="lookupFields">
+        <property name="formAttributeDefinitions">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyTelephone" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
-                <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
+                <ref bean="PaymentWorksVendor-requestingCompanyName"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyTelephone"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyUrl"/>
+                <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
+                <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
         </property>
-        <property name="resultFields">
+        <property name="displayAttributeDefinitions">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="pmwVendorRequestId" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyTelephone" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
-                <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
+                <ref bean="PaymentWorksVendor-pmwVendorRequestId"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyName"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyTelephone"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyUrl"/>
+                <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
+                <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
         </property>
     </bean>
@@ -1235,5 +1243,9 @@
             </list>
         </property>
     </bean>
+
+    <bean id="paymentWorksVendorActionsProvider"/>
+
+    <bean id="paymentWorksVendorAdminService"/>
 
 </beans>
