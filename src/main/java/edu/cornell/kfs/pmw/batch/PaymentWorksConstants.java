@@ -426,4 +426,14 @@ public class PaymentWorksConstants {
         public static final String INITIATOR_NETID = "initiatorNetId";
     }
 
+    public enum PaymentWorksVendorGlobalAction {
+        RESTAGE_FOR_UPLOAD("Restage for Upload");
+
+        public final String actionLabel;
+
+        private PaymentWorksVendorGlobalAction(final String actionLabel) {
+            this.actionLabel = actionLabel;
+        }
+    }
+
 }

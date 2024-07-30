@@ -71,4 +71,11 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_PAYMENTWORKS_DOMESTIC_WIRE_VENDOR_ACH = "error.paymentworks.domestic.wire.vendor.with.ach";
     public static final String ERROR_PAYMENTWORKS_FOREIGN_WIRE_VENDOR_ACH = "error.paymentworks.foreign.wire.vendor.with.ach";
 
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_ACTION_INVALID = "error.paymentworks.vendor.global.action.invalid";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_EMPTY = "error.paymentworks.vendor.global.details.empty";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_DUPLICATE = "error.paymentworks.vendor.global.details.duplicate";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_INVALID = "error.paymentworks.vendor.global.details.invalid";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_INELIGIBLE = "error.paymentworks.vendor.global.details.upload.status.ineligible";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_MATCH = "error.paymentworks.vendor.global.details.upload.status.match";
+
 }

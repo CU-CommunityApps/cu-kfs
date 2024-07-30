@@ -25,4 +25,8 @@ public class PaymentWorksPropertiesConstants {
         public static final String FOREIGN_FORM_MODE = "F";
     }
 
+    public static final String ACTION_TYPE = "actionType";
+    public static final String VENDOR_DETAILS = "vendorDetails";
+    public static final String PAYMENT_WORKS_VENDOR = "paymentWorksVendor";
+
 }
