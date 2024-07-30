@@ -1,5 +1,7 @@
 package edu.cornell.kfs.sys.web;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -98,6 +100,11 @@ public final class CuWebUtilities {
             personFieldName += CuKimPropertyConstants.MASKED_IF_NECESSARY_SUFFIX;
         }
         return StringUtils.join(formFieldName, CUKFSConstants.COLON, personFieldName);
+    }
+    
+    public static long convertLocalDateTimeToMilliseconds(LocalDateTime localdateTime) {
+        long milliseconds = localdateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return milliseconds;
     }
 
 }

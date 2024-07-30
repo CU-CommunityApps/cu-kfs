@@ -101,6 +101,18 @@
             &lt;c:set var="newlookupParameters" test="${kfsfunc:convertPersonLookupParametersForMasking(oldLookupParameters)}"/&gt;
         </example>
     </function>
+    
+    <function>
+        <description>
+            Converts LocalDateTime To Milliseconds
+        </description>
+        <name>convertLocalDateTimeToMilliseconds</name>
+        <function-class>edu.cornell.kfs.sys.web.CuWebUtilities</function-class>
+        <function-signature>long convertLocalDateTimeToMilliseconds(java.time.LocalDateTime)</function-signature>
+        <example>
+            &lt;c:set var="timeInMillis" value="${kfsfunc:convertLocalDateTimeToMilliseconds(localdateTime)}"/&gt;
+        </example>
+    </function>
 
     <!-- End of CU-specific functions -->
 
