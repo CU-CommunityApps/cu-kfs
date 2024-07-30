@@ -243,7 +243,7 @@
                                 <c:choose>
                                     <c:when test="${(!empty note.attachment) and (note.attachment.complete)}">
                                         <c:choose>
-                                            <c:when test="${!poCreated or (note.notePostedTimestamp.time lt KualiForm.document.documentHeader.workflowDocument.document.applicationDocumentStatusDate.millis)}">
+                                            <c:when test="${!poCreated or (note.notePostedTimestamp.time lt kfsfunc:convertLocalDateTimeToMilliseconds(KualiForm.document.documentHeader.workflowDocument.document.applicationDocumentStatusDate))}">
                                                 Yes
                                             </c:when>
                                             <c:otherwise>
