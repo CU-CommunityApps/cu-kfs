@@ -19,7 +19,6 @@
 
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
-<%@ page import="java.time.ZoneId" %>
 
 <kul:documentPage showDocumentInfo="true"
                   documentTypeName="RequisitionDocument"
