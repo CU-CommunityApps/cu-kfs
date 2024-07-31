@@ -625,6 +625,19 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.kfsVendorDetailAssignedIdentifier = kfsVendorDetailAssignedIdentifier;
     }
 
+    public String getKfsVendorNumber() {
+        if (kfsVendorHeaderGeneratedIdentifier != null && kfsVendorDetailAssignedIdentifier != null) {
+            return StringUtils.join(kfsVendorHeaderGeneratedIdentifier,
+                    KFSConstants.DASH, kfsVendorDetailAssignedIdentifier);
+        } else {
+            return null;
+        }
+    }
+
+    public void setKfsVendorNumber(final String kfsVendorNumber) {
+        // Ignore
+    }
+
     public boolean isCustomFieldConversionErrors() {
         return customFieldConversionErrors;
     }

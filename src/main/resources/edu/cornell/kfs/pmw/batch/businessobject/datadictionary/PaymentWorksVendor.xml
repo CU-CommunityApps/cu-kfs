@@ -13,16 +13,19 @@
           p:titleAttribute="pmwVendorRequestId"
           p:lookupDefinition-ref="PaymentWorksVendor-lookupDefinition"
           p:inquiryDefinition-ref="PaymentWorksVendor-inquiryDefinition"
-          p:actionsProvider-ref="paymentWorksVendorActionsProvider"
+          p:actionsProvider-ref="businessObjectActionsProvider"
           p:businessObjectAdminService-ref="paymentWorksVendorAdminService"
           p:searchService-ref="defaultSearchService"
     >
         <property name="attributes">
             <list>
+                <ref bean="PaymentWorksVendor-id" />
+                
                 <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus" />
                 <ref bean="PaymentWorksVendor-kfsVendorDocumentNumber" />
                 <ref bean="PaymentWorksVendor-kfsVendorHeaderGeneratedIdentifier" />
                 <ref bean="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier" />
+                <ref bean="PaymentWorksVendor-kfsVendorNumber" />
                 
                 <ref bean="PaymentWorksVendor-kfsAchProcessingStatus" />
                 <ref bean="PaymentWorksVendor-kfsAchDocumentNumber" />
@@ -102,6 +105,17 @@
             </list>
         </property>
     </bean>
+
+    <bean id="PaymentWorksVendor-id" parent="PaymentWorksVendor-id-parentBean" />
+    <bean id="PaymentWorksVendor-id-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="id"
+          p:label="ID"
+          p:shortLabel="ID"
+          p:forceUppercase="true"
+          p:maxLength="10"
+          p:type="INTEGER"
+          p:validationPattern-ref="NumericValidation"
+          p:control-ref="StandardShortNameTextControl"/>
 
     <bean id="PaymentWorksVendor-genericCompanyId" parent="PaymentWorksVendor-genericCompanyId-parentBean" />
     <bean id="PaymentWorksVendor-genericCompanyId-parentBean" abstract="true" parent="AttributeDefinition">
@@ -710,6 +724,12 @@
         <property name="name" value="kfsVendorDetailAssignedIdentifier"/>
     </bean>
 
+    <bean id="PaymentWorksVendor-kfsVendorNumber" parent="PaymentWorksVendor-kfsVendorNumber-parentBean" />
+    <bean id="PaymentWorksVendor-kfsVendorNumber-parentBean" abstract="true" parent="VendorDetail-vendorNumber"
+          p:name="kfsVendorNumber"
+          p:label="KFS Vendor #"
+          p:shortLabel="KFS Vendor #"/>
+
     <bean id="PaymentWorksVendor-vendorType" parent="PaymentWorksVendor-vendorType-parentBean" />
     <bean id="PaymentWorksVendor-vendorType-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="vendorType" />
@@ -1244,8 +1264,7 @@
         </property>
     </bean>
 
-    <bean id="paymentWorksVendorActionsProvider"/>
-
-    <bean id="paymentWorksVendorAdminService"/>
+    <bean id="paymentWorksVendorAdminService" parent="defaultBoAdminService"
+          class="edu.cornell.kfs.pmw.batch.businessobject.admin.PaymentWorksVendorAdminService"/>
 
 </beans>
