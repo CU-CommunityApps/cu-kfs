@@ -66,6 +66,12 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
         final Set<Integer> encounteredPmwVendors = new HashSet<>();
         final List<PersistableBusinessObject> pmwVendorsToUpdate = new ArrayList<>(existingPmwVendors.size());
 
+        if (vendorDetails.size() != existingPmwVendors.size()) {
+            throw new IllegalStateException("Document is updating " + vendorDetails.size()
+                    + " PaymentWorks Vendors but only " + existingPmwVendors.size()
+                    + " matching records were found in the system. The missing records may have been deleted/purged.");
+        }
+
         for (final PaymentWorksVendor existingPmwVendor : existingPmwVendors) {
             final PaymentWorksVendorGlobalDetail globalDetail = detailMappings.get(existingPmwVendor.getId());
             if (ObjectUtils.isNull(globalDetail)) {

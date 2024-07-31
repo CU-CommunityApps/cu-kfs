@@ -21,6 +21,7 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobal;
 import edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail;
 
+@SuppressWarnings("deprecation")
 public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
 
     private PaymentWorksVendorGlobal paymentWorksVendorGlobal;
@@ -56,7 +57,7 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
         if (actionType == null || actionType != PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD) {
             GlobalVariables.getMessageMap().putError(PaymentWorksPropertiesConstants.ACTION_TYPE,
                     PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_ACTION_INVALID,
-                    PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD.name());
+                    PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD.actionLabel);
             return false;
         }
         return true;
@@ -85,8 +86,8 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
                 success = false;
             }
 
-            final PaymentWorksVendor pmwVendor = vendorDetail.getPaymentWorksVendor();
-            if (ObjectUtils.isNull(pmwVendor)) {
+            final PaymentWorksVendor pmwVendor = vendorDetail.getPmwVendor();
+            if (ObjectUtils.isNull(pmwVendor) || vendorDetail.paymentWorksVendorWasDeletedOrPurged()) {
                 GlobalVariables.getMessageMap().putError(vendorDetailsIdErrorPath,
                         PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_INVALID,
                         String.valueOf(vendorDetail.getId()));
@@ -102,7 +103,7 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
     private boolean checkPaymentWorksVendorChangeForRestaging(
             final PaymentWorksVendor pmwVendor, final String errorPathPrefix) {
         final String uploadStatusErrorPath = StringUtils.join(errorPathPrefix,
-                PaymentWorksPropertiesConstants.PAYMENT_WORKS_VENDOR, KFSConstants.DELIMITER,
+                PaymentWorksPropertiesConstants.PMW_VENDOR, KFSConstants.DELIMITER,
                 PaymentWorksPropertiesConstants.PaymentWorksVendor.SUPPLIER_UPLOAD_STATUS);
 
         switch (StringUtils.defaultString(pmwVendor.getSupplierUploadStatus())) {
