@@ -324,6 +324,9 @@
         <field-descriptor name="additionalDisbursementVoucherDataCode"
                           column="ADDL_DV_DATA_CD"
                           jdbc-type="CHAR" />
+       <field-descriptor name="additionalPaymentRequestDataCode"
+                          column="ADDL_PREQ_DATA_CD"
+                          jdbc-type="CHAR" />
         <field-descriptor name="active"
                           column="ACTV_IND"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"

@@ -658,7 +658,8 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     public long getAttachmentMaxFileSize() {
         final String attachmentSize = getParameterService().getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
-                KRADConstants.ATTACHMENT_MAX_FILE_SIZE_PARM_NM);
+                KRADConstants.ATTACHMENT_FILE_SIZE
+        );
 
         return FileUtil.getBytes(attachmentSize);
     }

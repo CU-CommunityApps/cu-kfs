@@ -70,11 +70,15 @@
 
     <!-- Override route header service and DAO to add a helper method that the 1099/1042S tax process relies on. -->
 
-    <bean id="documentRouteHeaderDAO" class="edu.cornell.kfs.kew.routeheader.dao.impl.CuDocumentRouteHeaderDAOOjbImpl"
-          lazy-init="true" p:jcdAlias="kewDataSource" p:documentTypeService-ref="documentTypeService"/>
+    <bean id="documentRouteHeaderDAO" parent="documentRouteHeaderDAO-parentBean"
+          class="edu.cornell.kfs.kew.routeheader.dao.impl.CuDocumentRouteHeaderDAOOjbImpl"
+          lazy-init="true"
+          p:jcdAlias="kewDataSource"
+          p:documentTypeService-ref="documentTypeService"/>
 
-    <bean id="documentRouteHeaderService" class="edu.cornell.kfs.kew.routeheader.service.impl.CuRouteHeaderServiceImpl"
-          lazy-init="true" 
+    <bean id="documentRouteHeaderService" parent="documentRouteHeaderService-parentBean"
+          class="edu.cornell.kfs.kew.routeheader.service.impl.CuRouteHeaderServiceImpl"
+          lazy-init="true"
           p:personService-ref="personService"
           p:routeHeaderDAO-ref="documentRouteHeaderDAO"
           p:searchableAttributeDAO-ref="searchableAttributeDAO"/>
