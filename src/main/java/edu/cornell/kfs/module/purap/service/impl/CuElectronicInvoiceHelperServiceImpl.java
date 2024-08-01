@@ -766,7 +766,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         //KFSPTS-1891
         boolean hasPaymentMethodCode = false;
         if ( preqDoc instanceof PaymentRequestDocument ) {
-            String vendorPaymentMethodCode = ((VendorDetailExtension)poDoc.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode();
+            String vendorPaymentMethodCode = ((VendorDetail)poDoc.getVendorDetail()).getDefaultPaymentMethodCode();
             if ( StringUtils.isNotEmpty(vendorPaymentMethodCode) ) { 
                 ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
                 hasPaymentMethodCode = true;

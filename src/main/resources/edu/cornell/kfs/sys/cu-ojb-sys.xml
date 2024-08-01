@@ -317,12 +317,19 @@
                           column="DISPLAY_ON_PREQ_IND"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"
                           jdbc-type="CHAR"/>
+        <field-descriptor name="displayOnVendor"
+                          column="DISPLAY_ON_PVEN_IND"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"
+                          jdbc-type="CHAR"/>
         <field-descriptor name="displayOnVendorCreditMemo"
                           column="DISPLAY_ON_CM_IND"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"
                           jdbc-type="CHAR"/>
         <field-descriptor name="additionalDisbursementVoucherDataCode"
                           column="ADDL_DV_DATA_CD"
+                          jdbc-type="CHAR" />
+       <field-descriptor name="additionalPaymentRequestDataCode"
+                          column="ADDL_PREQ_DATA_CD"
                           jdbc-type="CHAR" />
         <field-descriptor name="active"
                           column="ACTV_IND"
@@ -351,7 +358,6 @@
         <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
         <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
         <field-descriptor name="processedUsingPdp" column="PDP_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-        <field-descriptor name="displayOnVendorDocument" column="VENDOR_DISPLAY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
         <field-descriptor name="displayOnRecurringDVDocument" column="RECURRING_DV_DISPLAY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
   </class-descriptor>
     

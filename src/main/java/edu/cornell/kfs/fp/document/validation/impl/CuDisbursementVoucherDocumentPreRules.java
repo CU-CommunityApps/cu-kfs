@@ -23,7 +23,7 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
 
     private CuCheckStubService cuCheckStubService;
     private ConfigurationService configurationService;
-
+    
     /**
      * Executes pre-rules for Disbursement Voucher Document
      *
@@ -58,43 +58,6 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
 	protected CuDisbursementVoucherTaxService getCuDisbursementVoucherTaxService(){
 		return SpringContext.getBean(CuDisbursementVoucherTaxService.class);
 	}
-
-	/**
-     * This method returns true if the state of all the tabs is valid, false otherwise.
-     *
-     * @param dvDocument submitted disbursement voucher document
-     * @return Returns true if the state of all the tabs is valid, false otherwise.
-     */
-    @SuppressWarnings("deprecation")
-    protected boolean checkWireTransferTabState(final DisbursementVoucherDocument dvDocument) {
-        boolean tabStatesOK = true;
-
-        final PaymentSourceWireTransfer dvWireTransfer = dvDocument.getWireTransfer();
-
-        // if payment method is not WIRE and wire tab contains data, ask user to clear tab
-        final String disbVchrPaymentMethodCode = dvDocument.getDisbVchrPaymentMethodCode();
-        final boolean isWireTransfer = StringUtils.equals(
-                KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE,
-                disbVchrPaymentMethodCode);
-        if (disbVchrPaymentMethodCode != null && !isWireTransfer && hasWireTransferValues(dvWireTransfer)) {
-            String questionText = getConfigurationService().getPropertyValueAsString(
-                    CUKFSKeyConstants.QUESTION_CLEAR_UNNEEDED_WIRE_TAB);
-            
-            final boolean clearTab = super.askOrAnalyzeYesNoQuestion(
-                    KFSConstants.DisbursementVoucherDocumentConstants.CLEAR_WIRE_TRANSFER_TAB_QUESTION_ID,
-                    questionText);
-            if (clearTab) {
-                // NOTE: Can't replace with new instance because Foreign Draft uses same object
-                clearWireTransferValues(dvWireTransfer);
-            } else {
-                // return to document if the user doesn't want to clear the Wire Transfer tab
-                super.event.setActionForwardName(KFSConstants.MAPPING_BASIC);
-                tabStatesOK = false;
-            }
-        }
-
-        return tabStatesOK;
-    }
 
     @Override
     protected boolean hasWireTransferValues(final PaymentSourceWireTransfer dvWireTransfer) {

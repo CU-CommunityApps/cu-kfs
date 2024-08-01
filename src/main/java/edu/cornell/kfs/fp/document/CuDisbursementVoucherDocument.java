@@ -37,6 +37,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
@@ -109,10 +110,14 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
         dvPayeeDetail.setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
+        
+        //Cornell Customization -- start
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(
                 createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
+        //Cornell Customization -- stop
+        
         dvPayeeDetail.setDisbVchrPayeePersonName(vendor.getVendorName());
 
         dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
@@ -137,12 +142,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
         dvPayeeDetail.setDvPayeeSubjectPaymentCode(
-                VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
-        dvPayeeDetail.setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService()
-                .isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
+            VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
+        dvPayeeDetail.setDisbVchrEmployeePaidOutsidePayrollCode(
+            getVendorService().isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
 
         dvPayeeDetail.setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
-
 
         boolean w9AndW8Checked = false;
         if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
@@ -168,15 +172,38 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             dvPayeeDetail.setDisbVchrNonresidentPaymentCode(true);
         }
 
-        // KFSPTS-1891
-        if ( vendor != null ) {
-                      if ( ObjectUtils.isNotNull( vendor.getExtension() )
-                              && vendor.getExtension() instanceof VendorDetailExtension ) {
-                          if ( StringUtils.isNotBlank(((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode())) {
-                              disbVchrPaymentMethodCode = ((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode();
-                          }
-                      }
-                  }
+        updatePaymentMethodBasedOnVendor(vendor);
+    }
+    
+    // Cornell Customization:  
+    // Basecode class method had to be copied into our customization and assignment of data value 
+    // defaultPaymentMethod changed to superclass setter method call due to super class having 
+    // more restrictive "private" visibility on this method as well as attribute defaultPaymentMethod.
+    private void updatePaymentMethodBasedOnVendor(final VendorDetail vendor) {
+        LOG.debug("updatePaymentMethodBasedOnVendor(...) - Enter");
+        if (ObjectUtils.isNull(dvPayeeDetail)) {
+            LOG.debug("updatePaymentMethodBasedOnVendor(...) - Exit : dvPayeeDetail=null");
+            return;
+        }
+        if (StringUtils.isBlank(vendor.getDefaultPaymentMethodCode())) {
+            LOG.debug(
+                    "updatePaymentMethodBasedOnVendor() - Exit : defaultPaymentMethodCode={}",
+                    vendor::getDefaultPaymentMethodCode);
+            return;
+        }
+        final PaymentMethod defaultPaymentMethod = vendor.getDefaultPaymentMethod();
+        if (ObjectUtils.isNull(defaultPaymentMethod)) {
+            LOG.debug("updatePaymentMethodBasedOnVendor() - Exit : defaultPaymentMethod=null");
+            return;
+        }
+        if (!defaultPaymentMethod.isDisplayOnDisbursementVoucher()) {
+            LOG.debug("updatePaymentMethodBasedOnVendor() - Exit : isDisplayOnDisbursementVoucher=false");
+            return;
+        }
+        disbVchrPaymentMethodCode = defaultPaymentMethod.getPaymentMethodCode();
+        super.setPaymentMethod(defaultPaymentMethod);
+        updateBankBasedOnPaymentMethodCode();
+        LOG.debug("updatePaymentMethodBasedOnVendor() - Exit");
     }
 
     @Override
@@ -573,7 +600,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         final PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
         disbVchrContactPersonName = currentUser.getName();
-        disbVchrContactEmailId = currentUser.getEmailAddress();
+        disbVchrContactEmailId = currentUser.getEmailAddress();  //CU Customization
 
         final String phoneNumber = currentUser.getPhoneNumber();
         //CU Customization: Add check for phoneNumber not being the actual string "null".
@@ -599,6 +626,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             campusCode = affiliatedCampusCode;
         }
 
+        //CU Customization: Base code due date calculation replaced with Cornell specific due date calculation.
         disbursementVoucherDueDate = getCuDisbursementVoucherDefaultDueDateService().findDefaultDueDate();
 
         // default doc location
@@ -609,6 +637,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             );
         }
 
+        disbVchrPaymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         updateBankBasedOnPaymentMethodCode();
     }
 

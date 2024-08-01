@@ -6,8 +6,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <import resource="classpath:edu/cornell/kfs/fp/cu-fp-lookup-beans.xml"/>
-
   <bean id="VendorCreditMemoDocument" parent="VendorCreditMemoDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument"/>
     <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.CuCreditMemoDocumentPreRules"/> 

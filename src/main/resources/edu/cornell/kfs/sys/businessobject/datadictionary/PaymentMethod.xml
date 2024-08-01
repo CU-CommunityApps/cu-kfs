@@ -10,7 +10,6 @@
         <property name="attributes">
             <list merge="true">
                 <ref bean="PaymentMethod-extension-processedUsingPdp"/>
-                <ref bean="PaymentMethod-extension-displayOnVendorDocument"/>
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
             </list>
         </property>
@@ -19,10 +18,6 @@
     <bean id="PaymentMethod-extension-processedUsingPdp" parent="PaymentMethod-extension-processedUsingPdp-parentBean"/>
     <bean id="PaymentMethod-extension-processedUsingPdp-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-processedUsingPdp"
             p:name="extension.processedUsingPdp"/>
-            
-    <bean id="PaymentMethod-extension-displayOnVendorDocument" parent="PaymentMethod-extension-displayOnVendorDocument-parentBean"/>
-    <bean id="PaymentMethod-extension-displayOnVendorDocument-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-displayOnVendorDocument"
-            p:name="extension.displayOnVendorDocument"/>
             
     <bean id="PaymentMethod-extension-displayOnRecurringDVDocument" parent="PaymentMethod-extension-displayOnRecurringDVDocument-parentBean"/>
     <bean id="PaymentMethod-extension-displayOnRecurringDVDocument-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"
@@ -34,9 +29,6 @@
                 <bean parent="PaymentMethod-extension-processedUsingPdp"
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                       p:defaultValue="" />
-                <bean parent="PaymentMethod-extension-displayOnVendorDocument"
-                      p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
-                      p:defaultValue="" />
                 <bean parent="PaymentMethod-extension-displayOnRecurringDVDocument"
                       p:control-ref="GenericAttributes-genericBooleanYNBoth-lookupControl"
                       p:defaultValue="" />
@@ -45,7 +37,6 @@
         <property name="displayAttributeDefinitions">
             <list merge="true">
                 <ref bean="PaymentMethod-extension-processedUsingPdp" />
-                <ref bean="PaymentMethod-extension-displayOnVendorDocument" />
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument" />
             </list>
         </property>
@@ -56,7 +47,6 @@
         <property name="fields">
             <list merge="true">
                 <ref bean="PaymentMethod-extension-processedUsingPdp"/>
-                <ref bean="PaymentMethod-extension-displayOnVendorDocument"/>
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
             </list>
         </property>

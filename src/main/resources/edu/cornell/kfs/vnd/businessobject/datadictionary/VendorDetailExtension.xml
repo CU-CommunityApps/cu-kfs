@@ -24,7 +24,6 @@
         <ref bean="VendorDetailExtension-vendorHeaderGeneratedIdentifier"/>
         <ref bean="VendorDetailExtension-vendorDetailAssignedIdentifier"/>
         <ref bean="VendorDetailExtension-einvoiceVendorIndicator"/>
-        <ref bean="VendorDetailExtension-defaultB2BPaymentMethodCode" />
 		<ref bean="VendorDetailExtension-insuranceRequiredIndicator"/> 
 		<ref bean="VendorDetailExtension-insuranceRequirementsCompleteIndicator"/> 
 		<ref bean="VendorDetailExtension-cornellAdditionalInsuredIndicator"/> 
@@ -257,20 +256,6 @@
   <bean id="VendorDetailExtension-vendorCreditCardMerchants.merchantCategoryCodeFour-parentBean" abstract="true" parent="VendorCreditCardMerchant-merchantCategoryCodeFour">
     <property name="name" value="vendorCreditCardMerchants.merchantCategoryCodeFour"/>
   </bean>
-  
-        <!-- KFSPTS-1891 -->
-  <bean id="VendorDetailExtension-defaultB2BPaymentMethodCode" parent="VendorDetailExtension-defaultB2BPaymentMethodCode-parentBean" />
-  <bean id="VendorDetailExtension-defaultB2BPaymentMethodCode-parentBean" abstract="true" parent="PaymentMethod-paymentMethodCode">
-	<property name="name" value="defaultB2BPaymentMethodCode" />
-	<property name="label" value="Default Payment Method" />
-	<property name="shortLabel" value="Dflt Pmt Mthd" />
-	<property name="control">
-            <bean parent="SelectControlDefinition"
-                  p:valuesFinder-ref="vendorPaymentMethodValuesFinder"
-                  p:includeKeyInLabel="false"/>
-    </property>
-  </bean>
-  
 
   <!-- KFSPTS-3918 -->
   <bean id="VendorDetailExtension-procurementMethods" parent="VendorDetailExtension-procurementMethods-parentBean" />
@@ -313,9 +298,5 @@
 
   <bean id="cuProcurementMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
-        
-  <bean id="vendorPaymentMethodValuesFinder"
-          class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
-          
+
 </beans>
