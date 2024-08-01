@@ -1,13 +1,11 @@
 package edu.cornell.kfs.fp.document.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Calendar;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -18,33 +16,27 @@ import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
 
 public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
     private CuDisbursementVoucherDefaultDueDateServiceImpl cuDisbursementVoucherDefaultDueDateServiceImpl;
-    private TestDateTimeServiceImpl testDateTimeService;
 
     @BeforeEach
     public void setUp() throws Exception {
         Logger.getLogger(CuDisbursementVoucherDefaultDueDateServiceImpl.class.getName()).setLevel(Level.DEBUG);
         cuDisbursementVoucherDefaultDueDateServiceImpl = new CuDisbursementVoucherDefaultDueDateServiceImpl();
-        testDateTimeService = buildDateTimeService();
     }
 
     @AfterEach
     public void tearDown() throws Exception {
         cuDisbursementVoucherDefaultDueDateServiceImpl = null;
-        testDateTimeService = null;
     }
 
     @Test
-    public void testFindDefaultDueDateToday() {
-        cuDisbursementVoucherDefaultDueDateServiceImpl.setDateTimeService(buildSpiedDateTimeService(testDateTimeService,
-                LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
-        prepCuDisbursementVoucherDefaultDueDateServiceImpl("1");
+    public void testFindDefaultDueDateToday() throws Exception {
+        prepCuDisbursementVoucherDefaultDueDateServiceImpl("1", LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
         LocalDate expectedDate = LocalDate.now();
         expectedDate = expectedDate.plusDays(1);
 
@@ -52,53 +44,35 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
     }
 
     @Test
-    public void testFindDefaultDueDateLeapYear() {
-        cuDisbursementVoucherDefaultDueDateServiceImpl
-                .setDateTimeService(buildSpiedDateTimeService(testDateTimeService, 2020, Month.FEBRUARY, 28));
-        prepCuDisbursementVoucherDefaultDueDateServiceImpl("3");
+    public void testFindDefaultDueDateLeapYear() throws Exception {
+        prepCuDisbursementVoucherDefaultDueDateServiceImpl("3", LocalDate.of(2020, Month.FEBRUARY, 28));
         LocalDate expectedDate = LocalDate.of(2020, Month.MARCH, 2);
 
         assertServiceDateEqualsExpectedDate(expectedDate);
     }
 
     @Test
-    public void testFindDefaultDueDateNewYear() {
-        cuDisbursementVoucherDefaultDueDateServiceImpl
-                .setDateTimeService(buildSpiedDateTimeService(testDateTimeService, 2020, Month.DECEMBER, 28));
-        prepCuDisbursementVoucherDefaultDueDateServiceImpl("5");
+    public void testFindDefaultDueDateNewYear() throws Exception {
+        prepCuDisbursementVoucherDefaultDueDateServiceImpl("5", LocalDate.of(2020, Month.DECEMBER, 28));
         LocalDate expectedDate = LocalDate.of(2021, Month.JANUARY, 2);
 
         assertServiceDateEqualsExpectedDate(expectedDate);
     }
 
     @Test
-    public void testFindDefaultDueDateBadParamString() {
-        cuDisbursementVoucherDefaultDueDateServiceImpl
-                .setDateTimeService(buildSpiedDateTimeService(testDateTimeService, 2020, Month.DECEMBER, 28));
-
-        prepCuDisbursementVoucherDefaultDueDateServiceImpl("foo");
-        boolean caughtError = false;
-        try {
-            Date actualDate = cuDisbursementVoucherDefaultDueDateServiceImpl.findDefaultDueDate();
-        } catch (IllegalStateException il) {
-            caughtError = true;
-        }
-        assertTrue("This should have generated an IllegalStateException", caughtError);
+    public void testFindDefaultDueDateBadParamString() throws Exception {
+        prepCuDisbursementVoucherDefaultDueDateServiceImpl("foo", LocalDate.of(2020, Month.DECEMBER, 28));
+        assertThrows(IllegalStateException.class,
+                () -> cuDisbursementVoucherDefaultDueDateServiceImpl.findDefaultDueDate(),
+                "This should have generated an IllegalStateException");
     }
 
     @Test
-    public void testFindDefaultDueDateBadParamEmptyNull() {
-        cuDisbursementVoucherDefaultDueDateServiceImpl
-                .setDateTimeService(buildSpiedDateTimeService(testDateTimeService, 2020, Month.DECEMBER, 28));
-
-        prepCuDisbursementVoucherDefaultDueDateServiceImpl(null);
-        boolean caughtError = false;
-        try {
-            Date actualDate = cuDisbursementVoucherDefaultDueDateServiceImpl.findDefaultDueDate();
-        } catch (IllegalStateException il) {
-            caughtError = true;
-        }
-        assertTrue("This should have generated an IllegalStateException", caughtError);
+    public void testFindDefaultDueDateBadParamEmptyNull() throws Exception {
+        prepCuDisbursementVoucherDefaultDueDateServiceImpl(null, LocalDate.of(2020, Month.DECEMBER, 28));
+        assertThrows(IllegalStateException.class,
+                () -> cuDisbursementVoucherDefaultDueDateServiceImpl.findDefaultDueDate(),
+                "This should have generated an IllegalStateException");
     }
 
     protected void assertServiceDateEqualsExpectedDate(LocalDate expectedDate) {
@@ -106,7 +80,8 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
         assertEquals(java.sql.Date.valueOf(expectedDate), actualDate);
     }
 
-    protected void prepCuDisbursementVoucherDefaultDueDateServiceImpl(String numberOfDays) {
+    protected void prepCuDisbursementVoucherDefaultDueDateServiceImpl(String numberOfDays, LocalDate currentDate) throws Exception {
+        cuDisbursementVoucherDefaultDueDateServiceImpl.setDateTimeService(buildSpiedDateTimeService(currentDate));
         cuDisbursementVoucherDefaultDueDateServiceImpl.setParameterService(buildMockParameterService(numberOfDays));
     }
 
@@ -118,33 +93,12 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
         return service;
     }
 
-    protected DateTimeService buildMockDateTimeService(Calendar currentCalendar) {
-        DateTimeService service = Mockito.mock(DateTimeService.class);
-        Mockito.when(service.getCurrentCalendar()).thenReturn(currentCalendar);
-        return service;
-
-    }
-
-    private java.sql.Date getSqlDate(InvocationOnMock invocation) {
-        java.time.LocalDate p = invocation.getArgument(0);
-        return java.sql.Date.valueOf(p);
-    }
-
-    private DateTimeService buildSpiedDateTimeService(TestDateTimeServiceImpl actualDateTimeService, int year,
-            Month month, int dayOfMonth) {
-        TestDateTimeServiceImpl dateTimeService = Mockito.spy(actualDateTimeService);
-        Mockito.doAnswer(invocation -> getMockLocalDateNow(year, month, dayOfMonth)).when(dateTimeService)
+    private DateTimeService buildSpiedDateTimeService(LocalDate currentDate) throws Exception{
+        TestDateTimeServiceImpl dateTimeService = Mockito.spy(buildDateTimeService());
+        Mockito.doAnswer(invocation -> currentDate).when(dateTimeService)
                 .getLocalDateNow();
-        Mockito.doAnswer(invocation -> getSqlDate(invocation)).when(dateTimeService).getSqlDate(any(LocalDate.class));
 
         return dateTimeService;
-    }
-
-    private LocalDate getMockLocalDateNow(int year, Month month, int dayOfMonth) {
-        if (year <= 0 || month == null || dayOfMonth <= 0) {
-            throw new IllegalStateException("The mocked current local date setting may not have been initialized");
-        }
-        return LocalDate.of(year, month, dayOfMonth);
     }
 
     private TestDateTimeServiceImpl buildDateTimeService() throws Exception {
