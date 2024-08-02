@@ -257,6 +257,11 @@ public final class ArPropertyConstants {
 
     public static class CashControlDetailFields {
         public static final String CASH_CONTROL_DETAILS_TAB = "document.cashControlDetails";
+        public static final String CUSTOMER_NUMBER = "customerNumber";
+        public static final String CUSTOMER_PAYMENT_DATE = "customerPaymentDate";
+        public static final String CUSTOMER_PAYMENT_DESCRIPTION = "customerPaymentDescription";
+        public static final String CUSTOMER_PAYMENT_MEDIUM_IDENTIFIER = "customerPaymentMediumIdentifier";
+        public static final String FINANCIAL_DOCUMENT_LINE_AMOUNT = "financialDocumentLineAmount";
         public static final String REFERENCE_FINANCIAL_DOC_NBR = "referenceFinancialDocumentNumber";
     }
 
