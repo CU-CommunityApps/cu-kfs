@@ -36,7 +36,7 @@ public class CuDisbursementVoucherDefaultDueDateServiceImplTest {
 
     @Test
     public void testFindDefaultDueDateToday() throws Exception {
-        prepCuDisbursementVoucherDefaultDueDateServiceImpl("1", LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
+        prepCuDisbursementVoucherDefaultDueDateServiceImpl("1", LocalDate.now());
         LocalDate expectedDate = LocalDate.now();
         expectedDate = expectedDate.plusDays(1);
 
