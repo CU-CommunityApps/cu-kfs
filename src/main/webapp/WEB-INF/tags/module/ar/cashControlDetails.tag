@@ -31,6 +31,8 @@
     }
 </SCRIPT>
 
+<!-- CU Customization: Backport FINP-10040 This file can be removed after upgrading to the 2023-09-20 financials patch. -->
+
 <%@ attribute name="documentAttributes" required="true"
               type="java.util.Map"
               description="The DataDictionary entry containing attributes for cash control document fields."%>

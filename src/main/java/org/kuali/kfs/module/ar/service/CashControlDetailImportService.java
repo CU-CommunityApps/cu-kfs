@@ -53,6 +53,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+/* CU Customization: Backport FINP-10040 this class can be removed after the 2023-09-20 financials patch. */
+
 public class CashControlDetailImportService {
 
     /**

@@ -18,6 +18,8 @@
  */
 package org.kuali.kfs.module.ar.exception;
 
+/* CU Customization: Backport FINP-10040 this class can be removed after the 2023-09-20 financials patch. */
+
 public class CashControlDetailParserException extends RuntimeException {
     private final String errorKey;
     private final String[] errorParameters;
