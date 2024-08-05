@@ -64,6 +64,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
+/* CU Customization: Backport FINP-10040 this class can be removed after the 2023-09-20 financials patch. */
+
 public class CashControlAction extends FinancialSystemTransactionalDocumentActionBase {
 
     private static final Logger LOG = LogManager.getLogger();

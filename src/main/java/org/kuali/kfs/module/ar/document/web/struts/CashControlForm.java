@@ -35,6 +35,8 @@ import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumen
 
 import javax.servlet.http.HttpServletRequest;
 
+/* CU Customization: Backport FINP-10040 this class can be removed after the 2023-09-20 financials patch. */
+
 public class CashControlForm extends FinancialSystemTransactionalDocumentFormBase {
 
     private static final Logger LOG = LogManager.getLogger();
