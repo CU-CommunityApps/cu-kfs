@@ -41,6 +41,7 @@ import java.util.Set;
 /**
  * Contracts & Grants Invoice Document Presentation Controller class.
  */
+// CU customization to allow adjusting billing period when the doc is enroute also
 public class ContractsGrantsInvoiceDocumentPresentationController extends
         CustomerInvoiceDocumentPresentationController {
 

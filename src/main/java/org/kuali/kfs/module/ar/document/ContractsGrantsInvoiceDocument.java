@@ -56,6 +56,7 @@ import java.util.List;
 /**
  * Contracts & Grants Invoice document extending Customer Invoice document.
  */
+//CU customization to allow billing period to be edited when doc is enroute
 public class ContractsGrantsInvoiceDocument extends CustomerInvoiceDocument {
 
     private static final Logger LOG = LogManager.getLogger();
@@ -482,6 +483,7 @@ public class ContractsGrantsInvoiceDocument extends CustomerInvoiceDocument {
 
     public boolean isBillingPeriodAdjusted() {
         final WorkflowDocument workflowDoc = this.getDocumentHeader().getWorkflowDocument();
-        return (workflowDoc.isSaved() || workflowDoc.isEnroute())&& getInvoiceGeneralDetail().isBillingPeriodAdjusted();
+        // CU customization to allow billing period to be edited when doc is enroute
+        return (workflowDoc.isSaved() || workflowDoc.isEnroute()) && getInvoiceGeneralDetail().isBillingPeriodAdjusted();
     }
 }
