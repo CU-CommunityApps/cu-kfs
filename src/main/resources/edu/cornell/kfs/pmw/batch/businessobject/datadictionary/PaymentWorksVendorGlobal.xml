@@ -10,19 +10,18 @@
           p:objectLabel="PaymentWorks Vendor Global">
         <property name="attributes">
             <list>
-                <ref bean="PaymentWorksVendorGlobal-actionType"/>
+                <ref bean="PaymentWorksVendorGlobal-actionTypeCode"/>
             </list>
         </property>
     </bean>
 
-    <bean id="PaymentWorksVendorGlobal-actionType" parent="PaymentWorksVendorGlobal-actionType-parentBean"/>
-    <bean id="PaymentWorksVendorGlobal-actionType-parentBean" abstract="true" parent="AttributeDefinition"
-          p:name="actionType"
+    <bean id="PaymentWorksVendorGlobal-actionTypeCode" parent="PaymentWorksVendorGlobal-actionTypeCode-parentBean"/>
+    <bean id="PaymentWorksVendorGlobal-actionTypeCode-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="actionTypeCode"
           p:forceUppercase="true"
           p:label="Action"
           p:shortLabel="Action"
-          p:maxLength="30"
-    >
+          p:maxLength="30">
         <property name="validationPattern">
             <bean parent="AlphaNumericValidationPattern" p:allowUnderscore="true"/>
         </property>

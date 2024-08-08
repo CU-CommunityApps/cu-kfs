@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
@@ -24,8 +25,10 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
 
+    private static final long serialVersionUID = 1L;
+
     private String documentNumber;
-    private PaymentWorksVendorGlobalAction actionType;
+    private String actionTypeCode;
     private List<PaymentWorksVendorGlobalDetail> vendorDetails;
 
     private transient BusinessObjectService businessObjectService;
@@ -41,6 +44,7 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
 
     @Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
+        final PaymentWorksVendorGlobalAction actionType = getActionType();
         if (actionType == null) {
             throw new IllegalStateException("No global action was specified");
         }
@@ -56,10 +60,10 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
     private List<PersistableBusinessObject> generateChangesToRestagePaymentWorksVendorsForUpload() {
         final Map<Integer, PaymentWorksVendorGlobalDetail> detailMappings = vendorDetails.stream()
                 .collect(Collectors.toUnmodifiableMap(
-                        PaymentWorksVendorGlobalDetail::getId, Function.identity()));
+                        PaymentWorksVendorGlobalDetail::getPmwVendorId, Function.identity()));
 
         final Map<String, ?> fieldValues = Map.ofEntries(
-                Map.entry(KRADPropertyConstants.ID, List.of(detailMappings.keySet()))
+                Map.entry(KRADPropertyConstants.ID, List.copyOf(detailMappings.keySet()))
         );
         final Collection<PaymentWorksVendor> existingPmwVendors = getBusinessObjectService().findMatching(
                 PaymentWorksVendor.class, fieldValues);
@@ -116,12 +120,16 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
         this.documentNumber = documentNumber;
     }
 
-    public PaymentWorksVendorGlobalAction getActionType() {
-        return actionType;
+    public String getActionTypeCode() {
+        return actionTypeCode;
     }
 
-    public void setActionType(final PaymentWorksVendorGlobalAction actionType) {
-        this.actionType = actionType;
+    public void setActionTypeCode(final String actionTypeCode) {
+        this.actionTypeCode = actionTypeCode;
+    }
+
+    public PaymentWorksVendorGlobalAction getActionType() {
+        return StringUtils.isNotBlank(actionTypeCode) ? PaymentWorksVendorGlobalAction.valueOf(actionTypeCode) : null;
     }
 
     public List<PaymentWorksVendorGlobalDetail> getVendorDetails() {

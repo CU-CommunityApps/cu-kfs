@@ -25,6 +25,12 @@
                 <value>documentNumber</value>
             </list>
         </property>
+        <property name="webScriptFiles">
+            <list>
+                <value>scripts/sys/modernLookupUtils.js</value>
+                <value>scripts/pmw/paymentWorksVendorGlobal.js</value>
+            </list>
+        </property>
     </bean>
 
     <bean id="PaymentWorksVendorGlobalMaintenanceDocument-GlobalPaymentWorksVendorMaintenance"
@@ -36,7 +42,7 @@
           p:title="Edit Global PaymentWorks Vendor">
         <property name="maintainableItems">
             <list>
-                <bean parent="MaintainableFieldDefinition" p:name="actionType" p:required="true"/>
+                <bean parent="MaintainableFieldDefinition" p:name="actionTypeCode" p:required="true"/>
             </list>
         </property>
     </bean>
@@ -57,35 +63,30 @@
                       p:newLookup="true">
                     <property name="summaryFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="id"/>
-                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendor.kfsVendorNumber"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorId"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="kfsVendorNumber"/>
                         </list>
                     </property>
                     <property name="maintainableFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="id"
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorId"
                                   p:required="true"
-                                  p:lookupReadOnly="true"
                                   p:readOnlyAfterAdd="true"
                                   p:newLookup="true"
                                   p:template="id"/>
-                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendor.kfsVendorNumber"
-                                  p:unconditionallyReadOnly="true"
-                                  p:template="kfsVendorNumber"/>
-                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendor.pmwVendorRequestId"
-                                  p:unconditionallyReadOnly="true"
-                                  p:template="pmwVendorRequestId"/>
-                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendor.requestingCompanyLegalName"
-                                  p:unconditionallyReadOnly="true"
-                                  p:template="requestingCompanyLegalName"/>
-                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendor.supplierUploadStatus"
-                                  p:unconditionallyReadOnly="true"
-                                  p:template="supplierUploadStatus"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="kfsVendorNumber"
+                                  p:unconditionallyReadOnly="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorRequestId"
+                                  p:unconditionallyReadOnly="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="requestingCompanyLegalName"
+                                  p:unconditionallyReadOnly="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="supplierUploadStatus"
+                                  p:unconditionallyReadOnly="true"/>
                         </list>
                     </property>
                     <property name="duplicateIdentificationFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="id"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorId"/>
                         </list>
                     </property>
                 </bean>

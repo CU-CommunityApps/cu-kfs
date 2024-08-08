@@ -14,7 +14,10 @@ import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobal;
 import edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail;
 
+@SuppressWarnings("deprecation")
 public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlobalMaintainable {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     public List<MaintenanceLock> generateMaintenanceLocks() {
@@ -32,7 +35,7 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
     private String buildPaymentWorksVendorLockingRepresentation(final PaymentWorksVendorGlobalDetail vendorDetail) {
         return StringUtils.join(PaymentWorksVendor.class.getName(), KFSConstants.Maintenance.AFTER_CLASS_DELIM,
                 KRADPropertyConstants.ID, KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM,
-                String.valueOf(vendorDetail.getId()));
+                String.valueOf(vendorDetail.getPmwVendorId()));
     }
 
     @Override

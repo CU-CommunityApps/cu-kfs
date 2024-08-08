@@ -177,22 +177,27 @@
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
-    <field-descriptor name="actionType" column="ACTN_TYP" jdbc-type="VARCHAR"/>
+    <field-descriptor name="actionTypeCode" column="ACTN_TYP_CD" jdbc-type="VARCHAR"/>
     <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     <collection-descriptor name="vendorDetails"
                            element-class-ref="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail"
                            collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
                            auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
-        <orderby name="id" sort="ASC"/>
+        <orderby name="pmwVendorId" sort="ASC"/>
         <inverse-foreignkey field-ref="documentNumber"/>
     </collection-descriptor>
 </class-descriptor>
 
 <class-descriptor class="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail" table="CU_PMW_VENDOR_CHG_DTL_T">
     <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true"/>
-    <field-descriptor name="pmwVendorId" column="PMW_VENDOR_ID" jdbc-type="VARCHAR" primarykey="true"/>
+    <field-descriptor name="pmwVendorId" column="PMW_VENDOR_ID" jdbc-type="INTEGER" primarykey="true"/>
     <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
     <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+    <field-descriptor name="pmwVendorRequestId" column="PMW_VND_REQ_ID" jdbc-type="VARCHAR"/>
+    <field-descriptor name="kfsVendorHeaderGeneratedIdentifier" column="VNDR_HDR_GNRTD_ID" jdbc-type="INTEGER"/>
+    <field-descriptor name="kfsVendorDetailAssignedIdentifier" column="VNDR_DTL_ASND_ID" jdbc-type="INTEGER"/>
+    <field-descriptor name="supplierUploadStatus" column="SUPP_UPLD_STAT" jdbc-type="VARCHAR"/>
+    <field-descriptor name="requestingCompanyLegalName" column="REQ_CMP_LEGAL_NM" jdbc-type="VARCHAR"/>
     <field-descriptor name="lastUpdatedTimestamp" column="LAST_UPDT_TS" jdbc-type="TIMESTAMP" index="true"/>
     <reference-descriptor name="pmwVendor"
                           class-ref="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor"
