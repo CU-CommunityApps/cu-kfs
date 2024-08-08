@@ -10,6 +10,9 @@ public class PaymentWorksPropertiesConstants {
         public static final String KFS_ACH_PROCESSING_STATUS = "kfsAchProcessingStatus";
         public static final String PMW_TRANSACTION_TYPE = "pmwTransactionType";
         public static final String SUPPLIER_UPLOAD_STATUS = "supplierUploadStatus";
+        public static final String KFS_VENDOR_NUMBER = "kfsVendorNumber";
+        public static final String KFS_VENDOR_HEADER_GENERATED_IDENTIFIER = "kfsVendorHeaderGeneratedIdentifier";
+        public static final String KFS_VENDOR_DETAIL_ASSIGNED_IDENTIFIER = "kfsVendorDetailAssignedIdentifier";
     }
 
     public static final class PaymentWorksFieldMapping {
@@ -25,8 +28,9 @@ public class PaymentWorksPropertiesConstants {
         public static final String FOREIGN_FORM_MODE = "F";
     }
 
-    public static final String ACTION_TYPE = "actionType";
+    public static final String ACTION_TYPE_CODE = "actionTypeCode";
     public static final String VENDOR_DETAILS = "vendorDetails";
+    public static final String PMW_VENDOR_ID = "pmwVendorId";
     public static final String PMW_VENDOR = "pmwVendor";
 
 }

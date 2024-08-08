@@ -15,8 +15,7 @@
           p:inquiryDefinition-ref="PaymentWorksVendor-inquiryDefinition"
           p:actionsProvider-ref="businessObjectActionsProvider"
           p:businessObjectAdminService-ref="paymentWorksVendorAdminService"
-          p:searchService-ref="defaultSearchService"
-    >
+          p:searchService-ref="paymentWorksVendorSearchService">
         <property name="attributes">
             <list>
                 <ref bean="PaymentWorksVendor-id" />
@@ -1154,6 +1153,9 @@
         </property>
         <property name="formAttributeDefinitions">
             <list>
+                <ref bean="PaymentWorksVendor-id"/>
+                <ref bean="PaymentWorksVendor-pmwVendorRequestId"/>
+                <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyName"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyTelephone"/>
@@ -1164,7 +1166,9 @@
         </property>
         <property name="displayAttributeDefinitions">
             <list>
-                <ref bean="PaymentWorksVendor-pmwVendorRequestId"/>
+                <bean parent="PaymentWorksVendor-id" p:disableInquiry="true"/>
+                <bean parent="PaymentWorksVendor-pmwVendorRequestId" p:disableInquiry="true"/>
+                <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyName"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyTelephone"/>
@@ -1266,5 +1270,9 @@
 
     <bean id="paymentWorksVendorAdminService" parent="defaultBoAdminService"
           class="edu.cornell.kfs.pmw.batch.businessobject.admin.PaymentWorksVendorAdminService"/>
+
+    <bean id="paymentWorksVendorSearchService" parent="defaultSearchService"
+          class="edu.cornell.kfs.pmw.batch.businessobject.service.impl.PaymentWorksVendorSearchService"
+          p:lookupDao-ref="paymentWorksVendorLookupDao"/>
 
 </beans>

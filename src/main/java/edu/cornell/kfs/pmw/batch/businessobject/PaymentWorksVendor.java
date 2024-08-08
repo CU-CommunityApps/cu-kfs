@@ -15,6 +15,7 @@ import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
 import edu.cornell.kfs.pmw.batch.PaymentWorksDataTransformation;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.businessobject.PurgeableBusinessObjectInterface;
+import edu.cornell.kfs.vnd.util.CuVendorUtils;
 
 public class PaymentWorksVendor extends PersistableBusinessObjectBase implements Serializable, PurgeableBusinessObjectInterface {
     private static final long serialVersionUID = -6784832598701451681L;
@@ -626,12 +627,7 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
     }
 
     public String getKfsVendorNumber() {
-        if (kfsVendorHeaderGeneratedIdentifier != null && kfsVendorDetailAssignedIdentifier != null) {
-            return StringUtils.join(kfsVendorHeaderGeneratedIdentifier,
-                    KFSConstants.DASH, kfsVendorDetailAssignedIdentifier);
-        } else {
-            return null;
-        }
+        return CuVendorUtils.formatVendorNumber(kfsVendorHeaderGeneratedIdentifier, kfsVendorDetailAssignedIdentifier);
     }
 
     public void setKfsVendorNumber(final String kfsVendorNumber) {

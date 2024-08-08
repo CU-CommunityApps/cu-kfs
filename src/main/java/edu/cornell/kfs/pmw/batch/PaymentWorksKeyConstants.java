@@ -74,7 +74,8 @@ public class PaymentWorksKeyConstants {
     public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_ACTION_INVALID = "error.paymentworks.vendor.global.action.invalid";
     public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_EMPTY = "error.paymentworks.vendor.global.details.empty";
     public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_DUPLICATE = "error.paymentworks.vendor.global.details.duplicate";
-    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_INVALID = "error.paymentworks.vendor.global.details.invalid";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_ADDLINE_NOT_FOUND = "error.paymentworks.vendor.global.details.addline.not.found";
+    public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_NOT_FOUND = "error.paymentworks.vendor.global.details.not.found";
     public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_INELIGIBLE = "error.paymentworks.vendor.global.details.upload.status.ineligible";
     public static final String ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_MATCH = "error.paymentworks.vendor.global.details.upload.status.match";
 
