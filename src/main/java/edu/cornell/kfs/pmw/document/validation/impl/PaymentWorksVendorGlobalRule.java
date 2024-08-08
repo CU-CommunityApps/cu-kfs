@@ -143,13 +143,13 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
             case SupplierUploadStatus.READY_FOR_UPLOAD :
                 putFieldError(uploadStatusErrorPath,
                         PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_MATCH,
-                        pmwVendor.getSupplierUploadStatus());
+                        new String[] { String.valueOf(pmwVendor.getId()), pmwVendor.getSupplierUploadStatus() });
                 return false;
 
             default :
                 putFieldError(uploadStatusErrorPath,
                         PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_INELIGIBLE,
-                        pmwVendor.getSupplierUploadStatus());
+                        new String[] { String.valueOf(pmwVendor.getId()), pmwVendor.getSupplierUploadStatus() });
                 return false;
         }
     }

@@ -25,12 +25,6 @@
                 <value>documentNumber</value>
             </list>
         </property>
-        <property name="webScriptFiles">
-            <list>
-                <value>scripts/sys/modernLookupUtils.js</value>
-                <value>scripts/pmw/paymentWorksVendorGlobal.js</value>
-            </list>
-        </property>
     </bean>
 
     <bean id="PaymentWorksVendorGlobalMaintenanceDocument-GlobalPaymentWorksVendorMaintenance"
