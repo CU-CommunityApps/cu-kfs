@@ -46,6 +46,7 @@
 <%@ attribute name="editPaymentAppDoc" required="true"
               description="If payment application document number should be a link"%>
 
+<!-- CU Customization Backport FINP-10040 -->
 <kul:tab tabTitle="Cash Control Details" defaultOpen="true" tabErrorKey="${KFSConstants.CASH_CONTROL_DETAILS_ERRORS}"
          helpUrl="${KualiForm.detailsImportInstructionsUrl}" helpLabel="Import Templates">
     <div id="cashControlDetails" class="tab-container">

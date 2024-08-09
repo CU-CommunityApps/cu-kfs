@@ -45,6 +45,7 @@ public class CashControlForm extends FinancialSystemTransactionalDocumentFormBas
     protected String processingChartOfAccCodeAndOrgCode;
     protected boolean cashPaymentMediumSelected;
 
+    /* CU Customization Backport FINP-10040 */
     private FormFile detailImportFile;
 
     public CashControlForm() {
@@ -124,6 +125,7 @@ public class CashControlForm extends FinancialSystemTransactionalDocumentFormBas
         this.cashPaymentMediumSelected = cashPaymentMediumSelected;
     }
 
+    /* CU Customization Backport FINP-10040 */
     public FormFile getDetailImportFile() {
         return detailImportFile;
     }
