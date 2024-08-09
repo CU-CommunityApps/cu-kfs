@@ -7,7 +7,6 @@ public class PaymentMethodExtendedAttribute extends PersistableBusinessObjectBas
     
     private String paymentMethodCode;
     private boolean processedUsingPdp;
-    private boolean displayOnVendorDocument;
     private boolean displayOnRecurringDVDocument;
 
     public boolean isProcessedUsingPdp() {
@@ -24,14 +23,6 @@ public class PaymentMethodExtendedAttribute extends PersistableBusinessObjectBas
 
     public void setPaymentMethodCode(String paymentMethodCode) {
         this.paymentMethodCode = paymentMethodCode;
-    }
-
-    public boolean isDisplayOnVendorDocument() {
-        return displayOnVendorDocument;
-    }
-
-    public void setDisplayOnVendorDocument(boolean displayOnVendorDocument) {
-        this.displayOnVendorDocument = displayOnVendorDocument;
     }
 
     public boolean isDisplayOnRecurringDVDocument() {

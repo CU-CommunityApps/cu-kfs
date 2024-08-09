@@ -2915,6 +2915,14 @@
     <reference-descriptor name="preqWireTransfer" class-ref="edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer" auto-retrieve="true" auto-update="object" auto-delete="object" >
         <foreignkey field-ref="documentNumber" />
     </reference-descriptor>
+    <!-- FINP-9047 like our custom class nkk4 need to reconcile
+     <reference-descriptor name="wireTransfer"
+                              class-ref="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer"
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true">
+            <foreignkey field-ref="documentNumber"/>
+     </reference-descriptor>
+-->
+    
     <reference-descriptor name="paymentMethod"
                           auto-delete="none"
                           auto-retrieve="true"

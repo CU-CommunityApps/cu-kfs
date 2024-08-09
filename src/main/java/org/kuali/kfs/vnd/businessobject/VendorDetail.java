@@ -24,14 +24,15 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.LookupService;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
-import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
@@ -87,6 +88,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private String vendorSoldToName;
     private boolean vendorFirstLastNameIndicator;
     private boolean taxableIndicator;
+    private String defaultPaymentMethodCode;
 
     private List<VendorAddress> vendorAddresses;
     private List<VendorAlias> vendorAliases;
@@ -104,6 +106,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     private ShippingPaymentTerms vendorShippingPaymentTerms;
     private VendorDetail soldToVendorDetail;
     private Person vendorRestrictedPerson;
+    private PaymentMethod defaultPaymentMethod;
 
     // these nine are not persisted in the db
     private String vendorParentName;
@@ -305,6 +308,14 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
 
     public void setTaxableIndicator(final boolean taxableIndicator) {
         this.taxableIndicator = taxableIndicator;
+    }
+
+    public String getDefaultPaymentMethodCode() {
+        return defaultPaymentMethodCode;
+    }
+
+    public void setDefaultPaymentMethodCode(final String defaultPaymentMethodCode) {
+        this.defaultPaymentMethodCode = defaultPaymentMethodCode;
     }
 
     public boolean isVendorDebarred() {
@@ -619,6 +630,14 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
     @Deprecated
     public void setVendorRestrictedPerson(final Person vendorRestrictedPerson) {
         this.vendorRestrictedPerson = vendorRestrictedPerson;
+    }
+
+    public PaymentMethod getDefaultPaymentMethod() {
+        return defaultPaymentMethod;
+    }
+
+    public void setDefaultPaymentMethod(final PaymentMethod defaultPaymentMethod) {
+        this.defaultPaymentMethod = defaultPaymentMethod;
     }
 
     public String getDefaultAddressLine1() {

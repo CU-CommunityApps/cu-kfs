@@ -1217,6 +1217,8 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
         preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),
                 expiredOrClosedAccountList);
 
+        paymentRequestService.initializePaymentMethodAndBank(preqDoc);
+
         populateItemDetails(preqDoc, orderHolder);
 
         // Validate totals, paydate

@@ -127,7 +127,9 @@
 
     <bean id="PaymentRequest-accountingLineAccessibleValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestAccountingLineAccessibleValidation"
-          abstract="true" p:dataDictionaryService-ref="dataDictionaryService" p:documentDictionaryService-ref="documentDictionaryService"/>
+          abstract="true" p:dataDictionaryService-ref="dataDictionaryService"
+          p:documentDictionaryService-ref="documentDictionaryService"
+    />
           
     <bean id="Purchasing-itemConsideredEnteredCompositeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true"> 								
         <property name="quitOnFail" value="false" />

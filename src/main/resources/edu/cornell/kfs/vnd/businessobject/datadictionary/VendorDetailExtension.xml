@@ -266,7 +266,7 @@
 	<property name="shortLabel" value="Dflt Pmt Mthd" />
 	<property name="control">
             <bean parent="SelectControlDefinition"
-                  p:valuesFinder-ref="vendorPaymentMethodValuesFinder"
+                  p:valuesFinder-ref="vendorDetailPaymentMethodValuesFinder"
                   p:includeKeyInLabel="false"/>
     </property>
   </bean>
@@ -313,9 +313,5 @@
 
   <bean id="cuProcurementMethodValuesFinder"
         class="edu.cornell.kfs.vnd.businessobject.options.CuProcurementMethodValuesFinder"/>
-        
-  <bean id="vendorPaymentMethodValuesFinder"
-          class="edu.cornell.kfs.fp.businessobject.options.PaymentMethodsForVendorValuesFinder"
-          p:keyValuesService-ref="keyValuesService"/>
-          
+
 </beans>

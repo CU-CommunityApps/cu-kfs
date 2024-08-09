@@ -13,7 +13,6 @@
             <list>
                 <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
                 <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
-                <ref bean="PaymentMethodExtendedAttribute-displayOnVendorDocument"/>
                 <ref bean="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"/>
             </list>
         </property>
@@ -33,16 +32,6 @@
           p:name="processedUsingPdp"
           p:label="PDP Indicator"
           p:shortLabel="PDPInd"
-    />
-    
-    <bean id="PaymentMethodExtendedAttribute-displayOnVendorDocument" 
-          parent="PaymentMethodExtendedAttribute-displayOnVendorDocument-parentBean"/>
-    <bean id="PaymentMethodExtendedAttribute-displayOnVendorDocument-parentBean"
-          abstract="true" 
-          parent="GenericAttributes-genericBoolean"
-          p:name="displayOnVendorDocument"
-          p:label="Display on Vendor Doc?"
-          p:shortLabel="Vendor Doc?"
     />
     
     <bean id="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument" 
