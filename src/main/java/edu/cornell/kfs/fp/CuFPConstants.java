@@ -135,4 +135,8 @@ public class CuFPConstants {
     public static final String IS_TRIP_DOC = "1";
 
     public static final String DV_CHECK_STUB_FIELD_LABEL = "Check Stub Text";
+
+    public static final String ACCOUNTING_XML_DOCUMENT_FILE_TYPE_IDENTIFIER = "accountingXmlDocumentInputFileType";
+    public static final String ACCOUNTING_XML_DOCUMENT_XSD_LOCATION
+            = "classpath:edu/cornell/kfs/fp/batch/accountingXmlDocument.xsd";
 }
