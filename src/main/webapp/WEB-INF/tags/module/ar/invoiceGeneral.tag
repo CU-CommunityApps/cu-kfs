@@ -244,7 +244,7 @@
                             <kul:htmlControlAttribute
                                     attributeEntry="${invoiceGeneralDetailAttributes.billingPeriod}"
                                     property="document.invoiceGeneralDetail.billingPeriod"
-                                    readOnly="${readOnly}" />
+                                    readOnly="${readOnlyForBillignPeriodAdjustment}" />
                         </div>
                     </td>
                     <th class="right" style="width: 25%;">
