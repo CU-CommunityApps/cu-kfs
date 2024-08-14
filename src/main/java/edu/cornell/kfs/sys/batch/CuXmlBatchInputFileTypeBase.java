@@ -4,10 +4,6 @@ import static org.kuali.kfs.pdp.PdpConstants.FILE_NAME_PART_DELIMITER;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import javax.xml.validation.Schema;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +13,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.XmlBatchInputFileTypeBase;
 import org.kuali.kfs.sys.exception.ParseException;
 
-import edu.cornell.kfs.sys.util.ForUnitTestConvenience;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -29,9 +24,6 @@ public abstract class CuXmlBatchInputFileTypeBase<T> extends XmlBatchInputFileTy
 
     protected String fileNamePrefix;
     protected DateTimeService dateTimeService;
-
-    @ForUnitTestConvenience
-    protected Function<Supplier<Schema>, Schema> schemaRetrievalTaskWrapper = Supplier::get;
 
     @Override
     public boolean validate(final Object parsedFileContents) {
@@ -106,11 +98,6 @@ public abstract class CuXmlBatchInputFileTypeBase<T> extends XmlBatchInputFileTy
         }
     }
 
-    @Override
-    public Schema getSchema(final String schemaLocation) {
-        return schemaRetrievalTaskWrapper.apply(() -> super.getSchema(schemaLocation));
-    }
-
     public String getFileNamePrefix() {
         return fileNamePrefix;
     }
@@ -125,11 +112,6 @@ public abstract class CuXmlBatchInputFileTypeBase<T> extends XmlBatchInputFileTy
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
-    }
-
-    @ForUnitTestConvenience
-    public void setSchemaRetrievalTaskWrapper(Function<Supplier<Schema>, Schema> schemaRetrievalTaskWrapper) {
-        this.schemaRetrievalTaskWrapper = schemaRetrievalTaskWrapper;
     }
 
 }

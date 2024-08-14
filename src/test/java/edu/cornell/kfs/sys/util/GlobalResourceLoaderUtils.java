@@ -15,7 +15,7 @@ public final class GlobalResourceLoaderUtils {
      * the logic that calls the getResource() method must be wrapped by the given Supplier and must not branch off
      * into a separate thread.
      */
-    public static <T> T handleTaskCallingGetResource(final Supplier<T> task) {
+    public static <T> T doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(final Supplier<T> task) {
         try (
                 final MockedStatic<GlobalResourceLoader> mockLoader = Mockito.mockStatic(GlobalResourceLoader.class)
         ) {

@@ -387,7 +387,6 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, KFSConstants.DELIMITER));
         inputFileType.setDirectoryPath(TARGET_TEST_FILE_PATH);
         inputFileType.setSchemaLocation(CuFPConstants.ACCOUNTING_XML_DOCUMENT_XSD_LOCATION);
-        inputFileType.setSchemaRetrievalTaskWrapper(GlobalResourceLoaderUtils::handleTaskCallingGetResource);
         return inputFileType;
     }
 
@@ -690,8 +689,9 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
 
             boolean result = false;
             try {
-            	result = GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
-                	return super.createAccountingDocumentsFromXml();
+                result = GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
+                    return GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
+                            () -> super.createAccountingDocumentsFromXml());
                 });
             } catch (Exception e) {
                 throw new RuntimeException(e);
