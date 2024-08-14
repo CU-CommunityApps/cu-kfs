@@ -138,6 +138,7 @@ public class ContractsGrantsInvoiceDocument extends CustomerInvoiceDocument {
                         DocumentService.class).getByDocumentHeaderId(getDocumentHeader()
                         .getFinancialDocumentInErrorNumber());
                 if (ObjectUtils.isNotNull(invoice)) {
+                    //CU customization to get current time from date service
                     invoice.setInvoiceDueDate(getDateTimeService().getCurrentSqlDate());
                     invoice.getInvoiceGeneralDetail().setFinalBillIndicator(false);
                     SpringContext.getBean(DocumentService.class).updateDocument(invoice);
