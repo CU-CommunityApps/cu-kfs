@@ -87,13 +87,13 @@ import edu.cornell.kfs.fp.CuFPKeyConstants;
 import edu.cornell.kfs.fp.CuFPParameterConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants;
 import edu.cornell.kfs.fp.CuFPTestConstants.TestEmails;
+import edu.cornell.kfs.fp.batch.AccountingXmlDocumentInputFileType;
 import edu.cornell.kfs.fp.batch.CreateAccountingDocumentReportItem;
 import edu.cornell.kfs.fp.batch.service.AccountingDocumentGenerator;
 import edu.cornell.kfs.fp.batch.service.AccountingXmlDocumentDownloadAttachmentService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentReportService;
 import edu.cornell.kfs.fp.batch.service.CreateAccountingDocumentValidationService;
 import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentListWrapper;
-import edu.cornell.kfs.fp.batch.xml.AccountingXmlDocumentUnmarshalListener;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentClassMappingUtils;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingDocumentMapping;
 import edu.cornell.kfs.fp.batch.xml.fixture.AccountingXmlDocumentEntryFixture;
@@ -103,11 +103,10 @@ import edu.cornell.kfs.fp.document.CuDistributionOfIncomeAndExpenseDocument;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherPayeeService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.batch.JAXBXmlBatchInputFileTypeBase;
 import edu.cornell.kfs.sys.businessobject.WebServiceCredential;
 import edu.cornell.kfs.sys.businessobject.fixture.WebServiceCredentialFixture;
 import edu.cornell.kfs.sys.service.WebServiceCredentialService;
-import edu.cornell.kfs.sys.service.impl.CUMarshalServiceImpl;
+import edu.cornell.kfs.sys.util.GlobalResourceLoaderUtils;
 import edu.cornell.kfs.sys.util.MockDocumentUtils;
 import edu.cornell.kfs.sys.util.MockDocumentUtils.TestAdHocRoutePerson;
 import edu.cornell.kfs.sys.util.MockDocumentUtils.TestNote;
@@ -379,17 +378,15 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
         }
     }
 
-    private JAXBXmlBatchInputFileTypeBase buildAccountingXmlDocumentInputFileType(DateTimeService dateTimeService) throws Exception {
-        JAXBXmlBatchInputFileTypeBase inputFileType = new JAXBXmlBatchInputFileTypeBase();
+    private AccountingXmlDocumentInputFileType buildAccountingXmlDocumentInputFileType(
+            final DateTimeService dateTimeService) throws Exception {
+        final AccountingXmlDocumentInputFileType inputFileType = new AccountingXmlDocumentInputFileType();
+        inputFileType.setOutputClass(AccountingXmlDocumentListWrapper.class);
         inputFileType.setDateTimeService(dateTimeService);
-        inputFileType.setCuMarshalService(new CUMarshalServiceImpl());
-        inputFileType.setPojoClass(AccountingXmlDocumentListWrapper.class);
-        inputFileType.setFileTypeIdentifier("accountingXmlDocumentFileType");
         inputFileType.setFileNamePrefix("accountingXmlDocument_");
-        inputFileType.setTitleKey("accountingXmlDocument");
         inputFileType.setFileExtension(StringUtils.substringAfter(CuFPConstants.XML_FILE_EXTENSION, KFSConstants.DELIMITER));
         inputFileType.setDirectoryPath(TARGET_TEST_FILE_PATH);
-        inputFileType.setListenerClass(AccountingXmlDocumentUnmarshalListener.class);
+        inputFileType.setSchemaLocation(CuFPConstants.ACCOUNTING_XML_DOCUMENT_XSD_LOCATION);
         return inputFileType;
     }
 
@@ -692,8 +689,9 @@ public abstract class CreateAccountingDocumentServiceImplTestBase {
 
             boolean result = false;
             try {
-            	result = GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
-                	return super.createAccountingDocumentsFromXml();
+                result = GlobalVariables.doInNewGlobalVariables(systemUserSession, () -> {
+                    return GlobalResourceLoaderUtils.doWithResourceRetrievalDelegatedToKradResourceLoaderUtil(
+                            () -> super.createAccountingDocumentsFromXml());
                 });
             } catch (Exception e) {
                 throw new RuntimeException(e);
