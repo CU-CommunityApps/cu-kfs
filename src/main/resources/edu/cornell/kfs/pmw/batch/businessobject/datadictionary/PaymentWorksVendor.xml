@@ -1156,10 +1156,8 @@
                 <ref bean="PaymentWorksVendor-id"/>
                 <ref bean="PaymentWorksVendor-pmwVendorRequestId"/>
                 <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
-                <ref bean="PaymentWorksVendor-requestingCompanyName"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
-                <ref bean="PaymentWorksVendor-requestingCompanyTelephone"/>
-                <ref bean="PaymentWorksVendor-requestingCompanyUrl"/>
+                <ref bean="PaymentWorksVendor-processTimestamp"/>
                 <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
                 <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
@@ -1169,10 +1167,8 @@
                 <bean parent="PaymentWorksVendor-id" p:disableInquiry="true"/>
                 <bean parent="PaymentWorksVendor-pmwVendorRequestId" p:disableInquiry="true"/>
                 <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
-                <ref bean="PaymentWorksVendor-requestingCompanyName"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
-                <ref bean="PaymentWorksVendor-requestingCompanyTelephone"/>
-                <ref bean="PaymentWorksVendor-requestingCompanyUrl"/>
+                <ref bean="PaymentWorksVendor-processTimestamp"/>
                 <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
                 <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
