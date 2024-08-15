@@ -43,7 +43,7 @@ import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension
 import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
 public class CuPaymentRequestDocument extends PaymentRequestDocument {
 	private static final Logger LOG = LogManager.getLogger();
@@ -52,7 +52,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
     protected PaymentRequestWireTransfer preqWireTransfer;
     
-    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
+    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;  // needs base code adjustment nkk4
     private static CuCheckStubService cuCheckStubService;
     
     public CuPaymentRequestDocument() {
@@ -144,17 +144,13 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
      */
     @Override
     public void populatePaymentRequestFromPurchaseOrder(
-            final PurchaseOrderDocument po, final HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
-    	super.populatePaymentRequestFromPurchaseOrder(po, expiredOrClosedAccountList);
-    	
-    	 // KFSPTS-1891
-        if ( ObjectUtils.isNotNull(po.getVendorDetail())
-                 && ObjectUtils.isNotNull(po.getVendorDetail().getExtension()) ) {
-             if ( po.getVendorDetail().getExtension() instanceof VendorDetailExtension
-                     && StringUtils.isNotBlank( ((VendorDetailExtension)po.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
-                 setPaymentMethodCode(
-                         ((VendorDetailExtension)po.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() );
-             }
+            final PurchaseOrderDocument po, final HashMap<String,
+            ExpiredOrClosedAccountEntry> expiredOrClosedAccountList) {
+        super.populatePaymentRequestFromPurchaseOrder(po, expiredOrClosedAccountList);
+
+        if (ObjectUtils.isNotNull(po.getVendorDetail()) 
+                && StringUtils.isNotBlank(((VendorDetail)po.getVendorDetail()).getDefaultPaymentMethodCode())) {
+             setPaymentMethodCode(((VendorDetail)po.getVendorDetail()).getDefaultPaymentMethodCode());
          }
         
         // Copy PO explanation to PREQ.

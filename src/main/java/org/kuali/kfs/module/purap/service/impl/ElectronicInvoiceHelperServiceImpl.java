@@ -1188,8 +1188,6 @@ public class ElectronicInvoiceHelperServiceImpl extends InitiateDirectoryBase im
                     orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
         }
 
-        paymentRequestService.initializePaymentMethodAndBank(preqDoc);
-
         final RequisitionDocument reqDoc = requisitionService.getRequisitionById(poDoc.getRequisitionIdentifier());
         final String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {

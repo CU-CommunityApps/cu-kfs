@@ -752,8 +752,8 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
                     ((VendorDetailExtension)getExtension()).getHealthOffSiteCateringLicenseReq(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteCateringLicenseReq()).append(
                     ((VendorDetailExtension)getExtension()).getHealthOffSiteLicenseExpirationDate(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteLicenseExpirationDate()).append(
                     ((VendorDetailExtension)getExtension()).getInsuranceNotes(),((VendorDetailExtension)detail.getExtension()).getInsuranceNotes()).append(
-                    ((VendorDetailExtension)getExtension()).getMerchantNotes(),((VendorDetailExtension)detail.getExtension()).getMerchantNotes()).append( 
-                    ((VendorDetailExtension)getExtension()).getDefaultB2BPaymentMethodCode(),((VendorDetailExtension)detail.getExtension()).getDefaultB2BPaymentMethodCode()).append( // end KFSUPGRADE-779
+                    ((VendorDetailExtension)getExtension()).getMerchantNotes(),((VendorDetailExtension)detail.getExtension()).getMerchantNotes()).append( // end KFSUPGRADE-779
+                    getDefaultPaymentMethodCode(), detail.getDefaultPaymentMethodCode()).append( 
                     isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
         }
     }

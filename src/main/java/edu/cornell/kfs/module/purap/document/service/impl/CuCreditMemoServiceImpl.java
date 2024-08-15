@@ -183,16 +183,10 @@ public class CuCreditMemoServiceImpl extends CreditMemoServiceImpl {
              populateDocumentFromVendor(cmDocument);
          }
 
-         // KFSPTS-1891
-         
          final VendorDetail vendorDetail = vendorService.getVendorDetail(cmDocument.getVendorHeaderGeneratedIdentifier(), cmDocument.getVendorDetailAssignedIdentifier());
-         if ( ObjectUtils.isNotNull(vendorDetail)
-                 && ObjectUtils.isNotNull(vendorDetail.getExtension()) ) {
-             if ( vendorDetail.getExtension() instanceof VendorDetailExtension
-                     && StringUtils.isNotBlank( ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
-             	((CuVendorCreditMemoDocument)cmDocument).setPaymentMethodCode(
-                         ((VendorDetailExtension)vendorDetail.getExtension()).getDefaultB2BPaymentMethodCode() );
-             }
+         if (ObjectUtils.isNotNull(vendorDetail)
+                 && StringUtils.isNotBlank(vendorDetail.getDefaultPaymentMethodCode())) {
+             ((CuVendorCreditMemoDocument)cmDocument).setPaymentMethodCode(vendorDetail.getDefaultPaymentMethodCode());
          }
 
          populateDocumentDescription(cmDocument);
