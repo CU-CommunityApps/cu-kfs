@@ -64,6 +64,4 @@ public class CuFPKeyConstants {
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_ERROR = "error.create.accounting.document.generic.error";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_GENERIC_NUMERIC_ERROR = "error.create.accounting.document.generic.numeric.error";
     public static final String ERROR_CREATE_ACCOUNTING_DOCUMENT_XML_ADAPTER_ERROR = "error.create.accounting.document.xml.adapter.error";
-
-    public static final String MESSAGE_BATCH_UPLOAD_TITLE_ACCOUNTING_XML_DOCUMENT = "message.batchUpload.title.accountingXmlDocument";
 }
