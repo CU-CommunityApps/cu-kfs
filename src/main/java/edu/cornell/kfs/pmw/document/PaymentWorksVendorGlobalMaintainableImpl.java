@@ -51,12 +51,14 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
     }
 
     /**
-     * Overridden to forcibly remove the add-line PaymentWorks Vendor fields, if present. Non-multi-value
-     * newer-style lookups have technical issues with triggering on-change events or assisting with
-     * auto-refreshing of read-only values upon return; however, the related multi-value lookup link
-     * will be configured to open the older-style lookup if the single-row add-line is excluded.
-     * To work around this issue, the single-row add-line fields will be forcibly removed after the correct
-     * multi-value lookup link has been prepared.
+     * Overridden to forcibly remove the add-line PaymentWorks Vendor fields, if present. To avoid document-updating
+     * issues when returning from converted lookups in this financials release, we only want to use the multi-value
+     * variant of the PaymentWorks Vendor lookup. However, there appears to be a bug where if the Data Dictionary
+     * has been configured to hide the single-value lookup variant, the multi-value variant will always use the
+     * legacy lookup. To work around the issue, we're keeping both the single-value and multi-value variants enabled
+     * in the Data Dictionary, and then this method will forcibly remove the relevant add-line fields afterwards.
+     * 
+     * We could investigate removing this workaround after upgrading to the 2023-11-01 version of financials.
      */
     @SuppressWarnings("rawtypes")
     @Override

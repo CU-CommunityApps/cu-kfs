@@ -13,6 +13,9 @@ public class PaymentWorksPropertiesConstants {
         public static final String KFS_VENDOR_NUMBER = "kfsVendorNumber";
         public static final String KFS_VENDOR_HEADER_GENERATED_IDENTIFIER = "kfsVendorHeaderGeneratedIdentifier";
         public static final String KFS_VENDOR_DETAIL_ASSIGNED_IDENTIFIER = "kfsVendorDetailAssignedIdentifier";
+        public static final String PROCESS_TIMESTAMP = "processTimestamp";
+        public static final String PROCESS_TIMESTAMP_FROM = "processTimestampFrom";
+        public static final String PROCESS_TIMESTAMP_TO = "processTimestampTo";
     }
 
     public static final class PaymentWorksFieldMapping {

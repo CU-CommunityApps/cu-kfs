@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.kuali.kfs.core.api.search.SearchOperator;
 import org.kuali.kfs.krad.bo.BusinessObjectBase;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.service.impl.DefaultSearchService;
 import org.springframework.util.MultiValueMap;
@@ -20,6 +22,13 @@ public class PaymentWorksVendorSearchService extends DefaultSearchService {
         final MultiValueMap<String, String> transformedSearchParams =
                 super.transformSearchParams(boClass, searchParams);
 
+        transformVendorNumberParams(transformedSearchParams);
+        transformProcessTimestampParams(transformedSearchParams);
+
+        return transformedSearchParams;
+    }
+
+    private void transformVendorNumberParams(final MultiValueMap<String, String> transformedSearchParams) {
         if (transformedSearchParams.containsKey(PaymentWorksVendor.KFS_VENDOR_NUMBER)) {
             final String kfsVendorNumber = transformedSearchParams
                     .remove(PaymentWorksVendor.KFS_VENDOR_NUMBER)
@@ -36,8 +45,6 @@ public class PaymentWorksVendorSearchService extends DefaultSearchService {
                         List.of(parsedKfsVendorNumber.getRight()));
             }
         }
-
-        return transformedSearchParams;
     }
 
     private Pair<String, String> parseKfsVendorNumber(final String kfsVendorNumber) {
@@ -51,6 +58,50 @@ public class PaymentWorksVendorSearchService extends DefaultSearchService {
         return Pair.of(
                 StringUtils.defaultIfBlank(vendorHeaderId, KFSConstants.DASH),
                 StringUtils.defaultIfBlank(vendorDetailId, KFSConstants.DASH));
+    }
+
+    /*
+     * NOTE: We can potentially remove the workaround below when we upgrade to the 2023-11-01 financials patch,
+     * at which time we can configure the lookup definition to reference the actual processTimestamp field. 
+     */
+    private void transformProcessTimestampParams(final MultiValueMap<String, String> transformedSearchParams) {
+        String processTimestampFrom = null;
+        String processTimestampTo = null;
+
+        if (transformedSearchParams.containsKey(PaymentWorksVendor.PROCESS_TIMESTAMP_FROM)) {
+            processTimestampFrom = transformedSearchParams
+                    .remove(PaymentWorksVendor.PROCESS_TIMESTAMP_FROM)
+                    .get(0);
+            processTimestampFrom = ObjectUtils.clean(processTimestampFrom);
+        }
+        if (transformedSearchParams.containsKey(PaymentWorksVendor.PROCESS_TIMESTAMP_TO)) {
+            processTimestampTo = transformedSearchParams
+                    .remove(PaymentWorksVendor.PROCESS_TIMESTAMP_TO)
+                    .get(0);
+            processTimestampTo = ObjectUtils.clean(processTimestampTo);
+        }
+
+        final String processTimestampSearchString = buildProcessTimestampSearchString(
+                processTimestampFrom, processTimestampTo);
+        if (StringUtils.isNotBlank(processTimestampSearchString)) {
+            transformedSearchParams.put(
+                    PaymentWorksVendor.PROCESS_TIMESTAMP,
+                    List.of(processTimestampSearchString));
+        }
+    }
+
+    private String buildProcessTimestampSearchString(final String lowerBound, final String upperBound) {
+        if (StringUtils.isNotBlank(lowerBound)) {
+            if (StringUtils.isNotBlank(upperBound)) {
+                return lowerBound + SearchOperator.BETWEEN + upperBound;
+            } else {
+                return SearchOperator.GREATER_THAN_EQUAL + lowerBound;
+            }
+        } else if (StringUtils.isNotBlank(upperBound)) {
+            return SearchOperator.LESS_THAN_EQUAL + upperBound;
+        } else {
+            return KFSConstants.EMPTY_STRING;
+        }
     }
 
 }

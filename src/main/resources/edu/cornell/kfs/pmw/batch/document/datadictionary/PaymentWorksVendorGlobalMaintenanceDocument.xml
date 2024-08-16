@@ -57,7 +57,7 @@
                       p:newLookup="true">
                     <property name="summaryFields">
                         <list>
-                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorId"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorRequestId"/>
                             <bean parent="MaintainableFieldDefinition" p:name="kfsVendorNumber"/>
                         </list>
                     </property>

@@ -578,6 +578,36 @@ public class PaymentWorksVendor extends PersistableBusinessObjectBase implements
         this.processTimestamp = processTimestamp;
     }
 
+    /*
+     * These from/to timestamp getters and setters are a temporary workaround for adding the processTimestamp
+     * to the converted lookups without using date fields or pickers. (The regular converted from/to date fields
+     * and date pickers don't work for converted lookups that open in a modal/dialog box.) Once we upgrade
+     * to the 2023-11-01 version of financials (which improves the integration between legacy documents
+     * and converted lookups), we can look into removing this workaround.
+     */
+
+    public String getProcessTimestampFrom() {
+        // No value needs to be returned; this is only meant for setup of the lookup criteria section.
+        return null;
+    }
+
+    public void setProcessTimestampFrom(String processTimestampFrom) {
+        // No value needs to be set; this is only meant for setup of the lookup criteria section.
+    }
+
+    public String getProcessTimestampTo() {
+        // No value needs to be returned; this is only meant for setup of the lookup criteria section.
+        return null;
+    }
+
+    public void setProcessTimestampTo(String processTimestampTo) {
+        // No value needs to be set; this is only meant for setup of the lookup criteria section.
+    }
+
+    /*
+     * End of temporary getters/setters.
+     */
+
     public String getSupplierUploadStatus() {
         return supplierUploadStatus;
     }

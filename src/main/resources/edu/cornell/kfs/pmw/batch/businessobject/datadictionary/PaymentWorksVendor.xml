@@ -101,6 +101,10 @@
                 <ref bean="PaymentWorksVendor-poTransmissionMethod" />
                 <ref bean="PaymentWorksVendor-poFaxNumber" />
                 <ref bean="PaymentWorksVendor-poEmailAddress" />
+
+                <!-- Temporary fields related to converted lookup integration -->
+                <ref bean="PaymentWorksVendor-processTimestampFrom"/>
+                <ref bean="PaymentWorksVendor-processTimestampTo"/>
             </list>
         </property>
     </bean>
@@ -1139,6 +1143,37 @@
         <property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter" />
     </bean>
 
+    <!--
+        Temporary fields to work around integration issues with converted lookups; they can tentatively be removed
+        when we upgrade to the 2023-11-01 version of financials.
+    -->
+
+    <bean id="PaymentWorksVendor-processTimestampFrom" parent="PaymentWorksVendor-processTimestampFrom-parentBean"/>
+    <bean id="PaymentWorksVendor-processTimestampFrom-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="processTimestampFrom"
+          p:label="Process Timestamp From"
+          p:shortLabel="Timestamp From"
+          p:forceUppercase="true"
+          p:maxLength="22"
+          p:control-ref="TenCharacterTextControl"/>
+
+    <bean id="PaymentWorksVendor-processTimestampTo" parent="PaymentWorksVendor-processTimestampTo-parentBean"/>
+    <bean id="PaymentWorksVendor-processTimestampTo-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="processTimestampTo"
+          p:label="Process Timestamp To"
+          p:shortLabel="Timestamp To"
+          p:forceUppercase="true"
+          p:maxLength="22"
+          p:control-ref="TenCharacterTextControl"/>
+
+    <!-- End of temporary fields. -->
+
+
+
     <bean id="PaymentWorksVendor-lookupDefinition" parent="PaymentWorksVendor-lookupDefinition-parentBean" />
     <bean id="PaymentWorksVendor-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="PaymentWorks Vendor Lookup" />
@@ -1157,7 +1192,8 @@
                 <ref bean="PaymentWorksVendor-pmwVendorRequestId"/>
                 <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
                 <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
-                <ref bean="PaymentWorksVendor-processTimestamp"/>
+                <ref bean="PaymentWorksVendor-processTimestampFrom"/>
+                <ref bean="PaymentWorksVendor-processTimestampTo"/>
                 <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
                 <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
