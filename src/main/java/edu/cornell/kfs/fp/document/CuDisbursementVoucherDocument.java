@@ -175,7 +175,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         updatePaymentMethodBasedOnVendor(vendor);
     }
     
-    //Cornell Customization: 
+    // Cornell Customization:  
     // Basecode class method had to be copied into our customization and assignment of data value 
     // defaultPaymentMethod changed to superclass setter method call due to super class having 
     // more restrictive "private" visibility on this method as well as attribute defaultPaymentMethod.
