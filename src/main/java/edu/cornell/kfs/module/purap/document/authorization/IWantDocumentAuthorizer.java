@@ -147,8 +147,13 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     
     public boolean canViewContractTab(Document document, Person person) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
-        return (isInOrgHierarchyOrProcurementAssistantNode(document) && (isCurrentUserOrgReviewer(person) 
-                || isCurrentUserProcurementContractAssistant(person))) || workflowDocument.isFinal();
+
+        if (workflowDocument.isEnroute() || workflowDocument.isFinal()) {
+            return true;
+        }
+
+        return isInOrgHierarchyOrProcurementAssistantNode(document) &&
+                (isCurrentUserOrgReviewer(person) || isCurrentUserProcurementContractAssistant(person));
     }
 
     /*
