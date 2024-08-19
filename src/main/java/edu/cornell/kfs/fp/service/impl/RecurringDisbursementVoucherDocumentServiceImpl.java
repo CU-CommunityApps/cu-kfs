@@ -44,7 +44,6 @@ import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
@@ -398,18 +397,18 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
 
     private void noteChangeOnRecurringDV(RecurringDisbursementVoucherDocument recurringDV, String noteText, Set<String> setOfStrings) {
         if (!setOfStrings.isEmpty()) {
-            String joinedNoteText = noteText + StringUtils.join(setOfStrings, ", ");
-            LOG.debug("noteChangeOnRecurringDV, adding note '{}' on recurring DV {}", joinedNoteText, recurringDV.getDocumentNumber());
-            Note note = documentService.createNoteFromDocument(recurringDV, joinedNoteText);
-            updateNoteAuthorAndTimestamp(note);
+            Note note = buildNoteBase();
+            note.setNoteText(noteText + StringUtils.join(setOfStrings, ", "));;
             recurringDV.addNote(note);
-            noteService.save(note);
+            getDocumentService().saveDocument(recurringDV);
         }
     }
 
-    private void updateNoteAuthorAndTimestamp(Note noteBase) {
+    private Note buildNoteBase() {
+        Note noteBase = new Note();
         noteBase.setAuthorUniversalIdentifier(GlobalVariables.getUserSession().getPerson().getPrincipalId());
         noteBase.setNotePostedTimestampToCurrent();
+        return noteBase;
     }
 
     @Override
@@ -493,11 +492,8 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
                 @Override
                 public Object call() throws WorkflowException {
                     CuDisbursementVoucherDocument disbursementVoucher = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocumentNumber);
-                    LOG.debug("cancelDVAsSystemUser, attempting to cancel DV document {}", disbursementVoucher.getDocumentNumber());
-                    overrideExpiredAccountsIfNeeded(disbursementVoucher.getSourceAccountingLines());
 
-                    Note note = new Note();
-                    updateNoteAuthorAndTimestamp(note);
+                    Note note = buildNoteBase();
                     note.setNoteText("This DV was canceled from the recurring disbursement voucher that created it.");
                     String usersPrincipleID = GlobalVariables.getUserSession().getPrincipalId();
                     note = getNoteService().createNote(note, disbursementVoucher.getDocumentHeader(), usersPrincipleID);
@@ -512,17 +508,6 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             throw new RuntimeException("cancelDVAsSystemUser() Unable to cancel DV: " + dvDocumentNumber, e);
         }
     }
-    
-    private void overrideExpiredAccountsIfNeeded(List<SourceAccountingLine> sourceLines) {
-        for (SourceAccountingLine line : sourceLines) {
-            if (!line.getAccountExpiredOverride() && line.getAccount().isExpired()) {
-                line.setAccountExpiredOverride(true);
-                line.setOverrideCode(AccountingLineOverride.CODE.EXPIRED_ACCOUNT);
-                LOG.debug("overrideExpiredAccountsIfNeeded, overriding expired account {} - {} on document {}",
-                        line.getChartOfAccountsCode(), line.getAccountNumber(), line.getDocumentNumber());
-            }
-        }
-    }
 
     @Override
     public Set<String> cancelDisbursementVouchersFinalizedNotExtracted(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument, String cancelMessage) {
@@ -534,8 +519,6 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
                 CuDisbursementVoucherDocument dv;
                 dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
                 if (isDvCancelableFromApprovedNotExtracted(dv)) {
-                    LOG.debug("cancelDisbursementVouchersFinalizedNotExtracted, attempting to cancel DV document {}", dv.getDocumentNumber());
-                    overrideExpiredAccountsIfNeeded(dv.getSourceAccountingLines());
 
                     Date cancelDate =  new Date (Calendar.getInstance().getTimeInMillis());
                     dv.setCancelDate(cancelDate);
