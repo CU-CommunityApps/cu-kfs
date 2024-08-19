@@ -161,4 +161,11 @@ public class CreateAccountingDocumentServiceImplTestDI extends CreateAccountingD
                 AccountingXmlDocumentListWrapperFixture.BAD_XML_DOCUMENT_TEST);
     }
 
+    @Test
+    public void testLoadSingleFileWithReorderedHeaderElements() throws Exception {
+        copyTestFilesAndCreateDoneFiles("single-di-reordered-headers-test");
+        assertDocumentsAreGeneratedCorrectlyByBatchProcess(
+                AccountingXmlDocumentListWrapperFixture.SINGLE_DI_DOCUMENT_TEST);
+    }
+
 }
