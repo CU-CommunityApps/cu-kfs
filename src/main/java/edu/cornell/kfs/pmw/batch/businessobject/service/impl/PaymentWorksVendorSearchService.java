@@ -90,15 +90,15 @@ public class PaymentWorksVendorSearchService extends DefaultSearchService {
         }
     }
 
-    private String buildProcessTimestampSearchString(final String lowerBound, final String upperBound) {
-        if (StringUtils.isNotBlank(lowerBound)) {
-            if (StringUtils.isNotBlank(upperBound)) {
-                return lowerBound + SearchOperator.BETWEEN + upperBound;
+    private String buildProcessTimestampSearchString(final String fromTimestamp, final String toTimestamp) {
+        if (StringUtils.isNotBlank(fromTimestamp)) {
+            if (StringUtils.isNotBlank(toTimestamp)) {
+                return fromTimestamp + SearchOperator.BETWEEN + toTimestamp;
             } else {
-                return SearchOperator.GREATER_THAN_EQUAL + lowerBound;
+                return SearchOperator.GREATER_THAN_EQUAL + fromTimestamp;
             }
-        } else if (StringUtils.isNotBlank(upperBound)) {
-            return SearchOperator.LESS_THAN_EQUAL + upperBound;
+        } else if (StringUtils.isNotBlank(toTimestamp)) {
+            return SearchOperator.LESS_THAN_EQUAL + toTimestamp;
         } else {
             return KFSConstants.EMPTY_STRING;
         }

@@ -3,6 +3,7 @@ package edu.cornell.kfs.pmw.batch;
 public class PaymentWorksPropertiesConstants {
     
     public static final class PaymentWorksVendor {
+        public static final String ID = "id";
         public static final String PMW_VENDOR_REQUEST_ID = "pmwVendorRequestId";
         public static final String KFS_VENDOR_DOCUMENT_NUMBER = "kfsVendorDocumentNumber";
         public static final String PMW_REQUEST_STATUS = "pmwRequestStatus";

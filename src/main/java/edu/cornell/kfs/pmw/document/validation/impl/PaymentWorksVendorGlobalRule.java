@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.document.validation.impl.GlobalDocumentRuleBase;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
+import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -78,19 +79,23 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
     }
 
     private boolean checkActionType() {
-        PaymentWorksVendorGlobalAction actionType;
-        try {
-            actionType = paymentWorksVendorGlobal.getActionType();
-        } catch (RuntimeException e) {
-            actionType = null;
-        }
-        if (actionType == null || actionType != PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD) {
+        boolean success = true;
+        final PaymentWorksVendorGlobalAction actionType = paymentWorksVendorGlobal.getActionType();
+        if (actionType == null || actionType == PaymentWorksVendorGlobalAction.NO_ACTION) {
+            putFieldError(PaymentWorksPropertiesConstants.ACTION_TYPE_CODE,
+                    PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_ACTION_EMPTY,
+                    PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD.getActionLabel());
+            success = false;
+        } else if (actionType != PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD) {
             putFieldError(PaymentWorksPropertiesConstants.ACTION_TYPE_CODE,
                     PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_ACTION_INVALID,
-                    PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD.actionLabel);
-            return false;
+                    new String[] {
+                            actionType.getActionLabel(),
+                            PaymentWorksVendorGlobalAction.RESTAGE_FOR_UPLOAD.getActionLabel()
+                    });
+            success = false;
         }
-        return true;
+        return success;
     }
 
     private boolean checkPaymentWorksVendorChanges() {
@@ -109,7 +114,9 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
             i++;
             final String errorPathPrefix = buildVendorDetailsErrorPathPrefix(i);
             final String pmwVendorIdErrorPath = errorPathPrefix + PaymentWorksPropertiesConstants.PMW_VENDOR_ID;
-            if (!encounteredPmwVendors.add(vendorDetail.getPmwVendorId())) {
+
+            final boolean isDuplicate = !encounteredPmwVendors.add(vendorDetail.getPmwVendorId());
+            if (isDuplicate) {
                 putFieldError(pmwVendorIdErrorPath,
                         PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_DUPLICATE,
                         String.valueOf(vendorDetail.getPmwVendorId()));
@@ -141,10 +148,11 @@ public class PaymentWorksVendorGlobalRule extends GlobalDocumentRuleBase {
                 return true;
 
             case SupplierUploadStatus.READY_FOR_UPLOAD :
-                putFieldError(uploadStatusErrorPath,
-                        PaymentWorksKeyConstants.ERROR_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_MATCH,
-                        new String[] { String.valueOf(pmwVendor.getId()), pmwVendor.getSupplierUploadStatus() });
-                return false;
+                GlobalVariables.getMessageMap().putWarningWithoutFullErrorPath(
+                        MAINTAINABLE_ERROR_PREFIX + uploadStatusErrorPath,
+                        PaymentWorksKeyConstants.WARNING_PAYMENTWORKS_VENDOR_GLOBAL_DETAILS_UPLOAD_STATUS_MATCH,
+                        String.valueOf(pmwVendor.getId()), pmwVendor.getSupplierUploadStatus());
+                return true;
 
             default :
                 putFieldError(uploadStatusErrorPath,

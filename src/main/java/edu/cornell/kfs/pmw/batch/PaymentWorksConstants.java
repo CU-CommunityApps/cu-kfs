@@ -1,13 +1,13 @@
 package edu.cornell.kfs.pmw.batch;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
-
-import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import edu.cornell.kfs.coa.businessobject.options.CuCheckingSavingsValuesFinder;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class PaymentWorksConstants {
@@ -427,12 +427,33 @@ public class PaymentWorksConstants {
     }
 
     public enum PaymentWorksVendorGlobalAction {
-        RESTAGE_FOR_UPLOAD("Restage for Upload");
+        NO_ACTION("NONE", "(Select...)"),
+        RESTAGE_FOR_UPLOAD("RSTG", "Restage for Upload");
 
+        public final String actionTypeCode;
         public final String actionLabel;
 
-        private PaymentWorksVendorGlobalAction(final String actionLabel) {
+        private PaymentWorksVendorGlobalAction(final String actionTypeCode, final String actionLabel) {
+            this.actionTypeCode = actionTypeCode;
             this.actionLabel = actionLabel;
+        }
+
+        public String getActionTypeCode() {
+            return actionTypeCode;
+        }
+
+        public String getActionLabel() {
+            return actionLabel;
+        }
+
+        public static PaymentWorksVendorGlobalAction findByActionTypeCode(final String actionTypeCode) {
+            if (StringUtils.isBlank(actionTypeCode)) {
+                return NO_ACTION;
+            }
+            return Arrays.stream(PaymentWorksVendorGlobalAction.values())
+                    .filter(action -> StringUtils.equals(action.getActionTypeCode(), actionTypeCode))
+                    .findFirst()
+                    .orElse(NO_ACTION);
         }
     }
 

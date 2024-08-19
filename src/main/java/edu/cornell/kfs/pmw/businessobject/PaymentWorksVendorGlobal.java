@@ -9,18 +9,17 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.krad.bo.GlobalBusinessObject;
 import org.kuali.kfs.krad.bo.GlobalBusinessObjectDetail;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
 import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.PaymentWorksVendorGlobalAction;
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants.SupplierUploadStatus;
+import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 
 public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase implements GlobalBusinessObject {
@@ -45,15 +44,15 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
     @Override
     public List<PersistableBusinessObject> generateGlobalChangesToPersist() {
         final PaymentWorksVendorGlobalAction actionType = getActionType();
-        if (actionType == null) {
-            throw new IllegalStateException("No global action was specified");
-        }
         switch (actionType) {
+            case NO_ACTION :
+                throw new IllegalStateException("A global action was not specified");
+
             case RESTAGE_FOR_UPLOAD :
                 return generateChangesToRestagePaymentWorksVendorsForUpload();
 
             default :
-                throw new IllegalStateException("Invalid global action: " + actionType);
+                throw new IllegalStateException("Invalid global action: " + actionType.getActionTypeCode());
         }
     }
 
@@ -63,7 +62,7 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
                         PaymentWorksVendorGlobalDetail::getPmwVendorId, Function.identity()));
 
         final Map<String, ?> fieldValues = Map.ofEntries(
-                Map.entry(KRADPropertyConstants.ID, List.copyOf(detailMappings.keySet()))
+                Map.entry(PaymentWorksPropertiesConstants.PaymentWorksVendor.ID, List.copyOf(detailMappings.keySet()))
         );
         final Collection<PaymentWorksVendor> existingPmwVendors = getBusinessObjectService().findMatching(
                 PaymentWorksVendor.class, fieldValues);
@@ -81,7 +80,9 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
             if (ObjectUtils.isNull(globalDetail)) {
                 throw new IllegalStateException("Document does not contain the specified PaymentWorks Vendor: "
                         + existingPmwVendor.getId());
-            } else if (!encounteredPmwVendors.add(existingPmwVendor.getId())) {
+            }
+            final boolean isDuplicate = !encounteredPmwVendors.add(existingPmwVendor.getId());
+            if (isDuplicate) {
                 throw new IllegalStateException("Duplicate PaymentWorks Vendor encountered during processing: "
                         + existingPmwVendor.getId());
             }
@@ -129,7 +130,7 @@ public class PaymentWorksVendorGlobal extends PersistableBusinessObjectBase impl
     }
 
     public PaymentWorksVendorGlobalAction getActionType() {
-        return StringUtils.isNotBlank(actionTypeCode) ? PaymentWorksVendorGlobalAction.valueOf(actionTypeCode) : null;
+        return PaymentWorksVendorGlobalAction.findByActionTypeCode(actionTypeCode);
     }
 
     public List<PaymentWorksVendorGlobalDetail> getVendorDetails() {

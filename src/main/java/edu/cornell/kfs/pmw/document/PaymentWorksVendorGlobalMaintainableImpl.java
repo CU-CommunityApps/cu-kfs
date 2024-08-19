@@ -10,10 +10,10 @@ import org.kuali.kfs.kns.web.ui.Field;
 import org.kuali.kfs.kns.web.ui.Section;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.maintenance.MaintenanceLock;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.document.FinancialSystemGlobalMaintainable;
 
+import edu.cornell.kfs.pmw.batch.PaymentWorksPropertiesConstants;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobal;
 import edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail;
@@ -23,6 +23,7 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
 
     private static final long serialVersionUID = 1L;
 
+    private static final String EDIT_GLOBAL_PAYMENTWORKS_VENDOR_SECTION = "Edit Global PaymentWorks Vendor";
     private static final String EDIT_PAYMENTWORKS_VENDOR_SECTION = "Edit PaymentWorks Vendors";
     private static final String PAYMENTWORKS_VENDOR_CONTAINER_ELEMENT_NAME = "PaymentWorks Vendor";
 
@@ -41,7 +42,7 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
 
     private String buildPaymentWorksVendorLockingRepresentation(final PaymentWorksVendorGlobalDetail vendorDetail) {
         return StringUtils.join(PaymentWorksVendor.class.getName(), KFSConstants.Maintenance.AFTER_CLASS_DELIM,
-                KRADPropertyConstants.ID, KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM,
+                PaymentWorksPropertiesConstants.PaymentWorksVendor.ID, KFSConstants.Maintenance.AFTER_FIELDNAME_DELIM,
                 String.valueOf(vendorDetail.getPmwVendorId()));
     }
 
@@ -50,8 +51,29 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
         return PaymentWorksVendor.class;
     }
 
+    @SuppressWarnings("rawtypes")
+    @Override
+    public List getSections(final MaintenanceDocument document, final Maintainable oldMaintainable) {
+        final List<?> sections = super.getSections(document, oldMaintainable);
+        removeBlankOptionFromActionTypeDropDownIfPresent(sections);
+        removePaymentWorksVendorAddLineFieldsIfPresent(sections);
+        return sections;
+    }
+
+    private void removeBlankOptionFromActionTypeDropDownIfPresent(final List<?> maintenanceDocumentSections) {
+        maintenanceDocumentSections.stream()
+                .map(Section.class::cast)
+                .filter(section -> StringUtils.equals(section.getSectionId(), EDIT_GLOBAL_PAYMENTWORKS_VENDOR_SECTION))
+                .flatMap(section -> section.getRows().stream())
+                .flatMap(row -> row.getFields().stream())
+                .filter(field -> StringUtils.equals(field.getPropertyName(),
+                        PaymentWorksPropertiesConstants.ACTION_TYPE_CODE))
+                .findFirst()
+                .ifPresent(field -> field.setSkipBlankValidValue(true));
+    }
+
     /**
-     * Overridden to forcibly remove the add-line PaymentWorks Vendor fields, if present. To avoid document-updating
+     * Added this to forcibly remove the add-line PaymentWorks Vendor fields, if present. To avoid document-updating
      * issues when returning from converted lookups in this financials release, we only want to use the multi-value
      * variant of the PaymentWorks Vendor lookup. However, there appears to be a bug where if the Data Dictionary
      * has been configured to hide the single-value lookup variant, the multi-value variant will always use the
@@ -60,11 +82,8 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
      * 
      * We could investigate removing this workaround after upgrading to the 2023-11-01 version of financials.
      */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public List getSections(final MaintenanceDocument document, final Maintainable oldMaintainable) {
-        final List<?> sections = super.getSections(document, oldMaintainable);
-        sections.stream()
+    private void removePaymentWorksVendorAddLineFieldsIfPresent(final List<?> maintenanceDocumentSections) {
+        maintenanceDocumentSections.stream()
                 .map(Section.class::cast)
                 .filter(section -> StringUtils.equals(section.getSectionId(), EDIT_PAYMENTWORKS_VENDOR_SECTION))
                 .flatMap(section -> section.getRows().stream())
@@ -72,7 +91,6 @@ public class PaymentWorksVendorGlobalMaintainableImpl extends FinancialSystemGlo
                 .filter(this::fieldRepresentsContainerForPaymentWorksVendorAddLine)
                 .findFirst()
                 .ifPresent(containerField -> containerField.setContainerRows(new ArrayList<>()));
-        return sections;
     }
 
     private boolean fieldRepresentsContainerForPaymentWorksVendorAddLine(final Field field) {
