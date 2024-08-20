@@ -511,7 +511,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
             throw new RuntimeException("cancelDVAsSystemUser() Unable to cancel DV: " + dvDocumentNumber, e);
         }
     }
-    
+
     @Override
     public Set<String> cancelDisbursementVouchersFinalizedNotExtracted(RecurringDisbursementVoucherDocument recurringDisbursementVoucherDocument, String cancelMessage) {
         Set<String> canceledDVs = new HashSet<String>();
@@ -539,7 +539,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         noteChangeOnRecurringDV(recurringDisbursementVoucherDocument, "The following disbursement vouchers were canceled after it was approved but before payments were created: ", canceledDVs);
         return canceledDVs;
     }
-    
+
     private boolean isDvCancelableFromApprovedNotExtracted(CuDisbursementVoucherDocument dv) {
         String dvStatus = getRouteHeaderService().getDocumentStatus(dv.getDocumentNumber());
         return hasCancelPermission() && StringUtils.equals(dv.getDisbursementVoucherPdpStatus(), CuFPConstants.RecurringDisbursementVoucherDocumentConstants.PDP_PRE_EXTRACTION_STATUS)
