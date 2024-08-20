@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="PaymentWorksVendorGlobalMaintenanceDocument"
+          parent="PaymentWorksVendorGlobalMaintenanceDocument-parentBean" />
+    <bean id="PaymentWorksVendorGlobalMaintenanceDocument-parentBean"
+          abstract="true"
+          parent="MaintenanceDocumentEntry"
+          p:businessObjectClass="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobal"
+          p:maintainableClass="edu.cornell.kfs.pmw.document.PaymentWorksVendorGlobalMaintainableImpl"
+          p:documentTypeName="GPMWV"
+          p:businessRulesClass="edu.cornell.kfs.pmw.document.validation.impl.PaymentWorksVendorGlobalRule"
+          p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase">
+        <property name="maintainableSections">
+            <list>
+                <ref bean="PaymentWorksVendorGlobalMaintenanceDocument-GlobalPaymentWorksVendorMaintenance"/>
+                <ref bean="PaymentWorksVendorGlobalMaintenanceDocument-EditListOfPaymentWorksVendors"/>
+            </list>
+        </property>
+        <property name="lockingKeys">
+            <list>
+                <value>documentNumber</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendorGlobalMaintenanceDocument-GlobalPaymentWorksVendorMaintenance"
+          parent="PaymentWorksVendorGlobalMaintenanceDocument-GlobalPaymentWorksVendorMaintenance-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalMaintenanceDocument-GlobalPaymentWorksVendorMaintenance-parentBean"
+          abstract="true"
+          parent="MaintainableSectionDefinition"
+          p:id="Edit Global PaymentWorks Vendor"
+          p:title="Edit Global PaymentWorks Vendor">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableFieldDefinition" p:name="actionTypeCode" p:required="true"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendorGlobalMaintenanceDocument-EditListOfPaymentWorksVendors"
+          parent="PaymentWorksVendorGlobalMaintenanceDocument-EditListOfPaymentWorksVendors-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalMaintenanceDocument-EditListOfPaymentWorksVendors-parentBean"
+          abstract="true"
+          parent="MaintainableSectionDefinition"
+          p:id="Edit PaymentWorks Vendors"
+          p:title="Edit PaymentWorks Vendors">
+        <property name="maintainableItems">
+            <list>
+                <bean parent="MaintainableCollectionDefinition" p:name="vendorDetails"
+                      p:businessObjectClass="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail"
+                      p:sourceClassName="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor"
+                      p:summaryTitle="PaymentWorks Vendor"
+                      p:newLookup="true">
+                    <property name="summaryFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorRequestId"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="kfsVendorNumber"/>
+                        </list>
+                    </property>
+                    <property name="maintainableFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorId"
+                                  p:required="true"
+                                  p:readOnlyAfterAdd="true"
+                                  p:newLookup="true"
+                                  p:template="id"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="kfsVendorNumber"
+                                  p:unconditionallyReadOnly="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorRequestId"
+                                  p:unconditionallyReadOnly="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="requestingCompanyLegalName"
+                                  p:unconditionallyReadOnly="true"/>
+                            <bean parent="MaintainableFieldDefinition" p:name="supplierUploadStatus"
+                                  p:unconditionallyReadOnly="true"/>
+                        </list>
+                    </property>
+                    <property name="duplicateIdentificationFields">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="pmwVendorId"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
