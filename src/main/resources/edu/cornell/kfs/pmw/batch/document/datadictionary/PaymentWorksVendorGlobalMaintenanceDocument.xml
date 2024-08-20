@@ -11,7 +11,7 @@
           parent="MaintenanceDocumentEntry"
           p:businessObjectClass="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobal"
           p:maintainableClass="edu.cornell.kfs.pmw.document.PaymentWorksVendorGlobalMaintainableImpl"
-          p:documentTypeName="GPWV"
+          p:documentTypeName="GPMWV"
           p:businessRulesClass="edu.cornell.kfs.pmw.document.validation.impl.PaymentWorksVendorGlobalRule"
           p:documentAuthorizerClass="org.kuali.kfs.kns.document.authorization.MaintenanceDocumentAuthorizerBase">
         <property name="maintainableSections">
