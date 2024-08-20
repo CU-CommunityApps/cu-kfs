@@ -48,6 +48,7 @@ import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.businessobject.SourceAccountingLine;
+import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.sys.util.KfsDateUtils;
 
 import edu.cornell.kfs.fp.CuFPConstants;
@@ -398,9 +399,10 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
     private void noteChangeOnRecurringDV(RecurringDisbursementVoucherDocument recurringDV, String noteText, Set<String> setOfStrings) {
         if (!setOfStrings.isEmpty()) {
             Note note = buildNoteBase();
-            note.setNoteText(noteText + StringUtils.join(setOfStrings, ", "));;
+            note.setNoteText(noteText + StringUtils.join(setOfStrings, ", "));
+            LOG.debug("noteChangeOnRecurringDV, adding note '{}' to document {}", note.getNoteText(), recurringDV.getDocumentNumber());
             recurringDV.addNote(note);
-            getDocumentService().saveDocument(recurringDV);
+            getDocumentService().saveDocument(recurringDV, DocumentSystemSaveEvent.class);
         }
     }
 
@@ -492,6 +494,7 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
                 @Override
                 public Object call() throws WorkflowException {
                     CuDisbursementVoucherDocument disbursementVoucher = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(dvDocumentNumber);
+                    LOG.debug("cancelDVAsSystemUser, attempting to cancel DV document {}", disbursementVoucher.getDocumentNumber());
 
                     Note note = buildNoteBase();
                     note.setNoteText("This DV was canceled from the recurring disbursement voucher that created it.");
@@ -519,11 +522,12 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
                 CuDisbursementVoucherDocument dv;
                 dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
                 if (isDvCancelableFromApprovedNotExtracted(dv)) {
+                    LOG.debug("cancelDisbursementVouchersFinalizedNotExtracted, attempting to cancel DV document {}", dv.getDocumentNumber());
 
                     Date cancelDate =  new Date (Calendar.getInstance().getTimeInMillis());
                     dv.setCancelDate(cancelDate);
 
-                    CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv);
+                    CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv, DocumentSystemSaveEvent.class);
 
                     getCuDisbursementVoucherExtractionHelperService().getPaymentSourceHelperService().handleEntryCancellation(
                             cancledDV, getCuDisbursementVoucherExtractionHelperService());
