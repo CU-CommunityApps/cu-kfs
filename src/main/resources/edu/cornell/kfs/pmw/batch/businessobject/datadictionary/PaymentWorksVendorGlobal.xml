@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="PaymentWorksVendorGlobal" parent="PaymentWorksVendorGlobal-parentBean"/>
+    <bean id="PaymentWorksVendorGlobal-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobal"
+          p:objectLabel="PaymentWorks Vendor Global">
+        <property name="attributes">
+            <list>
+                <ref bean="PaymentWorksVendorGlobal-actionTypeCode"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendorGlobal-actionTypeCode" parent="PaymentWorksVendorGlobal-actionTypeCode-parentBean"/>
+    <bean id="PaymentWorksVendorGlobal-actionTypeCode-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="actionTypeCode"
+          p:forceUppercase="true"
+          p:label="Action"
+          p:shortLabel="Action"
+          p:maxLength="30">
+        <property name="validationPattern">
+            <bean parent="AlphaNumericValidationPattern" p:allowUnderscore="true"/>
+        </property>
+        <property name="control">
+            <bean parent="SelectControlDefinition"
+                  p:valuesFinder-ref="paymentWorksVendorGlobalActionValuesFinder"
+                  p:includeKeyInLabel="false"/>
+        </property>
+    </bean>
+
+    <bean id="paymentWorksVendorGlobalActionValuesFinder"
+          class="edu.cornell.kfs.pmw.businessobject.options.PaymentWorksVendorGlobalActionValuesFinder"/>
+
+</beans>

@@ -5,18 +5,26 @@
 
     <bean id="PaymentWorksVendor" parent="PaymentWorksVendor-parentBean" />
 
-    <bean id="PaymentWorksVendor-parentBean" abstract="true" parent="BusinessObjectEntry">
-        <property name="businessObjectClass" value="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor" />
-        <property name="objectLabel" value="PaymentWorks Vendor" />
-        <property name="titleAttribute" value="pmwVendorRequestId" />
-        <property name="lookupDefinition" ref="PaymentWorksVendor-lookupDefinition" />
-        <property name="inquiryDefinition" ref="PaymentWorksVendor-inquiryDefinition" />
+    <bean id="PaymentWorksVendor-parentBean"
+          abstract="true"
+          parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor"
+          p:objectLabel="PaymentWorks Vendor"
+          p:titleAttribute="pmwVendorRequestId"
+          p:lookupDefinition-ref="PaymentWorksVendor-lookupDefinition"
+          p:inquiryDefinition-ref="PaymentWorksVendor-inquiryDefinition"
+          p:actionsProvider-ref="businessObjectActionsProvider"
+          p:businessObjectAdminService-ref="paymentWorksVendorAdminService"
+          p:searchService-ref="paymentWorksVendorSearchService">
         <property name="attributes">
             <list>
+                <ref bean="PaymentWorksVendor-id" />
+                
                 <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus" />
                 <ref bean="PaymentWorksVendor-kfsVendorDocumentNumber" />
                 <ref bean="PaymentWorksVendor-kfsVendorHeaderGeneratedIdentifier" />
                 <ref bean="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier" />
+                <ref bean="PaymentWorksVendor-kfsVendorNumber" />
                 
                 <ref bean="PaymentWorksVendor-kfsAchProcessingStatus" />
                 <ref bean="PaymentWorksVendor-kfsAchDocumentNumber" />
@@ -93,9 +101,24 @@
                 <ref bean="PaymentWorksVendor-poTransmissionMethod" />
                 <ref bean="PaymentWorksVendor-poFaxNumber" />
                 <ref bean="PaymentWorksVendor-poEmailAddress" />
+
+                <!-- Temporary fields related to converted lookup integration -->
+                <ref bean="PaymentWorksVendor-processTimestampFrom"/>
+                <ref bean="PaymentWorksVendor-processTimestampTo"/>
             </list>
         </property>
     </bean>
+
+    <bean id="PaymentWorksVendor-id" parent="PaymentWorksVendor-id-parentBean" />
+    <bean id="PaymentWorksVendor-id-parentBean" abstract="true" parent="AttributeDefinition"
+          p:name="id"
+          p:label="ID"
+          p:shortLabel="ID"
+          p:forceUppercase="true"
+          p:maxLength="10"
+          p:type="INTEGER"
+          p:validationPattern-ref="NumericValidation"
+          p:control-ref="StandardShortNameTextControl"/>
 
     <bean id="PaymentWorksVendor-genericCompanyId" parent="PaymentWorksVendor-genericCompanyId-parentBean" />
     <bean id="PaymentWorksVendor-genericCompanyId-parentBean" abstract="true" parent="AttributeDefinition">
@@ -704,6 +727,12 @@
         <property name="name" value="kfsVendorDetailAssignedIdentifier"/>
     </bean>
 
+    <bean id="PaymentWorksVendor-kfsVendorNumber" parent="PaymentWorksVendor-kfsVendorNumber-parentBean" />
+    <bean id="PaymentWorksVendor-kfsVendorNumber-parentBean" abstract="true" parent="VendorDetail-vendorNumber"
+          p:name="kfsVendorNumber"
+          p:label="KFS Vendor #"
+          p:shortLabel="KFS Vendor #"/>
+
     <bean id="PaymentWorksVendor-vendorType" parent="PaymentWorksVendor-vendorType-parentBean" />
     <bean id="PaymentWorksVendor-vendorType-parentBean" abstract="true" parent="AttributeDefinition">
         <property name="name" value="vendorType" />
@@ -1114,6 +1143,37 @@
         <property name="formatterClass" value="org.kuali.kfs.core.web.format.BooleanFormatter" />
     </bean>
 
+    <!--
+        Temporary fields to work around integration issues with converted lookups; they can tentatively be removed
+        when we upgrade to the 2023-11-01 version of financials.
+    -->
+
+    <bean id="PaymentWorksVendor-processTimestampFrom" parent="PaymentWorksVendor-processTimestampFrom-parentBean"/>
+    <bean id="PaymentWorksVendor-processTimestampFrom-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="processTimestampFrom"
+          p:label="Process Timestamp From"
+          p:shortLabel="Timestamp From"
+          p:forceUppercase="true"
+          p:maxLength="22"
+          p:control-ref="TenCharacterTextControl"/>
+
+    <bean id="PaymentWorksVendor-processTimestampTo" parent="PaymentWorksVendor-processTimestampTo-parentBean"/>
+    <bean id="PaymentWorksVendor-processTimestampTo-parentBean"
+          abstract="true"
+          parent="AttributeDefinition"
+          p:name="processTimestampTo"
+          p:label="Process Timestamp To"
+          p:shortLabel="Timestamp To"
+          p:forceUppercase="true"
+          p:maxLength="22"
+          p:control-ref="TenCharacterTextControl"/>
+
+    <!-- End of temporary fields. -->
+
+
+
     <bean id="PaymentWorksVendor-lookupDefinition" parent="PaymentWorksVendor-lookupDefinition-parentBean" />
     <bean id="PaymentWorksVendor-lookupDefinition-parentBean" abstract="true" parent="LookupDefinition">
         <property name="title" value="PaymentWorks Vendor Lookup" />
@@ -1126,23 +1186,27 @@
                 </property>
             </bean>
         </property>
-        <property name="lookupFields">
+        <property name="formAttributeDefinitions">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyTelephone" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
-                <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
+                <ref bean="PaymentWorksVendor-id"/>
+                <ref bean="PaymentWorksVendor-pmwVendorRequestId"/>
+                <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
+                <ref bean="PaymentWorksVendor-processTimestampFrom"/>
+                <ref bean="PaymentWorksVendor-processTimestampTo"/>
+                <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
+                <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
         </property>
-        <property name="resultFields">
+        <property name="displayAttributeDefinitions">
             <list>
-                <bean parent="FieldDefinition" p:attributeName="pmwVendorRequestId" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyTelephone" />
-                <bean parent="FieldDefinition" p:attributeName="requestingCompanyUrl" />
-                <bean parent="FieldDefinition" p:attributeName="kfsVendorProcessingStatus" />
+                <bean parent="PaymentWorksVendor-id" p:disableInquiry="true"/>
+                <bean parent="PaymentWorksVendor-pmwVendorRequestId" p:disableInquiry="true"/>
+                <ref bean="PaymentWorksVendor-kfsVendorNumber"/>
+                <ref bean="PaymentWorksVendor-requestingCompanyLegalName"/>
+                <ref bean="PaymentWorksVendor-processTimestamp"/>
+                <ref bean="PaymentWorksVendor-kfsVendorProcessingStatus"/>
+                <ref bean="PaymentWorksVendor-supplierUploadStatus"/>
             </list>
         </property>
     </bean>
@@ -1235,5 +1299,12 @@
             </list>
         </property>
     </bean>
+
+    <bean id="paymentWorksVendorAdminService" parent="defaultBoAdminService"
+          class="edu.cornell.kfs.pmw.batch.businessobject.admin.PaymentWorksVendorAdminService"/>
+
+    <bean id="paymentWorksVendorSearchService" parent="defaultSearchService"
+          class="edu.cornell.kfs.pmw.batch.businessobject.service.impl.PaymentWorksVendorSearchService"
+          p:lookupDao-ref="paymentWorksVendorLookupDao"/>
 
 </beans>

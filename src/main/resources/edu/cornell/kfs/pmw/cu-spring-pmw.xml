@@ -140,6 +140,9 @@
     <bean id="kfsSupplierDiversityDao" parent="platformAwareDaoJdbc" class="edu.cornell.kfs.pmw.batch.dataaccess.impl.KfsSupplierDiversityDaoJdbc">
     </bean>
     
+    <bean id="paymentWorksVendorLookupDao" parent="lookupDao"
+          class="edu.cornell.kfs.pmw.batch.dataaccess.impl.PaymentWorksVendorLookupDaoOjb"/>
+    
     <bean id="paymentWorksReportEmailService" parent="paymentWorksReportEmailService-parentBean" />
     <bean id="paymentWorksReportEmailService-parentBean" class="edu.cornell.kfs.pmw.batch.service.impl.PaymentWorksReportEmailServiceImpl" abstract="true">
         <property name="emailService" ref="emailService" />

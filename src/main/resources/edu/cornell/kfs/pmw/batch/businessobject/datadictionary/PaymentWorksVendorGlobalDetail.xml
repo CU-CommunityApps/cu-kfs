@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="PaymentWorksVendorGlobalDetail" parent="PaymentWorksVendorGlobalDetail-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-parentBean" abstract="true" parent="BusinessObjectEntry"
+          p:businessObjectClass="edu.cornell.kfs.pmw.businessobject.PaymentWorksVendorGlobalDetail"
+          p:objectLabel="PaymentWorks Vendor Global Detail"
+          p:inquiryDefinition-ref="PaymentWorksVendorGlobalDetail-inquiryDefinition">
+        <property name="attributes">
+            <list>
+                <ref bean="PaymentWorksVendorGlobalDetail-pmwVendorId"/>
+                <ref bean="PaymentWorksVendorGlobalDetail-pmwVendorRequestId"/>
+                <ref bean="PaymentWorksVendorGlobalDetail-kfsVendorHeaderGeneratedIdentifier"/>
+                <ref bean="PaymentWorksVendorGlobalDetail-kfsVendorDetailAssignedIdentifier"/>
+                <ref bean="PaymentWorksVendorGlobalDetail-kfsVendorNumber"/>
+                <ref bean="PaymentWorksVendorGlobalDetail-supplierUploadStatus"/>
+                <ref bean="PaymentWorksVendorGlobalDetail-requestingCompanyLegalName"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="PaymentWorksVendorGlobalDetail-pmwVendorId"
+          parent="PaymentWorksVendorGlobalDetail-pmwVendorId-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-pmwVendorId-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-id"
+          p:name="pmwVendorId"/>
+
+    <bean id="PaymentWorksVendorGlobalDetail-pmwVendorRequestId"
+          parent="PaymentWorksVendorGlobalDetail-pmwVendorRequestId-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-pmwVendorRequestId-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-pmwVendorRequestId"/>
+
+    <bean id="PaymentWorksVendorGlobalDetail-kfsVendorHeaderGeneratedIdentifier"
+          parent="PaymentWorksVendorGlobalDetail-kfsVendorHeaderGeneratedIdentifier-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-kfsVendorHeaderGeneratedIdentifier-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-kfsVendorHeaderGeneratedIdentifier"/>
+
+    <bean id="PaymentWorksVendorGlobalDetail-kfsVendorDetailAssignedIdentifier"
+          parent="PaymentWorksVendorGlobalDetail-kfsVendorDetailAssignedIdentifier-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-kfsVendorDetailAssignedIdentifier-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-kfsVendorDetailAssignedIdentifier"/>
+
+    <bean id="PaymentWorksVendorGlobalDetail-kfsVendorNumber"
+          parent="PaymentWorksVendorGlobalDetail-kfsVendorNumber-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-kfsVendorNumber-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-kfsVendorNumber"/>
+
+    <bean id="PaymentWorksVendorGlobalDetail-supplierUploadStatus"
+          parent="PaymentWorksVendorGlobalDetail-supplierUploadStatus-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-supplierUploadStatus-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-supplierUploadStatus"/>
+
+    <bean id="PaymentWorksVendorGlobalDetail-requestingCompanyLegalName"
+          parent="PaymentWorksVendorGlobalDetail-requestingCompanyLegalName-parentBean"/>
+    <bean id="PaymentWorksVendorGlobalDetail-requestingCompanyLegalName-parentBean"
+          abstract="true"
+          parent="PaymentWorksVendor-requestingCompanyLegalName"/>
+
+    <!--
+        This inquiry is only meant for controlling the display of inquiry links on the PMW Vendor Detail entries
+        for PaymentWorks Vendor Global documents. (The Data Dictionary still relies on the legacy inquiry
+        configuration for controlling some of the maintenance document inquiry setup.) When KFS introduces better
+        control over maintenance doc inquiry links that don't depend on BO inquiry definitions, this inquiry should
+        be removed.
+     -->
+    <bean id="PaymentWorksVendorGlobalDetail-inquiryDefinition"
+          parent="PaymentWorksVendorGlobalDetail-inquiryDefinition-parentBean" />
+    <bean id="PaymentWorksVendorGlobalDetail-inquiryDefinition-parentBean"
+          abstract="true"
+          parent="InquiryDefinition"
+          p:title="PaymentWorks Vendor Global Detail Inquiry">
+        <property name="inquirySections">
+            <list>
+                <bean parent="InquirySectionDefinition"
+                      p:title=""
+                      p:numberOfColumns="1">
+                    <property name="inquiryFields">
+                        <list>
+                            <bean parent="FieldDefinition" p:attributeName="pmwVendorId"/>
+                            <bean parent="FieldDefinition" p:attributeName="kfsVendorNumber"
+                                  p:noInquiry="true"/>
+                            <bean parent="FieldDefinition" p:attributeName="pmwVendorRequestId"
+                                  p:noInquiry="true"/>
+                            <bean parent="FieldDefinition" p:attributeName="requestingCompanyLegalName"
+                                  p:noInquiry="true"/>
+                            <bean parent="FieldDefinition" p:attributeName="supplierUploadStatus"
+                                  p:noInquiry="true"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
