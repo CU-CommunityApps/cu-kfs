@@ -148,7 +148,7 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
     public boolean canViewContractTab(Document document, Person person) {
         WorkflowDocument workflowDocument = document.getDocumentHeader().getWorkflowDocument();
 
-        if (workflowDocument.isEnroute() || workflowDocument.isFinal()) {
+        if (!workflowDocument.isInitiated() && !workflowDocument.isSaved()) {
             return true;
         }
 
