@@ -44,7 +44,6 @@ import org.kuali.kfs.pdp.PdpPropertyConstants;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.AccountingLineOverride;
 import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
@@ -524,12 +523,11 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
                 dv = (CuDisbursementVoucherDocument) getDocumentService().getByDocumentHeaderId(detail.getDvDocumentNumber());
                 if (isDvCancelableFromApprovedNotExtracted(dv)) {
                     LOG.debug("cancelDisbursementVouchersFinalizedNotExtracted, attempting to cancel DV document {}", dv.getDocumentNumber());
-                    overrideExpiredAccountsIfNeeded(dv.getSourceAccountingLines());
 
                     Date cancelDate =  new Date (Calendar.getInstance().getTimeInMillis());
                     dv.setCancelDate(cancelDate);
 
-                    CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv);
+                    CuDisbursementVoucherDocument cancledDV = (CuDisbursementVoucherDocument) getDocumentService().saveDocument(dv, DocumentSystemSaveEvent.class);
 
                     getCuDisbursementVoucherExtractionHelperService().getPaymentSourceHelperService().handleEntryCancellation(
                             cancledDV, getCuDisbursementVoucherExtractionHelperService());
@@ -547,18 +545,6 @@ public class RecurringDisbursementVoucherDocumentServiceImpl implements Recurrin
         return hasCancelPermission() && StringUtils.equals(dv.getDisbursementVoucherPdpStatus(), CuFPConstants.RecurringDisbursementVoucherDocumentConstants.PDP_PRE_EXTRACTION_STATUS)
                 && StringUtils.equalsIgnoreCase(dvStatus, DocumentStatus.FINAL.getCode());
     }
-    
-    private void overrideExpiredAccountsIfNeeded(List<SourceAccountingLine> sourceLines) {
-        for (SourceAccountingLine line : sourceLines) {
-            if (!line.getAccountExpiredOverride() && line.getAccount().isExpired()) {
-                line.setAccountExpiredOverride(true);
-                line.setOverrideCode(AccountingLineOverride.CODE.EXPIRED_ACCOUNT);
-                LOG.debug("overrideExpiredAccountsIfNeeded, overriding expired account {} - {} on document {}",
-                        line.getChartOfAccountsCode(), line.getAccountNumber(), line.getDocumentNumber());
-            }
-        }
-    }
-
 
     public DocumentService getDocumentService() {
         return documentService;
