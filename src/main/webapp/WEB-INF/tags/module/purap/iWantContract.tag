@@ -8,8 +8,8 @@
 <c:set var="displayContractTab" value="${(not empty KualiForm.editingMode['displayContractTab'])}" scope="request"/>
 <c:set var="contractIndicatorReadOnly" value="${(empty KualiForm.editingMode['editContractIndicator'])}" scope="request"/>
 <c:set var="docEnroute" value="${KualiForm.docEnroute}"/>
-<c:set var="canEditProcessingAssistantNetId" value="${(not empty KualiForm.editingMode['editProcurementAssistantNetId'])}" scope="request"/>
-<c:set var="procurementAssistantNetIdReadOnly" value="${!fullEntryMode || !canEditProcessingAssistantNetId || !docEnroute}" scope="request"/>
+<c:set var="canEditProcurementAssistantNetId" value="${(not empty KualiForm.editingMode['editProcurementAssistantNetId'])}" scope="request"/>
+<c:set var="procurementAssistantNetIdReadOnly" value="${!fullEntryMode || !canEditProcurementAssistantNetId || !docEnroute}" scope="request"/>
 
 <c:if test="${displayContractTab}">
     <kul:tab tabTitle="Jaggaer Contract" defaultOpen="true">

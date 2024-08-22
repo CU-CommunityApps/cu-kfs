@@ -80,6 +80,10 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
             result.remove(CUPurapConstants.IWNT_DOC_RETURN_TO_SSC);
         }
         
+        if (!canEditProcurementAssistantNetId(user)) {
+            result.remove(CUPurapConstants.I_WANT_DOC_EDIT_PROCUREMENT_ASSISTANT_NET_ID);
+        }
+        
         return result;
     }
 
@@ -207,6 +211,10 @@ public class IWantDocumentAuthorizer extends FinancialSystemTransactionalDocumen
             return nodeNames.contains(CUPurapConstants.IWantRouteNodes.PROCUREMENT_CONTRACT_ASSISTANT);
         }
         return false;
+    }
+    
+    private boolean canEditProcurementAssistantNetId(Person currentUser) {
+        return isCurrentUserProcurementContractAssistant(currentUser);
     }
     
     private boolean isCurrentUserInRole(String namespace, String roleName, Person currentUser) {
