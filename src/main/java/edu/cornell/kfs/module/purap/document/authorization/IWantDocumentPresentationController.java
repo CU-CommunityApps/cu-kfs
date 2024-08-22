@@ -13,6 +13,7 @@ import org.kuali.kfs.sys.service.FinancialSystemWorkflowHelperService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapConstants.IWantRouteNodes;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.IWantDocument;
 import edu.cornell.kfs.sys.CUKFSConstants;
@@ -148,13 +149,15 @@ public class IWantDocumentPresentationController extends FinancialSystemTransact
         }
         
         editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROC_NET_ID);
-        editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROCUREMENT_ASSISTANT_NET_ID);
         editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_NOTE_OPTIONS);
         
         if (isContractFunctionalityEnabled()) {
             editModes.add(CUPurapConstants.IWNT_DOC_DISPLAY_CONTRACT_TAB);
             editModes.add(CUPurapConstants.IWNT_DOC_EDIT_CONTRACT_INDICATOR);
-
+            if (workflowDocument.isEnroute() && workflowDocument.getCurrentNodeNames().contains(
+                    IWantRouteNodes.PROCUREMENT_CONTRACT_ASSISTANT)) {
+                editModes.add(CUPurapConstants.I_WANT_DOC_EDIT_PROCUREMENT_ASSISTANT_NET_ID);
+            }
         }
 
         return editModes;
