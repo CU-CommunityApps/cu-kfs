@@ -32,8 +32,8 @@
 
 <%-- CU Customization: Set "renderMultipart" to true so that attachments can be added to the document. --%>
 <kul:documentPage
-    showDocumentInfo="true"
-    htmlFormAction="${formAction}"
+  showDocumentInfo="true"
+  htmlFormAction="${formAction}"
     documentTypeName="PERS"
     renderMultipart="true"
     showTabButtons="true"

@@ -31,8 +31,8 @@
 <c:set var="formAction" value="identityManagementRoleDocument" />
 
 <kul:documentPage
-  showDocumentInfo="true"
-  htmlFormAction="${formAction}"
+    showDocumentInfo="true"
+    htmlFormAction="${formAction}"
     documentTypeName="ROLE"
     renderMultipart="true"
     showTabButtons="true"
