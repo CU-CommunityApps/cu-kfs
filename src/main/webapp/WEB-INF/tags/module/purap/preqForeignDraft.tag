@@ -1,6 +1,6 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<c:set var="wireTransAttributes" value="${DataDictionary.PaymentRequestWireTransfer.attributes}" />
+<c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
 
 <kul:tab tabTitle="Foreign Draft" defaultOpen="false" tabErrorKey="${CUKFSConstants.PREQ_FOREIGNDRAFTS_TAB_ERRORS}">
     <div class="tab-container" align=center>

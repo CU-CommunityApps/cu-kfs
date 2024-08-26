@@ -13,12 +13,11 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 
 public class CreditMemoForeignDraftValidation extends GenericValidation {
-	private static final Logger LOG = LogManager.getLogger(CreditMemoForeignDraftValidation.class);
+	private static final Logger LOG = LogManager.getLogger();
 
     private AccountingDocument accountingDocumentForValidation;
 

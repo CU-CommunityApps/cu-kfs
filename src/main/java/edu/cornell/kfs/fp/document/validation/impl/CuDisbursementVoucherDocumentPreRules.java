@@ -7,14 +7,12 @@ import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.fp.document.DisbursementVoucherDocument;
 import org.kuali.kfs.fp.document.validation.impl.DisbursementVoucherDocumentPreRules;
 import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
-import edu.cornell.kfs.sys.CUKFSKeyConstants;
 
 /**
  * Checks warnings and prompt conditions for dv document.
@@ -64,16 +62,16 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         boolean hasValues = super.hasWireTransferValues(dvWireTransfer);
         final DisbursementVoucherWireTransferExtendedAttribute wireExtension =
                 (DisbursementVoucherWireTransferExtendedAttribute) dvWireTransfer.getExtension();
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankStreetAddress());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankProvince());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankSWIFTCode());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrBankIBAN());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrSortOrTransitCode());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankName());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankAddress());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankRoutingNumber());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankAccountNumber());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getDisbVchrCorrespondentBankSwiftCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getBankStreetAddress());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getBankProvince());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getBankSWIFTCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getBankIBAN());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getSortOrTransitCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankName());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankAddress());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankRoutingNumber());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankAccountNumber());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankSwiftCode());
         return hasValues;
     }
 
@@ -82,16 +80,16 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
         super.clearWireTransferValues(dvWireTransfer);
         final DisbursementVoucherWireTransferExtendedAttribute wireExtension =
                 (DisbursementVoucherWireTransferExtendedAttribute) dvWireTransfer.getExtension();
-        wireExtension.setDisbVchrBankStreetAddress(null);
-        wireExtension.setDisbVchrBankProvince(null);
-        wireExtension.setDisbVchrBankSWIFTCode(null);
-        wireExtension.setDisbVchrBankIBAN(null);
-        wireExtension.setDisbVchrSortOrTransitCode(null);
-        wireExtension.setDisbVchrCorrespondentBankName(null);
-        wireExtension.setDisbVchrCorrespondentBankAddress(null);
-        wireExtension.setDisbVchrCorrespondentBankRoutingNumber(null);
-        wireExtension.setDisbVchrCorrespondentBankAccountNumber(null);
-        wireExtension.setDisbVchrCorrespondentBankSwiftCode(null);
+        wireExtension.setBankStreetAddress(null);
+        wireExtension.setBankProvince(null);
+        wireExtension.setBankSWIFTCode(null);
+        wireExtension.setBankIBAN(null);
+        wireExtension.setSortOrTransitCode(null);
+        wireExtension.setCorrespondentBankName(null);
+        wireExtension.setCorrespondentBankAddress(null);
+        wireExtension.setCorrespondentBankRoutingNumber(null);
+        wireExtension.setCorrespondentBankAccountNumber(null);
+        wireExtension.setCorrespondentBankSwiftCode(null);
     }
 
     public CuCheckStubService getCuCheckStubService() {

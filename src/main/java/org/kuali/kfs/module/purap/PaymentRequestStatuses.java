@@ -46,7 +46,7 @@ public final class PaymentRequestStatuses {
     public static final String APPDOC_AWAITING_PAYMENT_METHOD_REVIEW = "Awaiting Payment Method Review";
     public static final String APPDOC_PENDING_E_INVOICE = "Pending Route Electronic Invoice";
     // CU Customization: Added new APPDOC status
-    public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval"; //nkk4 is this customization the same as base code APPDOC_AWAITING_PAYMENT_METHOD_REVIEW being added
+    public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval"; //Base code uses APPDOC_AWAITING_PAYMENT_METHOD_REVIEW
 
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
     public static final String NODE_AWAITING_RECEIVING = "Receiving";
@@ -56,9 +56,9 @@ public final class PaymentRequestStatuses {
     public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
     public static final String NODE_OBJECT_CODE_REVIEW = "ObjectCode";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
-    //BASE CODE : public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethod";
+    //public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethod";   //Base code uses different String value
     // CU Customization: Added two new nodes for KFSUPGRADE-779 and KFSUPGRADE-500
-    public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer"; //nkk4 should this be changed to match base code?? What else would need to be modified?? Refer to base code line commented out above
+    public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer"; 
     public static final String NODE_RECEIVING = "Receiving";
     // End CU Customization
 

@@ -40,7 +40,6 @@ import org.kuali.kfs.sys.service.GeneralLedgerPendingEntryService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
-import edu.cornell.kfs.module.purap.businessobject.PaymentRequestWireTransfer;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
@@ -50,44 +49,25 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
     // KFSPTS-1891
     public static String DOCUMENT_TYPE_NON_CHECK = "PRNC";
     public static String DOCUMENT_TYPE_INTERNAL_BILLING = "PRID";
-    protected PaymentRequestWireTransfer preqWireTransfer;
     
-    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;  // needs base code adjustment nkk4
+    private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     private static CuCheckStubService cuCheckStubService;
     
     public CuPaymentRequestDocument() {
-		super();
-		preqWireTransfer = new PaymentRequestWireTransfer();
-		setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
-	}
+        super();
+        setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+    }
 
+    @Override
     public void prepareForSave(final KualiDocumentEvent event) {
-    	
-        // KFSPTS-1891.  purchasingPreDisbursementExtractJob has NPE issue.  need this null check
-       // if (preqWireTransfer != null && !StringUtils.equals(preqWireTransfer.getDocumentNumber(),getDocumentNumber())) {
-//        LOG.info("preqWireTransfer " + preqWireTransfer != null);
-        try {
-//        if (preqWireTransfer != null) {
-//            if (!StringUtils.equals(preqWireTransfer.getDocumentNumber(),getDocumentNumber())) {
-        	preqWireTransfer.setDocumentNumber(getDocumentNumber());
-//            }
-//        }
-        } catch (final Exception e) {
-          LOG.info("preqWireTransfer is null" );
-          preqWireTransfer = new PaymentRequestWireTransfer();  
-      	  preqWireTransfer.setDocumentNumber(getDocumentNumber());
-     	
-        }
-        
     	super.prepareForSave(event);
         for (final PaymentRequestItem item : (List<PaymentRequestItem>) getItems()) {
             if (item.getItemIdentifier() == null) {
                 final Integer generatedItemId = SpringContext.getBean(SequenceAccessorService.class).getNextAvailableSequenceNumber("PMT_RQST_ITM_ID").intValue();
                 item.setItemIdentifier(generatedItemId);
-            	if (item.getExtension() == null) {
-            		item.setExtension(new CuPaymentRequestItemExtension());
-            	}
-
+                if (item.getExtension() == null) {
+                    item.setExtension(new CuPaymentRequestItemExtension());
+                }
                 ((CuPaymentRequestItemExtension)item.getExtension()).setItemIdentifier(generatedItemId);
             }
         }
@@ -289,19 +269,7 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         return Stream.concat(otherDocIdsToLock, poDocIdsToLock)
                 .collect(Collectors.toUnmodifiableList());
     }
-
-	public PaymentRequestWireTransfer getPreqWireTransfer() {
-		if (ObjectUtils.isNull(preqWireTransfer)) {
-			preqWireTransfer = new PaymentRequestWireTransfer();
-			preqWireTransfer.setDocumentNumber(this.getDocumentNumber());
-		}
-		return preqWireTransfer;
-	}
-
-	public void setPreqWireTransfer(final PaymentRequestWireTransfer preqWireTransfer) {
-		this.preqWireTransfer = preqWireTransfer;
-	}
-
+    
     protected static CuCheckStubService getCuCheckStubService() {
         if (cuCheckStubService == null) {
             cuCheckStubService = SpringContext.getBean(CuCheckStubService.class);

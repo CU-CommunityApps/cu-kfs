@@ -119,7 +119,6 @@
           abstract="true" p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
     	<!--  KFSPTS-1891 -->
-	<bean id="PaymentRequest-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestWireTransferValidation" abstract="true" />
 	<bean id="PaymentRequest-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestForeignDraftValidation" abstract="true" />
 	
 	<bean id="VendorCreditMemo-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoWireTransferValidation" abstract="true" />
