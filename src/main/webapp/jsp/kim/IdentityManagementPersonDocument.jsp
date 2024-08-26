@@ -19,7 +19,10 @@
 
 --%>
 <%--
-    CU Customization: Reinserted the Privacy Preferences tab from the 2023-01-25 financials version of the document.
+    CU Customization:
+
+    * Reinserted the Privacy Preferences tab from the 2023-01-25 financials version of the document.
+    * Added the Notes/Attachments tab to the document.
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
@@ -27,11 +30,12 @@
 <c:set var="readOnlyEntity" scope="request" value="${!KualiForm.canModifyPerson || readOnly}" />
 <c:set var="formAction" value="identityManagementPersonDocument" />
 
+<%-- CU Customization: Set "renderMultipart" to true so that attachments can be added to the document. --%>
 <kul:documentPage
-  showDocumentInfo="true"
-  htmlFormAction="${formAction}"
+    showDocumentInfo="true"
+    htmlFormAction="${formAction}"
     documentTypeName="PERS"
-    renderMultipart="false"
+    renderMultipart="true"
     showTabButtons="true"
 >
   <kul:hiddenDocumentFields />
@@ -42,6 +46,11 @@
   <kim:personPrivacy />
   <%-- End CU Customization --%>
   <kim:personMembership />
+  <%-- CU Customization: Add the Notes/Attachments tab. --%>
+  <c:set var="readOnly" scope="request" value="false" />
+  <kul:notes/>
+  <c:set var="readOnly" scope="request" value="${!KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" />
+  <%-- End CU Customization --%>
   <kul:adHocRecipients />
   <kul:routeLog />
   <kul:superUserActions />
