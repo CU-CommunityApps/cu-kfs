@@ -11,6 +11,7 @@ public class PaymentSourceWireTransferExtendedAttribute extends PersistableBusin
     private String bankProvince;
     private String bankSWIFTCode;
     private String bankIBAN;
+    private String sortOrTransitCode;
     private String correspondentBankName;
     private String correspondentBankAddress;
     private String correspondentBankRoutingNumber;
@@ -69,6 +70,14 @@ public class PaymentSourceWireTransferExtendedAttribute extends PersistableBusin
         this.bankIBAN = bankIBAN;
     }
     
+    public String getSortOrTransitCode() {
+        return sortOrTransitCode;
+    }
+
+    public void setSortOrTransitCode(String sortOrTransitCode) {
+        this.sortOrTransitCode = sortOrTransitCode;
+    }
+
     public String getCorrespondentBankName() {
         return correspondentBankName;
     }
@@ -109,4 +118,3 @@ public class PaymentSourceWireTransferExtendedAttribute extends PersistableBusin
         this.correspondentBankSwiftCode = correspondentBankSwiftCode;
     }
 }
-

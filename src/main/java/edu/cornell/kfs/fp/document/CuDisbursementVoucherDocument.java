@@ -53,13 +53,12 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
-import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
@@ -391,7 +390,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         if (wireTransfer != null) {
             wireTransfer.setDocumentNumber(documentNumber);
-            ((DisbursementVoucherWireTransferExtendedAttribute) wireTransfer.getExtension()).setDocumentNumber(documentNumber);
+            ((PaymentSourceWireTransferExtendedAttribute) wireTransfer.getExtension()).setDocumentNumber(documentNumber);
         }
 
         if (dvNonresidentTax != null) {

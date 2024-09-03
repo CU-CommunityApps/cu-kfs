@@ -42,21 +42,6 @@
         </property>
     </bean>
 
-    <bean id="PaymentSourceWireTransferExtendedAttribute-automatedClearingHouseProfileNumber"
-          parent="PaymentSourceWireTransferExtendedAttribute-automatedClearingHouseProfileNumber-parentBean"/>
-    <bean id="PaymentSourceWireTransferExtendedAttribute-automatedClearingHouseProfileNumber-parentBean"
-          abstract="true" parent="AttributeDefinition"
-          p:name="automatedClearingHouseProfileNumber"
-          p:forceUppercase="false"
-          p:label="Recurring Profile No."
-          p:shortLabel="Prof. No"
-          p:maxLength="3"
-          p:required="false">
-        <property name="control">
-            <bean parent="TextControlDefinition" p:size="3"/>
-        </property>
-    </bean>
-
     <bean id="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress" 
           parent="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress-parentBean"/>
     <bean id="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress-parentBean"

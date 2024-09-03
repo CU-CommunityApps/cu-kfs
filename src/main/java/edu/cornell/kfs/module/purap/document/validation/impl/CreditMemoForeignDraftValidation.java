@@ -13,7 +13,6 @@ import org.kuali.kfs.sys.document.validation.event.AttributedDocumentEvent;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.MessageMap;
 
-import edu.cornell.kfs.module.purap.CUPurapPropertyConstants;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 
 public class CreditMemoForeignDraftValidation extends GenericValidation {
@@ -37,21 +36,21 @@ public class CreditMemoForeignDraftValidation extends GenericValidation {
 
         MessageMap errors = GlobalVariables.getMessageMap();
         errors.addToErrorPath(KFSPropertyConstants.DOCUMENT);
-        errors.addToErrorPath(CUPurapPropertyConstants.CM_WIRE_TRANSFER);
+        errors.addToErrorPath(KFSPropertyConstants.PAYMENT_SOURCE_WIRE_TRANSFER);
 
         /* currency type code required */
-        if (StringUtils.isBlank(((CuVendorCreditMemoDocument)document).getCmWireTransfer().getCmForeignCurrencyTypeCode())) {
-            errors.putError(CUPurapPropertyConstants.CM_FD_CURRENCY_TYPE_CODE, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_CODE);
+        if (StringUtils.isBlank(((CuVendorCreditMemoDocument)document).getWireTransfer().getForeignCurrencyTypeCode())) {
+            errors.putError(KFSPropertyConstants.FD_CURRENCY_TYPE_CODE, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_CODE);
             isValid = false;
         }
 
         /* currency type name required */
-        if (StringUtils.isBlank(((CuVendorCreditMemoDocument)document).getCmWireTransfer().getCmForeignCurrencyTypeName())) {
-            errors.putError(CUPurapPropertyConstants.CM_FD_CURRENCY_TYPE_NAME, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_NAME);
+        if (StringUtils.isBlank(((CuVendorCreditMemoDocument)document).getWireTransfer().getForeignCurrencyTypeName())) {
+            errors.putError(KFSPropertyConstants.FD_CURRENCY_TYPE_NAME, KFSKeyConstants.ERROR_PAYMENT_SOURCE_CURRENCY_TYPE_NAME);
             isValid = false;
         }
 
-        errors.removeFromErrorPath(CUPurapPropertyConstants.CM_WIRE_TRANSFER);
+        errors.removeFromErrorPath(KFSPropertyConstants.PAYMENT_SOURCE_WIRE_TRANSFER);
         errors.removeFromErrorPath(KFSPropertyConstants.DOCUMENT);
 
         return isValid;

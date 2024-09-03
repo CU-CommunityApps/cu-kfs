@@ -8,6 +8,7 @@ public class PaymentMethodExtendedAttribute extends PersistableBusinessObjectBas
     private String paymentMethodCode;
     private boolean processedUsingPdp;
     private boolean displayOnRecurringDVDocument;
+    private String additionalCreditMemoDataCode;
 
     public boolean isProcessedUsingPdp() {
         return processedUsingPdp;
@@ -31,6 +32,14 @@ public class PaymentMethodExtendedAttribute extends PersistableBusinessObjectBas
 
     public void setDisplayOnRecurringDVDocument(boolean displayOnRecurringDVDocument) {
         this.displayOnRecurringDVDocument = displayOnRecurringDVDocument;
+    }
+
+    public String getAdditionalCreditMemoDataCode() {
+        return additionalCreditMemoDataCode;
+    }
+
+    public void setAdditionalCreditMemoDataCode(String additionalCreditMemoDataCode) {
+        this.additionalCreditMemoDataCode = additionalCreditMemoDataCode;
     }
 
 }

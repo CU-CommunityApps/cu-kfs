@@ -14,6 +14,7 @@
                 <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
                 <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
                 <ref bean="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"/>
+                <ref bean="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode"/>
             </list>
         </property>
     </bean>
@@ -43,5 +44,23 @@
           p:label="Display on Recurring DV?"
           p:shortLabel="On Recurring DV?"
     />
+    
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode"
+          parent="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode-parentBean" />
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode-parentBean"
+          parent="AttributeDefinition"
+          p:label="Additional Credit Memo Data"
+          p:name="additionalCreditMemoDataCode"
+          p:required="true"
+          p:shortLabel="AddCmData"
+    >
+          <property name="control">
+              <bean parent="SelectControlDefinition"
+                    p:includeBlankRow="false"
+                    p:includeKeyInLabel="true"
+                    p:valuesFinder-ref="paymentMethodAdditionalDocumentDataValuesFinder"
+              />
+          </property>
+    </bean>
 
 </beans>

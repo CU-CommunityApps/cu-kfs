@@ -10,9 +10,9 @@ import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
-import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
+import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute;
 
 /**
  * Checks warnings and prompt conditions for dv document.
@@ -58,10 +58,10 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
 	}
 
     @Override
-    protected boolean hasWireTransferValues(final PaymentSourceWireTransfer dvWireTransfer) {
-        boolean hasValues = super.hasWireTransferValues(dvWireTransfer);
-        final DisbursementVoucherWireTransferExtendedAttribute wireExtension =
-                (DisbursementVoucherWireTransferExtendedAttribute) dvWireTransfer.getExtension();
+    protected boolean hasWireTransferValues(final PaymentSourceWireTransfer wireTransfer) {
+        boolean hasValues = super.hasWireTransferValues(wireTransfer);
+        final PaymentSourceWireTransferExtendedAttribute wireExtension =
+                (PaymentSourceWireTransferExtendedAttribute) wireTransfer.getExtension();
         hasValues |= StringUtils.isNotBlank(wireExtension.getBankStreetAddress());
         hasValues |= StringUtils.isNotBlank(wireExtension.getBankProvince());
         hasValues |= StringUtils.isNotBlank(wireExtension.getBankSWIFTCode());
@@ -76,10 +76,10 @@ public class CuDisbursementVoucherDocumentPreRules extends DisbursementVoucherDo
     }
 
     @Override
-    protected void clearWireTransferValues(final PaymentSourceWireTransfer dvWireTransfer) {
-        super.clearWireTransferValues(dvWireTransfer);
-        final DisbursementVoucherWireTransferExtendedAttribute wireExtension =
-                (DisbursementVoucherWireTransferExtendedAttribute) dvWireTransfer.getExtension();
+    protected void clearWireTransferValues(final PaymentSourceWireTransfer wireTransfer) {
+        super.clearWireTransferValues(wireTransfer);
+        final PaymentSourceWireTransferExtendedAttribute wireExtension =
+                (PaymentSourceWireTransferExtendedAttribute) wireTransfer.getExtension();
         wireExtension.setBankStreetAddress(null);
         wireExtension.setBankProvince(null);
         wireExtension.setBankSWIFTCode(null);

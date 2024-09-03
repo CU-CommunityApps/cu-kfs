@@ -21,7 +21,7 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
-<c:set var="wireTransAttributes2" value="${DataDictionary.DisbursementVoucherWireTransferExtendedAttribute.attributes}" />
+<c:set var="wireTransAttributes2" value="${DataDictionary.PaymentSourceWireTransferExtendedAttribute.attributes}" />
 
 <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
 	<tbody>
