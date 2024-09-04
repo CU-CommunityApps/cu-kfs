@@ -25,11 +25,10 @@
   
     <bean id="PaymentSourceWireTransfer-bankName" parent="PaymentSourceWireTransfer-bankName-parentBean"
         p:maxLength="55"/>
-<!-- 
-    <bean id="PaymentSourceWireTransfer-payeeAccountName" parent="PaymentSourceWireTransfer-bankRoutingNumber-parentBean">
-        <property name="maxLength" value="55"/>
-    </bean>
--->
+ 
+    <bean id="PaymentSourceWireTransfer-payeeAccountName" parent="PaymentSourceWireTransfer-payeeAccountName-parentBean"
+        p:maxLength="55"/>
+
     <bean id="PaymentSourceWireTransfer-extension-bankStreetAddress" parent="PaymentSourceWireTransfer-extension-bankStreetAddress-parentBean"/>
     <bean id="PaymentSourceWireTransfer-extension-bankStreetAddress-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress"
         p:name="extension.bankStreetAddress"/>
