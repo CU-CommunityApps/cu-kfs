@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.module.purap.PurapAuthorizationConstants.PaymentRequestEditMode;
-import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.module.purap.PaymentRequestStatuses;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.authorization.PaymentRequestDocumentPresentationController;
@@ -14,7 +13,6 @@ import org.kuali.kfs.kew.api.WorkflowDocument;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentRequestEditMode;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
@@ -42,7 +40,6 @@ public class CuPaymentRequestDocumentPresentationController extends PaymentReque
             editModes.add(CUPaymentRequestEditMode.WAIVE_WIRE_FEE_EDITABLE);
             // KFSPTS-1891
             editModes.add(KfsAuthorizationConstants.TransactionalEditMode.FRN_ENTRY);
-            editModes.add(KfsAuthorizationConstants.TransactionalEditMode.WIRE_ENTRY);
             // KFSPTS-2968 allows DM to edit additional charge amount
             editModes.add(CUPaymentRequestEditMode.ADDITONAL_CHARGE_AMOUNT_EDITABLE);
 		}

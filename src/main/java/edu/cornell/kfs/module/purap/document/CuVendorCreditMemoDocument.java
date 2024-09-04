@@ -15,11 +15,11 @@ import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySourceDetail;
+import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
-import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
@@ -29,7 +29,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
     private static CuCheckStubService cuCheckStubService;
-    protected CreditMemoWireTransfer cmWireTransfer;
+    protected PaymentSourceWireTransfer wireTransfer;
     
     public CuVendorCreditMemoDocument() {
         super();
@@ -41,15 +41,14 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     	super.prepareForSave(event);
     	
         try {
-          	cmWireTransfer.setDocumentNumber(getDocumentNumber());
+          	wireTransfer.setDocumentNumber(getDocumentNumber());
         } catch (Exception e) {
-            LOG.info("cmWireTransfer is null" );
-            cmWireTransfer = new CreditMemoWireTransfer();  
-            cmWireTransfer.setDocumentNumber(getDocumentNumber());
-       	
+            LOG.info("wireTransfer is null" );
+            wireTransfer = new PaymentSourceWireTransfer();  
+            wireTransfer.setDocumentNumber(getDocumentNumber());
         }
-    	
-    	// KFSPTS-1981
+    
+        // KFSPTS-1981
         // First, only do this if the document is in initiated status - after that, we don't want to 
         // accidentally reset the bank code
         if ( getDocumentHeader().getWorkflowDocument().isInitiated() ||  getDocumentHeader().getWorkflowDocument().isSaved() ) {
@@ -66,13 +65,13 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
                 // ensure that the name is updated properly
                 refreshReferenceObject( "bank" );
             }
-        }        
+        }
     }
     
     @Override
 	public void customizeExplicitGeneralLedgerPendingEntry( final GeneralLedgerPendingEntrySourceDetail postable, final GeneralLedgerPendingEntry explicitEntry) {
-    	super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
-    	
+        super.customizeExplicitGeneralLedgerPendingEntry(postable, explicitEntry);
+        
         // KFSPTS-1891
         // if the document is not processed using PDP, then the cash entries need to be created instead of liability
         // so, switch the document type so the offset generation uses a cash offset object code
@@ -83,7 +82,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     
     @Override
     public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
-    	   if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) return requiresAccountsPayableReviewRouting();
+        if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) return requiresAccountsPayableReviewRouting();
            // KFSPTS-1891, KFSPTS-2851
            if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER))
                return isWireOrForeignDraft();
@@ -125,17 +124,17 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
         return paymentMethodGeneralLedgerPendingEntryService;
     }
 
-	public CreditMemoWireTransfer getCmWireTransfer() {
-		if (ObjectUtils.isNull(cmWireTransfer)) {
-			cmWireTransfer = new CreditMemoWireTransfer();
-			cmWireTransfer.setDocumentNumber(this.getDocumentNumber());
-		}
-		return cmWireTransfer;
-	}
+    public PaymentSourceWireTransfer getWireTransfer() {
+        if (ObjectUtils.isNull(wireTransfer)) {
+            wireTransfer = new PaymentSourceWireTransfer();
+            wireTransfer.setDocumentNumber(this.getDocumentNumber());
+        }
+        return wireTransfer;
+    }
 
-	public void setCmWireTransfer(CreditMemoWireTransfer cmWireTransfer) {
-		this.cmWireTransfer = cmWireTransfer;
-	}
+    public void setWireTransfer(PaymentSourceWireTransfer wireTransfer) {
+        this.wireTransfer = wireTransfer;
+    }
 
     protected static CuCheckStubService getCuCheckStubService() {
         if (cuCheckStubService == null) {

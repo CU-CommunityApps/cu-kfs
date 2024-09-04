@@ -42,7 +42,6 @@ public class CuFPConstants {
     public static final String OPEN = "OPEN";
     public static final String INTERDEPARTMENTAL_PAYMENT = "interdepartmentalPayment";
     public static final String DISPLAY_ON_DV_DOCUMENT = "displayOnDisbursementVoucherDocument";
-    public static final String DISPLAY_ON_VENDOR_DOCUMENT = "displayOnVendorDocument";
 
     public static final String CURRENCY_CODE_U = "U";
     public static final String CURRENCY_CODE_C = "C";

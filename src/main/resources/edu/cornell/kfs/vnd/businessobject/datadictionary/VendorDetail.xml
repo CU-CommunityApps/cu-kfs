@@ -32,7 +32,6 @@
 				<ref bean="VendorDetail-extension-insuranceNotes"/> 
 				<ref bean="VendorDetail-extension-merchantNotes"/> 
 				<ref bean="VendorDetail-extension-einvoiceVendorIndicator" />
-				<ref bean="VendorDetail-extension-defaultB2BPaymentMethodCode" />
 				<ref bean="VendorDetail-extension-procurementMethods" />
 				<ref bean="VendorDetail-extension-procurementMethodsArray" />
 				<ref bean="VendorDetail-extension-procurementMethodsForDisplay" />
@@ -52,14 +51,8 @@
 		                <list>
 		                    <bean parent="PrimitiveAttributeDefinition"
 		                          p:sourceName="vendorHeaderGeneratedIdentifier" p:targetName="vendorHeaderGeneratedIdentifier"/>
-		                <bean parent="PrimitiveAttributeDefinition"
+		                    <bean parent="PrimitiveAttributeDefinition"
 		                          p:sourceName="vendorDetailAssignedIdentifier" p:targetName="vendorDetailAssignedIdentifier"/>
-		                </list>
-		            </property>
-		            <property name="supportAttributes">
-		                <list>
-		                    <bean parent="SupportAttributeDefinition"
-		                          p:sourceName="extension.defaultB2BPaymentMethodCode" p:targetName="defaultB2BPaymentMethodCode"/>
 		                </list>
 		            </property>
 		        </bean>
@@ -181,14 +174,6 @@
 		<property name="name" value="extension.einvoiceVendorIndicator" />
 	</bean>
 	
-    <bean id="VendorDetail-extension-defaultB2BPaymentMethodCode"
-        parent="VendorDetail-extension-defaultB2BPaymentMethodCode-parentBean" />
-
-    <bean id="VendorDetail-extension-defaultB2BPaymentMethodCode-parentBean"
-        abstract="true" parent="VendorDetailExtension-defaultB2BPaymentMethodCode">
-        <property name="name" value="extension.defaultB2BPaymentMethodCode" />
-    </bean>
-
     <bean id="VendorDetail-extension-procurementMethods" parent="VendorDetail-extension-procurementMethods-parentBean" />
     <bean id="VendorDetail-extension-procurementMethods-parentBean" abstract="true" parent="VendorDetailExtension-procurementMethods">
         <property name="name" value="extension.procurementMethods" />
@@ -315,18 +300,6 @@
                       </list>
                   </property>
               </bean>
-              <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="inquiryFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
-                  <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="vendorFirstLastNameIndicator" />
-                  </property>
-                  <property name="insertAfter">
-                      <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.defaultB2BPaymentMethodCode" />
-                      </list>
-                  </property>
-              </bean>
            </list>
       </property>
   </bean>
@@ -410,7 +383,11 @@
 	</bean>
 
 	<!-- Business Object Lookup Definition -->
-   <bean parent="DataDictionaryBeanOverride">
+    
+    <!-- KualiCo release 2024-04-19 of FINP-9046 replaced Cornell's similar customization but baseocde
+         did not include the "Default Payment Method" drop down without inquiry on Vendor Lookup. 
+         Adding that back in here.-->
+    <bean parent="DataDictionaryBeanOverride">
        <property name="beanName" value="VendorDetail-lookupDefinition" />
        <property name="fieldOverrides">
            <list>
@@ -422,7 +399,7 @@
                    </property>
                    <property name="insertAfter">
                        <list>
-                           <bean parent="FieldDefinition" p:attributeName="extension.defaultB2BPaymentMethodCode" />
+                           <bean parent="FieldDefinition" p:noLookup="true" p:attributeName="defaultPaymentMethodCode" />
                        </list>
                    </property>
                </bean>

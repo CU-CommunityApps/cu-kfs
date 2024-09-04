@@ -42,4 +42,6 @@ public class CUVendorPropertyConstants {
     public static final String VENDOR_ADDRESS_STATE_CODE = "vendorAddresses.vendorStateCode";
     
     public static final String VENDOR_DETAIL_ACTIVE_INDICATOR = "activeIndicator";
+    
+    public static final String VENDOR_DEFAULT_PAYMENT_METHOD = "defaultPaymentMethod";
 }

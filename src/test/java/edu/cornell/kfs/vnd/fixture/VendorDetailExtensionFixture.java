@@ -5,20 +5,17 @@ import edu.cornell.kfs.vnd.businessobject.options.EinvoiceIndicatorValuesFinder;
 
 public enum VendorDetailExtensionFixture {
 	
-	EXTENSION(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.SFTP.code, "P");
+	EXTENSION(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.SFTP.code);
 	
 	public final String einvoice;
-	public final String defaultB2BPaymentMethodCode;
 
-	private VendorDetailExtensionFixture(String einvoice, String defaultB2BPaymentMethodCode) {
+	private VendorDetailExtensionFixture(String einvoice) {
 		this.einvoice = einvoice;
-		this.defaultB2BPaymentMethodCode = defaultB2BPaymentMethodCode;
 	}
 	
 	public VendorDetailExtension createVendorDetailExtension() {
 		VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
 		vendorDetailExtension.setEinvoiceVendorIndicator(einvoice);
-		vendorDetailExtension.setDefaultB2BPaymentMethodCode(defaultB2BPaymentMethodCode);
 		return vendorDetailExtension;
 	}
 }

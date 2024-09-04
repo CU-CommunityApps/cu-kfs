@@ -54,11 +54,10 @@
                    <property name="propertyName" value="maintainableItems" />
                    <property name="propertyNameForElementCompare" value="name" />
                    <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="displayOnVendorCreditMemo" />
+                           <bean parent="MaintainableFieldDefinition" p:name="displayOnVendor" />
                    </property>
                    <property name="insertAfter">
-                       <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="extension.displayOnVendorDocument" />
+                        <list>
                           <bean parent="MaintainableFieldDefinition" p:name="extension.displayOnRecurringDVDocument" />
                        </list>
                    </property>

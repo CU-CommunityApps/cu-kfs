@@ -5,8 +5,6 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-  <import resource="classpath:edu/cornell/kfs/fp/cu-fp-lookup-beans.xml"/>
   
   <bean id="PaymentRequestDocument" parent="PaymentRequestDocument-parentBean">
     <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"/>
@@ -24,8 +22,10 @@
     <bean id="PaymentRequestDocument-workflowAttributes" parent="PaymentRequestDocument-workflowAttributes-parentBean">
     	<property name="routingTypeDefinitions">
     		<map merge="true">
-    			<!-- KFSPTS-1891 -->
-    			<entry key="PaymentMethodReviewer" value-ref="RoutingType-PaymentRequestDocument-PaymentMethod"/>
+    			<!-- KFSPTS-1891 cu existing mod-->
+    			<entry key="PaymentMethodReviewer" value-ref="RoutingType-PaymentRequestDocument-PaymentMethod"/> 
+                <!-- NEW with FINP-9047 in basecode: nkk4 need to reconcile with our existing mod -->
+                <!--<entry key="PaymentMethod" value-ref="PaymentRequest-RoutingType-PaymentMethod" /> -->
     		</map>
     	</property>
     	<property name="searchingTypeDefinitions">
@@ -70,5 +70,27 @@
     		</list>
     	</property>
 	</bean>
-   
+    <!-- NEW with FINP-9047 in basecode: nkk4 need to reconcile with our existing mod routing above-->
+<!-- <bean id="PaymentRequest-RoutingType-PaymentMethod"
+          class="org.kuali.kfs.krad.datadictionary.RoutingTypeDefinition">
+        <property name="routingAttributes">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.RoutingAttribute"
+                      p:qualificationAttributeName="paymentMethodCode"/>
+            </list>
+        </property>
+        <property name="documentValuePathGroups">
+            <list>
+                <bean class="org.kuali.kfs.krad.datadictionary.DocumentValuePathGroup">
+                    <property name="documentValues">
+                        <list>
+                            <value>paymentMethodCode</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+-->
+
    </beans>

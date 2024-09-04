@@ -648,8 +648,8 @@ public class KualiDocumentActionBase extends KualiAction {
 
         // check if warning is configured in which case we will prompt, or if not business rules will thrown an error
         final boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
-            KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.ALL_COMPONENT,
-            KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_PATTERNS_WARNING_IND);
+            KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.DOCUMENT_COMPONENT,
+            KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_WARNING_IND);
 
         // determine if the question has been asked yet
         final Map<String, String> ticketContext = new HashMap<>();
@@ -1881,7 +1881,6 @@ public class KualiDocumentActionBase extends KualiAction {
         }
         return personService;
     }
-    
 
     //CU customization: Added blacklist attachment processing
     public BlackListAttachmentService getBlackListAttachmentService() {
@@ -2189,8 +2188,8 @@ public class KualiDocumentActionBase extends KualiAction {
 
             // check for sensitive data in note
             final boolean warnForSensitiveData = CoreFrameworkServiceLocator.getParameterService().getParameterValueAsBoolean(
-                    KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.ALL_COMPONENT,
-                    KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_PATTERNS_WARNING_IND);
+                    KFSConstants.CoreModuleNamespaces.KFS, KfsParameterConstants.DOCUMENT_COMPONENT,
+                    KRADConstants.SystemGroupParameterNames.SENSITIVE_DATA_WARNING_IND);
             if (warnForSensitiveData) {
                 final String context = KRADConstants.QUESTION_REASON_ATTRIBUTE_NAME + "=" + reason;
                 final ActionForward forward = checkAndWarnAboutSensitiveData(mapping, form, request, response,

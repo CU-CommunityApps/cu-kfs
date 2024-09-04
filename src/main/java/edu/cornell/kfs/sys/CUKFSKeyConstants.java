@@ -119,7 +119,6 @@ public class CUKFSKeyConstants {
     public static final String ERROR_DUPLICATE_AWARD_ORGANIZATION = "error.duplicate.awardOrganization";
 
     // KFSUPGRADE-779
-    public static final String QUESTION_CLEAR_UNNEEDED_WIRW_TAB = "question.preq.clearUnneededTab";
     public static final String QUESTION_CLEAR_UNNEEDED_CM_WIRW_TAB = "question.cm.clearUnneededTab";
 
     public static final String ACCOUNT_REVERSION_TRICKLE_DOWN_INACTIVATION = "note.trickleDownInactivation.inactivatedAccountReversions";
@@ -137,9 +136,6 @@ public class CUKFSKeyConstants {
     // KFSPTS-4337
     public static final String QUESTION_ACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.account.confirm.offCampusIndicator";
     public static final String QUESTION_A21SUBACCOUNT_OFF_CAMPUS_INDICATOR = "question.coa.a21subaccount.confirm.offCampusIndicator";
-
-	// KFSPTS-4366
-    public static final String QUESTION_CLEAR_UNNEEDED_WIRE_TAB = "question.dv.clearUnneededWireTab";
 
     // KFSPTS-4388
     public static final String ERROR_ZERO_OR_NEGATIVE_ACCOUNTING_TOTAL = "error.document.accountingtotal.zeroOrNegative";
