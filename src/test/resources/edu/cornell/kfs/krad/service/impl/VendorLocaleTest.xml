@@ -446,7 +446,6 @@
   <objectId>f4e9f0d0-d6ed-4c01-b8b1-671d0f092000</objectId>
   <lastUpdatedTimestamp>2009-07-01 04:00:00.0</lastUpdatedTimestamp>
   <newCollectionRecord>false</newCollectionRecord>
-  <defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
     <versionNumber>5</versionNumber>
     <objectId>12cf4d99-9673-4ba3-85c3-1a778f368000</objectId>
@@ -473,7 +472,7 @@
     </excessLiabilityUmbrellaAmount>
     <excessLiabilityUmbExpiration>2017-12-31</excessLiabilityUmbExpiration>
     <vendorCreditCardMerchants/>
-  </extension>
+  </extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
   <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
   <vendorParentIndicator>true</vendorParentIndicator>
@@ -606,7 +605,6 @@
   <objectId>f4e9f0d0-d6ed-4c01-b8b1-671d0f092000</objectId>
   <lastUpdatedTimestamp>2009-07-01 04:00:00.0</lastUpdatedTimestamp>
   <newCollectionRecord>false</newCollectionRecord>
-  <defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   <extension class="edu.cornell.kfs.vnd.businessobject.VendorDetailExtension">
     <versionNumber>5</versionNumber>
     <objectId>12cf4d99-9673-4ba3-85c3-1a778f368000</objectId>
@@ -633,7 +631,7 @@
     </excessLiabilityUmbrellaAmount>
     <excessLiabilityUmbExpiration>2017-12-31</excessLiabilityUmbExpiration>
     <vendorCreditCardMerchants/>
-  </extension>
+  </extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
   <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
   <vendorParentIndicator>true</vendorParentIndicator>

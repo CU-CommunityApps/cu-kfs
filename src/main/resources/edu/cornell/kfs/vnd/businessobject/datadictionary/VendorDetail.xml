@@ -384,7 +384,7 @@
 
 	<!-- Business Object Lookup Definition -->
     
-    <!-- KualiCo release 2024-04-19 of FINP-9046 replaced Cornell's similar customization but baseocde
+    <!-- KualiCo release 2024-04-19 of FINP-9046 replaced Cornell's similar customization but base code
          did not include the "Default Payment Method" drop down without inquiry on Vendor Lookup. 
          Adding that back in here.-->
     <bean parent="DataDictionaryBeanOverride">

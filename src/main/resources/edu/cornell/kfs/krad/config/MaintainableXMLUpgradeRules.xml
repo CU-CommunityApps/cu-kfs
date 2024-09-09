@@ -1424,6 +1424,13 @@
         </pattern>
         <!-- KDO-934 end -->
         <pattern>
+            <class>vendorDetail</class>
+            <pattern>
+                <match>extension</match>
+                <replacement>(MOVE_MARKED_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>org.kuali.kfs.vnd.businessobject.VendorDetail</class>
             <pattern>
                 <match>extension</match>
