@@ -183,19 +183,15 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
 
     /*
-     * The KualiCo superclass declares this method as private, so we have to define our own instead of overriding.
+     * The KualiCo superclass declares this method as private, so we have to duplicate it here so we can use it in this class.
      */
     private boolean shouldUseIso20022Format() {
-        if (isIso20022FormatParameterEnabled(CUPdpParameterConstants.CU_USE_ISO20022_FORMAT_IND)) {
-            if (isIso20022FormatParameterEnabled(PdpConstants.ISO20022_FORMAT_IND)) {
-                return true;
-            } else {
-                throw new IllegalStateException("ISO20022_FORMAT_IND cannot be disabled "
-                        + "if CU_USE_ISO20022_FORMAT_IND is enabled");
-            }
-        } else {
-            return false;
-        }
+        return parameterService.getParameterValueAsBoolean(
+                KFSConstants.CoreModuleNamespaces.PDP,
+                KFSConstants.Components.ISO_FORMAT,
+                PdpConstants.ISO20022_FORMAT_IND,
+                Boolean.FALSE
+        );
     }
 
     private boolean isIso20022FormatParameterEnabled(final String parameterName) {
