@@ -51,25 +51,33 @@ import com.rsmart.kuali.kfs.cr.document.service.GlTransactionService;
 
 import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.CUKFSConstants;
+import edu.cornell.kfs.sys.util.CreateTestDirectories;
 
 @Execution(ExecutionMode.SAME_THREAD)
+@CreateTestDirectories(
+        baseDirectory = CheckReconciliationImportStepTest.TEST_CR_BATCH_DIRECTORY,
+        subDirectories = {
+                CheckReconciliationImportStepTest.TEST_CR_REPORTS_DIRECTORY,
+                CheckReconciliationImportStepTest.TEST_CR_ARCHIVE_DIRECTORY,
+                CheckReconciliationImportStepTest.TEST_CR_UPLOAD_DIRECTORY
+        }
+)
 public class CheckReconciliationImportStepTest {
 
-    private static final String TEST_CR_RESOURCES_DIRECTORY =
+    static final String TEST_CR_RESOURCES_DIRECTORY =
             "classpath:com/rsmart/kuali/kfs/cr/batch/service/fixture/";
-    private static final String TEST_CR_BATCH_DIRECTORY = "test/cr_import/";
-    private static final String TEST_BASE_REPORTS_DIRECTORY = TEST_CR_BATCH_DIRECTORY + CUKFSConstants.REPORTS_DIR;
-    private static final String TEST_BASE_STAGING_DIRECTORY = TEST_CR_BATCH_DIRECTORY + CUKFSConstants.STAGING_DIR;
-    private static final String TEST_CR_REPORTS_DIRECTORY = TEST_BASE_REPORTS_DIRECTORY + "/cr/";
-    private static final String TEST_CR_ARCHIVE_DIRECTORY = TEST_BASE_STAGING_DIRECTORY + "/cr/archive/";
-    private static final String TEST_CR_UPLOAD_DIRECTORY = TEST_BASE_STAGING_DIRECTORY + "/cr/upload/";
+    static final String TEST_CR_BATCH_DIRECTORY = "test/cr_import/";
+    static final String TEST_BASE_REPORTS_DIRECTORY = TEST_CR_BATCH_DIRECTORY + CUKFSConstants.REPORTS_DIR;
+    static final String TEST_BASE_STAGING_DIRECTORY = TEST_CR_BATCH_DIRECTORY + CUKFSConstants.STAGING_DIR;
+    static final String TEST_CR_REPORTS_DIRECTORY = TEST_BASE_REPORTS_DIRECTORY + "/cr/";
+    static final String TEST_CR_ARCHIVE_DIRECTORY = TEST_BASE_STAGING_DIRECTORY + "/cr/archive/";
+    static final String TEST_CR_UPLOAD_DIRECTORY = TEST_BASE_STAGING_DIRECTORY + "/cr/upload/";
 
-    private static final String MELLON_SUCCESS_FILE = "mellon_check_success.txt";
-    private static final String MELLON_BAD_FILE = "mellon_check_bad.txt";
     private static final String JPMC_SUCCESS_FILE = "jpmc_check_success.txt";
+    private static final String JPMC_SUCCESS_FILE2 = "jpmc_check_success2.txt";
     private static final String JPMC_BAD_FILE = "jpmc_check_bad.txt";
+    private static final String JPMC_BAD_FILE2 = "jpmc_check_bad2.txt";
 
-    private static final String MELLON_FILE_PREFIX = "mellon_";
     private static final String JPMC_FILE_PREFIX = "jpmc_";
 
     private enum CrImportResult {
@@ -87,14 +95,12 @@ public class CheckReconciliationImportStepTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        createTestBatchDirectories();
         parameters = createInitialTestParameterMappings();
         currentCheckReconRows = createInitialCheckReconciliationMappings();
         updatedCheckReconRows = new HashMap<>();
         banks = createBanks();
         prefixMappings = new ArrayList<>();
-        setPrefixMappings(Map.entry(MELLON_FILE_PREFIX, KFSConstants.EMPTY_STRING),
-                Map.entry(JPMC_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX));
+        setPrefixMappings(Map.entry(JPMC_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX));
         
         crImportStep = new CheckReconciliationImportStep();
         crImportStep.setParameterService(createMockParameterService());
@@ -112,20 +118,6 @@ public class CheckReconciliationImportStepTest {
         updatedCheckReconRows = null;
         currentCheckReconRows = null;
         parameters = null;
-        deleteTestBatchDirectories();
-    }
-
-    private void createTestBatchDirectories() throws IOException {
-        String[] directoryPaths = {
-            TEST_CR_BATCH_DIRECTORY,
-            TEST_CR_REPORTS_DIRECTORY,
-            TEST_CR_ARCHIVE_DIRECTORY,
-            TEST_CR_UPLOAD_DIRECTORY
-        };
-        for (String directoryPath : directoryPaths) {
-            File testBatchDirectory = new File(directoryPath);
-            FileUtils.forceMkdir(testBatchDirectory);
-        }
     }
 
     private void copyFilesToCrUploadDirectory(List<String> fileNames) throws IOException {
@@ -138,46 +130,8 @@ public class CheckReconciliationImportStepTest {
         }
     }
 
-    private void deleteTestBatchDirectories() throws IOException {
-        File testBatchDirectory = new File(TEST_CR_BATCH_DIRECTORY);
-        if (testBatchDirectory.exists() && testBatchDirectory.isDirectory()) {
-            FileUtils.forceDelete(testBatchDirectory.getAbsoluteFile());
-        }
-    }
-
     private Map<String, String> createInitialTestParameterMappings() {
-        Map<String, String> parms = new HashMap<>();
-
-        parms.put(CRConstants.ACCOUNT_NUM, TestParamValues.ACCOUNT_111_2345);
-        parms.put(CRConstants.ACCOUNT_NUM_COL, TestParamValues.UNUSED_COL_0);
-        parms.put(CRConstants.ACCOUNT_NUM_HEADER_IND, KRADConstants.NO_INDICATOR_VALUE);
-        parms.put(CRConstants.AMOUNT_DECIMAL_IND, KRADConstants.YES_INDICATOR_VALUE);
-        parms.put(CRConstants.AMOUNT_COL, TestParamValues.MELLON_CHK_AMT_COL);
-        parms.put(CRConstants.CHECK_DATE_COL, TestParamValues.MELLON_CHK_DT_COL);
-        parms.put(CRConstants.CHECK_DATE_FORMAT, TestParamValues.MELLON_DATE_FORMAT);
-        parms.put(CRConstants.CHECK_NUM_COL, TestParamValues.MELLON_CHK_NB_COL);
-        parms.put(CRConstants.CLEARING_ACCOUNT, TestParamValues.CLEARING_ACCOUNT_G987654);
-        parms.put(CRConstants.CLEARING_COA, TestParamValues.CLEARING_CHART_IT);
-        parms.put(CRConstants.CLEARING_OBJECT_CODE, TestParamValues.CLEARING_OBJECT_5555);
-        parms.put(CRConstants.CHECK_FILE_COLUMNS, TestParamValues.MELLON_COL_LENGTHS);
-        parms.put(CRConstants.CHECK_FILE_DELIMETER, KFSConstants.COMMA);
-        parms.put(CRConstants.CHECK_FILE_FOOTER_COLUMNS, TestParamValues.NOT_APPLICABLE);
-        parms.put(CRConstants.CHECK_FILE_FOOTER, KRADConstants.NO_INDICATOR_VALUE);
-        parms.put(CRConstants.CHECK_FILE_HEADER_COLUMNS, TestParamValues.MELLON_HEADER_COL_LENGTHS);
-        parms.put(CRConstants.CHECK_FILE_HEADER, KRADConstants.YES_INDICATOR_VALUE);
-        parms.put(CRConstants.CHECK_FILE_TYPE, CRConstants.FIXED);
-        parms.put(CRConstants.ISSUE_DATE_COL, TestParamValues.MELLON_ISSD_DT_COL);
-        parms.put(CRConstants.BNK_CD_NOT_FOUND, CrTestConstants.MELLON_BANK_CODE);
-        parms.put(CRConstants.PAYEE_ID_COL, TestParamValues.MELLON_PAYEE_ID_COL);
-        parms.put(CRConstants.PAYEE_NAME_COL, TestParamValues.MELLON_PAYEE_NAME_COL);
-        parms.put(CRConstants.SRC_NOT_FOUND, TestParamValues.SOURCE_FOR_NOT_FOUND_B);
-        parms.put(CRConstants.CLRD_STATUS, TestParamValues.MELLON_CLRD_CODES);
-        parms.put(CRConstants.CNCL_STATUS, TestParamValues.MELLON_CNCL_CODES);
-        parms.put(CRConstants.STATUS_COL, TestParamValues.MELLON_STATUS_COL);
-        parms.put(CRConstants.ISSD_STATUS, TestParamValues.MELLON_ISSD_CODES);
-        parms.put(CRConstants.STAL_STATUS, TestParamValues.NOT_APPLICABLE);
-        parms.put(CRConstants.STOP_STATUS, TestParamValues.MELLON_STOP_CODES);
-        parms.put(CRConstants.VOID_STATUS, TestParamValues.MELLON_VOID_CODES);
+        final Map<String, String> parms = new HashMap<>();
 
         parms.put(createJpmcParmName(CRConstants.ACCOUNT_NUM), TestParamValues.ACCOUNT_888_7777);
         parms.put(createJpmcParmName(CRConstants.ACCOUNT_NUM_COL), TestParamValues.UNUSED_COL_0);
@@ -265,13 +219,13 @@ public class CheckReconciliationImportStepTest {
 
     private Map<String, CheckReconciliation> createInitialCheckReconciliationMappings() {
         Stream<CheckReconciliationFixture> fixtures = Stream.of(
-                CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607,
-                CheckReconciliationFixture.CHECK_50012234_DISB_ISSD_22222,
-                CheckReconciliationFixture.CHECK_50012237_DISB_VOID_12500,
-                CheckReconciliationFixture.CHECK_15566_NDWR_ISSD_76500,
-                CheckReconciliationFixture.CHECK_15567_NDWR_ISSD_1995,
-                CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
-                CheckReconciliationFixture.CHECK_15569_NDWR_VOID_18875
+                CheckReconciliationFixture.CHECK_50012233_JPCD_ISSD_5607,
+                CheckReconciliationFixture.CHECK_50012234_JPCD_ISSD_22222,
+                CheckReconciliationFixture.CHECK_50012237_JPCD_VOID_12500,
+                CheckReconciliationFixture.CHECK_15566_JPCD_ISSD_76500,
+                CheckReconciliationFixture.CHECK_15567_JPCD_ISSD_1995,
+                CheckReconciliationFixture.CHECK_15568_JPCD_ISSD_2202455,
+                CheckReconciliationFixture.CHECK_15569_JPCD_VOID_18875
         );
         return fixtures.map(CheckReconciliationFixture::toCheckReconciliationUsingCurrentStatus)
                 .collect(Collectors.toMap(
@@ -296,7 +250,6 @@ public class CheckReconciliationImportStepTest {
 
     private List<Bank> createBanks() {
         return List.of(
-                createBank(CrTestConstants.MELLON_BANK_CODE, TestParamValues.ACCOUNT_111_2345),
                 createBank(CrTestConstants.JPMC_BANK_CODE, TestParamValues.ACCOUNT_888_7777));
     }
 
@@ -357,25 +310,25 @@ public class CheckReconciliationImportStepTest {
 
     static Stream<Arguments> successfulCheckReconImports() {
         return Stream.of(
-                Arguments.of(files(MELLON_SUCCESS_FILE), List.of(
-                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607,
-                        CheckReconciliationFixture.CHECK_50012234_DISB_ISSD_22222,
-                        CheckReconciliationFixture.CHECK_55555555_DISB_ISSD_22222
-                )),
                 Arguments.of(files(JPMC_SUCCESS_FILE), List.of(
-                        CheckReconciliationFixture.CHECK_15566_NDWR_ISSD_76500,
-                        CheckReconciliationFixture.CHECK_15567_NDWR_ISSD_1995,
-                        CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
-                        CheckReconciliationFixture.CHECK_88888_NDWR_ISSD_1995
+                        CheckReconciliationFixture.CHECK_15566_JPCD_ISSD_76500,
+                        CheckReconciliationFixture.CHECK_15567_JPCD_ISSD_1995,
+                        CheckReconciliationFixture.CHECK_15568_JPCD_ISSD_2202455,
+                        CheckReconciliationFixture.CHECK_88888_JPCD_ISSD_1995
                 )),
-                Arguments.of(files(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE), List.of(
-                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607,
-                        CheckReconciliationFixture.CHECK_50012234_DISB_ISSD_22222,
-                        CheckReconciliationFixture.CHECK_55555555_DISB_ISSD_22222,
-                        CheckReconciliationFixture.CHECK_15566_NDWR_ISSD_76500,
-                        CheckReconciliationFixture.CHECK_15567_NDWR_ISSD_1995,
-                        CheckReconciliationFixture.CHECK_15568_NDWR_ISSD_2202455,
-                        CheckReconciliationFixture.CHECK_88888_NDWR_ISSD_1995
+                Arguments.of(files(JPMC_SUCCESS_FILE2), List.of(
+                        CheckReconciliationFixture.CHECK_50012233_JPCD_ISSD_5607,
+                        CheckReconciliationFixture.CHECK_50012234_JPCD_ISSD_22222,
+                        CheckReconciliationFixture.CHECK_55555555_JPCD_ISSD_22222
+                )),
+                Arguments.of(files(JPMC_SUCCESS_FILE, JPMC_SUCCESS_FILE2), List.of(
+                        CheckReconciliationFixture.CHECK_15566_JPCD_ISSD_76500,
+                        CheckReconciliationFixture.CHECK_15567_JPCD_ISSD_1995,
+                        CheckReconciliationFixture.CHECK_15568_JPCD_ISSD_2202455,
+                        CheckReconciliationFixture.CHECK_88888_JPCD_ISSD_1995,
+                        CheckReconciliationFixture.CHECK_50012233_JPCD_ISSD_5607,
+                        CheckReconciliationFixture.CHECK_50012234_JPCD_ISSD_22222,
+                        CheckReconciliationFixture.CHECK_55555555_JPCD_ISSD_22222
                 ))
         );
     }
@@ -395,13 +348,11 @@ public class CheckReconciliationImportStepTest {
 
     static Stream<Arguments> invalidDataImports() {
         return Stream.of(
-                Arguments.of(files(MELLON_BAD_FILE), List.of(
-                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607
-                )),
                 Arguments.of(files(JPMC_BAD_FILE), List.of()),
-                Arguments.of(files(MELLON_BAD_FILE, JPMC_BAD_FILE), List.of(
-                        CheckReconciliationFixture.CHECK_50012233_DISB_ISSD_5607
-                ))
+                Arguments.of(files(JPMC_BAD_FILE2), List.of(
+                        CheckReconciliationFixture.CHECK_50012233_JPCD_ISSD_5607
+                )),
+                Arguments.of(files(JPMC_BAD_FILE, JPMC_BAD_FILE2), List.of())
         );
     }
 
@@ -413,45 +364,27 @@ public class CheckReconciliationImportStepTest {
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, expectedCheckReconUpdates);
     }
 
-    static Stream<Arguments> checkReconImportsWithMismatchedPrefixes() {
-        return Stream.of(
-                files(MELLON_SUCCESS_FILE),
-                files(JPMC_SUCCESS_FILE),
-                files(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE)
-        ).map(Arguments::of);
-    }
-
-    @ParameterizedTest
-    @MethodSource("checkReconImportsWithMismatchedPrefixes")
-    void testExecutionFailsWhenParamPrefixesAreMismatched(List<String> testFileNames) throws Exception {
-        setPrefixMappings(Map.entry(MELLON_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX),
-                Map.entry(JPMC_FILE_PREFIX, KFSConstants.EMPTY_STRING));
-        copyFilesToCrUploadDirectory(testFileNames);
-        assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, List.of());
-    }
-
     static Stream<Arguments> checkReconImportsWithInvalidParameterPrefixes() {
-        List<String> mellonFile = files(MELLON_SUCCESS_FILE);
         List<String> jpmcFile = files(JPMC_SUCCESS_FILE);
-        List<String> mellonAndJpmcFiles = files(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE);
+        List<String> jpmcFile2 = files(JPMC_SUCCESS_FILE2);
+        List<String> bothJpmcFiles = files(JPMC_SUCCESS_FILE, JPMC_SUCCESS_FILE2);
         return Stream.of(
-                Arguments.of("a", mellonFile),
                 Arguments.of("a", jpmcFile),
-                Arguments.of("a", mellonAndJpmcFiles),
-                Arguments.of("Dummy", mellonFile),
+                Arguments.of("a", jpmcFile2),
+                Arguments.of("a", bothJpmcFiles),
                 Arguments.of("Dummy", jpmcFile),
-                Arguments.of("Dummy", mellonAndJpmcFiles),
-                Arguments.of("BANK1_", mellonFile),
+                Arguments.of("Dummy", jpmcFile2),
+                Arguments.of("Dummy", bothJpmcFiles),
                 Arguments.of("BANK1_", jpmcFile),
-                Arguments.of("BANK1_", mellonAndJpmcFiles)
+                Arguments.of("BANK1_", jpmcFile2),
+                Arguments.of("BANK1_", bothJpmcFiles)
         );
     }
 
     @ParameterizedTest
     @MethodSource("checkReconImportsWithInvalidParameterPrefixes")
     void testExecutionFailsWhenParamPrefixIsInvalid(String paramPrefix, List<String> testFileNames) throws Exception {
-        setPrefixMappings(Map.entry(MELLON_FILE_PREFIX, paramPrefix),
-                Map.entry(JPMC_FILE_PREFIX, paramPrefix));
+        setPrefixMappings(Map.entry(JPMC_FILE_PREFIX, paramPrefix));
         copyFilesToCrUploadDirectory(testFileNames);
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.EXCEPTION, List.of());
     }
@@ -459,10 +392,7 @@ public class CheckReconciliationImportStepTest {
     static Stream<Arguments> unmatchableFilePrefixes() {
         return Stream.of(
                 List.of(),
-                List.of(Map.entry("bny_", KFSConstants.EMPTY_STRING)),
-                List.of(Map.entry("chase_", CrTestConstants.JPMC_PARAM_PREFIX)),
-                List.of(Map.entry("bny_", KFSConstants.EMPTY_STRING),
-                        Map.entry("chase_", CrTestConstants.JPMC_PARAM_PREFIX))
+                List.of(Map.entry("chase_", CrTestConstants.JPMC_PARAM_PREFIX))
         ).map(Arguments::of);
     }
 
@@ -470,23 +400,15 @@ public class CheckReconciliationImportStepTest {
     @MethodSource("unmatchableFilePrefixes")
     void testFilesAreIgnoredWhenNoFilePrefixMatchExists(List<Map.Entry<String, String>> mappings) throws Exception {
         setPrefixMappings(mappings);
-        copyFilesToCrUploadDirectory(List.of(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE));
+        copyFilesToCrUploadDirectory(List.of(JPMC_SUCCESS_FILE, JPMC_SUCCESS_FILE2));
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.FAILURE, List.of());
     }
 
     static Stream<Arguments> conflictingFilePrefixes() {
         return Stream.of(
                 List.of(
-                        Map.entry(MELLON_FILE_PREFIX, KFSConstants.EMPTY_STRING),
-                        Map.entry(MELLON_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX)
-                ),
-                List.of(
                         Map.entry(JPMC_FILE_PREFIX, KFSConstants.EMPTY_STRING),
                         Map.entry(JPMC_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX)
-                ),
-                List.of(
-                        Map.entry(MELLON_FILE_PREFIX + "bny_", KFSConstants.EMPTY_STRING),
-                        Map.entry(MELLON_FILE_PREFIX, CrTestConstants.JPMC_PARAM_PREFIX)
                 ),
                 List.of(
                         Map.entry(JPMC_FILE_PREFIX, KFSConstants.EMPTY_STRING),
@@ -499,7 +421,7 @@ public class CheckReconciliationImportStepTest {
     @MethodSource("conflictingFilePrefixes")
     void testCannotHaveDuplicateFilePrefixes(List<Map.Entry<String, String>> mappings) throws Exception {
         setPrefixMappings(mappings);
-        copyFilesToCrUploadDirectory(List.of(MELLON_SUCCESS_FILE, JPMC_SUCCESS_FILE));
+        copyFilesToCrUploadDirectory(List.of(JPMC_SUCCESS_FILE, JPMC_SUCCESS_FILE2));
         assertCheckReconciliationImportHasExpectedResult(CrImportResult.EXCEPTION, List.of());
     }
 
