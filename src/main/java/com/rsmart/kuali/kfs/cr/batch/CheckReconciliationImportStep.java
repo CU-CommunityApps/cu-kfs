@@ -82,7 +82,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
     private static final Logger LOG = LogManager.getLogger();
 
     private static final Pattern ALL_ZEROS_PATTERN = Pattern.compile("^0+$");
-    private static final String DATE_000000 = "000000";
     private static final int YEAR_2099 = 2099;
     private static final int MONTH_12 = 12;
     private static final int DAY_31 = 31;
@@ -908,13 +907,9 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
     }
     
     private Function<String, Date> getDateParser() {
-        String dateFormatString = getCrImportParameterValueAsString(CRConstants.CHECK_DATE_FORMAT);
-        if (StringUtils.equals(dateFormatString, CRConstants.LEGACY_DATE_FORMAT_yyMMdd)) {
-            return this::getDateFromStringWithTwoDigitYear;
-        } else {
-            final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatString, Locale.US);
-            return dateString -> getDateFromString(dateString, dateFormatter);
-        }
+        final String dateFormatString = getCrImportParameterValueAsString(CRConstants.CHECK_DATE_FORMAT);
+        final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormatString, Locale.US);
+        return dateString -> getDateFromString(dateString, dateFormatter);
     }
 
     private Date getDateFromString(String dateString, DateTimeFormatter dateFormatter) {
@@ -925,28 +920,6 @@ public class CheckReconciliationImportStep extends CuAbstractStep {
             Instant dateAsInstant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
             return Date.from(dateAsInstant);
         }
-    }
-
-    private Date getDateFromStringWithTwoDigitYear(String dateString) {
-        String revisedDateString = dateString;
-        if (StringUtils.isEmpty(dateString) || StringUtils.equals(dateString, DATE_000000)) {
-            return getDefaultDateValue();
-        } else {
-            return getGregorianCalendar(revisedDateString).getTime();
-        }
-    }
-
-    private GregorianCalendar getGregorianCalendar(String yyMMDD){
-        String year  = "20"+yyMMDD.substring(0,2);
-        String month = yyMMDD.substring(2,4);
-        String day = yyMMDD.substring(4);
-        
-        month = ""+(Integer.parseInt(month) -1);
-        
-        GregorianCalendar gc = new GregorianCalendar(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
-      
-        return gc;
-        
     }
 
     private Date getDefaultDateValue() {

@@ -44,7 +44,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-@SuppressWarnings("deprecation")
 public class StaleCheckExtractServiceImplTest {
 
     private static final String STALE_CHECK_SOURCE_FILE_PATH = "src/test/resources/com/rsmart/kuali/kfs/cr/batch/service/fixture";
@@ -306,32 +305,32 @@ public class StaleCheckExtractServiceImplTest {
 
     private static CheckReconciliationDao createMockCheckReconciliationDao() {
         CheckReconciliationDao checkReconciliationDao = mock(CheckReconciliationDao.class);
-        CheckReconciliation mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_999_DISB_STAL_925);
-        when(checkReconciliationDao.findByCheckNumber("99999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        CheckReconciliation mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_999_JPCD_STAL_925);
+        when(checkReconciliationDao.findByCheckNumber("99999999", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_123_DISB_STAL_29252);
-        when(checkReconciliationDao.findByCheckNumber("12345678", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_123_JPCD_STAL_29252);
+        when(checkReconciliationDao.findByCheckNumber("12345678", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_199_DISB_STAL_925);
-        when(checkReconciliationDao.findByCheckNumber("19999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_199_JPCD_STAL_925);
+        when(checkReconciliationDao.findByCheckNumber("19999999", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_399_DISB_VOID_951);
-        when(checkReconciliationDao.findByCheckNumber("39999999", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_399_JPCD_VOID_951);
+        when(checkReconciliationDao.findByCheckNumber("39999999", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_111_DISB_CLRD_123);
-        when(checkReconciliationDao.findByCheckNumber("11111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_111_JPCD_CLRD_123);
+        when(checkReconciliationDao.findByCheckNumber("11111111", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_211_DISB_STOP_123);
-        when(checkReconciliationDao.findByCheckNumber("21111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_211_JPCD_STOP_123);
+        when(checkReconciliationDao.findByCheckNumber("21111111", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_311_DISB_STAL_123);
-        when(checkReconciliationDao.findByCheckNumber("31111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_311_JPCD_STAL_123);
+        when(checkReconciliationDao.findByCheckNumber("31111111", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_411_DISB_EXCP_123);
-        when(checkReconciliationDao.findByCheckNumber("41111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_411_JPCD_EXCP_123);
+        when(checkReconciliationDao.findByCheckNumber("41111111", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
 
-        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_511_DISB_CDIS_321);
-        when(checkReconciliationDao.findByCheckNumber("51111111", CrTestConstants.MELLON_BANK_CODE)).thenReturn(mockedCheckReconciliation);
+        mockedCheckReconciliation = createMockCheckReconciliation(CheckReconciliationFixture.CHECK_511_JPCD_CDIS_321);
+        when(checkReconciliationDao.findByCheckNumber("51111111", CrTestConstants.JPMC_BANK_CODE)).thenReturn(mockedCheckReconciliation);
         return checkReconciliationDao;
     }
 
