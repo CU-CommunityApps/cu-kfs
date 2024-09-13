@@ -63,7 +63,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     /** MOD: Overridden to make filename unique by adding milliseconds to filename **/
     @Override
     protected String getOutputFile(final String fileprefix, final Date runDate) {
-        LOG.info("getOutputFile, entering");
         //add a step to check for directory paths
         prepareDirectories(getRequiredDirectoryNames());
 
@@ -81,7 +80,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     */
     @Override
     public void extractAchPayments() {
-        LOG.info("MOD - extractAchPayments() - Enter");
+        LOG.debug("MOD - extractAchPayments() - Enter");
 
         PaymentStatus extractedStatus = businessObjectService.findBySinglePrimaryKey(PaymentStatus.class,
                 PdpConstants.PaymentStatusCodes.EXTRACTED);
@@ -119,7 +118,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
      */
     @Override
     public void extractChecks() {
-        LOG.info("extractChecks() - Enter");
+        LOG.debug("extractChecks() - Enter");
 
         final PaymentStatus extractedStatus =
                 businessObjectService.findBySinglePrimaryKey(
@@ -145,7 +144,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     private void extractChecksToProprietaryFormat(
             final PaymentStatus extractedStatus
     ) {
-        LOG.info("extractChecksToProprietaryFormat(...) - Enter : extractedStatus={}", extractedStatus);
+        LOG.debug("extractChecksToProprietaryFormat(...) - Enter : extractedStatus={}", extractedStatus);
 
         final Date processDate = dateTimeService.getCurrentDate();
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -173,7 +172,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
      * The KualiCo superclass declares this method as private, so we have to define our own instead of overriding.
      */
     private boolean shouldUseIso20022Format() {
-        LOG.info("getOutputFile, shouldUseIso20022Format");
         return isIso20022FormatParameterEnabled(PdpConstants.ISO20022_FORMAT_IND);
     }
 
@@ -290,7 +288,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writeExtractCheckFile(
             final PaymentStatus extractedStatus, final PaymentProcess p, String filename,
             final Integer processId) {
-        LOG.info("writeExtractCheckFile started.");
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         final Date processDate = dateTimeService.getCurrentDate();
         BufferedWriter os = null;
@@ -520,7 +517,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writeExtractAchFile(
             final PaymentStatus extractedStatus, final String filename, final Date processDate,
             final SimpleDateFormat sdf) {
-        LOG.info("writeExtractAchFile started.");
         BufferedWriter os = null;
         try {
             List<String> notificationEmailAddresses = this.getBankPaymentFileNotificationEmailAddresses();  
@@ -582,7 +578,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writePayeeSpecificsToAchFile(
             final BufferedWriter os, final PaymentGroup paymentGroup, final Date processDate, 
             final SimpleDateFormat sdf) throws IOException {
-        LOG.info("writePayeeSpecificsToAchFile started.");
         
         try {
             writeOpenTagAttribute(os, 2, "ach", "disbursementNbr",
@@ -617,7 +612,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     protected void writePaymentDetailToAchFile(
             final BufferedWriter os, final PaymentGroup paymentGroup, final PaymentDetail paymentDetail, 
             final Map<String, Integer> unitCounts, final Map<String, KualiDecimal> unitTotals, final SimpleDateFormat sdf) throws IOException {
-        LOG.info("writePaymentDetailToAchFile started.");
+        
         try {           
             writeOpenTag(os, 6, "payment");
             
@@ -669,7 +664,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
      * @return
      */
     protected List<String> getBankPaymentFileNotificationEmailAddresses() {
-        LOG.info("getBankPaymentFileNotificationEmailAddresses started.");
+        
         String emailAddressesStr = ""; 
         
         try {
@@ -687,7 +682,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
     
     protected String updateNoteLine(String noteLine) {
-        LOG.info("updateNoteLine started.");
         // Had to add this code to check for and remove the colons (::) that were added in
         // DisbursementVoucherExtractServiceImpl.java line 506 v4229 if they exist.  If not
         // then just return what was sent.  This was placed in a method as it is used in
@@ -701,7 +695,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
     
     protected boolean renameFile(final String fromFile, final String toFile) {
-        LOG.info("renameFile started.");
         boolean bResult = false;
         try {
             final File f = new File(fromFile);
