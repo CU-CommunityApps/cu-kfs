@@ -19,14 +19,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.core.impl.config.property.Config;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.batch.service.impl.ExtractPaymentServiceImpl;
@@ -525,47 +521,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             }
         }
     }
-
-    
-    public String stripLeadingSpace(final String stringToCheck) {
-        return (StringUtils.isNotEmpty(stringToCheck)) ? StringUtils.removeStart(stringToCheck, KFSConstants.BLANK_SPACE) : stringToCheck;
-    }
-    
-    public String stripTrailingSpace(final String stringToCheck) {
-        return (StringUtils.isNotEmpty(stringToCheck)) ? StringUtils.removeEnd(stringToCheck, KFSConstants.BLANK_SPACE) : stringToCheck;
-    }
-    
-    public int calculateMaxNumCharsFromNewNoteLine(final String noteLine, final String currentCheckStubDataLine) {
-        String proposedCheckStubLine;
-        
-        if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
-            proposedCheckStubLine = KFSConstants.EMPTY_STRING;
-            
-        } else if (StringUtils.isBlank(currentCheckStubDataLine) && StringUtils.isNotBlank(noteLine)) {
-            proposedCheckStubLine = noteLine;
-            
-        } else if (StringUtils.isNotBlank(currentCheckStubDataLine) && StringUtils.isBlank(noteLine)) {
-            proposedCheckStubLine = currentCheckStubDataLine;
-            
-        } else {
-            proposedCheckStubLine = (currentCheckStubDataLine + KFSConstants.BLANK_SPACE + noteLine);
-        }
-         
-        int totalNumChars = proposedCheckStubLine.length();
-        
-        if (totalNumChars == 0 || totalNumChars <= CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE) {
-            return noteLine.length();
-        } else {
-            final String wrappedText = WordUtils.wrap(proposedCheckStubLine, CuDisbursementVoucherConstants.DV_EXTRACT_MAX_NOTE_LINE_SIZE, "\n", false);
-            final String[] constructedCheckStubLines = wrappedText.split("\n");
-            return noteLine.length() - constructedCheckStubLines[1].length();
-        }
-    }
-    
-    protected boolean isProduction() {
-        return ConfigContext.getCurrentContextConfig().getProperty(Config.PROD_ENVIRONMENT_CODE).equalsIgnoreCase(
-                ConfigContext.getCurrentContextConfig().getEnvironment());
-    }
     
     @Override
     protected void writeExtractAchFile(
@@ -734,6 +689,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         
         return emailAddressList;
     }
+    
     protected String updateNoteLine(String noteLine) {
         // Had to add this code to check for and remove the colons (::) that were added in
         // DisbursementVoucherExtractServiceImpl.java line 506 v4229 if they exist.  If not
@@ -757,10 +713,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
             LOG.error("fromFile: " + fromFile + ", toFile: " + toFile);
         }
         return bResult;
-    }
-    // This utility function produces a string of (s) characters (n) times.
-    protected String repeatThis(final String s, final int n) {
-        return  String.format(String.format("%%0%dd", n), 0).replace("0",s);
     }
     
     public AchBundlerHelperService getAchBundlerHelperService() {
