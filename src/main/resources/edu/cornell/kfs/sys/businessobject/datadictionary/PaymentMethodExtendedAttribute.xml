@@ -5,7 +5,6 @@
         xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
     <bean id="PaymentMethodExtendedAttribute" parent="PaymentMethodExtendedAttribute-parentBean"/>
- 
     <bean id="PaymentMethodExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"
             p:businessObjectClass="edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute"
             p:objectLabel="Payment Method Extended Attribute">

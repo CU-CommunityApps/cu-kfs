@@ -21,7 +21,6 @@ import org.kuali.kfs.vnd.businessobject.VendorContact;
 import org.kuali.kfs.vnd.businessobject.VendorContactPhoneNumber;
 
 import edu.cornell.kfs.pmw.batch.PaymentWorksConstants;
-import edu.cornell.kfs.pmw.batch.businessobject.KfsVendorDataWrapper;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksIsoFipsCountryItem;
 import edu.cornell.kfs.pmw.batch.businessobject.PaymentWorksVendor;
 import edu.cornell.kfs.sys.service.impl.TestDateTimeServiceImpl;
@@ -215,9 +214,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, generatedDefaultPaymentMethodCode);
     }
 
     @Test
@@ -226,9 +224,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, generatedDefaultPaymentMethodCode);
     }
     
     @Test
@@ -237,9 +234,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, generatedDefaultPaymentMethodCode);
     }
     
     @Test
@@ -248,7 +244,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
         try {
-            conversionService.buildVendorDetailExtension(pmwVendor,  buildPaymentWorksIsoToFipsCountryMap());
+            conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
             fail("With no payment method provided, an Illegal Argument Exception should have been thrown.");
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
@@ -259,7 +255,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     void testbuildVendorDetailExtensionDefaultEinvoiceIndicator() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
-        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor,  buildPaymentWorksIsoToFipsCountryMap());
+        VendorDetailExtension actualDetail = conversionService.buildVendorDetailExtension(pmwVendor);
         assertEquals(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.code, actualDetail.getEinvoiceVendorIndicator());
     }
     
@@ -269,9 +265,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, generatedDefaultPaymentMethodCode);
     }
     
     @Test
@@ -280,9 +275,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, generatedDefaultPaymentMethodCode);
     }
     
     @Test
@@ -291,9 +285,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, generatedDefaultPaymentMethodCode);
     }
     
     @Test
@@ -302,9 +295,8 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
         
-        KfsVendorDataWrapper kfsVendorDataWrapper = new KfsVendorDataWrapper();
-        kfsVendorDataWrapper = conversionService.buildKFSPaymentMethodWithReferenceObjectRefresh(pmwVendor, buildPaymentWorksIsoToFipsCountryMap(), kfsVendorDataWrapper);
-        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode());
+        String generatedDefaultPaymentMethodCode = conversionService.buildDefaultKFSPaymentMethodCode(pmwVendor, buildPaymentWorksIsoToFipsCountryMap());
+        assertEquals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK, generatedDefaultPaymentMethodCode);
     }
     
     @Test
