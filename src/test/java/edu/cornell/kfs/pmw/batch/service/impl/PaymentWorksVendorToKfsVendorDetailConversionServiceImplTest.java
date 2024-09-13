@@ -209,7 +209,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
 
     @Test
-    void testbuildVendorDetailExtensionCheck() {
+    void testbuildDefaultKFSPaymentMethodCodeCheck() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
@@ -219,7 +219,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
 
     @Test
-    void testbuildVendorDetailExtensionAch() {
+    void testbuildDefaultKFSPaymentMethodCodeAch() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
@@ -229,7 +229,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionWire() {
+    void testbuildDefaultKFSPaymentMethodCodeWire() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
@@ -239,7 +239,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionEmpty() {
+    void testbuildDefaultKFSPaymentMethodCodeEmpty() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(ARUBA_ISO_CODE);
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
@@ -260,7 +260,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionDomesticCheck() {
+    void testbuildDefaultKFSPaymentMethodCodeDomesticCheck() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK);
@@ -270,7 +270,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionDomesticAch() {
+    void testbuildDefaultKFSPaymentMethodCodeDomesticAch() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH);
@@ -280,7 +280,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionDomesticWire() {
+    void testbuildDefaultKFSPaymentMethodCodeDomesticWire() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE);
@@ -290,7 +290,7 @@ class PaymentWorksVendorToKfsVendorDetailConversionServiceImplTest {
     }
     
     @Test
-    void testbuildVendorDetailExtensionDomesticEmpty() {
+    void testbuildDefaultKFSPaymentMethodCodeDomesticEmpty() {
         PaymentWorksVendor pmwVendor = new PaymentWorksVendor();
         pmwVendor.setRequestingCompanyTaxCountry(KFSConstants.COUNTRY_CODE_UNITED_STATES);
         pmwVendor.setPaymentMethod(StringUtils.EMPTY);
