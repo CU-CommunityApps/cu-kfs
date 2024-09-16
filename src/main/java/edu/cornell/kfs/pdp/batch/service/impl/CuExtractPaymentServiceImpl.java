@@ -198,7 +198,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     * --Added the call to writePaymentDetailToAchFile for re-factored code
     * --Made the "finally" clause match the ExtractPaymentServiceImpl.writeExtractAchFile finally so that the XML files are named the same regardless of which routine is invoked.
     * --Added call to get the parameterized bank notification email addresses
-    * --Removed FastTrack customization
     * 
     * @param extractedStatus
     * @param filename
