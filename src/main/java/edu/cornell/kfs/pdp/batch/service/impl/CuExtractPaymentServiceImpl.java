@@ -192,8 +192,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
    /**
     * A custom method that goes through and extracts all pending ACH payments and bundles them by payee/disbursement nbr.
     * Changes made to this method due to re-factoring the code so that common pieces could be used 
-    * by both ExtractPaymentServiceImpl.writeExtractAchFile and AchBundlerExtractPaymentServiceImpl.writeExtractBundledAchFile
-    * as well as incorporating the Mellon file creation.
+    * by both ExtractPaymentServiceImpl.writeExtractAchFile and AchBundlerExtractPaymentServiceImpl.writeExtractBundledAchFile.
     * --Added the call to writePayeeSpecificsToAchFile for re-factored code
     * --Added the call to writePaymentDetailToAchFile for re-factored code
     * --Made the "finally" clause match the ExtractPaymentServiceImpl.writeExtractAchFile finally so that the XML files are named the same regardless of which routine is invoked.
