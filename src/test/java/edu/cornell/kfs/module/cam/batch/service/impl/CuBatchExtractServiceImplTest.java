@@ -36,7 +36,7 @@ import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.cam.fixture.EntryFixture;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
-import edu.cornell.kfs.module.purap.fixture.CuVendorCreditMemoDocumentFixture;
+import edu.cornell.kfs.module.purap.fixture.VendorCreditMemoDocumentFixture;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
@@ -143,11 +143,11 @@ public class CuBatchExtractServiceImplTest {
     private BusinessObject findMatchingDocument(String documentNumber) {
         switch (documentNumber) {
             case CuCamsTestConstants.DOC_5319793 :
-                return CuVendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO_5319793.createVendorCreditMemoDocumentForMicroTest();
+                return VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO_5319793.createVendorCreditMemoDocumentForMicroTest();
             case CuCamsTestConstants.DOC_5686500 :
-                return CuVendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO_5686500.createVendorCreditMemoDocumentForMicroTest();
+                return VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO_5686500.createVendorCreditMemoDocumentForMicroTest();
             case CuCamsTestConstants.DOC_5686501 :
-                return CuVendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO_5686501.createVendorCreditMemoDocumentForMicroTest();
+                return VendorCreditMemoDocumentFixture.VENDOR_CREDIT_MEMO_5686501.createVendorCreditMemoDocumentForMicroTest();
             case CuCamsTestConstants.DOC_5773686 :
                 return buildMinimalPaymentRequestDocument(documentNumber);
             case CuCamsTestConstants.DOC_5773687 :

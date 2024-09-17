@@ -19,6 +19,7 @@ public class PaymentSourceWireTransferExtendedAttribute extends PersistableBusin
     private String correspondentBankSwiftCode;
     
     public PaymentSourceWireTransferExtendedAttribute() {
+        super();
     }
     
     public String getDocumentNumber() {

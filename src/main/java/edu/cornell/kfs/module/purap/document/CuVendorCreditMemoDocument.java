@@ -21,11 +21,10 @@ import org.kuali.kfs.sys.context.SpringContext;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
-import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
-    private static final Logger LOG = LogManager.getLogger();
-    
+	private static final Logger LOG = LogManager.getLogger();
+	
     public static String DOCUMENT_TYPE_NON_CHECK = "CMNC";
 
     private static CUPaymentMethodGeneralLedgerPendingEntryService paymentMethodGeneralLedgerPendingEntryService;
@@ -34,23 +33,19 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     
     public CuVendorCreditMemoDocument() {
         super();
-        wireTransfer = new PaymentSourceWireTransfer();
         setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
     }
     
     @Override
     public void prepareForSave(final KualiDocumentEvent event) {
-        super.prepareForSave(event);
-        
+    	super.prepareForSave(event);
+    	
         try {
-            wireTransfer.setDocumentNumber(getDocumentNumber());
-            ((PaymentSourceWireTransferExtendedAttribute)wireTransfer.getExtension()).setDocumentNumber(getDocumentNumber());
+          	wireTransfer.setDocumentNumber(getDocumentNumber());
         } catch (Exception e) {
             LOG.info("wireTransfer is null" );
             wireTransfer = new PaymentSourceWireTransfer();  
             wireTransfer.setDocumentNumber(getDocumentNumber());
-            wireTransfer.setExtension(new PaymentSourceWireTransferExtendedAttribute());
-            ((PaymentSourceWireTransferExtendedAttribute)wireTransfer.getExtension()).setDocumentNumber(getDocumentNumber());
         }
     
         // KFSPTS-1981
@@ -97,8 +92,7 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     
     // KFSPTS-1891, KFSPTS-2851
     private boolean isWireOrForeignDraft() {
-        return StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, this.getPaymentMethodCode()) 
-                || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, this.getPaymentMethodCode());
+        return StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, this.getPaymentMethodCode());
     }
     
     public void synchronizeBankCodeWithPaymentMethod() {
