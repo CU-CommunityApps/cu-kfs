@@ -15,9 +15,6 @@ public final class CUPdpParameterConstants {
     public static final String PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES = "PDP_ACH_INVALID_EMAIL_ERROR_REPORT_TO_ADDRESSES";
     public static final String MAX_ACH_ACCT_EXTRACT_RETRY = "MAX_ACH_ACCT_EXTRACT_RETRY";
 
-    // TODO: Remove this parameter after we have fully migrated to the ISO 20022 formatting process.
-    public static final String CU_USE_ISO20022_FORMAT_IND = "CU_USE_ISO20022_FORMAT_IND";
-
     // TODO: Remove this parameter after we have fully updated our local Check printing to use the ISO 20022 files.
     public static final String CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES =
             "CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES";
