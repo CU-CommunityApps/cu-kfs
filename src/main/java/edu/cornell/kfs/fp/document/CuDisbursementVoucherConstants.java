@@ -9,8 +9,6 @@ public class CuDisbursementVoucherConstants {
     public static String DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS2 = "SH2:";
     public static String DV_EXTRACT_NOTE_PREFIX_SPECIAL_HANDLING_ADDRESS3 = "SH3:";
     public static String DV_EXTRACT_SUB_UNIT_CODE = "DV";
-    public static String DV_EXTRACT_MELLON_FAST_TRACK_INVOICE_NUMBER_CODE = "IV";
-    public static String DV_EXTRACT_MELLON_FAST_TRACK_CUSTOMER_PAYMENT_DOC_NBR_CODE = "8M";
     public static String DV_EXTRACT_TYPED_NOTE_PREFIX_IDENTIFIER = "::";
     
     public static int DV_EXTRACT_MAX_NOTE_LINE_SIZE = 72;
