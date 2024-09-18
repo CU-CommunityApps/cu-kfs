@@ -20,13 +20,21 @@ package org.kuali.kfs.sys.businessobject;
 
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
+import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute;
+
 /**
- * Cornell Customization: 
+ * Cornell Customizations: 
  *     Added method toStringMapper to KualiCo 2024-04-19 version of this class
  *     to support credit memo payment method additional data processing.
+ *     
+ *     Add extended attribute to the business object when the extended attribute does not exist.
+ *     Set table primary key of extended attribute to same primary key value as main business object
+ *     when it is null. Both will prevent stacktrace when insert of extension is attempted.
  */
 
 /**
@@ -221,4 +229,25 @@ public class PaymentSourceWireTransfer extends PersistableBusinessObjectBase {
         m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
         return m;
     }
+    
+    /*
+     * Cornell Customization:
+     *    Add extended attribute to the business object when the extended attribute does not exist.
+     *    Set table primary key of extended attribute to same primary key value as main business object
+     *    when it is null. Both will prevent stacktrace when insert of extension is attempted.
+     */
+    @Override
+    public void beforeInsert() {
+        super.beforeInsert();
+        if (ObjectUtils.isNull(this.getExtension())) {
+            PaymentSourceWireTransferExtendedAttribute paymentSourceWireTransferExtendedAttribute = new PaymentSourceWireTransferExtendedAttribute();
+            paymentSourceWireTransferExtendedAttribute.setDocumentNumber(this.getDocumentNumber());
+            this.setExtension(paymentSourceWireTransferExtendedAttribute);
+        }
+        PaymentSourceWireTransferExtendedAttribute boExtension = (PaymentSourceWireTransferExtendedAttribute)(this.getExtension());
+        if (StringUtils.isBlank(boExtension.getDocumentNumber())) {
+            boExtension.setDocumentNumber(this.getDocumentNumber());
+        }
+    }
+
 }
