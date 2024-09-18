@@ -26,9 +26,6 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -44,8 +41,6 @@ import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.CUBankService;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
@@ -280,7 +275,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             if (vdDetail != null
                     && StringUtils.isNotBlank(vdDetail.getDefaultPaymentMethodCode())) {
                 ((CuPaymentRequestDocument)preq).setPaymentMethodCode(vdDetail.getDefaultPaymentMethodCode());
-                preq.refreshReferenceObject("defaultPaymentMethod");
+                preq.refreshReferenceObject("paymentMethod");
             }
         }
     }
