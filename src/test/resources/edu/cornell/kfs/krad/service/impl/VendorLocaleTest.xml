@@ -453,7 +453,6 @@
     <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
     <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
     <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
-    <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
     <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
     <cornellAdditionalInsuredIndicator>true</cornellAdditionalInsuredIndicator>
     <generalLiabilityCoverageAmount>
@@ -473,7 +472,7 @@
     </excessLiabilityUmbrellaAmount>
     <excessLiabilityUmbExpiration>2017-12-31</excessLiabilityUmbExpiration>
     <vendorCreditCardMerchants/>
-  </extension>
+  </extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
   <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
   <vendorParentIndicator>true</vendorParentIndicator>
@@ -613,7 +612,6 @@
     <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
     <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
     <einvoiceVendorIndicator>false</einvoiceVendorIndicator>
-    <defaultB2BPaymentMethodCode>P</defaultB2BPaymentMethodCode>
     <insuranceRequiredIndicator>false</insuranceRequiredIndicator>
     <cornellAdditionalInsuredIndicator>true</cornellAdditionalInsuredIndicator>
     <generalLiabilityCoverageAmount>
@@ -633,7 +631,7 @@
     </excessLiabilityUmbrellaAmount>
     <excessLiabilityUmbExpiration>2017-12-31</excessLiabilityUmbExpiration>
     <vendorCreditCardMerchants/>
-  </extension>
+  </extension><defaultPaymentMethodCode>P</defaultPaymentMethodCode>
   <vendorHeaderGeneratedIdentifier>61616</vendorHeaderGeneratedIdentifier>
   <vendorDetailAssignedIdentifier>0</vendorDetailAssignedIdentifier>
   <vendorParentIndicator>true</vendorParentIndicator>

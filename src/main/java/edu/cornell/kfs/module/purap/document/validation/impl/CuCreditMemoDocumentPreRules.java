@@ -14,10 +14,10 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.validation.impl.CreditMemoDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
+import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.businessobject.CreditMemoWireTransfer;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSKeyConstants;
@@ -73,7 +73,7 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
 	protected boolean checkWireTransferTabState(final VendorCreditMemoDocument cmDocument) {
         boolean tabStatesOK = true;
 
-        final CreditMemoWireTransfer cmWireTransfer = ((CuVendorCreditMemoDocument)cmDocument).getCmWireTransfer();
+        final PaymentSourceWireTransfer cmWireTransfer = ((CuVendorCreditMemoDocument)cmDocument).getWireTransfer();
 
         // if payment method is CHECK and wire tab contains data, ask user to clear tab
         if (!StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, ((CuVendorCreditMemoDocument)cmDocument).getPaymentMethodCode()) && hasWireTransferValues(cmWireTransfer)) {
@@ -97,37 +97,37 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         return tabStatesOK;
     }
 
-    protected boolean hasWireTransferValues(final CreditMemoWireTransfer cmWireTransfer) {
+    protected boolean hasWireTransferValues(final PaymentSourceWireTransfer wireTransfer) {
         boolean hasValues = false;
 
         // Checks each explicit field in the tab for user entered values
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmAutomatedClearingHouseProfileNumber());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankName());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankRoutingNumber());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankCityName());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankStateCode());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmBankCountryCode());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmPayeeAccountNumber());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmAttentionLineText());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmCurrencyTypeName());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmAdditionalWireText());
-        hasValues |= StringUtils.isNotBlank(cmWireTransfer.getCmPayeeAccountName());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getAutomatedClearingHouseProfileNumber());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getBankName());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getBankRoutingNumber());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getBankCityName());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getBankStateCode());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getBankCountryCode());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getPayeeAccountNumber());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getAttentionLineText());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getCurrencyTypeName());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getAdditionalWireText());
+        hasValues |= StringUtils.isNotBlank(wireTransfer.getPayeeAccountName());
 
         return hasValues;
     }
     
-    protected void clearWireTransferValues(final CreditMemoWireTransfer cmWireTransfer) {
-    	cmWireTransfer.setCmAutomatedClearingHouseProfileNumber(null);
-    	cmWireTransfer.setCmBankName(null);
-    	cmWireTransfer.setCmBankRoutingNumber(null);
-    	cmWireTransfer.setCmBankCityName(null);
-    	cmWireTransfer.setCmBankStateCode(null);
-    	cmWireTransfer.setCmBankCountryCode(null);
-    	cmWireTransfer.setCmPayeeAccountNumber(null);
-    	cmWireTransfer.setCmAttentionLineText(null);
-    	cmWireTransfer.setCmCurrencyTypeName(null);
-    	cmWireTransfer.setCmAdditionalWireText(null);
-    	cmWireTransfer.setCmPayeeAccountName(null);
+    protected void clearWireTransferValues(final PaymentSourceWireTransfer wireTransfer) {
+        wireTransfer.setAutomatedClearingHouseProfileNumber(null);
+        wireTransfer.setBankName(null);
+        wireTransfer.setBankRoutingNumber(null);
+        wireTransfer.setBankCityName(null);
+        wireTransfer.setBankStateCode(null);
+        wireTransfer.setBankCountryCode(null);
+        wireTransfer.setPayeeAccountNumber(null);
+        wireTransfer.setAttentionLineText(null);
+        wireTransfer.setCurrencyTypeName(null);
+        wireTransfer.setAdditionalWireText(null);
+        wireTransfer.setPayeeAccountName(null);
     }
     
    // end KFSUPGRADE-779

@@ -33,10 +33,8 @@ import org.kuali.kfs.coa.businessobject.ObjectType;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
 import org.kuali.kfs.coa.businessobject.SubAccount;
 import org.kuali.kfs.coa.businessobject.SubObjectCode;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.kew.actionrequest.ActionRequest;
 import org.kuali.kfs.kew.actiontaken.ActionTaken;
 import org.kuali.kfs.kew.api.WorkflowDocument;
@@ -658,7 +656,8 @@ public class PaymentApplicationAdjustmentForm extends FinancialSystemTransaction
     public long getAttachmentMaxFileSize() {
         final String attachmentSize = getParameterService().getParameterValueAsString(
                 KFSConstants.CoreModuleNamespaces.KFS, KRADConstants.DetailTypes.DOCUMENT_DETAIL_TYPE,
-                KRADConstants.ATTACHMENT_MAX_FILE_SIZE_PARM_NM);
+                KRADConstants.ATTACHMENT_FILE_SIZE
+        );
 
         return FileUtil.getBytes(attachmentSize);
     }

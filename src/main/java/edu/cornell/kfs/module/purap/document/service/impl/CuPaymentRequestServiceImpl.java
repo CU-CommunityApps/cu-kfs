@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +26,6 @@ import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.PurchaseOrderDocument;
 import org.kuali.kfs.module.purap.document.service.impl.PaymentRequestServiceImpl;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.service.BankService;
 import org.kuali.kfs.vnd.businessobject.PaymentTermType;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
@@ -40,15 +36,11 @@ import org.kuali.kfs.krad.exception.InfrastructureException;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.document.dataaccess.CuPaymentRequestDao;
 import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
-import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.sys.service.CUBankService;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl implements CuPaymentRequestService {
     private static final Logger LOG = LogManager.getLogger();
@@ -275,48 +267,15 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
     }
     
     @Override
-    public void initializePaymentMethodAndBank(PaymentRequestDocument paymentRequestDocument) {
-        final PurchaseOrderDocument purchaseOrderDocument = paymentRequestDocument.getPurchaseOrderDocument();
-        if ( ObjectUtils.isNotNull(purchaseOrderDocument) 
-                && ObjectUtils.isNotNull(purchaseOrderDocument.getVendorDetail())) {
-            if ( purchaseOrderDocument.getVendorDetail().getExtension() instanceof VendorDetailExtension
-                    && StringUtils.isNotBlank( ((VendorDetailExtension)purchaseOrderDocument.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
-                paymentRequestDocument.setPaymentMethodCode(
-                        ((VendorDetailExtension)purchaseOrderDocument.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode() );
-            }
-        }
-        
-        //KFSUPGRADE-779
-        //reset bank code
-         paymentRequestDocument.setBankCode(null);
-         paymentRequestDocument.setBank(null);
-         
-        // set bank code to default bank code in the system parameter
-        Bank defaultBank = null;
-        if (StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, paymentRequestDocument.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, paymentRequestDocument.getPaymentMethodCode())) {
-            defaultBank = SpringContext.getBean(CUBankService.class).getDefaultBankByDocType(CuPaymentRequestDocument.DOCUMENT_TYPE_NON_CHECK);
-        } else if (!StringUtils.equals(CUKFSConstants.CuPaymentSourceConstants.PAYMENT_METHOD_INTERNAL_BILLING, paymentRequestDocument.getPaymentMethodCode())) {
-            defaultBank = SpringContext.getBean(BankService.class).getDefaultBankByDocType(PaymentRequestDocument.class);
-        }
-        if (defaultBank != null) {
-            paymentRequestDocument.setBankCode(defaultBank.getBankCode());
-            paymentRequestDocument.setBank(defaultBank);
-        }
-    }
-    
-    @Override
     public void changeVendor(final PaymentRequestDocument preq, final Integer headerId, final Integer detailId) {
-    	super.changeVendor(preq, headerId, detailId);
-    	// KFSPTS-1891
-        if ( preq instanceof PaymentRequestDocument ) {
+        super.changeVendor(preq, headerId, detailId);
+        
+        if (preq instanceof PaymentRequestDocument) {
             final VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
             if (vdDetail != null
-                    && ObjectUtils.isNotNull(vdDetail.getExtension()) ) {
-                if ( vdDetail.getExtension() instanceof VendorDetailExtension
-                        && StringUtils.isNotBlank( ((VendorDetailExtension)vdDetail.getExtension()).getDefaultB2BPaymentMethodCode() ) ) {
-                    ((CuPaymentRequestDocument)preq).setPaymentMethodCode(
-                            ((VendorDetailExtension)vdDetail.getExtension()).getDefaultB2BPaymentMethodCode() );
-                }
+                    && StringUtils.isNotBlank(vdDetail.getDefaultPaymentMethodCode())) {
+                ((CuPaymentRequestDocument)preq).setPaymentMethodCode(vdDetail.getDefaultPaymentMethodCode());
+                preq.refreshReferenceObject("paymentMethod");
             }
         }
     }
