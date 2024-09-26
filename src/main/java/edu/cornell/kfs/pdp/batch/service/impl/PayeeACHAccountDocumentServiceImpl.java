@@ -1,7 +1,11 @@
 package edu.cornell.kfs.pdp.batch.service.impl;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -10,16 +14,21 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
+import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
-import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.keyvalues.KeyValuesFinder;
+import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.service.DocumentService;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.ErrorMessage;
@@ -33,13 +42,10 @@ import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.businessobject.options.StandardEntryClassValuesFinder;
 import org.kuali.kfs.pdp.document.PayeeACHAccountMaintainableImpl;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.DocumentHeader;
 import org.kuali.kfs.sys.mail.BodyMailMessage;
 import org.kuali.kfs.sys.service.EmailService;
 import org.kuali.kfs.sys.service.impl.KfsParameterConstants;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.util.type.KualiInteger;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +66,8 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     private ParameterService parameterService;
     private PersonService personService;
     private SequenceAccessorService sequenceAccessorService;
+    private BusinessObjectService businessObjectService;
+    private DateTimeService dateTimeService;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
@@ -398,8 +406,28 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         paatDocument.getNewMaintainableObject().setDataObject(newAccount);
         paatDocument.getNewMaintainableObject().setMaintenanceAction(KFSConstants.MAINTENANCE_EDIT_ACTION);
     }
-    
-    
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public List<PayeeACHAccountExtractDetail> getPersistedPayeeACHAccountExtractDetails() {
+        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<>();
+        Map<String, Object> fieldValues = new HashMap<>();
+        fieldValues.put(CUPdpPropertyConstants.PAYEE_ACH_EXTRACT_DETAIL_STATUS, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
+        persistedPayeeACHAccountExtractDetails
+                .addAll(businessObjectService.findMatchingOrderBy(PayeeACHAccountExtractDetail.class, fieldValues, KRADPropertyConstants.ID, true));
+        return persistedPayeeACHAccountExtractDetails;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void updateACHAccountExtractDetailRetryCount(PayeeACHAccountExtractDetail achDetail, int retryCount) {
+        achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
+        achDetail.setRetryCount(retryCount);
+        businessObjectService.save(achDetail);
+    }
+
+
+
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
@@ -427,6 +455,15 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
         this.sequenceAccessorService = sequenceAccessorService;
     }
+
+    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
+        this.businessObjectService = businessObjectService;
+    }
+
+    public void setDateTimeService(DateTimeService dateTimeService) {
+        this.dateTimeService = dateTimeService;
+    }
+
 
 
     protected static class PayeeACHData {

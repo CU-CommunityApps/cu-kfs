@@ -53,7 +53,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private PersonService personService;
     private CuAchService achService;
     private AchBankService achBankService;
-    private BusinessObjectService businessObjectService; 
     private DateTimeService dateTimeService;
     private PayeeACHAccountExtractReportService payeeACHAccountExtractReportService;
     protected PayeeACHAccountDocumentService payeeACHAccountDocumentService;
@@ -234,7 +233,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             for (PayeeACHAccountExtractDetail achDetail : achDetailsEligibleForRetry) {
                 String error = processACHBatchDetail(achDetail);
                 if (StringUtils.isNotBlank(error)) {
-                    updateACHAccountExtractDetailRetryCount(achDetail, achDetail.getRetryCount() + 1);
+                    payeeACHAccountDocumentService.updateACHAccountExtractDetailRetryCount(
+                            achDetail, achDetail.getRetryCount() + 1);
                     numRetryFail++;
                     addErrorToReport(processingRetryResult, achDetail, error);
                 } else {
@@ -273,7 +273,8 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     }
 
     private List<PayeeACHAccountExtractDetail> getPayeeACHExtractDetailsEligibleForRetry() {
-        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = getPersistedPayeeACHAccountExtractDetails();
+        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails =
+                payeeACHAccountDocumentService.getPersistedPayeeACHAccountExtractDetails();
         if (!persistedPayeeACHAccountExtractDetails.isEmpty()) {
             return getSortedACHDetailsEligibleForRetry(persistedPayeeACHAccountExtractDetails);
         }
@@ -297,29 +298,14 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private void storeACHAccountExtractDetailForRetry(PayeeACHAccountExtractDetail achDetail) {
         achDetail.setCreateDate(dateTimeService.getCurrentSqlDate());
         achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
-        updateACHAccountExtractDetailRetryCount(achDetail, 0);
+        payeeACHAccountDocumentService.updateACHAccountExtractDetailRetryCount(achDetail, 0);
     }
 
     private void markACHAccountExtractDetailAsProcessed(PayeeACHAccountExtractDetail achDetail) {
         achDetail.setStatus(CUPdpConstants.PayeeAchAccountExtractStatuses.PROCESSED);
-        updateACHAccountExtractDetailRetryCount(achDetail, achDetail.getRetryCount() + 1);
+        payeeACHAccountDocumentService.updateACHAccountExtractDetailRetryCount(achDetail, achDetail.getRetryCount() + 1);
     }
 
-    private void updateACHAccountExtractDetailRetryCount(PayeeACHAccountExtractDetail achDetail, int retryCount) {
-        achDetail.setLastUpdatedTimestamp(dateTimeService.getCurrentTimestamp());
-        achDetail.setRetryCount(retryCount);
-        businessObjectService.save(achDetail);
-    }
-
-    protected List<PayeeACHAccountExtractDetail> getPersistedPayeeACHAccountExtractDetails() {
-        List<PayeeACHAccountExtractDetail> persistedPayeeACHAccountExtractDetails = new ArrayList<>();
-        Map<String, Object> fieldValues = new HashMap<>();
-        fieldValues.put(CUPdpPropertyConstants.PAYEE_ACH_EXTRACT_DETAIL_STATUS, CUPdpConstants.PayeeAchAccountExtractStatuses.OPEN);
-        persistedPayeeACHAccountExtractDetails
-                .addAll(businessObjectService.findMatchingOrderBy(PayeeACHAccountExtractDetail.class, fieldValues, KRADPropertyConstants.ID, true));
-        return persistedPayeeACHAccountExtractDetails;
-    }
-    
     protected void cleanPayeeACHAccountExtractDetail(PayeeACHAccountExtractDetail detail) {
         if (!StringUtils.isNumeric(detail.getBankAccountNumber())) {
             String logMessageStarter = "cleanPayeeACHAccountExtractDetail, the bank account for " + detail.getNetID();
@@ -539,10 +525,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
     public void setAchBankService(AchBankService achBankService) {
         this.achBankService = achBankService;
-    }
-    
-    public void setBusinessObjectService(BusinessObjectService businessObjectService) {
-        this.businessObjectService = businessObjectService;
     }
     
     public void setDateTimeService(DateTimeService dateTimeService) {

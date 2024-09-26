@@ -122,6 +122,8 @@ public class PayeeACHAccountExtractServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
+        final DateTimeService mockDateTimeService = createMockDateTimeService();
+        
         documentIdCounter = new AtomicInteger(INITIAL_DOCUMENT_ID);
         achAccountIdCounter = new AtomicLong(INITIAL_ACH_ACCOUNT_ID);
         
@@ -133,10 +135,10 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountExtractService.setPersonService(createMockPersonService());
         payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
-        payeeACHAccountExtractService.setBusinessObjectService(createMockBusinessObjectService());
         payeeACHAccountExtractService.setPayeeACHAccountExtractReportService(createMockPayeeACHAccountExtractReportService());
-        payeeACHAccountExtractService.setDateTimeService(createMockDateTimeService());
-        payeeACHAccountExtractService.setPayeeACHAccountDocumentService(buildPayeeACHAccountDocumentServiceImpl());
+        payeeACHAccountExtractService.setDateTimeService(mockDateTimeService);
+        payeeACHAccountExtractService.setPayeeACHAccountDocumentService(
+                buildPayeeACHAccountDocumentServiceImpl(mockDateTimeService));
     }
 
     @After
@@ -550,7 +552,8 @@ public class PayeeACHAccountExtractServiceImplTest {
         return dateTimeService;
     }
     
-    private PayeeACHAccountDocumentServiceImpl buildPayeeACHAccountDocumentServiceImpl() throws Exception {
+    private PayeeACHAccountDocumentServiceImpl buildPayeeACHAccountDocumentServiceImpl(
+            final DateTimeService mockDateTimeService) throws Exception {
         PayeeACHAccountDocumentServiceImpl payeeACHAccountDocumentService = Mockito.spy(new PayeeACHAccountDocumentServiceImpl());
         Mockito.doNothing().when(payeeACHAccountDocumentService).addNote(Mockito.any(), Mockito.anyString());
         
@@ -561,6 +564,8 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountDocumentService.setParameterService(createMockParameterService());
         payeeACHAccountDocumentService.setPersonService(createMockPersonService());
         payeeACHAccountDocumentService.setSequenceAccessorService(createMockSequenceAccessorService());
+        payeeACHAccountDocumentService.setBusinessObjectService(createMockBusinessObjectService());
+        payeeACHAccountDocumentService.setDateTimeService(mockDateTimeService);
         return payeeACHAccountDocumentService;
     }
 

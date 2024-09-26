@@ -173,7 +173,6 @@
         <property name="personService" ref="personService" />
         <property name="achService" ref="pdpAchService" />
         <property name="achBankService" ref="pdpAchBankService" />
-        <property name="businessObjectService" ref="businessObjectService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="payeeACHAccountExtractReportService" ref="payeeACHAccountExtractReportService" />
         <property name="payeeACHAccountDocumentService" ref="payeeACHAccountDocumentService" />
@@ -193,6 +192,8 @@
       <property name="parameterService" ref="parameterService" />
       <property name="personService" ref="personService" />
       <property name="sequenceAccessorService" ref="sequenceAccessorService" />
+      <property name="businessObjectService" ref="businessObjectService" />
+      <property name="dateTimeService" ref="dateTimeService" />
     </bean>
 
     <bean id="payeeACHAccountExtractReportService" parent="payeeACHAccountExtractReportService-parentBean"/>
