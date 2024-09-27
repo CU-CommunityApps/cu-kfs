@@ -56,9 +56,11 @@ public final class PaymentRequestStatuses {
     public static final String NODE_ORG_REVIEW = "AccountingOrganizationHierarchy";
     public static final String NODE_OBJECT_CODE_REVIEW = "ObjectCode";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
-    //public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethod";   //Base code uses different String value
     // CU Customization: Added two new nodes for KFSUPGRADE-779 and KFSUPGRADE-500
-    public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer"; 
+    //   Same constant is used by base code and a Cornell mod (NODE_PAYMENT_METHOD_REVIEW)
+    //   Cornell has string value defined as "PaymentMethodReviewer" in its mod while base code
+    //   introduced this constant with string value "PaymentMethod".
+    public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
     public static final String NODE_RECEIVING = "Receiving";
     // End CU Customization
 

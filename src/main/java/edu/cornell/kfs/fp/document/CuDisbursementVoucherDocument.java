@@ -174,10 +174,16 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         updatePaymentMethodBasedOnVendor(vendor);
     }
     
-    // Cornell Customization:  
-    // Basecode class method had to be copied into our customization and assignment of data value 
-    // defaultPaymentMethod changed to superclass setter method call due to super class having 
-    // more restrictive "private" visibility on this method as well as attribute defaultPaymentMethod.
+    // Cornell Customization:
+    // Issues being tracked and reported to KualiCo on Cornell JIRA KFSPTS-32923.
+    //
+    // Basecode class method had to be copied into our customization due to the super
+    // class having declared it with more restrictive "private" visibility.
+    //
+    // The direct assignment of super class attribute paymentMethod within the method then had
+    // to be changed to utilize a super class setter method call due to the super class having
+    // declared the PaymentMethod object attribute with a more restrictive "private" visibility
+    // as well.
     private void updatePaymentMethodBasedOnVendor(final VendorDetail vendor) {
         LOG.debug("updatePaymentMethodBasedOnVendor(...) - Enter");
         if (ObjectUtils.isNull(dvPayeeDetail)) {
@@ -200,7 +206,8 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             return;
         }
         disbVchrPaymentMethodCode = defaultPaymentMethod.getPaymentMethodCode();
-        super.setPaymentMethod(defaultPaymentMethod);
+        //paymentMethod = defaultPaymentMethod;        //base code
+        super.setPaymentMethod(defaultPaymentMethod);  //Cornell customization due to base code restrictive visibility
         updateBankBasedOnPaymentMethodCode();
         LOG.debug("updatePaymentMethodBasedOnVendor() - Exit");
     }
@@ -599,7 +606,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         final PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
         disbVchrContactPersonName = currentUser.getName();
-        disbVchrContactEmailId = currentUser.getEmailAddress();  //CU Customization
 
         final String phoneNumber = currentUser.getPhoneNumber();
         //CU Customization: Add check for phoneNumber not being the actual string "null".
