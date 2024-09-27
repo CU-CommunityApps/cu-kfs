@@ -13,26 +13,21 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
-import org.kuali.kfs.krad.service.BusinessObjectService;
-import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.KRADPropertyConstants;
+import org.kuali.kfs.kim.api.identity.PersonService;
+import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.pdp.PdpConstants.PayeeIdTypeCodes;
-import org.kuali.kfs.pdp.businessobject.PayeeACHAccount;
 import org.kuali.kfs.pdp.service.AchBankService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
 import org.kuali.kfs.sys.exception.ParseException;
-import org.kuali.kfs.core.api.datetime.DateTimeService;
-import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.cornell.kfs.pdp.CUPdpConstants;
 import edu.cornell.kfs.pdp.CUPdpParameterConstants;
-import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractFileResult;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractReportData;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractRetryResult;
@@ -41,7 +36,6 @@ import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountDocumentService;
 import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractReportService;
 import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountExtractService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
-import edu.cornell.kfs.pdp.service.CuAchService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
 
 public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtractService {
@@ -51,7 +45,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
     private List<BatchInputFileType> batchInputFileTypes;
     private ParameterService parameterService;
     private PersonService personService;
-    private CuAchService achService;
     private AchBankService achBankService;
     private DateTimeService dateTimeService;
     private PayeeACHAccountExtractReportService payeeACHAccountExtractReportService;
@@ -352,27 +345,16 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
             return processingError;
         }
         
-        processingError = addOrUpdateACHAccountIfNecessary(payee, achDetail, PayeeIdTypeCodes.ENTITY, payee.getEntityId());
+        processingError = payeeACHAccountDocumentService.addOrUpdateACHAccountIfNecessary(
+                payee, achDetail, PayeeIdTypeCodes.ENTITY, payee.getEntityId());
         if (StringUtils.isNotBlank(processingError)) {
             return processingError;
         }
         
-        processingError = addOrUpdateACHAccountIfNecessary(payee, achDetail, PayeeIdTypeCodes.EMPLOYEE, payee.getEmployeeId());
+        processingError = payeeACHAccountDocumentService.addOrUpdateACHAccountIfNecessary(
+                payee, achDetail, PayeeIdTypeCodes.EMPLOYEE, payee.getEmployeeId());
         
         return processingError;
-    }
-
-    protected String addOrUpdateACHAccountIfNecessary(
-            Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType, String payeeIdNumber) {
-        GlobalVariables.getMessageMap().clearErrorMessages();
-        PayeeACHAccount achAccount = achService.getAchInformationIncludingInactive(
-                payeeType, payeeIdNumber, payeeACHAccountDocumentService.getDirectDepositTransactionType());
-        
-        if (ObjectUtils.isNull(achAccount)) {
-            return payeeACHAccountDocumentService.addACHAccount(payee, achDetail, payeeType);
-        } else {
-            return payeeACHAccountDocumentService.updateACHAccountIfNecessary(payee, achDetail, achAccount);
-        }
     }
 
     /**
@@ -517,10 +499,6 @@ public class PayeeACHAccountExtractServiceImpl implements PayeeACHAccountExtract
 
     public void setPersonService(PersonService personService) {
         this.personService = personService;
-    }
-
-    public void setAchService(CuAchService achService) {
-        this.achService = achService;
     }
 
     public void setAchBankService(AchBankService achBankService) {

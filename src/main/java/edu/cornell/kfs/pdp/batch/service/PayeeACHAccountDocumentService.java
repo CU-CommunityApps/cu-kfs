@@ -10,6 +10,9 @@ import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
 
 public interface PayeeACHAccountDocumentService {
     
+    String addOrUpdateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail,
+            String payeeType, String payeeIdNumber);
+    
     String addACHAccount(Person payee, PayeeACHAccountExtractDetail achDetail, String payeeType);
 
     String updateACHAccountIfNecessary(Person payee, PayeeACHAccountExtractDetail achDetail, PayeeACHAccount achAccount);

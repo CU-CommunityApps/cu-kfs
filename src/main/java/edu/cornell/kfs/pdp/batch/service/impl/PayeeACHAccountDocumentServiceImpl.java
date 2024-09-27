@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
 import org.kuali.kfs.kim.api.identity.PersonService;
 import org.kuali.kfs.kim.impl.identity.Person;
 import org.kuali.kfs.kns.document.MaintenanceDocument;
+import org.kuali.kfs.krad.UserSession;
 import org.kuali.kfs.krad.bo.Note;
 import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
@@ -55,6 +57,7 @@ import edu.cornell.kfs.pdp.CUPdpPropertyConstants;
 import edu.cornell.kfs.pdp.batch.PayeeACHAccountExtractStep;
 import edu.cornell.kfs.pdp.batch.service.PayeeACHAccountDocumentService;
 import edu.cornell.kfs.pdp.businessobject.PayeeACHAccountExtractDetail;
+import edu.cornell.kfs.pdp.service.CuAchService;
 
 public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocumentService {
     private static final Logger LOG = LogManager.getLogger();
@@ -66,8 +69,31 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
     private ParameterService parameterService;
     private PersonService personService;
     private SequenceAccessorService sequenceAccessorService;
+    private CuAchService achService;
     private BusinessObjectService businessObjectService;
     private DateTimeService dateTimeService;
+
+    private Function<String, UserSession> userSessionBuilder = UserSession::new;
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public String addOrUpdateACHAccountIfNecessary(final Person payee, final PayeeACHAccountExtractDetail achDetail,
+            final String payeeType, final String payeeIdNumber) {
+        try {
+            return GlobalVariables.doInNewGlobalVariables(userSessionBuilder.apply(KFSConstants.SYSTEM_USER), () -> {
+                final PayeeACHAccount achAccount = achService.getAchInformationIncludingInactive(
+                        payeeType, payeeIdNumber, getDirectDepositTransactionType());
+
+                if (ObjectUtils.isNull(achAccount)) {
+                    return addACHAccount(payee, achDetail, payeeType);
+                } else {
+                    return updateACHAccountIfNecessary(payee, achDetail, achAccount);
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
@@ -452,6 +478,10 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
         this.personService = personService;
     }
 
+    public void setAchService(CuAchService achService) {
+        this.achService = achService;
+    }
+
     public void setSequenceAccessorService(SequenceAccessorService sequenceAccessorService) {
         this.sequenceAccessorService = sequenceAccessorService;
     }
@@ -462,6 +492,10 @@ public class PayeeACHAccountDocumentServiceImpl implements PayeeACHAccountDocume
 
     public void setDateTimeService(DateTimeService dateTimeService) {
         this.dateTimeService = dateTimeService;
+    }
+
+    public void setUserSessionBuilder(Function<String, UserSession> userSessionBuilder) {
+        this.userSessionBuilder = userSessionBuilder;
     }
 
 

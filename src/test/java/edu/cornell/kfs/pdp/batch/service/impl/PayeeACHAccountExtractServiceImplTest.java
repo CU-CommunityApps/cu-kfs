@@ -133,7 +133,6 @@ public class PayeeACHAccountExtractServiceImplTest {
                 Collections.singletonList(createACHBatchInputFileType()));
         payeeACHAccountExtractService.setParameterService(createMockParameterService());
         payeeACHAccountExtractService.setPersonService(createMockPersonService());
-        payeeACHAccountExtractService.setAchService(createAchService());
         payeeACHAccountExtractService.setAchBankService(createMockAchBankService());
         payeeACHAccountExtractService.setPayeeACHAccountExtractReportService(createMockPayeeACHAccountExtractReportService());
         payeeACHAccountExtractService.setDateTimeService(mockDateTimeService);
@@ -564,9 +563,17 @@ public class PayeeACHAccountExtractServiceImplTest {
         payeeACHAccountDocumentService.setParameterService(createMockParameterService());
         payeeACHAccountDocumentService.setPersonService(createMockPersonService());
         payeeACHAccountDocumentService.setSequenceAccessorService(createMockSequenceAccessorService());
+        payeeACHAccountDocumentService.setAchService(createAchService());
         payeeACHAccountDocumentService.setBusinessObjectService(createMockBusinessObjectService());
         payeeACHAccountDocumentService.setDateTimeService(mockDateTimeService);
+        payeeACHAccountDocumentService.setUserSessionBuilder(this::createMockUserSessionForPerson);
         return payeeACHAccountDocumentService;
+    }
+
+    private UserSession createMockUserSessionForPerson(final String principalName) {
+        final UserNameFixture fixture = UserNameFixture.valueOf(principalName);
+        final Person mockPerson = MockPersonUtil.createMockPerson(fixture);
+        return MockPersonUtil.createMockUserSession(mockPerson);
     }
 
     private Map<String, Object> createPropertiesMapForMatching(PayeeACHAccountFixture achFixture) {

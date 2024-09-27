@@ -171,7 +171,6 @@
         <property name="batchInputFileService" ref="batchInputFileService" />
         <property name="parameterService" ref="parameterService" />
         <property name="personService" ref="personService" />
-        <property name="achService" ref="pdpAchService" />
         <property name="achBankService" ref="pdpAchBankService" />
         <property name="dateTimeService" ref="dateTimeService" />
         <property name="payeeACHAccountExtractReportService" ref="payeeACHAccountExtractReportService" />
@@ -192,6 +191,7 @@
       <property name="parameterService" ref="parameterService" />
       <property name="personService" ref="personService" />
       <property name="sequenceAccessorService" ref="sequenceAccessorService" />
+      <property name="achService" ref="pdpAchService" />
       <property name="businessObjectService" ref="businessObjectService" />
       <property name="dateTimeService" ref="dateTimeService" />
     </bean>
