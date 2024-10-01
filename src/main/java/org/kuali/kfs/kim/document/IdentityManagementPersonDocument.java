@@ -20,6 +20,7 @@ package org.kuali.kfs.kim.document;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
 import org.kuali.kfs.kim.api.KimConstants;
@@ -38,10 +39,13 @@ import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -482,8 +486,22 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
             setIfGroupsEditable();
             setIfRolesEditable();
+
+            if (StringUtils.equals(statusChangeEvent.getNewRouteStatus(), KFSConstants.DocumentStatusCodes.FINAL)) {
+                for (final PersonDocumentRole role : roles) {
+                    for (final KimDocumentRoleMember rolePrncpl : role.getRolePrncpls()) {
+                        if (ObjectUtils.isNull(rolePrncpl.getActiveFromDate())) {
+                            Timestamp timestampNow = new Timestamp(new java.util.Date().getTime());
+                            rolePrncpl.setActiveFromDate(timestampNow);
+                        }
+                    }
+                }
+            }
+
             KIMServiceLocatorInternal.getUiDocumentService().savePerson(this);
         }
+
+
     }
 
     @Override
