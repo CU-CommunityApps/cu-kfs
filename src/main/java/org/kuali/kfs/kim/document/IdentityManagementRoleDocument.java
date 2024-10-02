@@ -261,6 +261,11 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
         final String roleMemberId = nextSeq.toString();
         member.setRoleMemberId(roleMemberId);
         setupMemberRspActions(member);
+
+        if (ObjectUtils.isNull(member.getActiveFromDate())) {
+            member.setActiveFromDate(getDateTimeService().getCurrentTimestamp());
+        }
+
         getModifiedMembers().add(member);
     }
 

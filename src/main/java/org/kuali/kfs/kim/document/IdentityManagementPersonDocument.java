@@ -490,8 +490,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
             for (final PersonDocumentRole role : roles) {
                 for (final KimDocumentRoleMember rolePrncpl : role.getRolePrncpls()) {
                     if (ObjectUtils.isNull(rolePrncpl.getActiveFromDate())) {
-                        Timestamp timestampNow = new Timestamp(new java.util.Date().getTime());
-                        rolePrncpl.setActiveFromDate(timestampNow);
+                        rolePrncpl.setActiveFromDate(getDateTimeService().getCurrentTimestamp());
                     }
                 }
             }
