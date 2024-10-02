@@ -9,6 +9,7 @@
 <c:set var="securityRequestRole" value="${KualiForm.document.securityRequestRoles[securityRequestRoleIndex]}" />
 <c:set var="roleTitle" value="${securityRequestRole.roleInfo.id} : ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name}"/>
 <c:set var="roleInquiryUrl" value="${ConfigProperties.application.url}/inquiry.do?methodToCall=start&businessObjectClassName=org.kuali.kfs.kim.impl.role.Role&id=${securityRequestRole.roleInfo.id}&mode=standalone"/>
+<c:set var="roleLinkTitle" value="Open details for ${securityRequestRole.roleInfo.namespaceCode} - ${securityRequestRole.roleInfo.name} in new tab"/>
 
 <h3>&nbsp;</h3>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="datatable">
@@ -16,7 +17,8 @@
     <th colspan="2" width="100%">
       <b>
         <c:out value="${roleTitle}"/>
-        <a href="<c:out value='${roleInquiryUrl}'/>" target="_blank" title="Open in new tab" class="new-window" onclick="event.stopPropagation();">
+        &nbsp;
+        <a href="<c:out value='${roleInquiryUrl}'/>" target="_blank" title="<c:out value='${roleLinkTitle}'/>" class="new-window" onclick="event.stopPropagation();">
           <span class="glyphicon glyphicon-new-window"></span>
         </a>
       </b>
