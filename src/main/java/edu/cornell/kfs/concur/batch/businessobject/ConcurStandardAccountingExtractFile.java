@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
-public class ConcurStandardAccountingExtractFile {
+public class ConcurStandardAccountingExtractFile extends ConcurStandardAccountingExtractLineBase {
 
     private Date batchDate;
     private Integer recordCount;

@@ -145,7 +145,7 @@
 	
 	<bean id="standardAccountExtractFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser">
         <property name="flatFileSpecification">
-            <bean class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileSpecification">
+            <bean class="edu.cornell.kfs.concur.batch.ConcurSaeDelimitedFlatFileSpecification">
                 <property name="delimiter" value="|"/>
                 <property name="objectSpecifications">
                     <list>
