@@ -20,13 +20,14 @@
 --%>
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
+<c:set var="camsFullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && not empty KualiForm.editingMode['allowCapitalAssetEdit']}"/>
+
 <kul:documentPage showDocumentInfo="true"
                   documentTypeName="RequisitionDocument"
                   htmlFormAction="purapRequisition" renderMultipart="true"
                   showTabButtons="true">
 
-    <c:set var="fullEntryMode"
-           value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
+    <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"/>
 
     <sys:documentOverview editingMode="${KualiForm.editingMode}"
                           includePostingYear="true"
@@ -58,7 +59,7 @@
                    camsAssetAttributes="${DataDictionary.RequisitionItemCapitalAsset.attributes}"
                    camsLocationAttributes="${DataDictionary.RequisitionCapitalAssetLocation.attributes}"
                    isRequisition="true"
-                   fullEntryMode="${fullEntryMode}"/>
+                   fullEntryMode="${camsFullEntryMode}"/>
 
     <purap:paymentinfo
             documentAttributes="${DataDictionary.RequisitionDocument.attributes}"/>
@@ -92,7 +93,7 @@
     <c:set var="extraButtons" value="${KualiForm.extraButtons}"/>
 
     <sys:documentControls transactionalDocument="true" extraButtons="${extraButtons}"/>
-    
+
     <kul:modernLookupSupport />
     <script type="application/javascript">
       document.addEventListener('DOMContentLoaded', () => {
