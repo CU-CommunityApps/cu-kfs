@@ -261,11 +261,6 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
         final String roleMemberId = nextSeq.toString();
         member.setRoleMemberId(roleMemberId);
         setupMemberRspActions(member);
-
-        if (ObjectUtils.isNull(member.getActiveFromDate())) {
-            member.setActiveFromDate(getDateTimeService().getCurrentTimestamp());
-        }
-
         getModifiedMembers().add(member);
     }
 
@@ -343,7 +338,15 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
     @Override
     public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
+        
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
+
+            for (final KimDocumentRoleMember member : getMembers()) {
+                if (ObjectUtils.isNull(member.getActiveFromDate())) {
+                    member.setActiveFromDate(getDateTimeService().getCurrentTimestamp());
+                }
+            }
+
             KIMServiceLocatorInternal.getUiDocumentService().saveRole(this);
         }
     }
