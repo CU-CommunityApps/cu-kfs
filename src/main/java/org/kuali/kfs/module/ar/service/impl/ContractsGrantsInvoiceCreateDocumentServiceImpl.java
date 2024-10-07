@@ -39,6 +39,7 @@ import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAward;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsBillingAwardAccount;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsModuleBillingService;
 import org.kuali.kfs.integration.cg.ContractsAndGrantsOrganization;
+import org.kuali.kfs.integration.cg.businessobject.AwardAccount;
 import org.kuali.kfs.kew.api.document.DocumentStatus;
 import org.kuali.kfs.kew.api.document.WorkflowDocumentService;
 import org.kuali.kfs.krad.service.BusinessObjectService;
