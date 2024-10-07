@@ -1770,7 +1770,6 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         newRoleMember.setMemberId(principalId);
         newRoleMember.setType(MemberType.PRINCIPAL);
 
-        DateTimeService dateTimeService = SpringContext.getBean(DateTimeService.class);
         newRoleMember.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
 
         // build role member attribute objects from the given Map<String, String>
