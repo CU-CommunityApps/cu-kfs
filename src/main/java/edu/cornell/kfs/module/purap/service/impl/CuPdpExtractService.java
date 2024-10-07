@@ -23,7 +23,8 @@ public class CuPdpExtractService extends PdpExtractService {
     
     @Override
     protected void updatePaymentRequest(
-            final PaymentRequestDocument paymentRequestDocument, final Person puser, 
+            final PaymentRequestDocument paymentRequestDocument, 
+            final Person puser, 
             final Date processRunDate) {
         final PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
         doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
@@ -89,7 +90,9 @@ public class CuPdpExtractService extends PdpExtractService {
     }
     
     @Override
-    protected PaymentGroup populatePaymentGroup(final PaymentRequestDocument paymentRequestDocument, final Batch batch) {
+    protected PaymentGroup populatePaymentGroup(
+            final PaymentRequestDocument paymentRequestDocument, 
+            final Batch batch) {
         final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
         if (paymentGroup.isPayableByACH()) {

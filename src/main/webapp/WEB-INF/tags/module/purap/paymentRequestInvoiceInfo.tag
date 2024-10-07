@@ -190,7 +190,7 @@
                             tabindexOverride="${tabindexOverrideBase + 4}" />
                     </td>
 	                <sys:bankLabel align="right"/>
-                    <sys:bankControl property="document.bankCode" objectProperty="document.bank" readOnly="${not (not canEditBank}"/>
+                    <sys:bankControl property="document.bankCode" objectProperty="document.bank" readOnly="${(not canEditBank)}"/>
             <%-- KITT-592 / MOD-PA2000-01: Baseline Modification End --%>
             </tr>
 

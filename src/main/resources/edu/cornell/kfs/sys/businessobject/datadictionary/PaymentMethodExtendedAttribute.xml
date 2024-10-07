@@ -13,7 +13,7 @@
                 <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
                 <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
                 <ref bean="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"/>
-                <ref bean="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode"/>
+                <ref bean="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel"/>
             </list>
         </property>
     </bean>
@@ -61,5 +61,16 @@
               />
           </property>
     </bean>
+    
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel"
+          parent="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel-parentBean" />
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel-parentBean"
+          parent="GenericAttributes-genericBigText"
+          p:label="Additional Credit Memo Data"
+          p:maxLength="32"
+          p:name="additionalCreditMemoDataLabel"
+          p:required="true"
+          p:shortLabel="AddlCMDataLbl"
+    />
 
 </beans>

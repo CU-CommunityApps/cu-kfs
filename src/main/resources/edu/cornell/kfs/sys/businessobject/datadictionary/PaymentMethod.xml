@@ -12,6 +12,7 @@
                 <ref bean="PaymentMethod-extension-processedUsingPdp"/>
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
                 <ref bean="PaymentMethod-extension-additionalCreditMemoDataCode"/>
+                <ref bean="PaymentMethod-extension-additionalCreditMemoDataLabel"/>
             </list>
         </property>
     </bean>
@@ -27,6 +28,10 @@
     <bean id="PaymentMethod-extension-additionalCreditMemoDataCode" parent="PaymentMethod-extension-additionalCreditMemoDataCode-parentBean"/>
     <bean id="PaymentMethod-extension-additionalCreditMemoDataCode-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode"
             p:name="extension.additionalCreditMemoDataCode"/> 
+    
+        <bean id="PaymentMethod-extension-additionalCreditMemoDataLabel" parent="PaymentMethod-extension-additionalCreditMemoDataLabel-parentBean"/>
+    <bean id="PaymentMethod-extension-additionalCreditMemoDataLabel-parentBean" abstract="true" parent="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel"
+            p:name="extension.additionalCreditMemoDataLabel"/> 
             
     <bean id="PaymentMethod-lookupDefinition" parent="PaymentMethod-lookupDefinition-parentBean" >
         <property name="formAttributeDefinitions">
@@ -51,8 +56,10 @@
             parent="PaymentMethod-sectionDefinition-parentBean">
         <property name="fields">
             <list merge="true">
+                <ref bean="PaymentMethod-extension-additionalCreditMemoDataLabel"/>
                 <ref bean="PaymentMethod-extension-processedUsingPdp"/>
                 <ref bean="PaymentMethod-extension-displayOnRecurringDVDocument"/>
+                
             </list>
         </property>
     </bean>

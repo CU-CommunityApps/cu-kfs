@@ -761,6 +761,29 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
         }
 
+        final RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
+        final String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
+        try {
+            final Person user = personService.getPerson(reqDocInitiator);
+
+            setProcessingCampus(preqDoc, user.getCampusCode());
+
+        } catch (final Exception e) {
+            final String extraDescription = "Error setting processing campus code - " + e.getMessage();
+            final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
+            orderHolder.addInvoiceOrderRejectReason(rejectReason);
+            return null;
+        }
+
+        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = getAccountsPayableService().expiredOrClosedAccountsList(poDoc);
+        if (expiredOrClosedAccountList == null) {
+            expiredOrClosedAccountList = new HashMap();
+        }
+
+        LOG.info("{} accounts has been found as Expired or Closed", expiredOrClosedAccountList::size);
+
+        preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),expiredOrClosedAccountList);
+        
         //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
         //set bank code to default bank code in the system parameter
         //KFSPTS-1891
@@ -787,29 +810,7 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setBankCode(defaultBank.getBankCode());
             preqDoc.setBank(defaultBank);
         }
-
-        final RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
-        final String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
-        try {
-            final Person user = personService.getPerson(reqDocInitiator);
-
-            setProcessingCampus(preqDoc, user.getCampusCode());
-
-        } catch (final Exception e) {
-            final String extraDescription = "Error setting processing campus code - " + e.getMessage();
-            final ElectronicInvoiceRejectReason rejectReason = matchingService.createRejectReason(PurapConstants.ElectronicInvoice.PREQ_ROUTING_VALIDATION_ERROR, extraDescription, orderHolder.getFileName());
-            orderHolder.addInvoiceOrderRejectReason(rejectReason);
-            return null;
-        }
-
-        HashMap<String, ExpiredOrClosedAccountEntry> expiredOrClosedAccountList = getAccountsPayableService().expiredOrClosedAccountsList(poDoc);
-        if (expiredOrClosedAccountList == null) {
-            expiredOrClosedAccountList = new HashMap();
-        }
-
-        LOG.info("{} accounts has been found as Expired or Closed", expiredOrClosedAccountList::size);
-
-        preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),expiredOrClosedAccountList);
+        
         // need to populate here for ext price.  it become per item
         // KFSPTS-1719.  convert 1st matching inv item that is qty, but po is non-qty
         checkQtyInvItemForNoQtyOrder(preqDoc, orderHolder);
