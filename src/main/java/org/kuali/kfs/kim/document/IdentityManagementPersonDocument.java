@@ -485,6 +485,7 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
             setIfGroupsEditable();
             setIfRolesEditable();
 
+            // CU Customization KFSPTS-27162 Set default for activeFromDate field
             for (final PersonDocumentRole role : roles) {
                 for (final KimDocumentRoleMember rolePrncpl : role.getRolePrncpls()) {
                     if (ObjectUtils.isNull(rolePrncpl.getActiveFromDate())) {

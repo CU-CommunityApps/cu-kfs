@@ -341,6 +341,7 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
         
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
 
+            // CU Customization KFSPTS-27162 Set default for activeFromDate field
             for (final KimDocumentRoleMember member : getMembers()) {
                 if (ObjectUtils.isNull(member.getActiveFromDate())) {
                     member.setActiveFromDate(getDateTimeService().getCurrentTimestamp());

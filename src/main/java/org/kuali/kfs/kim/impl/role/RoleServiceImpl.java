@@ -52,7 +52,6 @@ import org.kuali.kfs.kim.impl.services.KimImplServiceLocator;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.util.KimCommonUtilsInternal;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -1770,6 +1769,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         newRoleMember.setMemberId(principalId);
         newRoleMember.setType(MemberType.PRINCIPAL);
 
+        // CU Customization KFSPTS-27162 Set default for activeFromDate field
         newRoleMember.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
 
         // build role member attribute objects from the given Map<String, String>
