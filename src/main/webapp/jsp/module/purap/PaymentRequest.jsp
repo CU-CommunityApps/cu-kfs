@@ -99,7 +99,6 @@
 
         <purap:paymentHistory />
 
-        <purap:preqWireTransfer/>
         <purap:preqForeignDraft/>
 
         <gl:generalLedgerPendingEntries/>

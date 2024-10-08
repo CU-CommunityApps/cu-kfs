@@ -3417,6 +3417,11 @@
                               proxy="true">
             <foreignkey field-ref="paymentMethodCode"/>
         </reference-descriptor>
+        <!-- Cornell Customization -->
+        <reference-descriptor name="wireTransfer" class-ref="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer" 
+                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
+            <foreignkey field-ref="documentNumber" />
+        </reference-descriptor>
         <collection-descriptor name="items" proxy="true"
                                element-class-ref="org.kuali.kfs.module.purap.businessobject.CreditMemoItem"
                                collection-class="org.apache.ojb.broker.util.collections.ManageableArrayList"
@@ -3435,12 +3440,6 @@
                 <attribute attribute-name="documentNumber" attribute-value="parent.documentNumber"/>
             </query-customizer>
         </collection-descriptor>
-        
-        <!-- Cornell Customization -->
-        <reference-descriptor name="wireTransfer" class-ref="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer" 
-                              auto-retrieve="true" auto-update="object" auto-delete="object" proxy="true" >
-            <foreignkey field-ref="documentNumber" />
-        </reference-descriptor>
     </class-descriptor>
 
 	<class-descriptor class="edu.cornell.kfs.module.purap.businessobject.JaggaerRoleLinkMapping" table="CU_JAGGAER_ROLE_LNK_T">
