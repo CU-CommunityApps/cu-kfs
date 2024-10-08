@@ -1084,9 +1084,10 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
                             .add(invoiceDetailAccountObjectCode.getCumulativeExpenditures()));
                     /*
                      * CU Customization back port FINP-10147
+                     * these two lines removed
                      */
-                    //invDetail.setInvoiceAmount(invDetail.getInvoiceAmount()
-                      //      .add(invoiceDetailAccountObjectCode.getCurrentExpenditures()));
+//                    invDetail.setInvoiceAmount(invDetail.getInvoiceAmount()
+//                            .add(invoiceDetailAccountObjectCode.getCurrentExpenditures()));
                 }
             }
             final List<AwardAccountObjectCodeTotalBilled> billedForCategory = billedsMap.get(category.getCategoryCode());
@@ -1100,6 +1101,7 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             
             /*
              * CU Customization back port FINP-10147
+             * these two lines added
              */
             invDetail.setInvoiceAmount(invDetail.getCumulativeExpenditures()
                     .subtract(invDetail.getTotalPreviouslyBilled()));
@@ -1657,16 +1659,14 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
         /*
          * CU Customization backport FINP-10147
          */
-        
-        /*
-        final Map<String, KualiDecimal> totalBilledByAccountNumberMap = new HashMap<>();
-        for (final InvoiceDetailAccountObjectCode objectCode: document.getInvoiceDetailAccountObjectCodes()) {
-            final String key = objectCode.getChartOfAccountsCode() + "-" + objectCode.getAccountNumber();
-            KualiDecimal totalBilled = cleanAmount(totalBilledByAccountNumberMap.get(key));
-            totalBilled = totalBilled.add(objectCode.getTotalBilled());
-            totalBilledByAccountNumberMap.put(key, totalBilled);
-        }
-        */
+//        final Map<String, KualiDecimal> totalBilledByAccountNumberMap = new HashMap<>();
+//        for (final InvoiceDetailAccountObjectCode objectCode: document.getInvoiceDetailAccountObjectCodes()) {
+//            final String key = objectCode.getChartOfAccountsCode() + "-" + objectCode.getAccountNumber();
+//            KualiDecimal totalBilled = cleanAmount(totalBilledByAccountNumberMap.get(key));
+//            totalBilled = totalBilled.add(objectCode.getTotalBilled());
+//            totalBilledByAccountNumberMap.put(key, totalBilled);
+//        }
+//        
 
         KualiDecimal totalExpendituredAmount = KualiDecimal.ZERO;
         for (final InvoiceAccountDetail invAcctD : document.getAccountDetails()) {
@@ -1677,13 +1677,12 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
              * CU Customization backport FINP-10147
              */
             
-            /*
-            final String key = chartOfAccountsCode + "-" + accountNumber;
-            if (ObjectUtils.isNotNull(totalBilledByAccountNumberMap.get(key))) {
-                invAcctD.setTotalPreviouslyBilled(totalBilledByAccountNumberMap.get(key));
-            } else {
-                invAcctD.setTotalPreviouslyBilled(KualiDecimal.ZERO);
-                */
+//            final String key = chartOfAccountsCode + "-" + accountNumber;
+//            if (ObjectUtils.isNotNull(totalBilledByAccountNumberMap.get(key))) {
+//                invAcctD.setTotalPreviouslyBilled(totalBilledByAccountNumberMap.get(key));
+//            } else {
+//                invAcctD.setTotalPreviouslyBilled(KualiDecimal.ZERO);
+                
             final Map<String, Object> mapKey = new HashMap<>();
             mapKey.put(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber);
             mapKey.put(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chartOfAccountsCode);
@@ -1705,6 +1704,9 @@ public class ContractsGrantsInvoiceCreateDocumentServiceImpl implements Contract
             }
             
             invAcctD.setTotalPreviouslyBilled(totalBilled);
+            /**
+             * end CU Customization backport FINP-10147
+             */
 
             if (invAcctD.getTotalPreviouslyBilled().isZero()) {
                 final String proposalNumber = document.getInvoiceGeneralDetail().getProposalNumber();
