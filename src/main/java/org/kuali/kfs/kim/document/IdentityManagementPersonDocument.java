@@ -496,7 +496,6 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
 
             KIMServiceLocatorInternal.getUiDocumentService().savePerson(this);
         }
-        
     }
 
     @Override
