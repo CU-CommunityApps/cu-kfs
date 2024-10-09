@@ -94,12 +94,11 @@
                 documentAttributes="${DataDictionary.SourceAccountingLine.attributes}"/>
 
         <fp:wireTransfer/>
+        <fp:foreignDraft/>
 
         <purap:relatedDocuments />
 
         <purap:paymentHistory />
-
-        <purap:preqForeignDraft/>
 
         <gl:generalLedgerPendingEntries/>
 
