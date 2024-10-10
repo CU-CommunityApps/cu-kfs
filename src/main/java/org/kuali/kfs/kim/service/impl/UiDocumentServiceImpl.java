@@ -772,7 +772,7 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                             roleMemberImpl.setActiveFromDateValue(
                                     new java.sql.Timestamp(roleMember.getActiveFromDate().getTime()));
                         } else {
-                            //CU Customization
+                            // CU Customization KFSPTS-27162 Set default for activeFromDate field
                             roleMemberImpl.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
                         }
 
