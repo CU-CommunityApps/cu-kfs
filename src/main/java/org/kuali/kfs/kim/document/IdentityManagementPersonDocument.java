@@ -484,17 +484,6 @@ public class IdentityManagementPersonDocument extends IdentityManagementKimDocum
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
             setIfGroupsEditable();
             setIfRolesEditable();
-
-            // ==== CU Customization KFSPTS-27162 Set default for activeFromDate field ===
-            for (final PersonDocumentRole role : roles) {
-                for (final KimDocumentRoleMember rolePrncpl : role.getRolePrncpls()) {
-                    if (ObjectUtils.isNull(rolePrncpl.getActiveFromDate())) {
-                        rolePrncpl.setActiveFromDate(getDateTimeService().getCurrentTimestamp());
-                    }
-                }
-            }
-            // ==== End CU Customization ====
-
             KIMServiceLocatorInternal.getUiDocumentService().savePerson(this);
         }
     }

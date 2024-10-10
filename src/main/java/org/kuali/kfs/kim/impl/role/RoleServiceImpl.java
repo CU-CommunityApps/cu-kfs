@@ -1824,7 +1824,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         newRoleMember.setMemberId(groupId);
         newRoleMember.setType(MemberType.GROUP);
 
-        //CU Customization
+        // CU Customization KFSPTS-27162 Set default for activeFromDate field
         newRoleMember.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
 
         // build role member attribute objects from the given Map<String, String>
@@ -1881,7 +1881,7 @@ public class RoleServiceImpl extends RoleServiceBase implements RoleService {
         newRoleMember.setMemberId(roleId);
         newRoleMember.setType(MemberType.ROLE);
 
-        // CU Customization
+        // CU Customization KFSPTS-27162 Set default for activeFromDate field
         newRoleMember.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
 
         // build roleBo member attribute objects from the given Map<String, String>
