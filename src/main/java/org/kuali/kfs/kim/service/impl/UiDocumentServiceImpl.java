@@ -752,7 +752,7 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                     if (!role.getDefinitions().isEmpty()) {
                         final RoleMember roleMemberImpl = new RoleMember();
 
-                        // CU Customization Default Active From Date
+                        // CU Customization KFSPTS-27162 Set default for activeFromDate field
                         roleMemberImpl.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
 
                         roleMemberImpl.setRoleId(role.getRoleId());
@@ -2048,7 +2048,7 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                 roleMember.setActiveFromDateValue(documentRoleMember.getActiveFromDate());
                 roleMember.setActiveToDateValue(documentRoleMember.getActiveToDate());
 
-                //CU Customization
+                // CU Customization KFSPTS-27162 Set default for activeFromDate field
                 if (ObjectUtils.isNull(documentRoleMember.getActiveFromDate())) {
                     roleMember.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
                 }
