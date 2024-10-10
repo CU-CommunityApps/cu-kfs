@@ -751,6 +751,10 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                 if (role.getRolePrncpls().isEmpty()) {
                     if (!role.getDefinitions().isEmpty()) {
                         final RoleMember roleMemberImpl = new RoleMember();
+
+                        // CU Customization Default Active From Date
+                        roleMemberImpl.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
+
                         roleMemberImpl.setRoleId(role.getRoleId());
                         roleMemberImpl.setMemberId(identityManagementPersonDocument.getPrincipalId());
                         roleMemberImpl.setType(MemberType.PRINCIPAL);
@@ -764,10 +768,15 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                         roleMemberImpl.setMemberId(identityManagementPersonDocument.getPrincipalId());
                         roleMemberImpl.setType(MemberType.PRINCIPAL);
                         roleMemberImpl.setId(roleMember.getRoleMemberId());
+
                         if (roleMember.getActiveFromDate() != null) {
                             roleMemberImpl.setActiveFromDateValue(
                                     new java.sql.Timestamp(roleMember.getActiveFromDate().getTime()));
+                        } else {
+                            //CU Customization
+                            roleMemberImpl.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
                         }
+
                         if (roleMember.getActiveToDate() != null) {
                             roleMemberImpl.setActiveToDateValue(
                                     new java.sql.Timestamp(roleMember.getActiveToDate().getTime()));
@@ -2038,6 +2047,11 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                 roleMember.setType(MemberType.fromCode(documentRoleMember.getMemberTypeCode()));
                 roleMember.setActiveFromDateValue(documentRoleMember.getActiveFromDate());
                 roleMember.setActiveToDateValue(documentRoleMember.getActiveToDate());
+
+                //CU Customization
+                if (ObjectUtils.isNull(documentRoleMember.getActiveFromDate())) {
+                    roleMember.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
+                }
 
                 roleMember.setAttributeDetails(getRoleMemberAttributeData(documentRoleMember.getQualifiers()));
                 roleMember.setRoleRspActions(new ArrayList<>());
