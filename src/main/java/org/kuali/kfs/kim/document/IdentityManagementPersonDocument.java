@@ -38,12 +38,10 @@ import org.kuali.kfs.kns.service.KNSServiceLocator;
 import org.kuali.kfs.krad.bo.PersistableBusinessObject;
 import org.kuali.kfs.krad.service.SequenceAccessorService;
 import org.kuali.kfs.krad.util.GlobalVariables;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.kim.document.IdentityManagementPersonDocumentExtension;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

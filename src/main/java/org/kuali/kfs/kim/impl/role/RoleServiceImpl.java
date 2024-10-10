@@ -52,7 +52,6 @@ import org.kuali.kfs.kim.impl.services.KimImplServiceLocator;
 import org.kuali.kfs.kim.impl.type.KimType;
 import org.kuali.kfs.kim.util.KimCommonUtilsInternal;
 import org.kuali.kfs.krad.service.KRADServiceLocator;
-import org.kuali.kfs.krad.util.ObjectUtils;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;

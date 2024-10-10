@@ -338,7 +338,6 @@ public class IdentityManagementRoleDocument extends IdentityManagementTypeAttrib
     @Override
     public void doRouteStatusChange(final DocumentRouteStatusChange statusChangeEvent) {
         super.doRouteStatusChange(statusChangeEvent);
-        
         if (getDocumentHeader().getWorkflowDocument().isProcessed()) {
             KIMServiceLocatorInternal.getUiDocumentService().saveRole(this);
         }

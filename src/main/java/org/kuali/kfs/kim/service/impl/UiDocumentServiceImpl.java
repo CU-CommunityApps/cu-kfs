@@ -768,7 +768,6 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                         roleMemberImpl.setMemberId(identityManagementPersonDocument.getPrincipalId());
                         roleMemberImpl.setType(MemberType.PRINCIPAL);
                         roleMemberImpl.setId(roleMember.getRoleMemberId());
-
                         if (roleMember.getActiveFromDate() != null) {
                             roleMemberImpl.setActiveFromDateValue(
                                     new java.sql.Timestamp(roleMember.getActiveFromDate().getTime()));
