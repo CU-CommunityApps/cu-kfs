@@ -36,7 +36,7 @@
 				<value>accountReversionImportJob</value>
 				<value>createClosedAccountsCsvJob</value>
 				<value>createWorkdayOpenAccountsCsvJob</value>
-                <value>copyLegacyAccountAttachmentsJob</value>
+				<value>copyLegacyAccountAttachmentsJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">

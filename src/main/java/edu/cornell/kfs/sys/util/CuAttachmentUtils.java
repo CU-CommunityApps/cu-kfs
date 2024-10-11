@@ -18,7 +18,7 @@ public final class CuAttachmentUtils {
 
     /*
      * Modified copy of AccountingXmlDocumentDownloadAttachmentServiceImpl.findMimeType() method.
-     * KFSPTS-????? will handle consolidating the other method's usage into this one.
+     * NOTE: If needed, create a user story for consolidating the other method's usage into this one.
      */
     public static String findMimeType(final String fileName) {
         if (StringUtils.isBlank(fileName)) {
