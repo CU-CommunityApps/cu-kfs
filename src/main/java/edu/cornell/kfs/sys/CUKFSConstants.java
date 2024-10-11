@@ -190,6 +190,8 @@ public class CUKFSConstants {
 
     public static final String DOCUMENT_REINDEX_FILE_NAME_PREFIX = "documentReindex";
 
+    public static final String CLASSPATH_PREFIX = "classpath:";
+
     public static final class FileExtensions {
         public static final String CSV = ".csv";
         public static final String DONE = ".done";

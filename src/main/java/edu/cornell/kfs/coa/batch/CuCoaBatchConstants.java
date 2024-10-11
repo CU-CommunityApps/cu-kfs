@@ -1,8 +1,5 @@
 package edu.cornell.kfs.coa.batch;
 
-import java.util.function.BiConsumer;
-
-import edu.cornell.kfs.coa.batch.businessobject.LegacyAccountAttachment;
 import edu.cornell.kfs.fp.CuFPConstants;
 
 public class CuCoaBatchConstants {
@@ -73,35 +70,5 @@ public class CuCoaBatchConstants {
     public static final String DFA_ATTACHMENTS_GROUP_CODE = "DFAATTACH";
     public static final String DFA_ATTACHMENTS_URL_KEY = CuFPConstants.CREDENTIAL_BASE_URL + "1";
     public static final String DFA_ATTACHMENTS_API_KEY = "x-api-key";
-
-    public enum LegacyAccountAttachmentProperty {
-        ID("COPYING_ACCT_ATTACH_ID", LegacyAccountAttachment::setId),
-        LEGACY_ACCOUNT_CODE("ORIGINAL_ACCOUNT_CODE", LegacyAccountAttachment::setLegacyAccountCode),
-        KFS_CHART_CODE("KFS_CHART_CODE", LegacyAccountAttachment::setKfsChartCode),
-        KFS_ACCOUNT_NUMBER("KFS_ACCOUNT_NUMBER", LegacyAccountAttachment::setKfsAccountNumber),
-        FILE_NAME("FILE_NAME", LegacyAccountAttachment::setFileName),
-        ADDED_BY("ADDED_BY", LegacyAccountAttachment::setAddedBy),
-        FILE_DESCRIPTION("FILE_DESCRIPTION", LegacyAccountAttachment::setFileDescription),
-        FILE_PATH("FILE_SYSTEM_FILE_NAME", LegacyAccountAttachment::setFilePath),
-        RETRY_COUNT("RETRY_COUNT", LegacyAccountAttachment::setRetryCount),
-        IS_COPIED("COPIED_IND", LegacyAccountAttachment::setCopied);
-
-        public final String columnName;
-        public final BiConsumer<LegacyAccountAttachment, String> propertySetter;
-
-        private LegacyAccountAttachmentProperty(final String columnName,
-                final BiConsumer<LegacyAccountAttachment, String> propertySetter) {
-            this.columnName = columnName;
-            this.propertySetter = propertySetter;
-        }
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public BiConsumer<LegacyAccountAttachment, String> getPropertySetter() {
-            return propertySetter;
-        }
-    }
 
 }

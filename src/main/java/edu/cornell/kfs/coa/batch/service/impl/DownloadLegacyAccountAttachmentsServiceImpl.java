@@ -28,6 +28,12 @@ public class DownloadLegacyAccountAttachmentsServiceImpl implements DownloadLega
 
     private WebServiceCredentialService webServiceCredentialService;
 
+    private WebClient webClient;
+
+    public DownloadLegacyAccountAttachmentsServiceImpl() {
+        webClient = WebClientFactory.create();
+    }
+
     @Override
     public void downloadAndProcessLegacyAccountAttachment(final LegacyAccountAttachment legacyAccountAttachment,
             final FailableBiConsumer<LegacyAccountAttachment, DataBuffer, IOException> attachmentProcessor)
@@ -38,7 +44,7 @@ public class DownloadLegacyAccountAttachmentsServiceImpl implements DownloadLega
         try {
             final URI fileDownloadUrl = buildAttachmentDownloadUrl(legacyAccountAttachment.getFilePath());
             final String apiKey = getApiKey();
-            fileDataBuffer = getClient()
+            fileDataBuffer = webClient
                     .get()
                     .uri(fileDownloadUrl)
                     .header(CuCoaBatchConstants.DFA_ATTACHMENTS_API_KEY, apiKey)
@@ -66,10 +72,6 @@ public class DownloadLegacyAccountAttachmentsServiceImpl implements DownloadLega
         return new URIBuilder(baseUrl)
                 .appendPath(filePath)
                 .build();
-    }
-
-    private WebClient getClient() {
-        return WebClientFactory.create();
     }
 
     private String getBaseUrl() {

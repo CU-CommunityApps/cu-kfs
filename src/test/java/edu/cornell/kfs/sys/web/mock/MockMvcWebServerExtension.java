@@ -46,6 +46,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 
@@ -134,8 +136,9 @@ public class MockMvcWebServerExtension implements BeforeEachCallback, BeforeTest
                     .map(controller -> (ResettableController) controller)
                     .collect(Collectors.toUnmodifiableList());
         }
-        this.mockMvc = MockMvcBuilders
-                .standaloneSetup(controllers)
+        final StandaloneMockMvcBuilder mvcBuilder = MockMvcBuilders.standaloneSetup(controllers);
+        mvcBuilder.setPatternParser(new PathPatternParser());
+        this.mockMvc = mvcBuilder
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
                 .addInterceptors(new ForceUTF8TestResponseInterceptor())
                 .setMessageConverters(getDefaultMessageConverters())
