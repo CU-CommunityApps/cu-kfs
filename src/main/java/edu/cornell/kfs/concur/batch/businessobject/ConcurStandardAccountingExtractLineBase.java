@@ -5,21 +5,22 @@ import java.util.List;
 
 public abstract class ConcurStandardAccountingExtractLineBase {
 
-    private int lineNumber;
+    private Integer lineNumber;
     private List<Integer> columnNumbersContainingSpecialCharacters;
 
-    public int getLineNumber() {
+    public ConcurStandardAccountingExtractLineBase() {
+        this.columnNumbersContainingSpecialCharacters = new ArrayList<>();
+    }
+
+    public Integer getLineNumber() {
         return lineNumber;
     }
 
-    public void setLineNumber(final int lineNumber) {
+    public void setLineNumber(final Integer lineNumber) {
         this.lineNumber = lineNumber;
     }
 
     public List<Integer> getColumnNumbersContainingSpecialCharacters() {
-        if (columnNumbersContainingSpecialCharacters == null) {
-            columnNumbersContainingSpecialCharacters = new ArrayList<>();
-        }
         return columnNumbersContainingSpecialCharacters;
     }
 
@@ -29,6 +30,9 @@ public abstract class ConcurStandardAccountingExtractLineBase {
     }
 
     public void addColumnNumberContainingSpecialCharacters(final Integer columnNumber) {
+        if (columnNumbersContainingSpecialCharacters == null) {
+            columnNumbersContainingSpecialCharacters = new ArrayList<>();
+        }
         getColumnNumbersContainingSpecialCharacters().add(columnNumber);
     }
 

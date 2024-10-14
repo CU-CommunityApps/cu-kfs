@@ -598,6 +598,7 @@
         <property name="reportValidationErrorsSubTitle" value="Concur Standard Accounting Extract Records With Validation Errors"/>
         <property name="reportValidationErrorsSubTitleXXXXNote" value="XXXX Represent Cash Advance. This is information only and does not represent errors."/>
         <property name="reportMissingObjectCodesSubTitle" value="Concur Standard Accounting Extract Records With Missing Object Codes"/>
+        <property name="reportRemovedCharactersSubTitle" value="Concur SAE File Lines Where Special Characters or Extra Quotes Were Removed"/>
     </bean>
 
     <bean id="concurReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">

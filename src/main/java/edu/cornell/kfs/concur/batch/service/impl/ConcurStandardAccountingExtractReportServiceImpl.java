@@ -14,16 +14,18 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportRemovedCharactersWarningItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurReportEmailService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountingExtractReportService;
+import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.service.ReportWriterService;
 
 public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurStandardAccountingExtractReportService {
@@ -51,6 +53,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
     protected String reportValidationErrorsSubTitle;
     protected String reportValidationErrorsSubTitleXXXXNote;
     protected String reportMissingObjectCodesSubTitle;
+    protected String reportRemovedCharactersSubTitle;
     
     @Override
     public File generateReport(ConcurStandardAccountingExtractBatchReportData reportData) {
@@ -61,6 +64,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
             writeValidationErrorSubReport(reportData);
             writeMissingObjectCodesSubReport(reportData);
         }
+        writeRemovedCharacterWarnings(reportData);
         finalizeReport();
         return getReportWriterService().getReportFile();
     }
@@ -209,6 +213,7 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
             
             writeErrorSubReport(reportData.getPendingClientObjectCodeLines(), errorItemWriter, getReportMissingObjectCodesSubTitle());
         }
+        getReportWriterService().pageBreak();
     }
 
     protected Object[] getValidationErrorItemHeaders() {
@@ -323,6 +328,27 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
             for (String errorMessage : errorMessages) {
                 getReportWriterService().writeFormattedMessageLine(errorMessage);
             }
+        }
+    }
+
+    protected void writeRemovedCharacterWarnings(final ConcurStandardAccountingExtractBatchReportData reportData) {
+        if (CollectionUtils.isEmpty(reportData.getLinesWithRemovedCharacters())) {
+            writeErrorSubReportWithNoLineItems(getReportRemovedCharactersSubTitle(),
+                    ConcurConstants.StandardAccountingExtractReport.NO_REMOVED_CHARACTERS_MESSAGE);
+            return;
+        }
+        writeSubTitleForErrorSubReport(getReportRemovedCharactersSubTitle());
+        getReportWriterService().writeFormattedMessageLine("-----------        -------");
+        getReportWriterService().writeFormattedMessageLine("Line Number        Columns");
+        getReportWriterService().writeFormattedMessageLine("-----------        -------");
+        final String lineFormat = "%-11d        %s";
+        for (final ConcurBatchReportRemovedCharactersWarningItem removedCharsWarning :
+                reportData.getLinesWithRemovedCharacters()) {
+            final String columnNumbers = removedCharsWarning.getColumnNumbers().stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(CUKFSConstants.COMMA_AND_SPACE));
+            getReportWriterService().writeFormattedMessageLine(
+                    lineFormat, removedCharsWarning.getLineNumber(), columnNumbers);
         }
     }
 
@@ -518,6 +544,17 @@ public class ConcurStandardAccountingExtractReportServiceImpl implements ConcurS
 
     public void setReportMissingObjectCodesSubTitle(String reportMissingObjectCodesSubTitle) {
         this.reportMissingObjectCodesSubTitle = reportMissingObjectCodesSubTitle;
+    }
+
+    public String getReportRemovedCharactersSubTitle() {
+        if (StringUtils.isEmpty(reportRemovedCharactersSubTitle)) {
+            setReportRemovedCharactersSubTitle(ConcurConstants.StandardAccountingExtractReport.SAE_REMOVED_CHARACTERS_SUB_REPORT_TITLE_NOT_SET_IN_CONFIGURATION_FILE);
+        }
+        return reportRemovedCharactersSubTitle;
+    }
+
+    public void setReportRemovedCharactersSubTitle(String reportRemovedCharactersSubTitle) {
+        this.reportRemovedCharactersSubTitle = reportRemovedCharactersSubTitle;
     }
 
 }
