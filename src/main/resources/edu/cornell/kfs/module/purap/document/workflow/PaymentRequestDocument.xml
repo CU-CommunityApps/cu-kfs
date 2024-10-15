@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
     <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
         <documentType>
@@ -25,6 +25,7 @@
                 <status>Awaiting Sub-Account Manager Approval</status>
                 <status>Cancelled In Process</status>
                 <status>Awaiting Treasury Manager Approval</status>
+                <status>Awaiting Payment Method Review</status>
                 <status>Pending Route Electronic Invoice</status>
             </validApplicationStatuses>
             <policies>
@@ -70,7 +71,7 @@
                     </split>
                     <split name="TreasuryManager" nextNode="RequiresAutoApprovalNotification">
                         <branch name="True">
-                            <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
+                            <role name="PaymentMethod" nextNode="JoinTreasury" nextAppDocStatus="Awaiting Payment Method Review"/>
                         </branch>
                         <branch name="False">
                             <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
@@ -98,6 +99,9 @@
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinRequiresImageAttachment"/>
+                <simple name="NoOpRequiresImageAttachment">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
                 <split name="PurchaseWasReceived">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
@@ -106,6 +110,9 @@
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinReceiving"/>
+                <simple name="NoOpReceiving">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
                 <role name="SubAccount">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
@@ -131,14 +138,20 @@
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinVendorIsEmployeeOrNonresident"/>
+                <simple name="NoOpVendorIsEmployeeOrNonresident">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
                 <split name="TreasuryManager">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
-                <role name="PaymentMethodReviewer">
+                <role name="PaymentMethod">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinTreasury"/>
+                <simple name="NoOpTreasury">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
                 <split name="RequiresAutoApprovalNotification">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
@@ -148,18 +161,6 @@
                 </role>
                 <join name="joinOnAutoApproval"/>
                 <simple name="NoOpAutoApproval">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpTreasury">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpVendorIsEmployeeOrNonresident">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpReceiving">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpRequiresImageAttachment">
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
             </routeNodes>
