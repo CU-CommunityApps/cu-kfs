@@ -317,12 +317,19 @@
                           column="DISPLAY_ON_PREQ_IND"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"
                           jdbc-type="CHAR"/>
+        <field-descriptor name="displayOnVendor"
+                          column="DISPLAY_ON_PVEN_IND"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"
+                          jdbc-type="CHAR"/>
         <field-descriptor name="displayOnVendorCreditMemo"
                           column="DISPLAY_ON_CM_IND"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"
                           jdbc-type="CHAR"/>
         <field-descriptor name="additionalDisbursementVoucherDataCode"
                           column="ADDL_DV_DATA_CD"
+                          jdbc-type="CHAR" />
+       <field-descriptor name="additionalPaymentRequestDataCode"
+                          column="ADDL_PREQ_DATA_CD"
                           jdbc-type="CHAR" />
         <field-descriptor name="active"
                           column="ACTV_IND"
@@ -347,12 +354,65 @@
     </class-descriptor>
     
     <class-descriptor class="edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute" table="FS_PMT_MTHD_TX">
-        <field-descriptor name="paymentMethodCode" column="PMT_MTHD_CD" jdbc-type="VARCHAR" primarykey="true" index="true" />
-        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true" />
-        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true" />
-        <field-descriptor name="processedUsingPdp" column="PDP_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-        <field-descriptor name="displayOnVendorDocument" column="VENDOR_DISPLAY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-        <field-descriptor name="displayOnRecurringDVDocument" column="RECURRING_DV_DISPLAY_IND" jdbc-type="VARCHAR" conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion" />
-  </class-descriptor>
+        <field-descriptor name="paymentMethodCode" column="PMT_MTHD_CD" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="processedUsingPdp" column="PDP_IND" jdbc-type="VARCHAR" 
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="displayOnRecurringDVDocument" column="RECURRING_DV_DISPLAY_IND" jdbc-type="VARCHAR" 
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="additionalCreditMemoDataCode"
+                          column="ADDL_CM_DATA_CD"
+                          jdbc-type="CHAR" />
+    </class-descriptor>
+  
+    <class-descriptor class="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer" table="FS_PMT_SRC_WIRE_TRNFR_T">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="bankName" column="BNK_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankRoutingNumber" column="BNK_RTNG_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankCityName" column="BNK_CTY_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankStateCode" column="BNK_ST_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankCountryCode" column="BNK_CNTRY_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="attentionLineText" column="ATTN_LN_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="additionalWireText" column="ADDL_WIRE_TXT" jdbc-type="VARCHAR"/>
+        <field-descriptor name="payeeAccountNumber" column="PAYEE_ACCT_NBR" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="currencyTypeName" column="CRNCY_TYP_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="currencyTypeCode" column="CRNCY_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="wireTransferFeeWaiverIndicator" column="WIRE_TRNFR_FEE_WVR_IND" jdbc-type="CHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
+        <field-descriptor name="payeeAccountName" column="PAYEE_ACCT_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="automatedClearingHouseProfileNumber" column="ACH_PRFL_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="foreignCurrencyTypeName" column="FCRNCY_TYP_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="foreignCurrencyTypeCode" column="FCRNCY_TYP_CD" jdbc-type="VARCHAR"/>
+
+        <!-- Cornell Customization -->
+        <reference-descriptor name="extension" 
+                class-ref="edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute"
+                auto-retrieve="true" auto-update="object" auto-delete="object" proxy="false">
+            <foreignkey field-ref="documentNumber"/>
+        </reference-descriptor>
+    </class-descriptor>
+    
+    <class-descriptor class="edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute" table="FS_PMT_SRC_WIRE_TRNFR_TX">
+        <field-descriptor name="documentNumber" column="FDOC_NBR" jdbc-type="VARCHAR" primarykey="true" index="true"/>
+        <field-descriptor name="objectId" column="OBJ_ID" jdbc-type="VARCHAR" index="true"/>
+        <field-descriptor name="versionNumber" column="VER_NBR" jdbc-type="BIGINT" locking="true"/>
+        <field-descriptor name="payeeAccountTypeCode" column="PAYEE_ACCT_TYP_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankStreetAddress" column="BNK_STR_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankProvince" column="BNK_PRVNC" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankSWIFTCode" column="BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankIBAN" column="BNK_IBAN" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="sortOrTransitCode" column="BNK_SORT_TRNS_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankName" column="CRSPNDT_BNK_NM" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankAddress" column="CRSPNDT_BNK_ADDR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankRoutingNumber" column="CRSPNDT_BNK_RTNG_NBR" jdbc-type="VARCHAR"/>
+        <field-descriptor name="correspondentBankAccountNumber" column="CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
+        <field-descriptor name="correspondentBankSwiftCode" column="CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
+    </class-descriptor>
     
 </descriptor-repository>

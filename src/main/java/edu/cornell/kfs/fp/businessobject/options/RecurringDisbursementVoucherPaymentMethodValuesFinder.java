@@ -7,7 +7,7 @@ public class RecurringDisbursementVoucherPaymentMethodValuesFinder extends Payme
     private static final String DISPLAY_ON_RECURRING_DV_DOCUMENT = "extension.displayOnRecurringDVDocument";
 
     public RecurringDisbursementVoucherPaymentMethodValuesFinder() {
-        super(DISPLAY_ON_RECURRING_DV_DOCUMENT);
+        super(DISPLAY_ON_RECURRING_DV_DOCUMENT, false);
     }  
 
 }

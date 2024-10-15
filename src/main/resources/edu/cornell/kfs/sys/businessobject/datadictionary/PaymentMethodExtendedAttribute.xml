@@ -5,7 +5,6 @@
         xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
     <bean id="PaymentMethodExtendedAttribute" parent="PaymentMethodExtendedAttribute-parentBean"/>
- 
     <bean id="PaymentMethodExtendedAttribute-parentBean" abstract="true" parent="BusinessObjectEntry"
             p:businessObjectClass="edu.cornell.kfs.sys.businessobject.PaymentMethodExtendedAttribute"
             p:objectLabel="Payment Method Extended Attribute">
@@ -13,8 +12,8 @@
             <list>
                 <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
                 <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
-                <ref bean="PaymentMethodExtendedAttribute-displayOnVendorDocument"/>
                 <ref bean="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"/>
+                <ref bean="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel"/>
             </list>
         </property>
     </bean>
@@ -35,16 +34,6 @@
           p:shortLabel="PDPInd"
     />
     
-    <bean id="PaymentMethodExtendedAttribute-displayOnVendorDocument" 
-          parent="PaymentMethodExtendedAttribute-displayOnVendorDocument-parentBean"/>
-    <bean id="PaymentMethodExtendedAttribute-displayOnVendorDocument-parentBean"
-          abstract="true" 
-          parent="GenericAttributes-genericBoolean"
-          p:name="displayOnVendorDocument"
-          p:label="Display on Vendor Doc?"
-          p:shortLabel="Vendor Doc?"
-    />
-    
     <bean id="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument" 
           parent="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument-parentBean"/>
     <bean id="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument-parentBean"
@@ -53,6 +42,35 @@
           p:name="displayOnRecurringDVDocument"
           p:label="Display on Recurring DV?"
           p:shortLabel="On Recurring DV?"
+    />
+    
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode"
+          parent="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode-parentBean" />
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode-parentBean"
+          parent="AttributeDefinition"
+          p:label="Additional Credit Memo Data"
+          p:name="additionalCreditMemoDataCode"
+          p:required="true"
+          p:shortLabel="AddCmData"
+    >
+          <property name="control">
+              <bean parent="SelectControlDefinition"
+                    p:includeBlankRow="false"
+                    p:includeKeyInLabel="true"
+                    p:valuesFinder-ref="paymentMethodAdditionalDocumentDataValuesFinder"
+              />
+          </property>
+    </bean>
+    
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel"
+          parent="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel-parentBean" />
+    <bean id="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel-parentBean"
+          parent="GenericAttributes-genericBigText"
+          p:label="Additional Credit Memo Data"
+          p:maxLength="32"
+          p:name="additionalCreditMemoDataLabel"
+          p:required="true"
+          p:shortLabel="AddlCMDataLbl"
     />
 
 </beans>

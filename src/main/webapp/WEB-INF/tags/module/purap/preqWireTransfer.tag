@@ -1,7 +1,7 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 <c:set var="isOpen" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])
                                && KualiForm.document.paymentMethodCode == 'W'}" />
-<c:set var="wireTransAttributes" value="${DataDictionary.PaymentRequestWireTransfer.attributes}" />
+<c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
 
 <kul:tab tabTitle="Wire Transfer" defaultOpen="${isOpen}" tabErrorKey="${KFSConstants.PREQ_WIRETRANSFER_TAB_ERRORS}">
     <div class="tab-container" align=center >
@@ -13,9 +13,9 @@
                 <tr>
                     <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqAutomatedClearingHouseProfileNumber}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqAutomatedClearingHouseProfileNumber}" property="document.preqWireTransfer.preqAutomatedClearingHouseProfileNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.automatedClearingHouseProfileNumber}" property="document.preqWireTransfer.preqAutomatedClearingHouseProfileNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqWireTransferFeeWaiverIndicator}"/> </div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.wireTransferFeeWaiverIndicator}"/> </div></th>
                     <td class="datacell">
                         <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqWireTransferFeeWaiverIndicator}" property="document.preqWireTransfer.preqWireTransferFeeWaiverIndicator" readOnly="${!wireEntryMode&&!frnEntryMode}"/>
                     </td>
