@@ -25,4 +25,8 @@ public interface ConcurStandardAccountingExtractService {
 
     void createDoneFileForCollectorFile(String collectorFileName) throws IOException;
 
+    void populateReportWithInformationOnSpecialCharacterRemoval(
+            final ConcurStandardAccountingExtractBatchReportData reportData,
+            final ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile);
+
 }

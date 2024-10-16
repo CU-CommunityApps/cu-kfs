@@ -53,12 +53,14 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
     protected boolean processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile(String saeFullyQualifiedFileName, ConcurStandardAccountingExtractBatchReportData reportData) {
         boolean success = true;
         LOG.info("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, current File: " + saeFullyQualifiedFileName);
-        ConcurStandardAccountingExtractFile concurStandardAccoutingExtractFile = getConcurStandardAccountingExtractService()
+        ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile = getConcurStandardAccountingExtractService()
                 .parseStandardAccoutingExtractFile(saeFullyQualifiedFileName);
-        reportData.setConcurFileName(concurStandardAccoutingExtractFile.getOriginalFileName());
-        if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccoutingExtractFile, reportData)) {
+        reportData.setConcurFileName(concurStandardAccountingExtractFile.getOriginalFileName());
+        getConcurStandardAccountingExtractService().populateReportWithInformationOnSpecialCharacterRemoval(
+                reportData, concurStandardAccountingExtractFile);
+        if (getConcurStandardAccountingExtractValidationService().validateConcurStandardAccountExtractFile(concurStandardAccountingExtractFile, reportData)) {
             String pdpOutputFileName = getConcurStandardAccountingExtractService()
-                    .extractPdpFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile, reportData);
+                    .extractPdpFeedFromStandardAccountingExtract(concurStandardAccountingExtractFile, reportData);
             String collectorOutputFileName = null;
             if (StringUtils.isEmpty(pdpOutputFileName)) {
                 success = false;
@@ -66,7 +68,7 @@ public class ConcurStandardAccountingExtractToPdpAndCollectorStep extends Abstra
             }
             if (success) {
                 collectorOutputFileName = getConcurStandardAccountingExtractService()
-                        .extractCollectorFeedFromStandardAccountingExtract(concurStandardAccoutingExtractFile, reportData);
+                        .extractCollectorFeedFromStandardAccountingExtract(concurStandardAccountingExtractFile, reportData);
                 if (StringUtils.isEmpty(collectorOutputFileName)) {
                     LOG.error("processCurrentFileAndExtractPdpFeedAndCollectorFromSAEFile, could not produce a Collector flat file for "
                             + saeFullyQualifiedFileName);
