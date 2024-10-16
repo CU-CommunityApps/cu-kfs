@@ -69,6 +69,5 @@ public class CuCoaBatchConstants {
 
     public static final String DFA_ATTACHMENTS_GROUP_CODE = "DFAATTACH";
     public static final String DFA_ATTACHMENTS_URL_KEY = CuFPConstants.CREDENTIAL_BASE_URL + "1";
-    public static final String DFA_ATTACHMENTS_API_KEY = "x-api-key";
 
 }
