@@ -8,8 +8,9 @@ public interface CopyLegacyAccountAttachmentsDao {
 
     List<LegacyAccountAttachment> getLegacyAccountAttachmentsToCopy(final int fetchSize, final int maxRetryCount);
 
-    void markLegacyAccountAttachmentsAsCopied(final List<LegacyAccountAttachment> legacyAccountAttachments);
+    void markLegacyAccountAttachmentAsCopied(final LegacyAccountAttachment legacyAccountAttachment);
 
-    void incrementRetryCountsOnLegacyAccountAttachments(final List<LegacyAccountAttachment> legacyAccountAttachments);
+    void recordCopyingErrorForLegacyAccountAttachment(final LegacyAccountAttachment legacyAccountAttachment,
+            final String errorMessage);
 
 }

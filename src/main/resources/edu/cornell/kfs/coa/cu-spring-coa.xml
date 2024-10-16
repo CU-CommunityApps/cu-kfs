@@ -288,11 +288,11 @@
           abstract="true"
           class="edu.cornell.kfs.coa.batch.service.impl.CopyLegacyAccountAttachmentsServiceImpl"
           p:copyLegacyAccountAttachmentsDao-ref="copyLegacyAccountAttachmentsDao"
-          p:downloadLegacyAccountAttachmentsService-ref="downloadLegacyAccountAttachmentsService"
+          p:accountingXmlDocumentDownloadAttachmentService-ref="accountingXmlDocumentDownloadAttachmentService"
+          p:webServiceCredentialService-ref="webServiceCredentialService"
           p:accountService-ref="accountService"
           p:personService-ref="personService"
           p:noteService-ref="noteService"
-          p:attachmentService-ref="attachmentService"
           p:dataDictionaryService-ref="dataDictionaryService"
           p:parameterService-ref="parameterService"
           p:configurationService-ref="configurationService"/>
@@ -300,11 +300,5 @@
     <bean id="copyLegacyAccountAttachmentsDao"
           parent="platformAwareDaoJdbc"
           class="edu.cornell.kfs.coa.batch.dataaccess.impl.CopyLegacyAccountAttachmentsDaoJdbc"/>
-
-    <bean id="downloadLegacyAccountAttachmentsService" parent="downloadLegacyAccountAttachmentsService-parentBean"/>
-    <bean id="downloadLegacyAccountAttachmentsService-parentBean"
-          abstract="true"
-          class="edu.cornell.kfs.coa.batch.service.impl.DownloadLegacyAccountAttachmentsServiceImpl"
-          p:webServiceCredentialService-ref="webServiceCredentialService"/>
 
 </beans>

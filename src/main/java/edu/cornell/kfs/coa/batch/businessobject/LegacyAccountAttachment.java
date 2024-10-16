@@ -1,5 +1,7 @@
 package edu.cornell.kfs.coa.batch.businessobject;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.Truth;
 import org.kuali.kfs.krad.bo.TransientBusinessObjectBase;
 
@@ -17,6 +19,12 @@ public class LegacyAccountAttachment extends TransientBusinessObjectBase {
     private String filePath;
     private Integer retryCount;
     private boolean copied;
+    private String latestErrorMessage;
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
 
     public Long getId() {
         return id;
@@ -100,6 +108,14 @@ public class LegacyAccountAttachment extends TransientBusinessObjectBase {
 
     public void setCopied(final String copied) {
         this.copied = Truth.strToBooleanIgnoreCase(copied, Boolean.FALSE);
+    }
+
+    public String getLatestErrorMessage() {
+        return latestErrorMessage;
+    }
+
+    public void setLatestErrorMessage(final String latestErrorMessage) {
+        this.latestErrorMessage = latestErrorMessage;
     }
 
 }

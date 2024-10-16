@@ -4,15 +4,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.util.KRADConstants;
 
 import edu.cornell.kfs.coa.batch.businessobject.LegacyAccountAttachment;
 import edu.cornell.kfs.coa.batch.dataaccess.CopyLegacyAccountAttachmentsDao;
-import edu.cornell.kfs.sys.dataaccess.DtoPropertyHandler;
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.sys.util.CuSqlQueryPlatformAwareDaoBaseJdbc;
@@ -22,18 +21,7 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
 
     private static final Logger LOG = LogManager.getLogger();
 
-    private final List<DtoPropertyHandler<LegacyAccountAttachment, ?>> dtoProperties = List.of(
-            DtoPropertyHandler.forLong("COPYING_ACCT_ATTACH_ID", LegacyAccountAttachment::setId),
-            DtoPropertyHandler.forString("ORIGINAL_ACCOUNT_CODE", LegacyAccountAttachment::setLegacyAccountCode),
-            DtoPropertyHandler.forString("KFS_CHART_CODE", LegacyAccountAttachment::setKfsChartCode),
-            DtoPropertyHandler.forString("KFS_ACCOUNT_NBR", LegacyAccountAttachment::setKfsAccountNumber),
-            DtoPropertyHandler.forString("FILE_NAME", LegacyAccountAttachment::setFileName),
-            DtoPropertyHandler.forString("ADDED_BY", LegacyAccountAttachment::setAddedBy),
-            DtoPropertyHandler.forString("FILE_DESCRIPTION", LegacyAccountAttachment::setFileDescription),
-            DtoPropertyHandler.forString("FILE_SYSTEM_FILE_NAME", LegacyAccountAttachment::setFilePath),
-            DtoPropertyHandler.forInteger("RETRY_COUNT", LegacyAccountAttachment::setRetryCount),
-            DtoPropertyHandler.forString("COPIED_IND", LegacyAccountAttachment::setCopied)
-    );
+    private static final int MAX_ERROR_MESSAGE_LENGTH = 1000;
 
     @Override
     public List<LegacyAccountAttachment> getLegacyAccountAttachmentsToCopy(
@@ -57,60 +45,44 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
 
     private LegacyAccountAttachment mapLegacyAccountAttachment(final ResultSet rs, final int rowNum)
             throws SQLException {
-        final LegacyAccountAttachment legacyAccountAttachment = new LegacyAccountAttachment();
-        for (final DtoPropertyHandler<LegacyAccountAttachment, ?> dtoPropertyEntry : dtoProperties) {
-            dtoPropertyEntry.setProperty(legacyAccountAttachment, rs);
-        }
-        return legacyAccountAttachment;
+        final LegacyAccountAttachment attachment = new LegacyAccountAttachment();
+        attachment.setId(rs.getLong("COPYING_ACCT_ATTACH_ID"));
+        attachment.setLegacyAccountCode(rs.getString("ORIGINAL_ACCOUNT_CODE"));
+        attachment.setKfsChartCode(rs.getString("KFS_CHART_CODE"));
+        attachment.setKfsAccountNumber(rs.getString("KFS_ACCOUNT_NBR"));
+        attachment.setFileName(rs.getString("FILE_NAME"));
+        attachment.setAddedBy(rs.getString("ADDED_BY"));
+        attachment.setFileDescription(rs.getString("FILE_DESCRIPTION"));
+        attachment.setFilePath(rs.getString("FILE_SYSTEM_FILE_NAME"));
+        attachment.setRetryCount(rs.getInt("RETRY_COUNT"));
+        attachment.setCopied(rs.getString("COPIED_IND"));
+        attachment.setLatestErrorMessage(rs.getString("LATEST_ERR_MSG"));
+        return attachment;
     }
 
     @Override
-    public void markLegacyAccountAttachmentsAsCopied(final List<LegacyAccountAttachment> legacyAccountAttachments) {
-        final CuSqlQuery sqlQuery = buildQueryForMarkingAccountAttachmentsAsCopied(legacyAccountAttachments);
-        final int numUpdatedRows = executeUpdate(sqlQuery);
-        LOG.info("markLegacyAccountAttachmentsAsCopied, {} attachments were marked as copied", numUpdatedRows);
-        if (numUpdatedRows != legacyAccountAttachments.size()) {
-            LOG.warn("markLegacyAccountAttachmentsAsCopied, {} attachments were meant to be marked as copied, "
-                    + "but only {} were updated in the database", legacyAccountAttachments.size(), numUpdatedRows);
-        }
-    }
-
-    private CuSqlQuery buildQueryForMarkingAccountAttachmentsAsCopied(
-            final List<LegacyAccountAttachment> legacyAccountAttachments) {
-        final List<Long> ids = legacyAccountAttachments.stream()
-                .map(LegacyAccountAttachment::getId)
-                .collect(Collectors.toUnmodifiableList());
-        return new CuSqlChunk()
+    public void markLegacyAccountAttachmentAsCopied(final LegacyAccountAttachment legacyAccountAttachment) {
+        final Long id = legacyAccountAttachment.getId();
+        final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("UPDATE KFS.TEMP_ACCT_ATTACH_FOR_COPYING")
                 .append(" SET COPIED_IND = ").appendAsParameter(KRADConstants.YES_INDICATOR_VALUE)
-                .append(" WHERE ").append(CuSqlChunk.asSqlInCondition("COPYING_ACCT_ATTACH_ID", Types.BIGINT, ids))
+                .append(" WHERE COPYING_ACCT_ATTACH_ID = ").appendAsParameter(Types.BIGINT, id)
                 .toQuery();
+        executeUpdate(sqlQuery);
     }
 
     @Override
-    public void incrementRetryCountsOnLegacyAccountAttachments(
-            final List<LegacyAccountAttachment> legacyAccountAttachments) {
-        final CuSqlQuery sqlQuery = buildQueryForIncrementingRetryCounts(legacyAccountAttachments);
-        final int numUpdatedRows = executeUpdate(sqlQuery);
-        LOG.info("incrementRetryCountsOnLegacyAccountAttachments, {} attachments had their retry counts incremented",
-                numUpdatedRows);
-        if (numUpdatedRows != legacyAccountAttachments.size()) {
-            LOG.warn("incrementRetryCountsOnLegacyAccountAttachments, {} attachments were meant to have their "
-                    + "retry counts incremented, but only {} were updated in the database",
-                    legacyAccountAttachments.size(), numUpdatedRows);
-        }
-    }
-
-    private CuSqlQuery buildQueryForIncrementingRetryCounts(
-            final List<LegacyAccountAttachment> legacyAccountAttachments) {
-        final List<Long> ids = legacyAccountAttachments.stream()
-                .map(LegacyAccountAttachment::getId)
-                .collect(Collectors.toUnmodifiableList());
-        return new CuSqlChunk()
+    public void recordCopyingErrorForLegacyAccountAttachment(final LegacyAccountAttachment legacyAccountAttachment,
+            final String errorMessage) {
+        final Long id = legacyAccountAttachment.getId();
+        final String errorMessageToStore = StringUtils.left(errorMessage, MAX_ERROR_MESSAGE_LENGTH);
+        final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("UPDATE KFS.TEMP_ACCT_ATTACH_FOR_COPYING")
-                .append(" SET RETRY_COUNT = RETRY_COUNT + 1")
-                .append(" WHERE ").append(CuSqlChunk.asSqlInCondition("COPYING_ACCT_ATTACH_ID", Types.BIGINT, ids))
+                .append(" SET RETRY_COUNT = RETRY_COUNT + 1,")
+                .append(" LATEST_ERR_MSG = ").appendAsParameter(errorMessageToStore)
+                .append(" WHERE COPYING_ACCT_ATTACH_ID = ").appendAsParameter(Types.BIGINT, id)
                 .toQuery();
+        executeUpdate(sqlQuery);
     }
 
 }
