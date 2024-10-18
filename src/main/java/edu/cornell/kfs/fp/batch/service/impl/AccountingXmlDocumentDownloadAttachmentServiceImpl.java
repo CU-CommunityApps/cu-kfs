@@ -19,8 +19,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.mo.common.GloballyUnique;
 import org.kuali.kfs.krad.bo.Attachment;
-import org.kuali.kfs.krad.document.Document;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.krad.service.AttachmentService;
 import org.springframework.beans.factory.DisposableBean;
@@ -41,7 +41,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
     protected WebServiceCredentialService webServiceCredentialService;
 
     @Override
-    public Attachment createAttachmentFromBackupLink(Document document, AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
+    public Attachment createAttachmentFromBackupLink(GloballyUnique parentObject, AccountingXmlDocumentBackupLink accountingXmlDocumentBackupLink) {
         if (StringUtils.isBlank(accountingXmlDocumentBackupLink.getCredentialGroupCode())) {
             LOG.error("createAttachmentFromBackupLink, the Credential Group Code is blank");
             throw new ValidationException("Unable to download attachment with blank Credential Group Code: " + accountingXmlDocumentBackupLink.getLinkUrl());
@@ -61,7 +61,7 @@ public class AccountingXmlDocumentDownloadAttachmentServiceImpl extends Disposab
                 }
                 InputStream inputStream = new ByteArrayInputStream(formFile);
 
-                Attachment attachment = attachmentService.createAttachment(document, uploadFileName, mimeType, fileSize, inputStream, attachmentType);
+                Attachment attachment = attachmentService.createAttachment(parentObject, uploadFileName, mimeType, fileSize, inputStream, attachmentType);
                 return attachment;
 
             } else {
