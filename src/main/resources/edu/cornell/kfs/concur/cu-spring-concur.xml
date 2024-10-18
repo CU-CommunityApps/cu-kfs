@@ -145,7 +145,7 @@
 	
 	<bean id="standardAccountExtractFileType-parentBean" abstract="true" class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileParser" parent="FlatFileParser">
         <property name="flatFileSpecification">
-            <bean class="edu.cornell.kfs.sys.batch.CuDelimitedFlatFileSpecification">
+            <bean class="edu.cornell.kfs.concur.batch.ConcurSaeDelimitedFlatFileSpecification">
                 <property name="delimiter" value="|"/>
                 <property name="objectSpecifications">
                     <list>
@@ -598,6 +598,7 @@
         <property name="reportValidationErrorsSubTitle" value="Concur Standard Accounting Extract Records With Validation Errors"/>
         <property name="reportValidationErrorsSubTitleXXXXNote" value="XXXX Represent Cash Advance. This is information only and does not represent errors."/>
         <property name="reportMissingObjectCodesSubTitle" value="Concur Standard Accounting Extract Records With Missing Object Codes"/>
+        <property name="reportRemovedCharactersSubTitle" value="Concur SAE File Lines Where Tabs Were Replaced, or Where Special Characters or Extra Quotes Were Removed"/>
     </bean>
 
     <bean id="concurReportWriterService" class="edu.cornell.kfs.sys.service.impl.ReportWriterTextServiceImpl" parent="reportWriterService">
