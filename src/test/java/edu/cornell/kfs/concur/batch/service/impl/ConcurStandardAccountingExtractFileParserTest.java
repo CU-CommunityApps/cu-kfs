@@ -55,7 +55,7 @@ public class ConcurStandardAccountingExtractFileParserTest extends CuDelimitedFl
     public void testLoadGoodSAEFileWithFilteringOfSpecialCharacters() throws Exception {
         final Map<Integer, List<Integer>> expectedFilteredCells = Map.ofEntries(
                 Map.entry(1, columnNumbers(4)),
-                Map.entry(2, columnNumbers(9, 19))
+                Map.entry(2, columnNumbers(9, 19, 23, 63))
         );
         assertConcurSAEFileParsesCorrectly(
                 ConcurSAEFileFixture.PARSE_FLAT_FILE_NO_QUOTES_TEST,

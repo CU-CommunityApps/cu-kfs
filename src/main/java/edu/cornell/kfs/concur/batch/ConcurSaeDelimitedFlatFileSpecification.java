@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur.batch;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,22 +34,29 @@ public class ConcurSaeDelimitedFlatFileSpecification extends CuDelimitedFlatFile
         int index = -1;
         for (final String lineSegment : lineSegments) {
             index++;
-            if (StringUtils.isEmpty(lineSegment)) {
-                cleanedSegments[index] = lineSegment;
-                continue;
-            }
-            String cleanedSegment = TABS_PATTERN.matcher(lineSegment).replaceAll(KFSConstants.BLANK_SPACE);
-            final Matcher removableCharsMatcher = REMOVABLE_CHARS_PATTERN.matcher(cleanedSegment);
-            if (removableCharsMatcher.find()) {
-                LOG.warn("parseLineIntoObject, Found special characters or extra quotes on SAE line {} at column {}",
-                        lineNumber, index + 1);
-                saeLine.addColumnNumberContainingSpecialCharacters(index + 1);
-                removableCharsMatcher.reset();
-                cleanedSegment = removableCharsMatcher.replaceAll(KFSConstants.EMPTY_STRING);
+            String cleanedSegment;
+            if (StringUtils.isNotEmpty(lineSegment)) {
+                cleanedSegment = replaceTabsWithSpaces(lineSegment);
+                cleanedSegment = removeInvalidCharacters(cleanedSegment);
+                if (!StringUtils.equals(lineSegment, cleanedSegment)) {
+                    LOG.warn("parseLineIntoObject, Found tabs, special characters or extra quotes on SAE line {} "
+                            + "at column {}", lineNumber, index + 1);
+                    saeLine.addColumnNumberContainingSpecialCharacters(index + 1);
+                }
+            } else {
+                cleanedSegment = lineSegment;
             }
             cleanedSegments[index] = cleanedSegment;
         }
         super.parseLineIntoObject(parseSpecification, cleanedSegments, parseIntoObject, lineNumber);
+    }
+
+    private String replaceTabsWithSpaces(final String lineSegment) {
+        return TABS_PATTERN.matcher(lineSegment).replaceAll(KFSConstants.BLANK_SPACE);
+    }
+
+    private String removeInvalidCharacters(final String lineSegment) {
+        return REMOVABLE_CHARS_PATTERN.matcher(lineSegment).replaceAll(KFSConstants.EMPTY_STRING);
     }
 
 }

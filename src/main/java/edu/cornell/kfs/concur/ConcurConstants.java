@@ -104,7 +104,7 @@ public class ConcurConstants {
         public static final String NO_RECORDS_WITH_VALIDATION_ERRORS_MESSAGE = "No records with validation errors.";
         public static final String NO_RECORDS_MISSING_OBJECT_CODES_MESSAGE = "No transactions with \"Pending Client\" as the object code.";
         public static final String NO_VALIDATION_ERROR_MESSAGES_TO_OUTPUT = "No validation errors to output.";
-        public static final String NO_REMOVED_CHARACTERS_MESSAGE = "No special characters or in-cell quotes were removed.";
+        public static final String NO_REMOVED_CHARACTERS_MESSAGE = "No tabs were replaced and no special characters or in-cell quotes were removed.";
         public static final String END_OF_REPORT_MESSAGE = "End of report.";
         public static final String PREFIX_FIRST_PART_NOT_SET_IN_CONFIGURATION_FILE = "PREFIX_FIRST_PART_NOT_SET_IN_CONFIGURATION_FILE";
         public static final String PREFIX_SECOND_PART_NOT_SET_IN_CONFIGURATION_FILE = "PREFIX_SECOND_PART_NOT_SET_IN_CONFIGURATION_FILE";
