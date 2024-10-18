@@ -65,7 +65,8 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
         final Long id = legacyAccountAttachment.getId();
         final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("UPDATE KFS.TEMP_ACCT_ATTACH_FOR_COPYING")
-                .append(" SET COPIED_IND = ").appendAsParameter(KRADConstants.YES_INDICATOR_VALUE)
+                .append(" SET LATEST_ERR_MSG = NULL,")
+                .append(" COPIED_IND = ").appendAsParameter(KRADConstants.YES_INDICATOR_VALUE)
                 .append(" WHERE COPYING_ACCT_ATTACH_ID = ").appendAsParameter(Types.BIGINT, id)
                 .toQuery();
         executeUpdate(sqlQuery);

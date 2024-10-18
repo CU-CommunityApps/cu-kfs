@@ -2,8 +2,8 @@ package edu.cornell.kfs.coa.batch.service.impl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -71,11 +71,11 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
 
         LOG.info("copyLegacyAccountAttachmentsToKfs, Copying {} legacy account attachments into KFS",
                 attachmentsToCopy.size());
-        final CopyLegacyAccountAttachmentsService proxiedService = SpringContext.getBean(
-                CopyLegacyAccountAttachmentsService.class);
+        final CopyLegacyAccountAttachmentsService proxiedService =
+                getThisServiceAsProxyToProcessAttachmentsInNewTransactions();
         int numCopiedAttachments = 0;
         int numCopyFailures = 0;
-        
+
         for (final LegacyAccountAttachment attachmentToCopy : attachmentsToCopy) {
             if (proxiedService.copyLegacyAccountAttachmentToKfs(attachmentToCopy)) {
                 numCopiedAttachments++;
@@ -99,14 +99,21 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
         return true;
     }
 
+    private CopyLegacyAccountAttachmentsService getThisServiceAsProxyToProcessAttachmentsInNewTransactions() {
+        return SpringContext.getBean(CopyLegacyAccountAttachmentsService.class);
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public boolean copyLegacyAccountAttachmentToKfs(final LegacyAccountAttachment legacyAccountAttachment) {
         try {
             LOG.debug("copyLegacyAccountAttachmentToKfs, Copying attachment: {}", legacyAccountAttachment);
             final Account account = getKfsAccountForAttachment(legacyAccountAttachment);
-            final Attachment attachment = downloadAttachment(legacyAccountAttachment, account);
-            saveAttachmentToKfs(legacyAccountAttachment, attachment, account);
+            final AccountingXmlDocumentBackupLink backupLink = createBackupLinkForAttachmentDownload(
+                    legacyAccountAttachment);
+            final Attachment attachment = accountingXmlDocumentDownloadAttachmentService
+                    .createAttachmentFromBackupLink(account, backupLink);
+            saveAttachmentToKfs(attachment, account, backupLink.getDescription());
             LOG.info("copyLegacyAccountAttachmentToKfs, Copied attachment with ID '{}' targeting account '{}-{}'",
                     legacyAccountAttachment.getId(), legacyAccountAttachment.getKfsChartCode(),
                     legacyAccountAttachment.getKfsAccountNumber());
@@ -130,21 +137,19 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
         return account;
     }
 
-    private Attachment downloadAttachment(final LegacyAccountAttachment legacyAccountAttachment,
-            final Account account) throws URISyntaxException {
+    private AccountingXmlDocumentBackupLink createBackupLinkForAttachmentDownload(
+            final LegacyAccountAttachment legacyAccountAttachment) throws URISyntaxException {
         final AccountingXmlDocumentBackupLink backupLink = new AccountingXmlDocumentBackupLink();
         backupLink.setCredentialGroupCode(CuCoaBatchConstants.DFA_ATTACHMENTS_GROUP_CODE);
         backupLink.setFileName(legacyAccountAttachment.getFileName());
-        backupLink.setDescription(legacyAccountAttachment.getFileDescription());
+        backupLink.setDescription(createNoteText(legacyAccountAttachment));
         backupLink.setLinkUrl(buildAttachmentDownloadUrl(legacyAccountAttachment));
-        return accountingXmlDocumentDownloadAttachmentService.createAttachmentFromBackupLink(account, backupLink);
+        return backupLink;
     }
 
-    private void saveAttachmentToKfs(final LegacyAccountAttachment legacyAccountAttachment,
-            final Attachment attachment, final Account account) throws IOException {
+    private void saveAttachmentToKfs(final Attachment attachment, final Account account,
+            final String noteText) throws IOException {
         final Person systemUser = personService.getPersonByPrincipalName(KFSConstants.SYSTEM_USER);
-        final String noteText = createNoteText(legacyAccountAttachment);
-
         final Note note = new Note();
         note.setAuthorUniversalIdentifier(systemUser.getPrincipalId());
         note.setNoteTypeCode(NoteType.BUSINESS_OBJECT.getCode());
@@ -160,7 +165,7 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
                 KRADConstants.NOTE_TEXT_PROPERTY_NAME);
         final String noteTemplate = configurationService.getPropertyValueAsString(
                 CuCOAKeyConstants.LEGACY_ACCOUNT_ATTACHMENT_NOTE_TEXT_TEMPLATE);
-        final String noteText = String.format(Locale.US, noteTemplate, legacyAccountAttachment.getLegacyAccountCode(),
+        final String noteText = MessageFormat.format(noteTemplate, legacyAccountAttachment.getLegacyAccountCode(),
                 legacyAccountAttachment.getAddedBy(), legacyAccountAttachment.getFileDescription());
         return StringUtils.left(noteText, noteTextMaxLength);
     }
