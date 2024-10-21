@@ -5,14 +5,11 @@ import java.util.List;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportLineValidationErrorItem;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
-import edu.cornell.kfs.concur.batch.report.ConcurBatchReportSummaryItem;
-
 public class ConcurStandardAccountingExtractBatchReportData implements ConcurEmailableReportData {
     
     private String concurFileName;
     private List<String> headerValidationErrors;
+    private List<ConcurBatchReportRemovedCharactersWarningItem> linesWithRemovedCharacters;
     private ConcurBatchReportSummaryItem reimbursementsInExpenseReport;
     private ConcurBatchReportSummaryItem cashAdvancesRelatedToExpenseReports;
     private ConcurBatchReportSummaryItem expensesPaidOnCorporateCard;
@@ -25,6 +22,7 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
     public ConcurStandardAccountingExtractBatchReportData() {
         this.concurFileName = KFSConstants.EMPTY_STRING;
         this.headerValidationErrors = new ArrayList<String>();
+        this.linesWithRemovedCharacters = new ArrayList<>();
         this.reimbursementsInExpenseReport = new ConcurBatchReportSummaryItem();
         this.cashAdvancesRelatedToExpenseReports = new ConcurBatchReportSummaryItem();
         this.expensesPaidOnCorporateCard = new ConcurBatchReportSummaryItem();
@@ -37,6 +35,7 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
     
     public ConcurStandardAccountingExtractBatchReportData(String concurFileName,
             List<String> headerValidationErrors,
+            List<ConcurBatchReportRemovedCharactersWarningItem> linesWithRemovedCharacters,
             ConcurBatchReportSummaryItem reimbursementsInExpenseReport,
             ConcurBatchReportSummaryItem cashAdvancesRelatedToExpenseReports,
             ConcurBatchReportSummaryItem expensesPaidOnCorporateCard,
@@ -46,6 +45,7 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
             List<ConcurBatchReportLineValidationErrorItem> validationErrorFileLines,
             List<ConcurBatchReportMissingObjectCodeItem> pendingClientObjectCodeLines) {
         this.headerValidationErrors = headerValidationErrors;
+        this.linesWithRemovedCharacters = linesWithRemovedCharacters;
         this.concurFileName = concurFileName;
         this.reimbursementsInExpenseReport = reimbursementsInExpenseReport;
         this.cashAdvancesRelatedToExpenseReports = cashAdvancesRelatedToExpenseReports;
@@ -80,6 +80,22 @@ public class ConcurStandardAccountingExtractBatchReportData implements ConcurEma
             headerValidationErrors = new ArrayList<String>();
         }
         this.headerValidationErrors.add(headerValidationError);
+    }
+
+    public List<ConcurBatchReportRemovedCharactersWarningItem> getLinesWithRemovedCharacters() {
+        return linesWithRemovedCharacters;
+    }
+
+    public void setLinesWithRemovedCharacters(
+            List<ConcurBatchReportRemovedCharactersWarningItem> linesWithRemovedCharacters) {
+        this.linesWithRemovedCharacters = linesWithRemovedCharacters;
+    }
+
+    public void addLineWithRemovedCharacters(ConcurBatchReportRemovedCharactersWarningItem lineWithRemovedCharacters) {
+        if (linesWithRemovedCharacters == null) {
+            linesWithRemovedCharacters = new ArrayList<>();
+        }
+        linesWithRemovedCharacters.add(lineWithRemovedCharacters);
     }
 
     public ConcurBatchReportSummaryItem getReimbursementsInExpenseReport() {

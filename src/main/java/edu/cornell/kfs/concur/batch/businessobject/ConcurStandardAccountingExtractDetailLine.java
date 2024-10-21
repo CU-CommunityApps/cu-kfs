@@ -8,7 +8,7 @@ import edu.cornell.kfs.concur.ConcurConstants;
 
 import org.kuali.kfs.sys.KFSConstants;
 
-public class ConcurStandardAccountingExtractDetailLine {
+public class ConcurStandardAccountingExtractDetailLine extends ConcurStandardAccountingExtractLineBase {
     
     private String batchID; 
     private Date batchDate; 
