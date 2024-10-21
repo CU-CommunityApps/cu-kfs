@@ -2,27 +2,30 @@ package edu.cornell.kfs.concur.batch.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import jakarta.xml.bind.JAXBException;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.core.api.util.type.KualiDecimal;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.gl.GeneralLedgerConstants;
 import org.kuali.kfs.krad.exception.ValidationException;
 import org.kuali.kfs.sys.batch.BatchInputFileType;
 import org.kuali.kfs.sys.batch.service.BatchInputFileService;
-import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurParameterConstants;
-import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractDetailLine;
 import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractFile;
+import edu.cornell.kfs.concur.batch.businessobject.ConcurStandardAccountingExtractLineBase;
 import edu.cornell.kfs.concur.batch.report.ConcurBatchReportMissingObjectCodeItem;
+import edu.cornell.kfs.concur.batch.report.ConcurBatchReportRemovedCharactersWarningItem;
 import edu.cornell.kfs.concur.batch.report.ConcurStandardAccountingExtractBatchReportData;
 import edu.cornell.kfs.concur.batch.service.ConcurBatchUtilityService;
 import edu.cornell.kfs.concur.batch.service.ConcurStandardAccountExtractPdpEntryService;
@@ -35,10 +38,12 @@ import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedDetailEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedFileBaseEntry;
 import edu.cornell.kfs.concur.batch.xmlObjects.PdpFeedGroupEntry;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
+import edu.cornell.kfs.gl.CuGeneralLedgerConstants;
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 import edu.cornell.kfs.sys.service.CUMarshalService;
 import edu.cornell.kfs.sys.util.LoadFileUtils;
+import jakarta.xml.bind.JAXBException;
 
 public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandardAccountingExtractService {
     private static final Logger LOG = LogManager.getLogger(ConcurStandardAccountingExtractServiceImpl.class);
@@ -363,6 +368,32 @@ public class ConcurStandardAccountingExtractServiceImpl implements ConcurStandar
     private boolean collectorUploadFileExists(String collectorFileName) {
         File collectorFile = new File(getCollectorImportDirectory() + collectorFileName);
         return collectorFile.exists();
+    }
+
+    @Override
+    public void populateReportWithInformationOnSpecialCharacterRemoval(
+            final ConcurStandardAccountingExtractBatchReportData reportData,
+            final ConcurStandardAccountingExtractFile concurStandardAccountingExtractFile) {
+        final List<ConcurBatchReportRemovedCharactersWarningItem> charRemovalWarnings = Stream
+                .concat(Stream.of(concurStandardAccountingExtractFile),
+                        concurStandardAccountingExtractFile.getConcurStandardAccountingExtractDetailLines().stream())
+                .filter(this::saeLineHadSpecialCharactersRemoved)
+                .map(this::createCharRemovalWarningFromSaeLineData)
+                .collect(Collectors.toCollection(ArrayList::new));
+        reportData.setLinesWithRemovedCharacters(charRemovalWarnings);
+    }
+
+    private boolean saeLineHadSpecialCharactersRemoved(final ConcurStandardAccountingExtractLineBase saeFileLine) {
+        return CollectionUtils.isNotEmpty(saeFileLine.getColumnNumbersContainingSpecialCharacters());
+    }
+
+    private ConcurBatchReportRemovedCharactersWarningItem createCharRemovalWarningFromSaeLineData(
+            final ConcurStandardAccountingExtractLineBase saeFileLine) {
+        final ConcurBatchReportRemovedCharactersWarningItem charRemovalWarning =
+                new ConcurBatchReportRemovedCharactersWarningItem();
+        charRemovalWarning.setLineNumber(saeFileLine.getLineNumber());
+        charRemovalWarning.setColumnNumbers(saeFileLine.getColumnNumbersContainingSpecialCharacters());
+        return charRemovalWarning;
     }
 
     public String getPaymentImportDirectory() {
