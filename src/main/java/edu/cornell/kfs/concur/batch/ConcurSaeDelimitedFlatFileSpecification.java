@@ -34,21 +34,24 @@ public class ConcurSaeDelimitedFlatFileSpecification extends CuDelimitedFlatFile
         int index = -1;
         for (final String lineSegment : lineSegments) {
             index++;
-            String cleanedSegment;
-            if (StringUtils.isNotEmpty(lineSegment)) {
-                cleanedSegment = replaceTabsWithSpaces(lineSegment);
-                cleanedSegment = removeInvalidCharacters(cleanedSegment);
-                if (!StringUtils.equals(lineSegment, cleanedSegment)) {
-                    LOG.warn("parseLineIntoObject, Found tabs, special characters or extra quotes on SAE line {} "
-                            + "at column {}", lineNumber, index + 1);
-                    saeLine.addColumnNumberContainingSpecialCharacters(index + 1);
-                }
-            } else {
-                cleanedSegment = lineSegment;
-            }
+            final String cleanedSegment = cleanLineSegment(lineSegment);
             cleanedSegments[index] = cleanedSegment;
+            if (!StringUtils.equals(lineSegment, cleanedSegment)) {
+                LOG.warn("parseLineIntoObject, Found tabs, special characters or extra quotes on SAE line {} "
+                        + "at column {}", lineNumber, index + 1);
+                saeLine.addColumnNumberContainingSpecialCharacters(index + 1);
+            }
         }
         super.parseLineIntoObject(parseSpecification, cleanedSegments, parseIntoObject, lineNumber);
+    }
+
+    private String cleanLineSegment(final String lineSegment) {
+        if (StringUtils.isEmpty(lineSegment)) {
+            return lineSegment;
+        }
+        String cleanedSegment = replaceTabsWithSpaces(lineSegment);
+        cleanedSegment = removeInvalidCharacters(cleanedSegment);
+        return cleanedSegment;
     }
 
     private String replaceTabsWithSpaces(final String lineSegment) {
