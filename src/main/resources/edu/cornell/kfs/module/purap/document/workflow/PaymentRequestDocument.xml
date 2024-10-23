@@ -24,7 +24,6 @@
                 <status>Awaiting AP Review</status>
                 <status>Awaiting Sub-Account Manager Approval</status>
                 <status>Cancelled In Process</status>
-                <status>Awaiting Treasury Manager Approval</status>
                 <status>Awaiting Payment Method Review</status>
                 <status>Pending Route Electronic Invoice</status>
             </validApplicationStatuses>
@@ -60,7 +59,9 @@
                     <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Chart Approval"/>
                     <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode" nextAppDocStatus="Awaiting Object Code Approval"/>
                     <role name="ObjectCode" nextNode="VendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Tax Approval"/>
-                    <split name="VendorIsEmployeeOrNonresident" nextNode="TreasuryManager">
+                    <split name="VendorIsEmployeeOrNonresident"
+                           nextAppDocStatus="Awaiting Payment Method Review"
+                           nextNode="PaymentMethod">
                         <branch name="True">
                             <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
                         </branch>
@@ -69,15 +70,7 @@
                         </branch>
                         <join name="JoinVendorIsEmployeeOrNonresident"/>
                     </split>
-                    <split name="TreasuryManager" nextNode="RequiresAutoApprovalNotification">
-                        <branch name="True">
-                            <role name="PaymentMethod" nextNode="JoinTreasury" nextAppDocStatus="Awaiting Payment Method Review"/>
-                        </branch>
-                        <branch name="False">
-                            <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
-                        </branch>
-                        <join name="JoinTreasury"/>
-                    </split>
+                    <role name="PaymentMethod" nextNode="RequiresAutoApprovalNotification"/>
                     <split name="RequiresAutoApprovalNotification">
                         <branch name="True">
                             <role name="AutoApprove" nextNode="joinOnAutoApproval"/>
@@ -141,9 +134,6 @@
                 <simple name="NoOpVendorIsEmployeeOrNonresident">
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
-                <split name="TreasuryManager">
-                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-                </split>
                 <role name="PaymentMethod">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>

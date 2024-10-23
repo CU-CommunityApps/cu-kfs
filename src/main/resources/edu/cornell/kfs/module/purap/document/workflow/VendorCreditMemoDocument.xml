@@ -19,7 +19,7 @@
                 <status>Complete</status>
                 <status>Awaiting AP Review</status>
                 <status>Awaiting Fiscal Officer Approval</status>
-                <status>Awaiting Treasury Manager Approval</status>
+                <status>Awaiting Payment Method Review</status>
             </validApplicationStatuses>
             <policies>
                 <policy>
@@ -41,16 +41,10 @@
                         <join name="JoinRequiresImageAttachment"/>
                     </split>
                     <role name="Account" nextNode="ObjectCode"/>
-                    <role name="ObjectCode" nextNode="TreasuryManager" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
-                    <split name="TreasuryManager">
-                        <branch name="True">
-                            <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
-                        </branch>
-                        <branch name="False">
-                            <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
-                        </branch>
-                        <join name="JoinTreasury"/>
-                    </split>
+                    <role name="ObjectCode" 
+                          nextAppDocStatus="Awaiting Payment Method Review"
+                          nextNode="PaymentMethod"/>
+                    <role name="PaymentMethod"/>
                 </routePath>
             </routePaths>
             <routeNodes>
@@ -74,10 +68,7 @@
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
-                <split name="TreasuryManager">
-                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-                </split>
-                <role name="PaymentMethodReviewer">
+                <role name="PaymentMethod">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>

@@ -104,20 +104,12 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
                 "VendorIsEmployeeOrNonResidentAlien".equals(nodeName)) {
             return isVendorEmployeeOrNonresident();
         }
-        // KFSPTS-1891
-        if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER)) {
-            return isWireOrForeignDraft();
-        }
         if (nodeName.equals(PurapWorkflowConstants.IS_DOCUMENT_AUTO_APPROVED)) {
             return isAutoApprovedIndicator();
         }
         throw new UnsupportedOperationException("Cannot answer split question for this node you call \"" + nodeName + "\"");
     }
     
-    // KFSPTS-1891
-    private boolean isWireOrForeignDraft() {
-        return StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, this.getPaymentMethodCode());
-    }
     
     /**
      * @see org.kuali.kfs.module.purap.document.PaymentRequestDocument#populatePaymentRequestFromPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument, java.util.HashMap)
@@ -204,6 +196,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }
         return paymentMethodGeneralLedgerPendingEntryService;
     }
+    
+
 
     public boolean generateDocumentGeneralLedgerPendingEntries(final GeneralLedgerPendingEntrySequenceHelper sequenceHelper) {
         if (getGeneralLedgerPendingEntries() == null || getGeneralLedgerPendingEntries().size() < 2) {

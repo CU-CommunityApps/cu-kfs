@@ -82,17 +82,11 @@ public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
     
     @Override
     public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
-        if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) return requiresAccountsPayableReviewRouting();
-           // KFSPTS-1891, KFSPTS-2851
-           if (nodeName.equals(CUPurapWorkflowConstants.TREASURY_MANAGER))
-               return isWireOrForeignDraft();
-           throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
+        if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) 
+            return requiresAccountsPayableReviewRouting();
 
-    }
-    
-    // KFSPTS-1891, KFSPTS-2851
-    private boolean isWireOrForeignDraft() {
-        return StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE, this.getPaymentMethodCode()) || StringUtils.equals(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_DRAFT, this.getPaymentMethodCode());
+        throw new UnsupportedOperationException("Cannot answer split question for this node you call \""+nodeName+"\"");
+
     }
     
     public void synchronizeBankCodeWithPaymentMethod() {
