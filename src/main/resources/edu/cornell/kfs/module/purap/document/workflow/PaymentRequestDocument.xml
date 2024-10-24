@@ -63,10 +63,10 @@
                            nextAppDocStatus="Awaiting Payment Method Review"
                            nextNode="PaymentMethod">
                         <branch name="True">
-                            <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                            <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Payment Method Review"/>
                         </branch>
                         <branch name="False">
-                            <simple name="NoOpVendorIsEmployeeOrNonresident" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                            <simple name="NoOpVendorIsEmployeeOrNonresident" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Payment Method Review"/>
                         </branch>
                         <join name="JoinVendorIsEmployeeOrNonresident"/>
                     </split>
@@ -138,10 +138,6 @@
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
-                <join name="JoinTreasury"/>
-                <simple name="NoOpTreasury">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
                 <split name="RequiresAutoApprovalNotification">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
