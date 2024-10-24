@@ -14,25 +14,22 @@ import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
-import org.kuali.kfs.kew.doctype.bo.DocumentType;
-import org.kuali.kfs.kew.doctype.service.DocumentTypeService;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
 import org.kuali.kfs.kim.impl.identity.Person;
 
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 
 public class CuPdpExtractService extends PdpExtractService {
-    private DocumentTypeService documentTypeService;
     
     @Override
     protected void updatePaymentRequest(
-            final PaymentRequestDocument paymentRequestDocument, final Person puser, 
+            final PaymentRequestDocument paymentRequestDocument, 
+            final Person puser, 
             final Date processRunDate) {
         final PaymentRequestDocument doc = (PaymentRequestDocument) documentService.getByDocumentHeaderId(paymentRequestDocument.getDocumentNumber());
         doc.setExtractedTimestamp(new Timestamp(processRunDate.getTime()));
         getPurapService().saveDocumentNoValidation(doc);
         
-        final DocumentType documentType = documentTypeService.getDocumentTypeByName(doc.getFinancialDocumentTypeCode());
         final DocumentAttributeIndexingQueue queue = KewApiServiceLocator.getDocumentAttributeIndexingQueue();
         queue.indexDocument(doc.getDocumentNumber());
     }
@@ -93,7 +90,9 @@ public class CuPdpExtractService extends PdpExtractService {
     }
     
     @Override
-    protected PaymentGroup populatePaymentGroup(final PaymentRequestDocument paymentRequestDocument, final Batch batch) {
+    protected PaymentGroup populatePaymentGroup(
+            final PaymentRequestDocument paymentRequestDocument, 
+            final Batch batch) {
         final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
         if (paymentGroup.isPayableByACH()) {
@@ -118,7 +117,4 @@ public class CuPdpExtractService extends PdpExtractService {
         return paymentGroup;
     }
 
-    public void setDocumentTypeService(final DocumentTypeService documentTypeService) {
-        this.documentTypeService = documentTypeService;
-    }
 }

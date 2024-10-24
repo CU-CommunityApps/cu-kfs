@@ -40,7 +40,7 @@ public final class CreditMemoStatuses {
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
     public static final String NODE_ACCOUNT_REVIEW = "Account";
     // CU Customization: Added new node for KFSUPGRADE-779
-    public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethodReviewer";
+    public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethod";
 
     public static final String[] STATUSES_ALLOWED_FOR_EXTRACTION =
         {APPDOC_AWAITING_ACCOUNTS_PAYABLE_REVIEW, APPDOC_COMPLETE};

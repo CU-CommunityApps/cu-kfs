@@ -17,7 +17,7 @@ import org.powermock.api.mockito.PowerMockito;
 import edu.cornell.kfs.module.cam.CuCamsTestConstants;
 import edu.cornell.kfs.module.purap.document.CuVendorCreditMemoDocument;
 
-public enum VendorCreditMemoDocumentFixture {
+public enum CuVendorCreditMemoDocumentFixture {
 
 	VENDOR_CREDIT_MEMO("Description", 0, 4291, "12345", "12-05-2014",
 			new KualiDecimal(100)),
@@ -38,7 +38,7 @@ public enum VendorCreditMemoDocumentFixture {
 
 	public final KualiDecimal creditMemoAmount;
 
-	private VendorCreditMemoDocumentFixture(String documentDescription,
+	private CuVendorCreditMemoDocumentFixture(String documentDescription,
 			Integer vendorDetailAssignedIdentifier,
 			Integer vendorHeaderGeneratedIdentifier, String creditMemoNumber,
 			String creditMemoDate, KualiDecimal creditMemoAmount) {
@@ -46,7 +46,7 @@ public enum VendorCreditMemoDocumentFixture {
 	            creditMemoNumber, creditMemoDate, creditMemoAmount);
 	}
 
-	private VendorCreditMemoDocumentFixture(String documentNumber, String documentDescription,
+	private CuVendorCreditMemoDocumentFixture(String documentNumber, String documentDescription,
 	        Integer vendorDetailAssignedIdentifier,
 	        Integer vendorHeaderGeneratedIdentifier, Integer purchaseOrderIdentifier, String creditMemoNumber,
 	        String creditMemoDate, KualiDecimal creditMemoAmount) {

@@ -761,33 +761,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
         }
 
-        //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
-        //set bank code to default bank code in the system parameter
-        //KFSPTS-1891
-        boolean hasPaymentMethodCode = false;
-        if ( preqDoc instanceof PaymentRequestDocument ) {
-            String vendorPaymentMethodCode = ((VendorDetailExtension)poDoc.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode();
-            if ( StringUtils.isNotEmpty(vendorPaymentMethodCode) ) { 
-                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
-                hasPaymentMethodCode = true;
-            } else {
-                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
-            }
-        }
-        Bank defaultBank = null;
-        if ( hasPaymentMethodCode ) {
-            defaultBank = cUPaymentMethodGeneralLedgerPendingEntryService.getBankForPaymentMethod( ((CuPaymentRequestDocument)preqDoc).getPaymentMethodCode() );
-        } else { // default to baseline behavior - extended documents not in use
-            //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
-            //set bank code to default bank code in the system parameter
-            defaultBank = bankService.getDefaultBankByDocType(preqDoc.getClass());
-        }
-        
-        if (defaultBank != null) {
-            preqDoc.setBankCode(defaultBank.getBankCode());
-            preqDoc.setBank(defaultBank);
-        }
-
         final RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
         final String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
@@ -810,6 +783,34 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         LOG.info("{} accounts has been found as Expired or Closed", expiredOrClosedAccountList::size);
 
         preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),expiredOrClosedAccountList);
+        
+        //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
+        //set bank code to default bank code in the system parameter
+        //KFSPTS-1891
+        boolean hasPaymentMethodCode = false;
+        if ( preqDoc instanceof PaymentRequestDocument ) {
+            String vendorPaymentMethodCode = ((VendorDetail)poDoc.getVendorDetail()).getDefaultPaymentMethodCode();
+            if ( StringUtils.isNotEmpty(vendorPaymentMethodCode) ) { 
+                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
+                hasPaymentMethodCode = true;
+            } else {
+                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+            }
+        }
+        Bank defaultBank = null;
+        if ( hasPaymentMethodCode ) {
+            defaultBank = cUPaymentMethodGeneralLedgerPendingEntryService.getBankForPaymentMethod( ((CuPaymentRequestDocument)preqDoc).getPaymentMethodCode() );
+        } else { // default to baseline behavior - extended documents not in use
+            //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
+            //set bank code to default bank code in the system parameter
+            defaultBank = bankService.getDefaultBankByDocType(preqDoc.getClass());
+        }
+        
+        if (defaultBank != null) {
+            preqDoc.setBankCode(defaultBank.getBankCode());
+            preqDoc.setBank(defaultBank);
+        }
+        
         // need to populate here for ext price.  it become per item
         // KFSPTS-1719.  convert 1st matching inv item that is qty, but po is non-qty
         checkQtyInvItemForNoQtyOrder(preqDoc, orderHolder);

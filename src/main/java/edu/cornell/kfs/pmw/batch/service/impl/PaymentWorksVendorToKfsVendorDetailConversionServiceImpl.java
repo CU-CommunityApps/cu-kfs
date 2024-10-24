@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.State;
 import org.kuali.kfs.vnd.VendorConstants;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
@@ -41,7 +42,7 @@ import edu.cornell.kfs.vnd.businessobject.CuVendorAddressExtension;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements PaymentWorksVendorToKfsVendorDetailConversionService {
-	private static final Logger LOG = LogManager.getLogger(PaymentWorksVendorToKfsVendorDetailConversionServiceImpl.class);
+	private static final Logger LOG = LogManager.getLogger();
     
     protected ConfigurationService configurationService;
     protected DateTimeService dateTimeService;
@@ -72,7 +73,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             kfsVendorDataWrapper.getVendorDetail().setVendorUrlAddress(pmwVendor.getRequestingCompanyUrl());
             kfsVendorDataWrapper.getVendorDetail().setVendorAddresses(buildVendorAddresses(pmwVendor, paymentWorksIsoToFipsCountryMap));
             kfsVendorDataWrapper.getVendorDetail().setVendorContacts(buildVendorContacts(pmwVendor));
-            kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor, paymentWorksIsoToFipsCountryMap));
+            kfsVendorDataWrapper.getVendorDetail().setDefaultPaymentMethodCode(buildDefaultKFSPaymentMethodCode(pmwVendor, paymentWorksIsoToFipsCountryMap));
+            kfsVendorDataWrapper.getVendorDetail().setDefaultPaymentMethod(buildVendorDefaultPaymentMethod(kfsVendorDataWrapper.getVendorDetail().getDefaultPaymentMethodCode()));
+            kfsVendorDataWrapper.getVendorDetail().setExtension(buildVendorDetailExtension(pmwVendor));
             kfsVendorDataWrapper.getVendorDetail().setVendorParentIndicator(true);
             if (paymentWorksVendorIsPurchaseOrderVendor(pmwVendor)) {
                 kfsVendorDataWrapper.getVendorDetail().setVendorPaymentTermsCode(PaymentWorksConstants.KFSVendorMaintenaceDocumentConstants.KFSPoVendorConstants.PAYMENT_TERMS_NET_60_DAYS_CODE);
@@ -355,33 +358,41 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
             return truncateValueToMaxLength(legalFirstName, maxAllowedLengthOfFirstName);
     }
     
-    protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+    protected VendorDetailExtension buildVendorDetailExtension(PaymentWorksVendor pmwVendor) {
         VendorDetailExtension vendorDetailExtension = new VendorDetailExtension();
-        String paymentMethod = buildKFSPaymentMethod(pmwVendor, paymentWorksIsoToFipsCountryMap);
-        LOG.info("buildVendorDetailExtension, setting payment method to " + paymentMethod);
-        vendorDetailExtension.setDefaultB2BPaymentMethodCode(paymentMethod);
         vendorDetailExtension.setPaymentWorksOriginatingIndicator(true);
         vendorDetailExtension.setPaymentWorksLastActivityTimestamp(dateTimeService.getCurrentTimestamp());
         vendorDetailExtension.setEinvoiceVendorIndicator(EinvoiceIndicatorValuesFinder.EinvoiceIndicator.NONE.code);
         return vendorDetailExtension;
     }
     
-    protected String buildKFSPaymentMethod(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
+    protected String buildDefaultKFSPaymentMethodCode(PaymentWorksVendor pmwVendor, Map<String, List<PaymentWorksIsoFipsCountryItem>> paymentWorksIsoToFipsCountryMap) {
         String vendorCountryCode = paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
                 pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
         if (isUnitedStatesFipsCountryCode(vendorCountryCode)) {
-            LOG.debug("buildKFSPaymentMethod, Domestic Vendor");
+            LOG.info("buildKFSPaymentMethodCode, Domestic Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
             return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         } else {
-            LOG.debug("buildKFSPaymentMethod, Foreign Vendor");
             if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE, pmwVendor.getPaymentMethod())) {
+                LOG.info("buildKFSPaymentMethodCode, Foreign Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE);
                 return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE;
             } else if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK, pmwVendor.getPaymentMethod()) ||
                     StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH, pmwVendor.getPaymentMethod())) {
+                LOG.info("buildKFSPaymentMethodCode, Foreign Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
                 return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
             } else {
-                throw new IllegalArgumentException("Invalid payment method: " + pmwVendor.getPaymentMethod());
+                throw new IllegalArgumentException("buildKFSPaymentMethodCode, Invalid PaymentWorks payment method code: " + pmwVendor.getPaymentMethod());
             }
+        }
+    }
+    
+    protected PaymentMethod buildVendorDefaultPaymentMethod(String paymentMethodCodeValue) {
+        PaymentMethod paymentMethodReferenceObject= businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCodeValue);
+        if (ObjectUtils.isNotNull(paymentMethodReferenceObject)) {
+            LOG.info("buildVendorDefaultPaymentMethod, Foreign Vendor, return payment method to {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+            return paymentMethodReferenceObject;
+        } else {
+            throw new IllegalArgumentException("buildVendorDefaultPaymentMethod, Could not find Payment Method object for code : " + paymentMethodCodeValue);
         }
     }
     

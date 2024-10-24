@@ -15,9 +15,6 @@ import edu.cornell.kfs.module.purap.CUPurapAuthorizationConstants.CUPaymentReque
 import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 
 public class CuPaymentRequestForm extends PaymentRequestForm {
-	
-    // KFSPTS-1891
-    protected String wireChargeMessage;
     
     public CuPaymentRequestForm() {
 		super();
@@ -31,14 +28,6 @@ public class CuPaymentRequestForm extends PaymentRequestForm {
     	return can;
     }
     
-
-	public String getWireChargeMessage() {
-		return wireChargeMessage;
-	}
-
-	public void setWireChargeMessage(final String wireChargeMessage) {
-		this.wireChargeMessage = wireChargeMessage;
-	}
 
     @Override
     public List<ExtraButton> getExtraButtons() {

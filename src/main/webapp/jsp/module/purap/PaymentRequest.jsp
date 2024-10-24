@@ -33,9 +33,9 @@
     <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request"/>
     <c:set var="taxInfoViewable" value="${KualiForm.editingMode['taxInfoViewable']}" scope="request"/>
     <c:set var="taxAreaEditable" value="${KualiForm.editingMode['taxAreaEditable']}" scope="request"/>
+    <c:set var="wireEntryMode" value="${KualiForm.editingMode['wireEntry']}" scope="request"/>
 
     <!-- KFSPTS-1891 -->
-    <c:set var="wireEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['wireEntry']}" scope="request"/>
     <c:set var="frnEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['frnEntry']}" scope="request"/>
 
     <!-- Display hold message if payment is on hold -->
@@ -93,12 +93,12 @@
                 itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
                 documentAttributes="${DataDictionary.SourceAccountingLine.attributes}"/>
 
+        <fp:wireTransfer/>
+        <fp:foreignDraft/>
+
         <purap:relatedDocuments />
 
         <purap:paymentHistory />
-
-        <purap:preqWireTransfer/>
-        <purap:preqForeignDraft/>
 
         <gl:generalLedgerPendingEntries/>
 

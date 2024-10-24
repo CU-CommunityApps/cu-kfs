@@ -121,7 +121,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
 
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(preq);
         // if tax is required but not yet calculated, return and prompt user to calculate
-        if (requiresCalculateTax((PaymentRequestForm)form)) {
+        if (requiresCalculationBeforeApprove((PaymentRequestForm)form)) {
             GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, PurapKeyConstants.ERROR_APPROVE_REQUIRES_CALCULATE);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
@@ -146,22 +146,16 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
         }
     }
     
-    /**
-     * Calls service to clear tax info.
-     */
-    public ActionForward clearTaxInfo(
-            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
-            final HttpServletResponse response) throws Exception {
-        final PaymentRequestForm prForm = (PaymentRequestForm) form;
-        final PaymentRequestDocument document = (PaymentRequestDocument) prForm.getDocument();
-
-        final PaymentRequestService taxService = SpringContext.getBean(PaymentRequestService.class);
-
-        /* call service to clear previous lines */
-        taxService.clearTax(document);
-
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    // Cornell customization: method is private in base code so we had to copy it over
+    private boolean requiresCalculationBeforeApprove(final PaymentRequestForm preqForm) {
+        final PaymentRequestDocument preq = (PaymentRequestDocument) preqForm.getDocument();
+        final boolean requiresCalculatePaymentMethod = !preqForm.isCalculated()
+                && StringUtils.equals(
+                    PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW,
+                    preq.getApplicationDocumentStatus());
+        return requiresCalculatePaymentMethod || requiresCalculateTax(preqForm);
     }
+    
     
     private CuCheckStubService getCuCheckStubService() {
         if (cuCheckStubService == null) {

@@ -1,6 +1,6 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
-<c:set var="wireTransAttributes" value="${DataDictionary.PaymentRequestWireTransfer.attributes}" />
+<c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
 
 <kul:tab tabTitle="Foreign Draft" defaultOpen="false" tabErrorKey="${CUKFSConstants.PREQ_FOREIGNDRAFTS_TAB_ERRORS}">
     <div class="tab-container" align=center>
@@ -9,14 +9,14 @@
                 <c:if test="${!fullEntryMode&&!frnEntryMode}">
                     <tr>
                         <td>
-                            <c:if test="${KualiForm.document.preqWireTransfer.preqForeignCurrencyTypeCode=='C'}">
+                            <c:if test="${KualiForm.document.wireTransfer.preqForeignCurrencyTypeCode=='C'}">
                                 PREQ amount is stated in U.S. dollars; convert to foreign currency
                             </c:if>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <c:if test="${KualiForm.document.preqWireTransfer.preqForeignCurrencyTypeCode=='F'}">
+                            <c:if test="${KualiForm.document.wireTransfer.preqForeignCurrencyTypeCode=='F'}">
                                 PREQ amount is stated in foreign currency
                             </c:if>
                         </td>
@@ -27,7 +27,7 @@
                         <td>
                             <html:radio
                                     styleId="us-currency"
-                                    property="document.preqWireTransfer.preqForeignCurrencyTypeCode"
+                                    property="document.wireTransfer.preqForeignCurrencyTypeCode"
                                     value="C"/>
 
                             <label for="us-currency">
@@ -52,7 +52,7 @@
                         *<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCurrencyTypeName}"/>&nbsp;
                         <kul:htmlControlAttribute
                                 attributeEntry="${wireTransAttributes.preqCurrencyTypeName}"
-                                property="document.preqWireTransfer.preqForeignCurrencyTypeName"
+                                property="document.wireTransfer.preqForeignCurrencyTypeName"
                                 readOnly="${!fullEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
