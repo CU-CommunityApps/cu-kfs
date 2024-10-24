@@ -72,136 +72,144 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
         return count + 1;
     }
     
-    protected boolean generateEntriesPaymentRequest(
-            final PaymentRequestDocument preq, final List encumbrances, 
-            final List summaryAccounts, final String processType) {
-        LOG.debug("generateEntriesPaymentRequest() started");
-        final boolean success = true;
-        preq.setGeneralLedgerPendingEntries(new ArrayList());
-
-        /*
-         * Can't let generalLedgerPendingEntryService just create all the entries because we need the sequenceHelper to carry over
-         * from the encumbrances to the actuals and also because we need to tell the PaymentRequestDocumentRule customize entry
-         * method how to customize differently based on if creating an encumbrance or actual.
-         */
-        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(getNextAvailableSequence(preq.getDocumentNumber()));
-
-        // when cancelling a PREQ, do not book encumbrances if PO is CLOSED
-		if (encumbrances != null
-				&& !(CANCEL_PAYMENT_REQUEST.equals(processType) && PurchaseOrderStatuses.APPDOC_CLOSED
-						.equals(preq.getPurchaseOrderDocument().getApplicationDocumentStatus()))) {
-            LOG.debug("generateEntriesPaymentRequest() generate encumbrance entries");
-            if (CREATE_PAYMENT_REQUEST.equals(processType)) {
-                // on create, use CREDIT code for encumbrances
-                preq.setDebitCreditCodeForGLEntries(GL_CREDIT_CODE);
-            }
-            else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
-                // on cancel, use DEBIT code
-                preq.setDebitCreditCodeForGLEntries(GL_DEBIT_CODE);
-            }
-
-            preq.setGenerateEncumbranceEntries(true);
-            for (final Object encumbrance : encumbrances) {
-                final AccountingLine accountingLine = (AccountingLine) encumbrance;
-                preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
-                sequenceHelper.increment(); // increment for the next line
-            }
-        }
-
-        if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
-            LOG.debug("generateEntriesPaymentRequest() now book the actuals");
-            preq.setGenerateEncumbranceEntries(false);
-
-            if (CREATE_PAYMENT_REQUEST.equals(processType) || MODIFY_PAYMENT_REQUEST.equals(processType)) {
-                // on create and modify, use DEBIT code
-                preq.setDebitCreditCodeForGLEntries(GL_DEBIT_CODE);
-            }
-            else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
-                // on cancel, use CREDIT code
-                preq.setDebitCreditCodeForGLEntries(GL_CREDIT_CODE);
-            }
-
-            for (final Object account : summaryAccounts) {
-                final SummaryAccount summaryAccount = (SummaryAccount) account;
-                preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
-                sequenceHelper.increment(); // increment for the next line
-            }
-
-            // generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax document)
-            final List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(preq);
-            for (final UseTaxContainer useTaxContainer : useTaxContainers) {
-                final PurApItemUseTax offset = useTaxContainer.getUseTax();
-                final List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
-                for (final SourceAccountingLine sourceAccountingLine : accounts) {
-                    preq.generateGeneralLedgerPendingEntries(sourceAccountingLine, sequenceHelper, useTaxContainer.getUseTax());
-                    sequenceHelper.increment(); // increment for the next line
-                }
-
-            }
-
-            // Manually save preq summary accounts
-            if (MODIFY_PAYMENT_REQUEST.equals(processType)) {
-                //for modify, regenerate the summary from the doc
-                final List<SummaryAccount> summaryAccountsForModify = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax(preq);
-                saveAccountsPayableSummaryAccounts(summaryAccountsForModify, preq.getPurapDocumentIdentifier(), PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
-            }
-            else {
-                //for create and cancel, use the summary accounts
-                saveAccountsPayableSummaryAccounts(summaryAccounts, preq.getPurapDocumentIdentifier(), PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
-            }
-
-            // manually save cm account change tables (CAMS needs this)
-            if (CREATE_PAYMENT_REQUEST.equals(processType) || MODIFY_PAYMENT_REQUEST.equals(processType)) {
-                SpringContext.getBean(PurapAccountRevisionService.class).savePaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
-            }
-            else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
-                SpringContext.getBean(PurapAccountRevisionService.class).cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
-            }
-        
-        // KFSPTS-1891
-        // generate any document level GL entries (offsets or fee charges)
-        // we would only want to do this when booking the actuals (not the encumbrances)
-        if (preq.getGeneralLedgerPendingEntries() == null || preq.getGeneralLedgerPendingEntries().size() < 2) {
-            LOG.warn("No gl entries for accounting lines.");
-        } else {
-            // Upon a modify, we need to skip re-assessing any fees
-            // in fact, we need to skip making any of these entries since there could be a combination
-            // of debits and credit entries in the entry list - this will cause problems if the first is a
-            // credit since it uses that to determine the sign of all the other transactions
-            
-            // upon create, build the entries normally
-            if ( CREATE_PAYMENT_REQUEST.equals(processType) ) {
-                getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
-                        preq,((CuPaymentRequestDocument)preq).getPaymentMethodCode(),preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), false, false, sequenceHelper);
-            } else if ( MODIFY_PAYMENT_REQUEST.equals(processType) ) {
-                // upon modify, we need to calculate the deltas here and pass them in so the appropriate adjustments are created
-                KualiDecimal bankOffsetAmount = KualiDecimal.ZERO;
-                final Map<String,KualiDecimal> changesByChart = new HashMap<String, KualiDecimal>();
-                if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
-                    for ( final SummaryAccount a : (List<SummaryAccount>)summaryAccounts ) {
-                        bankOffsetAmount = bankOffsetAmount.add(a.getAccount().getAmount());
-                        if ( changesByChart.get( a.getAccount().getChartOfAccountsCode() ) == null ) {
-                            changesByChart.put( a.getAccount().getChartOfAccountsCode(), a.getAccount().getAmount() );
-                        } else {
-                            changesByChart.put( a.getAccount().getChartOfAccountsCode(), changesByChart.get( a.getAccount().getChartOfAccountsCode() ).add( a.getAccount().getAmount() ) );
-                        }
-                    }
-                }
-                
-                getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
-                        preq,((CuPaymentRequestDocument)preq).getPaymentMethodCode(),preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), true, false, sequenceHelper, bankOffsetAmount, changesByChart );
-            }
-        }
-        preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelper);
-        // END MOD
-    }
-
-
-        // Manually save GL entries for Payment Request and encumbrances
-        saveGLEntries(preq.getGeneralLedgerPendingEntries());
-
-        return success;
-    }
+//    protected boolean generateEntriesPaymentRequest(
+//            final PaymentRequestDocument preq, final List encumbrances, 
+//            final List summaryAccounts, final String processType) {
+//        LOG.debug("generateEntriesPaymentRequest() started");
+//        final boolean success = true;
+//        preq.setGeneralLedgerPendingEntries(new ArrayList());
+//
+//        /*
+//         * Can't let generalLedgerPendingEntryService just create all the entries because we need the sequenceHelper to carry over
+//         * from the encumbrances to the actuals and also because we need to tell the PaymentRequestDocumentRule customize entry
+//         * method how to customize differently based on if creating an encumbrance or actual.
+//         */
+//        final GeneralLedgerPendingEntrySequenceHelper sequenceHelper = new GeneralLedgerPendingEntrySequenceHelper(
+//                getNextAvailableSequence(preq.getDocumentNumber()));
+//
+//        // when cancelling a PREQ, do not book encumbrances if PO is CLOSED
+//        if (encumbrances != null && !(CANCEL_PAYMENT_REQUEST.equals(processType) 
+//                && PurchaseOrderStatuses.APPDOC_CLOSED.equals(
+//                        preq.getPurchaseOrderDocument().getApplicationDocumentStatus()))) {
+//            LOG.debug("generateEntriesPaymentRequest() generate encumbrance entries");
+//            if (CREATE_PAYMENT_REQUEST.equals(processType)) {
+//                // on create, use CREDIT code for encumbrances
+//                preq.setDebitCreditCodeForGLEntries(GL_CREDIT_CODE);
+//            }
+//            else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
+//                // on cancel, use DEBIT code
+//                preq.setDebitCreditCodeForGLEntries(GL_DEBIT_CODE);
+//            }
+//
+//            preq.setGenerateEncumbranceEntries(true);
+//            for (final Object encumbrance : encumbrances) {
+//                final AccountingLine accountingLine = (AccountingLine) encumbrance;
+//                preq.generateGeneralLedgerPendingEntries(accountingLine, sequenceHelper);
+//                sequenceHelper.increment(); // increment for the next line
+//            }
+//        }
+//
+//        if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
+//            LOG.debug("generateEntriesPaymentRequest() now book the actuals");
+//            preq.setGenerateEncumbranceEntries(false);
+//
+//            if (CREATE_PAYMENT_REQUEST.equals(processType) || MODIFY_PAYMENT_REQUEST.equals(processType)) {
+//                // on create and modify, use DEBIT code
+//                preq.setDebitCreditCodeForGLEntries(GL_DEBIT_CODE);
+//            } else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
+//                // on cancel, use CREDIT code
+//                preq.setDebitCreditCodeForGLEntries(GL_CREDIT_CODE);
+//                
+//                preq.setGenerateExternalEntries(cancellingShouldReverseExternalEntries(preq));
+//                preq.setGenerateWireTransferEntries(cancellingShouldReverseWireTransferEntries(preq));
+//            }
+//
+//            for (final Object account : summaryAccounts) {
+//                final SummaryAccount summaryAccount = (SummaryAccount) account;
+//                preq.generateGeneralLedgerPendingEntries(summaryAccount.getAccount(), sequenceHelper);
+//                sequenceHelper.increment(); // increment for the next line
+//            }
+//            
+//            preq.setGenerateExternalEntries(false);
+//            preq.setGenerateWireTransferEntries(false);
+//
+//            // generate offset accounts for use tax if it exists (useTaxContainers will be empty if not a use tax 
+//            // document)
+//            final List<UseTaxContainer> useTaxContainers = SpringContext.getBean(PurapAccountingService.class).generateUseTaxAccount(preq);
+//            for (final UseTaxContainer useTaxContainer : useTaxContainers) {
+//                final PurApItemUseTax offset = useTaxContainer.getUseTax();
+//                final List<SourceAccountingLine> accounts = useTaxContainer.getAccounts();
+//                for (final SourceAccountingLine sourceAccountingLine : accounts) {
+//                    preq.generateGeneralLedgerPendingEntries(sourceAccountingLine, sequenceHelper, 
+//                            useTaxContainer.getUseTax());
+//                    sequenceHelper.increment(); // increment for the next line
+//                }
+//
+//            }
+//
+//            // Manually save preq summary accounts
+//            if (MODIFY_PAYMENT_REQUEST.equals(processType)) {
+//                //for modify, regenerate the summary from the doc
+//                final List<SummaryAccount> summaryAccountsForModify = SpringContext.getBean(PurapAccountingService.class).generateSummaryAccountsWithNoZeroTotalsNoUseTax(preq);
+//                saveAccountsPayableSummaryAccounts(summaryAccountsForModify, preq.getPurapDocumentIdentifier(), PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
+//            } else {
+//                //for create and cancel, use the summary accounts
+//                saveAccountsPayableSummaryAccounts(summaryAccounts, preq.getPurapDocumentIdentifier(), PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT);
+//            }
+//
+//            // manually save cm account change tables (CAMS needs this)
+//            if (CREATE_PAYMENT_REQUEST.equals(processType) 
+//                    || MODIFY_PAYMENT_REQUEST.equals(processType)
+//                    || PROCESS_PAYMENT_REQUEST.equals(processType)) {
+//                SpringContext.getBean(PurapAccountRevisionService.class).savePaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
+//            } else if (CANCEL_PAYMENT_REQUEST.equals(processType)) {
+//                SpringContext.getBean(PurapAccountRevisionService.class).cancelPaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
+//            }
+//        
+//        // KFSPTS-1891
+//        // generate any document level GL entries (offsets or fee charges)
+//        // we would only want to do this when booking the actuals (not the encumbrances)
+//        if (preq.getGeneralLedgerPendingEntries() == null || preq.getGeneralLedgerPendingEntries().size() < 2) {
+//            LOG.warn("No gl entries for accounting lines.");
+//        } else {
+//            // Upon a modify, we need to skip re-assessing any fees
+//            // in fact, we need to skip making any of these entries since there could be a combination
+//            // of debits and credit entries in the entry list - this will cause problems if the first is a
+//            // credit since it uses that to determine the sign of all the other transactions
+//            
+//            // upon create, build the entries normally
+//            if ( CREATE_PAYMENT_REQUEST.equals(processType) ) {
+//                getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
+//                        preq,((CuPaymentRequestDocument)preq).getPaymentMethodCode(),preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), false, false, sequenceHelper);
+//            } else if ( MODIFY_PAYMENT_REQUEST.equals(processType) ) {
+//                // upon modify, we need to calculate the deltas here and pass them in so the appropriate adjustments are created
+//                KualiDecimal bankOffsetAmount = KualiDecimal.ZERO;
+//                final Map<String,KualiDecimal> changesByChart = new HashMap<String, KualiDecimal>();
+//                if (ObjectUtils.isNotNull(summaryAccounts) && !summaryAccounts.isEmpty()) {
+//                    for ( final SummaryAccount a : (List<SummaryAccount>)summaryAccounts ) {
+//                        bankOffsetAmount = bankOffsetAmount.add(a.getAccount().getAmount());
+//                        if ( changesByChart.get( a.getAccount().getChartOfAccountsCode() ) == null ) {
+//                            changesByChart.put( a.getAccount().getChartOfAccountsCode(), a.getAccount().getAmount() );
+//                        } else {
+//                            changesByChart.put( a.getAccount().getChartOfAccountsCode(), changesByChart.get( a.getAccount().getChartOfAccountsCode() ).add( a.getAccount().getAmount() ) );
+//                        }
+//                    }
+//                }
+//                
+//                getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
+//                        preq,((CuPaymentRequestDocument)preq).getPaymentMethodCode(),preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), true, false, sequenceHelper, bankOffsetAmount, changesByChart );
+//            }
+//        }
+//        preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelper);
+//        // END MOD
+//    }
+//
+//
+//        // Manually save GL entries for Payment Request and encumbrances
+//        saveGLEntries(preq.getGeneralLedgerPendingEntries());
+//
+//        return success;
+//    }
 
 	public CUPaymentMethodGeneralLedgerPendingEntryService getPaymentMethodGeneralLedgerPendingEntryService() {
 		return paymentMethodGeneralLedgerPendingEntryService;

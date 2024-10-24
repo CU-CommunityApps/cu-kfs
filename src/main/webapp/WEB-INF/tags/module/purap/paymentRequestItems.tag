@@ -34,6 +34,7 @@
 <c:set var="purapTaxEnabled" value="${(not empty KualiForm.editingMode['purapTaxEnabled'])}" />
 <c:set var="tabindexOverrideBase" value="50" />
 <c:set var="fullDocEntryCompleted" value="${(not empty KualiForm.editingMode['fullDocumentEntryCompleted'])}" />
+<c:set var="paymentMethodReview" value="${(not empty KualiForm.editingMode['paymentMethodReview'])}" />
 <c:set var="editAmount" value="${(not empty KualiForm.editingMode['editAmount'])}" /> <!-- KFSPTS-1891 -->
 
 <c:set var="colSpanDescription" value="3"/>
@@ -156,7 +157,7 @@
 				<kul:htmlControlAttribute
 				        attributeEntry="${itemAttributes.extendedPrice}"
 				        property="document.item[${ctr}].extendedPrice" 
-				        readOnly="${(not (fullEntryMode) or (fullDocEntryCompleted)) and not (editAmount)}"
+				        readOnly="${not paymentMethodReview and (not (fullEntryMode) or (fullDocEntryCompleted)) and not (editAmount)}"
 				        tabindexOverride="${tabindexOverrideBase + 0}" />
 			</td>
 
@@ -165,7 +166,7 @@
 			        <kul:htmlControlAttribute
 				        attributeEntry="${itemAttributes.itemTaxAmount}"
 				        property="document.item[${ctr}].itemTaxAmount" 
-				        readOnly="${not (fullEntryMode) or lockTaxAmountEntry}" 
+				        readOnly="${not paymentMethodReview and not (fullEntryMode) or lockTaxAmountEntry}"
 				        tabindexOverride="${tabindexOverrideBase + 0}" />
 			</td>			
 				<td class="infoline right">

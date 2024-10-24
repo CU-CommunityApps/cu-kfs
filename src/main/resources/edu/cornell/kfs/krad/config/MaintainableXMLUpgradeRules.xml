@@ -1424,10 +1424,39 @@
         </pattern>
         <!-- KDO-934 end -->
         <pattern>
+            <class>vendorDetail</class>
+            <pattern>
+                <match>extension</match>
+                <replacement>(MOVE_MARKED_NODES_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
             <class>org.kuali.kfs.vnd.businessobject.VendorDetail</class>
+            <pattern>
+                <match>extension</match>
+                <replacement>(MOVE_MARKED_NODES_TO_PARENT)</replacement>
+            </pattern>
+            <pattern>
+                <match>defaultB2BPaymentMethodCode</match>
+                <replacement>defaultPaymentMethodCode</replacement>
+            </pattern>
             <pattern>
                 <match>vendorRestrictedPerson</match>
                 <replacement/>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.vnd.businessobject.VendorDetailExtension</class>
+            <pattern>
+                <match>defaultB2BPaymentMethodCode</match>
+                <replacement>(MOVE_THIS_NODE_TO_PARENT)</replacement>
+            </pattern>
+        </pattern>
+        <pattern>
+            <class>edu.cornell.kfs.vnd.businessobject.VendorDetailExtension_MOVED_NODES</class>
+            <pattern>
+                <match>defaultB2BPaymentMethodCode</match>
+                <replacement>defaultPaymentMethodCode</replacement>
             </pattern>
         </pattern>
         <pattern>

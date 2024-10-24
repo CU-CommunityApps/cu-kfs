@@ -119,15 +119,16 @@
           abstract="true" p:parameterEvaluatorService-ref="parameterEvaluatorService"/>
     
     	<!--  KFSPTS-1891 -->
-	<bean id="PaymentRequest-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestWireTransferValidation" abstract="true" />
-	<bean id="PaymentRequest-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestForeignDraftValidation" abstract="true" />
-	
-	<bean id="VendorCreditMemo-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoWireTransferValidation" abstract="true" />
-	<bean id="VendorCreditMemo-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoForeignDraftValidation" abstract="true" />
+    <bean id="PaymentRequest-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.PaymentRequestForeignDraftValidation" abstract="true" />
+
+    <bean id="VendorCreditMemo-wireTransferValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoWireTransferValidation" abstract="true" />
+    <bean id="VendorCreditMemo-foreignDraftValidation" class="edu.cornell.kfs.module.purap.document.validation.impl.CreditMemoForeignDraftValidation" abstract="true" />
 
     <bean id="PaymentRequest-accountingLineAccessibleValidation"
           class="org.kuali.kfs.module.purap.document.validation.impl.PaymentRequestAccountingLineAccessibleValidation"
-          abstract="true" p:dataDictionaryService-ref="dataDictionaryService" p:documentDictionaryService-ref="documentDictionaryService"/>
+          abstract="true" p:dataDictionaryService-ref="dataDictionaryService"
+          p:documentDictionaryService-ref="documentDictionaryService"
+    />
           
     <bean id="Purchasing-itemConsideredEnteredCompositeValidation-parentBean" parent="CompositeValidation" scope="prototype" abstract="true"> 								
         <property name="quitOnFail" value="false" />
