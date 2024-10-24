@@ -3,10 +3,12 @@ package edu.cornell.kfs.coa.batch.service.impl;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,17 +75,19 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
                 attachmentsToCopy.size());
         final CopyLegacyAccountAttachmentsService proxiedService =
                 getThisServiceAsProxyToProcessAttachmentsInNewTransactions();
+        final List<Pair<LegacyAccountAttachment, String>> failedAttachments = new ArrayList<>(); 
         int numCopiedAttachments = 0;
-        int numCopyFailures = 0;
 
         for (final LegacyAccountAttachment attachmentToCopy : attachmentsToCopy) {
-            if (proxiedService.copyLegacyAccountAttachmentToKfs(attachmentToCopy)) {
+            try {
+                proxiedService.copyLegacyAccountAttachmentToKfs(attachmentToCopy);
                 numCopiedAttachments++;
-            } else {
-                numCopyFailures++;
-                if (numCopyFailures > maxFailuresAllowed) {
+            } catch (final Exception e) {
+                failedAttachments.add(Pair.of(attachmentToCopy, e.getMessage()));
+                if (failedAttachments.size() > maxFailuresAllowed) {
                     LOG.error("copyLegacyAccountAttachmentsToKfs, More than {} attachments failed to copy; aborting",
                             maxFailuresAllowed);
+                    proxiedService.recordCopyingErrorsForLegacyAccountAttachments(failedAttachments);
                     return false;
                 }
             }
@@ -93,8 +97,12 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
         LOG.info("copyLegacyAccountAttachmentsToKfs, Successfully copied {} legacy account attachments into KFS",
                 numCopiedAttachments);
         LOG.info("copyLegacyAccountAttachmentsToKfs, {} legacy account attachments failed copying into KFS",
-                numCopyFailures);
+                failedAttachments.size());
         LOG.info("====================");
+
+        if (failedAttachments.size() > 0) {
+            proxiedService.recordCopyingErrorsForLegacyAccountAttachments(failedAttachments);
+        }
 
         return true;
     }
@@ -105,25 +113,27 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public boolean copyLegacyAccountAttachmentToKfs(final LegacyAccountAttachment legacyAccountAttachment) {
+    public void copyLegacyAccountAttachmentToKfs(final LegacyAccountAttachment legacyAccountAttachment) {
         try {
             LOG.debug("copyLegacyAccountAttachmentToKfs, Copying attachment: {}", legacyAccountAttachment);
+            if (!LOG.isDebugEnabled()) {
+                LOG.info("copyLegacyAccountAttachmentToKfs, Copying attachment with ID '{}' targeting account '{}-{}'",
+                        legacyAccountAttachment.getId(), legacyAccountAttachment.getKfsChartCode(),
+                        legacyAccountAttachment.getKfsAccountNumber());
+            }
             final Account account = getKfsAccountForAttachment(legacyAccountAttachment);
             final AccountingXmlDocumentBackupLink backupLink = createBackupLinkForAttachmentDownload(
                     legacyAccountAttachment);
             final Attachment attachment = accountingXmlDocumentDownloadAttachmentService
                     .createAttachmentFromBackupLink(account, backupLink);
             saveAttachmentToKfs(attachment, account, backupLink.getDescription());
+            copyLegacyAccountAttachmentsDao.markLegacyAccountAttachmentAsCopied(legacyAccountAttachment);
             LOG.info("copyLegacyAccountAttachmentToKfs, Copied attachment with ID '{}' targeting account '{}-{}'",
                     legacyAccountAttachment.getId(), legacyAccountAttachment.getKfsChartCode(),
                     legacyAccountAttachment.getKfsAccountNumber());
-            copyLegacyAccountAttachmentsDao.markLegacyAccountAttachmentAsCopied(legacyAccountAttachment);
-            return true;
         } catch (final Exception e) {
             LOG.error("copyLegacyAccountAttachmentToKfs, Failed to copy attachment: {}", legacyAccountAttachment, e);
-            copyLegacyAccountAttachmentsDao.recordCopyingErrorForLegacyAccountAttachment(
-                    legacyAccountAttachment, e.getMessage());
-            return false;
+            throw (e instanceof RuntimeException) ? (RuntimeException) e : new RuntimeException(e);
         }
     }
 
@@ -194,6 +204,30 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
     private String getBaseAttachmentDownloadUrl() {
         return webServiceCredentialService.getWebServiceCredentialValue(
                 CuCoaBatchConstants.DFA_ATTACHMENTS_GROUP_CODE, CuCoaBatchConstants.DFA_ATTACHMENTS_URL_KEY);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void recordCopyingErrorsForLegacyAccountAttachments(
+            final List<Pair<LegacyAccountAttachment, String>> attachmentsWithErrors) {
+        LOG.info("recordCopyingErrorsForLegacyAccountAttachments, Marking {} attachments as having copy failures",
+                attachmentsWithErrors.size());
+        final int maxRetries = getParameterValueAsInteger(CuCoaBatchParameterConstants.MAX_DOWNLOAD_RETRIES);
+        for (final Pair<LegacyAccountAttachment, String> attachmentAndError : attachmentsWithErrors) {
+            final LegacyAccountAttachment legacyAccountAttachment = attachmentAndError.getLeft();
+            final int previousRetryCount = legacyAccountAttachment.getRetryCount();
+            copyLegacyAccountAttachmentsDao.recordCopyingErrorForLegacyAccountAttachment(
+                    legacyAccountAttachment, attachmentAndError.getRight());
+            if (previousRetryCount == maxRetries - 1) {
+                LOG.warn("recordCopyingErrorsForLegacyAccountAttachments, Attachment with ID '{}' "
+                        + "targeting account '{}-{}' has now encountered {} download failures. "
+                        + "No more download attempts will be made without further intervention.",
+                        legacyAccountAttachment.getId(), legacyAccountAttachment.getKfsChartCode(),
+                        legacyAccountAttachment.getKfsAccountNumber(), maxRetries);
+            }
+        }
+        LOG.info("recordCopyingErrorsForLegacyAccountAttachments, "
+                + "Finished marking attachments as having copy failures");
     }
 
     public void setCopyLegacyAccountAttachmentsDao(

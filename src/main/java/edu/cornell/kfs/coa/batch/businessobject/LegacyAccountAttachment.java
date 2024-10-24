@@ -1,5 +1,7 @@
 package edu.cornell.kfs.coa.batch.businessobject;
 
+import java.sql.Timestamp;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.core.api.util.Truth;
@@ -20,6 +22,7 @@ public class LegacyAccountAttachment extends TransientBusinessObjectBase {
     private Integer retryCount;
     private boolean copied;
     private String latestErrorMessage;
+    private Timestamp lastUpdatedTimestamp;
 
     @Override
     public String toString() {
@@ -116,6 +119,14 @@ public class LegacyAccountAttachment extends TransientBusinessObjectBase {
 
     public void setLatestErrorMessage(final String latestErrorMessage) {
         this.latestErrorMessage = latestErrorMessage;
+    }
+
+    public Timestamp getLastUpdatedTimestamp() {
+        return lastUpdatedTimestamp;
+    }
+
+    public void setLastUpdatedTimestamp(final Timestamp lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
 }

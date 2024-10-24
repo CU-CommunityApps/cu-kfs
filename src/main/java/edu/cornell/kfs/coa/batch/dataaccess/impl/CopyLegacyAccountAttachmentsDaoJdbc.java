@@ -57,6 +57,7 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
         attachment.setRetryCount(rs.getInt("RETRY_COUNT"));
         attachment.setCopied(rs.getString("COPIED_IND"));
         attachment.setLatestErrorMessage(rs.getString("LATEST_ERR_MSG"));
+        attachment.setLastUpdatedTimestamp(rs.getTimestamp("LAST_UPDT_TS"));
         return attachment;
     }
 
@@ -65,7 +66,8 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
         final Long id = legacyAccountAttachment.getId();
         final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("UPDATE KFS.TEMP_ACCT_ATTACH_FOR_COPYING")
-                .append(" SET LATEST_ERR_MSG = NULL,")
+                .append(" SET LAST_UPDT_TS = SYSDATE,")
+                .append(" LATEST_ERR_MSG = NULL,")
                 .append(" COPIED_IND = ").appendAsParameter(KRADConstants.YES_INDICATOR_VALUE)
                 .append(" WHERE COPYING_ACCT_ATTACH_ID = ").appendAsParameter(Types.BIGINT, id)
                 .toQuery();
@@ -79,7 +81,8 @@ public class CopyLegacyAccountAttachmentsDaoJdbc
         final String errorMessageToStore = StringUtils.left(errorMessage, MAX_ERROR_MESSAGE_LENGTH);
         final CuSqlQuery sqlQuery = new CuSqlChunk()
                 .append("UPDATE KFS.TEMP_ACCT_ATTACH_FOR_COPYING")
-                .append(" SET RETRY_COUNT = RETRY_COUNT + 1,")
+                .append(" SET LAST_UPDT_TS = SYSDATE,")
+                .append(" RETRY_COUNT = RETRY_COUNT + 1,")
                 .append(" LATEST_ERR_MSG = ").appendAsParameter(errorMessageToStore)
                 .append(" WHERE COPYING_ACCT_ATTACH_ID = ").appendAsParameter(Types.BIGINT, id)
                 .toQuery();
