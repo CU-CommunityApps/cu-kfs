@@ -72,10 +72,6 @@
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
-                <join name="JoinTreasury"/>
-                <simple name="NoOpTreasury">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
             </routeNodes>
         </documentType>
     </documentTypes>
