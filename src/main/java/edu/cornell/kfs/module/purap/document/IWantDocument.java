@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
@@ -26,6 +28,8 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
+import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.RouteLevelNames;
 import org.kuali.kfs.sys.businessobject.AccountingLineParser;
@@ -1032,6 +1036,16 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private boolean documentIsBeingReturnedToSSC(final DocumentRouteLevelChange levelChangeEvent) {
         return StringUtils.equals(levelChangeEvent.getNewNodeName(), IWantRouteNodes.NO_OP_NODE)
                 && !StringUtils.equals(levelChangeEvent.getOldNodeName(), RouteLevelNames.ADHOC);
+    }
+
+    public List<PaymentDetail> getDvPaymentDetails() {
+        if (StringUtils.isBlank(dvDocId)) {
+            return List.of();
+        }
+        Integer disbursementNumber = Integer.valueOf(dvDocId);
+        Iterator<?> paymentDetails = SpringContext.getBean(PaymentDetailService.class)
+                .getByDisbursementNumber(disbursementNumber);
+        return CollectionUtils.collect(paymentDetails, PaymentDetail.class::cast, new ArrayList<>());
     }
 
     // The following link identifier getter and setter are needed for viewing the IWNT with other related PURAP docs.
