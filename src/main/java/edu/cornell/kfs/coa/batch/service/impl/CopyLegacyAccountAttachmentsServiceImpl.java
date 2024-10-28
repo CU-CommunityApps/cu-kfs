@@ -177,7 +177,11 @@ public class CopyLegacyAccountAttachmentsServiceImpl implements CopyLegacyAccoun
                 CuCOAKeyConstants.LEGACY_ACCOUNT_ATTACHMENT_NOTE_TEXT_TEMPLATE);
         final String noteText = MessageFormat.format(noteTemplate, legacyAccountAttachment.getLegacyAccountCode(),
                 legacyAccountAttachment.getAddedBy(), legacyAccountAttachment.getFileDescription());
-        return StringUtils.left(noteText, noteTextMaxLength);
+        if (noteText.length() > noteTextMaxLength) {
+            throw new RuntimeException("Formatted note text for attachment exceeds " + noteTextMaxLength
+                    + " characters");
+        }
+        return noteText;
     }
 
     private int getParameterValueAsInteger(final String parameterName) {
