@@ -32,6 +32,22 @@ public abstract class CuSqlQueryPlatformAwareDaoBaseJdbc extends PlatformAwareDa
         }
     }
     
+    protected int executeUpdate(final CuSqlQuery sqlQuery) {
+        return executeUpdate(sqlQuery, true);
+    }
+    
+    protected int executeUpdate(final CuSqlQuery sqlQuery, boolean logSQLOnError) {
+        try {
+            return getJdbcTemplate().update(sqlQuery.getQueryString(), sqlQuery.getParametersArray());
+        } catch (RuntimeException e) {
+            if (logSQLOnError || LOG.isDebugEnabled()) {
+                logSQL(sqlQuery);
+            }
+            LOG.error("update, Unexpected error encountered while running query!", e);
+            throw e;
+        }
+    }
+    
     protected void logSQL(CuSqlQuery sqlQuery) {
         LOG.info("logSQL, queryString: " + sqlQuery.getQueryString());
         LOG.info("logSQL, parameters: " + buildParametersMessage(sqlQuery));
