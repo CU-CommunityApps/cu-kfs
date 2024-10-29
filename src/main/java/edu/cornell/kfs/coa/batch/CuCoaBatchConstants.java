@@ -1,5 +1,7 @@
 package edu.cornell.kfs.coa.batch;
 
+import edu.cornell.kfs.fp.CuFPConstants;
+
 public class CuCoaBatchConstants {
     
     public static class ClosedAccountsFileCreationConstants {
@@ -64,4 +66,8 @@ public class CuCoaBatchConstants {
         }
         
     }
+
+    public static final String DFA_ATTACHMENTS_GROUP_CODE = "DFAATTACH";
+    public static final String DFA_ATTACHMENTS_URL_KEY = CuFPConstants.CREDENTIAL_BASE_URL + "1";
+
 }

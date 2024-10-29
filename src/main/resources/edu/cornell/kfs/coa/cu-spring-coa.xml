@@ -36,6 +36,7 @@
 				<value>accountReversionImportJob</value>
 				<value>createClosedAccountsCsvJob</value>
 				<value>createWorkdayOpenAccountsCsvJob</value>
+				<value>copyLegacyAccountAttachmentsJob</value>
 			</list>
 		</property>
         <property name="batchFileDirectories">
@@ -268,5 +269,36 @@
     <bean id="accountDelegateService" parent="accountDelegateService-parentBean"
           class="edu.cornell.kfs.coa.service.impl.CuAccountDelegateServiceImpl"
           p:accountDelegateGlobalLockDao-ref="accountDelegateGlobalLockDao"/>
+
+    <bean id="copyLegacyAccountAttachmentsJob" parent="unscheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="copyLegacyAccountAttachmentsStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="copyLegacyAccountAttachmentsStep"
+          parent="step"
+          class="edu.cornell.kfs.coa.batch.CopyLegacyAccountAttachmentsStep"
+          p:copyLegacyAccountAttachmentsService-ref="copyLegacyAccountAttachmentsService"/>
+
+    <bean id="copyLegacyAccountAttachmentsService" parent="copyLegacyAccountAttachmentsService-parentBean"/>
+    <bean id="copyLegacyAccountAttachmentsService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.coa.batch.service.impl.CopyLegacyAccountAttachmentsServiceImpl"
+          p:copyLegacyAccountAttachmentsDao-ref="copyLegacyAccountAttachmentsDao"
+          p:accountingXmlDocumentDownloadAttachmentService-ref="accountingXmlDocumentDownloadAttachmentService"
+          p:webServiceCredentialService-ref="webServiceCredentialService"
+          p:accountService-ref="accountService"
+          p:personService-ref="personService"
+          p:noteService-ref="noteService"
+          p:dataDictionaryService-ref="dataDictionaryService"
+          p:parameterService-ref="parameterService"
+          p:configurationService-ref="configurationService"/>
+
+    <bean id="copyLegacyAccountAttachmentsDao"
+          parent="platformAwareDaoJdbc"
+          class="edu.cornell.kfs.coa.batch.dataaccess.impl.CopyLegacyAccountAttachmentsDaoJdbc"/>
 
 </beans>
