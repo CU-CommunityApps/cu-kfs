@@ -1,30 +1,32 @@
 package edu.cornell.kfs.module.purap.document.web.struts;
 
-import edu.cornell.kfs.module.purap.CUPurapConstants;
-import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
-import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
-import edu.cornell.kfs.module.purap.businessobject.IWantItem;
-import edu.cornell.kfs.module.purap.document.IWantDocument;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.kuali.kfs.kns.web.ui.ExtraButton;
-import org.kuali.kfs.krad.document.Document;
-import org.kuali.kfs.krad.util.KRADConstants;
-import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
-import org.kuali.kfs.core.api.config.property.ConfigContext;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
-import org.kuali.kfs.core.api.util.KeyValue;
-import org.kuali.kfs.kew.api.WorkflowDocument;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.kuali.kfs.core.api.config.property.ConfigContext;
+import org.kuali.kfs.core.api.config.property.ConfigurationService;
+import org.kuali.kfs.core.api.util.KeyValue;
+import org.kuali.kfs.kew.api.WorkflowDocument;
+import org.kuali.kfs.kns.web.ui.ExtraButton;
+import org.kuali.kfs.krad.document.Document;
+import org.kuali.kfs.krad.util.KRADConstants;
+import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
+import org.kuali.kfs.sys.KFSConstants;
+import org.kuali.kfs.sys.context.SpringContext;
+import org.kuali.kfs.sys.document.web.struts.FinancialSystemTransactionalDocumentFormBase;
+
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
+import edu.cornell.kfs.module.purap.CUPurapConstants;
+import edu.cornell.kfs.module.purap.CUPurapKeyConstants;
+import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
+import edu.cornell.kfs.module.purap.businessobject.IWantItem;
+import edu.cornell.kfs.module.purap.document.IWantDocument;
 
 @SuppressWarnings("deprecation")
 public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormBase {
@@ -44,6 +46,9 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
 
     protected boolean userMatchesInitiator;
     protected boolean docIsInitiatedOrSaved;
+
+    protected transient CuDisbursementVoucherDocument generatedDvDocument;
+    protected transient List<PaymentDetail> dvPaymentDetails;
 
     public IWantDocumentForm() {
         super();
@@ -537,5 +542,29 @@ public class IWantDocumentForm extends FinancialSystemTransactionalDocumentFormB
     private boolean isInOrgHierarchyNode(Document document) {
         return isDocInNode(document, KFSConstants.RouteLevelNames.ORGANIZATION_HIERARCHY);
     }
-    
+
+    public CuDisbursementVoucherDocument getGeneratedDvDocument() {
+        if (ObjectUtils.isNull(generatedDvDocument)) {
+            populateGeneratedDvDocumentInfo();
+        }
+        return generatedDvDocument;
+    }
+
+    public List<PaymentDetail> getDvPaymentDetails() {
+        if (ObjectUtils.isNull(dvPaymentDetails)) {
+            populateGeneratedDvDocumentInfo();
+        }
+        return dvPaymentDetails;
+    }
+
+    public void populateGeneratedDvDocumentInfo() {
+        if (StringUtils.isNotBlank(getIWantDocument().getDvDocId())) {
+            generatedDvDocument = getIWantDocument().getGeneratedDvDocument();
+            dvPaymentDetails = getIWantDocument().getDvPaymentDetails();
+        } else {
+            generatedDvDocument = null;
+            dvPaymentDetails = List.of();
+        }
+    }
+
 }

@@ -47,6 +47,7 @@ import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.IWantRouteNodes;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
@@ -1046,6 +1047,13 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
         Iterator<?> paymentDetails = SpringContext.getBean(PaymentDetailService.class)
                 .getByDisbursementNumber(disbursementNumber);
         return CollectionUtils.collect(paymentDetails, PaymentDetail.class::cast, new ArrayList<>());
+    }
+
+    public CuDisbursementVoucherDocument getGeneratedDvDocument() {
+        if (StringUtils.isBlank(dvDocId)) {
+            return null;
+        }
+        return SpringContext.getBean(IWantDocumentService.class).getDisbursementVoucherGeneratedByIWantDoc(this);
     }
 
     // The following link identifier getter and setter are needed for viewing the IWNT with other related PURAP docs.
