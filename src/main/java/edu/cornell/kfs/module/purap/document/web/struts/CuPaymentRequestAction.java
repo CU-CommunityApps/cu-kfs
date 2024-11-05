@@ -105,7 +105,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     	super.customCalculate(apDoc);
     	final PaymentRequestDocument preqDoc = (PaymentRequestDocument) apDoc;
         // KFSPTS-2578
-        if (PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
+        if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
         		&& StringUtils.isNotBlank(preqDoc.getTaxClassificationCode()) && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
             SpringContext.getBean(PaymentRequestService.class).calculateTaxArea(preqDoc);
             return;
@@ -135,7 +135,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
             // need to wait after new item generated itemid
             // preqacctrevision is saved separately
             // TODO : this preqacctrevision is new.  need to validate with existing system to see if '0' is normal ?
-            if (StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW) || StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
+            if (StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW) || StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
               SpringContext.getBean(PurapAccountRevisionService.class).savePaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
             }
             return forward;

@@ -45,8 +45,6 @@ public final class PaymentRequestStatuses {
     public static final String APPDOC_AWAITING_TAX_REVIEW = "Awaiting Tax Approval";
     public static final String APPDOC_AWAITING_PAYMENT_METHOD_REVIEW = "Awaiting Payment Method Review";
     public static final String APPDOC_PENDING_E_INVOICE = "Pending Route Electronic Invoice";
-    // CU Customization: Added new APPDOC status
-    public static final String APPDOC_PAYMENT_METHOD_REVIEW = "Awaiting Treasury Manager Approval"; //Base code uses APPDOC_AWAITING_PAYMENT_METHOD_REVIEW
 
     public static final String NODE_ADHOC_REVIEW = "AdHoc";
     public static final String NODE_AWAITING_RECEIVING = "Receiving";
@@ -57,6 +55,7 @@ public final class PaymentRequestStatuses {
     public static final String NODE_OBJECT_CODE_REVIEW = "ObjectCode";
     public static final String NODE_VENDOR_TAX_REVIEW = "Tax";
     public static final String NODE_PAYMENT_METHOD_REVIEW = "PaymentMethod";
+    // CU Customization: Added new node for KFSUPGRADE-500
     public static final String NODE_RECEIVING = "Receiving";
     // End CU Customization
 
@@ -103,9 +102,6 @@ public final class PaymentRequestStatuses {
         AWAITING_TAX_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
         AWAITING_PAYMENT_METHOD_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW, false),
         DEPARTMENT_APPROVED(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),
-        // CU Customization: Added new PAYMENT_METHOD_REVIEW constant
-        PAYMENT_METHOD_REVIEW(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, false),
-        // End CU Customization
         AUTO_APPROVED(PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false),;
 
         private final String statusCode;
@@ -182,7 +178,8 @@ public final class PaymentRequestStatuses {
         STATUSES_ENROUTE.add(APPDOC_AWAITING_PAYMENT_METHOD_REVIEW);
         // CU Customization: Added APPDOC_AWAITING_RECEIVING_REVIEW entry for KFSUPGRADE-500
         STATUSES_ENROUTE.add(APPDOC_AWAITING_RECEIVING_REVIEW);
-
+        // End CU Customization
+        
         STATUSES_POSTROUTE.add(APPDOC_DEPARTMENT_APPROVED);
         STATUSES_POSTROUTE.add(APPDOC_AUTO_APPROVED);
     }
@@ -200,7 +197,7 @@ public final class PaymentRequestStatuses {
         appDocStatusMap.put(NODE_ORG_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_OBJECT_CODE_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         appDocStatusMap.put(NODE_VENDOR_TAX_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
-        // CU Customization: Added two new mappings for KFSUPGRADE-500 and KFSUPGRADE-964
+        // CU Customization: Added two new mappings for KFSUPGRADE-500
         appDocStatusMap.put(NODE_RECEIVING, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
         // End CU Customization
         appDocStatusMap.put(NODE_PAYMENT_METHOD_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE);
