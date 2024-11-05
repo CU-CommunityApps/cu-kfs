@@ -771,6 +771,9 @@ public class UiDocumentServiceImpl implements UiDocumentService {
                         if (roleMember.getActiveFromDate() != null) {
                             roleMemberImpl.setActiveFromDateValue(
                                     new java.sql.Timestamp(roleMember.getActiveFromDate().getTime()));
+                        } else if(!roleMember.isEdit()){
+                            // CU Customization If this is a new role and activeFromDate is null, set default for activeFromDate field
+                            roleMemberImpl.setActiveFromDateValue(dateTimeService.getCurrentTimestamp());
                         }
 
                         if (roleMember.getActiveToDate() != null) {
