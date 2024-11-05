@@ -395,7 +395,7 @@
                    <property name="propertyName" value="lookupFields" />
                    <property name="propertyNameForElementCompare" value="attributeName" />
                    <property name="element">
-                       <bean parent="FieldDefinition" p:attributeName="extension.einvoiceVendorIndicator" />
+                       <bean parent="FieldDefinition" p:attributeName="vendorHeader.vendorDebarredIndicator" />
                    </property>
                    <property name="insertAfter">
                        <list>

@@ -34,7 +34,6 @@ import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.vnd.VendorPropertyConstants;
 import org.kuali.kfs.vnd.document.service.VendorService;
 
-import edu.cornell.kfs.vnd.CUVendorPropertyConstants;
 import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 import java.sql.Date;
@@ -754,7 +753,7 @@ public class VendorDetail extends PersistableBusinessObjectBase implements Vendo
                     ((VendorDetailExtension)getExtension()).getHealthOffSiteLicenseExpirationDate(),((VendorDetailExtension)detail.getExtension()).getHealthOffSiteLicenseExpirationDate()).append(
                     ((VendorDetailExtension)getExtension()).getInsuranceNotes(),((VendorDetailExtension)detail.getExtension()).getInsuranceNotes()).append(
                     ((VendorDetailExtension)getExtension()).getMerchantNotes(),((VendorDetailExtension)detail.getExtension()).getMerchantNotes()).append( // end KFSUPGRADE-779
-                    getDefaultPaymentMethodCode(), detail.getDefaultPaymentMethodCode()).append( 
+                    getDefaultPaymentMethodCode(), detail.getDefaultPaymentMethodCode()).append( // end KFSUPGRADE-779
                     isVendorFirstLastNameIndicator(), detail.isVendorFirstLastNameIndicator()).isEquals();
         }
     }

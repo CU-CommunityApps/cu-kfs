@@ -18,19 +18,22 @@
  */
 package org.kuali.kfs.sys.businessobject;
 
-import java.util.LinkedHashMap;
+import java.lang.reflect.Field;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;
+import org.kuali.kfs.krad.datadictionary.AttributeSecurity;
 import org.kuali.kfs.krad.util.ObjectUtils;
-import org.kuali.kfs.sys.KFSPropertyConstants;
 
 import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute;
 
 /**
  * Cornell Customizations: 
- *     Added method toStringMapper to KualiCo 2024-04-19 version of this class
+ *     Overrode toString method in KualiCo 2024-04-19 version of this class
  *     to support credit memo payment method additional data processing.
+ *     This was needed due to certain fields containing confidential information.
  *     
  *     Add extended attribute to the business object when the extended attribute does not exist.
  *     Set table primary key of extended attribute to same primary key value as main business object
@@ -220,14 +223,36 @@ public class PaymentSourceWireTransfer extends PersistableBusinessObjectBase {
     
     /*
      * Cornell Customization: 
-     *     Added method toStringMapper to KualiCo 2024-04-19 version of this class
+     *     Overrode toString method in KualiCo 2024-04-19 version of this class
      *     to support credit memo payment method additional data processing.
+     *     This was needed due to certain fields containing confidential information.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected LinkedHashMap toStringMapper() {
-        LinkedHashMap m = new LinkedHashMap();
-        m.put(KFSPropertyConstants.DOCUMENT_NUMBER, this.documentNumber);
-        return m;
+    @Override
+    public String toString() {
+        
+        final class PaymentSourceWireTransferToStringBuilder extends ReflectionToStringBuilder {
+            private PaymentSourceWireTransferToStringBuilder(final Object object) {
+                super(object);
+            }
+
+            @Override
+            public boolean accept(final Field field) {
+                if (BusinessObject.class.isAssignableFrom(field.getType())) {
+                    return false;
+                }
+                final AttributeSecurity attributeSecurity = getDataDictionaryService()
+                        .getAttributeSecurity(PaymentSourceWireTransfer.class.getName(), field.getName());
+                if (ObjectUtils.isNotNull(attributeSecurity)
+                    && (attributeSecurity.isHide() || attributeSecurity.isMask()
+                        || attributeSecurity.isPartialMask())) {
+                    return false;
+                }
+                return super.accept(field);
+            }
+        }
+
+        final ReflectionToStringBuilder toStringBuilder = new PaymentSourceWireTransferToStringBuilder(this);
+        return toStringBuilder.toString();
     }
     
     /*
@@ -239,14 +264,14 @@ public class PaymentSourceWireTransfer extends PersistableBusinessObjectBase {
     @Override
     public void beforeInsert() {
         super.beforeInsert();
-        if (ObjectUtils.isNull(this.getExtension())) {
+        if (ObjectUtils.isNull(getExtension())) {
             PaymentSourceWireTransferExtendedAttribute paymentSourceWireTransferExtendedAttribute = new PaymentSourceWireTransferExtendedAttribute();
-            paymentSourceWireTransferExtendedAttribute.setDocumentNumber(this.getDocumentNumber());
-            this.setExtension(paymentSourceWireTransferExtendedAttribute);
+            paymentSourceWireTransferExtendedAttribute.setDocumentNumber(getDocumentNumber());
+            setExtension(paymentSourceWireTransferExtendedAttribute);
         }
-        PaymentSourceWireTransferExtendedAttribute boExtension = (PaymentSourceWireTransferExtendedAttribute)(this.getExtension());
+        PaymentSourceWireTransferExtendedAttribute boExtension = (PaymentSourceWireTransferExtendedAttribute)(getExtension());
         if (StringUtils.isBlank(boExtension.getDocumentNumber())) {
-            boExtension.setDocumentNumber(this.getDocumentNumber());
+            boExtension.setDocumentNumber(getDocumentNumber());
         }
     }
 

@@ -13,6 +13,7 @@
                 <ref bean="PaymentMethodExtendedAttribute-paymentMethodCode"/>
                 <ref bean="PaymentMethodExtendedAttribute-processedUsingPdp"/>
                 <ref bean="PaymentMethodExtendedAttribute-displayOnRecurringDVDocument"/>
+                <ref bean="PaymentMethodExtendedAttribute-additionalCreditMemoDataCode"/>
                 <ref bean="PaymentMethodExtendedAttribute-additionalCreditMemoDataLabel"/>
             </list>
         </property>
