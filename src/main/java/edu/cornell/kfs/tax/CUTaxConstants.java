@@ -57,6 +57,14 @@ public final class CUTaxConstants {
     public static final String TAX_1042S_TRANSACTION_DETAILS_OUTPUT_FILE_PREFIX = "irs_1042s_transaction_details_";
     public static final String TAX_OUTPUT_FILE_SUFFIX = ".txt";
 
+    public static class Sprintax {
+
+        public static final String PAYMENTS_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_payments_";
+        public static final String BIO_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_bio_";
+        public static final String TAX_CSV_FILE_SUFFIX = ".csv";
+
+    }
+
     public static final String FORM_1042S_GROSS_BOX = "GROSS";
     public static final String FORM_1042S_FED_TAX_WITHHELD_BOX = "FTW";
     public static final String FORM_1042S_STATE_INC_TAX_WITHHELD_BOX = "SITW";

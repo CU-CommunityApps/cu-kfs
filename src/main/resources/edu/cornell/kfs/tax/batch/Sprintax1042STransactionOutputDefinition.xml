@@ -38,7 +38,7 @@
         <field name="Header34" length="90" type="STATIC" value="Intermediary/Flow-Through's Name" />
         <field name="Header35" length="90" type="STATIC" value="Intermediary or FTE GIIN" />
         <field name="Header36" length="90" type="STATIC" value="NQI/FLW-THR/PTP Country Code" />
-        <field name="Header37" length="123" type="STATIC" value="Recipient's Foreign Tax I.D. Number" />
+        <field name="Header37" length="90" type="STATIC" value="Recipient's Foreign Tax I.D. Number" />
         <field name="Header38" length="90" type="STATIC" value="NQI/FLW-THR/PTP Address Line" />
         <field name="Header39" length="90" type="STATIC" value="NQI/FLW-THR/PTP City" />
         <field name="Header40" length="90" type="STATIC" value="Payer's Name" />

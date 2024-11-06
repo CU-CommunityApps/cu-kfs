@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <section length="1890" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="Header1" length="90" type="STATIC" value="First_Name" />
+        <field name="Header2" length="90" type="STATIC" value="Middle_Name" />
+        <field name="Header3" length="90" type="STATIC" value="Last_Name" />
+        <field name="Header4" length="90" type="STATIC" value="Email" />
+        <field name="Header5" length="90" type="STATIC" value="Unique_ID_Student_Number" />
+        <field name="Header6" length="90" type="STATIC" value="TIN (If TT was applied)" />
+        <field name="Header7" length="90" type="STATIC" value="DOB" />
+        <field name="Header8" length="90" type="STATIC" value="Foreign_Tax_ID" />
+        <field name="Header9" length="90" type="STATIC" value="Country_of_Residence" />
+        <field name="Header10" length="90" type="STATIC" value="US_Address_Line_1" />
+        <field name="Header11" length="90" type="STATIC" value="US_Address_Line_2" />
+        <field name="Header12" length="90" type="STATIC" value="US_City" />
+        <field name="Header13" length="90" type="STATIC" value="US_State" />
+        <field name="Header14" length="90" type="STATIC" value="US_zip" />
+        <field name="Header15" length="90" type="STATIC" value="NOnUS_Address_Line_1" />
+        <field name="Header16" length="90" type="STATIC" value="NonUS_Address_Province" />
+        <field name="Header17" length="90" type="STATIC" value="NonUS_Address_City" />
+        <field name="Header18" length="90" type="STATIC" value="NonUS_address_Country" />
+        <field name="Header19" length="90" type="STATIC" value="NonUS-Address_postal_code" />
+        <field name="Header20" length="90" type="STATIC" value="Mailing_Address" />
+        <field name="Header21" length="90" type="STATIC" value="Canada_Province" />
+    </section>
+    <!-- Mappings to TransactionRowOutput -->
+    <section length="3518" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="Field1" length="90" type="DERIVED" value="vendorFirstName" /> <!-- First_Name -->
+        <field name="Field2" length="90" type="STATIC" value="" /> <!-- Middle_Name -->
+        <field name="Field3" length="90" type="DERIVED" value="vendorLastName" /> <!-- Last_Name -->
+        <field name="Field4" length="90" type="STATIC" value="" />
+        <field name="Field5" length="90" type="STATIC" value="" />
+        <field name="Field6" length="90" type="STATIC" value="" />  <!--  -->
+        <field name="Field7" length="90" type="STATIC" value="" />  <!--  -->
+        <field name="Field8" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field9" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field10" length="90" type="STATIC" value="" /><!--  -->
+        <field name="Field11" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field12" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field13" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field14" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field15" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field16" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field17" length="90" type="STATIC" value="" />
+        <field name="Field18" length="90" type="STATIC" value="" />
+        <field name="Field19" length="90" type="STATIC" value="" />
+        <field name="Field20" length="90" type="STATIC" value="" /> <!--  -->
+        <field name="Field21" length="90" type="STATIC" value="" />
+
+    </section>
+</taxOutputDefinition>

@@ -26,7 +26,7 @@
                   <xsd:attribute name="name" type="kfs:oneToFiftyCharType" use="required" />
                   <xsd:attribute name="length" type="xsd:integer" use="required" />
                   <xsd:attribute name="type" type="kfs:oneToFiftyCharType" use="required" />
-                  <xsd:attribute name="value" type="kfs:oneToSeventyCharType" use="optional" />
+                  <xsd:attribute name="value" type="kfs:zeroToNinetyCharType" use="optional" />
                 </xsd:complexType>
               </xsd:element>
             </xsd:sequence>

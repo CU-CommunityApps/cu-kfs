@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import edu.cornell.kfs.tax.dataaccess.impl.TaxProcessing1042DaoJdbc;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,6 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
-import org.kuali.kfs.core.api.util.CoreUtilities;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -35,7 +35,6 @@ import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionFileType;
 import edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping;
 import edu.cornell.kfs.tax.businessobject.TransactionOverride;
-import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.service.TaxProcessingService;
 
 /**
@@ -50,7 +49,23 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
 
     private TaxOutputDefinitionFileType taxOutputDefinitionFileType;
     private TaxDataDefinitionFileType taxDataDefinitionFileType;
-    private TaxProcessingDao taxProcessingDao;
+//    private TaxProcessingDao taxProcessingDao;
+    private TaxProcessing1042DaoJdbc taxProcessingDao;
+
+    @Override
+    @Transactional
+    public void doTaxProcessing1042() {
+        LOG.info("==== Start of 1042S SPRINTAX Tax processing ====");
+
+        java.sql.Date startDate = new java.sql.Date(124, 0, 1);
+        java.sql.Date endDate = new java.sql.Date(124, 0, 15);
+
+        taxProcessingDao.doTaxProcessing("1042S",2024, startDate, endDate, true, new java.util.Date());
+
+//        taxProcessingDao.doTaxProcessing1042(2024, startDate, endDate);
+
+        LOG.info("==== End of 1042S SPRINTAX Tax processing ====");
+    }
 
     @Override
     @Transactional
@@ -70,21 +85,24 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         /*
          * Perform basic tax-type-specific setup.
          */
-        if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
-            // Do 1099 tax processing.
-            taxDetailType = CUTaxConstants.TAX_1099_PARM_DETAIL;
-            vendorForeign = false;
-            
-        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
-            // Do 1042S tax processing.
-            taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
-            vendorForeign = true;
-            
-        } else {
-            throw new IllegalArgumentException("Invalid tax reporting type");
-        }
-        
-        
+//        if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
+//            // Do 1099 tax processing.
+//            taxDetailType = CUTaxConstants.TAX_1099_PARM_DETAIL;
+//            vendorForeign = false;
+//
+//        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
+//            // Do 1042S tax processing.
+//            taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
+//            vendorForeign = true;
+//
+//        } else {
+//            throw new IllegalArgumentException("Invalid tax reporting type");
+//        }
+//
+
+
+        taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
+        vendorForeign = true;
         
         /*
          * Determine report year, start date, and end date.
@@ -162,12 +180,60 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         LOG.info("Performing " + taxType + " tax processing for the given time period:");
         LOG.info("Report Year: " + Integer.toString(reportYear) + ", Start Date: " + startDate.toString() + ", End Date: " + endDate.toString());
         
-        taxProcessingDao.doTaxProcessing(taxType, reportYear, startDate, endDate, vendorForeign, processingStartDate);
+//        taxProcessingDao.doTaxProcessing(taxType, reportYear, startDate, endDate, vendorForeign, processingStartDate);
         
         LOG.info("==== End of tax processing ====");
     }
 
+    public TaxOutputDefinition get1042PaymentsOutputDefinition() {
+        InputStream definitionStream = null;
+        byte[] definitionContent;
 
+        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/Sprintax1042STransactionOutputDefinition.xml";
+
+        try {
+            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
+            definitionContent = IOUtils.toByteArray(definitionStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (definitionStream != null) {
+                try {
+                    definitionStream.close();
+                } catch (IOException e) {
+                    LOG.error("Could not close tax definition file input");
+                }
+            }
+        }
+
+        Object ret = taxOutputDefinitionFileType.parse(definitionContent);
+        return TaxOutputDefinition.class.cast(ret);
+    }
+
+    public TaxOutputDefinition get1042BioOutputDefinition() {
+        InputStream definitionStream = null;
+        byte[] definitionContent;
+
+        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/Sprintax1042SBioOutputDefinition.xml";
+
+        try {
+            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
+            definitionContent = IOUtils.toByteArray(definitionStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (definitionStream != null) {
+                try {
+                    definitionStream.close();
+                } catch (IOException e) {
+                    LOG.error("Could not close tax definition file input");
+                }
+            }
+        }
+
+        Object ret = taxOutputDefinitionFileType.parse(definitionContent);
+        return TaxOutputDefinition.class.cast(ret);
+    }
 
     @Override
     public TaxOutputDefinition getOutputDefinition(String taxParamPrefix, int reportYear) {
@@ -263,7 +329,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         this.taxDataDefinitionFileType = taxDataDefinitionFileType;
     }
 
-    public void setTaxProcessingDao(TaxProcessingDao taxProcessingDao) {
+    public void setTaxProcessingDao(TaxProcessing1042DaoJdbc taxProcessingDao) {
         this.taxProcessingDao = taxProcessingDao;
     }
 
