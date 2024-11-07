@@ -2,9 +2,13 @@ package edu.cornell.kfs.concur.services;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,12 +50,8 @@ public class ConcurAccountValidationServiceTest {
         concurAccountValidationService.setSubObjectCodeService(new MockSubObjectCodeService());
         concurAccountValidationService.setProjectCodeService(new MockProjectCodeService());
         concurAccountValidationService.setSubAccountService(new MockSubAccountService());
-        concurAccountValidationService.setConfigurationService(buildMockConfigurationService());
+        concurAccountValidationService.setConfigurationService(new MockConfigurationService());
         concurAccountInfo = buildValidConcurAccountInfo();
-    }
-    
-    private static ConfigurationService buildMockConfigurationService() {
-        return new MockConfigurationService();
     }
     
     private ConcurAccountInfo buildValidConcurAccountInfo(){
@@ -97,14 +97,11 @@ public class ConcurAccountValidationServiceTest {
         String accountErrorMessageString = ConcurUtils
                 .formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, chart, account);
         return MessageFormat.format(
-                buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
+                concurAccountValidationService.getConfigurationService().getPropertyValueAsString(errorMessageProperty),
                 accountErrorMessageString);
     }
     
     private void validateResults(boolean validationExpectation, List<String> expectedErrorMessages, ValidationResult validationResult, String functionName) {
-        Assert.assertEquals("Validation was expected to be " + validationExpectation, validationExpectation, validationResult.isValid());
-        Assert.assertEquals("Number of error messages is not what is exptected", expectedErrorMessages.size(), validationResult.getMessages().size());
-        
         if (LOG.isDebugEnabled()) {
             for (String expectedMessage : expectedErrorMessages) {
                 LOG.debug(functionName + ", expected error message: " + expectedMessage);
@@ -114,6 +111,8 @@ public class ConcurAccountValidationServiceTest {
             }
         }
         
+        Assert.assertEquals("Validation was expected to be " + validationExpectation, validationExpectation, validationResult.isValid());
+        Assert.assertEquals("Number of error messages is not what is exptected", expectedErrorMessages.size(), validationResult.getMessages().size());
         for (String expectedMessage : expectedErrorMessages) {
             boolean isExpectedMessageFound = validationResult.getMessages().contains(expectedMessage);
             Assert.assertTrue("expected to find " + expectedMessage, isExpectedMessageFound);
@@ -259,58 +258,78 @@ public class ConcurAccountValidationServiceTest {
                 projectCodeErrorMessageString);
     }
     
-    @Test
-    public void isAccountInfoValid(){
-        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        Assert.assertTrue(validationResult.getErrorMessagesAsOneFormattedString(), validationResult.isValid());
+    @ParameterizedTest
+    @MethodSource("testValidateConcurAccountInfoParams")
+    public void testValidateConcurAccountInfo(String chart, String account, String subAccount, String object,
+            String subObject, String project, boolean validationExpectation, List<ImmutablePair<String, String>> errorMessagePairs) {
+        List<String> expectedErrorMessages = new ArrayList<>();
+        if (!validationExpectation) {
+            for (Pair<String, String> errorMessagePair : errorMessagePairs) {
+                expectedErrorMessages.add(MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(errorMessagePair.getLeft()), errorMessagePair.getRight()));
+            }
+        }
+        ConcurAccountInfo accountInfo = new ConcurAccountInfo(chart, account, subAccount, object, subObject, project);
+        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo);
+        validateResults(validationExpectation, expectedErrorMessages, validationResult, "testValidateConcurAccountInfo");
+    }
+
+    private static Stream<Arguments> testValidateConcurAccountInfoParams() {
+        return Stream.of(
+                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
+                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, true, buildPairList()),
+                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        StringUtils.EMPTY, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        StringUtils.EMPTY, StringUtils.EMPTY, true, buildPairList()),
+                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        null, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        null, null, true, buildPairList()),
+                Arguments.of(null, ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
+                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
+                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false, 
+                        buildPairList(ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART))),
+                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART, null,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
+                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
+                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false, 
+                        buildPairList(ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER))),
+                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART, 
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, null,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
+                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false, 
+                        buildPairList(ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
+                Arguments.of(null,
+                        null,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, null,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
+                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false, 
+                        buildPairList(ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART),
+                                ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER),
+                                ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
+                Arguments.of(null,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, null,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
+                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false, 
+                        buildPairList(ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART),
+                                ImmutablePair.of(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE)))
+                );
     }
     
-    @Test
-    public void isChartMissing(){
-        concurAccountInfo.setChart(null);
-        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
-        Assert.assertEquals(
-                "One error message was expected for missing chart",
-                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART) + KFSConstants.NEWLINE,
-                validationResult.getErrorMessagesAsOneFormattedString());
-    }
-    
-    @Test
-    public void isAccountNumberMissing(){
-        concurAccountInfo.setAccountNumber(null);
-        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
-        Assert.assertEquals(
-                "One error message was expected for missing account",
-                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE,
-                validationResult.getErrorMessagesAsOneFormattedString());
-    }
-    
-    @Test
-    public void isObjectCodeMissing(){
-        concurAccountInfo.setObjectCode(null);
-        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
-        Assert.assertEquals(
-                "One error message was expected for missing object code",
-                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
-                validationResult.getErrorMessagesAsOneFormattedString());
-    }
-    
-    @Test
-    public void isChartAccountAndObjectCodeMissing(){
-        concurAccountInfo.setChart(null);
-        concurAccountInfo.setAccountNumber(null);
-        concurAccountInfo.setObjectCode(null);
-        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(concurAccountInfo);
-        Assert.assertFalse("Validation was expected to fail but returned true", validationResult.isValid());
-        Assert.assertEquals(
-                "One error message was expected for missing object code",
-                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART) + KFSConstants.NEWLINE +
-                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER) + KFSConstants.NEWLINE +
-                MessageFormat.format(concurAccountValidationService.getConfigurationService().getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE) + KFSConstants.NEWLINE,
-                validationResult.getErrorMessagesAsOneFormattedString());
+    private static List<ImmutablePair<String, String>> buildPairList(ImmutablePair<String, String>... pairs) {
+        List<ImmutablePair<String, String>> pairList = new ArrayList<>();
+        for (ImmutablePair pair : pairs) {
+            pairList.add(pair);
+        }
+        return pairList;
     }
     
     @Test
