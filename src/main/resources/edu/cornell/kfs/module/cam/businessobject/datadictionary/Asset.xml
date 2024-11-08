@@ -12,7 +12,7 @@
          <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
          <ref bean="Asset-extension-lastScannedBy"/>
          <ref bean="Asset-extension-lastScannedDate"/>
-          <ref bean="Asset-extension-serviceRateIndicator"/>
+         <ref bean="Asset-extension-serviceRateIndicator"/>
       </list>
     </property>
   </bean>
@@ -57,6 +57,7 @@
       <property name="beanName" value="Asset-inquiryDefinition" />
       <property name="fieldOverrides">
           <list>
+              <!-- OLD FRAMEWORK-->
               <bean parent="FieldOverrideForListElementInsert">
                   <property name="propertyName" value="inquirySections[0].inquiryFields" />
                   <property name="propertyNameForElementCompare" value="attributeName" />
@@ -71,6 +72,8 @@
                       </list>
                   </property>
               </bean>
+              <!-- NEW FRAMEWORK -->
+              <!-- New framework has not yet been implemented in base code; therefore it has not been implmented in Cornell's overlay. -->
            </list>
       </property>
   </bean>
@@ -82,27 +85,28 @@
       <property name="beanName" value="Asset-lookupDefinition" />
       <property name="fieldOverrides">
           <list>
+              <!-- NEW FRAMEWORK -->
               <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="lookupFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="propertyName" value="formAttributeDefinitions"/>
+                  <property name="propertyNameForElementCompare" value="name"/>
                   <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="assetOrganization.organizationTagNumber" />
+                      <ref bean="Asset-assetOrganization.organizationTagNumber"/>
                   </property>
                   <property name="insertAfter">
                       <list>
-                          <bean parent="FieldDefinition" p:attributeName="extension.serviceRateIndicator" />
+                          <ref bean="AssetExtension-serviceRateIndicator"/>
                       </list>
                   </property>
               </bean>
               <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="lookupFields" />
-                  <property name="propertyNameForElementCompare" value="attributeName" />
+                  <property name="propertyName" value="formAttributeDefinitions" />
+                  <property name="propertyNameForElementCompare" value="name"/>
                   <property name="element">
-                      <bean parent="FieldDefinition" p:attributeName="assetPayments.documentNumber" />
+                      <ref bean="Asset-assetPayments.documentNumber"/>
                   </property>
                   <property name="insertAfter">
                       <list>
-                          <bean parent="FieldDefinition" p:attributeName="assetLocations.assetLocationTypeCode" />
+                          <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
                       </list>
                   </property>
               </bean>
