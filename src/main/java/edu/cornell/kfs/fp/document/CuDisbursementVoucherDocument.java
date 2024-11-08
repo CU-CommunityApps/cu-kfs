@@ -106,110 +106,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         if (vendor == null) {
             return;
         }
-
-        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
-        dvPayeeDetail.setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
-        
-        //Cornell Customization -- start
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(
                 createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
-        //Cornell Customization -- stop
-        
-        dvPayeeDetail.setDisbVchrPayeePersonName(vendor.getVendorName());
-
-        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
-
-        if (ObjectUtils.isNotNull(vendorAddress) && ObjectUtils.isNotNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
-            dvPayeeDetail.setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
-            dvPayeeDetail.setDisbVchrPayeeLine1Addr(vendorAddress.getVendorLine1Address());
-            dvPayeeDetail.setDisbVchrPayeeLine2Addr(vendorAddress.getVendorLine2Address());
-            dvPayeeDetail.setDisbVchrPayeeCityName(vendorAddress.getVendorCityName());
-            dvPayeeDetail.setDisbVchrPayeeStateCode(vendorAddress.getVendorStateCode());
-            dvPayeeDetail.setDisbVchrPayeeZipCode(vendorAddress.getVendorZipCode());
-            dvPayeeDetail.setDisbVchrPayeeCountryCode(vendorAddress.getVendorCountryCode());
-        } else {
-            dvPayeeDetail.setDisbVchrVendorAddressIdNumber(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeCityName(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeStateCode(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeZipCode(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
-        }
-
-        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
-        dvPayeeDetail.setDvPayeeSubjectPaymentCode(
-            VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
-        dvPayeeDetail.setDisbVchrEmployeePaidOutsidePayrollCode(
-            getVendorService().isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
-
-        dvPayeeDetail.setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
-
-        boolean w9AndW8Checked = false;
-        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
-            && vendor.getVendorHeader().getVendorW9ReceivedIndicator()
-            || ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())
-            && vendor.getVendorHeader().getVendorW8BenReceivedIndicator()) {
-            w9AndW8Checked = true;
-        }
-
-        disbVchrPayeeW9CompleteCode = w9AndW8Checked;
-
-        final Date vendorFederalWithholdingTaxBeginDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
-        final Date vendorFederalWithholdingTaxEndDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
-        final java.util.Date today = getDateTimeService().getCurrentDate();
-        if (vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate
-                .before(today) && (vendorFederalWithholdingTaxEndDate == null || vendorFederalWithholdingTaxEndDate
-                .after(today))) {
-            disbVchrPayeeTaxControlCode = DisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
-        }
-
-        // if vendor is foreign, default nonresident payment code to true
-        if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
-            dvPayeeDetail.setDisbVchrNonresidentPaymentCode(true);
-        }
-
-        updatePaymentMethodBasedOnVendor(vendor);
-    }
-    
-    // Cornell Customization:
-    // Issues being tracked and reported to KualiCo on Cornell JIRA KFSPTS-32923.
-    //
-    // Basecode class method had to be copied into our customization due to the super
-    // class having declared it with more restrictive "private" visibility.
-    //
-    // The direct assignment of super class attribute paymentMethod within the method then had
-    // to be changed to utilize a super class setter method call due to the super class having
-    // declared the PaymentMethod object attribute with a more restrictive "private" visibility
-    // as well.
-    private void updatePaymentMethodBasedOnVendor(final VendorDetail vendor) {
-        LOG.debug("updatePaymentMethodBasedOnVendor(...) - Enter");
-        if (ObjectUtils.isNull(dvPayeeDetail)) {
-            LOG.debug("updatePaymentMethodBasedOnVendor(...) - Exit : dvPayeeDetail=null");
-            return;
-        }
-        if (StringUtils.isBlank(vendor.getDefaultPaymentMethodCode())) {
-            LOG.debug(
-                    "updatePaymentMethodBasedOnVendor() - Exit : defaultPaymentMethodCode={}",
-                    vendor::getDefaultPaymentMethodCode);
-            return;
-        }
-        final PaymentMethod defaultPaymentMethod = vendor.getDefaultPaymentMethod();
-        if (ObjectUtils.isNull(defaultPaymentMethod)) {
-            LOG.debug("updatePaymentMethodBasedOnVendor() - Exit : defaultPaymentMethod=null");
-            return;
-        }
-        if (!defaultPaymentMethod.isDisplayOnDisbursementVoucher()) {
-            LOG.debug("updatePaymentMethodBasedOnVendor() - Exit : isDisplayOnDisbursementVoucher=false");
-            return;
-        }
-        disbVchrPaymentMethodCode = defaultPaymentMethod.getPaymentMethodCode();
-        //paymentMethod = defaultPaymentMethod;        //base code
-        super.setPaymentMethod(defaultPaymentMethod);  //Cornell customization due to base code restrictive visibility
-        updateBankBasedOnPaymentMethodCode();
-        LOG.debug("updatePaymentMethodBasedOnVendor() - Exit");
+        super.templateVendor(vendor, vendorAddress);
     }
 
     @Override

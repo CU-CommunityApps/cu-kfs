@@ -31,7 +31,7 @@ import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttri
 
 /**
  * Cornell Customizations: 
- *     Overrode toString method in KualiCo 2024-04-19 version of this class
+ *     Overrode toString method in KualiCo 2023-04-19 version of this class
  *     to support credit memo payment method additional data processing.
  *     This was needed due to certain fields containing confidential information.
  *     

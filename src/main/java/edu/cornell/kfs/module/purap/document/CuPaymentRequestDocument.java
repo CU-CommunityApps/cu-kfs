@@ -92,25 +92,6 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         }    
     }
     
-    @Override
-    public boolean answerSplitNodeQuestion(final String nodeName) throws UnsupportedOperationException {
-        if (nodeName.equals(PurapWorkflowConstants.REQUIRES_IMAGE_ATTACHMENT)) {
-            return requiresAccountsPayableReviewRouting();
-        }
-        if (nodeName.equals(PurapWorkflowConstants.PURCHASE_WAS_RECEIVED)) {
-            return shouldWaitForReceiving();
-        }
-        if (nodeName.equals(PurapWorkflowConstants.VENDOR_IS_EMPLOYEE_OR_NONRESIDENT) ||
-                "VendorIsEmployeeOrNonResidentAlien".equals(nodeName)) {
-            return isVendorEmployeeOrNonresident();
-        }
-        if (nodeName.equals(PurapWorkflowConstants.IS_DOCUMENT_AUTO_APPROVED)) {
-            return isAutoApprovedIndicator();
-        }
-        throw new UnsupportedOperationException("Cannot answer split question for this node you call \"" + nodeName + "\"");
-    }
-    
-    
     /**
      * @see org.kuali.kfs.module.purap.document.PaymentRequestDocument#populatePaymentRequestFromPurchaseOrder(org.kuali.kfs.module.purap.document.PurchaseOrderDocument, java.util.HashMap)
      */
@@ -121,8 +102,8 @@ public class CuPaymentRequestDocument extends PaymentRequestDocument {
         super.populatePaymentRequestFromPurchaseOrder(po, expiredOrClosedAccountList);
 
         if (ObjectUtils.isNotNull(po.getVendorDetail()) 
-                && StringUtils.isNotBlank(((VendorDetail)po.getVendorDetail()).getDefaultPaymentMethodCode())) {
-             setPaymentMethodCode(((VendorDetail)po.getVendorDetail()).getDefaultPaymentMethodCode());
+                && StringUtils.isNotBlank((po.getVendorDetail()).getDefaultPaymentMethodCode())) {
+             setPaymentMethodCode((po.getVendorDetail()).getDefaultPaymentMethodCode());
          }
         
         // Copy PO explanation to PREQ.
