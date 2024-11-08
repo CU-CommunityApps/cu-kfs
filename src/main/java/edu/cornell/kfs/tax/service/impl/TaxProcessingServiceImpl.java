@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
-import edu.cornell.kfs.tax.dataaccess.impl.TaxProcessing1042DaoJdbc;
+import edu.cornell.kfs.tax.dataaccess.impl.TaxProcessingDaoJdbc;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -49,8 +49,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
 
     private TaxOutputDefinitionFileType taxOutputDefinitionFileType;
     private TaxDataDefinitionFileType taxDataDefinitionFileType;
-//    private TaxProcessingDao taxProcessingDao;
-    private TaxProcessing1042DaoJdbc taxProcessingDao;
+    private TaxProcessingDaoJdbc taxProcessingDao;
 
     @Override
     @Transactional
@@ -329,7 +328,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         this.taxDataDefinitionFileType = taxDataDefinitionFileType;
     }
 
-    public void setTaxProcessingDao(TaxProcessing1042DaoJdbc taxProcessingDao) {
+    public void setTaxProcessingDao(TaxProcessingDaoJdbc taxProcessingDao) {
         this.taxProcessingDao = taxProcessingDao;
     }
 
