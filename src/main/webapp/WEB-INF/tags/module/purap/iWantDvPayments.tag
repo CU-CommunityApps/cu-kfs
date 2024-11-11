@@ -7,7 +7,7 @@
 <c:set var="dvPaymentDetails" value="${KualiForm.dvPaymentDetails}"/>
 <c:set var="dvHasExactlyOnePayment" value="${fn:length(dvPaymentDetails) eq 1}"/>
 
-<kul:tab tabTitle="Disbursement Voucher Payments" defaultOpen="false">
+<kul:tab tabTitle="Disbursement Voucher Payments" defaultOpen="true">
     <div class="tab-container">
         <h3>DV Payment Information</h3>
         <c:choose>
