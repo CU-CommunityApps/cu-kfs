@@ -219,8 +219,6 @@
     <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl">
         <property name="workflowDocumentService" ref="workflowDocumentService" />
         <property name="financialSystemDocumentService" ref="financialSystemDocumentService" />
-        <property name="cUPaymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
-        
     </bean>
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
     <bean id="creditMemoService" parent="creditMemoService-parentBean" 
