@@ -5,6 +5,7 @@ import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
 import edu.cornell.kfs.tax.batch.TaxDataDefinition;
 import edu.cornell.kfs.tax.batch.TaxDataRow;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
+import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
 import edu.cornell.kfs.tax.dataaccess.SprintaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.service.SprintaxProcessingService;
@@ -32,25 +33,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Default JDBC implementation of TaxProcessingDao.
- */
 public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements SprintaxProcessingDao {
 	private static final Logger LOG = LogManager.getLogger(SprintaxProcessingDaoJdbc.class);
 
     @Override
-    public void doSprintaxProcessing(int reportYear, java.sql.Date startDate, java.sql.Date endDate, java.util.Date processingStartDate) {
+    public void doSprintaxProcessing(SprintaxReportParameters taxParameters) {
         SprintaxProcessingService sprintaxProcessingService = SpringContext.getBean(SprintaxProcessingService.class);
 
-        TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, reportYear);
+        TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, taxParameters.getReportYear());
         Map<String, TaxDataRow> taxDataRowMap = taxDataDefinition.getDataRowsAsMap();
-        Transaction1042SSummary summary = new Transaction1042SSummary(reportYear, startDate, endDate, true, taxDataRowMap);
+//        SprintaxPaymentSummary summary = new SprintaxPaymentSummary(taxParameters, taxDataRowMap);
+        Transaction1042SSummary summary = new Transaction1042SSummary(taxParameters.getReportYear(), taxParameters.getStartDate(), taxParameters.getEndDate(), true, taxDataRowMap);
 
         String deleteRawTransactionDetailSql = "DELETE FROM TX_RAW_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
-        getJdbcTemplate().update(deleteRawTransactionDetailSql, reportYear);
+        getJdbcTemplate().update(deleteRawTransactionDetailSql, taxParameters.getReportYear());
 
         String deleteTransactionDetailSql = "DELETE FROM TX_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
-        getJdbcTemplate().update(deleteTransactionDetailSql, reportYear);
+        getJdbcTemplate().update(deleteTransactionDetailSql, taxParameters.getReportYear());
 
         List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>>asList(
                 TransactionRowPdpBuilder.For1042S.class
@@ -59,15 +58,15 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         );
         List<EnumMap<TaxStatType,Integer>> stats = createTransactionRows(summary, transactionRowBuilders);
 
-        EnumMap<TaxStatType, Integer> processingStats = processPayments(summary, reportYear, sprintaxProcessingService);
+        EnumMap<TaxStatType, Integer> processingStats = processPayments(summary, taxParameters.getReportYear(), sprintaxProcessingService);
         stats.add(processingStats);
 
 
         TaxOutputDefinition paymentsOutputDefinition = sprintaxProcessingService.get1042PaymentsOutputDefinition();
-        printTransactionRows(processingStartDate, summary, PaymentRowPrintProcessor.For1042S.class, paymentsOutputDefinition);
+        printTransactionRows(taxParameters.getJobRunDate(), summary, PaymentRowPrintProcessor.For1042S.class, paymentsOutputDefinition);
 
         TaxOutputDefinition bioOutputDefinition = sprintaxProcessingService.get1042BioOutputDefinition();
-        printBiographicRows(processingStartDate, summary, PaymentRowPrintProcessor.For1042S.class, bioOutputDefinition);
+        printBiographicRows(taxParameters.getJobRunDate(), summary, PaymentRowPrintProcessor.For1042S.class, bioOutputDefinition);
 
         printStatistics(stats);
     }

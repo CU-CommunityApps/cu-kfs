@@ -7,8 +7,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
 import edu.cornell.kfs.tax.dataaccess.impl.SprintaxProcessingDaoJdbc;
-import edu.cornell.kfs.tax.dataaccess.impl.TaxProcessing1042DaoJdbc;
 import edu.cornell.kfs.tax.service.SprintaxProcessingService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -51,94 +51,22 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
 
     @Override
     @Transactional
-    public void doTaxProcessing(java.util.Date processingStartDate) {
-        if (processingStartDate == null) {
-            throw new IllegalArgumentException("processingStartDate cannot be null");
-        }
-        ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
-        String taxDetailType;
-        int reportYear;
-        java.sql.Date startDate;
-        java.sql.Date endDate;
-        String taxType = "1042S";
-
-        taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
-
-        Collection<String> datesToProcess = parameterService.getParameterValuesAsString(
-                CUTaxConstants.TAX_NAMESPACE, taxDetailType, taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX);
-        Calendar tempCalendar = CoreApiServiceLocator.getDateTimeService().getCurrentCalendar();
-
-        if (datesToProcess.isEmpty()) {
-            throw new IllegalStateException("Dates-to-process parameter cannot be empty or absent");
-        } else if (datesToProcess.size() == 1) {
-            // If single value, then it should equal a specific year (or a shortcut value representing a recent year).
-            String yearValue = datesToProcess.iterator().next();
-
-            if (CUTaxConstants.YEAR_TO_DATE.equals(yearValue)) {
-                // Current tax year; set report year to current year and end date to current date.
-                reportYear = tempCalendar.get(Calendar.YEAR);
-                endDate = new java.sql.Date(tempCalendar.getTime().getTime());
-
-            } else if (CUTaxConstants.PREVIOUS_YEAR_TO_DATE.equals(yearValue)) {
-                // Previous tax year; set report year to previous year and end date to December 31 of previous year.
-                tempCalendar.set(tempCalendar.get(Calendar.YEAR) - 1, Calendar.DECEMBER, DAY_31);
-                reportYear = tempCalendar.get(Calendar.YEAR);
-                endDate = new java.sql.Date(tempCalendar.getTime().getTime());
-
-            } else {
-                // Specific year; set report year to given year and end date to current date or December 31 of given year, depending on current year.
-                try {
-                    reportYear = Integer.parseInt(yearValue);
-                } catch (NumberFormatException e) {
-                    throw new IllegalStateException("Dates-to-process parameter's literal year value was not an integer");
-                }
-                if (reportYear != tempCalendar.get(Calendar.YEAR)) {
-                    tempCalendar.set(reportYear, Calendar.DECEMBER, DAY_31);
-                }
-                endDate = new java.sql.Date(tempCalendar.getTime().getTime());
-
-            }
-
-            // In all year-only cases, set start date to January 1 of given year.
-            tempCalendar.set(reportYear, Calendar.JANUARY, 1);
-            startDate = new java.sql.Date(tempCalendar.getTime().getTime());
-
-        } else if (datesToProcess.size() == 2) {
-            // If two values, then they should be start dates and end dates in the same year.
-            String[] dateValues = datesToProcess.toArray(new String[2]);
-            try {
-                startDate = CoreApiServiceLocator.getDateTimeService().convertToSqlDate(dateValues[0]);
-                endDate = CoreApiServiceLocator.getDateTimeService().convertToSqlDate(dateValues[1]);
-            } catch (ParseException e) {
-                throw new IllegalStateException("Dates-to-process parameter contains one or more invalid date values");
-            }
-
-            // Set report year to the year of the starting date.
-            tempCalendar.setTimeInMillis(startDate.getTime());
-            reportYear = tempCalendar.get(Calendar.YEAR);
-            // Make sure the dates are in the same year, and start date is earlier than or equal to end date.
-            tempCalendar.setTimeInMillis(endDate.getTime());
-            if (reportYear != tempCalendar.get(Calendar.YEAR)) {
-                throw new IllegalStateException("Dates-to-process parameter's start and end dates are not in the same year");
-            } else if (startDate.compareTo(endDate) > 0) {
-                throw new IllegalStateException("Dates-to-process parameter's start date cannot be later than its end date");
-            }
-
-        } else {
-            throw new IllegalStateException("Dates-to-process parameter cannot have more than two values");
+    public void doTaxProcessing(java.util.Date jobRunDate) {
+        if (jobRunDate == null) {
+            throw new IllegalArgumentException("jobRunDate cannot be null");
         }
 
+        LOG.info("==== Start of Sprintax processing ====");
+        SprintaxReportParameters sprintaxReportParameters = buildSprintaxReportParameters(jobRunDate);
 
-        /*
-         * Perform the main processing.
-         */
-        LOG.info("==== Start of tax processing ====");
-        LOG.info("Performing " + taxType + " tax processing for the given time period:");
-        LOG.info("Report Year: " + Integer.toString(reportYear) + ", Start Date: " + startDate.toString() + ", End Date: " + endDate.toString());
+        LOG.info("Performing Sprintax processing for the given time period:");
+        LOG.info("Report Year: " + sprintaxReportParameters.getReportYear() +
+                ", Start Date: " + sprintaxReportParameters.getStartDate() +
+                ", End Date: " + sprintaxReportParameters.getEndDate());
 
-        sprintaxProcessingDao.doSprintaxProcessing(reportYear, startDate, endDate, processingStartDate);
+        sprintaxProcessingDao.doSprintaxProcessing(sprintaxReportParameters);
 
-        LOG.info("==== End of tax processing ====");
+        LOG.info("==== End of Sprintax processing ====");
     }
 
     public TaxOutputDefinition get1042PaymentsOutputDefinition() {
@@ -275,6 +203,85 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         )).getResults();
     }
 
+    public SprintaxReportParameters buildSprintaxReportParameters(java.util.Date jobRunDate) {
+        int reportYear;
+        java.sql.Date startDate;
+        java.sql.Date endDate;
+        String taxType = "1042S";
+
+        ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
+
+
+        Collection<String> datesToProcess = parameterService.getParameterValuesAsString(
+                CUTaxConstants.TAX_NAMESPACE,
+                CUTaxConstants.TAX_1042S_PARM_DETAIL,
+                taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
+        );
+        Calendar tempCalendar = CoreApiServiceLocator.getDateTimeService().getCurrentCalendar();
+
+        if (datesToProcess.isEmpty()) {
+            throw new IllegalStateException("Dates-to-process parameter cannot be empty or absent");
+        } else if (datesToProcess.size() == 1) {
+            // If single value, then it should equal a specific year (or a shortcut value representing a recent year).
+            String yearValue = datesToProcess.iterator().next();
+
+            if (CUTaxConstants.YEAR_TO_DATE.equals(yearValue)) {
+                // Current tax year; set report year to current year and end date to current date.
+                reportYear = tempCalendar.get(Calendar.YEAR);
+                endDate = new java.sql.Date(tempCalendar.getTime().getTime());
+
+            } else if (CUTaxConstants.PREVIOUS_YEAR_TO_DATE.equals(yearValue)) {
+                // Previous tax year; set report year to previous year and end date to December 31 of previous year.
+                tempCalendar.set(tempCalendar.get(Calendar.YEAR) - 1, Calendar.DECEMBER, DAY_31);
+                reportYear = tempCalendar.get(Calendar.YEAR);
+                endDate = new java.sql.Date(tempCalendar.getTime().getTime());
+
+            } else {
+                // Specific year; set report year to given year and end date to current date or December 31 of given year, depending on current year.
+                try {
+                    reportYear = Integer.parseInt(yearValue);
+                } catch (NumberFormatException e) {
+                    throw new IllegalStateException("Dates-to-process parameter's literal year value was not an integer");
+                }
+                if (reportYear != tempCalendar.get(Calendar.YEAR)) {
+                    tempCalendar.set(reportYear, Calendar.DECEMBER, DAY_31);
+                }
+                endDate = new java.sql.Date(tempCalendar.getTime().getTime());
+
+            }
+
+            // In all year-only cases, set start date to January 1 of given year.
+            tempCalendar.set(reportYear, Calendar.JANUARY, 1);
+            startDate = new java.sql.Date(tempCalendar.getTime().getTime());
+
+        } else if (datesToProcess.size() == 2) {
+            // If two values, then they should be start dates and end dates in the same year.
+            String[] dateValues = datesToProcess.toArray(new String[2]);
+            try {
+                startDate = CoreApiServiceLocator.getDateTimeService().convertToSqlDate(dateValues[0]);
+                endDate = CoreApiServiceLocator.getDateTimeService().convertToSqlDate(dateValues[1]);
+            } catch (ParseException e) {
+                throw new IllegalStateException("Dates-to-process parameter contains one or more invalid date values");
+            }
+
+            // Set report year to the year of the starting date.
+            tempCalendar.setTimeInMillis(startDate.getTime());
+            reportYear = tempCalendar.get(Calendar.YEAR);
+            // Make sure the dates are in the same year, and start date is earlier than or equal to end date.
+            tempCalendar.setTimeInMillis(endDate.getTime());
+            if (reportYear != tempCalendar.get(Calendar.YEAR)) {
+                throw new IllegalStateException("Dates-to-process parameter's start and end dates are not in the same year");
+            } else if (startDate.compareTo(endDate) > 0) {
+                throw new IllegalStateException("Dates-to-process parameter's start date cannot be later than its end date");
+            }
+
+        } else {
+            throw new IllegalStateException("Dates-to-process parameter cannot have more than two values");
+        }
+
+        SprintaxReportParameters sprintaxReportParameters = new SprintaxReportParameters(startDate, endDate, reportYear, jobRunDate);
+        return sprintaxReportParameters;
+    }
 
 
     public void setTaxOutputDefinitionFileType(TaxOutputDefinitionFileType taxOutputDefinitionFileType) {

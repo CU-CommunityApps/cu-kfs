@@ -1,5 +1,7 @@
 package edu.cornell.kfs.tax.dataaccess;
 
+import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
+
 import java.util.List;
 
 public interface SprintaxProcessingDao {
@@ -17,12 +19,9 @@ public interface SprintaxProcessingDao {
      *   <li>Various summary statistics will be logged accordingly.</p>
      * </ol>
      * 
-     * @param reportYear The tax year to do the reporting for.
-     * @param startDate The start date to use when limiting tax source data retrieval; should be in the same year as reportYear.
-     * @param endDate The end date to use when limiting tax source data retrieval; should be in the same year as reportYear.
-     * @param processingStartDate The date-time when the current tax processing execution started.
+     * @param taxParameters POJO encapsulating Date parameters
      */
-    void doSprintaxProcessing(int reportYear, java.sql.Date startDate, java.sql.Date endDate, java.util.Date processingStartDate);
+    void doSprintaxProcessing(SprintaxReportParameters taxParameters);
 
     /**
      * Helper method that takes a list of document IDs and returns a List containing only the ones
