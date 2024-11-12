@@ -12,6 +12,7 @@ import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
+import org.apache.commons.codec.binary.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
@@ -95,12 +96,13 @@ public class CuPdpExtractService extends PdpExtractService {
             final Batch batch) {
         final PaymentGroup paymentGroup = super.populatePaymentGroup(paymentRequestDocument, batch);
         
-        if (paymentGroup.isPayableByACH()) {
-            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
-        } else {
-            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+        if (StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
+            if (paymentGroup.isPayableByACH()) {
+                paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
+            } else {
+                paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+            }
         }
-        
         return paymentGroup;
     }
     
@@ -108,12 +110,13 @@ public class CuPdpExtractService extends PdpExtractService {
     protected PaymentGroup populatePaymentGroup(final VendorCreditMemoDocument creditMemoDocument, final Batch batch) {
         PaymentGroup paymentGroup = super.populatePaymentGroup(creditMemoDocument, batch);
         
-        if (paymentGroup.isPayableByACH()) {
-            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
-        } else {
-            paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+        if (StringUtils.equals(paymentGroup.getDisbursementTypeCode(), PdpConstants.DisbursementTypeCodes.EXTERNAL)) {
+            if (paymentGroup.isPayableByACH()) {
+                paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.ACH);
+            } else {
+                paymentGroup.setDisbursementTypeCode(PdpConstants.DisbursementTypeCodes.CHECK);
+            }
         }
-        
         return paymentGroup;
     }
 

@@ -387,9 +387,9 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
     }
     
     protected PaymentMethod buildVendorDefaultPaymentMethod(String paymentMethodCodeValue) {
-        PaymentMethod paymentMethodReferenceObject= businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCodeValue);
+        PaymentMethod paymentMethodReferenceObject = businessObjectService.findBySinglePrimaryKey(PaymentMethod.class, paymentMethodCodeValue);
         if (ObjectUtils.isNotNull(paymentMethodReferenceObject)) {
-            LOG.info("buildVendorDefaultPaymentMethod, Foreign Vendor, return payment method to {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+            LOG.info("buildVendorDefaultPaymentMethod, returning Payment Method object for code {}", paymentMethodReferenceObject.getPaymentMethodCode());
             return paymentMethodReferenceObject;
         } else {
             throw new IllegalArgumentException("buildVendorDefaultPaymentMethod, Could not find Payment Method object for code : " + paymentMethodCodeValue);
