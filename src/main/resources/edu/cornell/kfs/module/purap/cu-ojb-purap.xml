@@ -2862,8 +2862,8 @@
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="taxForeignSourceIndicator" column="FRGN_SRC_IND" jdbc-type="VARCHAR"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
-        <field-descriptor name="taxSpecialW4Amount" column="SPCL_W4_INC_AMT" jdbc-type="DECIMAL"/>
-                          <!-- conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>-->
+        <field-descriptor name="taxSpecialW4Amount" column="SPCL_W4_INC_AMT" jdbc-type="DECIMAL"
+                          conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiDecimalFieldConversion"/>
         <field-descriptor name="taxUSAIDPerDiemIndicator" column="USAID_DIEM_IND" jdbc-type="VARCHAR"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbCharBooleanConversion"/>
         <field-descriptor name="taxOtherExemptIndicator" column="INC_TAX_EXMPT_CD_OTHR_IND" jdbc-type="VARCHAR"
@@ -2945,7 +2945,10 @@
         </reference-descriptor>
         <reference-descriptor name="wireTransfer"
                               class-ref="org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer"
-                              auto-retrieve="true" auto-update="object" auto-delete="object"> <!-- proxy="true"--> 
+                              auto-retrieve="true" auto-update="object" auto-delete="object"> 
+                              <!-- KualiCo 2023-04-19 base code version of this file had proxy="true"
+                                   but our original customization for KFSPTS-1891 did not.
+                                   Retaining our customization.--> 
             <foreignkey field-ref="documentNumber"/>
         </reference-descriptor>
     </class-descriptor>
