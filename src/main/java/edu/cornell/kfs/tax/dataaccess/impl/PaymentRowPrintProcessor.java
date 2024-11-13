@@ -87,7 +87,10 @@ abstract class PaymentRowPrintProcessor<T extends TransactionDetailSummary> exte
                 // SSN and DV_CHECK_STUB_WITH_UPDATED_WHITESPACE are the only derived-type "pieces" supported by this implementation.
                 if (summary.derivedValues.ssn.equals(field)) {
                     piece = new DerivedFieldStringPiece(name, len);
-                } else {
+                } else if (field.equals("vendorFirstName")) {
+                    piece = new DerivedFieldStringPiece(name, len);
+                }
+                else {
                     throw new IllegalArgumentException("Cannot create print-only piece for the given derived-field type");
                 }
                 break;
