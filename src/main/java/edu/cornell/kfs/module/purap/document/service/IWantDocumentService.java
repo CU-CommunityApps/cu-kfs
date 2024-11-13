@@ -107,8 +107,6 @@ public interface IWantDocumentService {
 
     void updateIWantDocumentWithDisbursementVoucherReference(IWantDocument iWantDocument, String dvDocumentNumber);
 
-    CuDisbursementVoucherDocument getDisbursementVoucherGeneratedByIWantDoc(IWantDocument iWantDocument);
-
     /**
      * Generates and sets the IWantDocument description based on the field values on the document.
      * 

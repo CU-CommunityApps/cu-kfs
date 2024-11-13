@@ -90,7 +90,6 @@
 	        </c:if>
 	
 	        <c:if test="${!empty(KualiForm.document.dvDocId)}">
-	            <purap:iWantDvPayments />
 	            <purap:iWantRelatedDocuments />
 	        </c:if>
 	
