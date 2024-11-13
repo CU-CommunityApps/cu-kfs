@@ -309,6 +309,8 @@ public class IWantDocumentAction extends FinancialSystemTransactionalDocumentAct
 
             documentForm.setDocIsInitiatedOrSaved(determineDocStatusForCollegeDepartmentButtons(iWantDoc));
             documentForm.setUserMatchesInitiator(userIsInitiator(iWantDoc));
+            
+            documentForm.populateGeneratedDvDocumentInfo();
         }
 
         return actionForward;
