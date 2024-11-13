@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
@@ -53,6 +53,7 @@ import edu.cornell.kfs.module.purap.CUPurapConstants.IWantRouteNodes;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
 
 public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, PurchasingAccountsPayableDocument, AmountTotaling {
 
@@ -1040,13 +1041,14 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     }
 
     public List<PaymentDetail> getDvPaymentDetails() {
-        if (StringUtils.isBlank(dvDocId)) {
+        final CuDisbursementVoucherDocument generatedDvDocument = getGeneratedDvDocument();
+        if (ObjectUtils.isNull(generatedDvDocument)) {
             return List.of();
         }
-        Integer disbursementNumber = Integer.valueOf(dvDocId);
-        Iterator<?> paymentDetails = SpringContext.getBean(PaymentDetailService.class)
-                .getByDisbursementNumber(disbursementNumber);
-        return CollectionUtils.collect(paymentDetails, PaymentDetail.class::cast, new ArrayList<>());
+        final Iterator<PaymentDetail> paymentDetails = getCuPaymentDetailService()
+                .getByCustomerDocumentNumberAndFinancialDocumentTypeCode(
+                        generatedDvDocument.getDocumentNumber(), generatedDvDocument.getPaymentDetailDocumentType());
+        return IteratorUtils.toList(paymentDetails);
     }
 
     public CuDisbursementVoucherDocument getGeneratedDvDocument() {
@@ -1054,6 +1056,10 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
             return null;
         }
         return SpringContext.getBean(IWantDocumentService.class).getDisbursementVoucherGeneratedByIWantDoc(this);
+    }
+
+    private CuPaymentDetailService getCuPaymentDetailService() {
+        return ((CuPaymentDetailService) SpringContext.getBean(PaymentDetailService.class));
     }
 
     // The following link identifier getter and setter are needed for viewing the IWNT with other related PURAP docs.

@@ -14,4 +14,7 @@ public interface CuPaymentDetailService extends PaymentDetailService {
     Iterator<PaymentDetail> getByDisbursementNumber(Integer disbursementNumber, Integer processId,
             String disbursementType, String bankCode, boolean processImmediate);
 
+    Iterator<PaymentDetail> getByCustomerDocumentNumberAndFinancialDocumentTypeCode(
+            final String customerDocumentNumber, final String financialDocumentTypeCode);
+
 }
