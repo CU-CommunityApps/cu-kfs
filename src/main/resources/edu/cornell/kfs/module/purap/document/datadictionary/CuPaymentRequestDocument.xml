@@ -6,16 +6,36 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
   
-  <bean id="PaymentRequestDocument" parent="PaymentRequestDocument-parentBean">
-    <property name="documentClass" value="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"/>
-   <!--   <property name="baseDocumentClass" value="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"/> --> 
-   <property name="documentPresentationControllerClass" value="edu.cornell.kfs.module.purap.document.authorization.CuPaymentRequestDocumentPresentationController"/>
-   <property name="promptBeforeValidationClass" value="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestDocumentPreRules"/>
-   </bean>
+    <bean id="PaymentRequestDocument" parent="PaymentRequestDocument-parentBean"
+          p:documentClass="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"
+          p:documentPresentationControllerClass="edu.cornell.kfs.module.purap.document.authorization.CuPaymentRequestDocumentPresentationController"
+          p:promptBeforeValidationClass="edu.cornell.kfs.module.purap.document.validation.impl.CuPaymentRequestDocumentPreRules">
+    </bean>
 
-   
-  <bean id="PaymentRequestDocument-bankCode" parent="PaymentRequestDocument-bankCode-parentBean">
-      <property name="required" value="false"/>
-  </bean>
+    <bean id="PaymentRequestDocument-bankCode" parent="PaymentRequestDocument-bankCode-parentBean"
+          p:required="false">
+    </bean>
 
-   </beans>
+    <!-- workflow attributes for routing -->
+    <bean id="PaymentRequestDocument-workflowAttributes" parent="PaymentRequestDocument-workflowAttributes-parentBean">
+        <property name="searchingTypeDefinitions">
+            <list merge="true">
+               <!-- KFSPTS-1891 -->
+               <bean class="org.kuali.kfs.krad.datadictionary.SearchingTypeDefinition">
+                    <property name="searchingAttribute">
+                        <bean class="org.kuali.kfs.krad.datadictionary.SearchingAttribute">
+                            <property name="businessObjectClassName" value="edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument"/>
+                            <property name="attributeName" value="paymentMethodCode"/>
+                        </bean>
+                    </property>
+                    <property name="documentValues">
+                        <list>
+                            <value>paymentMethodCode</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
