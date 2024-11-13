@@ -979,14 +979,7 @@ private void copyIWantdDocAttachmentsToDV(DisbursementVoucherDocument dvDocument
 
 	}
 
-    @Override
-    public CuDisbursementVoucherDocument getDisbursementVoucherGeneratedByIWantDoc(IWantDocument iWantDocument) {
-        if (StringUtils.isBlank(iWantDocument.getDvDocId())) {
-            return null;
-        }
-        return (CuDisbursementVoucherDocument) documentService.getByDocumentHeaderId(iWantDocument.getDvDocId());
-    }
-
+    
     public AttachmentService getAttachmentService() {
         return attachmentService;
     }
