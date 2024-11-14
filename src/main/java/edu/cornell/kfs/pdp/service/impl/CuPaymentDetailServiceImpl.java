@@ -1,10 +1,13 @@
 package edu.cornell.kfs.pdp.service.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.krad.service.BusinessObjectService;
@@ -47,6 +50,22 @@ public class CuPaymentDetailServiceImpl extends PaymentDetailServiceImpl impleme
                 PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_CUST_PAYMENT_DOC_NBR);
 
         return paymentDetailByDisbursementNumberList.iterator();
+    }
+
+    @Override
+    public Iterator<PaymentDetail> getByCustomerDocumentNumberAndFinancialDocumentTypeCode(
+            final String customerDocumentNumber, final String financialDocumentTypeCode) {
+        if (StringUtils.isAnyBlank(customerDocumentNumber, financialDocumentTypeCode)) {
+            return Collections.emptyIterator();
+        }
+        final Map<String, String> fieldValues = Map.ofEntries(
+                Map.entry(PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_CUST_PAYMENT_DOC_NBR,
+                        customerDocumentNumber),
+                Map.entry(PdpPropertyConstants.PaymentDetail.PAYMENT_DISBURSEMENT_FINANCIAL_DOCUMENT_TYPE_CODE,
+                        financialDocumentTypeCode)
+        );
+        final Collection<PaymentDetail> results = businessObjectService.findMatching(PaymentDetail.class, fieldValues);
+        return results.iterator();
     }
 
     @Override

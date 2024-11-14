@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.coa.businessobject.AccountingPeriod;
 import org.kuali.kfs.coa.businessobject.Chart;
@@ -26,6 +28,8 @@ import org.kuali.kfs.module.purap.businessobject.PurchaseOrderView;
 import org.kuali.kfs.module.purap.document.PurchasingAccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.util.PurApRelatedViews;
+import org.kuali.kfs.pdp.businessobject.PaymentDetail;
+import org.kuali.kfs.pdp.service.PaymentDetailService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSConstants.RouteLevelNames;
 import org.kuali.kfs.sys.businessobject.AccountingLineParser;
@@ -43,11 +47,13 @@ import org.kuali.kfs.sys.document.FinancialSystemTransactionalDocumentBase;
 import org.kuali.kfs.vnd.businessobject.VendorAddress;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 
+import edu.cornell.kfs.fp.document.CuDisbursementVoucherDocument;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapConstants.IWantRouteNodes;
 import edu.cornell.kfs.module.purap.businessobject.IWantAccount;
 import edu.cornell.kfs.module.purap.businessobject.IWantItem;
 import edu.cornell.kfs.module.purap.document.service.IWantDocumentService;
+import edu.cornell.kfs.pdp.service.CuPaymentDetailService;
 
 public class IWantDocument extends FinancialSystemTransactionalDocumentBase implements Copyable, PurchasingAccountsPayableDocument, AmountTotaling {
 
@@ -1032,6 +1038,28 @@ public class IWantDocument extends FinancialSystemTransactionalDocumentBase impl
     private boolean documentIsBeingReturnedToSSC(final DocumentRouteLevelChange levelChangeEvent) {
         return StringUtils.equals(levelChangeEvent.getNewNodeName(), IWantRouteNodes.NO_OP_NODE)
                 && !StringUtils.equals(levelChangeEvent.getOldNodeName(), RouteLevelNames.ADHOC);
+    }
+
+    public List<PaymentDetail> getDvPaymentDetails() {
+        final CuDisbursementVoucherDocument generatedDvDocument = getGeneratedDvDocument();
+        if (ObjectUtils.isNull(generatedDvDocument)) {
+            return List.of();
+        }
+        final Iterator<PaymentDetail> paymentDetails = getCuPaymentDetailService()
+                .getByCustomerDocumentNumberAndFinancialDocumentTypeCode(
+                        generatedDvDocument.getDocumentNumber(), generatedDvDocument.getPaymentDetailDocumentType());
+        return IteratorUtils.toList(paymentDetails);
+    }
+
+    public CuDisbursementVoucherDocument getGeneratedDvDocument() {
+        if (StringUtils.isBlank(dvDocId)) {
+            return null;
+        }
+        return SpringContext.getBean(IWantDocumentService.class).getDisbursementVoucherGeneratedByIWantDoc(this);
+    }
+
+    private CuPaymentDetailService getCuPaymentDetailService() {
+        return ((CuPaymentDetailService) SpringContext.getBean(PaymentDetailService.class));
     }
 
     // The following link identifier getter and setter are needed for viewing the IWNT with other related PURAP docs.
