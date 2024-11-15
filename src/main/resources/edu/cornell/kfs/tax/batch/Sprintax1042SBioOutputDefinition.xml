@@ -25,9 +25,9 @@
     </section>
     <!-- Mappings to TransactionRowOutput -->
     <section length="3518" hasExactLength="false" hasSeparators="true" separator=",">
-        <field name="Field1" length="90" type="DERIVED" value="vendorFirstName" /> <!-- First_Name -->
+        <field name="Field1" length="90" type="DETAIL" value="vendorFirstName" /> <!-- First_Name -->
         <field name="Field2" length="90" type="STATIC" value="" /> <!-- Middle_Name -->
-        <field name="Field3" length="90" type="DERIVED" value="vendorLastName" /> <!-- Last_Name -->
+        <field name="Field3" length="90" type="STATIC" value="vendorLastName" /> <!-- Last_Name -->
         <field name="Field4" length="90" type="STATIC" value="" />
         <field name="Field5" length="90" type="STATIC" value="" />
         <field name="Field6" length="90" type="STATIC" value="" />  <!--  -->

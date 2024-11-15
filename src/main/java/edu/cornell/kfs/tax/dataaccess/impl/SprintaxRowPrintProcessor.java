@@ -48,14 +48,14 @@ public class SprintaxRowPrintProcessor {
     private String tempStringValue;
     private BigDecimal tempBigDecimalValue;
     private java.sql.Date tempDateValue;
-    private SprintaxPaymentSummary summary;
+    private Transaction1042SSummary summary;
     private String reportsDirectory;
     private final ResultSet[] extraResultSets;
     private final PreparedStatement[] extraStatements;
     private final SprintaxRowPrintProcessor.OutputHelper[] outputHelpers;
     private final Writer[] writers;
 
-    SprintaxRowPrintProcessor(SprintaxPaymentSummary summary, String reportsDirectory) {
+    SprintaxRowPrintProcessor(Transaction1042SSummary summary, String reportsDirectory) {
         this.summary = summary;
         this.reportsDirectory = reportsDirectory;
         this.extraResultSets = new ResultSet[0];
@@ -203,7 +203,7 @@ public class SprintaxRowPrintProcessor {
         return filePaths;
     }
 
-    String getSqlForSelect() {
+    String getSqlForSelect() {  //todo bio?
         return TaxSqlUtils.getTransactionDetailSelectSql(getFieldForWhereClause(summary), summary.transactionDetailRow, false, true);
     }
 
@@ -339,7 +339,7 @@ public class SprintaxRowPrintProcessor {
         }
     }
 
-    TaxTableField getFieldForWhereClause(SprintaxPaymentSummary summary) {
+    TaxTableField getFieldForWhereClause(Transaction1042SSummary summary) {
         return summary.transactionDetailRow.form1042SBox;
     }
 

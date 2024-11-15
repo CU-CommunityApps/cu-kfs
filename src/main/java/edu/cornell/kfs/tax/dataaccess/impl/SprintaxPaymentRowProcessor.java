@@ -68,7 +68,7 @@ public class SprintaxPaymentRowProcessor {
 
     // The default reporting sub-directory to use for file outputs.
     private String reportsDirectory;
-    private SprintaxPaymentSummary summary;
+    private Transaction1042SSummary summary;
 
     // Variables pertaining to values that need to be retrieved from the next detail row before populating the detail "piece" objects.
     private String nextTaxId;
@@ -221,7 +221,7 @@ public class SprintaxPaymentRowProcessor {
     private SprintaxPaymentRowProcessor.RecordPiece1042SBigDecimal ftwAmountP;
     private SprintaxPaymentRowProcessor.RecordPiece1042SBigDecimal sitwAmountP;
 
-    SprintaxPaymentRowProcessor(SprintaxPaymentSummary summary) {
+    SprintaxPaymentRowProcessor(Transaction1042SSummary summary) {
         this.summary = summary;
         this.extraResultSets = new ResultSet[4];
         this.extraStatements = new PreparedStatement[4];

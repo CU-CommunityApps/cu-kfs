@@ -3,6 +3,7 @@ package edu.cornell.kfs.tax.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -212,11 +213,15 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
 
 
-        Collection<String> datesToProcess = parameterService.getParameterValuesAsString(
-                CUTaxConstants.TAX_NAMESPACE,
-                CUTaxConstants.TAX_1042S_PARM_DETAIL,
-                taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
-        );
+//        Collection<String> datesToProcess = parameterService.getParameterValuesAsString(
+//                CUTaxConstants.TAX_NAMESPACE,
+//                CUTaxConstants.TAX_1042S_PARM_DETAIL,
+//                taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
+//        );
+        List<String> datesToProcess = new ArrayList<>();
+        datesToProcess.add("10/01/2024");
+        datesToProcess.add("10/05/2024");
+
         Calendar tempCalendar = CoreApiServiceLocator.getDateTimeService().getCurrentCalendar();
 
         if (datesToProcess.isEmpty()) {

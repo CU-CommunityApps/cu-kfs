@@ -44,14 +44,11 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
     @Override
     public void doSprintaxProcessing(SprintaxReportParameters taxParameters) {
-//        doSprintaxProcessingOld(taxParameters);
-//        return;
-        SprintaxProcessingService sprintaxProcessingService = SpringContext.getBean(SprintaxProcessingService.class);
+        SprintaxProcessingService taxProcessingService = SpringContext.getBean(SprintaxProcessingService.class);
 
         LOG.info("Preparing data for processing");
-        TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, taxParameters.getReportYear());
-        Map<String, TaxDataRow> taxDataRowMap = taxDataDefinition.getDataRowsAsMap();
-        SprintaxPaymentSummary summary = new SprintaxPaymentSummary(taxParameters, taxDataRowMap);
+        Transaction1042SSummary summary = buildSprintaxSummary(taxProcessingService, taxParameters);
+
 
         String deleteRawTransactionDetailSql = "DELETE FROM TX_RAW_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
         getJdbcTemplate().update(deleteRawTransactionDetailSql, taxParameters.getReportYear());
@@ -59,59 +56,44 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         String deleteTransactionDetailSql = "DELETE FROM TX_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
         getJdbcTemplate().update(deleteTransactionDetailSql, taxParameters.getReportYear());
 
-        LOG.info("Creating Payment Records");
-        SprintaxPaymentRowPdpBuilder sprintaxPaymentRowPdpBuilder = new SprintaxPaymentRowPdpBuilder(summary);
-        List<EnumMap<TaxStatType,Integer>> stats = createTransactionRows(summary, sprintaxPaymentRowPdpBuilder);
-
-        LOG.info("Processing Payment Records");
-        EnumMap<TaxStatType, Integer> processingStats = processPayments(summary, taxParameters.getReportYear(), sprintaxProcessingService);
-        stats.add(processingStats);
-
-        TaxOutputDefinition paymentsOutputDefinition = sprintaxProcessingService.get1042PaymentsOutputDefinition();
-        printTransactionRows(taxParameters.getJobRunDate(), summary, paymentsOutputDefinition);
-
-//        TaxOutputDefinition bioOutputDefinition = sprintaxProcessingService.get1042BioOutputDefinition();
-//        printBiographicRows(taxParameters.getJobRunDate(), summary, PaymentRowPrintProcessor.For1042S.class, bioOutputDefinition);
-
-        printStatistics(stats);
-    }
-
-//    @Override
-    public void doSprintaxProcessingOld(SprintaxReportParameters taxParameters) {
-        SprintaxProcessingService sprintaxProcessingService = SpringContext.getBean(SprintaxProcessingService.class);
-
-        LOG.info("Preparing data for processing");
-        TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, taxParameters.getReportYear());
-        Map<String, TaxDataRow> taxDataRowMap = taxDataDefinition.getDataRowsAsMap();
-        Transaction1042SSummary summary = new Transaction1042SSummary(taxParameters.getReportYear(), taxParameters.getStartDate(), taxParameters.getEndDate(), true, taxDataRowMap);
-
-        String deleteRawTransactionDetailSql = "DELETE FROM TX_RAW_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
-        getJdbcTemplate().update(deleteRawTransactionDetailSql, taxParameters.getReportYear());
-
-        String deleteTransactionDetailSql = "DELETE FROM TX_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
-        getJdbcTemplate().update(deleteTransactionDetailSql, taxParameters.getReportYear());
-
-        List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>>asList(
+        LOG.info("Creating Transaction Records");
+        List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.asList(
                 TransactionRowPdpBuilder.For1042S.class
 //                TransactionRowDvBuilder.For1042S.class,
 //                TransactionRowPRNCBuilder.For1042S.class
         );
-        List<EnumMap<TaxStatType,Integer>> stats = createTransactionRows(summary, transactionRowBuilders);
+        List<EnumMap<TaxStatType,Integer>> stats = createSprintaxTransactionRows(summary, transactionRowBuilders);
 
-        EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxParameters.getReportYear(), sprintaxProcessingService);
+        LOG.info("Processing Transaction Records");
+        EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxParameters.getReportYear(), taxProcessingService);
         stats.add(processingStats);
 
-//        TaxOutputDefinition paymentsOutputDefinition = sprintaxProcessingService.get1042PaymentsOutputDefinition();
-//        printTransactionRows(taxParameters.getJobRunDate(), summary, PaymentRowPrintProcessor.For1042S.class, paymentsOutputDefinition);
-//
-//        TaxOutputDefinition bioOutputDefinition = sprintaxProcessingService.get1042BioOutputDefinition();
-//        printBiographicRows(taxParameters.getJobRunDate(), summary, PaymentRowPrintProcessor.For1042S.class, bioOutputDefinition);
+        LOG.info("Printing to csv files");
+        TaxOutputDefinition paymentsOutputDefinition = taxProcessingService.get1042PaymentsOutputDefinition();
+        printTransactionRows(taxParameters.getJobRunDate(), summary, paymentsOutputDefinition);
+
+        LOG.info("Printing bio to csv files");
+        TaxOutputDefinition bioOutputDefinition = taxProcessingService.get1042BioOutputDefinition();
+        printBiographicRows(taxParameters.getJobRunDate(), summary, bioOutputDefinition);
 
         printStatistics(stats);
     }
 
+    public Transaction1042SSummary buildSprintaxSummary(SprintaxProcessingService sprintaxProcessingService, SprintaxReportParameters taxParameters) {
+        TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, taxParameters.getReportYear());
+        Map<String, TaxDataRow> taxDataDefinitionMap = taxDataDefinition.getDataRowsAsMap();
 
-    private List<EnumMap<TaxStatType,Integer>> createTransactionRows(SprintaxPaymentSummary summary, SprintaxPaymentRowPdpBuilder builder) {
+        Transaction1042SSummary summary = new Transaction1042SSummary(
+                taxParameters.getReportYear(),
+                taxParameters.getStartDate(),
+                taxParameters.getEndDate(),
+                true,
+                taxDataDefinitionMap
+        );
+        return  summary;
+    }
+
+    protected  <T extends TransactionDetailSummary> List<EnumMap<TaxStatType,Integer>> createSprintaxTransactionRows(T summary, List<Class<? extends TransactionRowBuilder<T>>> builderClasses) {
         final TaxProcessingDao currentDao = this;
 
         // Use a ConnectionCallback via a JdbcTemplate to simplify the batch processing and transaction management.
@@ -125,56 +107,65 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 ResultSet rs = null;
                 ResultSet rawDataTableResultSet = null;
                 List<EnumMap<TaxStatType,Integer>> stats = new ArrayList<EnumMap<TaxStatType,Integer>>();
-
-                // Setup the insertion statements to be used during the first and second passes.
-                rawTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getRawTransactionDetailInsertSql(summary.rawTransactionDetailRow));
-                secondPassTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getTransactionDetailInsertSql(summary.transactionDetailRow));
-
                 try {
+                    TransactionRowBuilder<T> previousBuilder = null;
 
-                    builder.copyValuesFromPreviousBuilder(null, currentDao);
+                    // Setup the insertion statements to be used during the first and second passes.
+                    rawTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getRawTransactionDetailInsertSql(summary.rawTransactionDetailRow));
+                    secondPassTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getTransactionDetailInsertSql(summary.transactionDetailRow));
 
-                    LOG.info("Starting creation of first pass (raw) transaction rows from the following tax source: " + builder.getTaxSourceName());
+                    // Process each type of retrievable data row (PDP, DV, etc.).
+                    for (Class<? extends TransactionRowBuilder<T>> builderClazz : builderClasses) {
+                        // Create and configure the builder.
+                        TransactionRowBuilder<T> builder = builderClazz.newInstance();
+                        builder.copyValuesFromPreviousBuilder(previousBuilder, currentDao, summary);
+                        LOG.info("Starting creation of first pass (raw) transaction rows from the following tax source: " + builder.getTaxSourceName());
 
-                    // Setup the retrieval statement.
-                    selectStatement = con.prepareStatement(builder.getSqlForSelect());
-                    Object[][] parameterValues = builder.getParameterValuesForSelect();
-                    setParameters(selectStatement, parameterValues);
+                        // Setup the retrieval statement.
+                        selectStatement = con.prepareStatement(builder.getSqlForSelect(summary));
+                        Object[][] parameterValues = builder.getParameterValuesForSelect(summary);
+                        setParameters(selectStatement, parameterValues);
 
-                    // Get the results.
-                    rs = selectStatement.executeQuery();
-                    // Let the builder iterate over the results and insert new transaction detail rows as needed.
-                    builder.buildRawTransactionRows(rs, rawTransactionInsertStatement);
+                        // Get the results.
+                        rs = selectStatement.executeQuery();
+                        // Let the builder iterate over the results and insert new transaction detail rows as needed.
+                        builder.buildRawTransactionRows(rs, rawTransactionInsertStatement, summary);
 
-                    // Close the result set and SELECT prepared statement to prepare for the second pass.
-                    rs.close();
-                    selectStatement.close();
+                        // Close the result set and SELECT prepared statement to prepare for the second pass.
+                        rs.close();
+                        selectStatement.close();
 
-                    // Setup retrieval statement for second pass. SELECT needs to obtain data from first pass (raw) transaction details table
-                    selectRawTransactionStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(), ResultSet.TYPE_FORWARD_ONLY);
-                    setParameters(selectRawTransactionStatement, builder.getParameterValuesForSelectingCreatedRows());
+                        // Setup retrieval statement for second pass. SELECT needs to obtain data from first pass (raw) transaction details table
+                        selectRawTransactionStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(summary), ResultSet.TYPE_FORWARD_ONLY);
+                        setParameters(selectRawTransactionStatement, builder.getParameterValuesForSelectingCreatedRows(summary));
 
-                    // Get the query results from the first pass table.
-                    rawDataTableResultSet = selectRawTransactionStatement.executeQuery();
+                        // Get the query results from the first pass table.
+                        rawDataTableResultSet = selectRawTransactionStatement.executeQuery();
 
-                    // Let the builder iterate over the raw detail transaction rows from the first pass table
-                    // updating specific attributes as needed then inserting those rows into the second pass
-                    // table OR logging the keys of the raw data row if it should not be used.
-                    builder.updateTransactionRowsFromWorkflowDocuments(rawDataTableResultSet, secondPassTransactionInsertStatement, summary);
+                        // Let the builder iterate over the raw detail transaction rows from the first pass table
+                        // updating specific attributes as needed then inserting those rows into the second pass
+                        // table OR logging the keys of the raw data row if it should not be used.
+                        builder.updateTransactionRowsFromWorkflowDocuments(rawDataTableResultSet, secondPassTransactionInsertStatement, summary);
 
-                    // Get the statistics collected by the builder.
-                    stats.add(builder.getStatistics());
+                        // Get the statistics collected by the builder.
+                        stats.add(builder.getStatistics());
 
-                    // Close the result set and SELECT prepared statement to prepare for any future iterations.
-                    rawDataTableResultSet.close();
-                    selectRawTransactionStatement.close();
+                        // Close the result set and SELECT prepared statement to prepare for any future iterations.
+                        rawDataTableResultSet.close();
+                        selectRawTransactionStatement.close();
 
-                    LOG.info("Finished creation of transaction rows from the following tax source: " + builder.getTaxSourceName());
+                        LOG.info("Finished creation of transaction rows from the following tax source: " + builder.getTaxSourceName());
 
-                    // Reference the builder for copying data to future builders as needed.
+                        // Reference the builder for copying data to future builders as needed.
+                        previousBuilder = builder;
+                    }
 
                     // Return the collected statistics.
                     return stats;
+                } catch (InstantiationException e) {
+                    throw new RuntimeException("Could not instantiate builder instance: " + e.getMessage());
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Could not create builder instance: " + e.getMessage());
                 } finally {
                     // Close result sets and prepared statements as needed.
                     if (rs != null) {
@@ -228,67 +219,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                                                                                               SprintaxProcessingService sprintaxProcessingService) {
         TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getOutputDefinition("tax.format.1042s.", reportYear);
         TransactionRowProcessorBuilder transactionRowProcessorBuilder = TransactionRowProcessorBuilder.createBuilder();
-        TransactionRow1042SProcessor processor = transactionRowProcessorBuilder.buildNewProcessor(TransactionRow1042SProcessor.class, taxOutputDefinition, summary);
-
-        processor.setReportsDirectory(getReportsDirectory());
-
-        return getJdbcTemplate().execute(new ConnectionCallback<EnumMap<TaxStatType,Integer>>() {
-            @Override
-            public EnumMap<TaxStatType,Integer> doInConnection(Connection con) throws SQLException {
-
-                String selectSql = processor.getSqlForSelect(summary);
-                PreparedStatement preparedSelectStatement = con.prepareStatement(selectSql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-                Object[][] selectParameters = processor.getParameterValuesForSelect(summary);
-                setParameters(preparedSelectStatement, selectParameters);
-
-                String[] sqlForExtraStatements = processor.getSqlForExtraStatements(summary);
-                for (int i = 0; i < sqlForExtraStatements.length; i++) {
-                    PreparedStatement tempStatement = con.prepareStatement(sqlForExtraStatements[i]);
-                    Object[][] defaultArgs = processor.getDefaultParameterValuesForExtraStatement(i, summary);
-                    if (defaultArgs != null) {
-                        setParameters(tempStatement, defaultArgs);
-                    }
-                    processor.setExtraStatement(tempStatement, i);
-                }
-
-                try {
-
-                    java.util.Date processingStartDate = new java.util.Date();
-                    String[] filePaths = processor.getFilePathsForWriters(summary, processingStartDate);
-                    for (int i = 0; i < filePaths.length; i++) {
-                        String filePath = filePaths[i];
-                        File outputFile = new File(filePath);
-                        PrintWriter printWriter = new PrintWriter(outputFile, StandardCharsets.UTF_8);
-                        Writer bufferedWriter = new BufferedWriter(printWriter);
-                        processor.setWriter(bufferedWriter, i);
-                    }
-
-                    ResultSet transactionDetailRecords = preparedSelectStatement.executeQuery();
-                    processor.processTaxRows(transactionDetailRecords, summary);
-
-                } catch (IOException e) {
-                    LOG.error(e.toString());
-                }
-
-                return processor.getStatistics();
-            }
-        });
-
-    }
-
-    private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processPayments(SprintaxPaymentSummary summary, int reportYear, SprintaxProcessingService sprintaxProcessingService) {
-
-        TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getOutputDefinition("tax.format.1042s.", reportYear);
-
-
-
-//        SprintaxPaymentRowProcessor builder = TransactionRowProcessorBuilder.createBuilder();
-//        TransactionRowProcessor<T> processor = builder.buildNewProcessor(processorClazz, outputDefinition, summary);
-
         SprintaxPaymentRowProcessor processor = buildNewProcessor(taxOutputDefinition, summary);
-
-//        TransactionRowProcessorBuilder transactionRowProcessorBuilder = TransactionRowProcessorBuilder.createBuilder();
-//        TransactionRow1042SProcessor processor2 = transactionRowProcessorBuilder.buildNewProcessor(TransactionRow1042SProcessor.class, taxOutputDefinition, summary);
 
         processor.setReportsDirectory(getReportsDirectory());
 
@@ -300,7 +231,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 PreparedStatement preparedSelectStatement = con.prepareStatement(selectSql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
                 Object[][] selectParameters = processor.getParameterValuesForSelect();
                 setParameters(preparedSelectStatement, selectParameters);
-//
+
                 String[] sqlForExtraStatements = processor.getSqlForExtraStatements();
                 for (int i = 0; i < sqlForExtraStatements.length; i++) {
                     PreparedStatement tempStatement = con.prepareStatement(sqlForExtraStatements[i]);
@@ -336,7 +267,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
     }
 
-    private EnumMap<TaxStatType,Integer> printTransactionRows(java.util.Date processingStartDate, SprintaxPaymentSummary summary, TaxOutputDefinition outputDefinition) {
+    private EnumMap<TaxStatType,Integer> printTransactionRows(java.util.Date processingStartDate, Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
 
         SprintaxRowPrintProcessor processor = buildNewPrintProcessor(outputDefinition, summary);
 
@@ -425,12 +356,10 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
             }
         });
     }
-    private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> printBiographicRows(java.util.Date processingStartDate, T summary, Class<? extends TransactionRowProcessor<T>> processorClazz, TaxOutputDefinition outputDefinition) {
-        // Create the object that will handle the processing of the transaction row data.
-        final TransactionRowProcessor<T> processor = TransactionRowProcessorBuilder.createBuilder().buildNewProcessor(processorClazz, outputDefinition, summary);
-        processor.setReportsDirectory(getReportsDirectory());
+    private EnumMap<TaxStatType,Integer> printBiographicRows(java.util.Date processingStartDate, Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
 
-        // Use a ConnectionCallback via a JdbcTemplate to simplify the batch processing and transaction management.
+        SprintaxRowPrintProcessor processor = buildNewPrintProcessor(outputDefinition, summary);
+
         return getJdbcTemplate().execute(new ConnectionCallback<EnumMap<TaxStatType,Integer>>() {
             @Override
             public EnumMap<TaxStatType,Integer> doInConnection(Connection con) throws SQLException {
@@ -441,14 +370,14 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
                 try {
 
-                    selectStatement = con.prepareStatement(processor.getSqlForSelect(summary), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-                    setParameters(selectStatement, processor.getParameterValuesForSelect(summary));
+                    selectStatement = con.prepareStatement(processor.getSqlForSelect(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+                    setParameters(selectStatement, processor.getParameterValuesForSelect());
 
                     // Prepare any other statements needed by the tax processing.
-                    String[] tempValues = processor.getSqlForExtraStatements(summary);
+                    String[] tempValues = processor.getSqlForExtraStatements();
                     for (int i = 0; i < tempValues.length; i++) {
                         tempStatement = con.prepareStatement(tempValues[i]);
-                        Object[][] defaultArgs = processor.getDefaultParameterValuesForExtraStatement(i, summary);
+                        Object[][] defaultArgs = processor.getDefaultParameterValuesForExtraStatement(i);
                         if (defaultArgs != null) {
                             setParameters(tempStatement, defaultArgs);
                         }
@@ -467,7 +396,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                     rs = selectStatement.executeQuery();
 
                     // Perform the actual processing.
-                    processor.processTaxRows(rs, summary);
+                    processor.processTaxRows(rs);
 
                     // Return the collected statistics.
                     return processor.getStatistics();
@@ -557,7 +486,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
      * @param summary The object encapsulating the tax-type-specific summary info.
      * @return A TransactionRowProcessor implementation of the given type with the given formatting.
      */
-    SprintaxPaymentRowProcessor buildNewProcessor(TaxOutputDefinition outputDefinition, SprintaxPaymentSummary summary) {
+    SprintaxPaymentRowProcessor buildNewProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
         Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces = new HashMap<String, SprintaxPaymentRowProcessor.RecordPiece>();
         Map<String,List<String>> complexPiecesNames = new HashMap<String,List<String>>();
         EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = new EnumMap<CUTaxBatchConstants.TaxFieldSource,Set<TaxTableField>>(CUTaxBatchConstants.TaxFieldSource.class);
@@ -717,17 +646,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         return rowProcessor;
     }
 
-    /**
-     * Helper method for building a new TransactionRowProcessor instance from the parsed XML input.
-     * The processor's implementation class *must* have a default constructor.
-     * Note that this method will not configure the PreparedStatement and Writer instances;
-     * the calling code is responsible for that part of the processor setup.
-     *
-     * @param outputDefinition The parsed XML definition for this processor's output formatting.
-     * @param summary The object encapsulating the tax-type-specific summary info.
-     * @return A TransactionRowProcessor implementation of the given type with the given formatting.
-     */
-    SprintaxRowPrintProcessor buildNewPrintProcessor(TaxOutputDefinition outputDefinition, SprintaxPaymentSummary summary) {
+    SprintaxRowPrintProcessor buildNewPrintProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
         Map<String, SprintaxRowPrintProcessor.RecordPiece> complexPieces = new HashMap<>();
         Map<String,List<String>> complexPiecesNames = new HashMap<>();
         EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = new EnumMap<>(CUTaxBatchConstants.TaxFieldSource.class);
