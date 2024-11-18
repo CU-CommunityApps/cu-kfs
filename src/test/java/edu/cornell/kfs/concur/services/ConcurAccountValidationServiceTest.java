@@ -19,15 +19,28 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.kuali.kfs.coa.businessobject.Account;
+import org.kuali.kfs.coa.businessobject.ObjectCode;
+import org.kuali.kfs.coa.businessobject.ProjectCode;
+import org.kuali.kfs.coa.businessobject.SubAccount;
+import org.kuali.kfs.coa.businessobject.SubObjectCode;
+import org.kuali.kfs.coa.service.AccountService;
+import org.kuali.kfs.coa.service.ObjectCodeService;
+import org.kuali.kfs.coa.service.ProjectCodeService;
+import org.kuali.kfs.coa.service.SubAccountService;
+import org.kuali.kfs.coa.service.SubObjectCodeService;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
+import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl;
+import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.AccountEnum;
 
 @Execution(SAME_THREAD)
 public class ConcurAccountValidationServiceTest {
@@ -38,16 +51,123 @@ public class ConcurAccountValidationServiceTest {
     public void setUp() throws Exception {
         Configurator.setLevel(ConcurAccountValidationServiceTest.class, Level.DEBUG);
         concurAccountValidationService = new ConcurAccountValidationServiceImpl();
-        concurAccountValidationService.setAccountService(new MockAccountService());
-        concurAccountValidationService.setObjectCodeService(new MockObjectCodeService());
-        concurAccountValidationService.setSubObjectCodeService(new MockSubObjectCodeService());
-        concurAccountValidationService.setProjectCodeService(new MockProjectCodeService());
-        concurAccountValidationService.setSubAccountService(new MockSubAccountService());
-        concurAccountValidationService.setConfigurationService(new MockConfigurationService());
+        concurAccountValidationService.setAccountService(buildMockAccountService());
+        concurAccountValidationService.setObjectCodeService(buildMockObjectCodeService());
+        concurAccountValidationService.setSubObjectCodeService(buildMockSubObjectCodeService());
+        concurAccountValidationService.setProjectCodeService(buildMockProjectCodeService());
+        concurAccountValidationService.setSubAccountService(buildMockSubAccountService());
+        concurAccountValidationService.setConfigurationService(buildMockConfigurationService());
     }
 
-    private static ConfigurationService getMockConfigurationService() {
-        return new MockConfigurationService();
+    private static ConfigurationService buildMockConfigurationService() {
+        ConfigurationService service = Mockito.mock(ConfigurationService.class);
+        Mockito.when(service.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EVENT_NOTIFICATION_ACCOUNT_DETAIL)).thenReturn("Account {0}-{1}, {2}, HEFC {3}");
+        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED)).thenReturn("{0} is a required field.");
+        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE)).thenReturn("The specified {0} does not exist.");
+        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE)).thenReturn("The specified {0} is inactive.");
+        return service;
+    }
+    
+    private AccountService buildMockAccountService() {
+        AccountService service = Mockito.mock(AccountService.class);
+        Mockito.when(service.getByPrimaryId(AccountEnum.VALID.chart, AccountEnum.VALID.account)).thenReturn(AccountEnum.VALID.toAccountBo());
+        Mockito.when(service.getByPrimaryId(AccountEnum.INACTIVE.chart, AccountEnum.INACTIVE.account)).thenReturn(AccountEnum.INACTIVE.toAccountBo());
+        Mockito.when(service.getByPrimaryId(AccountEnum.CLOSED.chart, AccountEnum.CLOSED.account)).thenReturn(AccountEnum.CLOSED.toAccountBo());
+        return service;
+    }
+    
+    private ObjectCodeService buildMockObjectCodeService() {
+        ObjectCodeService service = Mockito.mock(ObjectCodeService.class);
+        Mockito.when((service.getByPrimaryIdForCurrentYear(ConcurAccountValidationTestConstants.VALID_CHART,
+                ConcurAccountValidationTestConstants.VALID_OBJ_CD)))
+                .thenReturn(createObjectCode(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_OBJ_CD, true));
+        Mockito.when((service.getByPrimaryIdForCurrentYear(ConcurAccountValidationTestConstants.VALID_CHART,
+                ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD)))
+                .thenReturn(createObjectCode(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD, false));
+        return service;
+    }
+
+    private ObjectCode createObjectCode(String chartOfAccountsCode, String financialObjectCode, boolean active) {
+        ObjectCode objectCode = new ObjectCode();
+        objectCode.setChartOfAccountsCode(chartOfAccountsCode);
+        objectCode.setFinancialObjectCode(financialObjectCode);
+        objectCode.setActive(active);
+        return objectCode;
+    }
+    
+    private SubObjectCodeService buildMockSubObjectCodeService() {
+        SubObjectCodeService service = Mockito.mock(SubObjectCodeService.class);
+        Mockito.when(service.getByPrimaryIdForCurrentYear(ConcurAccountValidationTestConstants.VALID_CHART,
+                ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                ConcurAccountValidationTestConstants.VALID_SUB_OBJECT))
+                .thenReturn(createSubObjectCode(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT, true));
+        Mockito.when(service.getByPrimaryIdForCurrentYear(ConcurAccountValidationTestConstants.VALID_CHART,
+                ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT))
+                .thenReturn(createSubObjectCode(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
+                        ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT, false));
+        return service;
+    }
+
+    private SubObjectCode createSubObjectCode(String chartOfAccountsCode, String accountNumber,
+            String financialObjectCode, String financialSubObjectCode, boolean active) {
+        SubObjectCode subObjectCode = new SubObjectCode();
+        subObjectCode.setChartOfAccountsCode(chartOfAccountsCode);
+        subObjectCode.setAccountNumber(accountNumber);
+        subObjectCode.setFinancialObjectCode(financialObjectCode);
+        subObjectCode.setFinancialSubObjectCode(financialSubObjectCode);
+        subObjectCode.setActive(active);
+        return subObjectCode;
+    }
+    
+    private ProjectCodeService buildMockProjectCodeService() {
+        ProjectCodeService service = Mockito.mock(ProjectCodeService.class);
+        Mockito.when(service.getByPrimaryId(ConcurAccountValidationTestConstants.VALID_PROJECT_CODE))
+                .thenReturn(createProjectCode(ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, true));
+        Mockito.when(service.getByPrimaryId(ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE))
+        .thenReturn(createProjectCode(ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE, false));
+        return service;
+    }
+
+    private ProjectCode createProjectCode(String projectCode, boolean active) {
+        ProjectCode project = new ProjectCode();
+        project.setCode(projectCode);
+        project.setActive(active);
+        return project;
+    }
+    
+    private SubAccountService buildMockSubAccountService() {
+        SubAccountService service = Mockito.mock(SubAccountService.class);
+        Mockito.when(service.getByPrimaryId(ConcurAccountValidationTestConstants.VALID_CHART,
+                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                ConcurAccountValidationTestConstants.VALID_SUB_ACCT))
+                .thenReturn(createSubAccount(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, true));
+        Mockito.when(service.getByPrimaryId(ConcurAccountValidationTestConstants.VALID_CHART,
+                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT))
+                .thenReturn(createSubAccount(ConcurAccountValidationTestConstants.VALID_CHART,
+                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
+                        ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT, false));
+        return service;
+    }
+
+    private SubAccount createSubAccount(String chartOfAccountsCode, String accountNumber, String subAccountNumber,
+            boolean active) {
+        SubAccount subAccount = new SubAccount();
+        subAccount.setChartOfAccountsCode(chartOfAccountsCode);
+        subAccount.setAccountNumber(accountNumber);
+        subAccount.setSubAccountNumber(subAccountNumber);
+        subAccount.setActive(active);
+        return subAccount;
     }
 
     @AfterEach
@@ -60,9 +180,12 @@ public class ConcurAccountValidationServiceTest {
     public void testCheckAccount(String chartCode, String accountNumber, boolean validationExpectation,
             String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
+        List<String> expectedDetailMessages = new ArrayList<>();
         if (!validationExpectation) {
             expectedErrorMessages.add(buildFormattedMessage(errorMessageKey,
                     ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, chartCode, accountNumber));
+        } else {
+            
         }
         ValidationResult validationResult = concurAccountValidationService.checkAccount(chartCode, accountNumber);
         validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckAccount");
@@ -82,12 +205,12 @@ public class ConcurAccountValidationServiceTest {
 
     private static String buildFormattedMessage(String errorMessageProperty, String label, String... values) {
         String messageString = ConcurUtils.formatStringForErrorMessage(label, values);
-        return MessageFormat.format(getMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
+        return MessageFormat.format(buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
                 messageString);
     }
 
     private static String buildFormattedMessage(String errorMessageProperty, String label) {
-        return MessageFormat.format(getMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
+        return MessageFormat.format(buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
                 label);
     }
 
