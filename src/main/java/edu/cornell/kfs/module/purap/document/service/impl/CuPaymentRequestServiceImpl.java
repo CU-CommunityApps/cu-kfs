@@ -274,7 +274,7 @@ public class CuPaymentRequestServiceImpl extends PaymentRequestServiceImpl imple
             final VendorDetail vdDetail = vendorService.getVendorDetail(headerId, detailId);
             if (vdDetail != null
                     && StringUtils.isNotBlank(vdDetail.getDefaultPaymentMethodCode())) {
-                ((CuPaymentRequestDocument)preq).setPaymentMethodCode(vdDetail.getDefaultPaymentMethodCode());
+                preq.setPaymentMethodCode(vdDetail.getDefaultPaymentMethodCode());
                 preq.refreshReferenceObject("paymentMethod");
             }
         }
