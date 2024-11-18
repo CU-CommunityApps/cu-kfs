@@ -773,8 +773,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
         preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),expiredOrClosedAccountList);
         
-        // Starting with KualiCo release 2023-04-19:
-        // Use base code service method to initialize payment method and bank. 
         paymentRequestService.initializePaymentMethodAndBank(preqDoc);
         
         // need to populate here for ext price.  it become per item

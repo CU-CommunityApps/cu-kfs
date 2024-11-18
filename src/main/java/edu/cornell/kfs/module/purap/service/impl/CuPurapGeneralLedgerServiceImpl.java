@@ -38,7 +38,6 @@ import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 
-import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 
 
@@ -199,7 +198,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                 // upon create, build the entries normally
                 if ( CREATE_PAYMENT_REQUEST.equals(processType) ) {
                     getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
-                            preq, ((CuPaymentRequestDocument)preq).getPaymentMethodCode(), preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), false, false, sequenceHelper);
+                            preq, preq.getPaymentMethodCode(), preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), false, false, sequenceHelper);
                 } else if ( MODIFY_PAYMENT_REQUEST.equals(processType) ) {
                     // upon modify, we need to calculate the deltas here and pass them in so the appropriate adjustments are created
                     KualiDecimal bankOffsetAmount = KualiDecimal.ZERO;
@@ -216,7 +215,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
                     }
                 
                     getPaymentMethodGeneralLedgerPendingEntryService().generatePaymentMethodSpecificDocumentGeneralLedgerPendingEntries(
-                            preq, ((CuPaymentRequestDocument)preq).getPaymentMethodCode(), preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), true, false, sequenceHelper, bankOffsetAmount, changesByChart);
+                            preq, preq.getPaymentMethodCode(), preq.getBankCode(), KRADConstants.DOCUMENT_PROPERTY_NAME + "." + "bankCode", preq.getGeneralLedgerPendingEntry(0), true, false, sequenceHelper, bankOffsetAmount, changesByChart);
                 }
             }
             preq.generateDocumentGeneralLedgerPendingEntries(sequenceHelper);

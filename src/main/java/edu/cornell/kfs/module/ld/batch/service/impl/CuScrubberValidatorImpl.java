@@ -66,8 +66,10 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
                             laborWorkingEntry.getSubAccountNumber()
                     );
                 }
+                /* Cornell customization - start */
                 clearSubAccountOnModifiedFringeTransaction(
                         laborOriginEntry, laborWorkingEntry, laborAccountingCycleCachingService, err);
+                /* Cornell customization - end */
                 return err;
             }
 

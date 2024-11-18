@@ -3,6 +3,8 @@ package edu.cornell.kfs.module.purap.service.impl;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.kuali.kfs.module.purap.document.AccountsPayableDocument;
 import org.kuali.kfs.module.purap.document.PaymentRequestDocument;
 import org.kuali.kfs.module.purap.document.VendorCreditMemoDocument;
@@ -12,7 +14,6 @@ import org.kuali.kfs.pdp.businessobject.Batch;
 import org.kuali.kfs.pdp.businessobject.PaymentDetail;
 import org.kuali.kfs.pdp.businessobject.PaymentGroup;
 import org.kuali.kfs.pdp.businessobject.PaymentNoteText;
-import org.apache.commons.codec.binary.StringUtils;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
 import org.kuali.kfs.kew.api.KewApiServiceLocator;
 import org.kuali.kfs.kew.api.document.attribute.DocumentAttributeIndexingQueue;
