@@ -137,7 +137,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 LOG.info("validateExpenseAllocations, for report " + reportNumber + " account info: " + info.toString());
                 ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
                 reportValid &= results.isValid();
-                validationMessages.addAll(results.getMessages());
+                validationMessages.addAll(results.getErrorMessages());
             }
             if (!reportValid) {
                 reportResults = ConcurEventNotificationStatus.invalidAccounts;
@@ -167,9 +167,12 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String logMessageDetail = buildLogMessageDetailForExpenseWorkflowAction(workflowAction, reportId);
         ConcurWebRequest<Void> webRequest = buildWebRequestForExpenseWorkflowAction(
                 workflowAction, reportId, resultsDTO);
-
-        concurEventNotificationWebApiService.callConcurEndpoint(
-                accessToken, webRequest, logMessageDetail);
+        
+        /*
+         * @todo re enable this
+         */
+        LOG.error("updateStatusInConcur. would have updated the status in Concur: " + workflowAction);
+        //concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
     }
     
     protected boolean shouldUpdateStatusInConcur() {

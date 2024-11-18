@@ -97,7 +97,7 @@ public class ConcurAccountValidationServiceTest {
             for (String expectedMessage : expectedErrorMessages) {
                 LOG.debug(functionName + ", expected error message: " + expectedMessage);
             }
-            for (String actualMessage : validationResult.getMessages()) {
+            for (String actualMessage : validationResult.getErrorMessages()) {
                 LOG.debug(functionName + ", actual error message:   " + actualMessage);
             }
         }
@@ -105,9 +105,9 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertEquals("Validation was expected to be " + validationExpectation, validationExpectation,
                 validationResult.isValid());
         Assert.assertEquals("Number of error messages is not what is exptected", expectedErrorMessages.size(),
-                validationResult.getMessages().size());
+                validationResult.getErrorMessages().size());
         for (String expectedMessage : expectedErrorMessages) {
-            boolean isExpectedMessageFound = validationResult.getMessages().contains(expectedMessage);
+            boolean isExpectedMessageFound = validationResult.getErrorMessages().contains(expectedMessage);
             Assert.assertTrue("expected to find " + expectedMessage, isExpectedMessageFound);
         }
         
