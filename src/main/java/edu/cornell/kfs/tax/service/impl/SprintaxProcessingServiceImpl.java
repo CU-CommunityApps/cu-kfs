@@ -120,6 +120,31 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         return TaxOutputDefinition.class.cast(ret);
     }
 
+    public TaxOutputDefinition getSprintaxBioOutputDefinition() {
+        InputStream definitionStream = null;
+        byte[] definitionContent;
+
+        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/SprintaxBioOutputDefinition.xml";
+
+        try {
+            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
+            definitionContent = IOUtils.toByteArray(definitionStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (definitionStream != null) {
+                try {
+                    definitionStream.close();
+                } catch (IOException e) {
+                    LOG.error("Could not close tax definition file input");
+                }
+            }
+        }
+
+        Object ret = taxOutputDefinitionFileType.parse(definitionContent);
+        return TaxOutputDefinition.class.cast(ret);
+    }
+
     @Override
     public TaxOutputDefinition getOutputDefinition(String taxParamPrefix, int reportYear) {
         return getXMLBasedDefinition(taxParamPrefix, reportYear, TaxOutputDefinition.class, taxOutputDefinitionFileType);

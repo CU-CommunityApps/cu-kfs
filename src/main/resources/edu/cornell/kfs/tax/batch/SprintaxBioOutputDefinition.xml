@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Default output definition for 1042S tax processing.
+    This definition is for the tax year 2016 format.
+ -->
+<taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!--
+        ======================================================================
+        This section represents a 1042S header record (fields A1 through A13).
+        ======================================================================
+     -->
+    <section length="256" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="A1" length="40" type="DERIVED" value="vendorLastName" /><!-- A1 :: Last Name -->
+        <field name="A2" length="40" type="DERIVED" value="vendorFirstName" /><!-- A2 :: First Name -->
+        <field name="A3" length="40" type="BLANK" /><!-- A3 :: Middle Initials -->
+        <field name="A4" length="10" type="BLANK" /><!-- A4 :: System Generated ID Number -->
+        <field name="A5" length="11" type="DERIVED" value="ssn" /><!-- A5 :: Social Security Number [999-99-9999] -->
+        <field name="A6" length="15" type="BLANK" /><!-- A6 :: School Assigned ID Number -->
+        <field name="A7" length="10" type="BLANK" /><!-- A7 :: Date of Birth -->
+        <field name="A8" length="11" type="DERIVED" value="itin" /><!-- A8 :: ITIN [999-99-9999] -->
+        <field name="A9" length="15" type="BLANK" /><!-- A9 :: Payroll ID -->
+        <field name="A10" length="15" type="DETAIL" value="payeeId" /><!-- A10 :: Financial/AP ID -->
+        <field name="A11" length="15" type="BLANK" /><!-- A11 :: Student ID -->
+        <field name="A12" length="15" type="BLANK" /><!-- A12 :: VISA System ID -->
+        <field name="A13" length="19" type="VENDOR" value="vendorGIIN" /><!-- A13 :: Global Intermediary Identification Number (GIIN) [XXXXXX.XXXXX.XX.XXX] -->
+    </section>
+    <!--
+        ====================================================================================================================
+        This section represents a 1042S biographic record (header record fields A1 through A13, plus fields B1 through B99).
+        ====================================================================================================================
+     -->
+    <section length="1356" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="B1" length="2" type="DERIVED" value="chapter3StatusCode" /><!-- B1 :: Chapter 3 Status Code -->
+        <field name="B2" length="2" type="VENDOR" value="vendorChapter4StatusCode" /><!-- B2 :: Chapter 4 Status Code -->
+        <field name="B3" length="10" type="BLANK" /><!-- B3 :: Title -->
+        <field name="B4" length="10" type="BLANK" /><!-- B4 :: Title Suffix -->
+        <field name="B5" length="1" type="BLANK" /><!-- B5 :: Active Individual -->
+        <field name="B6" length="1" type="BLANK" /><!-- B6 :: Individual Married -->
+        <field name="B7" length="1" type="BLANK" /><!-- B7 :: Spouse Here -->
+        <field name="B8" length="2" type="BLANK" /><!-- B8 :: Dependents -->
+        <field name="B9" length="2" type="BLANK" /><!-- B9 :: School ID Number -->
+        <field name="B10" length="40" type="DERIVED" value="vendorUSAddressLine1" /><!-- B10 :: US Address (Line 1) -->
+        <field name="B11" length="40" type="VENDOR_US_ADDRESS" value="vendorLine2Address" /><!-- B11 :: US Address (Line 2) -->
+        <field name="B12" length="40" type="BLANK" /><!-- B12 :: US Address (Line 3) -->
+        <field name="B13" length="40" type="VENDOR_US_ADDRESS" value="vendorCityName" /><!-- B13 :: US City -->
+        <field name="B14" length="2" type="VENDOR_US_ADDRESS" value="vendorStateCode" /><!-- B14 :: US State -->
+        <field name="B15" length="10" type="VENDOR_US_ADDRESS" value="vendorZipCode" /><!-- B15 :: US Zip Code -->
+        <field name="B16" length="15" type="BLANK" /><!-- B16 :: US Home Telephone Number -->
+        <field name="B17" length="15" type="BLANK" /><!-- B17 :: US Work Telephonse Number -->
+        <field name="B18" length="10" type="BLANK" /><!-- B18 :: US FAX Number -->
+        <field name="B19" length="40" type="DERIVED" value="vendorForeignAddressLine1" /><!-- B19 :: Non US Address (Line 1) -->
+        <field name="B20" length="40" type="DERIVED" value="vendorForeignAddressLine2" /><!-- B20 :: Non US Address (Line 2) -->
+        <field name="B21" length="40" type="BLANK" /><!-- B21 :: Non US Address (Line 3) -->
+        <field name="B22" length="10" type="BLANK" /><!-- B22 :: Non US City Postal Code -->
+        <field name="B23" length="40" type="DERIVED" value="vendorForeignCityName" /><!-- B23 :: Non US City -->
+        <field name="B24" length="10" type="DERIVED" value="vendorForeignZipCode" /><!-- B24 :: Non US Region Postal Code -->
+        <field name="B25" length="30" type="DERIVED" value="vendorForeignProvinceName" /><!-- B25 :: Non US Region -->
+        <field name="B26" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B26 :: Non US Country Code -->
+        <field name="B27" length="25" type="BLANK" /><!-- B27 :: Non US Country Name (NOTE: Should be non-blank if B26 is blank or invalid) -->
+        <field name="B28" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B28 :: Citizenship Country Code -->
+        <field name="B29" length="25" type="BLANK" /><!-- B29 :: Citizenship Country Name -->
+        <field name="B30" length="20" type="BLANK" /><!-- B30 :: Passport Number -->
+        <field name="B31" length="10" type="BLANK" /><!-- B31 :: Date first Entered US -->
+        <field name="B32" length="10" type="BLANK" /><!-- B32 :: Date of Employment in US -->
+        <field name="B33" length="1" type="BLANK" /><!-- B33 :: Trainee Type -->
+        <field name="B34" length="2" type="BLANK" /><!-- B34 :: Student Type -->
+        <field name="B35" length="40" type="BLANK" /><!-- B35 :: Occupation -->
+        <field name="B36" length="2" type="BLANK" /><!-- B36 :: Dependents Here -->
+        <field name="B37" length="2" type="BLANK" /><!-- B37 :: Dependents Citizens -->
+        <field name="B38" length="1" type="BLANK" /><!-- B38 :: Spouse Working -->
+        <field name="B39" length="50" type="DERIVED" value="vendorEmailAddress" /><!-- B39 :: Email Address -->
+        <field name="B40" length="25" type="BLANK" /><!-- B40 :: Department -->
+        <field name="B41" length="1" type="BLANK" /><!-- B41 :: Applied for SSN/ITIN -->
+        <field name="B42" length="25" type="BLANK" /><!-- B42 :: Foreign Tax Payer ID -->
+        <field name="B43" length="1" type="BLANK" /><!-- B43 :: Pay Cycle -->
+        <field name="B44" length="10" type="BLANK" /><!-- B44 :: Estimated Annual Income (EE) -->
+        <field name="B45" length="1" type="BLANK" /><!-- B45 :: Self Employment Fixed base office -->
+        <field name="B46" length="3" type="BLANK" /><!-- B46 :: No. of day office available -->
+        <field name="B47" length="1" type="BLANK" /><!-- B47 :: Recipient of grant -->
+        <field name="B48" length="1" type="BLANK" /><!-- B48 :: Full time program -->
+        <field name="B49" length="1" type="BLANK" /><!-- B49 :: US Citizen -->
+        <field name="B50" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B50 :: Tax Residence Country Code -->
+        <field name="B51" length="25" type="BLANK" /><!-- B51 :: Tax Residence Country Name (NOTE: Should be non-blank if B43 is blank or invalid) -->
+        <field name="B52" length="10" type="BLANK" /><!-- B52 :: Passport Expiration Date -->
+        <field name="B53" length="10" type="STATIC" value="KFS" /><!-- B53 :: Record Source -->
+        <field name="B54" length="20" type="BLANK" /><!-- B54 :: Campus -->
+        <field name="B55" length="9" type="DERIVED" value="ein" /><!-- B55 :: EIN -->
+        <field name="B56" length="1" type="BLANK" /><!-- B56 :: Use US Address -->
+        <field name="B57" length="1" type="BLANK" /><!-- B57 :: Spouse_dependant -->
+        <field name="B58" length="2" type="BLANK" /><!-- B58 :: State of employment -->
+        <field name="B59" length="40" type="BLANK" /><!-- B59 :: Occupation 2 -->
+        <field name="B60" length="1" type="BLANK" /><!-- B60 :: Personal exemption -->
+        <field name="B61" length="10" type="BLANK" /><!-- B61 :: User 1 (Text) -->
+        <field name="B62" length="10" type="BLANK" /><!-- B62 :: User 2 (Text) -->
+        <field name="B63" length="10" type="BLANK" /><!-- B63 :: User 3 (Currency) -->
+        <field name="B64" length="1" type="BLANK" /><!-- B64 :: User 4 (Check box) -->
+        <field name="B65" length="1" type="BLANK" /><!-- B65 :: User 5 (Check box) -->
+        <field name="B66" length="10" type="BLANK" /><!-- B66 :: User 6 (Date) -->
+        <field name="B67" length="10" type="BLANK" /><!-- B67 :: User 7 (Date) -->
+        <field name="B68" length="10" type="BLANK" /><!-- B68 :: User 8 (Currency) -->
+        <field name="B69" length="4" type="BLANK" /><!-- B69 :: Intermediary/FLW-THR ID -->
+        <field name="B70" length="40" type="BLANK" /><!-- B70 :: Intermediary/FLW-THR Name Line 1 -->
+        <field name="B71" length="4" type="BLANK" /><!-- B71 :: Payer ID -->
+        <field name="B72" length="40" type="BLANK" /><!-- B72 :: Payer Name -->
+        <field name="B73" length="40" type="BLANK" /><!-- B73 :: Maiden Name -->
+        <field name="B74" length="1" type="BLANK" /><!-- B74 :: LPR steps -->
+        <field name="B75" length="1" type="BLANK" /><!-- B75 :: Tax Home Connection -->
+        <field name="B76" length="1" type="BLANK" /><!-- B76 :: Claim Treaty benefits -->
+        <field name="B77" length="4" type="BLANK" /><!-- B77 :: Primary Withholding Agent's ID -->
+        <field name="B78" length="40" type="BLANK" /><!-- B78 :: Primary Withholding Agent's Name -->
+        <field name="B97" length="25" type="BLANK" /><!-- B97 :: Filler -->
+        <field name="B98" length="1" type="STATIC" value="I" /><!-- B98 :: I (just the letter "I") -->
+        <field name="B99" length="2" type="BLANK" /><!-- B99 :: Carriage Return/Line Feed (can be spaces instead if writing to a flat ASCII file) -->
+    </section>
+    <!--
+        ================================================================================================================
+        This section represents a 1042S detail record (header record fields A1 through A13, plus fields D1 through D99).
+        ================================================================================================================
+     -->
+    <section length="609" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="D1" length="4" type="DETAIL" value="reportYear" /><!-- D1 :: Tax Year -->
+        <field name="D2" length="2" type="DERIVED" value="incomeCode" /><!-- D2 :: Income Code -->
+        <field name="D3" length="1" type="DETAIL" value="incomeCodeSubType" /><!-- D3 :: Income Code subtype -->
+        <field name="D4" length="1" type="STATIC" value="0" /><!-- D4 :: Type of Applicable Tax (0 - Reporting under Chapter 3 (NRA), 1 - Reporting Under Chapter 4 (FATCA)) -->
+        <field name="D5" length="2" type="DERIVED" value="chapter3ExemptionCode" /><!-- D5 :: Chapter 3 Exemption Code -->
+        <field name="D6" length="5" type="DERIVED" value="chapter3TaxRate" /><!-- D6 :: Chapter 3 Tax Rate -->
+        <field name="D7" length="2" type="DERIVED" value="chapter4ExemptionCode" /><!-- D7 :: Chapter 4 Exemption Code -->
+        <field name="D8" length="5" type="STATIC" value="00.00" /><!-- D8 :: Chapter 4 Tax Rate -->
+        <field name="D9" length="10" type="DERIVED" value="grossAmount" /><!-- D9 :: Gross amount paid to individual -->
+        <field name="D10" length="10" type="STATIC" value="0" /><!-- D10 :: Withholding Allowance (only valid for income types 15 or 16, code 0 for other types) -->
+        <field name="D11" length="10" type="DERIVED" value="fedTaxWithheldAmount" /><!-- D11 :: Federal Withheld Amount -->
+        <field name="D12" length="10" type="DERIVED" value="stateIncomeTaxWithheldAmount" /><!-- D12 :: State Withheld Amount -->
+        <field name="D13" length="10" type="BLANK" /><!-- D13 :: Out of system treaty benefit -->
+        <field name="D14" length="10" type="BLANK" /><!-- D14 :: Refund Amount -->
+        <field name="D15" length="10" type="BLANK" /><!-- D15 :: Tax Assumed by Withholding Agent -->
+        <field name="D16" length="2" type="DERIVED" value="stateCode" /><!-- D16 :: State Code -->
+        <field name="D17" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- D17 :: Country Code  -->
+        <field name="D18" length="25" type="BLANK" /><!-- D18 :: Country Name (NOTE: Should be non-blank if D17 Country Code is not given) -->
+        <field name="D19" length="10" type="DERIVED" value="endDate" /><!-- D19 :: Cycle Date (Payment Date) -->
+        <field name="D20" length="10" type="STATIC" value="KFS" /><!-- D20 :: Record Source -->
+        <field name="D21" length="1" type="STATIC" value="A" /><!-- D21 :: Record Status (F=Forecast, A=Actual, O=Out of System, R=Refund) -->
+        <field name="D22" length="1" type="STATIC" value="Y" /><!-- D22 :: Payment Type (Y=Year-to-date, C=Cycle only) -->
+        <field name="D23" length="3" type="BLANK" /><!-- D23 :: Number of Days in Cycle (Use to project end dates) -->
+        <field name="D24" length="10" type="DERIVED" value="endDate" /><!-- D24 :: Last Date of Earnings (Last Date for which payments cover. MM/DD/YYYY - (M-Month, D-Day, Y-Year) -->
+        <field name="D25" length="8" type="BLANK" /><!-- D25 :: Constant Additional Tax (Wants Decimal) -->
+        <field name="D26" length="20" type="BLANK" /><!-- D26 :: Campus -->
+        <field name="D27" length="9" type="DERIVED" value="ein" /><!-- D27 :: EIN -->
+        <field name="D28" length="4" type="BLANK" /><!-- D28 :: Intermediary/FLW-THR ID -->
+        <field name="D29" length="40" type="BLANK" /><!-- D29 :: Intermediary/FLW-THR Name Line 1 -->
+        <field name="D30" length="4" type="BLANK" /><!-- D30 :: Other Payer ID -->
+        <field name="D31" length="40" type="BLANK" /><!-- D31 :: Other Payer Name -->
+        <field name="D32" length="4" type="BLANK" /><!-- D32 :: Primary Withholding Agent's ID -->
+        <field name="D33" length="40" type="BLANK" /><!-- D33 :: Primary Withholding Agent's Name -->
+        <!--
+            ==== NOTE: The current spec does not have any fields with names D34 through D96. ====
+         -->
+        <field name="D97" length="25" type="BLANK" /><!-- D97 :: Filler -->
+        <field name="D98" length="1" type="STATIC" value="P" /><!-- D98 :: P (just the letter "P") -->
+        <field name="D99" length="2" type="BLANK" /><!-- D99 :: Carriage Return/Line Feed (can be spaces instead if writing to a flat ASCII file) -->
+    </section>
+</taxOutputDefinition>

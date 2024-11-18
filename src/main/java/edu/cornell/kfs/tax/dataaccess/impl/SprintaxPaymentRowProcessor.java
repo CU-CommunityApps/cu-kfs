@@ -616,17 +616,26 @@ public class SprintaxPaymentRowProcessor {
 
 
 
-    String[] getFilePathsForWriters(java.util.Date processingStartDate) {
-        String[] filePaths = new String[writers.length];
+    List<String> getFilePathsForWriters(java.util.Date processingStartDate) {
+        ArrayList<String> filePaths = new ArrayList<>();
+        // build bio
+
+
         DateFormat tempFormat = buildDateFormatForFileSuffixes();
-        // Output file for 1042S biographic records.
-        filePaths[0] =
-                new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_BIO_OUTPUT_FILE_PREFIX)
+        String bioFilePath = getReportsDirectory() + "/irs_1042s_sprintax_bio" + tempFormat.format(processingStartDate) + ".csv";
+        filePaths.add(bioFilePath);
+
+        String filePathDetail = new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
                         .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
-        // Output file for 1042S detail records.
-        filePaths[1] =
-                new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
-                        .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
+        filePaths.add(filePathDetail);
+
+//        filePaths[0] =
+//                new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_BIO_OUTPUT_FILE_PREFIX)
+//                        .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
+//        // Output file for 1042S detail records.
+//        filePaths[1] =
+//                new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
+//                        .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
         return filePaths;
     }
 

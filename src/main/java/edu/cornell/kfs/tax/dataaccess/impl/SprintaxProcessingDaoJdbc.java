@@ -64,17 +64,17 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         );
         List<EnumMap<TaxStatType,Integer>> stats = createSprintaxTransactionRows(summary, transactionRowBuilders);
 
-        LOG.info("Processing Transaction Records");
-        EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxParameters.getReportYear(), taxProcessingService);
+        LOG.info("Processing Transaction Records and generating Biographic csv file");
+        EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxProcessingService);
         stats.add(processingStats);
 
         LOG.info("Printing to csv files");
         TaxOutputDefinition paymentsOutputDefinition = taxProcessingService.get1042PaymentsOutputDefinition();
         printTransactionRows(taxParameters.getJobRunDate(), summary, paymentsOutputDefinition);
 
-        LOG.info("Printing bio to csv files");
-        TaxOutputDefinition bioOutputDefinition = taxProcessingService.get1042BioOutputDefinition();
-        printBiographicRows(taxParameters.getJobRunDate(), summary, bioOutputDefinition);
+//        LOG.info("Printing bio to csv files");
+//        TaxOutputDefinition bioOutputDefinition = taxProcessingService.get1042BioOutputDefinition();
+//        printBiographicRows(taxParameters.getJobRunDate(), summary, bioOutputDefinition);
 
         printStatistics(stats);
     }
@@ -215,10 +215,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         });
     }
 
-    private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processTransactionRows(Transaction1042SSummary summary, int reportYear,
-                                                                                              SprintaxProcessingService sprintaxProcessingService) {
-        TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getOutputDefinition("tax.format.1042s.", reportYear);
-        TransactionRowProcessorBuilder transactionRowProcessorBuilder = TransactionRowProcessorBuilder.createBuilder();
+    private EnumMap<TaxStatType,Integer> processTransactionRows(Transaction1042SSummary summary, SprintaxProcessingService sprintaxProcessingService) {
+
+        TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getSprintaxBioOutputDefinition();
         SprintaxPaymentRowProcessor processor = buildNewProcessor(taxOutputDefinition, summary);
 
         processor.setReportsDirectory(getReportsDirectory());
@@ -245,13 +244,21 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 try {
 
                     java.util.Date processingStartDate = new java.util.Date();
-                    String[] filePaths = processor.getFilePathsForWriters(processingStartDate);
-                    for (int i = 0; i < filePaths.length; i++) {
-                        String filePath = filePaths[i];
+                    List<String> filePaths = processor.getFilePathsForWriters(processingStartDate);
+                    for (int i = 0; i < filePaths.size(); i++) {
+                        String filePath = filePaths.get(i);
                         File outputFile = new File(filePath);
                         PrintWriter printWriter = new PrintWriter(outputFile, StandardCharsets.UTF_8);
                         Writer bufferedWriter = new BufferedWriter(printWriter);
                         processor.setWriter(bufferedWriter, i);
+
+                        if (filePath.contains("bio")) {
+                            LOG.info("TODO: write header row to file");
+                            bufferedWriter.write("First_Name,Middle_Name,Last_Name,Email,Unique_ID_Student_Number,TIN,DOB,Foreign_Tax_ID,Country_of_Residence,US_Address_Line_1,US_Address_Line_2,US_City,US_State,US_zip,NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province");
+                            bufferedWriter.write("\n");
+                            bufferedWriter.flush();
+                        }
+
                     }
 
                     ResultSet transactionDetailRecords = preparedSelectStatement.executeQuery();
@@ -518,7 +525,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
             } else if (section.isHasSeparators() && section.getSeparator() == null) {
                 throw new RuntimeException("Cannot have a null separator for a section with separator-delimited fields!");
             }
-            List<SprintaxPaymentRowProcessor.RecordPiece> pieces = new ArrayList<SprintaxPaymentRowProcessor.RecordPiece>(section.getFields().size());
+            List<SprintaxPaymentRowProcessor.RecordPiece> pieces = new ArrayList<>();
 
             for (TaxOutputField field : section.getFields()) {
                 if (StringUtils.isBlank(field.getName())) {
@@ -609,14 +616,21 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
 
             // Setup the section's output buffer.
-            rowProcessor.setupOutputBuffer(i, section.getLength(), pieces, section.isHasExactLength(), section.isHasSeparators(),
-                    section.isHasSeparators() ? section.getSeparatorChar().charValue() : ' ');
+            rowProcessor.setupOutputBuffer(
+                    i,
+                    section.getLength(),
+                    pieces,
+                    section.isHasExactLength(),
+                    section.isHasSeparators(),
+                    section.isHasSeparators() ? section.getSeparatorChar().charValue() : ' '
+            );
+
             i++;
         }
 
 
 
-        // If the processor has defined some minimum fields but they have not been created yet, then create them.
+        // If the processor has defined some minimum fields, but they have not been created yet, then create them.
         i = 1;
         for (Map.Entry<CUTaxBatchConstants.TaxFieldSource,Set<TaxTableField>> minTypeSpecificPieces : minimumPieces.entrySet()) {
             if (minTypeSpecificPieces.getValue() != null) {

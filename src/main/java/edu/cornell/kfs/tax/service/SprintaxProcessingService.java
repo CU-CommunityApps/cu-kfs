@@ -15,6 +15,8 @@ public interface SprintaxProcessingService {
 
     TaxOutputDefinition get1042BioOutputDefinition();
 
+    TaxOutputDefinition getSprintaxBioOutputDefinition();
+
     /**
      * Retrieves all active object-code-to-tax-bucket mappings for the given tax type.
      *
