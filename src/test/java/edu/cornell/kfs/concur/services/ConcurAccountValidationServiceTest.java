@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kuali.kfs.coa.businessobject.ProjectCode;
 import org.kuali.kfs.coa.service.AccountService;
@@ -37,6 +38,7 @@ import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl;
 import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.AccountEnum;
+import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.ConcurAccountInfoEnum;
 import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.ObjectCodeEnum;
 import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.ProjectCodeEnum;
 import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.SubAccountEnum;
@@ -56,21 +58,7 @@ public class ConcurAccountValidationServiceTest {
         concurAccountValidationService.setSubObjectCodeService(buildMockSubObjectCodeService());
         concurAccountValidationService.setProjectCodeService(buildMockProjectCodeService());
         concurAccountValidationService.setSubAccountService(buildMockSubAccountService());
-        concurAccountValidationService.setConfigurationService(buildMockConfigurationService());
-    }
-
-    private static ConfigurationService buildMockConfigurationService() {
-        ConfigurationService service = Mockito.mock(ConfigurationService.class);
-        Mockito.when(
-                service.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EVENT_NOTIFICATION_ACCOUNT_DETAIL))
-                .thenReturn("Account {0}-{1}, {2}, HEFC {3}");
-        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED))
-                .thenReturn("{0} is a required field.");
-        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE))
-                .thenReturn("The specified {0} does not exist.");
-        Mockito.when(service.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE))
-                .thenReturn("The specified {0} is inactive.");
-        return service;
+        concurAccountValidationService.setConfigurationService(ConcurAccountValidationTestConstants.buildMockConfigurationService());
     }
 
     private AccountService buildMockAccountService() {
@@ -138,41 +126,25 @@ public class ConcurAccountValidationServiceTest {
 
     @ParameterizedTest
     @MethodSource("testCheckAccountParams")
-    public void testCheckAccount(String chartCode, String accountNumber, boolean validationExpectation,
-            String errorMessageKey) {
+    public void testCheckAccount(AccountEnum accountEnum, boolean validationExpectation, String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         List<String> expectedDetailMessages = new ArrayList<>();
         if (!validationExpectation) {
-            expectedErrorMessages.add(buildFormattedMessage(errorMessageKey,
-                    ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, chartCode, accountNumber));
+            expectedErrorMessages.add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey,
+                    ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, accountEnum.chart, accountEnum.account));
         } else {
 
         }
-        ValidationResult validationResult = concurAccountValidationService.checkAccount(chartCode, accountNumber);
+        ValidationResult validationResult = concurAccountValidationService.checkAccount(accountEnum.chart,
+                accountEnum.account);
         validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckAccount");
     }
 
     private static Stream<Arguments> testCheckAccountParams() {
-        return Stream.of(
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR, true, null),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART, null, false,
-                        KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.BAD_ACCT_NBR, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR, false, KFSKeyConstants.ERROR_INACTIVE));
-    }
-
-    private static String buildFormattedMessage(String errorMessageProperty, String label, String... values) {
-        String messageString = ConcurUtils.formatStringForErrorMessage(label, values);
-        return MessageFormat.format(buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
-                messageString);
-    }
-
-    private static String buildFormattedMessage(String errorMessageProperty, String label) {
-        return MessageFormat.format(buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
-                label);
+        return Stream.of(Arguments.of(AccountEnum.VALID, true, null),
+                Arguments.of(AccountEnum.NULL, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(AccountEnum.BAD, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(AccountEnum.INACTIVE, false, KFSKeyConstants.ERROR_INACTIVE));
     }
 
     private void validateResults(boolean validationExpectation, List<String> expectedErrorMessages,
@@ -204,94 +176,70 @@ public class ConcurAccountValidationServiceTest {
 
     @ParameterizedTest
     @MethodSource("testCheckObjectCodeParams")
-    public void testCheckObjectCode(String chartCode, boolean validationExpectation, String errorMessageKey) {
+    public void testCheckObjectCode(ObjectCodeEnum objectCodeEnum, boolean validationExpectation,
+            String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         if (!validationExpectation) {
             expectedErrorMessages
-                    .add(buildFormattedMessage(errorMessageKey, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                            ConcurAccountValidationTestConstants.VALID_CHART, chartCode));
+                    .add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
+                            objectCodeEnum.chart, objectCodeEnum.objectCode));
         }
-        ValidationResult validationResult = concurAccountValidationService
-                .checkObjectCode(ConcurAccountValidationTestConstants.VALID_CHART, chartCode);
+        ValidationResult validationResult = concurAccountValidationService.checkObjectCode(objectCodeEnum.chart,
+                objectCodeEnum.objectCode);
         validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckObjectCode");
     }
 
     private static Stream<Arguments> testCheckObjectCodeParams() {
-        return Stream.of(Arguments.of(ConcurAccountValidationTestConstants.VALID_OBJ_CD, true, null),
-                Arguments.of(null, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.BAD_OBJ_CD, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD, false,
-                        KFSKeyConstants.ERROR_INACTIVE));
+        return Stream.of(Arguments.of(ObjectCodeEnum.VALID, true, null),
+                Arguments.of(ObjectCodeEnum.NULL, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(ObjectCodeEnum.BAD, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(ObjectCodeEnum.INACTIVE, false, KFSKeyConstants.ERROR_INACTIVE));
     }
 
     @ParameterizedTest
     @MethodSource("testCheckSubAccountParams")
-    public void testCheckSubAccount(String chartCode, String accountNumber, String subAccountNumber,
-            boolean validationExpectation, String errorMessageKey) {
+    public void testCheckSubAccount(SubAccountEnum subAccountEnum, boolean validationExpectation,
+            String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         if (!validationExpectation) {
-            expectedErrorMessages.add(buildFormattedMessage(errorMessageKey,
-                    ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, chartCode, accountNumber,
-                    subAccountNumber));
+            expectedErrorMessages.add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey,
+                    ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, subAccountEnum.chart,
+                    subAccountEnum.account, subAccountEnum.subAccount));
         }
-        ValidationResult validationResult = concurAccountValidationService.checkSubAccount(chartCode, accountNumber,
-                subAccountNumber);
+        ValidationResult validationResult = concurAccountValidationService.checkSubAccount(subAccountEnum.chart,
+                subAccountEnum.account, subAccountEnum.subAccount);
         validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckObjectCode");
     }
 
     private static Stream<Arguments> testCheckSubAccountParams() {
-        return Stream.of(
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, true, null),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR, null, true, null),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.BAD_SUB_ACCT, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.BAD_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT, false, KFSKeyConstants.ERROR_INACTIVE));
+        return Stream.of(Arguments.of(SubAccountEnum.VALID, true, null),
+                Arguments.of(SubAccountEnum.NULL_SUB_ACCOUNT, true, null),
+                Arguments.of(SubAccountEnum.BAD_SUB_ACCOUNT, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(SubAccountEnum.BAD_ACCOUNT, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(SubAccountEnum.INACTIVE, false, KFSKeyConstants.ERROR_INACTIVE));
     }
 
     @ParameterizedTest
     @MethodSource("testcheckSubObjectCodeParams")
-    public void testcheckSubObjectCode(String chartCode, String accountNumber, String objectCode, String subObjectCode,
-            boolean validationExpectation, String errorMessageKey) {
+    public void testcheckSubObjectCode(SubObjectCodeEnum subObjectCodeEnum, boolean validationExpectation,
+            String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         if (!validationExpectation) {
-            expectedErrorMessages.add(
-                    buildFormattedMessage(errorMessageKey, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                            chartCode, accountNumber, objectCode, subObjectCode));
+            expectedErrorMessages.add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey,
+                    ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, subObjectCodeEnum.chart,
+                    subObjectCodeEnum.account, subObjectCodeEnum.objectCode, subObjectCodeEnum.subObjectCode));
         }
-        ValidationResult validationResult = concurAccountValidationService.checkSubObjectCode(chartCode, accountNumber,
-                objectCode, subObjectCode);
+        ValidationResult validationResult = concurAccountValidationService.checkSubObjectCode(subObjectCodeEnum.chart,
+                subObjectCodeEnum.account, subObjectCodeEnum.objectCode, subObjectCodeEnum.subObjectCode);
         validateResults(validationExpectation, expectedErrorMessages, validationResult, "testcheckSubObjectCode");
     }
 
     private static Stream<Arguments> testcheckSubObjectCodeParams() {
-        return Stream.of(Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                ConcurAccountValidationTestConstants.VALID_ACCT_NBR, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                ConcurAccountValidationTestConstants.VALID_SUB_OBJECT, true, null),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.BAD_SUB_OBJECT, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD, null, true, null),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.BAD_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT, false,
-                        KFSKeyConstants.ERROR_INACTIVE));
+        return Stream.of(Arguments.of(SubObjectCodeEnum.VALID, true, null),
+                Arguments.of(SubObjectCodeEnum.BAD_SUB_OBJ, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(SubObjectCodeEnum.NULL_SUB_OBJ, true, null),
+                Arguments.of(SubObjectCodeEnum.BAD_OBJ, false, KFSKeyConstants.ERROR_EXISTENCE),
+                Arguments.of(SubObjectCodeEnum.INACTIVE, false, KFSKeyConstants.ERROR_INACTIVE));
     }
 
     @ParameterizedTest
@@ -299,7 +247,7 @@ public class ConcurAccountValidationServiceTest {
     public void testCheckProjectCode(String projectCode, boolean validationExpectation, String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         if (!validationExpectation) {
-            expectedErrorMessages.add(buildFormattedMessage(errorMessageKey,
+            expectedErrorMessages.add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey,
                     ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, projectCode));
         }
         ValidationResult validationResult = concurAccountValidationService.checkProjectCode(projectCode);
@@ -314,240 +262,13 @@ public class ConcurAccountValidationServiceTest {
                 Arguments.of(ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE, false,
                         KFSKeyConstants.ERROR_INACTIVE));
     }
-
+    
     @ParameterizedTest
-    @MethodSource("testValidateConcurAccountInfoParams")
-    public void testValidateConcurAccountInfo(String chart, String account, String subAccount, String object,
-            String subObject, String project, boolean validationExpectation, List<String> expectedErrorMessages) {
-        ConcurAccountInfo accountInfo = new ConcurAccountInfo(chart, account, subAccount, object, subObject, project);
+    @EnumSource
+    public void testValidateConcurAccountInfo(ConcurAccountInfoEnum accountinfo) {
+        ConcurAccountInfo accountInfo = accountinfo.toConcurAccountInfo();
         ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo);
-        validateResults(validationExpectation, expectedErrorMessages, validationResult,
+        validateResults(accountinfo.validationExpectation, accountinfo.expectedErrorMessages, validationResult,
                 "testValidateConcurAccountInfo");
-    }
-
-    private static Stream<Arguments> testValidateConcurAccountInfoParams() {
-        return Stream.of(Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                ConcurAccountValidationTestConstants.VALID_SUB_ACCT, ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, true, buildMessages()),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR, StringUtils.EMPTY,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD, StringUtils.EMPTY, StringUtils.EMPTY, true,
-                        buildMessages()),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR, null,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD, null, null, true, buildMessages()),
-                Arguments.of(null, ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                ConcurConstants.AccountingStringFieldNames.CHART))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART, null,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, null,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
-                Arguments.of(null, null, ConcurAccountValidationTestConstants.VALID_SUB_ACCT, null,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(
-                                buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                        ConcurConstants.AccountingStringFieldNames.CHART),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                        ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                        ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
-                Arguments.of(null, ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT, null,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(
-                                buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                        ConcurConstants.AccountingStringFieldNames.CHART),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
-                                        ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
-                Arguments.of(ConcurAccountValidationTestConstants.BAD_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                                ConcurAccountValidationTestConstants.BAD_CHART,
-                                ConcurAccountValidationTestConstants.VALID_ACCT_NBR))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.BAD_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.BAD_ACCT_NBR))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
-                                ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.INACTIVE_ACCT_NBR))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.BAD_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                ConcurAccountValidationTestConstants.BAD_SUB_ACCT))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
-                                ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                ConcurAccountValidationTestConstants.INACTIVE_SUB_ACCT))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.BAD_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.BAD_OBJ_CD),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                        ConcurAccountValidationTestConstants.BAD_OBJ_CD,
-                                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(
-                                buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
-                                        ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                        ConcurAccountValidationTestConstants.INACTIVE_OBJ_CD,
-                                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.BAD_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                                ConcurAccountValidationTestConstants.BAD_SUB_OBJECT))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.VALID_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
-                                ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                                ConcurAccountValidationTestConstants.INACTIVE_SUB_OBJECT))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.BAD_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                ConcurConstants.AccountingStringFieldNames.PROJECT_CODE,
-                                ConcurAccountValidationTestConstants.BAD_PROJECT_CODE))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.VALID_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.VALID_OBJ_CD,
-                        ConcurAccountValidationTestConstants.VALID_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
-                                ConcurConstants.AccountingStringFieldNames.PROJECT_CODE,
-                                ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.BAD_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.BAD_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.BAD_OBJ_CD,
-                        ConcurAccountValidationTestConstants.BAD_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.BAD_PROJECT_CODE, false,
-                        buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                                ConcurAccountValidationTestConstants.VALID_CHART,
-                                ConcurAccountValidationTestConstants.BAD_ACCT_NBR))),
-                Arguments.of(ConcurAccountValidationTestConstants.VALID_CHART,
-                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                        ConcurAccountValidationTestConstants.BAD_SUB_ACCT,
-                        ConcurAccountValidationTestConstants.BAD_OBJ_CD,
-                        ConcurAccountValidationTestConstants.BAD_SUB_OBJECT,
-                        ConcurAccountValidationTestConstants.BAD_PROJECT_CODE, false,
-                        buildMessages(
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.BAD_OBJ_CD),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                        ConcurAccountValidationTestConstants.BAD_SUB_ACCT),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                                        ConcurAccountValidationTestConstants.VALID_CHART,
-                                        ConcurAccountValidationTestConstants.VALID_ACCT_NBR,
-                                        ConcurAccountValidationTestConstants.BAD_OBJ_CD,
-                                        ConcurAccountValidationTestConstants.BAD_SUB_OBJECT),
-                                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
-                                        ConcurConstants.AccountingStringFieldNames.PROJECT_CODE,
-                                        ConcurAccountValidationTestConstants.BAD_PROJECT_CODE))));
-    }
-
-    private static List<String> buildMessages(String... messages) {
-        List<String> messageList = new ArrayList<>();
-        for (String message : messages) {
-            messageList.add(message);
-        }
-        return messageList;
     }
 }
