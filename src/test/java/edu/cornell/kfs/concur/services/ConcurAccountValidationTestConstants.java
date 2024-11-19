@@ -19,7 +19,7 @@ import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 
-public interface ConcurAccountValidationTestConstants {
+public class ConcurAccountValidationTestConstants {
     public static final String VALID_CHART = "VALIDCHART";
     public static final String BAD_CHART = "BADCHART";
     public static final String VALID_ACCT_NBR = "VALIDACCT";
@@ -185,80 +185,113 @@ public interface ConcurAccountValidationTestConstants {
             return project;
         }
     }
-    
+
     public enum ConcurAccountInfoEnum {
-        FULL_ACCOUNT_INFO(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, true, buildMessages()),
-        NULL_CHART(null, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART))),
-        NULL_ACCOUNT(VALID_CHART, null, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER))),
-        NULL_OBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, null, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
-        NULL_CHART_ACCOUNT_OBJECT(null, null, VALID_SUB_ACCT, null, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART),
-                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER),
-                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
-        NULL_CHART_OBJECT(null, VALID_ACCT_NBR, VALID_SUB_ACCT, null, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.CHART),
-                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
-        BAD_CHART_CODE(BAD_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                        BAD_CHART, VALID_ACCT_NBR))),
-        BAD_ACCOUNT(VALID_CHART, BAD_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                        VALID_CHART, BAD_ACCT_NBR))),
-        INACTIVE_ACCOUNT(VALID_CHART, INACTIVE_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                        VALID_CHART, INACTIVE_ACCT_NBR))),
-        BAD_SUBACCOUNT(VALID_CHART, VALID_ACCT_NBR, BAD_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER,
-                        VALID_CHART, VALID_ACCT_NBR, BAD_SUB_ACCT))),
-        BAD_OBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, BAD_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                        VALID_CHART, BAD_OBJ_CD),
-                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                        VALID_CHART,VALID_ACCT_NBR, BAD_OBJ_CD, VALID_SUB_OBJECT))),
-        INACTIVE_OBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, INACTIVE_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                        VALID_CHART, INACTIVE_OBJ_CD),
-                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                        VALID_CHART,VALID_ACCT_NBR, INACTIVE_OBJ_CD, VALID_SUB_OBJECT))),
-        BAD_SUBOBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, BAD_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                        VALID_CHART,VALID_ACCT_NBR, VALID_OBJ_CD, BAD_SUB_OBJECT))),
-        INACTIVE_SUBOBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, INACTIVE_SUB_OBJECT, VALID_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                        VALID_CHART,VALID_ACCT_NBR, VALID_OBJ_CD, INACTIVE_SUB_OBJECT))),
-        BAD_PROJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, BAD_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE,
-                        BAD_PROJECT_CODE))),
-        INACTIVE_PROJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, INACTIVE_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE,
-                        INACTIVE_PROJECT_CODE))),
-        BAD_ACCOUNT_SUBACCOUNT_OBJECT_SUBOBJECT_PROJECT(VALID_CHART, BAD_ACCT_NBR, BAD_SUB_ACCT, BAD_OBJ_CD, BAD_SUB_OBJECT, BAD_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER,
-                        VALID_CHART, BAD_ACCT_NBR))),
-        BAD_SUBACCOUNT_OBJECT_SUBOBJECT_PROJECT(VALID_CHART, VALID_ACCT_NBR, BAD_SUB_ACCT, BAD_OBJ_CD, BAD_SUB_OBJECT, BAD_PROJECT_CODE, false, 
-                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                        VALID_CHART, BAD_OBJ_CD),
-                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER,
-                        VALID_CHART, VALID_ACCT_NBR, BAD_SUB_ACCT),
-                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE,
-                        VALID_CHART, VALID_ACCT_NBR, BAD_OBJ_CD, BAD_SUB_OBJECT),
-                buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE, ConcurConstants.AccountingStringFieldNames.PROJECT_CODE,
-                        BAD_PROJECT_CODE))),
+        FULL_ACCOUNT_INFO(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT,
+                VALID_PROJECT_CODE, true, buildMessages()),
+        NULL_CHART(null, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                        ConcurConstants.AccountingStringFieldNames.CHART))),
+        NULL_ACCOUNT(VALID_CHART, null, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                        ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER))),
+        NULL_OBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, null, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                        ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
+        NULL_CHART_ACCOUNT_OBJECT(null, null, VALID_SUB_ACCT, null, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
+                buildMessages(
+                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                                ConcurConstants.AccountingStringFieldNames.CHART),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                                ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                                ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
+        NULL_CHART_OBJECT(null, VALID_ACCT_NBR, VALID_SUB_ACCT, null, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
+                buildMessages(
+                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                                ConcurConstants.AccountingStringFieldNames.CHART),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
+                                ConcurConstants.AccountingStringFieldNames.OBJECT_CODE))),
+        BAD_CHART_CODE(BAD_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE,
+                false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                        ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, BAD_CHART, VALID_ACCT_NBR))),
+        BAD_ACCOUNT(VALID_CHART, BAD_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE,
+                false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                        ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, VALID_CHART, BAD_ACCT_NBR))),
+        INACTIVE_ACCOUNT(VALID_CHART, INACTIVE_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT,
+                VALID_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
+                        ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, VALID_CHART, INACTIVE_ACCT_NBR))),
+        BAD_SUBACCOUNT(VALID_CHART, VALID_ACCT_NBR, BAD_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE,
+                false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                        ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, VALID_CHART, VALID_ACCT_NBR,
+                        BAD_SUB_ACCT))),
+        BAD_OBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, BAD_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
+                buildMessages(
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, VALID_CHART, BAD_OBJ_CD),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, VALID_CHART, VALID_ACCT_NBR,
+                                BAD_OBJ_CD, VALID_SUB_OBJECT))),
+        INACTIVE_OBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, INACTIVE_OBJ_CD, VALID_SUB_OBJECT,
+                VALID_PROJECT_CODE, false,
+                buildMessages(
+                        buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
+                                ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, VALID_CHART, INACTIVE_OBJ_CD),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, VALID_CHART, VALID_ACCT_NBR,
+                                INACTIVE_OBJ_CD, VALID_SUB_OBJECT))),
+        BAD_SUBOBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, BAD_SUB_OBJECT, VALID_PROJECT_CODE,
+                false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                        ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, VALID_CHART, VALID_ACCT_NBR,
+                        VALID_OBJ_CD, BAD_SUB_OBJECT))),
+        INACTIVE_SUBOBJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, INACTIVE_SUB_OBJECT,
+                VALID_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
+                        ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, VALID_CHART, VALID_ACCT_NBR,
+                        VALID_OBJ_CD, INACTIVE_SUB_OBJECT))),
+        BAD_PROJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, BAD_PROJECT_CODE,
+                false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                        ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, BAD_PROJECT_CODE))),
+        INACTIVE_PROJECT(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT,
+                INACTIVE_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_INACTIVE,
+                        ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, INACTIVE_PROJECT_CODE))),
+        BAD_ACCOUNT_SUBACCOUNT_OBJECT_SUBOBJECT_PROJECT(VALID_CHART, BAD_ACCT_NBR, BAD_SUB_ACCT, BAD_OBJ_CD,
+                BAD_SUB_OBJECT, BAD_PROJECT_CODE, false,
+                buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                        ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, VALID_CHART, BAD_ACCT_NBR))),
+        BAD_SUBACCOUNT_OBJECT_SUBOBJECT_PROJECT(VALID_CHART, VALID_ACCT_NBR, BAD_SUB_ACCT, BAD_OBJ_CD, BAD_SUB_OBJECT,
+                BAD_PROJECT_CODE, false,
+                buildMessages(
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, VALID_CHART, BAD_OBJ_CD),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.SUB_ACCOUNT_NUMBER, VALID_CHART,
+                                VALID_ACCT_NBR, BAD_SUB_ACCT),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.SUB_OBJECT_CODE, VALID_CHART, VALID_ACCT_NBR,
+                                BAD_OBJ_CD, BAD_SUB_OBJECT),
+                        buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
+                                ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, BAD_PROJECT_CODE))),
         MINIUMUM_ACCOUNT_INFO_NULLS(VALID_CHART, VALID_ACCT_NBR, null, VALID_OBJ_CD, null, null, true, buildMessages()),
-        MINIUMUM_ACCOUNT_INFO_EMPTY(VALID_CHART, VALID_ACCT_NBR, StringUtils.EMPTY, VALID_OBJ_CD, StringUtils.EMPTY, StringUtils.EMPTY, true, buildMessages());
-        
+        MINIUMUM_ACCOUNT_INFO_EMPTY(VALID_CHART, VALID_ACCT_NBR, StringUtils.EMPTY, VALID_OBJ_CD, StringUtils.EMPTY,
+                StringUtils.EMPTY, true, buildMessages());
+
         public final String chart;
         public final String account;
         public final String subAccount;
         public final String object;
         public final String subObject;
-        public final String project; 
+        public final String project;
         public final boolean validationExpectation;
         public final List<String> expectedErrorMessages;
-        
+
         private ConcurAccountInfoEnum(String chart, String account, String subAccount, String object, String subObject,
                 String project, boolean validationExpectation, List<String> expectedErrorMessages) {
             this.chart = chart;
@@ -270,24 +303,24 @@ public interface ConcurAccountValidationTestConstants {
             this.validationExpectation = validationExpectation;
             this.expectedErrorMessages = expectedErrorMessages;
         }
-        
+
         public ConcurAccountInfo toConcurAccountInfo() {
-            ConcurAccountInfo accountInfo = new ConcurAccountInfo(chart, account, subAccount, object, subObject, project);
+            ConcurAccountInfo accountInfo = new ConcurAccountInfo(chart, account, subAccount, object, subObject,
+                    project);
             return accountInfo;
         }
     }
-    
-    public static String buildFormattedMessage(String errorMessageProperty, String label) {
+
+    private static String buildFormattedMessage(String errorMessageProperty, String label) {
         return MessageFormat.format(buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
                 label);
     }
-    
+
     public static String buildFormattedMessage(String errorMessageProperty, String label, String... values) {
-        String messageString = ConcurUtils.formatStringForErrorMessage(label, values);
-        return MessageFormat.format(ConcurAccountValidationTestConstants.buildMockConfigurationService().getPropertyValueAsString(errorMessageProperty),
-                messageString);
+        String formattedLabel = ConcurUtils.formatStringForErrorMessage(label, values);
+        return buildFormattedMessage(errorMessageProperty, formattedLabel);
     }
-    
+
     private static List<String> buildMessages(String... messages) {
         List<String> messageList = new ArrayList<>();
         for (String message : messages) {
@@ -295,7 +328,7 @@ public interface ConcurAccountValidationTestConstants {
         }
         return messageList;
     }
-    
+
     public static ConfigurationService buildMockConfigurationService() {
         ConfigurationService service = Mockito.mock(ConfigurationService.class);
         Mockito.when(

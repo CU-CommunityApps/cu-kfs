@@ -26,14 +26,12 @@ import org.kuali.kfs.coa.service.ObjectCodeService;
 import org.kuali.kfs.coa.service.ProjectCodeService;
 import org.kuali.kfs.coa.service.SubAccountService;
 import org.kuali.kfs.coa.service.SubObjectCodeService;
-import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
-import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl;
@@ -58,7 +56,8 @@ public class ConcurAccountValidationServiceTest {
         concurAccountValidationService.setSubObjectCodeService(buildMockSubObjectCodeService());
         concurAccountValidationService.setProjectCodeService(buildMockProjectCodeService());
         concurAccountValidationService.setSubAccountService(buildMockSubAccountService());
-        concurAccountValidationService.setConfigurationService(ConcurAccountValidationTestConstants.buildMockConfigurationService());
+        concurAccountValidationService
+                .setConfigurationService(ConcurAccountValidationTestConstants.buildMockConfigurationService());
     }
 
     private AccountService buildMockAccountService() {
@@ -74,19 +73,17 @@ public class ConcurAccountValidationServiceTest {
 
     private ObjectCodeService buildMockObjectCodeService() {
         ObjectCodeService service = Mockito.mock(ObjectCodeService.class);
-        Mockito.when(
-                (service.getByPrimaryIdForCurrentYear(ObjectCodeEnum.VALID.chart, ObjectCodeEnum.VALID.objectCode)))
+        Mockito.when(service.getByPrimaryIdForCurrentYear(ObjectCodeEnum.VALID.chart, ObjectCodeEnum.VALID.objectCode))
                 .thenReturn(ObjectCodeEnum.VALID.toObjectCode());
-        Mockito.when((service.getByPrimaryIdForCurrentYear(ObjectCodeEnum.INACTIVE.chart,
-                ObjectCodeEnum.INACTIVE.objectCode))).thenReturn(ObjectCodeEnum.INACTIVE.toObjectCode());
+        Mockito.when(service.getByPrimaryIdForCurrentYear(ObjectCodeEnum.INACTIVE.chart,
+                ObjectCodeEnum.INACTIVE.objectCode)).thenReturn(ObjectCodeEnum.INACTIVE.toObjectCode());
         return service;
     }
 
     private SubObjectCodeService buildMockSubObjectCodeService() {
         SubObjectCodeService service = Mockito.mock(SubObjectCodeService.class);
-        Mockito.when(
-                service.getByPrimaryIdForCurrentYear(SubObjectCodeEnum.VALID.chart, SubObjectCodeEnum.VALID.account,
-                        SubObjectCodeEnum.VALID.objectCode, SubObjectCodeEnum.VALID.subObjectCode))
+        Mockito.when(service.getByPrimaryIdForCurrentYear(SubObjectCodeEnum.VALID.chart, 
+                SubObjectCodeEnum.VALID.account, SubObjectCodeEnum.VALID.objectCode, SubObjectCodeEnum.VALID.subObjectCode))
                 .thenReturn(SubObjectCodeEnum.VALID.toSubObjectCode());
         Mockito.when(service.getByPrimaryIdForCurrentYear(SubObjectCodeEnum.INACTIVE.chart,
                 SubObjectCodeEnum.INACTIVE.account, SubObjectCodeEnum.INACTIVE.objectCode,
@@ -126,45 +123,62 @@ public class ConcurAccountValidationServiceTest {
 
     @ParameterizedTest
     @MethodSource("testCheckAccountParams")
-    public void testCheckAccount(AccountEnum accountEnum, boolean validationExpectation, String errorMessageKey) {
+    public void testCheckAccount(AccountEnum accountEnum, boolean validationExpectation, String errorMessageKey,
+            String detailMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         List<String> expectedDetailMessages = new ArrayList<>();
         if (!validationExpectation) {
             expectedErrorMessages.add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey,
                     ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, accountEnum.chart, accountEnum.account));
         } else {
+            String accountDetailMessage = MessageFormat.format(
+                    ConcurAccountValidationTestConstants.buildMockConfigurationService()
+                            .getPropertyValueAsString(detailMessageKey),
+                    accountEnum.chart, accountEnum.account, accountEnum.subFundGroupCode,
+                    accountEnum.higherEdFunctionCode);
 
+            expectedDetailMessages.add(accountDetailMessage);
         }
         ValidationResult validationResult = concurAccountValidationService.checkAccount(accountEnum.chart,
                 accountEnum.account);
-        validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckAccount");
+        validateResults(validationExpectation, expectedErrorMessages, expectedDetailMessages, validationResult,
+                "testCheckAccount");
     }
 
     private static Stream<Arguments> testCheckAccountParams() {
-        return Stream.of(Arguments.of(AccountEnum.VALID, true, null),
-                Arguments.of(AccountEnum.NULL, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(AccountEnum.BAD, false, KFSKeyConstants.ERROR_EXISTENCE),
-                Arguments.of(AccountEnum.INACTIVE, false, KFSKeyConstants.ERROR_INACTIVE));
+        return Stream.of(
+                Arguments.of(AccountEnum.VALID, true, null,
+                        ConcurKeyConstants.MESSAGE_CONCUR_EVENT_NOTIFICATION_ACCOUNT_DETAIL),
+                Arguments.of(AccountEnum.NULL, false, KFSKeyConstants.ERROR_EXISTENCE, null),
+                Arguments.of(AccountEnum.BAD, false, KFSKeyConstants.ERROR_EXISTENCE, null),
+                Arguments.of(AccountEnum.INACTIVE, false, KFSKeyConstants.ERROR_INACTIVE, null));
     }
 
     private void validateResults(boolean validationExpectation, List<String> expectedErrorMessages,
             ValidationResult validationResult, String functionName) {
-        if (LOG.isDebugEnabled()) {
-            for (String expectedMessage : expectedErrorMessages) {
-                LOG.debug(functionName + ", expected error message: " + expectedMessage);
-            }
-            for (String actualMessage : validationResult.getErrorMessages()) {
-                LOG.debug(functionName + ", actual error message:   " + actualMessage);
-            }
-        }
+        validateResults(validationExpectation, expectedErrorMessages, new ArrayList<String>(), validationResult,
+                functionName);
+    }
+
+    private void validateResults(boolean validationExpectation, List<String> expectedErrorMessages,
+            List<String> expectedDetailMessages, ValidationResult validationResult, String functionName) {
+        logMessagesDetails(validationResult, expectedErrorMessages, expectedDetailMessages, functionName);
 
         Assert.assertEquals("Validation was expected to be " + validationExpectation, validationExpectation,
                 validationResult.isValid());
         Assert.assertEquals("Number of error messages is not what is exptected", expectedErrorMessages.size(),
                 validationResult.getErrorMessages().size());
+        Assert.assertEquals("Number of detail messages is not what is exptected", expectedDetailMessages.size(),
+                validationResult.getAccountDetailMessages().size());
+
         for (String expectedMessage : expectedErrorMessages) {
             boolean isExpectedMessageFound = validationResult.getErrorMessages().contains(expectedMessage);
-            Assert.assertTrue("expected to find " + expectedMessage, isExpectedMessageFound);
+            Assert.assertTrue("expected to find error " + expectedMessage, isExpectedMessageFound);
+        }
+
+        for (String expectedMessage : expectedDetailMessages) {
+            boolean isExpectedMessageFound = validationResult.getAccountDetailMessages().contains(expectedMessage);
+            Assert.assertTrue("expected to find account detail " + expectedMessage, isExpectedMessageFound);
         }
 
         String expectedFormatedString = StringUtils.EMPTY;
@@ -174,15 +188,33 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertEquals(expectedFormatedString, validationResult.getErrorMessagesAsOneFormattedString());
     }
 
+    private void logMessagesDetails(ValidationResult validationResult, List<String> expectedErrorMessages,
+            List<String> expectedDetailMessages, String functionName) {
+        if (LOG.isDebugEnabled()) {
+            for (String expectedMessage : expectedErrorMessages) {
+                LOG.debug(functionName + ", expected error message: " + expectedMessage);
+            }
+            for (String actualMessage : validationResult.getErrorMessages()) {
+                LOG.debug(functionName + ", actual error message:   " + actualMessage);
+            }
+            for (String expectedMessage : expectedDetailMessages) {
+                LOG.debug(functionName + ", expected detail message: " + expectedMessage);
+            }
+            for (String expectedMessage : validationResult.getAccountDetailMessages()) {
+                LOG.debug(functionName + ", actual detail message:   " + expectedMessage);
+            }
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("testCheckObjectCodeParams")
     public void testCheckObjectCode(ObjectCodeEnum objectCodeEnum, boolean validationExpectation,
             String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         if (!validationExpectation) {
-            expectedErrorMessages
-                    .add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey, ConcurConstants.AccountingStringFieldNames.OBJECT_CODE,
-                            objectCodeEnum.chart, objectCodeEnum.objectCode));
+            expectedErrorMessages.add(ConcurAccountValidationTestConstants.buildFormattedMessage(errorMessageKey,
+                    ConcurConstants.AccountingStringFieldNames.OBJECT_CODE, objectCodeEnum.chart,
+                    objectCodeEnum.objectCode));
         }
         ValidationResult validationResult = concurAccountValidationService.checkObjectCode(objectCodeEnum.chart,
                 objectCodeEnum.objectCode);
@@ -262,7 +294,7 @@ public class ConcurAccountValidationServiceTest {
                 Arguments.of(ConcurAccountValidationTestConstants.INACTIVE_PROJECT_CODE, false,
                         KFSKeyConstants.ERROR_INACTIVE));
     }
-    
+
     @ParameterizedTest
     @EnumSource
     public void testValidateConcurAccountInfo(ConcurAccountInfoEnum accountinfo) {
