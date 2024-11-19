@@ -477,7 +477,7 @@ abstract class TransactionRowBuilder<T extends TransactionDetailSummary> {
 	    		LOG.debug("Found a value for KewApiConstants.DOC_SEARCH_RESULT_CAP, and it is '" + searchLimit + "'");
 	    		maxSearchResultSize = new Integer(searchLimit);
 	    	} catch (Exception e) {
-	    		LOG.error("Unable to convert '" + searchLimit +
+	    		LOG.warn("Unable to convert '" + searchLimit +
 	    				"' to an integer.  Returning value of KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP which is " +
 	    				KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
 	    		maxSearchResultSize = new Integer(KewApiConstants.DOCUMENT_LOOKUP_DEFAULT_RESULT_CAP);
