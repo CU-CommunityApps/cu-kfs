@@ -253,7 +253,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                         processor.setWriter(bufferedWriter, i);
 
                         if (filePath.contains("bio")) {
-                            LOG.info("TODO: write header row to file");
                             bufferedWriter.write("First_Name,Middle_Name,Last_Name,Email,Unique_ID_Student_Number,TIN,DOB,Foreign_Tax_ID,Country_of_Residence,US_Address_Line_1,US_Address_Line_2,US_City,US_State,US_zip,NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province");
                             bufferedWriter.write("\n");
                             bufferedWriter.flush();

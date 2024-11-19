@@ -29,88 +29,31 @@
         This section represents a 1042S biographic record (header record fields A1 through A13, plus fields B1 through B99).
         ====================================================================================================================
      -->
-    <section length="1356" hasExactLength="false" hasSeparators="true" separator=",">
-        <field name="B1" length="2" type="DERIVED" value="chapter3StatusCode" /><!-- B1 :: Chapter 3 Status Code -->
-        <field name="B2" length="2" type="VENDOR" value="vendorChapter4StatusCode" /><!-- B2 :: Chapter 4 Status Code -->
-        <field name="B3" length="10" type="BLANK" /><!-- B3 :: Title -->
-        <field name="B4" length="10" type="BLANK" /><!-- B4 :: Title Suffix -->
-        <field name="B5" length="1" type="BLANK" /><!-- B5 :: Active Individual -->
-        <field name="B6" length="1" type="BLANK" /><!-- B6 :: Individual Married -->
-        <field name="B7" length="1" type="BLANK" /><!-- B7 :: Spouse Here -->
-        <field name="B8" length="2" type="BLANK" /><!-- B8 :: Dependents -->
-        <field name="B9" length="2" type="BLANK" /><!-- B9 :: School ID Number -->
-        <field name="B10" length="40" type="DERIVED" value="vendorUSAddressLine1" /><!-- B10 :: US Address (Line 1) -->
-        <field name="B11" length="40" type="VENDOR_US_ADDRESS" value="vendorLine2Address" /><!-- B11 :: US Address (Line 2) -->
-        <field name="B12" length="40" type="BLANK" /><!-- B12 :: US Address (Line 3) -->
-        <field name="B13" length="40" type="VENDOR_US_ADDRESS" value="vendorCityName" /><!-- B13 :: US City -->
-        <field name="B14" length="2" type="VENDOR_US_ADDRESS" value="vendorStateCode" /><!-- B14 :: US State -->
-        <field name="B15" length="10" type="VENDOR_US_ADDRESS" value="vendorZipCode" /><!-- B15 :: US Zip Code -->
-        <field name="B16" length="15" type="BLANK" /><!-- B16 :: US Home Telephone Number -->
-        <field name="B17" length="15" type="BLANK" /><!-- B17 :: US Work Telephonse Number -->
-        <field name="B18" length="10" type="BLANK" /><!-- B18 :: US FAX Number -->
-        <field name="B19" length="40" type="DERIVED" value="vendorForeignAddressLine1" /><!-- B19 :: Non US Address (Line 1) -->
-        <field name="B20" length="40" type="DERIVED" value="vendorForeignAddressLine2" /><!-- B20 :: Non US Address (Line 2) -->
-        <field name="B21" length="40" type="BLANK" /><!-- B21 :: Non US Address (Line 3) -->
-        <field name="B22" length="10" type="BLANK" /><!-- B22 :: Non US City Postal Code -->
-        <field name="B23" length="40" type="DERIVED" value="vendorForeignCityName" /><!-- B23 :: Non US City -->
-        <field name="B24" length="10" type="DERIVED" value="vendorForeignZipCode" /><!-- B24 :: Non US Region Postal Code -->
-        <field name="B25" length="30" type="DERIVED" value="vendorForeignProvinceName" /><!-- B25 :: Non US Region -->
-        <field name="B26" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B26 :: Non US Country Code -->
-        <field name="B27" length="25" type="BLANK" /><!-- B27 :: Non US Country Name (NOTE: Should be non-blank if B26 is blank or invalid) -->
-        <field name="B28" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B28 :: Citizenship Country Code -->
-        <field name="B29" length="25" type="BLANK" /><!-- B29 :: Citizenship Country Name -->
-        <field name="B30" length="20" type="BLANK" /><!-- B30 :: Passport Number -->
-        <field name="B31" length="10" type="BLANK" /><!-- B31 :: Date first Entered US -->
-        <field name="B32" length="10" type="BLANK" /><!-- B32 :: Date of Employment in US -->
-        <field name="B33" length="1" type="BLANK" /><!-- B33 :: Trainee Type -->
-        <field name="B34" length="2" type="BLANK" /><!-- B34 :: Student Type -->
-        <field name="B35" length="40" type="BLANK" /><!-- B35 :: Occupation -->
-        <field name="B36" length="2" type="BLANK" /><!-- B36 :: Dependents Here -->
-        <field name="B37" length="2" type="BLANK" /><!-- B37 :: Dependents Citizens -->
-        <field name="B38" length="1" type="BLANK" /><!-- B38 :: Spouse Working -->
-        <field name="B39" length="50" type="DERIVED" value="vendorEmailAddress" /><!-- B39 :: Email Address -->
-        <field name="B40" length="25" type="BLANK" /><!-- B40 :: Department -->
-        <field name="B41" length="1" type="BLANK" /><!-- B41 :: Applied for SSN/ITIN -->
-        <field name="B42" length="25" type="BLANK" /><!-- B42 :: Foreign Tax Payer ID -->
-        <field name="B43" length="1" type="BLANK" /><!-- B43 :: Pay Cycle -->
-        <field name="B44" length="10" type="BLANK" /><!-- B44 :: Estimated Annual Income (EE) -->
-        <field name="B45" length="1" type="BLANK" /><!-- B45 :: Self Employment Fixed base office -->
-        <field name="B46" length="3" type="BLANK" /><!-- B46 :: No. of day office available -->
-        <field name="B47" length="1" type="BLANK" /><!-- B47 :: Recipient of grant -->
-        <field name="B48" length="1" type="BLANK" /><!-- B48 :: Full time program -->
-        <field name="B49" length="1" type="BLANK" /><!-- B49 :: US Citizen -->
-        <field name="B50" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- B50 :: Tax Residence Country Code -->
-        <field name="B51" length="25" type="BLANK" /><!-- B51 :: Tax Residence Country Name (NOTE: Should be non-blank if B43 is blank or invalid) -->
-        <field name="B52" length="10" type="BLANK" /><!-- B52 :: Passport Expiration Date -->
-        <field name="B53" length="10" type="STATIC" value="KFS" /><!-- B53 :: Record Source -->
-        <field name="B54" length="20" type="BLANK" /><!-- B54 :: Campus -->
-        <field name="B55" length="9" type="DERIVED" value="ein" /><!-- B55 :: EIN -->
-        <field name="B56" length="1" type="BLANK" /><!-- B56 :: Use US Address -->
-        <field name="B57" length="1" type="BLANK" /><!-- B57 :: Spouse_dependant -->
-        <field name="B58" length="2" type="BLANK" /><!-- B58 :: State of employment -->
-        <field name="B59" length="40" type="BLANK" /><!-- B59 :: Occupation 2 -->
-        <field name="B60" length="1" type="BLANK" /><!-- B60 :: Personal exemption -->
-        <field name="B61" length="10" type="BLANK" /><!-- B61 :: User 1 (Text) -->
-        <field name="B62" length="10" type="BLANK" /><!-- B62 :: User 2 (Text) -->
-        <field name="B63" length="10" type="BLANK" /><!-- B63 :: User 3 (Currency) -->
-        <field name="B64" length="1" type="BLANK" /><!-- B64 :: User 4 (Check box) -->
-        <field name="B65" length="1" type="BLANK" /><!-- B65 :: User 5 (Check box) -->
-        <field name="B66" length="10" type="BLANK" /><!-- B66 :: User 6 (Date) -->
-        <field name="B67" length="10" type="BLANK" /><!-- B67 :: User 7 (Date) -->
-        <field name="B68" length="10" type="BLANK" /><!-- B68 :: User 8 (Currency) -->
-        <field name="B69" length="4" type="BLANK" /><!-- B69 :: Intermediary/FLW-THR ID -->
-        <field name="B70" length="40" type="BLANK" /><!-- B70 :: Intermediary/FLW-THR Name Line 1 -->
-        <field name="B71" length="4" type="BLANK" /><!-- B71 :: Payer ID -->
-        <field name="B72" length="40" type="BLANK" /><!-- B72 :: Payer Name -->
-        <field name="B73" length="40" type="BLANK" /><!-- B73 :: Maiden Name -->
-        <field name="B74" length="1" type="BLANK" /><!-- B74 :: LPR steps -->
-        <field name="B75" length="1" type="BLANK" /><!-- B75 :: Tax Home Connection -->
-        <field name="B76" length="1" type="BLANK" /><!-- B76 :: Claim Treaty benefits -->
-        <field name="B77" length="4" type="BLANK" /><!-- B77 :: Primary Withholding Agent's ID -->
-        <field name="B78" length="40" type="BLANK" /><!-- B78 :: Primary Withholding Agent's Name -->
-        <field name="B97" length="25" type="BLANK" /><!-- B97 :: Filler -->
-        <field name="B98" length="1" type="STATIC" value="I" /><!-- B98 :: I (just the letter "I") -->
-        <field name="B99" length="2" type="BLANK" /><!-- B99 :: Carriage Return/Line Feed (can be spaces instead if writing to a flat ASCII file) -->
+
+    <!-- NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province -->
+
+    <section length="1890" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="B1" length="90" type="DERIVED" value="vendorFirstName" /><!-- First_Name -->
+        <field name="B2" length="90" type="STATIC" value="" /><!-- Middle_Name -->
+        <field name="B3" length="90" type="DERIVED" value="vendorLastName" /><!-- Last_Name -->
+        <field name="B4" length="90" type="DERIVED" value="vendorEmailAddress" /><!-- vendorEmailAddress => Email -->
+        <field name="B5" length="90" type="BLANK" /><!-- Unique_ID_Student_Number -->
+        <field name="B6" length="90" type="DERIVED" value="ssn" /><!-- TIN  -->
+        <field name="B7" length="90" type="BLANK" /><!-- DOB -->
+        <field name="B8" length="90" type="DERIVED" value="itin" /><!-- Foreign_Tax_ID (vendorGIIN or itin?) -->
+        <field name="B9" length="90" type="DERIVED" value="vendorForeignCountryCode" /><!-- Country_of_Residence -->
+        <field name="B10" length="90" type="DERIVED" value="vendorUSAddressLine1" /><!-- US_Address_Line_1 -->
+        <field name="B11" length="90" type="VENDOR_US_ADDRESS" value="vendorLine2Address" /><!-- US_Address_Line_2 -->
+        <field name="B12" length="90" type="VENDOR_US_ADDRESS" value="vendorCityName" /><!-- US_City -->
+        <field name="B13" length="90" type="VENDOR_US_ADDRESS" value="vendorStateCode" /><!-- US_State -->
+        <field name="B14" length="90" type="VENDOR_US_ADDRESS" value="vendorZipCode" /><!-- US_zip -->
+        <field name="B15" length="90" type="DERIVED" value="vendorForeignAddressLine1" /><!-- NOnUS_Address_Line_1 -->
+        <field name="B16" length="90" type="DERIVED" value="vendorForeignProvinceName" /><!-- NonUS_Address_Province -->
+        <field name="B17" length="90" type="DERIVED" value="vendorForeignCityName" /><!-- NonUS_Address_City -->
+        <field name="B18" length="90" type="DERIVED" value="vendorForeignCountryCode" /><!-- NonUS_address_Country -->
+        <field name="B19" length="90" type="DERIVED" value="vendorForeignZipCode" /><!-- NonUS-Address_postal_code -->
+        <field name="B20" length="90" type="STATIC" value="" /><!-- Mailing_Address -->
+        <field name="B21" length="90" type="DERIVED" value="vendorForeignProvinceName" /><!-- Canada_Province -->
     </section>
     <!--
         ================================================================================================================
