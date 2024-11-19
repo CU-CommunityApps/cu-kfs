@@ -58,9 +58,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
         LOG.info("Creating Transaction Records");
         List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.asList(
-                TransactionRowPdpBuilder.For1042S.class
-//                TransactionRowDvBuilder.For1042S.class,
-//                TransactionRowPRNCBuilder.For1042S.class
+                TransactionRowPdpBuilder.For1042S.class,
+                TransactionRowDvBuilder.For1042S.class,
+                TransactionRowPRNCBuilder.For1042S.class
         );
         List<EnumMap<TaxStatType,Integer>> stats = createSprintaxTransactionRows(summary, transactionRowBuilders);
 
