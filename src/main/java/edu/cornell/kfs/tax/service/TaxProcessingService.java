@@ -22,12 +22,6 @@ public interface TaxProcessingService {
      */
     void doTaxProcessing(String taxType, java.util.Date processingStartDate);
 
-    void doTaxProcessing1042();
-
-    TaxOutputDefinition get1042PaymentsOutputDefinition();
-
-    TaxOutputDefinition get1042BioOutputDefinition();
-
     /**
      * Retrieves all active object-code-to-tax-bucket mappings for the given tax type.
      * 

@@ -53,21 +53,6 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
 
     @Override
     @Transactional
-    public void doTaxProcessing1042() {
-        LOG.info("==== Start of 1042S SPRINTAX Tax processing ====");
-
-        java.sql.Date startDate = new java.sql.Date(124, 0, 1);
-        java.sql.Date endDate = new java.sql.Date(124, 0, 15);
-
-        taxProcessingDao.doTaxProcessing("1042S",2024, startDate, endDate, true, new java.util.Date());
-
-//        taxProcessingDao.doTaxProcessing1042(2024, startDate, endDate);
-
-        LOG.info("==== End of 1042S SPRINTAX Tax processing ====");
-    }
-
-    @Override
-    @Transactional
     public void doTaxProcessing(String taxType, java.util.Date processingStartDate) {
         if (processingStartDate == null) {
             throw new IllegalArgumentException("processingStartDate cannot be null");
@@ -84,20 +69,20 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         /*
          * Perform basic tax-type-specific setup.
          */
-//        if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
-//            // Do 1099 tax processing.
-//            taxDetailType = CUTaxConstants.TAX_1099_PARM_DETAIL;
-//            vendorForeign = false;
-//
-//        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
-//            // Do 1042S tax processing.
-//            taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
-//            vendorForeign = true;
-//
-//        } else {
-//            throw new IllegalArgumentException("Invalid tax reporting type");
-//        }
-//
+        if (CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
+            // Do 1099 tax processing.
+            taxDetailType = CUTaxConstants.TAX_1099_PARM_DETAIL;
+            vendorForeign = false;
+
+        } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
+            // Do 1042S tax processing.
+            taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
+            vendorForeign = true;
+
+        } else {
+            throw new IllegalArgumentException("Invalid tax reporting type");
+        }
+
 
 
         taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
@@ -179,59 +164,9 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         LOG.info("Performing " + taxType + " tax processing for the given time period:");
         LOG.info("Report Year: " + Integer.toString(reportYear) + ", Start Date: " + startDate.toString() + ", End Date: " + endDate.toString());
         
-//        taxProcessingDao.doTaxProcessing(taxType, reportYear, startDate, endDate, vendorForeign, processingStartDate);
+        taxProcessingDao.doTaxProcessing(taxType, reportYear, startDate, endDate, vendorForeign, processingStartDate);
         
         LOG.info("==== End of tax processing ====");
-    }
-
-    public TaxOutputDefinition get1042PaymentsOutputDefinition() {
-        InputStream definitionStream = null;
-        byte[] definitionContent;
-
-        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/Sprintax1042STransactionOutputDefinition.xml";
-
-        try {
-            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
-            definitionContent = IOUtils.toByteArray(definitionStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (definitionStream != null) {
-                try {
-                    definitionStream.close();
-                } catch (IOException e) {
-                    LOG.error("Could not close tax definition file input");
-                }
-            }
-        }
-
-        Object ret = taxOutputDefinitionFileType.parse(definitionContent);
-        return TaxOutputDefinition.class.cast(ret);
-    }
-
-    public TaxOutputDefinition get1042BioOutputDefinition() {
-        InputStream definitionStream = null;
-        byte[] definitionContent;
-
-        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/Sprintax1042SBioOutputDefinition.xml";
-
-        try {
-            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
-            definitionContent = IOUtils.toByteArray(definitionStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (definitionStream != null) {
-                try {
-                    definitionStream.close();
-                } catch (IOException e) {
-                    LOG.error("Could not close tax definition file input");
-                }
-            }
-        }
-
-        Object ret = taxOutputDefinitionFileType.parse(definitionContent);
-        return TaxOutputDefinition.class.cast(ret);
     }
 
     @Override

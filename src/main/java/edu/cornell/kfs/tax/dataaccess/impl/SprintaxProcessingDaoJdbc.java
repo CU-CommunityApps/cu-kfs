@@ -72,10 +72,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         TaxOutputDefinition paymentsOutputDefinition = taxProcessingService.get1042PaymentsOutputDefinition();
         printTransactionRows(taxParameters.getJobRunDate(), summary, paymentsOutputDefinition);
 
-//        LOG.info("Printing bio to csv files");
-//        TaxOutputDefinition bioOutputDefinition = taxProcessingService.get1042BioOutputDefinition();
-//        printBiographicRows(taxParameters.getJobRunDate(), summary, bioOutputDefinition);
-
         printStatistics(stats);
     }
 

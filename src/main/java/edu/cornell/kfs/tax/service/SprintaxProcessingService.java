@@ -13,8 +13,6 @@ public interface SprintaxProcessingService {
 
     TaxOutputDefinition get1042PaymentsOutputDefinition();
 
-    TaxOutputDefinition get1042BioOutputDefinition();
-
     TaxOutputDefinition getSprintaxBioOutputDefinition();
 
     /**
