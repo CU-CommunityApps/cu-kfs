@@ -11,15 +11,14 @@ import org.kuali.kfs.module.purap.document.service.PurapService;
 import org.kuali.kfs.module.purap.document.validation.impl.CreditMemoDocumentPreRules;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.kuali.kfs.sys.document.validation.impl.PaymentSourcePreRulesServiceImpl;
+import org.kuali.kfs.sys.document.validation.PaymentSourcePreRulesService;
 
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
     
-    private PaymentSourcePreRulesServiceImpl paymentSourcePreRulesService;
+    private PaymentSourcePreRulesService paymentSourcePreRulesService;
     private CuCheckStubService cuCheckStubService;
     
     @Override
@@ -68,16 +67,6 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         return getPaymentSourcePreRulesService().checkWireTransferTabState((PromptBeforeValidationBase)this,
                 cmDocument.getPaymentRequestDocument());
     }
-    
-    // KFSUPGRADE-779
-    protected boolean hasWireTransferValues(final PaymentSourceWireTransfer wireTransfer) {
-        return getPaymentSourcePreRulesService().hasWireTransferValues(wireTransfer);
-    }
-    
-    protected void clearWireTransferValues(final PaymentSourceWireTransfer wireTransfer) {
-        getPaymentSourcePreRulesService().clearWireTransferValues(wireTransfer);
-    }
-   // end KFSUPGRADE-779
 
     public CuCheckStubService getCuCheckStubService() {
         if (cuCheckStubService == null) {
@@ -86,14 +75,14 @@ public class CuCreditMemoDocumentPreRules extends CreditMemoDocumentPreRules {
         return cuCheckStubService;
     }
     
-    public PaymentSourcePreRulesServiceImpl getPaymentSourcePreRulesService() {
+    public PaymentSourcePreRulesService getPaymentSourcePreRulesService() {
         if (paymentSourcePreRulesService == null) {
-            paymentSourcePreRulesService = SpringContext.getBean(PaymentSourcePreRulesServiceImpl.class);
+            paymentSourcePreRulesService = SpringContext.getBean(PaymentSourcePreRulesService.class);
         }
         return paymentSourcePreRulesService;
     }
 
-    public void setPaymentSourcePreRulesService(PaymentSourcePreRulesServiceImpl paymentSourcePreRulesService) {
+    public void setPaymentSourcePreRulesService(PaymentSourcePreRulesService paymentSourcePreRulesService) {
         this.paymentSourcePreRulesService = paymentSourcePreRulesService;
     }
 
