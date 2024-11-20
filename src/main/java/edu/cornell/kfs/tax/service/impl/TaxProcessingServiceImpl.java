@@ -16,6 +16,7 @@ import org.kuali.kfs.core.api.config.property.ConfigContext;
 import org.kuali.kfs.core.api.criteria.CriteriaLookupService;
 import org.kuali.kfs.core.api.criteria.PredicateFactory;
 import org.kuali.kfs.core.api.criteria.QueryByCriteria;
+import org.kuali.kfs.core.api.util.CoreUtilities;
 import org.kuali.kfs.coreservice.framework.CoreFrameworkServiceLocator;
 import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
 import org.kuali.kfs.sys.KFSConstants;
@@ -73,14 +74,17 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
             // Do 1099 tax processing.
             taxDetailType = CUTaxConstants.TAX_1099_PARM_DETAIL;
             vendorForeign = false;
+            
         } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
             // Do 1042S tax processing.
             taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
             vendorForeign = true;
+            
         } else {
             throw new IllegalArgumentException("Invalid tax reporting type");
         }
-
+        
+        
         
         /*
          * Determine report year, start date, and end date.
@@ -162,6 +166,8 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         
         LOG.info("==== End of tax processing ====");
     }
+
+
 
     @Override
     public TaxOutputDefinition getOutputDefinition(String taxParamPrefix, int reportYear) {
