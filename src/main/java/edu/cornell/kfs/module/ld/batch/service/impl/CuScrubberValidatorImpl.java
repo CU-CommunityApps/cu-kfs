@@ -67,8 +67,8 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
                     );
                 }
                 /* Cornell customization - start */
-                clearSubAccountOnModifiedFringeTransaction(
-                        laborOriginEntry, laborWorkingEntry, laborAccountingCycleCachingService, err);
+                generateWarningForClearedSubAccountOnModifiedFringeTransaction(
+                        laborOriginEntry, laborAccountingCycleCachingService, err);
                 /* Cornell customization - end */
                 return err;
             }
@@ -93,15 +93,14 @@ public class CuScrubberValidatorImpl extends ScrubberValidatorImpl {
     /**
      * Cornell Customization to support checkAccountFringeIndicator base code customization.
      */
-    protected void clearSubAccountOnModifiedFringeTransaction(
-            final LaborOriginEntry laborOriginEntry, final LaborOriginEntry laborWorkingEntry,
-            final LaborAccountingCycleCachingService laborAccountingCycleCachingService, final Message existingMessage) {
+    protected void generateWarningForClearedSubAccountOnModifiedFringeTransaction(
+            final LaborOriginEntry laborOriginEntry,
+            final LaborAccountingCycleCachingService laborAccountingCycleCachingService,
+            final Message existingMessage) {
         if (hasSubAccountNumber(laborOriginEntry)) {
             if (existingMessage.getType() == Message.TYPE_WARNING) {
                 appendSubAccountWarningToMessage(existingMessage, laborOriginEntry.getSubAccountNumber());
             }
-            laborWorkingEntry.setSubAccount(null);
-            laborWorkingEntry.setSubAccountNumber(KFSConstants.getDashSubAccountNumber());
         }
     }
 
