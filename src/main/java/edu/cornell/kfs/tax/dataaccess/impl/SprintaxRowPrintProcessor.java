@@ -230,6 +230,11 @@ public class SprintaxRowPrintProcessor {
                 dvCheckStubTextP.value = whitespacePattern.matcher(dvCheckStubTextP.value).replaceAll(KRADConstants.BLANK_SPACE);
             }
 
+            // Do the printing.
+            resetBuffer(1);
+            appendPieces(1);
+            writeBufferToOutput(1, 0);
+
         }
 
         LOG.info("Finished raw transaction row printing to file.");
