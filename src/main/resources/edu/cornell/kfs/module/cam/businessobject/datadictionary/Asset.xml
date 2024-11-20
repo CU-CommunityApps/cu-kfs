@@ -78,11 +78,23 @@
       </property>
   </bean>
 
+  <!-- Lookup Definition Beans -->
+  <bean id="Asset-organizationTagNumber" parent="Asset-organizationTagNumber-parentBean"/>
+  <bean id="Asset-organizationTagNumber-parentBean" abstract="true" parent="Asset-assetOrganization.organizationTagNumber"/>
+  
+  <bean id="Asset-serviceRateIndicator" parent="Asset-serviceRateIndicator-parentBean"/>
+  <bean id="Asset-serviceRateIndicator-parentBean" abstract="true" parent="Asset-extension-serviceRateIndicator"/>
 
-<!-- Business Object Lookup Definition -->
+  <bean id="Asset-payment-documentNumber" parent="Asset-payment-documentNumber-parentBean"/>
+  <bean id="Asset-payment-documentNumber-parentBean" abstract="true" parent="Asset-assetPayments.documentNumber"/>
+  
+  <bean id="Asset-location-typeCode" parent="Asset-location-typeCode-parentBean"/>
+  <bean id="Asset-location-typeCode-parentBean" parent="Asset-assetLocations.assetLocationTypeCode"/>
+  
 
+  <!-- Business Object Lookup Definition -->
   <bean parent="DataDictionaryBeanOverride">
-      <property name="beanName" value="Asset-lookupDefinition" />
+      <property name="beanName" value="Asset-lookupDefinition"/>
       <property name="fieldOverrides">
           <list>
               <!-- NEW FRAMEWORK -->
@@ -90,27 +102,27 @@
                   <property name="propertyName" value="formAttributeDefinitions"/>
                   <property name="propertyNameForElementCompare" value="name"/>
                   <property name="element">
-                      <ref bean="Asset-assetOrganization.organizationTagNumber"/>
+                      <ref bean="Asset-organizationTagNumber"/>
                   </property>
                   <property name="insertAfter">
                       <list>
-                          <ref bean="AssetExtension-serviceRateIndicator"/>
+                          <ref bean="Asset-serviceRateIndicator"/>
                       </list>
                   </property>
               </bean>
               <bean parent="FieldOverrideForListElementInsert">
-                  <property name="propertyName" value="formAttributeDefinitions" />
+                  <property name="propertyName" value="formAttributeDefinitions"/>
                   <property name="propertyNameForElementCompare" value="name"/>
                   <property name="element">
-                      <ref bean="Asset-assetPayments.documentNumber"/>
+                      <ref bean="Asset-payment-documentNumber"/>
                   </property>
                   <property name="insertAfter">
                       <list>
-                          <ref bean="Asset-assetLocations.assetLocationTypeCode"/>
+                          <ref bean="Asset-location-typeCode-parentBean"/>
                       </list>
                   </property>
               </bean>
-           </list>
+          </list>
       </property>
   </bean>
 
