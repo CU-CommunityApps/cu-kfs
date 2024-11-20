@@ -1,55 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <section length="3518" hasExactLength="false" hasSeparators="true" separator=",">
-        <field name="Header1" length="90" type="STATIC" value="E-mail" />
-        <field name="Header2" length="90" type="STATIC" value="Student number" />
-        <field name="Header3" length="90" type="STATIC" value="UNIQUE FORM IDENTIFIER" />
-        <field name="Header4" length="90" type="STATIC" value="Is the current version amendment" />
-        <field name="Header5" length="90" type="STATIC" value="The current number of amendment" />
-        <field name="Header6" length="90" type="STATIC" value="Income Code" />
-        <field name="Header7" length="90" type="STATIC" value="Gross Income" />
-        <field name="Header8" length="90" type="STATIC" value="Chapter 3 Indicator" />
-        <field name="Header9" length="90" type="STATIC" value="Chapter 3 Exemption Code" />
-        <field name="Header10" length="90" type="STATIC" value="Chapter 3 Tax Rate" />
-        <field name="Header11" length="90" type="STATIC" value="Chapter 4 Exemption Code" />
-        <field name="Header12" length="90" type="STATIC" value="Chapter 4 Tax Rate" />
-        <field name="Header13" length="90" type="STATIC" value="Withholding Allowance" />
-        <field name="Header14" length="90" type="STATIC" value="Net Income" />
-        <field name="Header15" length="90" type="STATIC" value="Federal Tax Withheld" />
-        <field name="Header16" length="90" type="STATIC" value="Check if tax not deposited with IRS pursuant to escrow prodecure" />
-        <field name="Header17" length="90" type="STATIC" value="Check if withholding occurred in subsequent year with respect to a partnership interest" />
-        <field name="Header18" length="90" type="STATIC" value="Tax withheld by other agents" />
-        <field name="Header19" length="90" type="STATIC" value="Overwithheld Tax Repaid to Recepient" />
-        <field name="Header20" length="90" type="STATIC" value="Total withholding credit" />
-        <field name="Header21" length="90" type="STATIC" value="Tax paid by withholding agent (amounts not withheld)" />
-        <field name="Header22" length="90" type="STATIC" value="Withholding agent's GIIN" />
-        <field name="Header23" length="90" type="STATIC" value="Recipient Chapter 3 status code" />
-        <field name="Header24" length="90" type="STATIC" value="Recipient Chapter 4 status code" />
-        <field name="Header25" length="90" type="STATIC" value="Recipient's GIIN" />
-        <field name="Header26" length="90" type="STATIC" value="LOB code" />
-        <field name="Header27" length="90" type="STATIC" value="Recipient's account number" />
-        <field name="Header28" length="90" type="STATIC" value="Primary Withholding Agent's Name (if applicapable)" />
-        <field name="Header29" length="90" type="STATIC" value="Primary Withholding Agent's EIN" />
-        <field name="Header30" length="90" type="STATIC" value="Pro-rata Reporting" />
-        <field name="Header31" length="90" type="STATIC" value="Intermediary flow-through's name" />
-        <field name="Header32" length="90" type="STATIC" value="Intermediary's or FTE's Chapter 3 Status Code" />
-        <field name="Header33" length="90" type="STATIC" value="Intermediary's or FTE's Chapter 4 Status Code" />
-        <field name="Header34" length="90" type="STATIC" value="Intermediary/Flow-Through's Name" />
-        <field name="Header35" length="90" type="STATIC" value="Intermediary or FTE GIIN" />
-        <field name="Header36" length="90" type="STATIC" value="NQI/FLW-THR/PTP Country Code" />
-        <field name="Header37" length="90" type="STATIC" value="Recipient's Foreign Tax I.D. Number" />
-        <field name="Header38" length="90" type="STATIC" value="NQI/FLW-THR/PTP Address Line" />
-        <field name="Header39" length="90" type="STATIC" value="NQI/FLW-THR/PTP City" />
-        <field name="Header40" length="90" type="STATIC" value="Payer's Name" />
-        <field name="Header41" length="90" type="STATIC" value="Payer's TIN" />
-        <field name="Header42" length="90" type="STATIC" value="Payer's GIIN" />
-        <field name="Header43" length="90" type="STATIC" value="Payer's Chapter 3 Status Code" />
-        <field name="Header44" length="90" type="STATIC" value="Payer's Chapter 4 Status Code" />
-        <field name="Header45" length="90" type="STATIC" value="State income tax withheld" />
-        <field name="Header46" length="90" type="STATIC" value="Payer's State Tax Number" />
-        <field name="Header47" length="90" type="STATIC" value="Name of State" />
-    </section>
     <!-- Mappings to TransactionRowOutput -->
     <section length="3518" hasExactLength="false" hasSeparators="true" separator=",">
         <field name="Field1" length="90" type="DETAIL" value="vendorEmailAddress" /> <!-- E-mail -->

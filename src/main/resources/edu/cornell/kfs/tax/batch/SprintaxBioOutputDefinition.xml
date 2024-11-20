@@ -4,33 +4,6 @@
     This definition is for the tax year 2016 format.
  -->
 <taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <!--
-        ======================================================================
-        This section represents a 1042S header record (fields A1 through A13).
-        ======================================================================
-     -->
-    <section length="256" hasExactLength="false" hasSeparators="true" separator=",">
-        <field name="A1" length="40" type="DERIVED" value="vendorLastName" /><!-- A1 :: Last Name -->
-        <field name="A2" length="40" type="DERIVED" value="vendorFirstName" /><!-- A2 :: First Name -->
-        <field name="A3" length="40" type="BLANK" /><!-- A3 :: Middle Initials -->
-        <field name="A4" length="10" type="BLANK" /><!-- A4 :: System Generated ID Number -->
-        <field name="A5" length="11" type="DERIVED" value="ssn" /><!-- A5 :: Social Security Number [999-99-9999] -->
-        <field name="A6" length="15" type="BLANK" /><!-- A6 :: School Assigned ID Number -->
-        <field name="A7" length="10" type="BLANK" /><!-- A7 :: Date of Birth -->
-        <field name="A8" length="11" type="DERIVED" value="itin" /><!-- A8 :: ITIN [999-99-9999] -->
-        <field name="A9" length="15" type="BLANK" /><!-- A9 :: Payroll ID -->
-        <field name="A10" length="15" type="DETAIL" value="payeeId" /><!-- A10 :: Financial/AP ID -->
-        <field name="A11" length="15" type="BLANK" /><!-- A11 :: Student ID -->
-        <field name="A12" length="15" type="BLANK" /><!-- A12 :: VISA System ID -->
-        <field name="A13" length="19" type="VENDOR" value="vendorGIIN" /><!-- A13 :: Global Intermediary Identification Number (GIIN) [XXXXXX.XXXXX.XX.XXX] -->
-    </section>
-    <!--
-        ====================================================================================================================
-        This section represents a 1042S biographic record (header record fields A1 through A13, plus fields B1 through B99).
-        ====================================================================================================================
-     -->
-
-    <!-- NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province -->
 
     <section length="1890" hasExactLength="false" hasSeparators="true" separator=",">
         <field name="B1" length="90" type="DERIVED" value="vendorFirstName" /><!-- First_Name -->
@@ -55,50 +28,5 @@
         <field name="B20" length="90" type="STATIC" value="" /><!-- Mailing_Address -->
         <field name="B21" length="90" type="DERIVED" value="vendorForeignProvinceName" /><!-- Canada_Province -->
     </section>
-    <!--
-        ================================================================================================================
-        This section represents a 1042S detail record (header record fields A1 through A13, plus fields D1 through D99).
-        ================================================================================================================
-     -->
-    <section length="609" hasExactLength="false" hasSeparators="true" separator=",">
-        <field name="D1" length="4" type="DETAIL" value="reportYear" /><!-- D1 :: Tax Year -->
-        <field name="D2" length="2" type="DERIVED" value="incomeCode" /><!-- D2 :: Income Code -->
-        <field name="D3" length="1" type="DETAIL" value="incomeCodeSubType" /><!-- D3 :: Income Code subtype -->
-        <field name="D4" length="1" type="STATIC" value="0" /><!-- D4 :: Type of Applicable Tax (0 - Reporting under Chapter 3 (NRA), 1 - Reporting Under Chapter 4 (FATCA)) -->
-        <field name="D5" length="2" type="DERIVED" value="chapter3ExemptionCode" /><!-- D5 :: Chapter 3 Exemption Code -->
-        <field name="D6" length="5" type="DERIVED" value="chapter3TaxRate" /><!-- D6 :: Chapter 3 Tax Rate -->
-        <field name="D7" length="2" type="DERIVED" value="chapter4ExemptionCode" /><!-- D7 :: Chapter 4 Exemption Code -->
-        <field name="D8" length="5" type="STATIC" value="00.00" /><!-- D8 :: Chapter 4 Tax Rate -->
-        <field name="D9" length="10" type="DERIVED" value="grossAmount" /><!-- D9 :: Gross amount paid to individual -->
-        <field name="D10" length="10" type="STATIC" value="0" /><!-- D10 :: Withholding Allowance (only valid for income types 15 or 16, code 0 for other types) -->
-        <field name="D11" length="10" type="DERIVED" value="fedTaxWithheldAmount" /><!-- D11 :: Federal Withheld Amount -->
-        <field name="D12" length="10" type="DERIVED" value="stateIncomeTaxWithheldAmount" /><!-- D12 :: State Withheld Amount -->
-        <field name="D13" length="10" type="BLANK" /><!-- D13 :: Out of system treaty benefit -->
-        <field name="D14" length="10" type="BLANK" /><!-- D14 :: Refund Amount -->
-        <field name="D15" length="10" type="BLANK" /><!-- D15 :: Tax Assumed by Withholding Agent -->
-        <field name="D16" length="2" type="DERIVED" value="stateCode" /><!-- D16 :: State Code -->
-        <field name="D17" length="2" type="DERIVED" value="vendorForeignCountryCode" /><!-- D17 :: Country Code  -->
-        <field name="D18" length="25" type="BLANK" /><!-- D18 :: Country Name (NOTE: Should be non-blank if D17 Country Code is not given) -->
-        <field name="D19" length="10" type="DERIVED" value="endDate" /><!-- D19 :: Cycle Date (Payment Date) -->
-        <field name="D20" length="10" type="STATIC" value="KFS" /><!-- D20 :: Record Source -->
-        <field name="D21" length="1" type="STATIC" value="A" /><!-- D21 :: Record Status (F=Forecast, A=Actual, O=Out of System, R=Refund) -->
-        <field name="D22" length="1" type="STATIC" value="Y" /><!-- D22 :: Payment Type (Y=Year-to-date, C=Cycle only) -->
-        <field name="D23" length="3" type="BLANK" /><!-- D23 :: Number of Days in Cycle (Use to project end dates) -->
-        <field name="D24" length="10" type="DERIVED" value="endDate" /><!-- D24 :: Last Date of Earnings (Last Date for which payments cover. MM/DD/YYYY - (M-Month, D-Day, Y-Year) -->
-        <field name="D25" length="8" type="BLANK" /><!-- D25 :: Constant Additional Tax (Wants Decimal) -->
-        <field name="D26" length="20" type="BLANK" /><!-- D26 :: Campus -->
-        <field name="D27" length="9" type="DERIVED" value="ein" /><!-- D27 :: EIN -->
-        <field name="D28" length="4" type="BLANK" /><!-- D28 :: Intermediary/FLW-THR ID -->
-        <field name="D29" length="40" type="BLANK" /><!-- D29 :: Intermediary/FLW-THR Name Line 1 -->
-        <field name="D30" length="4" type="BLANK" /><!-- D30 :: Other Payer ID -->
-        <field name="D31" length="40" type="BLANK" /><!-- D31 :: Other Payer Name -->
-        <field name="D32" length="4" type="BLANK" /><!-- D32 :: Primary Withholding Agent's ID -->
-        <field name="D33" length="40" type="BLANK" /><!-- D33 :: Primary Withholding Agent's Name -->
-        <!--
-            ==== NOTE: The current spec does not have any fields with names D34 through D96. ====
-         -->
-        <field name="D97" length="25" type="BLANK" /><!-- D97 :: Filler -->
-        <field name="D98" length="1" type="STATIC" value="P" /><!-- D98 :: P (just the letter "P") -->
-        <field name="D99" length="2" type="BLANK" /><!-- D99 :: Carriage Return/Line Feed (can be spaces instead if writing to a flat ASCII file) -->
-    </section>
+
 </taxOutputDefinition>

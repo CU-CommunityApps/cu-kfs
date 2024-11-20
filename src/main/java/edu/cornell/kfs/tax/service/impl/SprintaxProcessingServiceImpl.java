@@ -177,8 +177,8 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
 //                taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
 //        );
         List<String> datesToProcess = new ArrayList<>();
-        datesToProcess.add("10/01/2024");
-        datesToProcess.add("10/05/2024");
+        datesToProcess.add("10/21/2024");
+        datesToProcess.add("10/31/2024");
 
         Calendar tempCalendar = CoreApiServiceLocator.getDateTimeService().getCurrentCalendar();
 
@@ -245,7 +245,6 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         SprintaxReportParameters sprintaxReportParameters = new SprintaxReportParameters(startDate, endDate, reportYear, jobRunDate);
         return sprintaxReportParameters;
     }
-
 
     public void setTaxOutputDefinitionFileType(TaxOutputDefinitionFileType taxOutputDefinitionFileType) {
         this.taxOutputDefinitionFileType = taxOutputDefinitionFileType;

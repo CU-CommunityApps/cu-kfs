@@ -53,7 +53,7 @@ public class SprintaxPaymentRowProcessor {
     private final PreparedStatement[] extraStatements;
 
     // Helper objects for generating and storing output.
-    private final SprintaxPaymentRowProcessor.OutputHelper[] outputHelpers;
+    private SprintaxPaymentRowProcessor.OutputHelper outputHelper;
 
     // The Writer instances that the character buffers can be written to.
     private Writer writer;
@@ -225,7 +225,6 @@ public class SprintaxPaymentRowProcessor {
         this.summary = summary;
         this.extraResultSets = new ResultSet[4];
         this.extraStatements = new PreparedStatement[4];
-        this.outputHelpers = new SprintaxPaymentRowProcessor.OutputHelper[3];
         this.formattedTaxId = new char[]{'-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
         this.amountFormat = buildAmountFormat();
         this.percentFormat = buildPercentFormat();
@@ -641,6 +640,18 @@ public class SprintaxPaymentRowProcessor {
         }
     }
 
+    List<String> getFilePathsForWriters(java.util.Date processingStartDate) {
+        ArrayList<String> filePaths = new ArrayList<>();
+        // build bio
+        DateFormat tempFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
+        String bioFilePath = getReportsDirectory() + "/irs_1042s_sprintax_bio" + tempFormat.format(processingStartDate) + ".csv";
+        filePaths.add(bioFilePath);
+        String filePathDetail = new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
+                .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
+        filePaths.add(filePathDetail);
+        return filePaths;
+    }
+
     /**
      * Returns the SQL that should be used for retrieving the transaction detail rows to process.
      *
@@ -726,7 +737,6 @@ public class SprintaxPaymentRowProcessor {
             if (org.apache.commons.lang.StringUtils.isBlank(nextTaxId)) {
                 throw new RuntimeException("Could not find tax ID for initial row with payee " + nextPayeeId);
             }
-            LOG.info("Starting transaction row processing for 1042S tax reporting...");
         } else {
             // Skip processing if no detail rows were found.
             keepLooping = false;
@@ -1390,12 +1400,6 @@ public class SprintaxPaymentRowProcessor {
      * Helper method for writing 1042S biographic and detail records to their respective files.
      */
     private void writeLinesToFiles() throws SQLException, IOException {
-        final int HEADER_BUFFER_INDEX = 0;
-        final int BIO_BUFFER_INDEX = 1;
-        final int DETAIL_BUFFER_INDEX = 2;
-
-        final int BIO_WRITER_INDEX = 0;
-        final int DETAIL_WRITER_INDEX = 1;
 
         /*
          * If needed, replace the header record's contents and write a new biographic record.
@@ -1435,14 +1439,16 @@ public class SprintaxPaymentRowProcessor {
 
 
             // Prepare the header.
-            resetBuffer(HEADER_BUFFER_INDEX);
-            appendPieces(HEADER_BUFFER_INDEX);
+//            resetBuffer(HEADER_BUFFER_INDEX);
+//            appendPieces(HEADER_BUFFER_INDEX);
 
             // Prepare and write the biographic record.
-            resetBuffer(BIO_BUFFER_INDEX);
-            appendBuffer(HEADER_BUFFER_INDEX, BIO_BUFFER_INDEX);
-            appendPieces(BIO_BUFFER_INDEX);
-            writeBufferToOutput(BIO_BUFFER_INDEX, BIO_WRITER_INDEX);
+            resetBuffer();
+//            appendBuffer(HEADER_BUFFER_INDEX, BIO_BUFFER_INDEX);
+            appendPieces();
+            writer.write("\n");
+            writer.flush();
+//            writeBufferToOutput();
 
             writeWsBiographicRecord = false;
             numBioRecordsWritten++;
@@ -1529,10 +1535,10 @@ public class SprintaxPaymentRowProcessor {
 
 
         // Prepare and write the detail record.
-        resetBuffer(DETAIL_BUFFER_INDEX);
-        appendBuffer(HEADER_BUFFER_INDEX, DETAIL_BUFFER_INDEX);
-        appendPieces(DETAIL_BUFFER_INDEX);
-        writeBufferToOutput(DETAIL_BUFFER_INDEX, DETAIL_WRITER_INDEX);
+//        resetBuffer();
+//        appendBuffer(HEADER_BUFFER_INDEX, DETAIL_BUFFER_INDEX);
+//        appendPieces(DETAIL_BUFFER_INDEX);
+//        writeBufferToOutput(DETAIL_BUFFER_INDEX, DETAIL_WRITER_INDEX);
         numDetailRecordsWritten++;
 
         // Reset flags and amounts as needed.
@@ -1636,7 +1642,7 @@ public class SprintaxPaymentRowProcessor {
 
     final void setWriter(Writer writer) {
         if (this.writer != null) {
-            throw new IllegalStateException("A Writer is already defined");
+            throw new IllegalStateException("A Writer is already defined for index");
         }
         this.writer = writer;
     }
@@ -1646,22 +1652,18 @@ public class SprintaxPaymentRowProcessor {
      * sets the array of "pieces" that will be used to build it
      * by copying the contents of the provided List.
      *
-     * @param bufferIndex      The index to associate with the new buffer.
      * @param bufferLength     The size of the new buffer; cannot be negative.
      * @param pieces           The "piece" objects that will be used to set the buffer's contents.
-     * @param useExactLength   Indicates whether the max lengths of the buffer and each "piece" should also be treated as exact lengths.
-     * @param addSeparatorChar Indicates whether the buffer should separate "piece" output values with a delimiter character.
-     * @param separator        The character to use as the separator; will be ignored if addSeparatorChar is set to false.
      * @throws IllegalStateException if a character buffer already exists at the given index.
      */
-    final void setupOutputBuffer(int bufferIndex, int bufferLength, List<? extends SprintaxPaymentRowProcessor.RecordPiece> pieces,
-                                 boolean useExactLength, boolean addSeparatorChar, char separator) {
-        if (outputHelpers[bufferIndex] != null) {
-            throw new IllegalStateException("An output buffer is aleady set for index " + Integer.toString(bufferIndex));
+    final void setupOutputBuffer(int bufferLength, List<? extends SprintaxPaymentRowProcessor.RecordPiece> pieces) {
+        if (outputHelper != null) {
+            throw new IllegalStateException("An output buffer is aleady set");
         } else if (bufferLength < 0) {
             throw new IllegalArgumentException("bufferLength cannot be negative");
         }
-        outputHelpers[bufferIndex] = new SprintaxPaymentRowProcessor.OutputHelper(bufferLength, pieces, useExactLength, addSeparatorChar, separator);
+
+        outputHelper = new SprintaxPaymentRowProcessor.OutputHelper(bufferLength, pieces);
     }
 
 
@@ -1870,13 +1872,13 @@ public class SprintaxPaymentRowProcessor {
             }
         }
 
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                LOG.warn("Could not close writer");
-            }
-        }
+//        if (writer != null) {
+//            try {
+//                writer.close();
+//            } catch (IOException e) {
+//                LOG.warn("Could not close writer");
+//            }
+//        }
     }
 
     /**
@@ -1887,14 +1889,11 @@ public class SprintaxPaymentRowProcessor {
     final void clearArraysAndReferences() {
         Arrays.fill(extraResultSets, null);
         Arrays.fill(extraStatements, null);
-        writer = null;
 
-        for (int i = 0; i < outputHelpers.length; i++) {
-            if (outputHelpers[i] != null) {
-                Arrays.fill(outputHelpers[i].outputBuffer, '0');
-                Arrays.fill(outputHelpers[i].outputPieces, null);
-                outputHelpers[i] = null;
-            }
+        if (outputHelper != null) {
+            Arrays.fill(outputHelper.outputBuffer, '0');
+            Arrays.fill(outputHelper.outputPieces, null);
+            outputHelper = null;
         }
 
         // Clear out subclass-specific data.
@@ -1990,200 +1989,67 @@ public class SprintaxPaymentRowProcessor {
         taxBox = null;
     }
 
-
-    /**
-     * Resets the insertion index of the given buffer to zero.
-     * Does NOT reset the buffer contents, since it is assumed
-     * that the relevant portions of the buffer will be
-     * overwritten for the next output operation anyway.
-     *
-     * @param bufferIndex The index of the buffer to reset.
-     */
-    final void resetBuffer(int bufferIndex) {
-        outputHelpers[bufferIndex].position = 0;
+    final void resetBuffer() {
+        outputHelper.position = 0;
     }
 
-    /**
-     * Appends the getValue() String values of the matching "pieces" to the indicated buffer,
-     * performing truncation, right-padding or separator-character-delimiting as needed.
-     * Blank values will be treated as "" for not-exact-length processing, or " " for exact-length processing.
-     * Values that are too long will be truncated to the piece's length.
-     * If doing exact-length processing, values that are too short will be right-padded to the piece's length.
-     * If adding separator characters and at least one piece is added, then a trailing separator character will also be appended.
-     *
-     * @param bufferIndex
-     * @throws SQLException
-     */
-    final void appendPieces(int bufferIndex) throws SQLException {
-        SprintaxPaymentRowProcessor.OutputHelper helper = outputHelpers[bufferIndex];
+    final void appendPieces() throws SQLException, IOException {
         String tempValue;
         int tempLen;
 
-        final String defaultStringIfBlank = helper.useExactLengths ? KRADConstants.BLANK_SPACE : KFSConstants.EMPTY_STRING;
-
         // Append the String values of the pieces in order, right-padding or truncating as needed.
-        for (SprintaxPaymentRowProcessor.RecordPiece piece : helper.outputPieces) {
-            if (piece.alwaysBlank) {
-                // If the value is unconditionally blank, then just fill with spaces as necessary.
-                if (helper.useExactLengths) {
-                    Arrays.fill(helper.outputBuffer, helper.position, helper.position + piece.len, ' ');
-                    helper.position += piece.len;
-                }
+        for (SprintaxPaymentRowProcessor.RecordPiece piece : outputHelper.outputPieces) {
 
+            tempValue = StringUtils.defaultIfBlank(piece.getValue(), KFSConstants.EMPTY_STRING);
+            tempLen = tempValue.length();
+            if (tempLen <= piece.len) {
+                // If not too long, use the whole value and right-pad with spaces as needed.
+                tempValue.getChars(0, tempLen, outputHelper.outputBuffer, outputHelper.position);
+                outputHelper.position += tempLen;
             } else {
-                // Otherwise, prepare to append the value.
-                tempValue = StringUtils.defaultIfBlank(piece.getValue(), defaultStringIfBlank);
-                tempLen = tempValue.length();
-                if (tempLen <= piece.len) {
-                    // If not too long, use the whole value and right-pad with spaces as needed.
-                    tempValue.getChars(0, tempLen, helper.outputBuffer, helper.position);
-                    if (helper.useExactLengths && tempLen < piece.len) {
-                        Arrays.fill(helper.outputBuffer, helper.position + tempLen, helper.position + piece.len, ' ');
-                        helper.position += piece.len;
-                    } else {
-                        helper.position += tempLen;
-                    }
-                } else {
-                    // If the value is too long, then truncate it and notify the piece.
-                    tempValue.getChars(0, piece.len, helper.outputBuffer, helper.position);
-                    piece.notifyOfTruncatedValue();
-                    helper.position += piece.len;
-                }
+                // If the value is too long, then truncate it and notify the piece.
+                tempValue.getChars(0, piece.len, outputHelper.outputBuffer, outputHelper.position);
+                piece.notifyOfTruncatedValue();
+                outputHelper.position += piece.len;
             }
 
-            // If necessary, add a separator character.
-            if (helper.addSeparatorChar) {
-                helper.outputBuffer[helper.position] = helper.separator;
-                helper.position++;
-            }
+            writer.write(tempValue + ",");
+
+            outputHelper.outputBuffer[outputHelper.position] = ',';
+            outputHelper.position++;  //todo writer.write(piece.value + ",")
         }
 
     }
 
     /**
-     * Appends one char buffer with the contents of another char buffer.
-     * If the source buffer has separator characters between each field,
-     * then a trailing separator will also be put in the destination buffer.
-     *
-     * @param sourceBufferIndex The index of the char buffer to copy from.
-     * @param destBufferIndex   The index of the char buffer to copy to.
-     */
-    final void appendBuffer(int sourceBufferIndex, int destBufferIndex) {
-        SprintaxPaymentRowProcessor.OutputHelper sourceHelper = outputHelpers[sourceBufferIndex];
-
-        // Validate source buffer length before proceeding.
-        if (sourceHelper.useExactLengths) {
-            // If exact-length output, make sure that the buffer has been completely written over with new content.
-            if (sourceHelper.position != sourceHelper.outputBuffer.length) {
-                throw new IllegalStateException("Source buffer was not completely full but should have been! Index: " + Integer.toString(sourceBufferIndex)
-                        + ", expected source length: " + Integer.toString(sourceHelper.outputBuffer.length)
-                        + ", actual source length: " + Integer.toString(sourceHelper.position));
-            }
-
-        } else if (sourceHelper.position == 0) {
-            // If variable-length output, do not allow for outputting an empty buffer.
-            throw new IllegalStateException("Source buffer was empty but should not have been! Index: " + Integer.toString(sourceBufferIndex));
-        }
-
-        // Copy the contents of the source buffer to the destination one, including a trailing separator character (if any).
-        System.arraycopy(
-                sourceHelper.outputBuffer, 0, outputHelpers[destBufferIndex].outputBuffer, outputHelpers[destBufferIndex].position, sourceHelper.position);
-
-        // Update insertion position of the destination buffer.
-        outputHelpers[destBufferIndex].position += sourceHelper.position;
-    }
-
-    /**
-     * Writes the contents of the specified char buffer to the given writer.
-     * A newline character will also be appended to the output.
-     * If the buffer has separator characters between each field,
-     * then any trailing separator will be excluded.
-     *
-     * @param bufferIndex The index of the char buffer to read from.
-     * @param writerIndex The index of the Writer instance to write to.
+     * Writes the contents of the specified char buffer to the given writer. A newline character will also be appended to the output.
      * @throws IOException if an I/O error occurs.
      */
-    final void writeBufferToOutput(int bufferIndex, int writerIndex) throws IOException {
-        SprintaxPaymentRowProcessor.OutputHelper helper = outputHelpers[bufferIndex];
-
-        // Validate buffer length before proceeding.
-        if (helper.useExactLengths) {
-            // If exact-length output, make sure that the buffer has been completely written over with new content.
-            if (helper.position != helper.outputBuffer.length) {
-                throw new IllegalStateException("Buffer was not completely full but should have been! Index: " + Integer.toString(bufferIndex)
-                        + ", expected buffer length: " + Integer.toString(helper.outputBuffer.length)
-                        + ", actual buffer length: " + Integer.toString(helper.position));
-            }
-        } else if (helper.position == 0) {
-            // If variable-length output, do not allow for outputting an empty buffer.
-            throw new IllegalStateException("Buffer was empty but should not have been! Index: " + Integer.toString(bufferIndex));
+    final void writeBufferToOutput() throws IOException {
+        if (outputHelper.position == 0) {
+            throw new IllegalStateException("Buffer was empty but should not have been!");
         }
 
         // Send the buffer contents to the Writer, excluding the trailing separator character if one exists.
-        writer.write(helper.outputBuffer, 0, helper.position - (helper.addSeparatorChar ? 1 : 0));
+        writer.write(outputHelper.outputBuffer, 0, outputHelper.position - 1);
         writer.write('\n');
     }
 
 
 
-    /*
-     * ============================================================================================
-     * Below is a helper object for managing a section of tax input and output data.
-     * ============================================================================================
-     */
-
-    /**
-     * Helper object encapsulating data about a specific section of tax input and output.
-     */
     private static final class OutputHelper {
-        // The output character buffer to write to.
         private final char[] outputBuffer;
-        // The "piece" objects that will generate the String content to append to the buffer.
         private final SprintaxPaymentRowProcessor.RecordPiece[] outputPieces;
-        // Indicates whether the max lengths of the buffer and each "piece" should be treated as exact lengths.
-        private final boolean useExactLengths;
-        // Indicates whether a separator character should be added between the output of each "piece".
-        private final boolean addSeparatorChar;
-        // The separator character to use if addSeparatorChar is set to true.
-        private final char separator;
 
-        // The current insertion position for the character buffer.
         private int position;
 
-        private OutputHelper(int bufferLength, List<? extends SprintaxPaymentRowProcessor.RecordPiece> pieces, boolean useExactLengths, boolean addSeparatorChar, char separator) {
-            this.outputBuffer = new char[bufferLength + (addSeparatorChar ? 1 : 0)];
+        private OutputHelper(int bufferLength, List<? extends SprintaxPaymentRowProcessor.RecordPiece> pieces) {
+            this.outputBuffer = new char[bufferLength + 1];
             this.outputPieces = pieces.toArray(new SprintaxPaymentRowProcessor.RecordPiece[pieces.size()]);
-            this.useExactLengths = useExactLengths;
-            this.addSeparatorChar = addSeparatorChar;
-            this.separator = separator;
         }
 
     }
 
-
-
-    /*
-     * ============================================================================================
-     * Below are helper objects for encapsulating values read from or derived from the detail rows,
-     * and which will potentially be included in the output files.
-     * ============================================================================================
-     */
-
-    /**
-     * Convenience class representing a single field to be output to a file.
-     *
-     * <p>The name field is primarily for debugging or logging convenience.</p>
-     *
-     * <p>The len field should be set to the maximum length expected for the field.
-     * During processing, any returned values longer than this length will be
-     * truncated to this maximum length. Also, if performing exact-length processing
-     * and the returned value is too short, then it will be right-padded with spaces
-     * to match this length.</p>
-     *
-     * <p>The alwaysBlank field is a convenience flag for indicating whether the
-     * returned value is always expected to be a blank one. It is meant as a
-     * processing convenience to allow for buffer-appending shortcuts.</p>
-     */
     abstract static class RecordPiece {
         // The name of the field represented by this piece.
         final String name;
