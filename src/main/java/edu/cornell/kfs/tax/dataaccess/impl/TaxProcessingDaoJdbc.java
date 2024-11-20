@@ -518,16 +518,12 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
         this.reportsDirectory = reportsDirectory;
     }
 
-    public String getReportsDirectory() {
+    protected String getReportsDirectory() {
         return reportsDirectory;
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {
         this.configurationService = configurationService;
-    }
-
-    public ConfigurationService getConfigurationService() {
-        return configurationService;
     }
 
 }

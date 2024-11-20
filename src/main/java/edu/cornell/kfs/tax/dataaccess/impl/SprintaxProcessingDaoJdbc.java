@@ -12,7 +12,6 @@ import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
 import edu.cornell.kfs.tax.dataaccess.SprintaxProcessingDao;
 import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.service.SprintaxProcessingService;
-import edu.cornell.kfs.tax.service.TaxProcessingService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +46,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         SprintaxProcessingService taxProcessingService = SpringContext.getBean(SprintaxProcessingService.class);
 
         LOG.info("Preparing data for processing");
-        Transaction1042SSummary summary = buildSprintaxSummary(taxProcessingService, taxParameters);
+        Transaction1042SSummary summary = buildTransaction1042SSummary(taxProcessingService, taxParameters);
 
 
         String deleteRawTransactionDetailSql = "DELETE FROM TX_RAW_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
@@ -58,9 +57,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
         LOG.info("Creating Transaction Records");
         List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.asList(
-                TransactionRowPdpBuilder.For1042S.class,
-                TransactionRowDvBuilder.For1042S.class,
-                TransactionRowPRNCBuilder.For1042S.class
+                TransactionRowPdpBuilder.For1042S.class
+//                TransactionRowDvBuilder.For1042S.class,
+//                TransactionRowPRNCBuilder.For1042S.class
         );
         List<EnumMap<TaxStatType,Integer>> stats = createSprintaxTransactionRows(summary, transactionRowBuilders);
 
@@ -75,7 +74,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         printStatistics(stats);
     }
 
-    public Transaction1042SSummary buildSprintaxSummary(SprintaxProcessingService sprintaxProcessingService, SprintaxReportParameters taxParameters) {
+    public Transaction1042SSummary buildTransaction1042SSummary(SprintaxProcessingService sprintaxProcessingService, SprintaxReportParameters taxParameters) {
         TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, taxParameters.getReportYear());
         Map<String, TaxDataRow> taxDataDefinitionMap = taxDataDefinition.getDataRowsAsMap();
 
@@ -89,6 +88,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         return  summary;
     }
 
+    //todo try to remove and use super class
     protected  <T extends TransactionDetailSummary> List<EnumMap<TaxStatType,Integer>> createSprintaxTransactionRows(T summary, List<Class<? extends TransactionRowBuilder<T>>> builderClasses) {
         final TaxProcessingDao currentDao = this;
 
@@ -370,31 +370,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         return filePathForPaymentsCsv;
     }
 
-    List<String> getBiographicCsvFilePath(int reportYear, java.util.Date processingStartDate) {
-        List<String> ret = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
-
-        String filePathForPaymentsCsv = getReportsDirectory()
-                + "/"
-                + CUTaxConstants.Sprintax.BIO_OUTPUT_FILE_PREFIX
-                + reportYear
-                + dateFormat.format(processingStartDate)
-                + CUTaxConstants.Sprintax.TAX_CSV_FILE_SUFFIX;
-
-        ret.add(filePathForPaymentsCsv);
-        return ret;
-    }
-
-    /**
-     * Helper method for building a new TransactionRowProcessor instance from the parsed XML input.
-     * The processor's implementation class *must* have a default constructor.
-     * Note that this method will not configure the PreparedStatement and Writer instances;
-     * the calling code is responsible for that part of the processor setup.
-     *
-     * @param outputDefinition The parsed XML definition for this processor's output formatting.
-     * @param summary The object encapsulating the tax-type-specific summary info.
-     * @return A TransactionRowProcessor implementation of the given type with the given formatting.
-     */
+    //todo remove duplication
     SprintaxPaymentRowProcessor buildNewProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
         Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces = new HashMap<String, SprintaxPaymentRowProcessor.RecordPiece>();
         Map<String,List<String>> complexPiecesNames = new HashMap<String,List<String>>();
@@ -562,6 +538,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         return rowProcessor;
     }
 
+    //todo remove duplication
     SprintaxRowPrintProcessor buildNewPrintProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
         Map<String, SprintaxRowPrintProcessor.RecordPiece> complexPieces = new HashMap<>();
         Map<String,List<String>> complexPiecesNames = new HashMap<>();
@@ -721,6 +698,5 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
         return rowProcessor;
     }
-
 
 }
