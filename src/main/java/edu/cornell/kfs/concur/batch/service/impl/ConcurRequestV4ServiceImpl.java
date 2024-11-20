@@ -263,9 +263,6 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
                 requestUuid, resultsDTO);
         
-        /*
-         * 
-         @todo renable this
         ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
         
         try {
@@ -275,8 +272,6 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                     + "for Request UUID " + requestUuid, e);
             updateProcessingResultForInvalidWorkflowResponse(resultsDTO);
         }
-        */
-        LOG.error("updateRequestStatusInConcur. would have updated the status in Concur for " + requestId);
     }
 
     protected boolean shouldUpdateStatusInConcur() {
