@@ -61,7 +61,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 //                TransactionRowDvBuilder.For1042S.class,
 //                TransactionRowPRNCBuilder.For1042S.class
         );
-        List<EnumMap<TaxStatType,Integer>> stats = createSprintaxTransactionRows(summary, transactionRowBuilders);
+        List<EnumMap<TaxStatType,Integer>> stats = createTransactionRows(summary, transactionRowBuilders);
 
         LOG.info("Processing Transaction Records and generating Biographic csv file");
         EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxProcessingService);
@@ -86,129 +86,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 taxDataDefinitionMap
         );
         return  summary;
-    }
-
-    //todo try to remove and use super class
-    protected  <T extends TransactionDetailSummary> List<EnumMap<TaxStatType,Integer>> createSprintaxTransactionRows(T summary, List<Class<? extends TransactionRowBuilder<T>>> builderClasses) {
-        final TaxProcessingDao currentDao = this;
-
-        // Use a ConnectionCallback via a JdbcTemplate to simplify the batch processing and transaction management.
-        return getJdbcTemplate().execute(new ConnectionCallback<List<EnumMap<TaxStatType,Integer>>>() {
-            @Override
-            public List<EnumMap<TaxStatType,Integer>> doInConnection(Connection con) throws SQLException {
-                PreparedStatement selectStatement = null;
-                PreparedStatement rawTransactionInsertStatement = null;
-                PreparedStatement selectRawTransactionStatement = null;
-                PreparedStatement secondPassTransactionInsertStatement = null;
-                ResultSet rs = null;
-                ResultSet rawDataTableResultSet = null;
-                List<EnumMap<TaxStatType,Integer>> stats = new ArrayList<EnumMap<TaxStatType,Integer>>();
-                try {
-                    TransactionRowBuilder<T> previousBuilder = null;
-
-                    // Setup the insertion statements to be used during the first and second passes.
-                    rawTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getRawTransactionDetailInsertSql(summary.rawTransactionDetailRow));
-                    secondPassTransactionInsertStatement = con.prepareStatement(TaxSqlUtils.getTransactionDetailInsertSql(summary.transactionDetailRow));
-
-                    // Process each type of retrievable data row (PDP, DV, etc.).
-                    for (Class<? extends TransactionRowBuilder<T>> builderClazz : builderClasses) {
-                        // Create and configure the builder.
-                        TransactionRowBuilder<T> builder = builderClazz.newInstance();
-                        builder.copyValuesFromPreviousBuilder(previousBuilder, currentDao, summary);
-                        LOG.info("Starting creation of first pass (raw) transaction rows from the following tax source: " + builder.getTaxSourceName());
-
-                        // Setup the retrieval statement.
-                        selectStatement = con.prepareStatement(builder.getSqlForSelect(summary));
-                        Object[][] parameterValues = builder.getParameterValuesForSelect(summary);
-                        setParameters(selectStatement, parameterValues);
-
-                        // Get the results.
-                        rs = selectStatement.executeQuery();
-                        // Let the builder iterate over the results and insert new transaction detail rows as needed.
-                        builder.buildRawTransactionRows(rs, rawTransactionInsertStatement, summary);
-
-                        // Close the result set and SELECT prepared statement to prepare for the second pass.
-                        rs.close();
-                        selectStatement.close();
-
-                        // Setup retrieval statement for second pass. SELECT needs to obtain data from first pass (raw) transaction details table
-                        selectRawTransactionStatement = con.prepareStatement(builder.getSqlForSelectingCreatedRows(summary), ResultSet.TYPE_FORWARD_ONLY);
-                        setParameters(selectRawTransactionStatement, builder.getParameterValuesForSelectingCreatedRows(summary));
-
-                        // Get the query results from the first pass table.
-                        rawDataTableResultSet = selectRawTransactionStatement.executeQuery();
-
-                        // Let the builder iterate over the raw detail transaction rows from the first pass table
-                        // updating specific attributes as needed then inserting those rows into the second pass
-                        // table OR logging the keys of the raw data row if it should not be used.
-                        builder.updateTransactionRowsFromWorkflowDocuments(rawDataTableResultSet, secondPassTransactionInsertStatement, summary);
-
-                        // Get the statistics collected by the builder.
-                        stats.add(builder.getStatistics());
-
-                        // Close the result set and SELECT prepared statement to prepare for any future iterations.
-                        rawDataTableResultSet.close();
-                        selectRawTransactionStatement.close();
-
-                        LOG.info("Finished creation of transaction rows from the following tax source: " + builder.getTaxSourceName());
-
-                        // Reference the builder for copying data to future builders as needed.
-                        previousBuilder = builder;
-                    }
-
-                    // Return the collected statistics.
-                    return stats;
-                } catch (InstantiationException e) {
-                    throw new RuntimeException("Could not instantiate builder instance: " + e.getMessage());
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Could not create builder instance: " + e.getMessage());
-                } finally {
-                    // Close result sets and prepared statements as needed.
-                    if (rs != null) {
-                        try {
-                            rs.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close tax data first pass ResultSet.");
-                        }
-                    }
-                    if (rawDataTableResultSet != null) {
-                        try {
-                            rawDataTableResultSet.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close tax data second pass updatable ResultSet.");
-                        }
-                    }
-                    if (rawTransactionInsertStatement != null) {
-                        try {
-                            rawTransactionInsertStatement.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close rawTransactionInsertStatement row insertion statement.");
-                        }
-                    }
-                    if (secondPassTransactionInsertStatement != null) {
-                        try {
-                            secondPassTransactionInsertStatement.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close secondPassTransactionInsertStatement row insertion statement.");
-                        }
-                    }
-                    if (selectRawTransactionStatement != null) {
-                        try {
-                            selectRawTransactionStatement.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close tax data second pass selectRawTransactionStatement statement.");
-                        }
-                    }
-                    if (selectStatement != null) {
-                        try {
-                            selectStatement.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close tax data first pass selection statement.");
-                        }
-                    }
-                }
-            }
-        });
     }
 
     private EnumMap<TaxStatType,Integer> processTransactionRows(Transaction1042SSummary summary, SprintaxProcessingService sprintaxProcessingService) {
