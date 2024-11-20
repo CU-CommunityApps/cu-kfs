@@ -115,7 +115,7 @@ public class ValidationResult {
     public void add(ValidationResult validationResult){
         this.valid &= validationResult.isValid();
         this.addErrorMessages(validationResult.getErrorMessages());
-        this.addAccountDetailMessage(validationResult.getAccountDetailMessagesAsOneFormattedString());
+        this.addAccountDetailMessages(validationResult.getAccountDetailMessages());
     }
 
 }
