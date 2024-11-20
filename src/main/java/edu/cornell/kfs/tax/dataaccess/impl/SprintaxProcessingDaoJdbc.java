@@ -298,100 +298,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                     }
                     tempStatement = null;
 
-                    List<String> filePathsForWriters = getPaymentsCsvFilePath(summary.reportYear, processingStartDate);
-                    for (int i = 0; i < filePathsForWriters.size(); i++) {
-                        tempWriter = new BufferedWriter(new PrintWriter(new File(filePathsForWriters.get(i)), StandardCharsets.UTF_8));
-                        processor.setWriter(tempWriter, i);
-                    }
-                    tempWriter = null;
-
-                    // Get the transaction detail rows.
-                    rs = selectStatement.executeQuery();
-
-                    // Perform the actual processing.
-                    processor.processTaxRows(rs);
-
-                    // Return the collected statistics.
-                    return processor.getStatistics();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    // Close resources, handling exceptions as needed.
-                    processor.closeForFinallyBlock();
-
-                    if (tempWriter != null) {
-                        // If an error occurred passing a Writer to the processor, then close it here.
-                        try {
-                            tempWriter.close();
-                        } catch (IOException e) {
-                            LOG.error("Could not close file writer");
-                        }
-                    }
-
-                    if (tempStatement != null) {
-                        // If an error occurred passing a PreparedStatement to the processor, then close it here.
-                        try {
-                            tempStatement.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close extra tax processing statement");
-                        }
-                    }
-
-                    if (rs != null) {
-                        try {
-                            rs.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close transaction row ResultSet");
-                        }
-                    }
-
-                    if (selectStatement != null) {
-                        try {
-                            selectStatement.close();
-                        } catch (SQLException e) {
-                            LOG.error("Could not close transaction row selection statement");
-                        }
-                    }
-
-                    processor.clearArraysAndReferences();
-                }
-            }
-        });
-    }
-    private EnumMap<TaxStatType,Integer> printBiographicRows(java.util.Date processingStartDate, Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
-
-        SprintaxRowPrintProcessor processor = buildNewPrintProcessor(outputDefinition, summary);
-
-        return getJdbcTemplate().execute(new ConnectionCallback<EnumMap<TaxStatType,Integer>>() {
-            @Override
-            public EnumMap<TaxStatType,Integer> doInConnection(Connection con) throws SQLException {
-                PreparedStatement selectStatement = null;
-                ResultSet rs = null;
-                PreparedStatement tempStatement = null;
-                Writer tempWriter = null;
-
-                try {
-
-                    selectStatement = con.prepareStatement(processor.getSqlForSelect(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
-                    setParameters(selectStatement, processor.getParameterValuesForSelect());
-
-                    // Prepare any other statements needed by the tax processing.
-                    String[] tempValues = processor.getSqlForExtraStatements();
-                    for (int i = 0; i < tempValues.length; i++) {
-                        tempStatement = con.prepareStatement(tempValues[i]);
-                        Object[][] defaultArgs = processor.getDefaultParameterValuesForExtraStatement(i);
-                        if (defaultArgs != null) {
-                            setParameters(tempStatement, defaultArgs);
-                        }
-                        processor.setExtraStatement(tempStatement, i);
-                    }
-                    tempStatement = null;
-
-                    List<String> filePathsForWriters = getBiographicCsvFilePath(summary.reportYear, processingStartDate);
-                    for (int i = 0; i < filePathsForWriters.size(); i++) {
-                        tempWriter = new BufferedWriter(new PrintWriter(new File(filePathsForWriters.get(i)), StandardCharsets.UTF_8));
-                        processor.setWriter(tempWriter, i);
-                    }
+                    String filePathForWriter = getPaymentsCsvFilePath(summary.reportYear, processingStartDate);
+                    tempWriter = new BufferedWriter(new PrintWriter(new File(filePathForWriter), StandardCharsets.UTF_8));
+                    processor.setWriter(tempWriter);
                     tempWriter = null;
 
                     // Get the transaction detail rows.
@@ -448,8 +357,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         });
     }
 
-    List<String> getPaymentsCsvFilePath(int reportYear, java.util.Date processingStartDate) {
-        List<String> ret = new ArrayList<>();
+    String getPaymentsCsvFilePath(int reportYear, java.util.Date processingStartDate) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
 
         String filePathForPaymentsCsv = getReportsDirectory()
@@ -459,8 +367,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 + dateFormat.format(processingStartDate)
                 + CUTaxConstants.Sprintax.TAX_CSV_FILE_SUFFIX;
 
-        ret.add(filePathForPaymentsCsv);
-        return ret;
+        return filePathForPaymentsCsv;
     }
 
     List<String> getBiographicCsvFilePath(int reportYear, java.util.Date processingStartDate) {

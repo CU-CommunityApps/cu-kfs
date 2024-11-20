@@ -31,13 +31,7 @@ import java.util.regex.Pattern;
 public class SprintaxRowPrintProcessor {
     private static final Logger LOG = LogManager.getLogger(SprintaxRowPrintProcessor.class);
 
-    private static final int NUM_PRINT_CHAR_BUFFERS = 2;
-    private static final int NUM_PRINT_WRITERS = 1;
-
     private static final int HEADER_BUFFER_INDEX = 0;
-    private static final int DETAIL_ROW_BUFFER_INDEX = 1;
-
-    private static final int MED_BUILDER_SIZE = 100;
     private static final int VENDOR_US_ADDRESS_INDEX = 2;
     private static final int VENDOR_FOREIGN_ADDRESS_INDEX = 3;
 
@@ -53,7 +47,7 @@ public class SprintaxRowPrintProcessor {
     private final ResultSet[] extraResultSets;
     private final PreparedStatement[] extraStatements;
     private final SprintaxRowPrintProcessor.OutputHelper[] outputHelpers;
-    private final Writer[] writers;
+    private Writer writer;
 
     SprintaxRowPrintProcessor(Transaction1042SSummary summary, String reportsDirectory) {
         this.summary = summary;
@@ -61,7 +55,6 @@ public class SprintaxRowPrintProcessor {
         this.extraResultSets = new ResultSet[0];
         this.extraStatements = new PreparedStatement[2];
         this.outputHelpers = new SprintaxRowPrintProcessor.OutputHelper[2];
-        this.writers = new Writer[1];
     }
 
     SprintaxRowPrintProcessor.RecordPiece getPieceForField(CUTaxBatchConstants.TaxFieldSource fieldSource, TaxTableField field, String name, int len) {
@@ -193,17 +186,7 @@ public class SprintaxRowPrintProcessor {
         dvCheckStubTextP = (SprintaxRowPrintProcessor.DerivedFieldStringPiece) complexPieces.get(summary.derivedValues.dvCheckStubTextWithUpdatedWhitespace.propertyName);
     }
 
-
-
-    String[] getFilePathsForWriters(java.util.Date processingStartDate) {
-        String[] filePaths = getFilePathsForWriters(processingStartDate);
-        filePaths[0] = new StringBuilder(MED_BUILDER_SIZE).append(getReportsDirectory()).append('/')
-                .append(getPrintFilePrefix()).append(summary.reportYear)
-                .append(buildDateFormatForFileSuffixes().format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
-        return filePaths;
-    }
-
-    String getSqlForSelect() {  //todo bio?
+    String getSqlForSelect() {
         return TaxSqlUtils.getTransactionDetailSelectSql(getFieldForWhereClause(summary), summary.transactionDetailRow, false, true);
     }
 
@@ -247,10 +230,6 @@ public class SprintaxRowPrintProcessor {
                 dvCheckStubTextP.value = whitespacePattern.matcher(dvCheckStubTextP.value).replaceAll(KRADConstants.BLANK_SPACE);
             }
 
-            // Do the printing.
-            resetBuffer(DETAIL_ROW_BUFFER_INDEX);
-            appendPieces(DETAIL_ROW_BUFFER_INDEX);
-            writeBufferToOutput(DETAIL_ROW_BUFFER_INDEX, 0);
         }
 
         LOG.info("Finished raw transaction row printing to file.");
@@ -550,8 +529,8 @@ public class SprintaxRowPrintProcessor {
         }
 
         // Send the buffer contents to the Writer, excluding the trailing separator character if one exists.
-        writers[writerIndex].write(helper.outputBuffer, 0, helper.position - (helper.addSeparatorChar ? 1 : 0));
-        writers[writerIndex].write('\n');
+        writer.write(helper.outputBuffer, 0, helper.position - (helper.addSeparatorChar ? 1 : 0));
+        writer.write('\n');
     }
 
     String[] getSqlForExtraStatements() {
@@ -580,7 +559,7 @@ public class SprintaxRowPrintProcessor {
     void clearArraysAndReferences() {
         Arrays.fill(extraResultSets, null);
         Arrays.fill(extraStatements, null);
-        Arrays.fill(writers, null);
+        writer = null;
 
         for (int i = 0; i < outputHelpers.length; i++) {
             if (outputHelpers[i] != null) {
@@ -607,7 +586,7 @@ public class SprintaxRowPrintProcessor {
 
     /**
      * Closes any non-null result sets, prepared statements,
-     * and writers that have been stored by this processor,
+     * and writer that have been stored by this processor,
      * and catches and logs any SQLException or IOException
      * errors instead of leaving them unhandled.
      */
@@ -634,23 +613,20 @@ public class SprintaxRowPrintProcessor {
             }
         }
 
-        // Close any Writers.
-        for (Writer writer : writers) {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    LOG.warn("Could not close writer");
-                }
+        if (writer != null) {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LOG.warn("Could not close writer");
             }
         }
     }
 
-    final void setWriter(Writer writer, int writerIndex) {
-        if (writers[writerIndex] != null) {
-            throw new IllegalStateException("A Writer is already defined for index " + Integer.toString(writerIndex));
+    final void setWriter(Writer writer) {
+        if (this.writer != null) {
+            throw new IllegalStateException("A Writer is already defined");
         }
-        writers[writerIndex] = writer;
+        this.writer = writer;
     }
 
     /**
