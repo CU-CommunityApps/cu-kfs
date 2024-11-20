@@ -56,7 +56,7 @@ public class SprintaxPaymentRowProcessor {
     private final SprintaxPaymentRowProcessor.OutputHelper[] outputHelpers;
 
     // The Writer instances that the character buffers can be written to.
-    private final Writer[] writers;
+    private Writer writer;
 
     // Helper array for formatting tax IDs.
     private final char[] formattedTaxId;
@@ -226,7 +226,6 @@ public class SprintaxPaymentRowProcessor {
         this.extraResultSets = new ResultSet[4];
         this.extraStatements = new PreparedStatement[4];
         this.outputHelpers = new SprintaxPaymentRowProcessor.OutputHelper[3];
-        this.writers = new Writer[2];
         this.formattedTaxId = new char[]{'-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
         this.amountFormat = buildAmountFormat();
         this.percentFormat = buildPercentFormat();
@@ -288,17 +287,6 @@ public class SprintaxPaymentRowProcessor {
     DateFormat buildDateFormat() {
         return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
     }
-
-    /**
-     * Builds and returns an object for formatting date-time values
-     * to be used as the end of a filename.
-     *
-     * @return A new DateFormat for formatting date-times as filename suffixes.
-     */
-    DateFormat buildDateFormatForFileSuffixes() {
-        return new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
-    }
-
 
     String getReportsDirectory() {
         return reportsDirectory;
@@ -612,31 +600,6 @@ public class SprintaxPaymentRowProcessor {
         sitwAmountP.negateStringValue = true;
         stateCodeP = (SprintaxPaymentRowProcessor.RecordPiece1042SString) complexPieces.get(derivedValues.stateCode.propertyName);
         endDateP = (SprintaxPaymentRowProcessor.RecordPiece1042SDate) complexPieces.get(derivedValues.endDate.propertyName);
-    }
-
-
-
-    List<String> getFilePathsForWriters(java.util.Date processingStartDate) {
-        ArrayList<String> filePaths = new ArrayList<>();
-        // build bio
-
-
-        DateFormat tempFormat = buildDateFormatForFileSuffixes();
-        String bioFilePath = getReportsDirectory() + "/irs_1042s_sprintax_bio" + tempFormat.format(processingStartDate) + ".csv";
-        filePaths.add(bioFilePath);
-
-        String filePathDetail = new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
-                        .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
-        filePaths.add(filePathDetail);
-
-//        filePaths[0] =
-//                new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_BIO_OUTPUT_FILE_PREFIX)
-//                        .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
-//        // Output file for 1042S detail records.
-//        filePaths[1] =
-//                new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
-//                        .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
-        return filePaths;
     }
 
     String[] getSqlForExtraStatements() {
@@ -1671,18 +1634,11 @@ public class SprintaxPaymentRowProcessor {
         extraStatements[statementIndex] = extraStatement;
     }
 
-    /**
-     * Sets the Writer instance at the given index.
-     *
-     * @param writer      The Writer to set.
-     * @param writerIndex The index to associate with the Writer instance.
-     * @throws IllegalStateException if a Writer instance already exists at the given index.
-     */
-    final void setWriter(Writer writer, int writerIndex) {
-        if (writers[writerIndex] != null) {
-            throw new IllegalStateException("A Writer is already defined for index " + Integer.toString(writerIndex));
+    final void setWriter(Writer writer) {
+        if (this.writer != null) {
+            throw new IllegalStateException("A Writer is already defined");
         }
-        writers[writerIndex] = writer;
+        this.writer = writer;
     }
 
     /**
@@ -1914,14 +1870,11 @@ public class SprintaxPaymentRowProcessor {
             }
         }
 
-        // Close any Writers.
-        for (Writer writer : writers) {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    LOG.warn("Could not close writer");
-                }
+        if (writer != null) {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                LOG.warn("Could not close writer");
             }
         }
     }
@@ -1934,7 +1887,7 @@ public class SprintaxPaymentRowProcessor {
     final void clearArraysAndReferences() {
         Arrays.fill(extraResultSets, null);
         Arrays.fill(extraStatements, null);
-        Arrays.fill(writers, null);
+        writer = null;
 
         for (int i = 0; i < outputHelpers.length; i++) {
             if (outputHelpers[i] != null) {
@@ -2167,8 +2120,8 @@ public class SprintaxPaymentRowProcessor {
         }
 
         // Send the buffer contents to the Writer, excluding the trailing separator character if one exists.
-        writers[writerIndex].write(helper.outputBuffer, 0, helper.position - (helper.addSeparatorChar ? 1 : 0));
-        writers[writerIndex].write('\n');
+        writer.write(helper.outputBuffer, 0, helper.position - (helper.addSeparatorChar ? 1 : 0));
+        writer.write('\n');
     }
 
 

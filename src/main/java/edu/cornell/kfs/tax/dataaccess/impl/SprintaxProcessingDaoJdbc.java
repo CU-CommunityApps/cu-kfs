@@ -28,6 +28,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,23 +116,8 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 }
 
                 try {
-
-                    java.util.Date processingStartDate = new java.util.Date();
-                    List<String> filePaths = processor.getFilePathsForWriters(processingStartDate);
-                    for (int i = 0; i < filePaths.size(); i++) {
-                        String filePath = filePaths.get(i);
-                        File outputFile = new File(filePath);
-                        PrintWriter printWriter = new PrintWriter(outputFile, StandardCharsets.UTF_8);
-                        Writer bufferedWriter = new BufferedWriter(printWriter);
-                        processor.setWriter(bufferedWriter, i);
-
-                        if (filePath.contains("bio")) {
-                            bufferedWriter.write("First_Name,Middle_Name,Last_Name,Email,Unique_ID_Student_Number,TIN,DOB,Foreign_Tax_ID,Country_of_Residence,US_Address_Line_1,US_Address_Line_2,US_City,US_State,US_zip,NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province");
-                            bufferedWriter.write("\n");
-                            bufferedWriter.flush();
-                        }
-
-                    }
+                    Writer writer = buildBufferedWriterForBioFile();
+                    processor.setWriter(writer);
 
                     ResultSet transactionDetailRecords = preparedSelectStatement.executeQuery();
                     processor.processTaxRows(transactionDetailRecords);
@@ -144,6 +130,27 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
             }
         });
 
+    }
+
+    Writer buildBufferedWriterForBioFile() throws IOException {
+        java.util.Date processingStartDate = new java.util.Date();
+        String filePath = getFilePathForBioWriter(processingStartDate);
+        File outputFile = new File(filePath);
+        PrintWriter printWriter = new PrintWriter(outputFile, StandardCharsets.UTF_8);
+        Writer bufferedWriter = new BufferedWriter(printWriter);
+
+        bufferedWriter.write("First_Name,Middle_Name,Last_Name,Email,Unique_ID_Student_Number,TIN,DOB,Foreign_Tax_ID,Country_of_Residence,US_Address_Line_1,US_Address_Line_2,US_City,US_State,US_zip,NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province");
+        bufferedWriter.write("\n");
+        bufferedWriter.flush();
+
+        return bufferedWriter;
+    }
+
+    String getFilePathForBioWriter(java.util.Date processingStartDate) {
+        DateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
+        String bioFilePath = getReportsDirectory() + "/irs_1042s_sprintax_bio" + dateFormat.format(processingStartDate) + ".csv";
+
+        return bioFilePath;
     }
 
     private EnumMap<TaxStatType,Integer> printTransactionRows(java.util.Date processingStartDate, Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
