@@ -69,7 +69,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         stats.add(processingStats);
 
         LOG.info("Printing to csv files");
-        TaxOutputDefinition paymentsOutputDefinition = taxProcessingService.get1042PaymentsOutputDefinition();
+        TaxOutputDefinition paymentsOutputDefinition = taxProcessingService.getSprintaxOutputDefinition("SprintaxTransactionOutputDefinition.xml");
         printTransactionRows(taxParameters.getJobRunDate(), summary, paymentsOutputDefinition);
 
         printStatistics(stats);
@@ -213,7 +213,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
     private EnumMap<TaxStatType,Integer> processTransactionRows(Transaction1042SSummary summary, SprintaxProcessingService sprintaxProcessingService) {
 
-        TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getSprintaxBioOutputDefinition();
+        TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getSprintaxOutputDefinition("SprintaxBioOutputDefinition.xml");
         SprintaxPaymentRowProcessor processor = buildNewProcessor(taxOutputDefinition, summary);
 
         processor.setReportsDirectory(getReportsDirectory());

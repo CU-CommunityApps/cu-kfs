@@ -11,17 +11,8 @@ public interface SprintaxProcessingService {
 
     void doTaxProcessing(java.util.Date processingStartDate);
 
-    TaxOutputDefinition get1042PaymentsOutputDefinition();
+    TaxOutputDefinition getSprintaxOutputDefinition(String filename);
 
-    TaxOutputDefinition getSprintaxBioOutputDefinition();
-
-    /**
-     * Retrieves all active object-code-to-tax-bucket mappings for the given tax type.
-     *
-     * @param taxType The type of tax processing being performed (1099, 1042S, etc.).
-     * @return A list of all active ObjectCodeBucketMapping objects for the given tax type.
-     * @throws IllegalArgumentException if taxType is blank or an unsupported value.
-     */
     List<ObjectCodeBucketMapping> getBucketMappings(String taxType);
 
     /**

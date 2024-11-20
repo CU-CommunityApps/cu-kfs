@@ -43,7 +43,6 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
     private static final Logger LOG = LogManager.getLogger(TaxProcessingServiceImpl.class);
 
     private static final String TAX_TYPE_FIELD = "taxType";
-    private static final String BOX_NUMBER_FIELD = "boxNumber";
     private static final int DAY_31 = 31;
 
     private TaxOutputDefinitionFileType taxOutputDefinitionFileType;
@@ -70,36 +69,11 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         LOG.info("==== End of Sprintax processing ====");
     }
 
-    public TaxOutputDefinition get1042PaymentsOutputDefinition() {
+    public TaxOutputDefinition getSprintaxOutputDefinition(String filename) {
         InputStream definitionStream = null;
         byte[] definitionContent;
 
-        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/Sprintax1042STransactionOutputDefinition.xml";
-
-        try {
-            definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
-            definitionContent = IOUtils.toByteArray(definitionStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (definitionStream != null) {
-                try {
-                    definitionStream.close();
-                } catch (IOException e) {
-                    LOG.error("Could not close tax definition file input");
-                }
-            }
-        }
-
-        Object ret = taxOutputDefinitionFileType.parse(definitionContent);
-        return TaxOutputDefinition.class.cast(ret);
-    }
-
-    public TaxOutputDefinition getSprintaxBioOutputDefinition() {
-        InputStream definitionStream = null;
-        byte[] definitionContent;
-
-        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/SprintaxBioOutputDefinition.xml";
+        String definitionFilePath = "classpath:edu/cornell/kfs/tax/batch/" + filename;
 
         try {
             definitionStream = CuCoreUtilities.getResourceAsStream(definitionFilePath);
@@ -165,25 +139,9 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         return definitionClass.cast(xmlFileType.parse(definitionContent));
     }
 
-
-
-    /**
-     * This implementation only supports 1099 bucket mappings.
-     *
-     * @see edu.cornell.kfs.tax.service.TaxProcessingService#getBucketMappings(java.lang.String)
-     */
     @Override
     public List<ObjectCodeBucketMapping> getBucketMappings(String taxType) {
-        if (StringUtils.isBlank(taxType)) {
-            throw new IllegalArgumentException("Bucket mapping taxType cannot be blank");
-        } else if (!CUTaxConstants.TAX_TYPE_1099.equals(taxType)) {
-            throw new IllegalArgumentException("Cannot retrieve bucket mappings for tax types other than 1099");
-        }
-
-        return SpringContext.getBean(CriteriaLookupService.class).lookup(ObjectCodeBucketMapping.class, QueryByCriteria.Builder.fromPredicates(
-                PredicateFactory.isNotNull(BOX_NUMBER_FIELD),
-                PredicateFactory.equal(KFSPropertyConstants.ACTIVE, KFSConstants.ACTIVE_INDICATOR)
-        )).getResults();
+        throw new IllegalArgumentException("Cannot retrieve bucket mappings for tax types other than 1099");
     }
 
     @Override
