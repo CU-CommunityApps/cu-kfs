@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
-import edu.cornell.kfs.tax.dataaccess.impl.TaxProcessingDaoJdbc;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +34,7 @@ import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionFileType;
 import edu.cornell.kfs.tax.businessobject.ObjectCodeBucketMapping;
 import edu.cornell.kfs.tax.businessobject.TransactionOverride;
+import edu.cornell.kfs.tax.dataaccess.TaxProcessingDao;
 import edu.cornell.kfs.tax.service.TaxProcessingService;
 
 /**
@@ -49,7 +49,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
 
     private TaxOutputDefinitionFileType taxOutputDefinitionFileType;
     private TaxDataDefinitionFileType taxDataDefinitionFileType;
-    private TaxProcessingDaoJdbc taxProcessingDao;
+    private TaxProcessingDao taxProcessingDao;
 
     @Override
     @Transactional
@@ -73,20 +73,14 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
             // Do 1099 tax processing.
             taxDetailType = CUTaxConstants.TAX_1099_PARM_DETAIL;
             vendorForeign = false;
-
         } else if (CUTaxConstants.TAX_TYPE_1042S.equals(taxType)) {
             // Do 1042S tax processing.
             taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
             vendorForeign = true;
-
         } else {
             throw new IllegalArgumentException("Invalid tax reporting type");
         }
 
-
-
-        taxDetailType = CUTaxConstants.TAX_1042S_PARM_DETAIL;
-        vendorForeign = true;
         
         /*
          * Determine report year, start date, and end date.
@@ -263,7 +257,7 @@ public class TaxProcessingServiceImpl implements TaxProcessingService {
         this.taxDataDefinitionFileType = taxDataDefinitionFileType;
     }
 
-    public void setTaxProcessingDao(TaxProcessingDaoJdbc taxProcessingDao) {
+    public void setTaxProcessingDao(TaxProcessingDao taxProcessingDao) {
         this.taxProcessingDao = taxProcessingDao;
     }
 
