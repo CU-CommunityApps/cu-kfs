@@ -105,8 +105,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getSprintaxOutputDefinition("SprintaxBioOutputDefinition.xml");
         SprintaxPaymentRowProcessor processor = buildNewProcessor(taxOutputDefinition, summary);
 
-        processor.setReportsDirectory(getReportsDirectory());
-
         return getJdbcTemplate().execute(new ConnectionCallback<EnumMap<TaxStatType,Integer>>() {
             @Override
             public EnumMap<TaxStatType,Integer> doInConnection(Connection con) throws SQLException {
@@ -128,10 +126,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
                 try {
                     Writer writer = buildBufferedWriterForBioFile();
-                    processor.setWriter(writer);
 
                     ResultSet transactionDetailRecords = preparedSelectStatement.executeQuery();
-                    processor.processTaxRows(transactionDetailRecords);
+                    processor.processTaxRows(writer, transactionDetailRecords);
 
                 } catch (IOException e) {
                     LOG.error(e.toString());

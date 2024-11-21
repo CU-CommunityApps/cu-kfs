@@ -20,11 +20,7 @@ import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class SprintaxRowPrintProcessor {
     private static final Logger LOG = LogManager.getLogger(SprintaxRowPrintProcessor.class);
@@ -90,7 +86,6 @@ public class SprintaxRowPrintProcessor {
     void processTaxRows(ResultSet rs, String outputFilepath) throws SQLException, IOException {
         buildWriter(outputFilepath);
 
-        // Perform initialization as needed.
         TaxTableRow.TransactionDetailRow detailRow = summary.transactionDetailRow;
         EncryptionService encryptionService = CoreApiServiceLocator.getEncryptionService();
         rsTransactionDetail = rs;
@@ -103,9 +98,8 @@ public class SprintaxRowPrintProcessor {
         writer.write(CUTaxConstants.Sprintax.TRANSACTION_FILE_HEADER_ROW);
         writer.write('\n');
 
-        // Print the data for each row to the file.
         while (rsTransactionDetail.next()) {
-            // Prepare the tax number.
+
             if (!summary.scrubbedOutput) {
                 try {
                     ssnFieldDefinition.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));

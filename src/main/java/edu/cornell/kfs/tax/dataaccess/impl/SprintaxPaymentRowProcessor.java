@@ -53,9 +53,6 @@ public class SprintaxPaymentRowProcessor {
 
     private SprintaxPaymentRowProcessor.RecordPiece[] outputFieldDefinitions;
 
-    // The Writer instances that the character buffers can be written to.
-    private Writer writer;
-
     // Helper array for formatting tax IDs.
     private final char[] formattedTaxId;
 
@@ -65,7 +62,6 @@ public class SprintaxPaymentRowProcessor {
     private final DateFormat dateFormat;
 
     // The default reporting sub-directory to use for file outputs.
-    private String reportsDirectory;
     private Transaction1042SSummary summary;
 
     // Variables pertaining to values that need to be retrieved from the next detail row before populating the detail "piece" objects.
@@ -275,15 +271,6 @@ public class SprintaxPaymentRowProcessor {
     DateFormat buildDateFormat() {
         return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
     }
-
-    String getReportsDirectory() {
-        return reportsDirectory;
-    }
-
-    void setReportsDirectory(String reportsDirectory) {
-        this.reportsDirectory = reportsDirectory;
-    }
-
 
     /**
      * Helper method for determining whether an inclusion or exclusion should
@@ -672,7 +659,8 @@ public class SprintaxPaymentRowProcessor {
      * @throws SQLException if a database access error occurs while processing.
      * @throws IOException  if an I/O error occurs while processing.
      */
-    void processTaxRows(ResultSet rs) throws SQLException, IOException {
+    void processTaxRows(Writer writer, ResultSet rs) throws SQLException, IOException {
+
         boolean keepLooping = true;
         boolean taxIdChanged = false;
         TaxTableRow.TransactionDetailRow detailRow;
@@ -800,7 +788,7 @@ public class SprintaxPaymentRowProcessor {
             rs.updateRow();
 
             if(writeWsBiographicRecord) {
-                writeBioLineToFile();
+                writeBioLineToFile(writer);
             }
 
 
@@ -1332,7 +1320,7 @@ public class SprintaxPaymentRowProcessor {
     /*
      * Helper method for writing 1042S biographic and detail records to their respective files.
      */
-    private void writeBioLineToFile() throws SQLException, IOException {
+    private void writeBioLineToFile(Writer writer) throws SQLException, IOException {
         /*
          * SSN-vs-ITIN logic per Loree Kanellis:
          * If the taxID starts with a '9' and the fourth digit is a '7' or '8'
@@ -1503,14 +1491,6 @@ public class SprintaxPaymentRowProcessor {
         }
         extraStatements[statementIndex] = extraStatement;
     }
-
-    final void setWriter(Writer writer) {
-        if (this.writer != null) {
-            throw new IllegalStateException("A Writer is already defined for index");
-        }
-        this.writer = writer;
-    }
-
     public void setupOutputBuffer(List<SprintaxPaymentRowProcessor.RecordPiece> pieces) {
         outputFieldDefinitions = pieces.toArray(new SprintaxPaymentRowProcessor.RecordPiece[pieces.size()]);
     }
