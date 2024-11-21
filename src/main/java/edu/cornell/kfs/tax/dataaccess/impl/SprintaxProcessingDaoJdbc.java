@@ -11,6 +11,7 @@ import edu.cornell.kfs.tax.batch.TaxOutputSection;
 import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
 import edu.cornell.kfs.tax.dataaccess.SprintaxProcessingDao;
 import edu.cornell.kfs.tax.service.SprintaxProcessingService;
+import edu.cornell.kfs.tax.service.TaxProcessingService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,36 +47,45 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
     public void doSprintaxProcessing(SprintaxReportParameters taxParameters) {
         SprintaxProcessingService taxProcessingService = SpringContext.getBean(SprintaxProcessingService.class);
 
-        LOG.info("Preparing data for processing");
         Transaction1042SSummary summary = buildTransaction1042SSummary(taxProcessingService, taxParameters);
 
+        clearTaxTransactionRecords(taxParameters.getReportYear());
 
-        String deleteRawTransactionDetailSql = "DELETE FROM TX_RAW_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
-        getJdbcTemplate().update(deleteRawTransactionDetailSql, taxParameters.getReportYear());
+        List<EnumMap<TaxStatType,Integer>> stats = generateTransactionRecords(summary);
 
-        String deleteTransactionDetailSql = "DELETE FROM TX_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
-        getJdbcTemplate().update(deleteTransactionDetailSql, taxParameters.getReportYear());
+        EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxProcessingService);
+        stats.add(processingStats);
 
-        LOG.info("Creating Transaction Records");
+        printTransactionRows(taxParameters.getJobRunDate(), summary, taxProcessingService);
+
+        printStatistics(stats);
+    }
+
+    List<EnumMap<TaxStatType,Integer>> generateTransactionRecords(Transaction1042SSummary summary) {
+        LOG.info("Creating Transaction Records using parent TaxProcessingDaoJdbc");
+
         List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.asList(
                 TransactionRowPdpBuilder.For1042S.class
 //                TransactionRowDvBuilder.For1042S.class,
 //                TransactionRowPRNCBuilder.For1042S.class
         );
-        List<EnumMap<TaxStatType,Integer>> stats = createTransactionRows(summary, transactionRowBuilders);
-
-        LOG.info("Processing Transaction Records and generating Biographic csv file");
-        EnumMap<TaxStatType, Integer> processingStats = processTransactionRows(summary, taxProcessingService);
-        stats.add(processingStats);
-
-        LOG.info("Printing to csv files");
-        TaxOutputDefinition paymentsOutputDefinition = taxProcessingService.getSprintaxOutputDefinition("SprintaxTransactionOutputDefinition.xml");
-        printTransactionRows(taxParameters.getJobRunDate(), summary, paymentsOutputDefinition);
-
-        printStatistics(stats);
+        List<EnumMap<TaxStatType,Integer>> stats = super.createTransactionRows(summary, transactionRowBuilders);
+        return stats;
     }
 
-    public Transaction1042SSummary buildTransaction1042SSummary(SprintaxProcessingService sprintaxProcessingService, SprintaxReportParameters taxParameters) {
+    void clearTaxTransactionRecords(int reportYear) {
+        LOG.info("Deleting Tax Transaction Records for Year " + reportYear);
+
+        String deleteRawTransactionDetailSql = "DELETE FROM TX_RAW_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
+        getJdbcTemplate().update(deleteRawTransactionDetailSql, reportYear);
+
+        String deleteTransactionDetailSql = "DELETE FROM TX_TRANSACTION_DETAIL_T WHERE REPORT_YEAR = ? AND FORM_1042S_BOX IS NOT NULL";
+        getJdbcTemplate().update(deleteTransactionDetailSql, reportYear);
+    }
+
+    Transaction1042SSummary buildTransaction1042SSummary(SprintaxProcessingService sprintaxProcessingService, SprintaxReportParameters taxParameters) {
+        LOG.info("Preparing data for processing");
+
         TaxDataDefinition taxDataDefinition = sprintaxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, taxParameters.getReportYear());
         Map<String, TaxDataRow> taxDataDefinitionMap = taxDataDefinition.getDataRowsAsMap();
 
@@ -90,6 +100,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
     }
 
     private EnumMap<TaxStatType,Integer> processTransactionRows(Transaction1042SSummary summary, SprintaxProcessingService sprintaxProcessingService) {
+        LOG.info("Processing Transaction Records and Generating Biographic CSV File");
 
         TaxOutputDefinition taxOutputDefinition = sprintaxProcessingService.getSprintaxOutputDefinition("SprintaxBioOutputDefinition.xml");
         SprintaxPaymentRowProcessor processor = buildNewProcessor(taxOutputDefinition, summary);
@@ -152,9 +163,12 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         return bioFilePath;
     }
 
-    private void printTransactionRows(java.util.Date processingStartDate, Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
+    private void printTransactionRows(java.util.Date processingStartDate, Transaction1042SSummary summary, SprintaxProcessingService sprintaxService) {
+        LOG.info("Printing to csv files");
 
-        SprintaxRowPrintProcessor processor = buildNewPrintProcessor(outputDefinition, summary);
+        TaxOutputDefinition outputDefinition = sprintaxService.getSprintaxOutputDefinition("SprintaxTransactionOutputDefinition.xml");
+        SprintaxRowPrintProcessor processor = new SprintaxRowPrintProcessor(summary, outputDefinition);
+        String outputFilePath = getPaymentsCsvFilePath(summary.reportYear, processingStartDate);
 
         getJdbcTemplate().execute(new ConnectionCallback<String>() {
             @Override
@@ -172,10 +186,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
                     transactionDetailRecords = selectStatement.executeQuery();
 
-                    String filePathForWriter = getPaymentsCsvFilePath(summary.reportYear, processingStartDate);
-                    processor.buildWriter(filePathForWriter);
-
-                    processor.processTaxRows(transactionDetailRecords);
+                    processor.processTaxRows(transactionDetailRecords, outputFilePath);
 
                     return "success";
                 } catch (IOException e) {
@@ -368,80 +379,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         }
 
         return rowProcessor;
-    }
-
-    SprintaxRowPrintProcessor buildNewPrintProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
-        Map<String, SprintaxFieldDefinition> complexFieldDefinitions = new HashMap<>();
-        Map<String,List<String>> complexFieldNames = new HashMap<>();
-
-        SprintaxRowPrintProcessor rowProcessor = new SprintaxRowPrintProcessor(summary);
-        EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = buildMinimumPiecesForPrintProcessor(summary);
-
-        List<SprintaxFieldDefinition> fieldDefinitions = new ArrayList<>();
-        for (TaxOutputField field : outputDefinition.getSections().get(0).getFields()) {
-            CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
-            TaxTableField tableField = null;
-
-            if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.STATIC)) {
-                fieldDefinitions.add(new StaticStringFieldDefinition(field.getName(), field.getValue()));
-                tableField = null;
-            } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DETAIL)) {
-                tableField = summary.transactionDetailRow.getField(field.getValue());
-            } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DERIVED)) {
-                tableField = summary.derivedValues.getField(field.getValue());
-            }
-
-            if (tableField != null) {
-                String pieceKey = tableField.propertyName;
-
-                SprintaxFieldDefinition currentPiece = rowProcessor.buildFieldDefinition(fieldSource, tableField, field.getValue());
-                complexFieldNames.put(pieceKey, new ArrayList<>());
-                minimumPieces.get(fieldSource).remove(tableField);
-
-                complexFieldDefinitions.put(pieceKey, currentPiece);
-
-                complexFieldNames.get(pieceKey).add(field.getName());
-                fieldDefinitions.add(currentPiece);
-            }
-        }
-
-        rowProcessor.setFieldDefinitions(fieldDefinitions);
-
-        // If the processor has defined some minimum fields but they have not been created yet, then create them.
-        int i = 1;
-        for (Map.Entry<CUTaxBatchConstants.TaxFieldSource,Set<TaxTableField>> minTypeSpecificPieces : minimumPieces.entrySet()) {
-            if (minTypeSpecificPieces.getValue() != null) {
-                for (TaxTableField minPiece : minTypeSpecificPieces.getValue()) {
-                    SprintaxFieldDefinition field = rowProcessor.buildFieldDefinition(minTypeSpecificPieces.getKey(), minPiece, "autoGen" + i);
-                    complexFieldDefinitions.put(minPiece.propertyName, field);
-                    i++;
-                }
-            }
-        }
-
-        rowProcessor.buildSsnFieldDefinition(complexFieldDefinitions);
-
-        return rowProcessor;
-    }
-
-
-    public EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> buildMinimumPiecesForPrintProcessor(Transaction1042SSummary summary) {
-        EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = new EnumMap<>(CUTaxBatchConstants.TaxFieldSource.class);
-
-        HashSet<TaxTableField> detailMinPieces = new HashSet<>();
-        detailMinPieces.addAll(summary.transactionDetailRow.orderedFields);
-        minimumPieces.put(CUTaxBatchConstants.TaxFieldSource.DETAIL, detailMinPieces);
-
-        minimumPieces.put(CUTaxBatchConstants.TaxFieldSource.VENDOR, new HashSet<>());
-        minimumPieces.put(CUTaxBatchConstants.TaxFieldSource.VENDOR_US_ADDRESS, new HashSet<>());
-        minimumPieces.put(CUTaxBatchConstants.TaxFieldSource.VENDOR_ANY_ADDRESS, new HashSet<>());
-
-
-        HashSet<TaxTableField> derivedMinPieces = new HashSet<>();
-        derivedMinPieces.add(summary.derivedValues.ssn);
-        minimumPieces.put(CUTaxBatchConstants.TaxFieldSource.DERIVED, derivedMinPieces);
-
-        return minimumPieces;
     }
 
 }

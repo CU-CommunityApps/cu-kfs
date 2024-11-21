@@ -2,6 +2,8 @@ package edu.cornell.kfs.tax.dataaccess.impl;
 
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
+import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
+import edu.cornell.kfs.tax.batch.TaxOutputField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,21 +20,25 @@ import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SprintaxRowPrintProcessor {
     private static final Logger LOG = LogManager.getLogger(SprintaxRowPrintProcessor.class);
 
-    private DerivedFieldDefinitionString ssnP;
+    private DerivedFieldDefinitionString ssnFieldDefinition;
 
     private ResultSet rsTransactionDetail;
     private Transaction1042SSummary summary;
-    private SprintaxFieldDefinition[] fieldDefinitions;
+    private List<SprintaxFieldDefinition> fieldDefinitions = new ArrayList<>();
     private Writer writer;
 
-    SprintaxRowPrintProcessor(Transaction1042SSummary summary) {
+    SprintaxRowPrintProcessor(Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
         this.summary = summary;
+        buildFieldDefinitions(outputDefinition);
     }
 
     SprintaxFieldDefinition buildFieldDefinition(CUTaxBatchConstants.TaxFieldSource fieldSource, TaxTableField field, String name) {
@@ -46,7 +52,7 @@ public class SprintaxRowPrintProcessor {
             }
         } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DERIVED)) {
             if (summary.derivedValues.ssn.equals(field)) {
-                piece = new DerivedFieldDefinitionString(name);
+                piece = ssnFieldDefinition = new DerivedFieldDefinitionString(name);
             } else {
                 throw new IllegalArgumentException("Cannot create print-only piece for the given derived-field type");
             }
@@ -55,9 +61,25 @@ public class SprintaxRowPrintProcessor {
         return piece;
     }
 
-    @SuppressWarnings("unchecked")
-    void buildSsnFieldDefinition(Map<String, SprintaxFieldDefinition> complexPieces) {
-        ssnP = (DerivedFieldDefinitionString) complexPieces.get(summary.derivedValues.ssn.propertyName);
+    void buildFieldDefinitions(TaxOutputDefinition outputDefinition) {
+
+        for (TaxOutputField field : outputDefinition.getSections().get(0).getFields()) {
+            CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
+            TaxTableField tableField = null;
+
+            if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.STATIC)) {
+                fieldDefinitions.add(new StaticStringFieldDefinition(field.getName(), field.getValue()));
+            } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DETAIL)) {
+                tableField = summary.transactionDetailRow.getField(field.getValue());
+            } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DERIVED)) {
+                tableField = summary.derivedValues.getField(field.getValue());
+            }
+
+            if (tableField != null) {
+                SprintaxFieldDefinition currentPiece = buildFieldDefinition(fieldSource, tableField, field.getValue());
+                fieldDefinitions.add(currentPiece);
+            }
+        }
     }
 
     String getSqlForSelect() {
@@ -65,13 +87,15 @@ public class SprintaxRowPrintProcessor {
         return TaxSqlUtils.getTransactionDetailSelectSql(fieldForWhereClause, summary.transactionDetailRow, false, true);
     }
 
-    void processTaxRows(ResultSet rs) throws SQLException, IOException {
+    void processTaxRows(ResultSet rs, String outputFilepath) throws SQLException, IOException {
+        buildWriter(outputFilepath);
+
         // Perform initialization as needed.
         TaxTableRow.TransactionDetailRow detailRow = summary.transactionDetailRow;
         EncryptionService encryptionService = CoreApiServiceLocator.getEncryptionService();
         rsTransactionDetail = rs;
         if (summary.scrubbedOutput) {
-            ssnP.value = CUTaxConstants.MASKED_VALUE_9_CHARS;
+            ssnFieldDefinition.value = CUTaxConstants.MASKED_VALUE_9_CHARS;
         }
 
         LOG.info("Starting raw transaction row printing to file...");
@@ -84,7 +108,7 @@ public class SprintaxRowPrintProcessor {
             // Prepare the tax number.
             if (!summary.scrubbedOutput) {
                 try {
-                    ssnP.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));
+                    ssnFieldDefinition.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));
                 } catch (GeneralSecurityException e) {
                     throw new RuntimeException(e);
                 }
@@ -98,7 +122,7 @@ public class SprintaxRowPrintProcessor {
 
     void clearReferences() {
         rsTransactionDetail = null;
-        ssnP = null;
+        ssnFieldDefinition = null;
     }
 
     void writeLine() throws SQLException, IOException {
@@ -133,10 +157,6 @@ public class SprintaxRowPrintProcessor {
 
     void buildWriter(String filePathForWriter) throws IOException {
         this.writer = new BufferedWriter(new PrintWriter(filePathForWriter, StandardCharsets.UTF_8));
-    }
-
-    final void setFieldDefinitions(List<SprintaxFieldDefinition> fieldDefinitions) {
-        this.fieldDefinitions = fieldDefinitions.toArray(new SprintaxFieldDefinition[fieldDefinitions.size()]);
     }
 
 }
