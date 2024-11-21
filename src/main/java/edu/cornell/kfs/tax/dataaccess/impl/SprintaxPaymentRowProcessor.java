@@ -51,8 +51,7 @@ public class SprintaxPaymentRowProcessor {
     // Helper array for storing extra PreparedStatement instances needed for the tax processing.
     private final PreparedStatement[] extraStatements;
 
-    // Helper objects for generating and storing output.
-    private SprintaxPaymentRowProcessor.OutputHelper outputHelper;
+    private SprintaxPaymentRowProcessor.RecordPiece[] outputFieldDefinitions;
 
     // The Writer instances that the character buffers can be written to.
     private Writer writer;
@@ -921,7 +920,7 @@ public class SprintaxPaymentRowProcessor {
             }
         }
 
-        // Perform logging and updates depending on amount type and exclusions.
+        // Perform logging and updates dependingImp on amount type and exclusions.
         if ((isParm1042SExclusion && org.apache.commons.lang.StringUtils.isBlank(overrideTaxBox)) || CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY.equals(overrideTaxBox)) {
             // If exclusion and no overrides (or an override to a non-reportable box type), then do not update amounts.
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY);
@@ -1368,7 +1367,7 @@ public class SprintaxPaymentRowProcessor {
 
         // Prepare and write the biographic record.
         List<String> values = new ArrayList<>();
-        for (SprintaxPaymentRowProcessor.RecordPiece piece : outputHelper.outputPieces) {
+        for (SprintaxPaymentRowProcessor.RecordPiece piece : outputFieldDefinitions) {
 
             String val = StringUtils.defaultIfBlank(piece.getValue(), KFSConstants.EMPTY_STRING);
 
@@ -1512,46 +1511,14 @@ public class SprintaxPaymentRowProcessor {
         this.writer = writer;
     }
 
-    /**
-     * Creates a new character buffer at the given index, and also
-     * sets the array of "pieces" that will be used to build it
-     * by copying the contents of the provided List.
-     *
-     * @param bufferLength     The size of the new buffer; cannot be negative.
-     * @param pieces           The "piece" objects that will be used to set the buffer's contents.
-     * @throws IllegalStateException if a character buffer already exists at the given index.
-     */
-    final void setupOutputBuffer(int bufferLength, List<? extends SprintaxPaymentRowProcessor.RecordPiece> pieces) {
-        if (outputHelper != null) {
-            throw new IllegalStateException("An output buffer is aleady set");
-        } else if (bufferLength < 0) {
-            throw new IllegalArgumentException("bufferLength cannot be negative");
-        }
-
-        outputHelper = new SprintaxPaymentRowProcessor.OutputHelper(bufferLength, pieces);
+    public void setupOutputBuffer(List<SprintaxPaymentRowProcessor.RecordPiece> pieces) {
+        outputFieldDefinitions = pieces.toArray(new SprintaxPaymentRowProcessor.RecordPiece[pieces.size()]);
     }
 
 
     // ========================================================================================
     // Start of query-configuration-and-execution helper methods.
     // ========================================================================================
-
-    /**
-     * Configures the given PreparedStatement with the specified int parameter, then executes it
-     * and returns the results.
-     *
-     * <p>See the multi-query-arg configureAndRunQuery() method for more details on this method's effects.</p>
-     *
-     * @param rsIndex        The index to associate the returned ResultSet with.
-     * @param statementIndex The index of the extra PreparedStatement to configure and run.
-     * @param arg1           The value to set for the first PreparedStatement parameter.
-     * @return The ResultSet that was returned by executing the PreparedStatement after configuring it with the given parameter.
-     * @throws SQLException if a database access error occurs.
-     */
-    final ResultSet configureAndRunQuery(int rsIndex, int statementIndex, int arg1) throws SQLException {
-        extraStatements[statementIndex].setInt(1, arg1);
-        return getAndReferenceResults(rsIndex, extraStatements[statementIndex]);
-    }
 
     /**
      * Configures the given PreparedStatement with the specified int parameters, then executes it
@@ -1591,95 +1558,6 @@ public class SprintaxPaymentRowProcessor {
     }
 
     /**
-     * Configures the given PreparedStatement with the specified String parameters, then executes it
-     * and returns the results.
-     *
-     * <p>See the multi-query-arg configureAndRunQuery() method for more details on this method's effects.</p>
-     *
-     * @param rsIndex        The index to associate the returned ResultSet with.
-     * @param statementIndex The index of the extra PreparedStatement to configure and run.
-     * @param arg1           The value to set for the first PreparedStatement parameter.
-     * @param arg2           The value to set for the second PreparedStatement parameter.
-     * @return The ResultSet that was returned by executing the PreparedStatement after configuring it with the given parameters.
-     * @throws SQLException if a database access error occurs.
-     */
-    final ResultSet configureAndRunQuery(int rsIndex, int statementIndex, String arg1, String arg2) throws SQLException {
-        PreparedStatement statement = extraStatements[statementIndex];
-        statement.setString(1, arg1);
-        statement.setString(2, arg2);
-        return getAndReferenceResults(rsIndex, statement);
-    }
-
-    /**
-     * Configures the given PreparedStatement with the specified parameter, then executes it
-     * and returns the results. It is assumed that the parameter has a scale of zero.
-     *
-     * <p>See the multi-query-arg configureAndRunQuery() method for more details on this method's effects.</p>
-     *
-     * @param rsIndex        The index to associate the returned ResultSet with.
-     * @param statementIndex The index of the extra PreparedStatement to configure and run.
-     * @param arg1           The value to set for the first PreparedStatement parameter.
-     * @param arg1Type       The JDBC type for the first PreparedStatement parameter.
-     * @return The ResultSet that was returned by executing the PreparedStatement after configuring it with the given parameter.
-     * @throws SQLException if a database access error occurs.
-     */
-    final ResultSet configureAndRunQuery(int rsIndex, int statementIndex, Object arg1, int arg1Type) throws SQLException {
-        extraStatements[statementIndex].setObject(1, arg1, arg1Type);
-        return getAndReferenceResults(rsIndex, extraStatements[statementIndex]);
-    }
-
-    /**
-     * Configures the given PreparedStatement with the specified parameters, then executes it
-     * and returns the results. It is assumed that the parameters have a scale of zero.
-     *
-     * <p>See the multi-query-arg configureAndRunQuery() method for more details on this method's effects.</p>
-     *
-     * @param rsIndex        The index to associate the returned ResultSet with.
-     * @param statementIndex The index of the extra PreparedStatement to configure and run.
-     * @param arg1           The value to set for the first PreparedStatement parameter.
-     * @param arg1Type       The JDBC type for the first PreparedStatement parameter.
-     * @param arg2           The value to set for the second PreparedStatement parameter.
-     * @param arg2Type       The JDBC type for the second PreparedStatement parameter.
-     * @return The ResultSet that was returned by executing the PreparedStatement after configuring it with the given parameters.
-     * @throws SQLException if a database access error occurs.
-     */
-    final ResultSet configureAndRunQuery(int rsIndex, int statementIndex, Object arg1, int arg1Type, Object arg2, int arg2Type) throws SQLException {
-        PreparedStatement statement = extraStatements[statementIndex];
-        statement.setObject(1, arg1, arg1Type);
-        statement.setObject(2, arg2, arg2Type);
-        return getAndReferenceResults(rsIndex, statement);
-    }
-
-
-    /**
-     * Configures the given query, executes it, associates its results with the given index, and returns the ResultSet.
-     * Any existing ResultSet for the given index will automatically be closed. Also, the returned ResultSet
-     * will still be referenced and acted upon by this superclass, so the subclass does not need to worry
-     * about explicitly closing it when finished.
-     *
-     * <p>The other versions of the configureAndRunQuery() method should preferably be used instead of
-     * this one, since they can set up low-arg-count queries much more efficiently.</p>
-     *
-     * @param rsIndex        The index to associate the returned ResultSet with.
-     * @param statementIndex The index of the extra PreparedStatement to configure and run.
-     * @param argValues      The values to set for the PreparedStatement parameters, in order.
-     * @param argTypes       The JDBC types for the PreparedStatement parameters, in order.
-     * @param argScales      The scales of numeric values or the lengths of stream/reader values, in order; ignored for other types or integer-only types.
-     * @return The ResultSet that was returned by executing the PreparedStatement after configuring it with the given parameters.
-     * @throws SQLException if a database access error occurs.
-     */
-    final ResultSet configureAndRunQuery(int rsIndex, int statementIndex, Object[] argValues, int[] argTypes, int[] argScales) throws SQLException {
-        PreparedStatement statement = extraStatements[statementIndex];
-
-        for (int i = 0; i < argValues.length; i++) {
-            statement.setObject(i + 1, argValues[i], argTypes[i], argScales[i]);
-        }
-
-        return getAndReferenceResults(rsIndex, statement);
-    }
-
-
-    /**
      * Closes any existing result set mapped to the given index,
      * runs the given query to get a new result set, associates
      * the new result with the index, and returns the result.
@@ -1707,63 +1585,6 @@ public class SprintaxPaymentRowProcessor {
     // End of query-configuration-and-execution helper methods.
     // ========================================================================================
 
-
-    /**
-     * Closes any non-null result sets, prepared statements,
-     * and writers that have been stored by this processor,
-     * and catches and logs any SQLException or IOException
-     * errors instead of leaving them unhandled.
-     */
-    final void closeForFinallyBlock() {
-        // Close any remaining ResultSets.
-        for (ResultSet rs : extraResultSets) {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    LOG.warn("Could not close result set");
-                }
-            }
-        }
-
-        // Close any extra PreparedStatements.
-        for (PreparedStatement extraStatement : extraStatements) {
-            if (extraStatement != null) {
-                try {
-                    extraStatement.close();
-                } catch (SQLException e) {
-                    LOG.warn("Could not close prepared statement");
-                }
-            }
-        }
-
-//        if (writer != null) {
-//            try {
-//                writer.close();
-//            } catch (IOException e) {
-//                LOG.warn("Could not close writer");
-//            }
-//        }
-    }
-
-    /**
-     * Clears out the contents of the various internal arrays,
-     * resets numbers to zero and sets chars to a static value,
-     * and calls the clearReferences() method.
-     */
-    final void clearArraysAndReferences() {
-        Arrays.fill(extraResultSets, null);
-        Arrays.fill(extraStatements, null);
-
-        if (outputHelper != null) {
-            Arrays.fill(outputHelper.outputBuffer, '0');
-            Arrays.fill(outputHelper.outputPieces, null);
-            outputHelper = null;
-        }
-
-        // Clear out subclass-specific data.
-        clearReferences();
-    }
 
     /**
      * Helper method that subclasses can use to clear out
@@ -1852,36 +1673,6 @@ public class SprintaxPaymentRowProcessor {
         ftwAmountField = null;
         sitwAmountField = null;
         taxBox = null;
-    }
-
-
-    /**
-     * Writes the contents of the specified char buffer to the given writer. A newline character will also be appended to the output.
-     * @throws IOException if an I/O error occurs.
-     */
-    final void writeBufferToOutput() throws IOException {
-        if (outputHelper.position == 0) {
-            throw new IllegalStateException("Buffer was empty but should not have been!");
-        }
-
-        // Send the buffer contents to the Writer, excluding the trailing separator character if one exists.
-        writer.write(outputHelper.outputBuffer, 0, outputHelper.position - 1);
-        writer.write('\n');
-    }
-
-
-
-    private static final class OutputHelper {
-        private final char[] outputBuffer;
-        private final SprintaxPaymentRowProcessor.RecordPiece[] outputPieces;
-
-        private int position;
-
-        private OutputHelper(int bufferLength, List<? extends SprintaxPaymentRowProcessor.RecordPiece> pieces) {
-            this.outputBuffer = new char[bufferLength + 1];
-            this.outputPieces = pieces.toArray(new SprintaxPaymentRowProcessor.RecordPiece[pieces.size()]);
-        }
-
     }
 
     abstract static class RecordPiece {

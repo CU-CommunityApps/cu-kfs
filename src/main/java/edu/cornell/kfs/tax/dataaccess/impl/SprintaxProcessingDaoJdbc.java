@@ -58,9 +58,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
         LOG.info("Creating Transaction Records");
         List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.asList(
-                TransactionRowPdpBuilder.For1042S.class,
-                TransactionRowDvBuilder.For1042S.class,
-                TransactionRowPRNCBuilder.For1042S.class
+                TransactionRowPdpBuilder.For1042S.class
+//                TransactionRowDvBuilder.For1042S.class,
+//                TransactionRowPRNCBuilder.For1042S.class
         );
         List<EnumMap<TaxStatType,Integer>> stats = createTransactionRows(summary, transactionRowBuilders);
 
@@ -139,7 +139,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         PrintWriter printWriter = new PrintWriter(outputFile, StandardCharsets.UTF_8);
         Writer bufferedWriter = new BufferedWriter(printWriter);
 
-        bufferedWriter.write("First_Name,Middle_Name,Last_Name,Email,Unique_ID_Student_Number,TIN,DOB,Foreign_Tax_ID,Country_of_Residence,US_Address_Line_1,US_Address_Line_2,US_City,US_State,US_zip,NOnUS_Address_Line_1,NonUS_Address_Province,NonUS_Address_City,NonUS_address_Country,NonUS-Address_postal_code,Mailing_Address,Canada_Province");
+        bufferedWriter.write(CUTaxConstants.Sprintax.BIO_HEADER_ROW);
         bufferedWriter.write("\n");
         bufferedWriter.flush();
 
@@ -148,8 +148,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
     String getFilePathForBioWriter(java.util.Date processingStartDate) {
         DateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
-        String bioFilePath = getReportsDirectory() + "/irs_1042s_sprintax_bio" + dateFormat.format(processingStartDate) + ".csv";
-
+        String bioFilePath = getReportsDirectory() + "/" + CUTaxConstants.Sprintax.BIO_OUTPUT_FILE_PREFIX + dateFormat.format(processingStartDate) + ".csv";
         return bioFilePath;
     }
 
@@ -228,8 +227,8 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         int i = 0;
 
         // Check for at least one output section.
-        if (outputDefinition.getSections().isEmpty()) {
-            throw new IllegalArgumentException("outputDefinition has no sections!");
+        if (outputDefinition.getSections().size() != 1) {
+            throw new IllegalArgumentException("outputDefinition should have 1 section");
         }
 
         SprintaxPaymentRowProcessor rowProcessor = new SprintaxPaymentRowProcessor(summary);
@@ -269,13 +268,11 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
             // Create a simple "piece" type or determine what complex "piece" type to create.
             switch (fieldSource) {
                 case BLANK :
-                    // Use the AlwaysBlankRecordPiece implementation for blank "pieces".
                     pieces.add(new SprintaxPaymentRowProcessor.AlwaysBlankRecordPiece(field.getName(), field.getLength().intValue()));
                     tableField = null;
                     break;
 
                 case STATIC :
-                    // Use the StaticStringRecordPiece implementation for static-value "pieces".
                     pieces.add(new SprintaxPaymentRowProcessor.StaticStringRecordPiece(field.getName(), field.getLength().intValue(), field.getValue()));
                     tableField = null;
                     break;
@@ -341,8 +338,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
 
         // Setup the section's output buffer.
-        rowProcessor.setupOutputBuffer(section.getLength(), pieces);
-
+        rowProcessor.setupOutputBuffer(pieces);
 
         // If the processor has defined some minimum fields, but they have not been created yet, then create them.
         i = 1;
@@ -366,7 +362,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
             LOG.debug("The following tax output fields appeared more than once under different names:");
             for (Map.Entry<String,List<String>> pieceNames : complexPiecesNames.entrySet()) {
                 if (pieceNames.getValue().size() > 1) {
-                    LOG.debug(pieceNames.getKey() + ": " + pieceNames.getValue().toString());
+                    LOG.debug(pieceNames.getKey() + ": " + pieceNames.getValue());
                 }
             }
         }
@@ -375,99 +371,55 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
     }
 
     SprintaxRowPrintProcessor buildNewPrintProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
-        Map<String, SprintaxRowPrintProcessor.RecordPiece> complexPieces = new HashMap<>();
-        Map<String,List<String>> complexPiecesNames = new HashMap<>();
-        boolean foundDuplicate = false;
-        int i = 0;
+        Map<String, SprintaxFieldDefinition> complexFieldDefinitions = new HashMap<>();
+        Map<String,List<String>> complexFieldNames = new HashMap<>();
 
         SprintaxRowPrintProcessor rowProcessor = new SprintaxRowPrintProcessor(summary);
         EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = buildMinimumPiecesForPrintProcessor(summary);
 
-        // Create the "piece" objects for each section and add them to the processor.
-        for (TaxOutputSection section : outputDefinition.getSections()) {
-            List<SprintaxRowPrintProcessor.RecordPiece> pieces = new ArrayList<>();
+        List<SprintaxFieldDefinition> fieldDefinitions = new ArrayList<>();
+        for (TaxOutputField field : outputDefinition.getSections().get(0).getFields()) {
+            CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
+            TaxTableField tableField = null;
 
-            for (TaxOutputField field : section.getFields()) {
-                CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
-                TaxTableField tableField;
-
-                // Create a simple "piece" type or determine what complex "piece" type to create.
-                switch (fieldSource) {
-
-                    case STATIC :
-                        // Use the StaticStringRecordPiece implementation for static-value "pieces".
-                        pieces.add(new SprintaxRowPrintProcessor.StaticStringRecordPiece(field.getName(), field.getValue()));
-                        tableField = null;
-                        break;
-
-                    case DETAIL :
-                        tableField = summary.transactionDetailRow.getField(field.getValue());
-                        break;
-
-                    case DERIVED :
-                        tableField = summary.derivedValues.getField(field.getValue());
-                        break;
-
-                    default :
-                        throw new IllegalStateException("Unrecognized piece type for field");
-                }
-
-                // Create a more complex "piece" type if necessary.
-                if (tableField != null) {
-                    String pieceKey = tableField.propertyName;
-
-                    // Create a new "piece" or re-use an existing one for duplicates as needed.
-                    SprintaxRowPrintProcessor.RecordPiece currentPiece = complexPieces.get(pieceKey);
-
-                    if (currentPiece == null) {
-                        // If not a duplicate, then create a new one.
-                        currentPiece = rowProcessor.getPieceForField(fieldSource, tableField, field.getName());
-                        complexPiecesNames.put(pieceKey, new ArrayList<>());
-                        minimumPieces.get(fieldSource).remove(tableField);
-                        // Add piece to cache.
-                        complexPieces.put(pieceKey, currentPiece);
-                    } else {
-                        // If a duplicate, then use the originally-created piece instead, and warn about mismatched lengths.
-                        foundDuplicate = true;
-                    }
-                    complexPiecesNames.get(pieceKey).add(field.getName());
-                    pieces.add(currentPiece);
-                }
+            if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.STATIC)) {
+                fieldDefinitions.add(new StaticStringFieldDefinition(field.getName(), field.getValue()));
+                tableField = null;
+            } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DETAIL)) {
+                tableField = summary.transactionDetailRow.getField(field.getValue());
+            } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DERIVED)) {
+                tableField = summary.derivedValues.getField(field.getValue());
             }
 
-            // Setup the section's output buffer.
-            rowProcessor.buildOutputBuffer(section.getLength(), pieces, section.getSeparatorChar().charValue());
-            i++;
+            if (tableField != null) {
+                String pieceKey = tableField.propertyName;
+
+                SprintaxFieldDefinition currentPiece = rowProcessor.buildFieldDefinition(fieldSource, tableField, field.getValue());
+                complexFieldNames.put(pieceKey, new ArrayList<>());
+                minimumPieces.get(fieldSource).remove(tableField);
+
+                complexFieldDefinitions.put(pieceKey, currentPiece);
+
+                complexFieldNames.get(pieceKey).add(field.getName());
+                fieldDefinitions.add(currentPiece);
+            }
         }
 
-
+        rowProcessor.setFieldDefinitions(fieldDefinitions);
 
         // If the processor has defined some minimum fields but they have not been created yet, then create them.
-        i = 1;
+        int i = 1;
         for (Map.Entry<CUTaxBatchConstants.TaxFieldSource,Set<TaxTableField>> minTypeSpecificPieces : minimumPieces.entrySet()) {
             if (minTypeSpecificPieces.getValue() != null) {
                 for (TaxTableField minPiece : minTypeSpecificPieces.getValue()) {
-                    SprintaxRowPrintProcessor.RecordPiece field = rowProcessor.getPieceForField(minTypeSpecificPieces.getKey(), minPiece, "autoGen" + i);
-                    complexPieces.put(minPiece.propertyName, field);
+                    SprintaxFieldDefinition field = rowProcessor.buildFieldDefinition(minTypeSpecificPieces.getKey(), minPiece, "autoGen" + i);
+                    complexFieldDefinitions.put(minPiece.propertyName, field);
                     i++;
                 }
             }
         }
 
-        // Set the processor's complex "pieces" as needed.
-        rowProcessor.buildSsnFieldDefinition(complexPieces);
-
-
-
-        // Perform final logging as needed and return the processor.
-        if (foundDuplicate && LOG.isDebugEnabled()) {
-            LOG.debug("The following tax output fields appeared more than once under different names:");
-            for (Map.Entry<String,List<String>> pieceNames : complexPiecesNames.entrySet()) {
-                if (pieceNames.getValue().size() > 1) {
-                    LOG.debug(pieceNames.getKey() + ": " + pieceNames.getValue().toString());
-                }
-            }
-        }
+        rowProcessor.buildSsnFieldDefinition(complexFieldDefinitions);
 
         return rowProcessor;
     }
