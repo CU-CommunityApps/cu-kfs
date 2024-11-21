@@ -161,7 +161,7 @@ public class SprintaxRowPrintProcessor {
         @Override
         String getValue() throws SQLException {
             String stringValue = rsTransactionDetail.getString(columnIndex);
-            return (stringValue != null) ? stringValue.replace('\t', ' ') : null; //todo quotes?
+            return StringUtils.replace(stringValue, ",",  " ");
         }
     }
 

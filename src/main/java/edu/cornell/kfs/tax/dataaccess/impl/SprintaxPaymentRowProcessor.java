@@ -10,7 +10,6 @@ import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
-import software.amazon.awssdk.services.secretsmanager.endpoints.internal.Value;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -73,8 +72,6 @@ public class SprintaxPaymentRowProcessor {
     // Variables pertaining to values that need to be retrieved from the next detail row before populating the detail "piece" objects.
     private String nextTaxId;
     private String nextPayeeId;
-    private String nextIncomeCode;
-    private String nextIncomeCodeSubType;
 
     // Variables pertaining to decrypting and formatting the tax ID.
     private EncryptionService encryptionService;
@@ -115,9 +112,7 @@ public class SprintaxPaymentRowProcessor {
     // Variables pertaining to various flags.
     private boolean foundExclusion;
     private boolean excludeTransaction;
-    private boolean writeWsDetailRecord;
     private boolean writeWsBiographicRecord;
-    private boolean foundAmount;
     private boolean isRoyaltyAmount;
     private boolean isParm1042SInclusion;
     private boolean isParm1042SExclusion;
@@ -125,7 +120,6 @@ public class SprintaxPaymentRowProcessor {
     // Variables pertaining to various statistics.
     private int numTransactionRows;
     private int numBioRecordsWritten;
-    private int numDetailRecordsWritten;
     private int numNoVendor;
     private int numNoParentVendor;
     private int numVendorNamesParsed;
@@ -148,13 +142,9 @@ public class SprintaxPaymentRowProcessor {
     private int numIncomeCodeExcludedSitwAmounts;
     private int numIncomeCodeSubTypeExcludedSitwAmounts;
     private int numNoBoxDeterminedRows;
-    private int numBioLinesWithTruncatedUSAddress;
-    private int numBioLinesWithTruncatedForeignAddress;
     private int numBioLinesWithoutUSAddress;
     private int numBioLinesWithoutForeignAddress;
     private int numBioLinesWithoutAnyAddress;
-    private int numDetailLinesWithPositiveFtwAmount;
-    private int numDetailLinesWithPositiveSitwAmount;
 
     // Variables pertaining to tax-source-specific statistics.
     private SprintaxPaymentRowProcessor.OriginSpecificStats dvStats;
@@ -640,18 +630,6 @@ public class SprintaxPaymentRowProcessor {
         }
     }
 
-    List<String> getFilePathsForWriters(java.util.Date processingStartDate) {
-        ArrayList<String> filePaths = new ArrayList<>();
-        // build bio
-        DateFormat tempFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
-        String bioFilePath = getReportsDirectory() + "/irs_1042s_sprintax_bio" + tempFormat.format(processingStartDate) + ".csv";
-        filePaths.add(bioFilePath);
-        String filePathDetail = new StringBuilder(100).append(getReportsDirectory()).append('/').append(CUTaxConstants.TAX_1042S_DETAIL_OUTPUT_FILE_PREFIX)
-                .append(summary.reportYear).append(tempFormat.format(processingStartDate)).append(CUTaxConstants.TAX_OUTPUT_FILE_SUFFIX).toString();
-        filePaths.add(filePathDetail);
-        return filePaths;
-    }
-
     /**
      * Returns the SQL that should be used for retrieving the transaction detail rows to process.
      *
@@ -729,8 +707,6 @@ public class SprintaxPaymentRowProcessor {
             numTransactionRows++;
             nextTaxId = rs.getString(detailRow.vendorTaxNumber.index);
             nextPayeeId = rs.getString(detailRow.payeeId.index);
-            nextIncomeCode = rs.getString(detailRow.incomeCode.index);
-            nextIncomeCodeSubType = rs.getString(detailRow.incomeCodeSubType.index);
             vendorHeaderId = Integer.parseInt(nextPayeeId.substring(0, nextPayeeId.indexOf('-')));
             vendorDetailId = Integer.parseInt(nextPayeeId.substring(nextPayeeId.indexOf('-') + 1));
             taxIdChanged = true;
@@ -824,6 +800,10 @@ public class SprintaxPaymentRowProcessor {
             // Store any changes made to the current transaction detail row.
             rs.updateRow();
 
+            if(writeWsBiographicRecord) {
+                writeBioLineToFile();
+            }
+
 
             // Move to next row (if any) and update the looping flag as needed.
             if (rs.next()) {
@@ -831,8 +811,6 @@ public class SprintaxPaymentRowProcessor {
                 numTransactionRows++;
                 nextTaxId = rs.getString(detailRow.vendorTaxNumber.index);
                 nextPayeeId = rs.getString(detailRow.payeeId.index);
-                nextIncomeCode = rs.getString(detailRow.incomeCode.index);
-                nextIncomeCodeSubType = rs.getString(detailRow.incomeCodeSubType.index);
                 vendorHeaderId = Integer.parseInt(nextPayeeId.substring(0, nextPayeeId.indexOf('-')));
                 vendorDetailId = Integer.parseInt(nextPayeeId.substring(nextPayeeId.indexOf('-') + 1));
                 // Check for changes to the tax ID between rows. The prior tax ID should be non-null at this point.
@@ -840,51 +818,11 @@ public class SprintaxPaymentRowProcessor {
             } else {
                 // If no more rows, then prepare to exit the loop and process any leftover data from the previous iterations.
                 keepLooping = false;
-                writeWsDetailRecord = true;
             }
 
             // Automatically abort with an error if the current row has no tax ID.
             if (org.apache.commons.lang.StringUtils.isBlank(nextTaxId)) {
                 throw new RuntimeException("Could not find tax ID for row with payee " + nextPayeeId);
-            }
-
-
-            // If necessary, determine whether changes to tax ID, income code or subtype warrant writing a detail line.
-            if (!writeWsDetailRecord) {
-                if ((org.apache.commons.lang.StringUtils.isNotBlank(incomeCodeP.value) && (org.apache.commons.lang.StringUtils.isBlank(nextIncomeCode) || !incomeCodeP.value.equals(nextIncomeCode)))
-                        || (taxIdChanged && foundAmount)) {
-                    // Write record due to change from non-blank code to new or blank code, or due to tax ID change if gross/ftw/sitw amounts were found.
-                    writeWsDetailRecord = true;
-                } else if (org.apache.commons.lang.StringUtils.isNotBlank(incomeCodeSubTypeP.value)
-                        && (org.apache.commons.lang.StringUtils.isBlank(nextIncomeCodeSubType) || !incomeCodeSubTypeP.value.equals(nextIncomeCodeSubType))) {
-                    // Write record due to change from non-blank subtype to new or blank subtype.
-                    writeWsDetailRecord = true;
-                }
-            }
-
-            /*
-             * Do not write a new line to the file if no valid gross/ftw/sitw amount was found yet OR (as per Lori Kanellis) the following criteria are met:
-             *
-             * The line does NOT have an Exemption Code of 3 (Foreign Source) or 4 (Treaty Exempt)
-             * AND it does NOT have a Federal tax withholding RATE
-             * AND it does NOT have a Federal Tax Withholding amount
-             */
-            if (!foundAmount || (
-                    !Boolean.TRUE.equals(taxTreatyExemptIncomeInd)
-                            && !Boolean.TRUE.equals(foreignSourceIncomeInd)
-                            && (fedIncomeTaxPctP.value == null || summary.zeroAmount.equals(fedIncomeTaxPctP.value))
-                            && summary.zeroAmount.equals(ftwAmountP.value)
-            )) {
-                writeWsDetailRecord = false;
-            }
-
-
-
-            /*
-             * If needed, write new detail and/or biographic records to the appropriate output files.
-             */
-            if (writeWsDetailRecord) {
-                writeLinesToFiles();
             }
 
             // END OF LOOP
@@ -999,19 +937,16 @@ public class SprintaxPaymentRowProcessor {
             // If detail row has gross amount, then update flags, amounts, and the current row as needed.
             grossAmountP.value = grossAmountP.value.add(paymentAmountP.value);
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.FORM_1042S_GROSS_BOX);
-            foundAmount = true;
 
         } else if (taxBox == ftwAmountField) {
             // If detail row has FTW amount, then update flags, amounts, and the current row as needed.
             ftwAmountP.value = ftwAmountP.value.add(paymentAmountP.value);
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.FORM_1042S_FED_TAX_WITHHELD_BOX);
-            foundAmount = true;
 
         } else if (taxBox == sitwAmountField) {
             // If detail row has SITW amount, then update flags, amounts, and the current row as needed.
             sitwAmountP.value = sitwAmountP.value.add(paymentAmountP.value);
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX);
-            foundAmount = true;
 
         } else {
             // If no exclusions but box is still undetermined, then do not update amounts.
@@ -1035,7 +970,6 @@ public class SprintaxPaymentRowProcessor {
         sitwAmountP.value = summary.zeroAmount;
         vendorLastNameP.value = null;
         vendorFirstNameP.value = null;
-        foundAmount = false;
         foundParentVendor = false;
 
         // Assume that we'll need to write a new Biographic record to the file.
@@ -1399,110 +1333,62 @@ public class SprintaxPaymentRowProcessor {
     /*
      * Helper method for writing 1042S biographic and detail records to their respective files.
      */
-    private void writeLinesToFiles() throws SQLException, IOException {
-
+    private void writeBioLineToFile() throws SQLException, IOException {
         /*
-         * If needed, replace the header record's contents and write a new biographic record.
+         * SSN-vs-ITIN logic per Loree Kanellis:
+         * If the taxID starts with a '9' and the fourth digit is a '7' or '8'
+         * then format as NNN-NN-NNNN for data chunk ITIN (WsA8) and blank out SSN (WsA5)
+         * else format as NNN-NN-NNNN for data chunk SSN (WsA5) and blank out ITIN (WsA8)
          */
-        if (writeWsBiographicRecord) {
-            /*
-             * SSN-vs-ITIN logic per Loree Kanellis:
-             * If the taxID starts with a '9' and the fourth digit is a '7' or '8'
-             * then format as NNN-NN-NNNN for data chunk ITIN (WsA8) and blank out SSN (WsA5)
-             * else format as NNN-NN-NNNN for data chunk SSN (WsA5) and blank out ITIN (WsA8)
-             */
-            if (unencryptedTaxId.charAt(0) == '9'
-                    && (unencryptedTaxId.charAt(3) == '7' || unencryptedTaxId.charAt(3) == '8')) {
-                formattedSSNValueP.value = null;
-                formattedITINValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_11_CHARS : buildFormattedTaxId(unencryptedTaxId);
-            } else {
-                formattedSSNValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_11_CHARS : buildFormattedTaxId(unencryptedTaxId);
-                formattedITINValueP.value = null;
-            }
-
-            // Perform logging and processing as needed if no US or foreign vendor addresses could be found.
-            if (CUTaxConstants.NO_US_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorUSAddressLine1P.value))) {
-                numBioLinesWithoutUSAddress++;
-                if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorForeignAddressLine1P.value))) {
-                    numBioLinesWithoutForeignAddress++;
-                    numBioLinesWithoutAnyAddress++;
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Found an output row with no US or Foreign address on file! Key: " + rowKey);
-                    }
-                }
-            } else if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorForeignAddressLine1P.value))) {
-                numBioLinesWithoutForeignAddress++;
-            }
-
-            // Derive Chapter 3 Status Code. (Set to blank if no mapping is found.)
-            chapter3StatusCodeP.value = summary.vendorOwnershipToChapter3StatusMap.get(vendorOwnershipCodeP.value);
-
-
-            // Prepare the header.
-//            resetBuffer(HEADER_BUFFER_INDEX);
-//            appendPieces(HEADER_BUFFER_INDEX);
-
-            // Prepare and write the biographic record.
-            resetBuffer();
-//            appendBuffer(HEADER_BUFFER_INDEX, BIO_BUFFER_INDEX);
-            appendPieces();
-            writer.write("\n");
-            writer.flush();
-//            writeBufferToOutput();
-
-            writeWsBiographicRecord = false;
-            numBioRecordsWritten++;
+        if (unencryptedTaxId.charAt(0) == '9'
+                && (unencryptedTaxId.charAt(3) == '7' || unencryptedTaxId.charAt(3) == '8')) {
+            formattedSSNValueP.value = null;
+            formattedITINValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_11_CHARS : buildFormattedTaxId(unencryptedTaxId);
+        } else {
+            formattedSSNValueP.value = summary.scrubbedOutput ? CUTaxConstants.MASKED_VALUE_11_CHARS : buildFormattedTaxId(unencryptedTaxId);
+            formattedITINValueP.value = null;
         }
 
+        // Perform logging and processing as needed if no US or foreign vendor addresses could be found.
+        if (CUTaxConstants.NO_US_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorUSAddressLine1P.value))) {
+            numBioLinesWithoutUSAddress++;
+            if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorForeignAddressLine1P.value))) {
+                numBioLinesWithoutForeignAddress++;
+                numBioLinesWithoutAnyAddress++;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found an output row with no US or Foreign address on file! Key: " + rowKey);
+                }
+            }
+        } else if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorForeignAddressLine1P.value))) {
+            numBioLinesWithoutForeignAddress++;
+        }
 
+        // Derive Chapter 3 Status Code. (Set to blank if no mapping is found.)
+        chapter3StatusCodeP.value = summary.vendorOwnershipToChapter3StatusMap.get(vendorOwnershipCodeP.value);
+
+        // Prepare and write the biographic record.
+        List<String> values = new ArrayList<>();
+        for (SprintaxPaymentRowProcessor.RecordPiece piece : outputHelper.outputPieces) {
+
+            String val = StringUtils.defaultIfBlank(piece.getValue(), KFSConstants.EMPTY_STRING);
+
+            if (val.length() > 4096) {
+                val = StringUtils.left(val, 4096);
+            }
+
+            values.add(val);
+        }
+
+        String line = String.join(",", values);
+        writer.write(line);
+        writer.write("\n");
+        writer.flush();
+
+        writeWsBiographicRecord = false;
+        numBioRecordsWritten++;
 
         // Setup output income code accordingly. It will be overridden as non-reportable if no gross amount is given.
-        incomeCodeForOutputP.value = summary.zeroAmount.equals(grossAmountP.value)
-                ? summary.nonReportableIncomeCode : incomeCodeP.value;
-
-        /*
-         * Warn about positive FTW amount. Per Loree Kanellis:
-         *
-         * All Federal Tax Withholding transactions are negative numbers,
-         * so, if there are multiple federal withholding transactions (for the same payee),
-         * the net of all Federal Tax Withholding transactions would be a negative number
-         * (e.g. -50.00 + -4.52 = Net -54.52)
-         * Since we need to report to the IRS only positive numbers, this net negative amount
-         * would be changed to a positive value.
-         *
-         * The issue is that if the net Federal Tax withholding is a positive number
-         * (e.g. -4.52 + 50.00 = Net 45.48), the net of all Federal Tax withholding
-         * transactions would need to be reported as a negative amount.
-         * Even though we cannot report negative amounts to the IRS, we need to know that
-         * this result would be reflected as a negative number.  It would be a rare occurrence
-         * that could happen AND we would need to perform an Override.
-         */
-        if (ftwAmountP.value.compareTo(summary.zeroAmount) > 0) {
-            numDetailLinesWithPositiveFtwAmount++;
-            LOG.warn("Found a detail row with FTW amount greater than zero! May need override. Key: " + rowKey);
-        }
-
-        /*
-         * Warn about positive SITW amount. Per Loree Kanellis:
-         *
-         * All State Income Tax Withholding transactions are negative numbers,
-         * so, if there are multiple state income withholding transactions (for the same payee),
-         * the net of all State Income Tax Withholding transactions would be a negative number
-         * (e.g. -50.00 + -4.52 = Net -54.52)
-         * Since we need to report to the IRS only positive numbers, this net negative amount
-         * would be changed to a positive value.
-         *
-         * The issue is that if the net State Income Tax withholding is a positive number
-         * (e.g. -4.52 + 50.00 = Net 45.48), the net of all State Income Tax withholding
-         * transactions would need to be reported as a negative amount.
-         * Even though we cannot report negative amounts to the IRS, we need to know that
-         * this result would be reflected as a negative number.  It would be a rare occurrence
-         * that could happen AND we would need to perform an Override.
-         */
-        if (sitwAmountP.value.compareTo(summary.zeroAmount) > 0) {
-            numDetailLinesWithPositiveSitwAmount++;
-            LOG.warn("Found a detail row with SITW amount greater than zero! May need override. Key: " + rowKey);
-        }
+        incomeCodeForOutputP.value = summary.zeroAmount.equals(grossAmountP.value) ? summary.nonReportableIncomeCode : incomeCodeP.value;
 
         /*
          * Set the Chapter 3 Exemption Code based on the tax-treaty-exempt-income and foreign-source-income flags. Values at the time of this writing:
@@ -1531,22 +1417,6 @@ public class SprintaxPaymentRowProcessor {
          */
         chapter3TaxRateP.value = (fedIncomeTaxPctP.value != null && summary.chapter3NotExemptExemptionCode.equals(chapter3ExemptionCodeP.value))
                 ? fedIncomeTaxPctP.value : summary.zeroAmount;
-
-
-
-        // Prepare and write the detail record.
-//        resetBuffer();
-//        appendBuffer(HEADER_BUFFER_INDEX, DETAIL_BUFFER_INDEX);
-//        appendPieces(DETAIL_BUFFER_INDEX);
-//        writeBufferToOutput(DETAIL_BUFFER_INDEX, DETAIL_WRITER_INDEX);
-        numDetailRecordsWritten++;
-
-        // Reset flags and amounts as needed.
-        grossAmountP.value = summary.zeroAmount;
-        ftwAmountP.value = summary.zeroAmount;
-        sitwAmountP.value = summary.zeroAmount;
-        foundAmount = false;
-        writeWsDetailRecord = false;
     }
 
 
@@ -1561,7 +1431,6 @@ public class SprintaxPaymentRowProcessor {
         EnumMap<TaxStatType, Integer> statistics = new EnumMap<TaxStatType, Integer>(TaxStatType.class);
         statistics.put(TaxStatType.NUM_TRANSACTION_ROWS, Integer.valueOf(numTransactionRows));
         statistics.put(TaxStatType.NUM_BIO_RECORDS_WRITTEN, Integer.valueOf(numBioRecordsWritten));
-        statistics.put(TaxStatType.NUM_DETAIL_RECORDS_WRITTEN, Integer.valueOf(numDetailRecordsWritten));
         statistics.put(TaxStatType.NUM_NO_VENDOR, Integer.valueOf(numNoVendor));
         statistics.put(TaxStatType.NUM_NO_PARENT_VENDOR, Integer.valueOf(numNoParentVendor));
         statistics.put(TaxStatType.NUM_VENDOR_NAMES_PARSED, Integer.valueOf(numVendorNamesParsed));
@@ -1584,13 +1453,9 @@ public class SprintaxPaymentRowProcessor {
         statistics.put(TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS, Integer.valueOf(numIncomeCodeExcludedSitwAmounts));
         statistics.put(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS, Integer.valueOf(numIncomeCodeSubTypeExcludedSitwAmounts));
         statistics.put(TaxStatType.NUM_NO_BOX_DETERMINED_ROWS, Integer.valueOf(numNoBoxDeterminedRows));
-        statistics.put(TaxStatType.NUM_BIO_LINES_WITH_TRUNCATED_US_ADDRESS, Integer.valueOf(numBioLinesWithTruncatedUSAddress));
-        statistics.put(TaxStatType.NUM_BIO_LINES_WITH_TRUNCATED_FOREIGN_ADDRESS, Integer.valueOf(numBioLinesWithTruncatedForeignAddress));
         statistics.put(TaxStatType.NUM_BIO_LINES_WITHOUT_US_ADDRESS, Integer.valueOf(numBioLinesWithoutUSAddress));
         statistics.put(TaxStatType.NUM_BIO_LINES_WITHOUT_FOREIGN_ADDRESS, Integer.valueOf(numBioLinesWithoutForeignAddress));
         statistics.put(TaxStatType.NUM_BIO_LINES_WITHOUT_ANY_ADDRESS, Integer.valueOf(numBioLinesWithoutAnyAddress));
-        statistics.put(TaxStatType.NUM_DETAIL_LINES_WITH_POSITIVE_FTW_AMOUNT, Integer.valueOf(numDetailLinesWithPositiveFtwAmount));
-        statistics.put(TaxStatType.NUM_DETAIL_LINES_WITH_POSITIVE_SITW_AMOUNT, Integer.valueOf(numDetailLinesWithPositiveSitwAmount));
 
         TaxSqlUtils.addDvPdpTotalStats(statistics, TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED,
                 dvStats.numGrossAmountsDetermined, pdpStats.numGrossAmountsDetermined);
@@ -1989,37 +1854,6 @@ public class SprintaxPaymentRowProcessor {
         taxBox = null;
     }
 
-    final void resetBuffer() {
-        outputHelper.position = 0;
-    }
-
-    final void appendPieces() throws SQLException, IOException {
-        String tempValue;
-        int tempLen;
-
-        // Append the String values of the pieces in order, right-padding or truncating as needed.
-        for (SprintaxPaymentRowProcessor.RecordPiece piece : outputHelper.outputPieces) {
-
-            tempValue = StringUtils.defaultIfBlank(piece.getValue(), KFSConstants.EMPTY_STRING);
-            tempLen = tempValue.length();
-            if (tempLen <= piece.len) {
-                // If not too long, use the whole value and right-pad with spaces as needed.
-                tempValue.getChars(0, tempLen, outputHelper.outputBuffer, outputHelper.position);
-                outputHelper.position += tempLen;
-            } else {
-                // If the value is too long, then truncate it and notify the piece.
-                tempValue.getChars(0, piece.len, outputHelper.outputBuffer, outputHelper.position);
-                piece.notifyOfTruncatedValue();
-                outputHelper.position += piece.len;
-            }
-
-            writer.write(tempValue + ",");
-
-            outputHelper.outputBuffer[outputHelper.position] = ',';
-            outputHelper.position++;  //todo writer.write(piece.value + ",")
-        }
-
-    }
 
     /**
      * Writes the contents of the specified char buffer to the given writer. A newline character will also be appended to the output.

@@ -177,8 +177,8 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
 //                taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
 //        );
         List<String> datesToProcess = new ArrayList<>();
-        datesToProcess.add("10/21/2024");
-        datesToProcess.add("10/31/2024");
+        datesToProcess.add("01/21/2024");
+        datesToProcess.add("12/31/2024");
 
         Calendar tempCalendar = CoreApiServiceLocator.getDateTimeService().getCurrentCalendar();
 

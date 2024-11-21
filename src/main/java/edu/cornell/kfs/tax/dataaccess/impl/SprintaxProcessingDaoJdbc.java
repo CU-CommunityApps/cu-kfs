@@ -220,11 +220,10 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         return filePathForPaymentsCsv;
     }
 
-    //todo remove duplication
     SprintaxPaymentRowProcessor buildNewProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
-        Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces = new HashMap<String, SprintaxPaymentRowProcessor.RecordPiece>();
-        Map<String,List<String>> complexPiecesNames = new HashMap<String,List<String>>();
-        EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = new EnumMap<CUTaxBatchConstants.TaxFieldSource,Set<TaxTableField>>(CUTaxBatchConstants.TaxFieldSource.class);
+        Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces = new HashMap<>();
+        Map<String,List<String>> complexPiecesNames = new HashMap<>();
+        EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = new EnumMap<>(CUTaxBatchConstants.TaxFieldSource.class);
         boolean foundDuplicate = false;
         int i = 0;
 
@@ -244,112 +243,105 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
 
 
-        // Create the "piece" objects for each section and add them to the processor.
-        for (TaxOutputSection section : outputDefinition.getSections()) {
-//            TaxOutputSection section = outputDefinition.getSections().get(0);
-            if (section.getFields().isEmpty()) {
-                throw new RuntimeException("Cannot have empty sections!");
-            } else if (section.getLength() == null) {
-                throw new RuntimeException("Cannot have section with unspecified max length!");
-            } else if (section.isHasSeparators() && section.getSeparator() == null) {
-                throw new RuntimeException("Cannot have a null separator for a section with separator-delimited fields!");
+        // Create the "piece" objects for the section and add them to the processor.
+        TaxOutputSection section = outputDefinition.getSections().get(0);
+        if (section.getFields().isEmpty()) {
+            throw new RuntimeException("Cannot have empty sections!");
+        } else if (section.getLength() == null) {
+            throw new RuntimeException("Cannot have section with unspecified max length!");
+        } else if (section.isHasSeparators() && section.getSeparator() == null) {
+            throw new RuntimeException("Cannot have a null separator for a section with separator-delimited fields!");
+        }
+        List<SprintaxPaymentRowProcessor.RecordPiece> pieces = new ArrayList<>();
+
+        for (TaxOutputField field : section.getFields()) {
+            if (StringUtils.isBlank(field.getName())) {
+                throw new RuntimeException("Cannot have field with blank name");
+            } else if (StringUtils.isBlank(field.getType())) {
+                throw new RuntimeException("Cannot have field with blank type");
+            } else if (field.getLength() == null) {
+                throw new RuntimeException("Cannot have field with null length");
             }
-            List<SprintaxPaymentRowProcessor.RecordPiece> pieces = new ArrayList<>();
 
-            for (TaxOutputField field : section.getFields()) {
-                if (StringUtils.isBlank(field.getName())) {
-                    throw new RuntimeException("Cannot have field with blank name");
-                } else if (StringUtils.isBlank(field.getType())) {
-                    throw new RuntimeException("Cannot have field with blank type");
-                } else if (field.getLength() == null) {
-                    throw new RuntimeException("Cannot have field with null length");
-                }
+            CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
+            TaxTableField tableField;
 
-                CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
-                TaxTableField tableField;
+            // Create a simple "piece" type or determine what complex "piece" type to create.
+            switch (fieldSource) {
+                case BLANK :
+                    // Use the AlwaysBlankRecordPiece implementation for blank "pieces".
+                    pieces.add(new SprintaxPaymentRowProcessor.AlwaysBlankRecordPiece(field.getName(), field.getLength().intValue()));
+                    tableField = null;
+                    break;
 
+                case STATIC :
+                    // Use the StaticStringRecordPiece implementation for static-value "pieces".
+                    pieces.add(new SprintaxPaymentRowProcessor.StaticStringRecordPiece(field.getName(), field.getLength().intValue(), field.getValue()));
+                    tableField = null;
+                    break;
 
+                case DETAIL :
+                    tableField = summary.transactionDetailRow.getField(field.getValue());
+                    break;
 
-                // Create a simple "piece" type or determine what complex "piece" type to create.
-                switch (fieldSource) {
-                    case BLANK :
-                        // Use the AlwaysBlankRecordPiece implementation for blank "pieces".
-                        pieces.add(new SprintaxPaymentRowProcessor.AlwaysBlankRecordPiece(field.getName(), field.getLength().intValue()));
-                        tableField = null;
-                        break;
+                case PDP :
+                    throw new IllegalStateException("Cannot create piece for PDP type");
 
-                    case STATIC :
-                        // Use the StaticStringRecordPiece implementation for static-value "pieces".
-                        pieces.add(new SprintaxPaymentRowProcessor.StaticStringRecordPiece(field.getName(), field.getLength().intValue(), field.getValue()));
-                        tableField = null;
-                        break;
+                case DV :
+                    throw new IllegalStateException("Cannot create piece for DV type");
 
-                    case DETAIL :
-                        tableField = summary.transactionDetailRow.getField(field.getValue());
-                        break;
+                case VENDOR :
+                    tableField = summary.vendorRow.getField(field.getValue());
+                    break;
 
-                    case PDP :
-                        throw new IllegalStateException("Cannot create piece for PDP type");
+                case VENDOR_US_ADDRESS :
+                case VENDOR_ANY_ADDRESS :
+                    tableField = summary.vendorAddressRow.getField(field.getValue());
+                    break;
 
-                    case DV :
-                        throw new IllegalStateException("Cannot create piece for DV type");
+                case DOCUMENT_NOTE :
+                    throw new IllegalStateException("Cannot create piece for DOCUMENT_NOTE type");
 
-                    case VENDOR :
-                        tableField = summary.vendorRow.getField(field.getValue());
-                        break;
+                case DERIVED :
+                    tableField = summary.derivedValues.getField(field.getValue());
+                    break;
 
-                    case VENDOR_US_ADDRESS :
-                    case VENDOR_ANY_ADDRESS :
-                        tableField = summary.vendorAddressRow.getField(field.getValue());
-                        break;
-
-                    case DOCUMENT_NOTE :
-                        throw new IllegalStateException("Cannot create piece for DOCUMENT_NOTE type");
-
-                    case DERIVED :
-                        tableField = summary.derivedValues.getField(field.getValue());
-                        break;
-
-                    default :
-                        throw new IllegalStateException("Unrecognized piece type for field");
-                }
+                default :
+                    throw new IllegalStateException("Unrecognized piece type for field");
+            }
 
 
 
-                // Create a more complex "piece" type if necessary.
-                if (tableField != null) {
-                    String pieceKey = tableField.propertyName;
+            // Create a more complex "piece" type if necessary.
+            if (tableField != null) {
+                String pieceKey = tableField.propertyName;
 
-                    // Create a new "piece" or re-use an existing one for duplicates as needed.
-                    SprintaxPaymentRowProcessor.RecordPiece currentPiece = complexPieces.get(pieceKey);
+                // Create a new "piece" or re-use an existing one for duplicates as needed.
+                SprintaxPaymentRowProcessor.RecordPiece currentPiece = complexPieces.get(pieceKey);
 
-                    if (currentPiece == null) {
-                        // If not a duplicate, then create a new one.
-                        currentPiece = rowProcessor.getPieceForField(fieldSource, tableField, field.getName(), field.getLength().intValue());
-                        complexPiecesNames.put(pieceKey, new ArrayList<String>());
-                        minimumPieces.get(fieldSource).remove(tableField);
-                        // Add piece to cache.
-                        complexPieces.put(pieceKey, currentPiece);
-                    } else {
-                        // If a duplicate, then use the originally-created piece instead, and warn about mismatched lengths.
-                        foundDuplicate = true;
-                        if (currentPiece.len != field.getLength().intValue()) {
-                            LOG.warn("NOTE: Found multiple tax output pieces with key " + pieceKey + " that do not have the same max length!");
-                        }
+                if (currentPiece == null) {
+                    // If not a duplicate, then create a new one.
+                    currentPiece = rowProcessor.getPieceForField(fieldSource, tableField, field.getName(), field.getLength().intValue());
+                    complexPiecesNames.put(pieceKey, new ArrayList<String>());
+                    minimumPieces.get(fieldSource).remove(tableField);
+                    // Add piece to cache.
+                    complexPieces.put(pieceKey, currentPiece);
+                } else {
+                    // If a duplicate, then use the originally-created piece instead, and warn about mismatched lengths.
+                    foundDuplicate = true;
+                    if (currentPiece.len != field.getLength().intValue()) {
+                        LOG.warn("NOTE: Found multiple tax output pieces with key " + pieceKey + " that do not have the same max length!");
                     }
-                    complexPiecesNames.get(pieceKey).add(field.getName());
-                    pieces.add(currentPiece);
                 }
+                complexPiecesNames.get(pieceKey).add(field.getName());
+                pieces.add(currentPiece);
             }
-
-
-
-            // Setup the section's output buffer.
-            rowProcessor.setupOutputBuffer(section.getLength(), pieces);
-
-            i++;
         }
 
+
+
+        // Setup the section's output buffer.
+        rowProcessor.setupOutputBuffer(section.getLength(), pieces);
 
 
         // If the processor has defined some minimum fields, but they have not been created yet, then create them.
