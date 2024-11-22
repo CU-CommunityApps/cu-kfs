@@ -6,8 +6,67 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                 http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="PaymentSourceWireTransfer-bankName" parent="PaymentSourceWireTransfer-bankName-parentBean">
-		<property name="maxLength" value="55"/>
-	</bean>
+    <bean id="PaymentSourceWireTransfer" parent="PaymentSourceWireTransfer-parentBean">
+        <property name="attributes">
+            <list merge="true">
+                <ref bean="PaymentSourceWireTransfer-extension-bankStreetAddress"/>
+                <ref bean="PaymentSourceWireTransfer-extension-bankProvince"/>
+                <ref bean="PaymentSourceWireTransfer-extension-bankSwiftCode"/>
+                <ref bean="PaymentSourceWireTransfer-extension-bankIBAN"/>
+                <ref bean="PaymentSourceWireTransfer-extension-sortOrTransitCode"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankName"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankAddress"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankRoutingNumber"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankAccountNumber"/>
+                <ref bean="PaymentSourceWireTransfer-extension-correspondentBankSwiftCode"/>
+            </list>
+        </property>
+    </bean>
+  
+    <bean id="PaymentSourceWireTransfer-bankName" parent="PaymentSourceWireTransfer-bankName-parentBean"
+        p:maxLength="55"/>
+ 
+    <bean id="PaymentSourceWireTransfer-payeeAccountName" parent="PaymentSourceWireTransfer-payeeAccountName-parentBean"
+        p:maxLength="55"/>
 
+    <bean id="PaymentSourceWireTransfer-extension-bankStreetAddress" parent="PaymentSourceWireTransfer-extension-bankStreetAddress-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-bankStreetAddress-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress"
+        p:name="extension.bankStreetAddress"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-bankProvince" parent="PaymentSourceWireTransfer-extension-bankProvince-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-bankProvince-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-bankProvince"
+        p:name="extension.bankProvince"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-bankSwiftCode" parent="PaymentSourceWireTransfer-extension-bankSwiftCode-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-bankSwiftCode-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode"
+        p:name="extension.bankSwiftCode"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-bankIBAN" parent="PaymentSourceWireTransfer-extension-bankIBAN-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-bankIBAN-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-bankIBAN"
+        p:name="extension.bankIBAN"/> 
+
+    <bean id="PaymentSourceWireTransfer-extension-sortOrTransitCode" parent="PaymentSourceWireTransfer-extension-sortOrTransitCode-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-sortOrTransitCode-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode"
+        p:name="extension.sortOrTransitCode"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankName" parent="PaymentSourceWireTransfer-extension-correspondentBankName-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankName-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankName"
+        p:name="extension.correspondentBankName"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankAddress" parent="PaymentSourceWireTransfer-extension-correspondentBankAddress-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankAddress-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankAddress"
+        p:name="extension.correspondentBankAddress"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankRoutingNumber" parent="PaymentSourceWireTransfer-extension-correspondentBankRoutingNumber-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankRoutingNumber-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankRoutingNumber"
+        p:name="extension.correspondentBankRoutingNumber"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankAccountNumber" parent="PaymentSourceWireTransfer-extension-correspondentBankAccountNumber-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankAccountNumber-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankAccountNumber"
+        p:name="extension.correspondentBankAccountNumber"/>
+
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankSwiftCode" parent="PaymentSourceWireTransfer-extension-correspondentBankSwiftCode-parentBean"/>
+    <bean id="PaymentSourceWireTransfer-extension-correspondentBankSwiftCode-parentBean" abstract="true" parent="PaymentSourceWireTransferExtendedAttribute-correspondentBankSwiftCode"
+        p:name="extension.correspondentBankSwiftCode"/>
+        
 </beans>

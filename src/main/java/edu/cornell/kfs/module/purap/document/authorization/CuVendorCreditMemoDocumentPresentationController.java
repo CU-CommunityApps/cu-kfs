@@ -35,7 +35,7 @@ public class CuVendorCreditMemoDocumentPresentationController extends VendorCred
 	
     // KFSPTS-1891, KFSPTS-2851
     private boolean canEditAmount(final VendorCreditMemoDocument vendorCreditMemoDocument) {
-    		return  PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.contains(vendorCreditMemoDocument.getApplicationDocumentStatus());
+    		return  PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.contains(vendorCreditMemoDocument.getApplicationDocumentStatus());
     }
 
 }
