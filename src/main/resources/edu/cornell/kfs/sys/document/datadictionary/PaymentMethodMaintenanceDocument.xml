@@ -28,43 +28,62 @@
     <!-- Maintenance Section Definitions -->
     <bean parent="DataDictionaryBeanOverride">
         <property name="beanName" value="PaymentMethodMaintenanceDocument-EditPaymentMethod" />
-       <property name="fieldOverrides">
-           <list>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="maintainableItems" />
-                   <property name="propertyNameForElementCompare" value="name" />
-                   <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="bankCode" />
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="extension.processedUsingPdp" />
-                       </list>
-                   </property>
-               </bean>
-           </list>
-       </property>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="maintainableItems" />
+                    <property name="propertyNameForElementCompare" value="name" />
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="bankCode" />
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.processedUsingPdp" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
     </bean>
     
     <bean parent="DataDictionaryBeanOverride">
         <property name="beanName" value="PaymentMethodMaintenanceDocument-EditPaymentMethod" />
-       <property name="fieldOverrides">
-           <list>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="maintainableItems" />
-                   <property name="propertyNameForElementCompare" value="name" />
-                   <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="displayOnVendorCreditMemo" />
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                          <bean parent="MaintainableFieldDefinition" p:name="extension.displayOnVendorDocument" />
-                          <bean parent="MaintainableFieldDefinition" p:name="extension.displayOnRecurringDVDocument" />
-                       </list>
-                   </property>
-               </bean>
-           </list>
-       </property>
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="maintainableItems" />
+                    <property name="propertyNameForElementCompare" value="name" />
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="displayOnVendor" />
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.displayOnRecurringDVDocument" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <bean parent="DataDictionaryBeanOverride">
+        <property name="beanName" value="PaymentMethodMaintenanceDocument-EditPaymentMethod" />
+        <property name="fieldOverrides">
+            <list>
+                <bean parent="FieldOverrideForListElementInsert">
+                    <property name="propertyName" value="maintainableItems" />
+                    <property name="propertyNameForElementCompare" value="name" />
+                    <property name="element">
+                        <bean parent="MaintainableFieldDefinition" p:name="additionalPaymentRequestDataCode" />
+                    </property>
+                    <property name="insertAfter">
+                        <list>
+                            <bean parent="MaintainableFieldDefinition" p:name="extension.additionalCreditMemoDataCode" p:required="true"/>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
     </bean>
 
 </beans>

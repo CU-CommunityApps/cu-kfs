@@ -20,7 +20,6 @@ public class VendorDetailExtension extends PersistableBusinessObjectBase
 	protected Integer vendorHeaderGeneratedIdentifier;
     protected Integer vendorDetailAssignedIdentifier;
     protected String einvoiceVendorIndicator;
-    protected String  defaultB2BPaymentMethodCode;
     
     protected boolean insuranceRequiredIndicator;
     protected Boolean insuranceRequirementsCompleteIndicator;
@@ -72,14 +71,6 @@ public class VendorDetailExtension extends PersistableBusinessObjectBase
         this.einvoiceVendorIndicator = eInvoiceVendorIndicator;
     }
     
-    public String getDefaultB2BPaymentMethodCode() {
-        return defaultB2BPaymentMethodCode;
-    }
-
-    public void setDefaultB2BPaymentMethodCode(String defaultB2BPaymentMethodCode) {
-        this.defaultB2BPaymentMethodCode = defaultB2BPaymentMethodCode;
-    }
-
 	public boolean isInsuranceRequiredIndicator() {
 		return insuranceRequiredIndicator;
 	}

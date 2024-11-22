@@ -105,7 +105,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
     	super.customCalculate(apDoc);
     	final PaymentRequestDocument preqDoc = (PaymentRequestDocument) apDoc;
         // KFSPTS-2578
-        if (PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
+        if (PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW.equalsIgnoreCase(preqDoc.getApplicationDocumentStatus())
         		&& StringUtils.isNotBlank(preqDoc.getTaxClassificationCode()) && !StringUtils.equalsIgnoreCase(preqDoc.getTaxClassificationCode(), "N")) {
             SpringContext.getBean(PaymentRequestService.class).calculateTaxArea(preqDoc);
             return;
@@ -121,7 +121,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
 
         SpringContext.getBean(PurapService.class).prorateForTradeInAndFullOrderDiscount(preq);
         // if tax is required but not yet calculated, return and prompt user to calculate
-        if (requiresCalculateTax((PaymentRequestForm)form)) {
+        if (requiresCalculationBeforeApprove((PaymentRequestForm)form)) {
             GlobalVariables.getMessageMap().putError(KFSConstants.DOCUMENT_ERRORS, PurapKeyConstants.ERROR_APPROVE_REQUIRES_CALCULATE);
             return mapping.findForward(KFSConstants.MAPPING_BASIC);
         }
@@ -135,7 +135,7 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
             // need to wait after new item generated itemid
             // preqacctrevision is saved separately
             // TODO : this preqacctrevision is new.  need to validate with existing system to see if '0' is normal ?
-            if (StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW) || StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
+            if (StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW) || StringUtils.equals(preq.getApplicationDocumentStatus(), PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW)) {
               SpringContext.getBean(PurapAccountRevisionService.class).savePaymentRequestAccountRevisions(preq.getItems(), preq.getPostingYearFromPendingGLEntries(), preq.getPostingPeriodCodeFromPendingGLEntries());
             }
             return forward;
@@ -146,22 +146,16 @@ public class CuPaymentRequestAction extends PaymentRequestAction {
         }
     }
     
-    /**
-     * Calls service to clear tax info.
-     */
-    public ActionForward clearTaxInfo(
-            final ActionMapping mapping, final ActionForm form, final HttpServletRequest request, 
-            final HttpServletResponse response) throws Exception {
-        final PaymentRequestForm prForm = (PaymentRequestForm) form;
-        final PaymentRequestDocument document = (PaymentRequestDocument) prForm.getDocument();
-
-        final PaymentRequestService taxService = SpringContext.getBean(PaymentRequestService.class);
-
-        /* call service to clear previous lines */
-        taxService.clearTax(document);
-
-        return mapping.findForward(KFSConstants.MAPPING_BASIC);
+    // Cornell customization: method is private in base code so we had to copy it over
+    private boolean requiresCalculationBeforeApprove(final PaymentRequestForm preqForm) {
+        final PaymentRequestDocument preq = (PaymentRequestDocument) preqForm.getDocument();
+        final boolean requiresCalculatePaymentMethod = !preqForm.isCalculated()
+                && StringUtils.equals(
+                    PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW,
+                    preq.getApplicationDocumentStatus());
+        return requiresCalculatePaymentMethod || requiresCalculateTax(preqForm);
     }
+    
     
     private CuCheckStubService getCuCheckStubService() {
         if (cuCheckStubService == null) {

@@ -256,9 +256,9 @@ public class PaymentApplicationForm extends FinancialSystemTransactionalDocument
     }
 
     // When "adjusting", this method will get called multiple times. Sometimes getDocument() will return the APP being
-    // adjusted, in which case, it's adjusterDocumentNumber shoudl be returned; other times, it will return the newly
-    // created APPA, in which case, returning NULL is fine becuase the APP header isn't going to be displayed anyway.
-    // Something's getting called unnecessaryily...but this is Struts code, so...<shrug>.
+    // adjusted, in which case, it's adjusterDocumentNumber should be returned; other times, it will return the newly
+    // created APPA, in which case, returning NULL is fine because the APP header isn't going to be displayed anyway.
+    // Something's getting called unnecessarily...but this is Struts code, so...<shrug>.
     private Optional<String> getDocumentAdjusterDocumentNumber() {
         String adjusterDocumentNumber = null;
         if (getDocument() instanceof PaymentApplicationDocument) {
