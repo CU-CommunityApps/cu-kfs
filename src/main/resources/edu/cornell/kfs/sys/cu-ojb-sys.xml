@@ -403,7 +403,7 @@
         <field-descriptor name="payeeAccountTypeCode" column="PAYEE_ACCT_TYP_CD" jdbc-type="VARCHAR"/>
         <field-descriptor name="bankStreetAddress" column="BNK_STR_ADDR" jdbc-type="VARCHAR"/>
         <field-descriptor name="bankProvince" column="BNK_PRVNC" jdbc-type="VARCHAR"/>
-        <field-descriptor name="bankSWIFTCode" column="BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
+        <field-descriptor name="bankSwiftCode" column="BNK_SWIFT_CD" jdbc-type="VARCHAR"/>
         <field-descriptor name="bankIBAN" column="BNK_IBAN" jdbc-type="VARCHAR"
                           conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion"/>
         <field-descriptor name="sortOrTransitCode" column="BNK_SORT_TRNS_CD" jdbc-type="VARCHAR"/>

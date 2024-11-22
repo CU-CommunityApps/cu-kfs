@@ -131,12 +131,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankSWIFTCode}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankSwiftCode}"/></div></th>
                     <c:set var="bankSwiftCode">
         			    <bean:message key="label.wireTransfer.bankSwiftCode.hint"/>
                     </c:set>
                     <td class="datacell">
-                        <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransAttributes.preqBankSWIFTCode}" property="document.preqWireTransfer.preqBankSWIFTCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransAttributes.preqBankSwiftCode}" property="document.preqWireTransfer.preqBankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                     <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCorrespondentBankAddress}"/></div></th>
                     <td class="datacell">

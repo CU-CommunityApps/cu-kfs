@@ -16,7 +16,7 @@ public class CuPaymentSourcePreRulesServiceImpl extends PaymentSourcePreRulesSer
                 (PaymentSourceWireTransferExtendedAttribute) wireTransfer.getExtension();
         hasValues |= StringUtils.isNotBlank(wireExtension.getBankStreetAddress());
         hasValues |= StringUtils.isNotBlank(wireExtension.getBankProvince());
-        hasValues |= StringUtils.isNotBlank(wireExtension.getBankSWIFTCode());
+        hasValues |= StringUtils.isNotBlank(wireExtension.getBankSwiftCode());
         hasValues |= StringUtils.isNotBlank(wireExtension.getBankIBAN());
         hasValues |= StringUtils.isNotBlank(wireExtension.getSortOrTransitCode());
         hasValues |= StringUtils.isNotBlank(wireExtension.getCorrespondentBankName());
@@ -34,7 +34,7 @@ public class CuPaymentSourcePreRulesServiceImpl extends PaymentSourcePreRulesSer
                 (PaymentSourceWireTransferExtendedAttribute) wireTransfer.getExtension();
         wireExtension.setBankStreetAddress(null);
         wireExtension.setBankProvince(null);
-        wireExtension.setBankSWIFTCode(null);
+        wireExtension.setBankSwiftCode(null);
         wireExtension.setBankIBAN(null);
         wireExtension.setSortOrTransitCode(null);
         wireExtension.setCorrespondentBankName(null);

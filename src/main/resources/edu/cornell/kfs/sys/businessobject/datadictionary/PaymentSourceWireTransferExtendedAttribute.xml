@@ -13,7 +13,7 @@
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-payeeAccountTypeCode"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-bankStreetAddress"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-bankProvince"/>
-                <ref bean="PaymentSourceWireTransferExtendedAttribute-bankSWIFTCode"/>
+                <ref bean="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-bankIBAN"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-sortOrTransitCode"/>
                 <ref bean="PaymentSourceWireTransferExtendedAttribute-correspondentBankName"/>
@@ -72,11 +72,11 @@
         </property>
     </bean>
 
-    <bean id="PaymentSourceWireTransferExtendedAttribute-bankSWIFTCode"
-          parent="PaymentSourceWireTransferExtendedAttribute-bankSWIFTCode-parentBean"/>
-    <bean id="PaymentSourceWireTransferExtendedAttribute-bankSWIFTCode-parentBean"
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode"
+          parent="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode-parentBean"/>
+    <bean id="PaymentSourceWireTransferExtendedAttribute-bankSwiftCode-parentBean"
           abstract="true" parent="AttributeDefinition"
-          p:name="bankSWIFTCode"
+          p:name="bankSwiftCode"
           p:forceUppercase="false"
           p:label="Bank SWIFT Code (BIC)"
           p:shortLabel="Bnk SWIFT Cd"

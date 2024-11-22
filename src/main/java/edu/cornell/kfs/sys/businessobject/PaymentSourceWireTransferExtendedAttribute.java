@@ -9,7 +9,7 @@ public class PaymentSourceWireTransferExtendedAttribute extends PersistableBusin
     private String payeeAccountTypeCode;
     private String bankStreetAddress;
     private String bankProvince;
-    private String bankSWIFTCode;
+    private String bankSwiftCode;
     private String bankIBAN;
     private String sortOrTransitCode;
     private String correspondentBankName;
@@ -53,12 +53,12 @@ public class PaymentSourceWireTransferExtendedAttribute extends PersistableBusin
         this.bankProvince = bankProvince;
     }
     
-    public String getBankSWIFTCode() {
-        return bankSWIFTCode;
+    public String getBankSwiftCode() {
+        return bankSwiftCode;
     }
     
-    public void setBankSWIFTCode(String bankSWIFTCode) {
-        this.bankSWIFTCode = bankSWIFTCode;
+    public void setBankSwiftCode(String bankSwiftCode) {
+        this.bankSwiftCode = bankSwiftCode;
     }
     
     public String getBankIBAN() {

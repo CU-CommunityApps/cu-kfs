@@ -152,13 +152,13 @@
               </tr>
               
               <tr>
-                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.bankSWIFTCode}"/>
+                <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.bankSwiftCode}"/>
                 </div></th>
                   <c:set var="bankSwiftCode">
         			<bean:message key="label.wireTransfer.bankSwiftCode.hint"/>
                   </c:set>
                 <td class="datacell">
-                  <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransAttributes2.bankSWIFTCode}" property="document.wireTransfer.extension.bankSWIFTCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                  <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransAttributes2.bankSwiftCode}" property="document.wireTransfer.extension.bankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                 </td>
                 <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes2.correspondentBankAddress}"/></div></th>
                 <td class="datacell">
