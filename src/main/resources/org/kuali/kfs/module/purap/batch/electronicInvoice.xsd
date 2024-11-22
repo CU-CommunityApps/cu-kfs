@@ -457,7 +457,7 @@
                     <xsd:complexType>
                         <xsd:sequence>
                             <!-- minOccurs should be 1, but in sample data file there are no entries for it,
-                                but in dtd, it's maxOccurs/minOccurs=1. Becuase of the sample data file,
+                                but in dtd, it's maxOccurs/minOccurs=1. Because of the sample data file,
                                 i'm changing the minOccurs to ZERO-->
                             <xsd:element ref="InvoiceDetailShipping" minOccurs="0"/>
                             <xsd:element ref="Money"/>

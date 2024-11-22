@@ -25,28 +25,25 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
         
- <bean id="VendorCreditMemo-routeDocumentValidation" parent="VendorCreditMemo-routeDocumentValidation-parentBean" >
-  		<property name="validations">
-  			<list merge="true">
-  				
-				<!-- KFSPTS-1891 -->
-				<bean class="edu.cornell.kfs.module.purap.document.validation.impl.VendorCreditMemoPaymentMethodCodeValidation" />
-				<bean parent="VendorCreditMemo-wireTransferValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="accountingDocumentFieldConversion" />
-						</list>
-					</property>
-				</bean>
-				<bean parent="VendorCreditMemo-foreignDraftValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="accountingDocumentFieldConversion" />
-						</list>
-					</property>
-				</bean>
-														
-			</list>
-		</property>
-  	</bean>
- </beans>
+    <bean id="VendorCreditMemo-routeDocumentValidation" parent="VendorCreditMemo-routeDocumentValidation-parentBean" >
+        <property name="validations">
+            <list merge="true">
+                <bean class="edu.cornell.kfs.module.purap.document.validation.impl.VendorCreditMemoPaymentMethodCodeValidation" />
+                <bean parent="VendorCreditMemo-wireTransferValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+                <bean parent="VendorCreditMemo-foreignDraftValidation" scope="prototype">
+                    <property name="parameterProperties">
+                        <list>
+                            <bean parent="accountingDocumentFieldConversion" />
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+</beans>

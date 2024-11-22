@@ -2,6 +2,13 @@ package edu.cornell.kfs.module.purap.document.service.impl;
 
 import java.math.BigDecimal;
 
+import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
+import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
+import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
+import edu.cornell.kfs.module.purap.fixture.PaymentRequestFixture;
+import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
+import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coreservice.impl.parameter.Parameter;
@@ -23,12 +30,7 @@ import org.kuali.kfs.sys.fixture.UserNameFixture;
 import org.kuali.kfs.core.api.datetime.DateTimeService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
-import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
-import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
-import edu.cornell.kfs.module.purap.document.service.CuPaymentRequestService;
-import edu.cornell.kfs.module.purap.fixture.PaymentRequestFixture;
-import edu.cornell.kfs.module.purap.fixture.PurchaseOrderFixture;
-import edu.cornell.kfs.module.purap.fixture.RequisitionItemFixture;
+
 
 @ConfigureContext(session = UserNameFixture.mls398)
 public class CuPaymentRequestServiceImplIntegTest extends KualiIntegTestBase {

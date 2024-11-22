@@ -21,7 +21,7 @@
         <skipTests>true</skipTests>
         <test.excludes>**/*Test.java.bogus</test.excludes>
 
-        <kfs.version>2023-03-22</kfs.version>
+        <kfs.version>2023-04-19</kfs.version>
 
         <aws-java-sdk.version>2.25.2</aws-java-sdk.version>
         <backport-util-concurrent.version>2.2</backport-util-concurrent.version>
@@ -30,7 +30,7 @@
              This can be removed once all code has been updated to use jaxb or other framework to replace commons-digester.
         -->
         <commons-digester3.version>3.2</commons-digester3.version>
-        <gson.version>2.9.0</gson.version>
+        <gson.version>2.10.1</gson.version>
         <hibernate-validator-annotation-processor.version>6.2.3.Final</hibernate-validator-annotation-processor.version>
         <httpclient.version>5.2.1</httpclient.version>
         <httpcore.version>${httpclient.version}</httpcore.version>
@@ -1103,6 +1103,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

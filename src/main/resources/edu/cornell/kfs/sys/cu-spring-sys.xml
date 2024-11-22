@@ -271,8 +271,11 @@
 
 	<bean id="paymentSourceHelperService" parent="paymentSourceHelpService-parentBean"
 			class="edu.cornell.kfs.sys.document.service.impl.CuPaymentSourceHelperServiceImpl"/>
-
-	<bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean"
+    
+    <bean id="paymentSourcePreRulesService" parent="paymentSourcePreRulesService-parentBean"
+          class="edu.cornell.kfs.sys.document.validation.impl.CuPaymentSourcePreRulesServiceImpl"/>
+    
+    <bean id="batchFileLookupableHelperService" parent="batchFileLookupableHelperService-parentBean"
           scope="prototype"/>
     <bean id="batchFileLookupableHelperService-parentBean"
           class="org.kuali.kfs.sys.businessobject.lookup.BatchFileLookupableHelperServiceImpl" scope="prototype"

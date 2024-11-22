@@ -19,7 +19,7 @@ public class CUPurapConstants {
     public static final String SPECIAL_HANDLING_NOTE_LINE_2_ADDRESS = "SH1:";
     public static final String SPECIAL_HANDLING_NOTE_LINE_3_CITY_STATE_ZIP = "SH3:";
     public static final String PURAP_NOTES_IDENTIFIER = "::";
-    public static final String PAYMENT_METHODL_REVIEW = "PTMA";
+    public static final String PAYMENT_METHOD_REVIEW = "PTMA";
     public static final String B2B_HIGHER_LIMIT_PERMISSION = "B2B Higher APO Limit";
 
     public static class RequisitionStatuses {
@@ -65,7 +65,7 @@ public class CUPurapConstants {
         AWAITING_TAX_REVIEW(PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, false),
         DEPARTMENT_APPROVED(PaymentRequestStatuses.APPDOC_DEPARTMENT_APPROVED, false),        
         // KFSPTS-1891
-        PAYMENT_METHOD_REVIEW(CUPurapConstants.PAYMENT_METHODL_REVIEW, false), 
+        PAYMENT_METHOD_REVIEW(CUPurapConstants.PAYMENT_METHOD_REVIEW, false), 
         AUTO_APPROVED(PaymentRequestStatuses.APPDOC_AUTO_APPROVED, false), ;
 
         private String statusCode = new String();
@@ -257,8 +257,6 @@ public class CUPurapConstants {
     public static final String LABEL_CURRENCY = "Currency";
     public static final String LABEL_BANK_ACCT_NUMBER = "Bank Account#";
     public static final String LABEL_BANK_ACCT_NAME = "Bank Account Name";
-    public static final String PAYMENT_METHOD = "payment method";
-    public static final String WIRE_TRANSFER = "Wire Transfer";
     
     //KFSPTS-3718
     public static final String I_WANT_DOC_FEED_FILE_PREFIX = "purap_iwantdoc_";

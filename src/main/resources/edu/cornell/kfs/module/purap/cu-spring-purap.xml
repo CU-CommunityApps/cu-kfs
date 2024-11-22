@@ -54,14 +54,7 @@
           p:purchaseOrderService-ref="purchaseOrderService"
           p:vendorService-ref="vendorService"
     />
-    
-    <bean id="b2bPunchOutOrderFileType" 
-          class="org.kuali.kfs.module.purap.util.cxml.B2BPunchOutOrderFileType"
-          p:outputClass="org.kuali.kfs.module.purap.util.cxml.B2BShoppingCart"
-          p:schemaLocation="classpath:org/kuali/kfs/module/purap/util/cxml/b2bPunchOutOrder.xsd"
-    />
-	
-	
+
 	<bean id="electronicInvoiceExtractJob" parent="scheduledJobDescriptor">
 		<property name="steps">
 			<list>
@@ -226,8 +219,6 @@
     <bean id="electronicInvoiceHelperService" parent="electronicInvoiceHelperService-parentBean"  class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceHelperServiceImpl">
         <property name="workflowDocumentService" ref="workflowDocumentService" />
         <property name="financialSystemDocumentService" ref="financialSystemDocumentService" />
-        <property name="cUPaymentMethodGeneralLedgerPendingEntryService" ref="cUPaymentMethodGeneralLedgerPendingEntryService" />
-        
     </bean>
     <bean id="electronicInvoiceMatchingService" parent="electronicInvoiceMatchingService-parentBean" class="edu.cornell.kfs.module.purap.service.impl.CuElectronicInvoiceMatchingServiceImpl" />
     <bean id="creditMemoService" parent="creditMemoService-parentBean" 
@@ -240,7 +231,6 @@
 
     <bean id="pdpExtractService" parent="pdpExtractService-parentBean" 
           class="edu.cornell.kfs.module.purap.service.impl.CuPdpExtractService"
-          p:documentTypeService-ref="documentTypeService"
     />
 
 	<bean id="creditMemoDao" parent="platformAwareDao" class="edu.cornell.kfs.module.purap.document.dataaccess.impl.CuCreditMemoDaoOjb" />
