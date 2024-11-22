@@ -51,17 +51,6 @@
                        </list>
                    </property>
                </bean>
-               <bean parent="FieldOverrideForListElementInsert">
-                   <property name="propertyName" value="maintainableItems" />
-                   <property name="element">
-                           <bean parent="MaintainableFieldDefinition" p:name="vendorFirstLastNameIndicator" />
-                   </property>
-                   <property name="insertAfter">
-                       <list>
-                           <bean parent="MaintainableFieldDefinition" p:name="extension.defaultB2BPaymentMethodCode" p:required="true" />
-                       </list>
-                   </property>
-               </bean>
            </list>
        </property>
    </bean>

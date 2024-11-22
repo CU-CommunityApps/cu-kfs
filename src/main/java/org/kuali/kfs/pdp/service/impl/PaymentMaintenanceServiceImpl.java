@@ -21,6 +21,7 @@
  */
 package org.kuali.kfs.pdp.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.util.type.KualiInteger;
@@ -32,6 +33,7 @@ import org.kuali.kfs.krad.bo.KualiCode;
 import org.kuali.kfs.krad.service.BusinessObjectService;
 import org.kuali.kfs.krad.util.GlobalVariables;
 import org.kuali.kfs.krad.util.ObjectUtils;
+import org.kuali.kfs.module.purap.PurapConstants;
 import org.kuali.kfs.pdp.PdpConstants;
 import org.kuali.kfs.pdp.PdpKeyConstants;
 import org.kuali.kfs.pdp.PdpPropertyConstants;
@@ -493,6 +495,9 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
     protected boolean shouldGenerateCancellationGlpes(final PaymentGroup paymentGroup) {
         if (isCheckAchDisbursement(paymentGroup)) {
             return true;
+        } else if (nonCheckAchDisbursementOriginatesFromPaymentRequestDocument(paymentGroup)) {
+            // Non-check/ACH PREQ payments are handled by processPdpCancelsAndPaidJob
+            return false;
         }
         LOG.debug(
                 "shouldGenerateCancellationGlpes(...) - Check for GLPEs to delete: paymentGroupId={}",
@@ -521,6 +526,23 @@ public class PaymentMaintenanceServiceImpl implements PaymentMaintenanceService 
             }
         }
         return withoutGlpes;
+    }
+
+    /*
+     * Assumes the caller already knows the disbursement type is not check or ACH.  Determines if the payment group
+     * originates from a payment request document by checking the document type of the payment details against PREQ.
+     *
+     * @return whether the given non-Check/ACH disbursement is associated to a payment request
+     */
+    private static boolean nonCheckAchDisbursementOriginatesFromPaymentRequestDocument(
+            final PaymentGroup paymentGroup
+    ) {
+        if (paymentGroup.getPaymentDetails().isEmpty()) {
+            return false;
+        }
+        return StringUtils.equals(
+                PurapConstants.PurapDocTypeCodes.PAYMENT_REQUEST_DOCUMENT,
+                paymentGroup.getPaymentDetails().get(0).getFinancialDocumentTypeCode());
     }
 
     @Override
