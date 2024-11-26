@@ -10,9 +10,9 @@
         <field name="B2" length="90" type="STATIC" value="" /><!-- Middle_Name -->
         <field name="B3" length="90" type="DERIVED" value="vendorLastName" /><!-- Last_Name -->
         <field name="B4" length="90" type="DERIVED" value="vendorEmailAddress" /><!-- vendorEmailAddress => Email -->
-        <field name="B5" length="90" type="BLANK" /><!-- Unique_ID_Student_Number -->
+        <field name="B5" length="90" type="STATIC" value="" /><!-- Unique_ID_Student_Number -->
         <field name="B6" length="90" type="DERIVED" value="ssn" /><!-- TIN  -->
-        <field name="B7" length="90" type="BLANK" /><!-- DOB -->
+        <field name="B7" length="90" type="STATIC" value="" /><!-- DOB -->
         <field name="B8" length="90" type="DERIVED" value="itin" /><!-- Foreign_Tax_ID (vendorGIIN or itin?) -->
         <field name="B9" length="90" type="DERIVED" value="vendorForeignCountryCode" /><!-- Country_of_Residence -->
         <field name="B10" length="90" type="DERIVED" value="vendorUSAddressLine1" /><!-- US_Address_Line_1 -->

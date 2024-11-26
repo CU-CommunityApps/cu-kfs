@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -60,8 +61,6 @@ public class SprintaxPaymentRowProcessor {
     private final DecimalFormat amountFormat;
     private final DecimalFormat percentFormat;
     private final DateFormat dateFormat;
-
-    // The default reporting sub-directory to use for file outputs.
     private Transaction1042SSummary summary;
 
     // Variables pertaining to values that need to be retrieved from the next detail row before populating the detail "piece" objects.
@@ -112,34 +111,9 @@ public class SprintaxPaymentRowProcessor {
     private boolean isParm1042SInclusion;
     private boolean isParm1042SExclusion;
 
-    // Variables pertaining to various statistics.
-    private int numTransactionRows;
-    private int numBioRecordsWritten;
-    private int numNoVendor;
-    private int numNoParentVendor;
-    private int numVendorNamesParsed;
-    private int numVendorNamesNotParsed;
-    private int numNoVendorAddressUS;
-    private int numNoVendorAddressForeign;
-    private int numPdpDocTypeExclusionsDetermined;
-    private int numPaymentReasonExclusionsDetermined;
-    private int numVendorTypeExclusionsDetermined;
-    private int numOwnershipTypeExclusionsDetermined;
-    private int numDocNoteSetsRetrieved;
-    private int numDocNoteSetsNotRetrieved;
-    private int numRoyaltyObjDvChkStubInclusionsDetermined;
-    private int numRoyaltyObjDvChkStubExclusionsDetermined;
-    private int numRoyaltyObjDvChkStubNeitherDetermined;
-    private int numIncomeCodeExcludedGrossAmounts;
-    private int numIncomeCodeSubTypeExcludedGrossAmounts;
-    private int numIncomeCodeExcludedFtwAmounts;
-    private int numIncomeCodeSubTypeExcludedFtwAmounts;
-    private int numIncomeCodeExcludedSitwAmounts;
-    private int numIncomeCodeSubTypeExcludedSitwAmounts;
-    private int numNoBoxDeterminedRows;
-    private int numBioLinesWithoutUSAddress;
-    private int numBioLinesWithoutForeignAddress;
-    private int numBioLinesWithoutAnyAddress;
+    private EnumMap<TaxStatType, Integer> statistics;
+
+
 
     // Variables pertaining to tax-source-specific statistics.
     private SprintaxPaymentRowProcessor.OriginSpecificStats dvStats;
@@ -213,7 +187,29 @@ public class SprintaxPaymentRowProcessor {
         this.formattedTaxId = new char[]{'-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
         this.amountFormat = buildAmountFormat();
         this.percentFormat = buildPercentFormat();
-        this.dateFormat = buildDateFormat();
+        this.dateFormat = new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
+
+        this.statistics = new EnumMap<>(TaxStatType.class);
+        initializeStatistics();
+    }
+
+    void initializeStatistics() {
+        ArrayList<TaxStatType> stats = new ArrayList<>(Arrays.asList(TaxStatType.NUM_TRANSACTION_ROWS, TaxStatType.NUM_BIO_RECORDS_WRITTEN,
+                TaxStatType.NUM_NO_VENDOR, TaxStatType.NUM_NO_PARENT_VENDOR, TaxStatType.NUM_VENDOR_NAMES_PARSED, TaxStatType.NUM_VENDOR_NAMES_NOT_PARSED,
+                TaxStatType.NUM_NO_VENDOR_ADDRESS_US, TaxStatType.NUM_NO_VENDOR_ADDRESS_FOREIGN, TaxStatType.NUM_PDP_DOCTYPE_EXCLUSIONS_DETERMINED,
+                TaxStatType.NUM_PAYMENT_REASON_EXCLUSIONS_DETERMINED, TaxStatType.NUM_VENDOR_TYPE_EXCLUSIONS_DETERMINED,
+                TaxStatType.NUM_OWNERSHIP_TYPE_EXCLUSIONS_DETERMINED, TaxStatType.NUM_DOC_NOTE_SETS_RETRIEVED,
+                TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED, TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_INCLUSIONS_DETERMINED,
+                TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_EXCLUSIONS_DETERMINED, TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_NEITHER_DETERMINED,
+                TaxStatType.NUM_INCOME_CODE_EXCLUDED_GROSS_AMOUNTS, TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_GROSS_AMOUNTS,
+                TaxStatType.NUM_INCOME_CODE_EXCLUDED_FTW_AMOUNTS, TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_FTW_AMOUNTS,
+                TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS, TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS,
+                TaxStatType.NUM_NO_BOX_DETERMINED_ROWS, TaxStatType.NUM_BIO_LINES_WITHOUT_US_ADDRESS, TaxStatType.NUM_BIO_LINES_WITHOUT_FOREIGN_ADDRESS,
+                TaxStatType.NUM_BIO_LINES_WITHOUT_ANY_ADDRESS));
+
+        for(TaxStatType stat : stats) {
+            statistics.put(stat, 0);
+        }
     }
 
 
@@ -261,18 +257,6 @@ public class SprintaxPaymentRowProcessor {
     }
 
     /**
-     * Builds and returns an object for formatting date values.
-     * This will be called by the constructor to set the default date formatter.
-     * The default implementation builds a SimpleDateFormat using the given pattern
-     * from the CUTaxConstants class.
-     *
-     * @return A new DateFormat for formatting dates.
-     */
-    DateFormat buildDateFormat() {
-        return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
-    }
-
-    /**
      * Helper method for determining whether an inclusion or exclusion should
      * be performed based on if a value matches any of the given patterns, or
      * whether no inclusions/exclusions should be determined at all.
@@ -313,10 +297,9 @@ public class SprintaxPaymentRowProcessor {
      * @param fieldSource The type of "piece" being created; cannot be null or equal BLANK or STATIC.
      * @param field       The field to build a piece for; cannot be null.
      * @param name        The field's name; cannot be null.
-     * @param len         The field's max length or exact length; cannot be non-positive.
      * @return A "piece" object configured to handle the value of the given field.
      */
-    SprintaxPaymentRowProcessor.RecordPiece getPieceForField(CUTaxBatchConstants.TaxFieldSource fieldSource, TaxTableField field, String name, int len) {
+    SprintaxPaymentRowProcessor.RecordPiece getPieceForField(CUTaxBatchConstants.TaxFieldSource fieldSource, TaxTableField field, String name) {
         SprintaxPaymentRowProcessor.RecordPiece piece;
 
         switch (fieldSource) {
@@ -328,7 +311,7 @@ public class SprintaxPaymentRowProcessor {
 
             case DETAIL:
                 // Create a piece that pre-loads its value from the current transaction detail ResultSet line at runtime.
-                piece = getPieceForFieldInternal(field, name, len);
+                piece = getPieceForFieldInternal(field, name);
                 break;
 
             case PDP:
@@ -340,13 +323,13 @@ public class SprintaxPaymentRowProcessor {
             case VENDOR:
                 // Create a piece that derives its value directly from the vendor ResultSet at runtime, or a static masked piece if GIIN and in scrubbed mode.
                 piece = (!summary.scrubbedOutput || field.index != summary.vendorRow.vendorGIIN.index)
-                        ? new SprintaxPaymentRowProcessor.RecordPiece1042SResultSetDerivedString(name, len, field.index, CUTaxConstants.VENDOR_DETAIL_INDEX)
-                        : new SprintaxPaymentRowProcessor.StaticStringRecordPiece(name, len, CUTaxConstants.MASKED_VALUE_19_CHARS);
+                        ? new SprintaxPaymentRowProcessor.RecordPiece1042SResultSetDerivedString(name, field.index, CUTaxConstants.VENDOR_DETAIL_INDEX)
+                        : new SprintaxPaymentRowProcessor.StaticStringRecordPiece(name, CUTaxConstants.MASKED_VALUE_19_CHARS);
                 break;
 
             case VENDOR_US_ADDRESS:
                 // Create a piece that derives its value directly from the vendor US address ResultSet at runtime.
-                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SResultSetDerivedString(name, len, field.index, VENDOR_US_ADDRESS_INDEX);
+                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SResultSetDerivedString(name, field.index, VENDOR_US_ADDRESS_INDEX);
                 break;
 
             case VENDOR_ANY_ADDRESS:
@@ -358,7 +341,7 @@ public class SprintaxPaymentRowProcessor {
 
             case DERIVED:
                 // Create a piece whose value will be set by the 1042S processing.
-                piece = getPieceForFieldInternal(field, name, len);
+                piece = getPieceForFieldInternal(field, name);
                 break;
 
             default:
@@ -371,25 +354,25 @@ public class SprintaxPaymentRowProcessor {
     /*
      * Internal helper method for creating DETAIL or DERIVED RecordPiece instances.
      */
-    public SprintaxPaymentRowProcessor.RecordPiece getPieceForFieldInternal(TaxTableField field, String name, int len) {
+    public SprintaxPaymentRowProcessor.RecordPiece getPieceForFieldInternal(TaxTableField field, String name) {
         SprintaxPaymentRowProcessor.RecordPiece piece;
 
         switch (field.jdbcType) {
             case java.sql.Types.DECIMAL:
-                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SBigDecimal(name, len, field.index,
+                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SBigDecimal(name, field.index,
                         !summary.transactionDetailRow.federalIncomeTaxPercent.equals(field) && !summary.derivedValues.chapter3TaxRate.equals(field));
                 break;
 
             case java.sql.Types.INTEGER:
-                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SInt(name, len, field.index);
+                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SInt(name, field.index);
                 break;
 
             case java.sql.Types.VARCHAR:
-                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SString(name, len, field.index);
+                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SString(name, field.index);
                 break;
 
             case java.sql.Types.DATE:
-                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SDate(name, len, field.index);
+                piece = new SprintaxPaymentRowProcessor.RecordPiece1042SDate(name, field.index);
                 break;
 
             default:
@@ -691,7 +674,7 @@ public class SprintaxPaymentRowProcessor {
         // Perform initial processing for first row, if there is one.
         if (rs.next()) {
             // If at least one row exists, then update counters and retrieve field values as needed.
-            numTransactionRows++;
+            incrementStatistic(TaxStatType.NUM_TRANSACTION_ROWS);
             nextTaxId = rs.getString(detailRow.vendorTaxNumber.index);
             nextPayeeId = rs.getString(detailRow.payeeId.index);
             vendorHeaderId = Integer.parseInt(nextPayeeId.substring(0, nextPayeeId.indexOf('-')));
@@ -795,7 +778,7 @@ public class SprintaxPaymentRowProcessor {
             // Move to next row (if any) and update the looping flag as needed.
             if (rs.next()) {
                 // If more rows are available, then update counters and retrieve field values as needed.
-                numTransactionRows++;
+                incrementStatistic(TaxStatType.NUM_TRANSACTION_ROWS);
                 nextTaxId = rs.getString(detailRow.vendorTaxNumber.index);
                 nextPayeeId = rs.getString(detailRow.payeeId.index);
                 vendorHeaderId = Integer.parseInt(nextPayeeId.substring(0, nextPayeeId.indexOf('-')));
@@ -845,25 +828,25 @@ public class SprintaxPaymentRowProcessor {
                 // If needed, exclude based on income code.
                 if (taxBox == grossAmountField) {
                     isParm1042SExclusion = true;
-                    numIncomeCodeExcludedGrossAmounts++;
+                    incrementStatistic(TaxStatType.NUM_INCOME_CODE_EXCLUDED_GROSS_AMOUNTS);
                 } else if (taxBox == ftwAmountField) {
                     isParm1042SExclusion = true;
-                    numIncomeCodeExcludedFtwAmounts++;
+                    incrementStatistic(TaxStatType.NUM_INCOME_CODE_EXCLUDED_FTW_AMOUNTS);
                 } else if (taxBox == sitwAmountField) {
                     isParm1042SExclusion = true;
-                    numIncomeCodeExcludedSitwAmounts++;
+                    incrementStatistic(TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS);
                 }
             } else if (summary.excludedIncomeCodeSubType.equals(incomeCodeSubTypeP.value)) {
                 // If needed, exclude based on income code sub-type.
                 if (taxBox == grossAmountField) {
                     isParm1042SExclusion = true;
-                    numIncomeCodeSubTypeExcludedGrossAmounts++;
+                    incrementStatistic(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_GROSS_AMOUNTS);
                 } else if (taxBox == ftwAmountField) {
                     isParm1042SExclusion = true;
-                    numIncomeCodeSubTypeExcludedFtwAmounts++;
+                    incrementStatistic(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_FTW_AMOUNTS);
                 } else if (taxBox == sitwAmountField) {
                     isParm1042SExclusion = true;
-                    numIncomeCodeSubTypeExcludedSitwAmounts++;
+                    incrementStatistic(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS);
                 }
             }
         }
@@ -917,7 +900,7 @@ public class SprintaxPaymentRowProcessor {
                     LOG.debug("Found exclusions for row with key: " + rowKey);
                 }
             } else {
-                numNoBoxDeterminedRows++;
+                incrementStatistic(TaxStatType.NUM_NO_BOX_DETERMINED_ROWS);
             }
 
         } else if (taxBox == grossAmountField) {
@@ -937,7 +920,7 @@ public class SprintaxPaymentRowProcessor {
 
         } else {
             // If no exclusions but box is still undetermined, then do not update amounts.
-            numNoBoxDeterminedRows++;
+            incrementStatistic(TaxStatType.NUM_NO_BOX_DETERMINED_ROWS);
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY);
         }
 
@@ -1002,15 +985,16 @@ public class SprintaxPaymentRowProcessor {
                     } else {
                         vendorLastNameP.value = vendorNameForOutput.trim();
                     }
-                    numVendorNamesParsed++;
+                    incrementStatistic(TaxStatType.NUM_VENDOR_NAMES_PARSED);
                 } else {
-                    numVendorNamesNotParsed++;
+                    incrementStatistic(TaxStatType.NUM_VENDOR_NAMES_NOT_PARSED);
                 }
             } else {
                 currentVendorDetailId = vendorDetailId;
                 vendorNameForOutput = new StringBuilder(30)
                         .append("No Parent Vendor (").append(vendorHeaderId).append(')').append('!').toString();
-                numNoParentVendor++;
+
+                incrementStatistic(TaxStatType.NUM_NO_PARENT_VENDOR);
                 /*
                  * Update the ResultSet to the "dummy" one. The superclass will still
                  * handle the reference to the "real" ResultSet, so we don't need to
@@ -1025,7 +1009,9 @@ public class SprintaxPaymentRowProcessor {
             vendorNameForOutput = new StringBuilder(30)
                     .append("No Vendor (").append(vendorHeaderId).append('-').append(vendorDetailId).append(')').append('!').toString();
             parentVendorNameForOutput = null;
-            numNoVendor++;
+
+            incrementStatistic(TaxStatType.NUM_NO_VENDOR);
+
             /*
              * Update the ResultSet to the "dummy" one. The superclass will still
              * handle the reference to the "real" ResultSet, so we don't need to
@@ -1044,7 +1030,7 @@ public class SprintaxPaymentRowProcessor {
             vendorUSAddressLine1P.value = rsVendorUSAddress.getString(vendorAddressRow.vendorLine1Address.index);
         } else {
             vendorUSAddressLine1P.value = CUTaxConstants.NO_US_VENDOR_ADDRESS;
-            numNoVendorAddressUS++;
+            incrementStatistic(TaxStatType.NUM_NO_VENDOR_ADDRESS_US);
             /*
              * Update the ResultSet to the "dummy" one. The superclass will still
              * handle the reference to the "real" ResultSet, so we don't need to
@@ -1063,7 +1049,8 @@ public class SprintaxPaymentRowProcessor {
             vendorForeignAddressLine1P.value = rsVendorForeignAddress.getString(vendorAddressRow.vendorLine1Address.index);
         } else {
             vendorForeignAddressLine1P.value = CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS;
-            numNoVendorAddressForeign++;
+            incrementStatistic(TaxStatType.NUM_NO_VENDOR_ADDRESS_FOREIGN);
+
             /*
              * Update the ResultSet to the "dummy" one. The superclass will still
              * handle the reference to the "real" ResultSet, so we don't need to
@@ -1141,12 +1128,12 @@ public class SprintaxPaymentRowProcessor {
         if (taxBox != null && !excludeTransaction) {
             if (summary.excludedVendorTypeCodes.contains(rsVendor.getString(vendorRow.vendorTypeCode.index))) {
                 foundExclusion = true;
-                numVendorTypeExclusionsDetermined++;
+                incrementStatistic(TaxStatType.NUM_VENDOR_TYPE_EXCLUSIONS_DETERMINED);
             }
 
             if (summary.excludedOwnershipTypeCodes.contains(rsVendor.getString(vendorRow.vendorOwnershipCode.index))) {
                 foundExclusion = true;
-                numOwnershipTypeExclusionsDetermined++;
+                incrementStatistic(TaxStatType.NUM_OWNERSHIP_TYPE_EXCLUSIONS_DETERMINED);
             }
         }
 
@@ -1154,7 +1141,7 @@ public class SprintaxPaymentRowProcessor {
         if (taxBox != null && !excludeTransaction) {
             if (summary.pdpExcludedDocTypes.contains(docTypeP.value)) {
                 foundExclusion = true;
-                numPdpDocTypeExclusionsDetermined++;
+                incrementStatistic(TaxStatType.NUM_PDP_DOCTYPE_EXCLUSIONS_DETERMINED);
             }
         }
 
@@ -1163,7 +1150,7 @@ public class SprintaxPaymentRowProcessor {
             if (summary.excludedPaymentReasonCodes.contains(paymentReasonCodeP.value)) {
                 excludeTransaction = true;
                 foundExclusion = true;
-                numPaymentReasonExclusionsDetermined++;
+                incrementStatistic(TaxStatType.NUM_PAYMENT_REASON_EXCLUSIONS_DETERMINED);
             }
         }
 
@@ -1191,7 +1178,7 @@ public class SprintaxPaymentRowProcessor {
             rsDocNote = configureAndRunQuery(CUTaxConstants.DOC_NOTES_INDEX, CUTaxConstants.DOC_NOTES_INDEX, docNumberP.value);
 
             if (rsDocNote.next()) {
-                numDocNoteSetsRetrieved++;
+                incrementStatistic(TaxStatType.NUM_DOC_NOTE_SETS_RETRIEVED);
                 foundMatch = false;
 
                 do {
@@ -1212,7 +1199,7 @@ public class SprintaxPaymentRowProcessor {
                     currentStats.numDocNotesExclusionsDetermined++;
                 }
             } else {
-                numDocNoteSetsNotRetrieved++;
+                incrementStatistic(TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED);
             }
         }
 
@@ -1245,13 +1232,13 @@ public class SprintaxPaymentRowProcessor {
                         summary.royaltiesIncludedObjectCodeAndDvCheckStubTextMap.get(objectCodeP.value), summary.royaltiesObjCodeDvChkStubTextIsWhitelist);
                 if (royaltiesInclusionInd == null) {
                     // No DV-check-stub restrictions exist for the given object code.
-                    numRoyaltyObjDvChkStubNeitherDetermined++;
+                    incrementStatistic(TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_NEITHER_DETERMINED);
                 } else if (royaltiesInclusionInd.booleanValue()) {
                     // Found value in whitelist, or did not find value in blacklist.
-                    numRoyaltyObjDvChkStubInclusionsDetermined++;
+                    incrementStatistic(TaxStatType.NUM_ROYALTY_CHART_ACCOUNT_INCLUSIONS_DETERMINED);
                 } else {
                     // Found value in blacklist, or did not find value in whitelist.
-                    numRoyaltyObjDvChkStubExclusionsDetermined++;
+                    incrementStatistic(TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_EXCLUSIONS_DETERMINED);
                 }
 
             }
@@ -1336,19 +1323,7 @@ public class SprintaxPaymentRowProcessor {
             formattedITINValueP.value = null;
         }
 
-        // Perform logging and processing as needed if no US or foreign vendor addresses could be found.
-        if (CUTaxConstants.NO_US_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorUSAddressLine1P.value))) {
-            numBioLinesWithoutUSAddress++;
-            if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorForeignAddressLine1P.value))) {
-                numBioLinesWithoutForeignAddress++;
-                numBioLinesWithoutAnyAddress++;
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found an output row with no US or Foreign address on file! Key: " + rowKey);
-                }
-            }
-        } else if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(org.apache.commons.lang.StringUtils.trim(vendorForeignAddressLine1P.value))) {
-            numBioLinesWithoutForeignAddress++;
-        }
+        incrementAddressStatistics();
 
         // Derive Chapter 3 Status Code. (Set to blank if no mapping is found.)
         chapter3StatusCodeP.value = summary.vendorOwnershipToChapter3StatusMap.get(vendorOwnershipCodeP.value);
@@ -1372,7 +1347,7 @@ public class SprintaxPaymentRowProcessor {
         writer.flush();
 
         writeWsBiographicRecord = false;
-        numBioRecordsWritten++;
+        incrementStatistic(TaxStatType.NUM_BIO_RECORDS_WRITTEN);
 
         // Setup output income code accordingly. It will be overridden as non-reportable if no gross amount is given.
         incomeCodeForOutputP.value = summary.zeroAmount.equals(grossAmountP.value) ? summary.nonReportableIncomeCode : incomeCodeP.value;
@@ -1406,43 +1381,24 @@ public class SprintaxPaymentRowProcessor {
                 ? fedIncomeTaxPctP.value : summary.zeroAmount;
     }
 
+    void incrementAddressStatistics() {
+        if (CUTaxConstants.NO_US_VENDOR_ADDRESS.equalsIgnoreCase(StringUtils.trim(vendorUSAddressLine1P.value))) {
+            incrementStatistic(TaxStatType.NUM_BIO_LINES_WITHOUT_US_ADDRESS);
 
-    /**
-     * Returns a map containing various statistics that were collected during the processing.
-     * The default implementation creates and returns an empty map; subclasses can override
-     * this method to add entries to the superclass's map.
-     *
-     * @return An EnumMap containing various numeric information on the processed results.
-     */
+            if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(StringUtils.trim(vendorForeignAddressLine1P.value))) {
+                incrementStatistic(TaxStatType.NUM_BIO_LINES_WITHOUT_FOREIGN_ADDRESS);
+                incrementStatistic(TaxStatType.NUM_BIO_LINES_WITHOUT_ANY_ADDRESS);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Found an output row with no US or Foreign address on file! Key: " + rowKey);
+                }
+            }
+
+        } else if (CUTaxConstants.NO_FOREIGN_VENDOR_ADDRESS.equalsIgnoreCase(StringUtils.trim(vendorForeignAddressLine1P.value))) {
+            incrementStatistic(TaxStatType.NUM_BIO_LINES_WITHOUT_FOREIGN_ADDRESS);
+        }
+    }
+
     EnumMap<TaxStatType, Integer> getStatistics() {
-        EnumMap<TaxStatType, Integer> statistics = new EnumMap<TaxStatType, Integer>(TaxStatType.class);
-        statistics.put(TaxStatType.NUM_TRANSACTION_ROWS, Integer.valueOf(numTransactionRows));
-        statistics.put(TaxStatType.NUM_BIO_RECORDS_WRITTEN, Integer.valueOf(numBioRecordsWritten));
-        statistics.put(TaxStatType.NUM_NO_VENDOR, Integer.valueOf(numNoVendor));
-        statistics.put(TaxStatType.NUM_NO_PARENT_VENDOR, Integer.valueOf(numNoParentVendor));
-        statistics.put(TaxStatType.NUM_VENDOR_NAMES_PARSED, Integer.valueOf(numVendorNamesParsed));
-        statistics.put(TaxStatType.NUM_VENDOR_NAMES_NOT_PARSED, Integer.valueOf(numVendorNamesNotParsed));
-        statistics.put(TaxStatType.NUM_NO_VENDOR_ADDRESS_US, Integer.valueOf(numNoVendorAddressUS));
-        statistics.put(TaxStatType.NUM_NO_VENDOR_ADDRESS_FOREIGN, Integer.valueOf(numNoVendorAddressForeign));
-        statistics.put(TaxStatType.NUM_PDP_DOCTYPE_EXCLUSIONS_DETERMINED, Integer.valueOf(numPdpDocTypeExclusionsDetermined));
-        statistics.put(TaxStatType.NUM_PAYMENT_REASON_EXCLUSIONS_DETERMINED, Integer.valueOf(numPaymentReasonExclusionsDetermined));
-        statistics.put(TaxStatType.NUM_VENDOR_TYPE_EXCLUSIONS_DETERMINED, Integer.valueOf(numVendorTypeExclusionsDetermined));
-        statistics.put(TaxStatType.NUM_OWNERSHIP_TYPE_EXCLUSIONS_DETERMINED, Integer.valueOf(numOwnershipTypeExclusionsDetermined));
-        statistics.put(TaxStatType.NUM_DOC_NOTE_SETS_RETRIEVED, Integer.valueOf(numDocNoteSetsRetrieved));
-        statistics.put(TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED, Integer.valueOf(numDocNoteSetsNotRetrieved));
-        statistics.put(TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_INCLUSIONS_DETERMINED, Integer.valueOf(numRoyaltyObjDvChkStubInclusionsDetermined));
-        statistics.put(TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_EXCLUSIONS_DETERMINED, Integer.valueOf(numRoyaltyObjDvChkStubExclusionsDetermined));
-        statistics.put(TaxStatType.NUM_ROYALTY_OBJ_DV_CHK_STUB_NEITHER_DETERMINED, Integer.valueOf(numRoyaltyObjDvChkStubNeitherDetermined));
-        statistics.put(TaxStatType.NUM_INCOME_CODE_EXCLUDED_GROSS_AMOUNTS, Integer.valueOf(numIncomeCodeExcludedGrossAmounts));
-        statistics.put(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_GROSS_AMOUNTS, Integer.valueOf(numIncomeCodeSubTypeExcludedGrossAmounts));
-        statistics.put(TaxStatType.NUM_INCOME_CODE_EXCLUDED_FTW_AMOUNTS, Integer.valueOf(numIncomeCodeExcludedFtwAmounts));
-        statistics.put(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_FTW_AMOUNTS, Integer.valueOf(numIncomeCodeSubTypeExcludedFtwAmounts));
-        statistics.put(TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS, Integer.valueOf(numIncomeCodeExcludedSitwAmounts));
-        statistics.put(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS, Integer.valueOf(numIncomeCodeSubTypeExcludedSitwAmounts));
-        statistics.put(TaxStatType.NUM_NO_BOX_DETERMINED_ROWS, Integer.valueOf(numNoBoxDeterminedRows));
-        statistics.put(TaxStatType.NUM_BIO_LINES_WITHOUT_US_ADDRESS, Integer.valueOf(numBioLinesWithoutUSAddress));
-        statistics.put(TaxStatType.NUM_BIO_LINES_WITHOUT_FOREIGN_ADDRESS, Integer.valueOf(numBioLinesWithoutForeignAddress));
-        statistics.put(TaxStatType.NUM_BIO_LINES_WITHOUT_ANY_ADDRESS, Integer.valueOf(numBioLinesWithoutAnyAddress));
 
         TaxSqlUtils.addDvPdpTotalStats(statistics, TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED,
                 dvStats.numGrossAmountsDetermined, pdpStats.numGrossAmountsDetermined);
@@ -1487,7 +1443,7 @@ public class SprintaxPaymentRowProcessor {
      */
     final void setExtraStatement(PreparedStatement extraStatement, int statementIndex) {
         if (extraStatements[statementIndex] != null) {
-            throw new IllegalStateException("A PreparedStatement is already defined for index " + Integer.toString(statementIndex));
+            throw new IllegalStateException("A PreparedStatement is already defined for index " + statementIndex);
         }
         extraStatements[statementIndex] = extraStatement;
     }
@@ -1655,70 +1611,31 @@ public class SprintaxPaymentRowProcessor {
         taxBox = null;
     }
 
-    abstract static class RecordPiece {
-        // The name of the field represented by this piece.
-        final String name;
-        // The max string length of this piece.
-        final int len;
-        // Indicates whether this piece is always expected to have a blank value.
-        final boolean alwaysBlank;
-
-        /**
-         * Constructs a new RecordPiece.
-         *
-         * @param name        The name of the field represented by this piece.
-         * @param len         The max String length of this piece, for right-padding or truncation purposes.
-         * @param alwaysBlank Indicates whether the String value of this piece is unconditionally blank.
-         * @throws IllegalArgumentException if name is blank or len is non-positive.
-         */
-        RecordPiece(String name, int len, boolean alwaysBlank) {
-            if (StringUtils.isBlank(name)) {
-                throw new IllegalArgumentException("name cannot be blank");
-            } else if (len <= 0) {
-                throw new IllegalArgumentException("len cannot be non-positive");
-            }
-            this.name = name;
-            this.len = len;
-            this.alwaysBlank = alwaysBlank;
-        }
-
-        /**
-         * Retrieves the value to append, in String form.
-         * The enclosing class will automatically replace blank values accordingly.
-         * If the value is expected to always be blank, then setting the alwaysBlank flag
-         * to true will improve efficiency since it will make the enclosing class skip this method.
-         *
-         * @return The value to append.
-         * @throws SQLException if the piece attempts to retrieve its value from a database but a DB access error occurs.
-         */
-        abstract String getValue() throws SQLException;
-
-        /**
-         * Convenience method that allows subclasses to perform logging
-         * or other processing when an appended value gets truncated.
-         * The default implementation does nothing.
-         */
-        void notifyOfTruncatedValue() {
-            // Do nothing.
-        }
+    private void incrementStatistic(TaxStatType statName) {
+        Integer statValue = statistics.get(statName);
+        statValue += 1;
+        statistics.put(statName, statValue);
     }
 
-    static final class AlwaysBlankRecordPiece extends SprintaxPaymentRowProcessor.RecordPiece {
-        AlwaysBlankRecordPiece(String name, int len) {
-            super(name, len, true);
+    abstract static class RecordPiece {
+        final String name;
+
+        RecordPiece(String name) {
+            this.name = name;
         }
 
-        @Override
-        String getValue() throws SQLException {
-            return null;
+        abstract String getValue() throws SQLException;
+
+        void notifyOfTruncatedValue() {
+            // Do nothing.
         }
     }
 
     static final class StaticStringRecordPiece extends SprintaxPaymentRowProcessor.RecordPiece {
         String value;
 
-        StaticStringRecordPiece(String name, int len, String value) {
-            super(name, len, false);
+        StaticStringRecordPiece(String name, String value) {
+            super(name);
             this.value = value;
         }
 
@@ -1732,8 +1649,8 @@ public class SprintaxPaymentRowProcessor {
         // the index of the column to retrieve.
         final int columnIndex;
 
-        IndexedColumnRecordPiece(String name, int len, int columnIndex) {
-            super(name, len, false);
+        IndexedColumnRecordPiece(String name, int columnIndex) {
+            super(name);
             this.columnIndex = columnIndex;
         }
     }
@@ -1742,8 +1659,8 @@ public class SprintaxPaymentRowProcessor {
         // A flag indicating whether to use amount or percent formatter.
         final boolean useAmountFormat;
 
-        FormattedNumberRecordPiece(String name, int len, int columnIndex, boolean useAmountFormat) {
-            super(name, len, columnIndex);
+        FormattedNumberRecordPiece(String name, int columnIndex, boolean useAmountFormat) {
+            super(name, columnIndex);
             this.useAmountFormat = useAmountFormat;
         }
 
@@ -1752,13 +1669,6 @@ public class SprintaxPaymentRowProcessor {
             return useAmountFormat ? amountFormat.format(getNumericValue()) : percentFormat.format(getNumericValue());
         }
 
-        /**
-         * Retrieves the actual numeric value to be formatted. It is up to subclasses
-         * to deal with potentially-null values accordingly.
-         *
-         * @return The numeric object to be formatted.
-         * @throws SQLException if a database access error occurs when attempting to get the numeric value.
-         */
         abstract Object getNumericValue() throws SQLException;
     }
 
@@ -1768,39 +1678,24 @@ public class SprintaxPaymentRowProcessor {
      * that formats date values.
      */
     abstract class FormattedDateRecordPiece extends SprintaxPaymentRowProcessor.IndexedColumnRecordPiece {
-        FormattedDateRecordPiece(String name, int len, int columnIndex) {
-            super(name, len, columnIndex);
+        FormattedDateRecordPiece(String name, int columnIndex) {
+            super(name, columnIndex);
         }
 
-        /**
-         * Overridden to get the actual value from the getDateValue() method and then format it.
-         *
-         * @see edu.cornell.kfs.tax.dataaccess.impl.SprintaxPaymentRowProcessor.RecordPiece#getValue()
-         */
         @Override
         String getValue() throws SQLException {
             return dateFormat.format(getDateValue());
         }
 
-        /**
-         * Retrieves the actual date value to be formatted. It is up to subclasses
-         * to deal with potentially-null values accordingly.
-         *
-         * @return The date object to be formatted.
-         * @throws SQLException if a database access error occurs when attempting to get the date value.
-         */
         abstract Object getDateValue() throws SQLException;
     }
 
-    /**
-     * Represents a BigDecimal value that will potentially be written to one of the output files.
-     */
     private final class RecordPiece1042SBigDecimal extends SprintaxPaymentRowProcessor.FormattedNumberRecordPiece {
         private BigDecimal value;
         private boolean negateStringValue;
 
-        private RecordPiece1042SBigDecimal(String name, int len, int columnIndex, boolean useAmountFormat) {
-            super(name, len, columnIndex, useAmountFormat);
+        private RecordPiece1042SBigDecimal(String name, int columnIndex, boolean useAmountFormat) {
+            super(name, columnIndex, useAmountFormat);
         }
 
         @Override
@@ -1809,14 +1704,12 @@ public class SprintaxPaymentRowProcessor {
         }
     }
 
-    /**
-     * Represents a java.sql.Date value that will potentially be written to one of the output files.
-     */
+
     private final class RecordPiece1042SDate extends SprintaxPaymentRowProcessor.FormattedDateRecordPiece {
         private java.sql.Date value;
 
-        private RecordPiece1042SDate(String name, int len, int columnIndex) {
-            super(name, len, columnIndex);
+        private RecordPiece1042SDate(String name, int columnIndex) {
+            super(name, columnIndex);
         }
 
         @Override
@@ -1826,14 +1719,11 @@ public class SprintaxPaymentRowProcessor {
     }
 
 
-    /**
-     * Represents a ResultSet-retrieved String value that will potentially be written to one of the output files.
-     */
     private final class RecordPiece1042SResultSetDerivedString extends IndexedColumnRecordPiece {
         private final int rsIndex;
 
-        private RecordPiece1042SResultSetDerivedString(String name, int len, int columnIndex, int rsIndex) {
-            super(name, len, columnIndex);
+        private RecordPiece1042SResultSetDerivedString(String name, int columnIndex, int rsIndex) {
+            super(name, columnIndex);
             this.rsIndex = rsIndex;
         }
 
@@ -1908,8 +1798,8 @@ public class SprintaxPaymentRowProcessor {
     private final class RecordPiece1042SString extends SprintaxPaymentRowProcessor.IndexedColumnRecordPiece {
         private String value;
 
-        private RecordPiece1042SString(String name, int len, int columnIndex) {
-            super(name, len, columnIndex);
+        private RecordPiece1042SString(String name, int columnIndex) {
+            super(name, columnIndex);
         }
 
         @Override
@@ -1939,8 +1829,8 @@ public class SprintaxPaymentRowProcessor {
         private int value;
         private boolean negateStringValue;
 
-        private RecordPiece1042SInt(String name, int len, int columnIndex) {
-            super(name, len, columnIndex);
+        private RecordPiece1042SInt(String name, int columnIndex) {
+            super(name, columnIndex);
         }
 
         @Override

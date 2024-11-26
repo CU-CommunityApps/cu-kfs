@@ -11,8 +11,7 @@ import edu.cornell.kfs.tax.batch.TaxOutputSection;
 import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
 import edu.cornell.kfs.tax.dataaccess.SprintaxProcessingDao;
 import edu.cornell.kfs.tax.service.SprintaxProcessingService;
-import edu.cornell.kfs.tax.service.TaxProcessingService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -229,10 +227,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
     SprintaxPaymentRowProcessor buildNewProcessor(TaxOutputDefinition outputDefinition, Transaction1042SSummary summary) {
         Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces = new HashMap<>();
-        Map<String,List<String>> complexPiecesNames = new HashMap<>();
         EnumMap<CUTaxBatchConstants.TaxFieldSource, Set<TaxTableField>> minimumPieces = new EnumMap<>(CUTaxBatchConstants.TaxFieldSource.class);
-        boolean foundDuplicate = false;
-        int i = 0;
 
         // Check for at least one output section.
         if (outputDefinition.getSections().size() != 1) {
@@ -271,109 +266,55 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
             }
 
             CUTaxBatchConstants.TaxFieldSource fieldSource = CUTaxBatchConstants.TaxFieldSource.valueOf(field.getType());
-            TaxTableField tableField;
 
-            // Create a simple "piece" type or determine what complex "piece" type to create.
-            switch (fieldSource) {
-                case BLANK :
-                    pieces.add(new SprintaxPaymentRowProcessor.AlwaysBlankRecordPiece(field.getName(), field.getLength().intValue()));
-                    tableField = null;
-                    break;
 
-                case STATIC :
-                    pieces.add(new SprintaxPaymentRowProcessor.StaticStringRecordPiece(field.getName(), field.getLength().intValue(), field.getValue()));
-                    tableField = null;
-                    break;
-
-                case DETAIL :
-                    tableField = summary.transactionDetailRow.getField(field.getValue());
-                    break;
-
-                case PDP :
-                    throw new IllegalStateException("Cannot create piece for PDP type");
-
-                case DV :
-                    throw new IllegalStateException("Cannot create piece for DV type");
-
-                case VENDOR :
-                    tableField = summary.vendorRow.getField(field.getValue());
-                    break;
-
-                case VENDOR_US_ADDRESS :
-                case VENDOR_ANY_ADDRESS :
-                    tableField = summary.vendorAddressRow.getField(field.getValue());
-                    break;
-
-                case DOCUMENT_NOTE :
-                    throw new IllegalStateException("Cannot create piece for DOCUMENT_NOTE type");
-
-                case DERIVED :
-                    tableField = summary.derivedValues.getField(field.getValue());
-                    break;
-
-                default :
-                    throw new IllegalStateException("Unrecognized piece type for field");
+            if (fieldSource == CUTaxBatchConstants.TaxFieldSource.STATIC) {
+//                StaticStringFieldDefinition fieldDefinition = new StaticStringFieldDefinition(field.getName(), field.getValue());
+//                pieces.add(fieldDefinition);
+                SprintaxPaymentRowProcessor.StaticStringRecordPiece fieldDef = new SprintaxPaymentRowProcessor.StaticStringRecordPiece(field.getName(), field.getValue());
+                continue;
             }
 
+            TaxTableField tableField = null;
 
-
-            // Create a more complex "piece" type if necessary.
-            if (tableField != null) {
-                String pieceKey = tableField.propertyName;
-
-                // Create a new "piece" or re-use an existing one for duplicates as needed.
-                SprintaxPaymentRowProcessor.RecordPiece currentPiece = complexPieces.get(pieceKey);
-
-                if (currentPiece == null) {
-                    // If not a duplicate, then create a new one.
-                    currentPiece = rowProcessor.getPieceForField(fieldSource, tableField, field.getName(), field.getLength().intValue());
-                    complexPiecesNames.put(pieceKey, new ArrayList<String>());
-                    minimumPieces.get(fieldSource).remove(tableField);
-                    // Add piece to cache.
-                    complexPieces.put(pieceKey, currentPiece);
-                } else {
-                    // If a duplicate, then use the originally-created piece instead, and warn about mismatched lengths.
-                    foundDuplicate = true;
-                    if (currentPiece.len != field.getLength().intValue()) {
-                        LOG.warn("NOTE: Found multiple tax output pieces with key " + pieceKey + " that do not have the same max length!");
-                    }
-                }
-                complexPiecesNames.get(pieceKey).add(field.getName());
-                pieces.add(currentPiece);
+            if (fieldSource == CUTaxBatchConstants.TaxFieldSource.DETAIL) {
+                tableField = summary.transactionDetailRow.getField(field.getValue());
+            } else if (fieldSource == CUTaxBatchConstants.TaxFieldSource.DERIVED) {
+                tableField = summary.derivedValues.getField(field.getValue());
+            } else if (fieldSource == CUTaxBatchConstants.TaxFieldSource.VENDOR_US_ADDRESS) {
+                tableField = summary.vendorAddressRow.getField(field.getValue());
+            } else {
+                throw new IllegalStateException("Unrecognized piece type for field");
             }
+
+            String pieceKey = tableField.propertyName;
+
+            // Create a new "piece" or re-use an existing one for duplicates as needed.
+            SprintaxPaymentRowProcessor.RecordPiece currentPiece = complexPieces.get(pieceKey);
+
+            if (currentPiece == null) {
+                currentPiece = rowProcessor.getPieceForField(fieldSource, tableField, field.getName());
+                minimumPieces.get(fieldSource).remove(tableField);
+                complexPieces.put(pieceKey, currentPiece);
+            }
+
+            pieces.add(currentPiece);
+
         }
 
-
-
-        // Setup the section's output buffer.
         rowProcessor.setupOutputBuffer(pieces);
 
         // If the processor has defined some minimum fields, but they have not been created yet, then create them.
-        i = 1;
         for (Map.Entry<CUTaxBatchConstants.TaxFieldSource,Set<TaxTableField>> minTypeSpecificPieces : minimumPieces.entrySet()) {
             if (minTypeSpecificPieces.getValue() != null) {
                 for (TaxTableField minPiece : minTypeSpecificPieces.getValue()) {
-                    SprintaxPaymentRowProcessor.RecordPiece field = rowProcessor.getPieceForField(minTypeSpecificPieces.getKey(), minPiece, "autoGen" + i, 1);
+                    SprintaxPaymentRowProcessor.RecordPiece field = rowProcessor.getPieceForField(minTypeSpecificPieces.getKey(), minPiece, "autoGen" + minPiece.columnName);
                     complexPieces.put(minPiece.propertyName, field);
-                    i++;
                 }
             }
         }
 
-        // Set the processor's complex "pieces" as needed.
         rowProcessor.setComplexPieces(complexPieces);
-
-
-
-        // Perform final logging as needed and return the processor.
-        if (foundDuplicate && LOG.isDebugEnabled()) {
-            LOG.debug("The following tax output fields appeared more than once under different names:");
-            for (Map.Entry<String,List<String>> pieceNames : complexPiecesNames.entrySet()) {
-                if (pieceNames.getValue().size() > 1) {
-                    LOG.debug(pieceNames.getKey() + ": " + pieceNames.getValue());
-                }
-            }
-        }
 
         return rowProcessor;
     }

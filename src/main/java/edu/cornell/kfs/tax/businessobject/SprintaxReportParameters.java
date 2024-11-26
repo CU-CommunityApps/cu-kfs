@@ -2,7 +2,8 @@ package edu.cornell.kfs.tax.businessobject;
 
 public class SprintaxReportParameters {
 
-    private java.sql.Date startDate, endDate;
+    private java.sql.Date startDate;
+    private java.sql.Date endDate;
     private int reportYear;
     private java.util.Date jobRunDate;
 

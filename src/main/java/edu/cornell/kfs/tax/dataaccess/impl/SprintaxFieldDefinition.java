@@ -41,15 +41,6 @@ abstract class SprintaxFieldDefinition {
         return recordPiece;
     }
 
-    public static SprintaxFieldDefinition buildTransactionDetailFieldDefinition(TaxTableField detailField, TaxOutputField field) {
-        String name = field.getName();
-        if (name.equals("ssn")) {
-            return new DerivedFieldDefinitionString("ssn");
-        }
-
-        return buildTransactionDetailFieldDefinition(detailField, name);
-    }
-
     abstract String getValue(ResultSet rs) throws SQLException;
 }
 
