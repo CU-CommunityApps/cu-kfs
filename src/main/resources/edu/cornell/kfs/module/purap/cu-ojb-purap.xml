@@ -3334,12 +3334,14 @@
     <field-descriptor name="preqBankStreetAddress" column="PREQ_BNK_STR_ADDR" jdbc-type="VARCHAR" />
     <field-descriptor name="preqBankProvince" column="PREQ_BNK_PRVNC" jdbc-type="VARCHAR" />
     <field-descriptor name="preqBankSWIFTCode" column="PREQ_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
-    <field-descriptor name="preqBankIBAN" column="PREQ_BNK_IBAN" jdbc-type="VARCHAR" />
+    <field-descriptor name="preqBankIBAN" column="PREQ_BNK_IBAN" jdbc-type="VARCHAR" 
+                      conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion" />
 	<field-descriptor name="preqSortOrTransitCode" column="PREQ_BNK_SORT_TRNS_CD" jdbc-type="VARCHAR" />
 	<field-descriptor name="preqCorrespondentBankName" column="PREQ_CRSPNDT_BNK_NM" jdbc-type="VARCHAR" />
 	<field-descriptor name="preqCorrespondentBankAddress" column="PREQ_CRSPNDT_BNK_ADDR" jdbc-type="VARCHAR" />
 	<field-descriptor name="preqCorrespondentBankRoutingNumber" column="PREQ_CRSPNDT_BNK_RTNG_NBR" jdbc-type="VARCHAR" />
-	<field-descriptor name="preqCorrespondentBankAccountNumber" column="PREQ_CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR" />
+	<field-descriptor name="preqCorrespondentBankAccountNumber" column="PREQ_CRSPNDT_BNK_ACCT_NBR" jdbc-type="VARCHAR"
+                      conversion="org.kuali.kfs.core.framework.persistence.ojb.conversion.OjbKualiEncryptDecryptFieldConversion" />
 	<field-descriptor name="preqCorrespondentBankSwiftCode" column="PREQ_CRSPNDT_BNK_SWIFT_CD" jdbc-type="VARCHAR" />
 </class-descriptor>
 
