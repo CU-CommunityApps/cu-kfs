@@ -60,9 +60,9 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
         LOG.info("Creating Transaction Records using parent TaxProcessingDaoJdbc");
 
         List<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>> transactionRowBuilders = Arrays.asList(
-                TransactionRowPdpBuilder.For1042S.class
-//                TransactionRowDvBuilder.For1042S.class,
-//                TransactionRowPRNCBuilder.For1042S.class
+                TransactionRowPdpBuilder.For1042S.class,
+                TransactionRowDvBuilder.For1042S.class,
+                TransactionRowPRNCBuilder.For1042S.class
         );
         List<EnumMap<TaxStatType,Integer>> stats = super.createTransactionRows(summary, transactionRowBuilders);
         return stats;
@@ -119,8 +119,7 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                     processor.setExtraStatement(tempStatement, i);
                 }
 
-                try {
-                    CSVWriter csvWriter = buildBufferedWriterForBioFile();
+                try (CSVWriter csvWriter = buildBufferedWriterForBioFile()) {
 
                     ResultSet transactionDetailRecords = preparedSelectStatement.executeQuery();
                     processor.processTaxRows(csvWriter, transactionDetailRecords);

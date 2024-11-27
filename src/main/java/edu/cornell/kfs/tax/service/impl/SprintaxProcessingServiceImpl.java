@@ -12,7 +12,7 @@ import edu.cornell.kfs.tax.businessobject.SprintaxReportParameters;
 import edu.cornell.kfs.tax.dataaccess.impl.SprintaxProcessingDaoJdbc;
 import edu.cornell.kfs.tax.service.SprintaxProcessingService;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.CoreApiServiceLocator;
@@ -31,7 +31,6 @@ import edu.cornell.kfs.core.api.util.CuCoreUtilities;
 import edu.cornell.kfs.sys.batch.service.DigesterXmlBatchInputFileType;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
-import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.batch.TaxDataDefinition;
 import edu.cornell.kfs.tax.batch.TaxDataDefinitionFileType;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
@@ -57,7 +56,7 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         }
 
         LOG.info("==== Start of Sprintax processing ====");
-        SprintaxReportParameters sprintaxReportParameters = buildSprintaxReportParameters(jobRunDate);
+        final SprintaxReportParameters sprintaxReportParameters = buildSprintaxReportParameters(jobRunDate);
 
         LOG.info("Performing Sprintax processing for the given time period:");
         LOG.info("Report Year: " + sprintaxReportParameters.getReportYear() +
@@ -171,14 +170,11 @@ public class SprintaxProcessingServiceImpl implements SprintaxProcessingService 
         ParameterService parameterService = CoreFrameworkServiceLocator.getParameterService();
 
 
-//        Collection<String> datesToProcess = parameterService.getParameterValuesAsString(
-//                CUTaxConstants.TAX_NAMESPACE,
-//                CUTaxConstants.TAX_1042S_PARM_DETAIL,
-//                taxType + TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
-//        );
-        List<String> datesToProcess = new ArrayList<>();
-        datesToProcess.add("01/01/2024");
-        datesToProcess.add("01/10/2024");
+        Collection<String> datesToProcess = parameterService.getParameterValuesAsString(
+                CUTaxConstants.TAX_NAMESPACE,
+                CUTaxConstants.TAX_1042S_PARM_DETAIL,
+                taxType + CUTaxConstants.TaxCommonParameterNames.DATES_TO_PROCESS_PARAMETER_SUFFIX
+        );
 
         Calendar tempCalendar = CoreApiServiceLocator.getDateTimeService().getCurrentCalendar();
 

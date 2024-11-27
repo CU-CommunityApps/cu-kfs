@@ -679,7 +679,7 @@ public class SprintaxPaymentRowProcessor {
             vendorHeaderId = Integer.parseInt(nextPayeeId.substring(0, nextPayeeId.indexOf('-')));
             vendorDetailId = Integer.parseInt(nextPayeeId.substring(nextPayeeId.indexOf('-') + 1));
             taxIdChanged = true;
-            if (org.apache.commons.lang.StringUtils.isBlank(nextTaxId)) {
+            if (StringUtils.isBlank(nextTaxId)) {
                 throw new RuntimeException("Could not find tax ID for initial row with payee " + nextPayeeId);
             }
         } else {
@@ -718,9 +718,9 @@ public class SprintaxPaymentRowProcessor {
             }
 
             // Derive Boolean values.
-            taxTreatyExemptIncomeInd = org.apache.commons.lang.StringUtils.isNotBlank(taxTreatyExemptIncomeYesNoP.value)
+            taxTreatyExemptIncomeInd = StringUtils.isNotBlank(taxTreatyExemptIncomeYesNoP.value)
                     ? Boolean.valueOf(KRADConstants.YES_INDICATOR_VALUE.equals(taxTreatyExemptIncomeYesNoP.value)) : null;
-            foreignSourceIncomeInd = org.apache.commons.lang.StringUtils.isNotBlank(foreignSourceIncomeYesNoP.value)
+            foreignSourceIncomeInd = StringUtils.isNotBlank(foreignSourceIncomeYesNoP.value)
                     ? Boolean.valueOf(KRADConstants.YES_INDICATOR_VALUE.equals(foreignSourceIncomeYesNoP.value)) : null;
 
             // Derive or reset remaining values.
@@ -783,14 +783,14 @@ public class SprintaxPaymentRowProcessor {
                 vendorHeaderId = Integer.parseInt(nextPayeeId.substring(0, nextPayeeId.indexOf('-')));
                 vendorDetailId = Integer.parseInt(nextPayeeId.substring(nextPayeeId.indexOf('-') + 1));
                 // Check for changes to the tax ID between rows. The prior tax ID should be non-null at this point.
-                taxIdChanged = org.apache.commons.lang.StringUtils.isBlank(nextTaxId) || !taxIdP.value.equals(nextTaxId);
+                taxIdChanged = StringUtils.isBlank(nextTaxId) || !taxIdP.value.equals(nextTaxId);
             } else {
                 // If no more rows, then prepare to exit the loop and process any leftover data from the previous iterations.
                 keepLooping = false;
             }
 
             // Automatically abort with an error if the current row has no tax ID.
-            if (org.apache.commons.lang.StringUtils.isBlank(nextTaxId)) {
+            if (StringUtils.isBlank(nextTaxId)) {
                 throw new RuntimeException("Could not find tax ID for row with payee " + nextPayeeId);
             }
 
@@ -857,7 +857,7 @@ public class SprintaxPaymentRowProcessor {
                 .append(paymentDateP.value).append(';')
                 .append(docNumberP.value).append(';')
                 .append(docLineNumberP.value).toString());
-        if (org.apache.commons.lang.StringUtils.isNotBlank(overrideTaxBox)) {
+        if (StringUtils.isNotBlank(overrideTaxBox)) {
             // Found override, so setup override and overridden values accordingly.
             if (taxBox == grossAmountField) {
                 overriddenTaxBox = CUTaxConstants.FORM_1042S_GROSS_BOX;
@@ -891,7 +891,7 @@ public class SprintaxPaymentRowProcessor {
         }
 
         // Perform logging and updates dependingImp on amount type and exclusions.
-        if ((isParm1042SExclusion && org.apache.commons.lang.StringUtils.isBlank(overrideTaxBox)) || CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY.equals(overrideTaxBox)) {
+        if ((isParm1042SExclusion && StringUtils.isBlank(overrideTaxBox)) || CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY.equals(overrideTaxBox)) {
             // If exclusion and no overrides (or an override to a non-reportable box type), then do not update amounts.
             rs.updateString(detailRow.form1042SBox.index, CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY);
             if (taxBox != null) {
@@ -924,7 +924,7 @@ public class SprintaxPaymentRowProcessor {
         }
 
         // If tax box was overridden, then set previous value on transaction row.
-        if (org.apache.commons.lang.StringUtils.isNotBlank(overriddenTaxBox)) {
+        if (StringUtils.isNotBlank(overriddenTaxBox)) {
             rs.updateString(detailRow.form1042SOverriddenBox.index, overriddenTaxBox);
         }
     }
@@ -957,7 +957,7 @@ public class SprintaxPaymentRowProcessor {
             // Do extra processing if not the parent vendor detail.
             if (!KRADConstants.YES_INDICATOR_VALUE.equals(rsVendor.getString(vendorRow.vendorParentIndicator.index))) {
                 // Update parent name variable accordingly if the vendor owner is a sole proprietor owner.
-                if (org.apache.commons.lang.StringUtils.equals(summary.soleProprietorOwnerCode, rsVendor.getString(vendorRow.vendorOwnershipCode.index))) {
+                if (StringUtils.equals(summary.soleProprietorOwnerCode, rsVendor.getString(vendorRow.vendorOwnershipCode.index))) {
                     parentVendorNameForOutput = rsVendor.getString(vendorRow.vendorName.index);
                 } else {
                     parentVendorNameForOutput = null;
@@ -975,7 +975,7 @@ public class SprintaxPaymentRowProcessor {
             if (foundParentVendor) {
                 currentVendorDetailId = rsVendor.getInt(vendorRow.vendorDetailAssignedIdentifier.index);
                 vendorNameForOutput = rsVendor.getString(vendorRow.vendorName.index);
-                if (org.apache.commons.lang.StringUtils.isNotBlank(vendorNameForOutput)) {
+                if (StringUtils.isNotBlank(vendorNameForOutput)) {
                     // Parse vendor last name and first name.
                     if (KRADConstants.YES_INDICATOR_VALUE.equals(rsVendor.getString(vendorRow.vendorFirstLastNameIndicator.index))
                             && vendorNameForOutput.indexOf(',') != -1) {
@@ -1067,7 +1067,7 @@ public class SprintaxPaymentRowProcessor {
 
         // Set the Chapter 4 Exemption Code based on the Chapter 4 Status Code. Set to an appropriate default if a Ch4 status mapping does not exist.
         chapter4ExemptionCodeP.value = summary.chapter4StatusToChapter4ExemptionMap.get(rsVendor.getString(vendorRow.vendorChapter4StatusCode.index));
-        if (org.apache.commons.lang.StringUtils.isBlank(chapter4ExemptionCodeP.value)) {
+        if (StringUtils.isBlank(chapter4ExemptionCodeP.value)) {
             chapter4ExemptionCodeP.value = summary.chapter4DefaultExemptionCode;
         }
 
@@ -1103,7 +1103,7 @@ public class SprintaxPaymentRowProcessor {
          * Determine if object code is one of the types that allows for this tax processing.
          * If so, then indicate whether the amount represents a gross, FTW, or SITW one.
          */
-        if (org.apache.commons.lang.StringUtils.isNotBlank(incomeClassCodeFromMap)) {
+        if (StringUtils.isNotBlank(incomeClassCodeFromMap)) {
             // Found a matching income class.
             taxBox = grossAmountField;
             currentStats.numGrossAmountsDetermined++;
@@ -1145,7 +1145,7 @@ public class SprintaxPaymentRowProcessor {
         }
 
         // Check if the payment reason code is one that should be excluded from the processing.
-        if (!excludeTransaction && org.apache.commons.lang.StringUtils.isNotBlank(paymentReasonCodeP.value)) {
+        if (!excludeTransaction && StringUtils.isNotBlank(paymentReasonCodeP.value)) {
             if (summary.excludedPaymentReasonCodes.contains(paymentReasonCodeP.value)) {
                 excludeTransaction = true;
                 foundExclusion = true;
@@ -1155,7 +1155,7 @@ public class SprintaxPaymentRowProcessor {
 
         // Check if the row should be excluded from the processing based on the start of the payment line 1 address.
         if (taxBox != null && !excludeTransaction) {
-            if (org.apache.commons.lang.StringUtils.isNotBlank(paymentAddressLine1P.value)) {
+            if (StringUtils.isNotBlank(paymentAddressLine1P.value)) {
                 tempValue = paymentAddressLine1P.value.toUpperCase(Locale.US);
                 foundMatch = false;
 
@@ -1182,7 +1182,7 @@ public class SprintaxPaymentRowProcessor {
 
                 do {
                     tempValue = rsDocNote.getString(docNoteTextField.index);
-                    if (org.apache.commons.lang.StringUtils.isNotBlank(tempValue)) {
+                    if (StringUtils.isNotBlank(tempValue)) {
                         tempValue = tempValue.toUpperCase(Locale.US);
 
                         for (idx = summary.excludedDocumentNoteTextPrefixes.size() - 1; !foundMatch && idx >= 0; idx--) {
@@ -1223,7 +1223,7 @@ public class SprintaxPaymentRowProcessor {
         // Check for royalties, fed tax withheld, and state tax withheld.
         if (taxBox != null && !excludeTransaction) {
             isRoyaltyAmount = taxBox != ftwAmountField && taxBox != sitwAmountField
-                    && org.apache.commons.lang.StringUtils.isNotBlank(incomeClassCodeFromMap) && summary.incomeClassCodesDenotingRoyalties.contains(incomeClassCodeFromMap);
+                    && StringUtils.isNotBlank(incomeClassCodeFromMap) && summary.incomeClassCodesDenotingRoyalties.contains(incomeClassCodeFromMap);
 
             if (isRoyaltyAmount && isDVRow) {
                 // Check for royalty limitations based on DV check stub text.
@@ -1340,10 +1340,9 @@ public class SprintaxPaymentRowProcessor {
             values.add(val);
         }
 
-        String line = String.join(",", values);
-        writer.write(line);
-        writer.write("\n");
-        writer.flush();
+        String[] valuesToWrite = values.toArray(String[]::new);
+        csvWriter.writeNext(valuesToWrite);
+        csvWriter.flush();
 
         writeWsBiographicRecord = false;
         incrementStatistic(TaxStatType.NUM_BIO_RECORDS_WRITTEN);

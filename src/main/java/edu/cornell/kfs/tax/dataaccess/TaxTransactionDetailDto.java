@@ -65,40 +65,40 @@ public class TaxTransactionDetailDto {
 
     String rowKey;
 
-    public void initialize(Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces, TaxTableRow.TransactionDetailRow detailRow) {
-        rowId = complexPieces.get(detailRow.transactionDetailId.propertyName).getValue();
-        docNumber = complexPieces.get(detailRow.documentNumber.propertyName).getValue();
-        docType = complexPieces.get(detailRow.documentType.propertyName).getValue();
-        docLineNumber = Integer.valueOf(complexPieces.get(detailRow.financialDocumentLineNumber.propertyName).getValue());
-        objectCode = complexPieces.get(detailRow.finObjectCode.propertyName).getValue();
-        paymentAmount = complexPieces.get(detailRow.netPaymentAmount.propertyName).getNumericValue();
-        taxId = complexPieces.get(detailRow.vendorTaxNumber.propertyName).getValue();
-        incomeCode = complexPieces.get(detailRow.incomeCode.propertyName).getValue();
-        incomeCodeSubType = complexPieces.get(detailRow.incomeCodeSubType.propertyName).getValue();
-        dvCheckStubText = complexPieces.get(detailRow.dvCheckStubText.propertyName).getValue();
-        payeeId = complexPieces.get(detailRow.payeeId.propertyName).getValue();
-        vendorOwnershipCode = complexPieces.get(detailRow.vendorOwnershipCode.propertyName).getValue();
-        paymentDate = complexPieces.get(detailRow.paymentDate.propertyName).getDateValue();
-        taxTreatyExemptIncomeYesNo = complexPieces.get(detailRow.incomeTaxTreatyExemptIndicator.propertyName).getValue();
-        foreignSourceIncomeYesNo = complexPieces.get(detailRow.foreignSourceIncomeIndicator.propertyName).getValue();
-        fedIncomeTaxPct = complexPieces.get(detailRow.federalIncomeTaxPercent.propertyName).getNumericValue();
-        paymentAddressLine1 = complexPieces.get(detailRow.paymentLine1Address.propertyName).getValue();
-        chartCode = complexPieces.get(detailRow.chartCode.propertyName).getValue();
-        accountNumber = complexPieces.get(detailRow.accountNumber.propertyName).getValue();
-        paymentReasonCode = complexPieces.get(detailRow.paymentReasonCode.propertyName).getValue();
-
-        rowKey =  new StringBuilder(100)
-                .append(rowId)
-                .append(' ').append(docNumber)
-                .append(' ').append(docLineNumber)
-                .append(' ').append(payeeId)
-                .append(' ').append(docType)
-                .append(' ').append(objectCode)
-                .append(' ').append(incomeCode)
-                .append(' ').append(incomeCodeSubType)
-                .append(' ').append(paymentAmount)
-                .append(' ').append(paymentDate)
-                .toString();
+//    public void initialize(Map<String, SprintaxPaymentRowProcessor.RecordPiece> complexPieces, TaxTableRow.TransactionDetailRow detailRow) {
+//        rowId = complexPieces.get(detailRow.transactionDetailId.propertyName).getValue();
+//        docNumber = complexPieces.get(detailRow.documentNumber.propertyName).getValue();
+//        docType = complexPieces.get(detailRow.documentType.propertyName).getValue();
+//        docLineNumber = Integer.valueOf(complexPieces.get(detailRow.financialDocumentLineNumber.propertyName).getValue());
+//        objectCode = complexPieces.get(detailRow.finObjectCode.propertyName).getValue();
+//        paymentAmount = complexPieces.get(detailRow.netPaymentAmount.propertyName).getNumericValue();
+//        taxId = complexPieces.get(detailRow.vendorTaxNumber.propertyName).getValue();
+//        incomeCode = complexPieces.get(detailRow.incomeCode.propertyName).getValue();
+//        incomeCodeSubType = complexPieces.get(detailRow.incomeCodeSubType.propertyName).getValue();
+//        dvCheckStubText = complexPieces.get(detailRow.dvCheckStubText.propertyName).getValue();
+//        payeeId = complexPieces.get(detailRow.payeeId.propertyName).getValue();
+//        vendorOwnershipCode = complexPieces.get(detailRow.vendorOwnershipCode.propertyName).getValue();
+//        paymentDate = complexPieces.get(detailRow.paymentDate.propertyName).getDateValue();
+//        taxTreatyExemptIncomeYesNo = complexPieces.get(detailRow.incomeTaxTreatyExemptIndicator.propertyName).getValue();
+//        foreignSourceIncomeYesNo = complexPieces.get(detailRow.foreignSourceIncomeIndicator.propertyName).getValue();
+//        fedIncomeTaxPct = complexPieces.get(detailRow.federalIncomeTaxPercent.propertyName).getNumericValue();
+//        paymentAddressLine1 = complexPieces.get(detailRow.paymentLine1Address.propertyName).getValue();
+//        chartCode = complexPieces.get(detailRow.chartCode.propertyName).getValue();
+//        accountNumber = complexPieces.get(detailRow.accountNumber.propertyName).getValue();
+//        paymentReasonCode = complexPieces.get(detailRow.paymentReasonCode.propertyName).getValue();
+//
+//        rowKey =  new StringBuilder(100)
+//                .append(rowId)
+//                .append(' ').append(docNumber)
+//                .append(' ').append(docLineNumber)
+//                .append(' ').append(payeeId)
+//                .append(' ').append(docType)
+//                .append(' ').append(objectCode)
+//                .append(' ').append(incomeCode)
+//                .append(' ').append(incomeCodeSubType)
+//                .append(' ').append(paymentAmount)
+//                .append(' ').append(paymentDate)
+//                .toString();
 
         // Retrieve the various derived "pieces" that will be needed for the processing.
 //        vendorLastName = complexPieces.get(derivedValues.vendorLastName.propertyName);
@@ -126,7 +126,7 @@ public class TaxTransactionDetailDto {
 //        sitwAmountP.negateStringValue = true;
 //        stateCode = complexPieces.get(derivedValues.stateCode.propertyName);
 //        endDate = (SprintaxPaymentRowProcessor.RecordPiece1042SDate) complexPieces.get(derivedValues.endDate.propertyName);
-    }
+//    }
 
     public String[] getDetailStrings() {
         return detailStrings;
