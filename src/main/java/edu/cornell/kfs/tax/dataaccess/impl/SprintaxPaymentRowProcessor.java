@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import com.opencsv.CSVWriter;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,6 @@ import org.kuali.kfs.krad.util.KRADConstants;
 import org.kuali.kfs.sys.KFSConstants;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.security.GeneralSecurityException;
 import java.sql.PreparedStatement;
@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -642,7 +641,7 @@ public class SprintaxPaymentRowProcessor {
      * @throws SQLException if a database access error occurs while processing.
      * @throws IOException  if an I/O error occurs while processing.
      */
-    void processTaxRows(Writer writer, ResultSet rs) throws SQLException, IOException {
+    void processTaxRows(CSVWriter csvWriter, ResultSet rs) throws SQLException, IOException {
 
         boolean keepLooping = true;
         boolean taxIdChanged = false;
@@ -771,7 +770,7 @@ public class SprintaxPaymentRowProcessor {
             rs.updateRow();
 
             if(writeWsBiographicRecord) {
-                writeBioLineToFile(writer);
+                writeBioLineToFile(csvWriter);
             }
 
 
@@ -1307,7 +1306,7 @@ public class SprintaxPaymentRowProcessor {
     /*
      * Helper method for writing 1042S biographic and detail records to their respective files.
      */
-    private void writeBioLineToFile(Writer writer) throws SQLException, IOException {
+    private void writeBioLineToFile(CSVWriter csvWriter) throws SQLException, IOException {
         /*
          * SSN-vs-ITIN logic per Loree Kanellis:
          * If the taxID starts with a '9' and the fourth digit is a '7' or '8'

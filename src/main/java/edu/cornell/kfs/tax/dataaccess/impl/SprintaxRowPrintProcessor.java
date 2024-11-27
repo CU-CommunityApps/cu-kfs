@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import com.opencsv.CSVWriter;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinition;
@@ -11,11 +12,8 @@ import org.kuali.kfs.core.api.CoreApiServiceLocator;
 import org.kuali.kfs.core.api.encryption.EncryptionService;
 import org.kuali.kfs.sys.KFSConstants;
 
-import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,31 +28,10 @@ public class SprintaxRowPrintProcessor {
     private ResultSet rsTransactionDetail;
     private Transaction1042SSummary summary;
     private List<SprintaxFieldDefinition> fieldDefinitions = new ArrayList<>();
-    private Writer writer;
 
     SprintaxRowPrintProcessor(Transaction1042SSummary summary, TaxOutputDefinition outputDefinition) {
         this.summary = summary;
         buildFieldDefinitions(outputDefinition);
-    }
-
-    SprintaxFieldDefinition buildFieldDefinition(CUTaxBatchConstants.TaxFieldSource fieldSource, TaxTableField field, String name) {
-        SprintaxFieldDefinition piece = null;
-
-        if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DETAIL)) {
-            if (summary.scrubbedOutput && field.index == summary.transactionDetailRow.vendorGIIN.index) {
-                piece = new StaticStringFieldDefinition(name, CUTaxConstants.MASKED_VALUE_19_CHARS);
-            } else {
-                piece = SprintaxFieldDefinition.buildTransactionDetailFieldDefinition(field, name);
-            }
-        } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DERIVED)) {
-            if (summary.derivedValues.ssn.equals(field)) {
-                piece = ssnFieldDefinition = new DerivedFieldDefinitionString(name);
-            } else {
-                throw new IllegalArgumentException("Cannot create print-only piece for the given derived-field type");
-            }
-        }
-
-        return piece;
     }
 
     void buildFieldDefinitions(TaxOutputDefinition outputDefinition) {
@@ -78,13 +55,32 @@ public class SprintaxRowPrintProcessor {
         }
     }
 
+    SprintaxFieldDefinition buildFieldDefinition(CUTaxBatchConstants.TaxFieldSource fieldSource, TaxTableField field, String name) {
+        SprintaxFieldDefinition piece = null;
+
+        if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DETAIL)) {
+            if (summary.scrubbedOutput && field.index == summary.transactionDetailRow.vendorGIIN.index) {
+                piece = new StaticStringFieldDefinition(name, CUTaxConstants.MASKED_VALUE_19_CHARS);
+            } else {
+                piece = SprintaxFieldDefinition.buildTransactionDetailFieldDefinition(field, name);
+            }
+        } else if (fieldSource.equals(CUTaxBatchConstants.TaxFieldSource.DERIVED)) {
+            if (summary.derivedValues.ssn.equals(field)) {
+                piece = ssnFieldDefinition = new DerivedFieldDefinitionString(name);
+            } else {
+                throw new IllegalArgumentException("Cannot create print-only piece for the given derived-field type");
+            }
+        }
+
+        return piece;
+    }
+
     String getSqlForSelect() {
         TaxTableField fieldForWhereClause = summary.transactionDetailRow.form1042SBox;
         return TaxSqlUtils.getTransactionDetailSelectSql(fieldForWhereClause, summary.transactionDetailRow, false, true);
     }
 
     void processTaxRows(ResultSet rs, String outputFilepath) throws SQLException, IOException {
-        buildWriter(outputFilepath);
 
         TaxTableRow.TransactionDetailRow detailRow = summary.transactionDetailRow;
         EncryptionService encryptionService = CoreApiServiceLocator.getEncryptionService();
@@ -95,31 +91,32 @@ public class SprintaxRowPrintProcessor {
 
         LOG.info("Starting raw transaction row printing to file...");
 
-        writer.write(CUTaxConstants.Sprintax.TRANSACTION_FILE_HEADER_ROW);
-        writer.write('\n');
+        try (CSVWriter writer = new CSVWriter(new FileWriter(outputFilepath))) {
 
-        while (rsTransactionDetail.next()) {
+            writer.writeNext(CUTaxConstants.Sprintax.TRANSACTION_FILE_HEADER_ROW.split(","));
 
-            if (!summary.scrubbedOutput) {
-                try {
-                    ssnFieldDefinition.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));
-                } catch (GeneralSecurityException e) {
-                    throw new RuntimeException(e);
+            while (rsTransactionDetail.next()) {
+
+                if (!summary.scrubbedOutput) {
+                    try {
+                        ssnFieldDefinition.value = encryptionService.decrypt(rsTransactionDetail.getString(detailRow.vendorTaxNumber.index));
+                    } catch (GeneralSecurityException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
 
-            writeLine();
+                String[] valuesToWrite = getValuesToWrite();
+                writer.writeNext(valuesToWrite);
+            }
+        } finally {
+            rsTransactionDetail = null;
+            ssnFieldDefinition = null;
         }
 
         LOG.info("Finished raw transaction row printing to file.");
     }
 
-    void clearReferences() {
-        rsTransactionDetail = null;
-        ssnFieldDefinition = null;
-    }
-
-    void writeLine() throws SQLException, IOException {
+    String[] getValuesToWrite() throws SQLException {
         List<String> valuesToWrite = new ArrayList<>();
 
         for (SprintaxFieldDefinition fieldDefinition : fieldDefinitions) {
@@ -128,29 +125,7 @@ public class SprintaxRowPrintProcessor {
             valuesToWrite.add(val);
         }
 
-        String line = String.join(",", valuesToWrite);
-        writer.write(line);
-        writer.write("\n");
-    }
-
-    void clearArraysAndReferences() {
-        writer = null;
-        clearReferences();
-    }
-
-    final void closeForFinallyBlock() {
-
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                LOG.warn("Could not close writer");
-            }
-        }
-    }
-
-    void buildWriter(String filePathForWriter) throws IOException {
-        this.writer = new BufferedWriter(new PrintWriter(filePathForWriter, StandardCharsets.UTF_8));
+        return valuesToWrite.toArray(String[]::new);
     }
 
 }

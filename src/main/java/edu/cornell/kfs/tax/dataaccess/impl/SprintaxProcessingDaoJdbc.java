@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.dataaccess.impl;
 
+import com.opencsv.CSVWriter;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.CUTaxKeyConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants;
@@ -17,12 +18,8 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.springframework.jdbc.core.ConnectionCallback;
 
-import java.io.BufferedWriter;
-import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -123,10 +120,10 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 }
 
                 try {
-                    Writer writer = buildBufferedWriterForBioFile();
+                    CSVWriter csvWriter = buildBufferedWriterForBioFile();
 
                     ResultSet transactionDetailRecords = preparedSelectStatement.executeQuery();
-                    processor.processTaxRows(writer, transactionDetailRecords);
+                    processor.processTaxRows(csvWriter, transactionDetailRecords);
 
                 } catch (IOException e) {
                     LOG.error(e.toString());
@@ -138,18 +135,17 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
 
     }
 
-    Writer buildBufferedWriterForBioFile() throws IOException {
+    CSVWriter buildBufferedWriterForBioFile() throws IOException {
         java.util.Date processingStartDate = new java.util.Date();
         String filePath = getFilePathForBioWriter(processingStartDate);
-        File outputFile = new File(filePath);
-        PrintWriter printWriter = new PrintWriter(outputFile, StandardCharsets.UTF_8);
-        Writer bufferedWriter = new BufferedWriter(printWriter);
+        FileWriter fileWriter = new FileWriter(filePath);
+        CSVWriter csvWriter = new CSVWriter(fileWriter);
+        String[] headerRowArray = CUTaxConstants.Sprintax.BIO_HEADER_ROW.split(",");
 
-        bufferedWriter.write(CUTaxConstants.Sprintax.BIO_HEADER_ROW);
-        bufferedWriter.write("\n");
-        bufferedWriter.flush();
+        csvWriter.writeNext(headerRowArray, false);
+        csvWriter.flush();
 
-        return bufferedWriter;
+        return csvWriter;
     }
 
     String getFilePathForBioWriter(java.util.Date processingStartDate) {
@@ -187,8 +183,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
-                    // Close resources, handling exceptions as needed.
-                    processor.closeForFinallyBlock();
 
                     if (transactionDetailRecords != null) {
                         try {
@@ -205,8 +199,6 @@ public class SprintaxProcessingDaoJdbc extends TaxProcessingDaoJdbc implements S
                             LOG.error("Could not close transaction row selection statement");
                         }
                     }
-
-                    processor.clearArraysAndReferences();
                 }
             }
         });
