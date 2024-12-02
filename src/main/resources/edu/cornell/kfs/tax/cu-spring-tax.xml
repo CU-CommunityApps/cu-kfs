@@ -35,6 +35,7 @@
         <property name="jobNames">
             <list>
                 <value>taxProcessingJob</value>
+                <value>sprintaxProcessingJob</value>
             </list>
         </property>
         <property name="batchFileDirectories">
@@ -59,6 +60,12 @@
         <property name="taxOutputDefinitionFileType" ref="taxOutputDefinitionFileType" />
         <property name="taxDataDefinitionFileType" ref="taxDataDefinitionFileType" />
         <property name="taxProcessingDao" ref="taxProcessingDao" />
+    </bean>
+
+    <bean id="sprintaxProcessingService" class="edu.cornell.kfs.tax.service.impl.SprintaxProcessingServiceImpl">
+        <property name="taxOutputDefinitionFileType" ref="taxOutputDefinitionFileType" />
+        <property name="taxDataDefinitionFileType" ref="taxDataDefinitionFileType" />
+        <property name="sprintaxProcessingDao" ref="sprintaxProcessingDao" />
     </bean>
 
     <bean id="taxOutputDefinitionFileType" parent="taxOutputDefinitionFileType-parentBean" />
@@ -94,6 +101,13 @@
         <property name="configurationService" ref="configurationService"/>
     </bean>
 
+    <bean id="sprintaxProcessingDao" class="edu.cornell.kfs.tax.dataaccess.impl.SprintaxProcessingDaoJdbc" parent="platformAwareDaoJdbc">
+        <property name="reportsDirectory">
+            <value>${reports.directory}/tax</value>
+        </property>
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
+
     <bean id="taxTableMetadataService" class="edu.cornell.kfs.tax.dataaccess.impl.TaxTableMetadataServiceOjbImpl" />
     
     <bean id="paymentReason1099BoxService" parent="paymentReason1099BoxService-parentBean" />
@@ -116,6 +130,18 @@
         <property name="steps">
             <list>
                 <ref bean="taxProcessingStep" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="sprintaxProcessingStep" class="edu.cornell.kfs.tax.batch.SprintaxProcessingStep" parent="step">
+        <property name="sprintaxProcessingService" ref="sprintaxProcessingService" />
+    </bean>
+
+    <bean id="sprintaxProcessingJob" parent="scheduledJobDescriptor">
+        <property name="steps">
+            <list>
+                <ref bean="sprintaxProcessingStep" />
             </list>
         </property>
     </bean>
