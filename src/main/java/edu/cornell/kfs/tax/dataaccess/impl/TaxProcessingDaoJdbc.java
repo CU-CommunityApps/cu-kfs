@@ -86,6 +86,18 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                     CUTaxKeyConstants.TAX_FORMAT_1042S_PREFIX + CUTaxKeyConstants.TAX_FORMAT_SUMMARY_SUFFIX, reportYear);
             processTransactionRows(processingStartDate, summary, TransactionRowPrintProcessor.For1042S.class, tempDefinition);
             
+        } else if (StringUtils.equals(taxType, CUTaxConstants.TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY)) {
+            /*
+             * NOTE: This is a temporary duplication of only the create-transaction-rows section
+             * of the 1042-S processing above, to allow for rewriting the process-transaction-rows logic
+             * separately from the create-transaction-rows logic.
+             */
+            Transaction1042SSummary summary = new Transaction1042SSummary(reportYear, startDate, endDate, vendorForeign,
+                    taxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, reportYear).getDataRowsAsMap());
+            getJdbcTemplate().update(TaxSqlUtils.getRawTransactionDetailDeleteSql(taxType, summary.rawTransactionDetailRow), Integer.valueOf(reportYear));
+            getJdbcTemplate().update(TaxSqlUtils.getTransactionDetailDeleteSql(taxType, summary.transactionDetailRow), Integer.valueOf(reportYear));
+            stats = createTransactionRows(summary, Arrays.<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>>asList(
+                    TransactionRowPdpBuilder.For1042S.class, TransactionRowDvBuilder.For1042S.class, TransactionRowPRNCBuilder.For1042S.class));
         } else {
             // Invalid tax processing type was given.
             throw new IllegalArgumentException("Unrecognized tax type");
