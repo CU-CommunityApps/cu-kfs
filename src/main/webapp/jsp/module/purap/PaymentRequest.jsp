@@ -93,8 +93,8 @@
                 itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
                 documentAttributes="${DataDictionary.SourceAccountingLine.attributes}"/>
 
-        <fp:wireTransfer/>
-        <fp:foreignDraft/>
+        <fp:preqWireTransfer/>
+        <fp:preqForeignDraft/>
 
         <purap:relatedDocuments />
 
