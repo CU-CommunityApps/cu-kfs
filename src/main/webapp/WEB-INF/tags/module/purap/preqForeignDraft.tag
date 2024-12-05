@@ -9,14 +9,14 @@
                 <c:if test="${!fullEntryMode&&!frnEntryMode}">
                     <tr>
                         <td>
-                            <c:if test="${KualiForm.document.wireTransfer.preqForeignCurrencyTypeCode=='C'}">
+                            <c:if test="${KualiForm.document.wireTransfer.foreignCurrencyTypeCode=='C'}">
                                 PREQ amount is stated in U.S. dollars; convert to foreign currency
                             </c:if>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <c:if test="${KualiForm.document.wireTransfer.preqForeignCurrencyTypeCode=='F'}">
+                            <c:if test="${KualiForm.document.wireTransfer.foreignCurrencyTypeCode=='F'}">
                                 PREQ amount is stated in foreign currency
                             </c:if>
                         </td>
@@ -27,7 +27,7 @@
                         <td>
                             <html:radio
                                     styleId="us-currency"
-                                    property="document.wireTransfer.preqForeignCurrencyTypeCode"
+                                    property="document.wireTransfer.foreignCurrencyTypeCode"
                                     value="C"/>
 
                             <label for="us-currency">
@@ -39,7 +39,7 @@
                         <td>
                             <html:radio
                                     styleId="foreign-currency"
-                                    property="document.preqWireTransfer.preqForeignCurrencyTypeCode"
+                                    property="document.wireTransfer.foreignCurrencyTypeCode"
                                     value="F"/>
                             <label for="foreign-currency">
                                 PREQ amount is stated in foreign currency
@@ -49,10 +49,10 @@
                 </c:if>
                 <tr>
                     <td>
-                        *<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCurrencyTypeName}"/>&nbsp;
+                        *<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.currencyTypeName}"/>&nbsp;
                         <kul:htmlControlAttribute
-                                attributeEntry="${wireTransAttributes.preqCurrencyTypeName}"
-                                property="document.wireTransfer.preqForeignCurrencyTypeName"
+                                attributeEntry="${wireTransAttributes.currencyTypeName}"
+                                property="document.wireTransfer.foreignCurrencyTypeName"
                                 readOnly="${!fullEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>

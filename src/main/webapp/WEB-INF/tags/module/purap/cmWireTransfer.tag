@@ -2,7 +2,7 @@
 
 <c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
 
-<kul:tab tabTitle="Wire Transfer" defaultOpen="false" tabErrorKey="${KFSConstants.CM_WIRETRANSFER_TAB_ERRORS}">
+<kul:tab tabTitle="Wire Transfer" defaultOpen="false" tabErrorKey="${CUKFSConstants.CM_WIRETRANSFER_TAB_ERRORS}">
     <div class="tab-container" align="center">
 	    <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
             <tbody>

@@ -1,6 +1,5 @@
 package edu.cornell.kfs.module.purap.document;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.kew.framework.postprocessor.DocumentRouteStatusChange;
@@ -19,7 +18,6 @@ import org.kuali.kfs.sys.businessobject.PaymentSourceWireTransfer;
 import org.kuali.kfs.sys.context.SpringContext;
 
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
-import edu.cornell.kfs.module.purap.CUPurapWorkflowConstants;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 
 public class CuVendorCreditMemoDocument extends VendorCreditMemoDocument {
