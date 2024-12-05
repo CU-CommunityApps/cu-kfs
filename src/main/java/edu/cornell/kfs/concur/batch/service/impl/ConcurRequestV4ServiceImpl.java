@@ -185,7 +185,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                     + accountInfo.toString());
             ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo);
             requestValid = validationResult.isValid();
-            validationMessages.addAll(validationResult.getMessages());
+            validationMessages.addAll(validationResult.getErrorMessages());
             processingResult = requestValid ? ConcurEventNotificationStatus.validAccounts
                     : ConcurEventNotificationStatus.invalidAccounts;
         } catch (Exception e) {
@@ -263,8 +263,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
                 requestUuid, resultsDTO);
         
-        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(
-                accessToken, webRequest, logMessageDetail);
+        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
         
         try {
             checkStatusOfUpdatedRequest(updatedTravelRequest, requestUuid);

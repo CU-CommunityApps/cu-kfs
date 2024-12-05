@@ -18,6 +18,7 @@ import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.mo.common.active.Inactivatable;
 
 import edu.cornell.kfs.concur.ConcurConstants;
+import edu.cornell.kfs.concur.ConcurKeyConstants;
 import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
@@ -87,7 +88,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     private void updateValidationResultAndAddErrorMessages(ValidationResult validationResult, ValidationResult specificCheckResult){
         if (specificCheckResult.isNotValid()) {
             validationResult.setValid(false);
-            validationResult.addMessages(specificCheckResult.getMessages());
+            validationResult.addErrorMessages(specificCheckResult.getErrorMessages());
         }
     }
 
@@ -95,15 +96,15 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         ValidationResult validationResult = new ValidationResult();
         if (chartOfAccountsCode == null || chartOfAccountsCode.isEmpty()) {
             validationResult.setValid(false);
-            validationResult.addMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART));           
+            validationResult.addErrorMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.CHART));           
         } 
         if (accountNumber == null || accountNumber.isEmpty()) {
             validationResult.setValid(false);
-            validationResult.addMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER));
+            validationResult.addErrorMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER));
         }
         if (objectCodeRequired && (objectCode == null || objectCode.isEmpty())) {
             validationResult.setValid(false);
-            validationResult.addMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE));
+            validationResult.addErrorMessage(MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_REQUIRED), ConcurConstants.AccountingStringFieldNames.OBJECT_CODE));
         }
 
         return validationResult;
@@ -112,17 +113,25 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     public ValidationResult checkAccount(String chartOfAccountsCode, String accountNumber) {
         Account account = accountService.getByPrimaryId(chartOfAccountsCode, accountNumber);
         String  accountErrorMessageString = ConcurUtils.formatStringForErrorMessage(ConcurConstants.AccountingStringFieldNames.ACCOUNT_NUMBER, chartOfAccountsCode, accountNumber);
-        return checkMissingOrInactive(account, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), accountErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), accountErrorMessageString));
+        ValidationResult result = checkMissingOrInactive(account, MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_EXISTENCE), accountErrorMessageString), MessageFormat.format(configurationService.getPropertyValueAsString(KFSKeyConstants.ERROR_INACTIVE), accountErrorMessageString));
+        if (result.isValid()) {
+            String accountDetailMessage = MessageFormat.format(
+                    configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EVENT_NOTIFICATION_ACCOUNT_DETAIL),
+                    account.getChartOfAccountsCode(), account.getAccountNumber(), account.getSubFundGroupCode(),
+                    account.getFinancialHigherEdFunctionCd());
+            result.addAccountDetailMessage(accountDetailMessage);
+        }
+        return result;
     }
     
     private ValidationResult checkMissingOrInactive(Inactivatable inactivatableObject, String missingMessage, String inactiveMessage){
         ValidationResult validationResult = new ValidationResult();
         if (inactivatableObject == null || inactivatableObject.toString().isEmpty()) {
             validationResult.setValid(false);
-            validationResult.addMessage(missingMessage);
+            validationResult.addErrorMessage(missingMessage);
         } else if (!inactivatableObject.isActive()) {
             validationResult.setValid(false);
-            validationResult.addMessage(inactiveMessage);
+            validationResult.addErrorMessage(inactiveMessage);
         }       
         return validationResult;
     }

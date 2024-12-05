@@ -206,7 +206,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
             ConcurAccountInfo accountingInformation = buildConcurAccountingInformation(line);
             ValidationResult validationResults = buildValidationResult(accountingInformation, false);
             if (validationResults.isNotValid()) {
-                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationResults.getMessages()));
+                reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(line, validationResults.getErrorMessages()));
             }
             return validationResults.isValid();
         } else {
@@ -225,7 +225,7 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
     
             if (overriddenValidationResults.isNotValid()) {
                 reportData.addValidationErrorFileLine(new ConcurBatchReportLineValidationErrorItem(
-                        line, overriddenValidationResults.getMessages()));
+                        line, overriddenValidationResults.getErrorMessages()));
             }
 
             return overriddenValidationResults.isValid();
@@ -267,7 +267,8 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         if (validationResults.isNotValid()) {
             String overriddenOrOriginal = isOverriddenInfo ? "overridden" : "original";
             String messageStarter = "buildValidationResult, the " + overriddenOrOriginal + " acounting validation results: "; 
-            LOG.info(messageStarter + validationResults.getErrorMessagesAsOneFormattedString());
+            String formattedString = validationResults.isValid() ? validationResults.getAccountDetailMessagesAsOneFormattedString() : validationResults.getErrorMessagesAsOneFormattedString();
+            LOG.info(messageStarter + formattedString);
         }
         return validationResults;
     }
