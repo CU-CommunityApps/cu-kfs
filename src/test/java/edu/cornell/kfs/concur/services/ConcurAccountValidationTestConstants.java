@@ -321,7 +321,7 @@ public class ConcurAccountValidationTestConstants {
         return buildFormattedMessage(errorMessageProperty, formattedLabel);
     }
 
-    private static List<String> buildMessages(String... messages) {
+    public static List<String> buildMessages(String... messages) {
         List<String> messageList = new ArrayList<>();
         for (String message : messages) {
             messageList.add(message);

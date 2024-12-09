@@ -193,6 +193,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     
     protected ConcurWebRequest<Void> buildWebRequestForExpenseWorkflowAction(String workflowAction, String reportId,
             ConcurEventNotificationResponse resultsDTO) {
+        
         String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
                 ? ConcurConstants.APPROVE_COMMENT
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);

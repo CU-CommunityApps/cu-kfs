@@ -266,9 +266,8 @@ public class ConcurStandardAccountingExtractValidationServiceImpl implements Con
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(accountingInfo);
         if (validationResults.isNotValid()) {
             String overriddenOrOriginal = isOverriddenInfo ? "overridden" : "original";
-            String messageStarter = "buildValidationResult, the " + overriddenOrOriginal + " acounting validation results: "; 
-            String formattedString = validationResults.isValid() ? validationResults.getAccountDetailMessagesAsOneFormattedString() : validationResults.getErrorMessagesAsOneFormattedString();
-            LOG.info(messageStarter + formattedString);
+            String messageStarter = "buildValidationResult, the " + overriddenOrOriginal + " acounting validation results: ";
+            LOG.info(messageStarter + validationResults.getErrorMessagesAsOneFormattedString());
         }
         return validationResults;
     }
