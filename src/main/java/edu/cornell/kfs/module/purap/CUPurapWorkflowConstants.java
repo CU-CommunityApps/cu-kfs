@@ -41,7 +41,7 @@ public class CUPurapWorkflowConstants {
 	            ACCOUNT_REVIEW("Account", PaymentRequestStatuses.APPDOC_AWAITING_FISCAL_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, true), 
 	            ORG_REVIEW("AccountingOrganizationHierarchy", PaymentRequestStatuses.APPDOC_AWAITING_ORG_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, false), 
 	            // KFSPTS-1891
-	            PAYMENT_METHOD_REVIEW("PaymentMethodReviewer", CUPurapConstants.PAYMENT_METHODL_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, true), 
+	            PAYMENT_METHOD_REVIEW("PaymentMethod", CUPurapConstants.PAYMENT_METHOD_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, true), 
 	            VENDOR_TAX_REVIEW("Tax", PaymentRequestStatuses.APPDOC_AWAITING_TAX_REVIEW, PaymentRequestStatuses.APPDOC_CANCELLED_POST_AP_APPROVE, true);
 	            
 	            private final String name;

@@ -37,6 +37,7 @@ import org.kuali.kfs.sys.businessobject.Bank;
 import org.kuali.kfs.sys.businessobject.ChartOrgHolder;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntry;
 import org.kuali.kfs.sys.businessobject.GeneralLedgerPendingEntrySequenceHelper;
+import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.businessobject.WireCharge;
 import org.kuali.kfs.sys.context.SpringContext;
 import org.kuali.kfs.sys.service.BankService;
@@ -52,13 +53,12 @@ import org.kuali.kfs.vnd.service.PhoneNumberService;
 import edu.cornell.kfs.fp.CuFPConstants;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetail;
 import edu.cornell.kfs.fp.businessobject.CuDisbursementVoucherPayeeDetailExtension;
-import edu.cornell.kfs.fp.businessobject.DisbursementVoucherWireTransferExtendedAttribute;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherDefaultDueDateService;
 import edu.cornell.kfs.fp.document.service.CuDisbursementVoucherTaxService;
 import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.pdp.service.CuCheckStubService;
 import edu.cornell.kfs.sys.CUKFSConstants;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
+import edu.cornell.kfs.sys.businessobject.PaymentSourceWireTransferExtendedAttribute;
 
 
 @NAMESPACE(namespace = KFSConstants.CoreModuleNamespaces.FINANCIAL)
@@ -106,77 +106,11 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         if (vendor == null) {
             return;
         }
-
-        dvPayeeDetail.setDisbursementVoucherPayeeTypeCode(KFSConstants.PaymentPayeeTypes.VENDOR);
-        dvPayeeDetail.setDisbVchrPayeeIdNumber(vendor.getVendorNumber());
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setDisbVchrPayeeIdType(
                 CuDisbursementVoucherConstants.DV_PAYEE_ID_TYP_VENDOR);
         ((CuDisbursementVoucherPayeeDetailExtension) dvPayeeDetail.getExtension()).setPayeeTypeSuffix(
                 createVendorPayeeTypeSuffix(vendor.getVendorHeader().getVendorType()));
-        dvPayeeDetail.setDisbVchrPayeePersonName(vendor.getVendorName());
-
-        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
-
-        if (ObjectUtils.isNotNull(vendorAddress) && ObjectUtils.isNotNull(vendorAddress.getVendorAddressGeneratedIdentifier())) {
-            dvPayeeDetail.setDisbVchrVendorAddressIdNumber(vendorAddress.getVendorAddressGeneratedIdentifier().toString());
-            dvPayeeDetail.setDisbVchrPayeeLine1Addr(vendorAddress.getVendorLine1Address());
-            dvPayeeDetail.setDisbVchrPayeeLine2Addr(vendorAddress.getVendorLine2Address());
-            dvPayeeDetail.setDisbVchrPayeeCityName(vendorAddress.getVendorCityName());
-            dvPayeeDetail.setDisbVchrPayeeStateCode(vendorAddress.getVendorStateCode());
-            dvPayeeDetail.setDisbVchrPayeeZipCode(vendorAddress.getVendorZipCode());
-            dvPayeeDetail.setDisbVchrPayeeCountryCode(vendorAddress.getVendorCountryCode());
-        } else {
-            dvPayeeDetail.setDisbVchrVendorAddressIdNumber(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeLine1Addr(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeLine2Addr(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeCityName(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeStateCode(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeZipCode(StringUtils.EMPTY);
-            dvPayeeDetail.setDisbVchrPayeeCountryCode(StringUtils.EMPTY);
-        }
-
-        dvPayeeDetail.setDisbVchrNonresidentPaymentCode(vendor.getVendorHeader().getVendorForeignIndicator());
-        dvPayeeDetail.setDvPayeeSubjectPaymentCode(
-                VendorConstants.VendorTypes.SUBJECT_PAYMENT.equals(vendor.getVendorHeader().getVendorTypeCode()));
-        dvPayeeDetail.setDisbVchrEmployeePaidOutsidePayrollCode(getVendorService()
-                .isVendorInstitutionEmployee(vendor.getVendorHeaderGeneratedIdentifier()));
-
-        dvPayeeDetail.setHasMultipleVendorAddresses(1 < vendor.getVendorAddresses().size());
-
-
-        boolean w9AndW8Checked = false;
-        if (ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW9ReceivedIndicator())
-            && vendor.getVendorHeader().getVendorW9ReceivedIndicator()
-            || ObjectUtils.isNotNull(vendor.getVendorHeader().getVendorW8BenReceivedIndicator())
-            && vendor.getVendorHeader().getVendorW8BenReceivedIndicator()) {
-            w9AndW8Checked = true;
-        }
-
-        disbVchrPayeeW9CompleteCode = w9AndW8Checked;
-
-        final Date vendorFederalWithholdingTaxBeginDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxBeginningDate();
-        final Date vendorFederalWithholdingTaxEndDate = vendor.getVendorHeader().getVendorFederalWithholdingTaxEndDate();
-        final java.util.Date today = getDateTimeService().getCurrentDate();
-        if (vendorFederalWithholdingTaxBeginDate != null && vendorFederalWithholdingTaxBeginDate
-                .before(today) && (vendorFederalWithholdingTaxEndDate == null || vendorFederalWithholdingTaxEndDate
-                .after(today))) {
-            disbVchrPayeeTaxControlCode = DisbursementVoucherConstants.TAX_CONTROL_CODE_BEGIN_WITHHOLDING;
-        }
-
-        // if vendor is foreign, default nonresident payment code to true
-        if (getVendorService().isVendorForeign(vendor.getVendorHeaderGeneratedIdentifier())) {
-            dvPayeeDetail.setDisbVchrNonresidentPaymentCode(true);
-        }
-
-        // KFSPTS-1891
-        if ( vendor != null ) {
-                      if ( ObjectUtils.isNotNull( vendor.getExtension() )
-                              && vendor.getExtension() instanceof VendorDetailExtension ) {
-                          if ( StringUtils.isNotBlank(((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode())) {
-                              disbVchrPaymentMethodCode = ((VendorDetailExtension)vendor.getExtension()).getDefaultB2BPaymentMethodCode();
-                          }
-                      }
-                  }
+        super.templateVendor(vendor, vendorAddress);
     }
 
     @Override
@@ -364,7 +298,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
 
         if (wireTransfer != null) {
             wireTransfer.setDocumentNumber(documentNumber);
-            ((DisbursementVoucherWireTransferExtendedAttribute) wireTransfer.getExtension()).setDocumentNumber(documentNumber);
+            ((PaymentSourceWireTransferExtendedAttribute) wireTransfer.getExtension()).setDocumentNumber(documentNumber);
         }
 
         if (dvNonresidentTax != null) {
@@ -573,7 +507,6 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
         final PhoneNumberService phoneNumberService = SpringContext.getBean(PhoneNumberService.class);
         final Person currentUser = GlobalVariables.getUserSession().getPerson();
         disbVchrContactPersonName = currentUser.getName();
-        disbVchrContactEmailId = currentUser.getEmailAddress();
 
         final String phoneNumber = currentUser.getPhoneNumber();
         //CU Customization: Add check for phoneNumber not being the actual string "null".
@@ -599,6 +532,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             campusCode = affiliatedCampusCode;
         }
 
+        //CU Customization: Base code due date calculation replaced with Cornell specific due date calculation.
         disbursementVoucherDueDate = getCuDisbursementVoucherDefaultDueDateService().findDefaultDueDate();
 
         // default doc location
@@ -609,6 +543,7 @@ public class CuDisbursementVoucherDocument extends DisbursementVoucherDocument {
             );
         }
 
+        disbVchrPaymentMethodCode = KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         updateBankBasedOnPaymentMethodCode();
     }
 

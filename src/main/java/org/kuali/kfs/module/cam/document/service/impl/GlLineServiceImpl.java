@@ -530,7 +530,7 @@ public class GlLineServiceImpl implements GlLineService {
         final ParameterEvaluator evaluator = parameterEvaluatorService
                 .getParameterEvaluator(KFSConstants.CoreModuleNamespaces.KFS,
                         KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.DETAIL_PARAMETER_TYPE,
-                        KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.FISCAL_PERIOD_SELECTION_DOCUMENT_TYPES,
+                        KfsParameterConstants.YEAR_END_ACCOUNTING_PERIOD_PARAMETER_NAMES.FISCAL_PERIOD_DOCUMENT_TYPES,
                         docType);
         if (evaluator.evaluationSucceeds()) {
             final Integer closingYear = Integer.valueOf(parameterService

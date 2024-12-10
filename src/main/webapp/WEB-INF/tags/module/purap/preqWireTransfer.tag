@@ -1,9 +1,10 @@
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 <c:set var="isOpen" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])
                                && KualiForm.document.paymentMethodCode == 'W'}" />
-<c:set var="wireTransAttributes" value="${DataDictionary.PaymentRequestWireTransfer.attributes}" />
+<c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
+<c:set var="wireTransExtendedAttributes" value="${DataDictionary.PaymentSourceWireTransferExtendedAttribute.attributes}" />
 
-<kul:tab tabTitle="Wire Transfer" defaultOpen="${isOpen}" tabErrorKey="${KFSConstants.PREQ_WIRETRANSFER_TAB_ERRORS}">
+<kul:tab tabTitle="Wire Transfer" defaultOpen="${isOpen}" tabErrorKey="${CUKFSConstants.PREQ_WIRETRANSFER_TAB_ERRORS}">
     <div class="tab-container" align=center >
 	    <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
             <tbody>
@@ -11,98 +12,98 @@
                     <td colspan="4" align="left" valign="middle" class="datacell"><bean:write name="KualiForm" property="wireChargeMessage" /></td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqAutomatedClearingHouseProfileNumber}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.automatedClearingHouseProfileNumber}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqAutomatedClearingHouseProfileNumber}" property="document.preqWireTransfer.preqAutomatedClearingHouseProfileNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.automatedClearingHouseProfileNumber}" property="document.wireTransfer.automatedClearingHouseProfileNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqWireTransferFeeWaiverIndicator}"/> </div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.wireTransferFeeWaiverIndicator}"/> </div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqWireTransferFeeWaiverIndicator}" property="document.preqWireTransfer.preqWireTransferFeeWaiverIndicator" readOnly="${!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqWireTransferFeeWaiverIndicator}" property="document.wireTransfer.wireTransferFeeWaiverIndicator" readOnly="${!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankName}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankName}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankName}" property="document.preqWireTransfer.preqBankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankName}" property="document.wireTransfer.bankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqAdditionalWireText}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.additionalWireText}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqAdditionalWireText}" property="document.preqWireTransfer.preqAdditionalWireText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.additionalWireText}" property="document.wireTransfer.additionalWireText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
                     <th scope=row class="bord-l-b">
                         <div align="right">
-                            <kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankRoutingNumber}"/>
+                            <kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankRoutingNumber}"/>
                             <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}"><br/> *required for US bank</c:if>
                         </div>
                     </th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankRoutingNumber}" property="document.preqWireTransfer.preqBankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankRoutingNumber}" property="document.wireTransfer.bankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqAttentionLineText}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.attentionLineText}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqAttentionLineText}" property="document.preqWireTransfer.preqAttentionLineText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.attentionLineText}" property="document.wireTransfer.attentionLineText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
                     <th scope=row class="bord-l-b" >
-                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankStreetAddress}"/></div>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.bankStreetAddress}"/></div>
                     </th>
                     <td class="datacell" >
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankStreetAddress}" property="document.preqWireTransfer.preqBankStreetAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.bankStreetAddress}" property="document.wireTransfer.extension.bankStreetAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
                     <%-- can't make this field required in DD; so add '*' here --%>
-                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankCityName}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankCityName}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankCityName}" property="document.preqWireTransfer.preqBankCityName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankCityName}" property="document.wireTransfer.bankCityName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCurrencyTypeCode}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.currencyTypeCode}"/></div></th>
                     <c:set var="amountHint">
                         <bean:message key="label.wireTransfer.amount.hint"/>
                     </c:set>
                     <td class="datacell">
-                      <kul:htmlControlAttribute accessibilityHint="${amountHint}" attributeEntry="${wireTransAttributes.preqCurrencyTypeCode}" property="document.preqWireTransfer.preqCurrencyTypeCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                      <kul:htmlControlAttribute accessibilityHint="${amountHint}" attributeEntry="${wireTransAttributes.currencyTypeCode}" property="document.wireTransfer.currencyTypeCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
                     <th scope=row class="bord-l-b">
-                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankStateCode}"/>
+                        <div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankStateCode}"/>
                             <c:if test="${fullEntryMode||wireEntryMode||frnEntryMode}"><br/> *required for US bank</c:if>
                         </div>
                     </th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankStateCode}" property="document.preqWireTransfer.preqBankStateCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankStateCode}" property="document.wireTransfer.bankStateCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCurrencyTypeName}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.currencyTypeName}"/></div></th>
                     <td class="datacell" colspan="3">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqCurrencyTypeName}" property="document.preqWireTransfer.preqCurrencyTypeName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.currencyTypeName}" property="document.wireTransfer.currencyTypeName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankProvince}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.extension.bankProvince}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankProvince}" property="document.preqWireTransfer.preqBankProvince" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.bankProvince}" property="document.wireTransfer.extension.bankProvince" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankCountryCode}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankCountryCode}"/></div></th>
                     <td class="datacell" colspan="3">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqBankCountryCode}" property="document.preqWireTransfer.preqBankCountryCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankCountryCode}" property="document.wireTransfer.bankCountryCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqPayeeAccountNumber}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.payeeAccountNumber}"/></div></th>
                     <td class="datacell" colspan="3">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqPayeeAccountNumber}" property="document.preqWireTransfer.preqPayeeAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}" />
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.payeeAccountNumber}" property="document.wireTransfer.payeeAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}" />
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqPayeeAccountName}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.payeeAccountName}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqPayeeAccountName}" property="document.preqWireTransfer.preqPayeeAccountName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.payeeAccountName}" property="document.wireTransfer.payeeAccountName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                     <td class="datacell" colspan="2">
                         <bean:message key="message.wiretransfer.fee"/>
@@ -118,58 +119,58 @@
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankIBAN}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.bankIBAN}"/></div></th>
                     <c:set var="bankIBANHint">
         			    <bean:message key="label.wireTransfer.bankIBAN.hint"/>
                     </c:set>
                     <td class="datacell">
-                        <kul:htmlControlAttribute accessibilityHint="${bankIBANHint}" attributeEntry="${wireTransAttributes.preqBankIBAN}" property="document.preqWireTransfer.preqBankIBAN" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute accessibilityHint="${bankIBANHint}" attributeEntry="${wireTransExtendedAttributes.bankIBAN}" property="document.wireTransfer.extension.bankIBAN" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCorrespondentBankName}"/></div></th>
+                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankName}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqCorrespondentBankName}" property="document.preqWireTransfer.preqCorrespondentBankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankName}" property="document.wireTransfer.extension.correspondentBankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqBankSWIFTCode}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.bankSwiftCode}"/></div></th>
                     <c:set var="bankSwiftCode">
         			    <bean:message key="label.wireTransfer.bankSwiftCode.hint"/>
                     </c:set>
                     <td class="datacell">
-                        <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransAttributes.preqBankSWIFTCode}" property="document.preqWireTransfer.preqBankSWIFTCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute accessibilityHint="${bankSwiftCode}" attributeEntry="${wireTransExtendedAttributes.bankSwiftCode}" property="document.wireTransfer.extension.bankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCorrespondentBankAddress}"/></div></th>
+                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankAddress}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqCorrespondentBankAddress}" property="document.preqWireTransfer.preqCorrespondentBankAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankAddress}" property="document.wireTransfer.extension.correspondentBankAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
-                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqSortOrTransitCode}"/></div></th>
+                    <th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.sortOrTransitCode}"/></div></th>
                     <c:set var="sortOrTransitCodeHint">
         			    <bean:message key="label.wireTransfer.sortOrTransitCode.hint"/>
                     </c:set>
                     <td class="datacell">
-                        <kul:htmlControlAttribute accessibilityHint="${sortOrTransitCodeHint}" attributeEntry="${wireTransAttributes.preqSortOrTransitCode}" property="document.preqWireTransfer.preqSortOrTransitCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute accessibilityHint="${sortOrTransitCodeHint}" attributeEntry="${wireTransExtendedAttributes.sortOrTransitCode}" property="document.wireTransfer.extension.sortOrTransitCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
-                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCorrespondentBankSwiftCode}"/></div></th>
+                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankSwiftCode}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqCorrespondentBankSwiftCode}" property="document.preqWireTransfer.preqCorrespondentBankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankSwiftCode}" property="document.wireTransfer.extension.correspondentBankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
                     <th scope=row class="bord-l-b" colspan="2"><div align="right">&nbsp;</div></th>
-                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCorrespondentBankRoutingNumber}"/></div></th>
+                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankRoutingNumber}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqCorrespondentBankRoutingNumber}" property="document.preqWireTransfer.preqCorrespondentBankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankRoutingNumber}" property="document.wireTransfer.extension.correspondentBankRoutingNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="datacell" colspan="2">
                         <b><bean:message key="message.wiretransfer.use.IBAN"/></b>
                     </td>
-                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.preqCorrespondentBankAccountNumber}"/></div></th>
+                    <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankAccountNumber}"/></div></th>
                     <td class="datacell">
-                        <kul:htmlControlAttribute attributeEntry="${wireTransAttributes.preqCorrespondentBankAccountNumber}" property="document.preqWireTransfer.preqCorrespondentBankAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
+                        <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankAccountNumber}" property="document.wireTransfer.extension.correspondentBankAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
                     </td>
                 </tr>
             </tbody>
