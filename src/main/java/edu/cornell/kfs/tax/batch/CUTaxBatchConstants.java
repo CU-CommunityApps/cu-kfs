@@ -521,6 +521,18 @@ public final class CUTaxBatchConstants {
         }
     }
 
+    public static final class TaxFileSections {
+        public static final String SPRINTAX_BIOGRAPHIC_ROW_1042S = "Sprintax_Bio_Row_1042S";
+        public static final String SPRINTAX_DETAIL_ROW_1042S = "Sprintax_Detail_Row_1042S";
+    }
+
+    public enum TaxAmountType {
+        GROSS_AMOUNT,
+        FEDERAL_TAX_WITHHELD_AMOUNT,
+        STATE_INCOME_TAX_WITHHELD_AMOUNT,
+        UNKNOWN;
+    }
+
 
 
     private CUTaxBatchConstants() {

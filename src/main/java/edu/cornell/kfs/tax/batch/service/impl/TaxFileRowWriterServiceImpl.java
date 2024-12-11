@@ -31,12 +31,11 @@ import edu.cornell.kfs.sys.CUKFSConstants.FileExtensions;
 import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
 import edu.cornell.kfs.tax.batch.dto.TaxFileRow;
-import edu.cornell.kfs.tax.batch.service.TaxFileRowWriterService;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputField;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputSection;
 
-public class TaxFileRowWriterServiceImpl implements TaxFileRowWriterService {
+public class TaxFileRowWriterServiceImpl /*implements TaxFileRowWriterService*/ {
 
     private static final Logger LOG = LogManager.getLogger();
 
@@ -47,7 +46,7 @@ public class TaxFileRowWriterServiceImpl implements TaxFileRowWriterService {
 
     private TaxOutputHelper taxOutputHelper;
 
-    @Override
+    //@Override
     public void doWithNewOutputFile(final int reportYear, final Date processingStartDate,
             final FailableRunnable<Exception> task) throws IOException, SQLException {
         Validate.validState(taxOutputHelper == null, "Another file writing operation is still in progress");
@@ -105,7 +104,7 @@ public class TaxFileRowWriterServiceImpl implements TaxFileRowWriterService {
                 .build();
     }
 
-    @Override
+    //@Override
     public void writeHeaderRow(final String sectionName) throws IOException {
         Validate.validState(taxOutputHelper != null, "Method was not invoked within a doWithNewOutputFile() task");
         Validate.notBlank(sectionName, "sectionName cannot be blank");
@@ -120,7 +119,7 @@ public class TaxFileRowWriterServiceImpl implements TaxFileRowWriterService {
         taxOutputHelper.csvWriter.writeNext(headers);
     }
 
-    @Override
+    //@Override
     public void writeDataRow(final TaxFileRow taxFileRow, final String sectionName) throws IOException {
         Validate.validState(taxOutputHelper != null, "Method was not invoked within a doWithNewOutputFile() task");
         Validate.notNull(taxFileRow, "taxFileRow cannot be null");
@@ -156,6 +155,7 @@ public class TaxFileRowWriterServiceImpl implements TaxFileRowWriterService {
     private String adjustFieldValue(final TaxOutputField field, final String value, boolean useExactFieldLengths) {
         final String nonNullValue = StringUtils.defaultString(value);
         if (nonNullValue.length() > field.getLength()) {
+            LOG.warn("adjustFieldValue, Truncating data value for field: {}", field.getName());
             return StringUtils.left(nonNullValue, field.getLength());
         } else if (useExactFieldLengths && nonNullValue.length() < field.getLength()) {
             return StringUtils.rightPad(nonNullValue, field.getLength());

@@ -4,7 +4,7 @@ package edu.cornell.kfs.tax.dataaccess.impl;
  * Helper enum for grouping various numeric statistics that are collected
  * during the transaction detail creation and processing.
  */
-enum TaxStatType {
+public enum TaxStatType {
     NUM_TRANSACTION_ROWS("message.tax.num.transaction.rows"),
     NUM_NULL_TAX_NUMBERS("message.tax.num.null.tax.numbers"),
     NUM_NULL_TAX_NUMBERS_FOR_DISTINCT_PAYEES("message.tax.num.null.tax.numbers.for.distinct.payees"),
@@ -314,6 +314,10 @@ enum TaxStatType {
 
     private TaxStatType(String propKey) {
         this.propKey = propKey;
+    }
+
+    public String getPropKey() {
+        return propKey;
     }
 
     @Override
