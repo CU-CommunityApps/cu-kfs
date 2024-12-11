@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -164,7 +165,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
             String reportId, ConcurEventNotificationStatus reportResults, String... messages) {
         return new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.ExpenseReport, reportResults, reportId, REPORT_NAME_E3_CONFERENCE, REPORT_STATUS_APPROVED,
-                TRAVELER_NAME_JOHN_DOE, TRAVELER_EMAIL_JOHN_DOE, Arrays.asList(messages));
+                TRAVELER_NAME_JOHN_DOE, TRAVELER_EMAIL_JOHN_DOE, Arrays.asList(messages), new ArrayList<String>());
     }
 
     @ParameterizedTest

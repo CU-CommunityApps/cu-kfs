@@ -130,6 +130,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             String travelerEmail) {
         boolean reportValid = true;
         ArrayList<String> validationMessages = new ArrayList<>();
+        ArrayList<String> detailMessages = new ArrayList<>();
         ConcurEventNotificationStatus reportResults = ConcurEventNotificationStatus.validAccounts;
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
@@ -138,6 +139,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
                 ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
                 reportValid &= results.isValid();
                 validationMessages.addAll(results.getErrorMessages());
+                detailMessages.addAll(results.getAccountDetailMessages());
             }
             if (!reportValid) {
                 reportResults = ConcurEventNotificationStatus.invalidAccounts;
@@ -150,7 +152,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         }
         
         ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport,
-                reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
+                reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages, detailMessages);
         processingResults.add(resultsDTO);
         updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);
         
@@ -171,8 +173,17 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         /*
          * @todo re enable this
          */
-        LOG.error("updateStatusInConcur. would have updated the status in Concur: " + workflowAction);
-        //concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
+        if (shouldUpdateConcur(reportId)) {
+            LOG.info("updateStatusInConcur, actively decided to not update the status in Concur");
+            concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
+        } else {
+            LOG.error("updateStatusInConcur. would have updated the status in Concur");
+        }
+
+    }
+    
+    private boolean shouldUpdateConcur(String reportId) {
+        return true;
     }
     
     protected boolean shouldUpdateStatusInConcur() {
@@ -195,7 +206,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             ConcurEventNotificationResponse resultsDTO) {
         
         String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
-                ? ConcurConstants.APPROVE_COMMENT
+                ? ConcurUtils.buildDetailMessageForWorkflowAction(resultsDTO)
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
         ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
         String workflowActionUrl = buildFullUrlForExpenseWorkflowAction(reportId, workflowAction);

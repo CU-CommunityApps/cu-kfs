@@ -46,6 +46,7 @@ public class ConcurConstants {
     public static final String APPROVE_COMMENT = "Approved via Concur Connect";
 
     public static final String ERROR_MESSAGE_HEADER = "Please resubmit your Report.\n\nThe Report is being returned due to an error. Please make the necessary corrections.\n\nError:\n";
+    public static final String DETAIL_MESSAGE_HEADER = APPROVE_COMMENT + ".  Below are the account, sub fund code, and higher ed function codes used in this report:\n";
     
     public static final boolean EVENT_NOTIFICATION_IN_PROCESS = true;
     public static final boolean EVENT_NOTIFICATION_NOT_IN_PROCESS = false;

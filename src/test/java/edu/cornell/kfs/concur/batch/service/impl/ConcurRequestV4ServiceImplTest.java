@@ -541,10 +541,10 @@ public class ConcurRequestV4ServiceImplTest {
         assertEquals(expectedResult.getExpectedProcessingResult(), actualResult.getEventNotificationStatus(),
                 "Wrong validation outcome for result");
         if (expectedResult.isExpectedToPassAccountValidation()) {
-            assertTrue(CollectionUtils.isEmpty(actualResult.getMessages()),
+            assertTrue(CollectionUtils.isEmpty(actualResult.getErrorMessages()),
                     "Successful validation result should not have contained any error messages");
         } else {
-            assertTrue(CollectionUtils.isNotEmpty(actualResult.getMessages()),
+            assertTrue(CollectionUtils.isNotEmpty(actualResult.getErrorMessages()),
                     "Unsuccessful validation result should have contained at least one error message");
         }
     }

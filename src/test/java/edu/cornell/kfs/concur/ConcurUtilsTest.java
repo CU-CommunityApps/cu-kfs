@@ -102,7 +102,7 @@ public class ConcurUtilsTest {
     @MethodSource("testVuildValidationErrorMessageForWorkflowActionParams")
     public void testVuildValidationErrorMessageForWorkflowAction(List<String> errorMessages) {
         ConcurEventNotificationResponse dto = buildTestingConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport, ConcurEventNotificationStatus.invalidAccounts);
-        dto.setMessages(errorMessages);        
+        dto.setErrorMessages(errorMessages);        
         
         String actualResults = ConcurUtils.buildValidationErrorMessageForWorkflowAction(dto);
         StringBuilder expectedResults = new StringBuilder(ConcurConstants.ERROR_MESSAGE_HEADER);
