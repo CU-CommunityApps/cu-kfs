@@ -39,10 +39,10 @@
 
             <tr>
                 <th align=right valign=middle class="bord-l-b">
-                  <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceNumber}" /></div>
+                   <div align="right"><kul:htmlAttributeLabel attributeEntry="${documentAttributes.invoiceNumber}" /></div>
                 </th>
                 <td align=left valign=middle class="datacell">
-                    <kul:htmlControlAttribute
+                   <kul:htmlControlAttribute
                    		attributeEntry="${documentAttributes.invoiceNumber}" property="document.invoiceNumber"
                    		readOnly="${not displayInitTab}" tabindexOverride="${tabindexOverrideBase + 0}"/>
                 </td>
@@ -177,16 +177,16 @@
                     
                     <th align=right valign=middle class="bord-l-b">
                         <div align="right">
-                           <label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.paymentMethodCode}" /></label>
+                            <label><kul:htmlAttributeLabel attributeEntry="${documentAttributes.paymentMethodCode}" /></label>
                         </div>
                     </th>
                     <td align=left valign=middle class="datacell">
                         <kul:htmlControlAttribute
                             attributeEntry="${documentAttributes.paymentMethodCode}"
-                            property="document.paymentMethodCode"
                             extraReadOnlyProperty="document.paymentMethod.displayName"
+                            onchange="paymentMethodChanged(this.value);"
+                            property="document.paymentMethodCode"
                             readOnly="${not canEditPaymentMethod}"
-                            onchange="onPaymentMethodChanged( this.value );"
                             tabindexOverride="${tabindexOverrideBase + 4}" />
                     </td>
 	                <sys:bankLabel align="right"/>

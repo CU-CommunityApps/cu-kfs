@@ -69,8 +69,8 @@
 
         <purap:paymentHistory />
 
-        <purap:cmWireTransfer/>
-        <purap:cmForeignDraft/>
+        <fp:wireTransfer/>
+        <fp:foreignDraft/>
 
         <gl:generalLedgerPendingEntries/>
 
