@@ -174,16 +174,16 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
          * @todo re enable this
          */
         if (shouldUpdateConcur(reportId)) {
-            LOG.info("updateStatusInConcur, actively decided to not update the status in Concur");
+            LOG.info("updateStatusInConcur, updating the status in Concur for report " + reportId);
             concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
         } else {
-            LOG.error("updateStatusInConcur. would have updated the status in Concur");
+            LOG.error("updateStatusInConcur. updates disabled, but would have updated the status in Concur for report " + reportId + " with a webrequest: " + webRequest.toString());
         }
 
     }
     
     private boolean shouldUpdateConcur(String reportId) {
-        return true;
+        return false;
     }
     
     protected boolean shouldUpdateStatusInConcur() {

@@ -4,6 +4,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.http.HttpMethod;
 
 public final class ConcurWebRequest<T> {
@@ -53,6 +55,11 @@ public final class ConcurWebRequest<T> {
 
     public boolean expectsEmptyResponse() {
         return Void.class.isAssignableFrom(responseType);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
 }

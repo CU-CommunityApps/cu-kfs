@@ -68,11 +68,11 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
     }
     
     private ValidationResult checkValuesAreValid(String chartOfAccountsCode, String accountNumber, String subAccountNumber, String objectCode, String subObjectCode, String projectCode, boolean objectCodeRequired){
-        ValidationResult accountValidationResult = checkAccount(chartOfAccountsCode, accountNumber);
-        if (accountValidationResult.isNotValid()) {
-            return accountValidationResult;
+        ValidationResult validationResult = checkAccount(chartOfAccountsCode, accountNumber);
+        if (validationResult.isNotValid()) {
+            return validationResult;
         } else {           
-            ValidationResult validationResult = new ValidationResult();
+            //ValidationResult validationResult = new ValidationResult();
             if(objectCodeRequired) {
                 updateValidationResultAndAddErrorMessages(validationResult, checkObjectCode(chartOfAccountsCode, objectCode));
             }
