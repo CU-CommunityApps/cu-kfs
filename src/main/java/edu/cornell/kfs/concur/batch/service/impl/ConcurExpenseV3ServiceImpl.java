@@ -128,33 +128,29 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationResponse> processingResults,
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportNumber, String reportName, String reportStatus, String travelerName,
             String travelerEmail) {
-        boolean reportValid = true;
-        ArrayList<String> validationMessages = new ArrayList<>();
-        ArrayList<String> detailMessages = new ArrayList<>();
+        ValidationResult validationResults = new ValidationResult();
         ConcurEventNotificationStatus reportResults = ConcurEventNotificationStatus.validAccounts;
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
                 LOG.info("validateExpenseAllocations, for report " + reportNumber + " account info: " + info.toString());
-                ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
-                reportValid &= results.isValid();
-                validationMessages.addAll(results.getErrorMessages());
-                detailMessages.addAll(results.getAccountDetailMessages());
+                validationResults.add(concurAccountValidationService.validateConcurAccountInfo(info));
             }
-            if (!reportValid) {
+            if (validationResults.isNotValid()) {
                 reportResults = ConcurEventNotificationStatus.invalidAccounts;
             }
         } catch (Exception e) {
-            reportValid = false;
             reportResults = ConcurEventNotificationStatus.processingError;
-            validationMessages.add("Encountered an error validating this report");
+            validationResults.setValid(false);
+            validationResults.addErrorMessage("Encountered an error validating this report");
             LOG.error("validateExpenseAllocations, had an error validating report " + reportNumber, e);
         }
         
-        ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport,
-                reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages, detailMessages);
+        ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(
+                ConcurEventNotificationType.ExpenseReport, reportResults, reportNumber, reportName, reportStatus,
+                travelerName, travelerEmail, validationResults.getErrorMessages(), validationResults.getAccountDetailMessages());
         processingResults.add(resultsDTO);
-        updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);
+        updateStatusInConcur(accessToken, reportNumber, validationResults.isValid(), resultsDTO);
         
     }
     
@@ -177,13 +173,14 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
             LOG.info("updateStatusInConcur, updating the status in Concur for report " + reportId);
             concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
         } else {
-            LOG.error("updateStatusInConcur. updates disabled, but would have updated the status in Concur for report " + reportId + " with a webrequest: " + webRequest.toString());
+            LOG.error("updateStatusInConcur. updates disabled, but would have updated the status in Concur for report " + reportId);
         }
 
     }
     
     private boolean shouldUpdateConcur(String reportId) {
-        return false;
+        //return StringUtils.equalsIgnoreCase(reportId, "0BAE300FD284493DB175");
+        return true;
     }
     
     protected boolean shouldUpdateStatusInConcur() {

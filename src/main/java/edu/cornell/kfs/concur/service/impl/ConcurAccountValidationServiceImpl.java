@@ -72,7 +72,6 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         if (validationResult.isNotValid()) {
             return validationResult;
         } else {           
-            //ValidationResult validationResult = new ValidationResult();
             if(objectCodeRequired) {
                 updateValidationResultAndAddErrorMessages(validationResult, checkObjectCode(chartOfAccountsCode, objectCode));
             }

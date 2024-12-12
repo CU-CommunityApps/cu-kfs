@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.sys.KFSConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +26,7 @@ import edu.cornell.kfs.sys.web.mock.ResettableController;
 
 @RestController
 public class MockConcurExpenseV4WorkflowController implements ResettableController {
+    private static final Logger LOG = LogManager.getLogger();
 
     private static final String REPORT_ID_VARIABLE = "reportId";
     private static final String ACTION_VARIABLE = "action";
@@ -80,6 +83,7 @@ public class MockConcurExpenseV4WorkflowController implements ResettableControll
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Authorization header is missing or empty");
         } else if (!StringUtils.equals(authorizationHeader, expectedAuthorizationHeader)) {
+            LOG.error("checkAuthorizationHeaderIsValid, empty authorization header");
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Not authorized due to malformed or unrecognized access token");
         }
@@ -87,9 +91,11 @@ public class MockConcurExpenseV4WorkflowController implements ResettableControll
 
     private void checkReportExistsAndIsAwaitingAction(String reportId, ConcurTestWorkflowInfo workflowInfo) {
         if (workflowInfo == null) {
+            LOG.error("checkReportExistsAndIsAwaitingAction, empty workflow info");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Unknown report ID: " + reportId);
         } else if (StringUtils.isNotBlank(workflowInfo.getActionTaken())) {
+            LOG.error("checkReportExistsAndIsAwaitingAction, no action taken");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Action has already been taken on report with ID: " + reportId);
         }
@@ -97,13 +103,16 @@ public class MockConcurExpenseV4WorkflowController implements ResettableControll
 
     private void checkRequestContentIsValid(ConcurV4WorkflowDTO requestContent) {
         if (requestContent == null) {
+            LOG.error("checkRequestContentIsValid, no request content");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Expected JSON content is missing");
         } else if (StringUtils.isBlank(requestContent.getComment())) {
+            LOG.error("checkRequestContentIsValid, no comment");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Workflow action comment is missing");
         } else if (StringUtils.length(requestContent.getComment())
                 > ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH) {
+            LOG.error("checkRequestContentIsValid, comment is too long: " + requestContent.getComment());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Workflow action comment exceeds max length");
         }

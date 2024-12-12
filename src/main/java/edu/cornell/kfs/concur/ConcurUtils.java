@@ -152,8 +152,11 @@ public class ConcurUtils {
         String fullMessage = resultsDTO.getFlattenedDetailMessages();
         if (StringUtils.isNotBlank(fullMessage)) {
             fullMessage = ConcurConstants.DETAIL_MESSAGE_HEADER + fullMessage;
+            return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+        } else {
+            return ConcurConstants.APPROVE_COMMENT;
         }
-        return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+        
     }
 
 }
