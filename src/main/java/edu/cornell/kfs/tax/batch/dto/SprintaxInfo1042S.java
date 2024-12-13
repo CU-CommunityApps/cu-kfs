@@ -32,7 +32,12 @@ public class SprintaxInfo1042S {
     private String vendorLastName;
     private String vendorFirstName;
     private String vendorEmailAddress;
+    private String vendorGIIN;
     private String vendorUSAddressLine1;
+    private String vendorUSAddressLine2;
+    private String vendorUSCityName;
+    private String vendorUSStateCode;
+    private String vendorUSZipCode;
     private String vendorForeignAddressLine1;
     private String vendorForeignAddressLine2;
     private String vendorForeignCityName;
@@ -42,6 +47,7 @@ public class SprintaxInfo1042S {
     private String formattedSSNValue;
     private String formattedITINValue;
     private String chapter3StatusCode;
+    private String chapter4StatusCode;
     //private String chapter3ExemptionCode;
     private String chapter4ExemptionCode;
     //private String incomeCodeForOutput;
@@ -309,12 +315,52 @@ public class SprintaxInfo1042S {
         this.vendorEmailAddress = vendorEmailAddress;
     }
 
+    public String getVendorGIIN() {
+        return vendorGIIN;
+    }
+
+    public void setVendorGIIN(final String vendorGIIN) {
+        this.vendorGIIN = vendorGIIN;
+    }
+
     public String getVendorUSAddressLine1() {
         return vendorUSAddressLine1;
     }
 
     public void setVendorUSAddressLine1(final String vendorUSAddressLine1) {
         this.vendorUSAddressLine1 = vendorUSAddressLine1;
+    }
+
+    public String getVendorUSAddressLine2() {
+        return vendorUSAddressLine2;
+    }
+
+    public void setVendorUSAddressLine2(final String vendorUSAddressLine2) {
+        this.vendorUSAddressLine2 = vendorUSAddressLine2;
+    }
+
+    public String getVendorUSCityName() {
+        return vendorUSCityName;
+    }
+
+    public void setVendorUSCityName(final String vendorUSCityName) {
+        this.vendorUSCityName = vendorUSCityName;
+    }
+
+    public String getVendorUSStateCode() {
+        return vendorUSStateCode;
+    }
+
+    public void setVendorUSStateCode(final String vendorUSStateCode) {
+        this.vendorUSStateCode = vendorUSStateCode;
+    }
+
+    public String getVendorUSZipCode() {
+        return vendorUSZipCode;
+    }
+
+    public void setVendorUSZipCode(final String vendorUSZipCode) {
+        this.vendorUSZipCode = vendorUSZipCode;
     }
 
     public String getVendorForeignAddressLine1() {
@@ -396,6 +442,14 @@ public class SprintaxInfo1042S {
     public void setChapter3ExemptionCode(final String chapter3ExemptionCode) {
         this.chapter3ExemptionCode = chapter3ExemptionCode;
     }*/
+
+    public String getChapter4StatusCode() {
+        return chapter4StatusCode;
+    }
+
+    public void setChapter4StatusCode(final String chapter4StatusCode) {
+        this.chapter4StatusCode = chapter4StatusCode;
+    }
 
     public String getChapter4ExemptionCode() {
         return chapter4ExemptionCode;

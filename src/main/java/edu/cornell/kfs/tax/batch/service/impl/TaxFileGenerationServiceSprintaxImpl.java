@@ -6,18 +6,17 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
 import org.kuali.kfs.core.api.util.type.KualiDecimal;
-import org.kuali.kfs.coreservice.framework.parameter.ParameterService;
+import org.kuali.kfs.fp.document.DisbursementVoucherConstants;
 import org.kuali.kfs.krad.util.ObjectUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -28,9 +27,11 @@ import edu.cornell.kfs.tax.CUTaxConstants;
 import edu.cornell.kfs.tax.CUTaxConstants.Tax1042SParameterNames;
 import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.CUTaxKeyConstants;
-import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxAmountType;
+import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxBoxType1042S;
+import edu.cornell.kfs.tax.batch.TaxColumns.TransactionDetailColumn;
 import edu.cornell.kfs.tax.batch.TaxOutputConfig;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
+import edu.cornell.kfs.tax.batch.TaxRowClusionBuilderBase.ClusionResult;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.TaxStatisticsHandler;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailExtractor;
@@ -42,17 +43,21 @@ import edu.cornell.kfs.tax.batch.service.TaxFileGenerationService;
 import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition;
 import edu.cornell.kfs.tax.businessobject.NoteLite;
 import edu.cornell.kfs.tax.businessobject.TransactionDetail;
+import edu.cornell.kfs.tax.businessobject.TransactionOverride;
 import edu.cornell.kfs.tax.businessobject.VendorAddressLite;
 import edu.cornell.kfs.tax.businessobject.VendorDetailLite;
 import edu.cornell.kfs.tax.dataaccess.impl.TaxStatType;
+import edu.cornell.kfs.tax.service.TaxParameterService;
+import edu.cornell.kfs.tax.service.TransactionOverrideService;
 import edu.cornell.kfs.tax.util.TaxUtils;
 
 public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationService {
 
     private TransactionDetailProcessorDao transactionDetailProcessorDao;
     private TaxOutputDefinitionV2FileType taxOutputDefinitionV2FileType;
+    private TransactionOverrideService transactionOverrideService;
     private ConfigurationService configurationService;
-    private ParameterService parameterService;
+    private TaxParameterService taxParameterService;
     private String sprintaxBioFileDefinitionFilePath;
     private String sprintaxPaymentsFileDefinitionFilePath;
     private String fileOutputDirectory;
@@ -64,6 +69,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
     private TaxStatistics generateFilesFromTransactions(final TaxOutputConfig config,
             final TransactionDetailExtractor rowExtractor) throws Exception {
+        final Map<String, String> transactionOverrides = getTransactionOverrides(config);
         final TaxOutputDefinition bioFileDefinition = parseTaxOutputDefinition(
                 sprintaxBioFileDefinitionFilePath);
         final TaxOutputDefinition paymentsFileDefinition = parseTaxOutputDefinition(
@@ -78,10 +84,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
                 final TaxFileRowWriterSprintaxPaymentsFileImpl paymentsFileWriter = 
                         new TaxFileRowWriterSprintaxPaymentsFileImpl(paymentsFilePath, "", paymentsFileDefinition);
         ) {
-            final Map<String, String> objectCodeToIncomeClassCodeMappings =
-                    prepareObjectCodeToIncomeClassCodeMappings();
             final SprintaxHelper helper = new SprintaxHelper(config, rowExtractor, bioFileWriter, paymentsFileWriter,
-                    objectCodeToIncomeClassCodeMappings);
+                    transactionOverrides);
             return generateSprintaxFiles(helper);
         }
     }
@@ -99,10 +103,10 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
                 fileNamePrefix, dateFormat.format(config.getProcessingStartDate()), FileExtensions.CSV);
     }
 
-    private Map<String, String> prepareObjectCodeToIncomeClassCodeMappings() {
-        final Collection<String> parameterValuesToParse = getMultiValueParameter(
-                Tax1042SParameterNames.INCOME_CLASS_CODE_VALID_OBJECT_CODES);
-        return TaxUtils.buildValueToKeyMapFromParameterContainingMultiValueEntries(parameterValuesToParse);
+    private Map<String, String> getTransactionOverrides(final TaxOutputConfig config) {
+        final List<TransactionOverride> transactionOverrides = transactionOverrideService.getTransactionOverrides(
+                CUTaxConstants.TAX_TYPE_1042S, config.getStartDate(), config.getEndDate());
+        return TaxUtils.buildTransactionOverridesMap(transactionOverrides);
     }
 
 
@@ -122,6 +126,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
                 finalizeCurrentInfo(currentInfo, helper);
                 currentInfo = createNewInfo(currentRow, helper);
             }
+
             processCurrentRow(currentInfo, currentRow, helper);
         }
 
@@ -168,7 +173,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
                 nextInfo.getVendorHeaderId(), nextInfo.getVendorDetailId());
         final VendorDetailLite matchingVendor = vendorResults.getVendor();
         final VendorDetailLite vendorToProcess;
-        
+
         if (ObjectUtils.isNull(matchingVendor)) {
             helper.increment(TaxStatType.NUM_NO_VENDOR);
             nextInfo.setVendorNameForOutput(createMessage(CUTaxKeyConstants.MESSAGE_TAX_OUTPUT_1042S_VENDOR_NOT_FOUND,
@@ -191,6 +196,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         if (ObjectUtils.isNotNull(vendorToProcess)) {
             nextInfo.setVendorTypeCode(vendorToProcess.getVendorTypeCode());
             nextInfo.setVendorOwnershipCode(vendorToProcess.getVendorOwnershipCode());
+            nextInfo.setVendorGIIN(vendorToProcess.getVendorGIIN());
+            nextInfo.setChapter4StatusCode(vendorToProcess.getVendorChapter4StatusCode());
             initializeVendorName(nextInfo, vendorToProcess, helper);
             initializeChapter4ExemptionCode(nextInfo, vendorToProcess);
             initializeVendorAddressData(nextInfo, vendorToProcess, helper);
@@ -259,6 +266,10 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
         if (ObjectUtils.isNotNull(usAddress)) {
             nextInfo.setVendorUSAddressLine1(usAddress.getVendorLine1Address());
+            nextInfo.setVendorUSAddressLine2(usAddress.getVendorLine2Address());
+            nextInfo.setVendorUSCityName(usAddress.getVendorCityName());
+            nextInfo.setVendorUSStateCode(usAddress.getVendorStateCode());
+            nextInfo.setVendorUSZipCode(usAddress.getVendorZipCode());
             if (ObjectUtils.isNull(foreignAddress)) {
                 nextInfo.setVendorEmailAddress(usAddress.getVendorAddressEmailAddress());
             }
@@ -285,14 +296,68 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
     private void processCurrentRow(final SprintaxInfo1042S currentInfo, final TransactionDetail currentRow,
             final SprintaxHelper helper) throws SQLException {
-        final TaxRowClusionBuilderSprintaxImpl clusionBuilder = new TaxRowClusionBuilderSprintaxImpl(
-                helper, parameterService);
-        final String incomeClassCode = helper.objectCodeToIncomeClassCodeMappings.get(
-                StringUtils.defaultString(currentRow.getFinObjectCode()));
-        final TaxAmountType amountType = determineAmountType(currentRow, incomeClassCode, helper);
-        Validate.validState(amountType != null, "Amount Type cannot be null; it should be UNKNOWN if undetermined");
+        final SprintaxPayment1042S currentPayment = currentInfo.getCurrentPayment();
+        currentPayment.setFedIncomeTaxPercent(currentRow.getFederalIncomeTaxPercent());
 
-        if (amountType != TaxAmountType.UNKNOWN) {
+        final String incomeClassCode = findIncomeClassCodeForObject(currentRow.getFinObjectCode());
+        final TaxBoxType1042S taxBoxType = determineTaxBoxType(currentRow, incomeClassCode, helper);
+        Validate.validState(taxBoxType != null, "Tax Box Type cannot be null; it should be UNKNOWN if undetermined");
+
+        ClusionResult rowClusionResult = checkForExclusions(currentInfo, currentRow, helper, taxBoxType);
+        final TaxBoxType1042S taxBoxOverride = findTaxBoxOverride(currentRow, helper);
+        final TaxBoxType1042S taxBoxToUse = determineTaxBoxToUse(taxBoxType, taxBoxOverride, rowClusionResult);
+        final TaxBoxType1042S overriddenTaxBox = (taxBoxOverride != null) ? taxBoxType : null;
+
+        if (taxBoxToUse == TaxBoxType1042S.GROSS_AMOUNT) {
+            currentPayment.addToGrossAmount(currentRow.getNetPaymentAmount());
+        } else if (taxBoxToUse == TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT) {
+            currentPayment.addToFederalTaxWithheldAmount(currentRow.getNetPaymentAmount());
+        } else if (taxBoxToUse == TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT) {
+            currentPayment.addToStateIncomeTaxWithheldAmount(currentRow.getNetPaymentAmount());
+        } else {
+            helper.increment(TaxStatType.NUM_NO_BOX_DETERMINED_ROWS);
+        }
+
+        final Map<TransactionDetailColumn, String> updatedFieldValues = generateUpdatedTransactionDetailFieldValues(
+                currentInfo, taxBoxToUse, overriddenTaxBox);
+        helper.rowExtractor.updateCurrentRow(updatedFieldValues);
+    }
+
+    private String findIncomeClassCodeForObject(final String objectCode) {
+        if (StringUtils.isBlank(objectCode)) {
+            return null;
+        }
+        final Map<String, String> objectCodeToIncomeClassCodeMappings = taxParameterService
+                .getValueToKeyMapFromParameterContainingMultiValueEntries(CUTaxConstants.TAX_1042S_PARM_DETAIL,
+                        Tax1042SParameterNames.INCOME_CLASS_CODE_VALID_OBJECT_CODES);
+        return objectCodeToIncomeClassCodeMappings.get(objectCode);
+    }
+
+    private TaxBoxType1042S determineTaxBoxType(final TransactionDetail currentRow, final String incomeClassCode,
+            final SprintaxHelper helper) {
+        if (StringUtils.isNotBlank(incomeClassCode)) {
+            helper.increment(TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED);
+            return TaxBoxType1042S.GROSS_AMOUNT;
+        } else if (multiValueParameterContains(Tax1042SParameterNames.FEDERAL_TAX_WITHHELD_VALID_OBJECT_CODES,
+                currentRow.getFinObjectCode())) {
+            helper.increment(TaxStatType.NUM_DETERMINED_FED_TAX_WITHHELD_INCOME_CODES);
+            return TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT;
+        } else if (multiValueParameterContains(Tax1042SParameterNames.STATE_INCOME_TAX_WITHHELD_VALID_OBJECT_CODES,
+                currentRow.getFinObjectCode())) {
+            helper.increment(TaxStatType.NUM_DETERMINED_STATE_INC_TAX_WITHHELD_INCOME_CODES);
+            return TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT;
+        } else {
+            return TaxBoxType1042S.UNKNOWN;
+        }
+    }
+
+    private ClusionResult checkForExclusions(final SprintaxInfo1042S currentInfo, final TransactionDetail currentRow,
+            final SprintaxHelper helper, final TaxBoxType1042S taxBoxType) throws SQLException {
+        final String objectCode = currentRow.getFinObjectCode();
+        final TaxRowClusionBuilderSprintaxImpl clusionBuilder = new TaxRowClusionBuilderSprintaxImpl(
+                helper, taxParameterService);
+
+        if (taxBoxType != TaxBoxType1042S.UNKNOWN) {
             clusionBuilder.appendCheckForVendorType(currentInfo.getVendorTypeCode())
                     .appendCheckForVendorOwnershipType(currentInfo.getVendorOwnershipCode())
                     .appendCheckForDocumentType(currentRow.getDocumentType());
@@ -301,36 +366,103 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         boolean paymentReasonIsBlankOrProcessable = true;
         if (StringUtils.isNotBlank(currentRow.getPaymentReasonCode())) {
             clusionBuilder.appendCheckForPaymentReason(currentRow.getPaymentReasonCode());
-            paymentReasonIsBlankOrProcessable = clusionBuilder.getResultOfPreviousCheck();
+            paymentReasonIsBlankOrProcessable = clusionBuilder.getResultOfPreviousCheck() == ClusionResult.INCLUDE;
         }
 
-        if (paymentReasonIsBlankOrProcessable && amountType != TaxAmountType.UNKNOWN) {
+        if (paymentReasonIsBlankOrProcessable && taxBoxType != TaxBoxType1042S.UNKNOWN) {
+            final String chartAndAccountPair = StringUtils.join(
+                    currentRow.getChartCode(), KFSConstants.DASH, currentRow.getAccountNumber());
+            final boolean isRoyaltyAmount = isRoyaltyAmount(currentRow, taxBoxType);
             final List<NoteLite> documentNotes = transactionDetailProcessorDao.getNotesByDocumentNumber(
                     currentRow.getDocumentNumber());
-            if (CollectionUtils.isNotEmpty(documentNotes)) {
-                helper.increment(TaxStatType.NUM_DOC_NOTE_SETS_RETRIEVED);
-            } else {
-                helper.increment(TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED);
+            clusionBuilder.appendCheckForDocumentNotes(documentNotes);
+            if (isRoyaltyAmount) {
+                clusionBuilder.appendCheckForAccountOnRoyalties(objectCode, chartAndAccountPair);
+                if (isDVDocumentTransaction(currentRow)) {
+                    clusionBuilder.appendCheckForDvCheckStubTextOnRoyalties(
+                            objectCode, currentRow.getDvCheckStubText());
+                }
+            } else if (taxBoxType == TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT) {
+                clusionBuilder.appendCheckForAccountOnFederalTaxWithholding(objectCode, chartAndAccountPair);
+            } else if (taxBoxType == TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT) {
+                clusionBuilder.appendCheckForAccountOnStateTaxWithholding(objectCode, chartAndAccountPair);
             }
+        }
+
+        if (clusionBuilder.getCumulativeResult() != ClusionResult.EXCLUDE) {
+            clusionBuilder.appendCheckForIncomeCode(currentRow.getIncomeCode(), taxBoxType)
+                    .appendCheckForIncomeCodeSubType(currentRow.getIncomeCodeSubType(), taxBoxType);
+        }
+
+        return clusionBuilder.getCumulativeResult();
+    }
+
+    private boolean isRoyaltyAmount(final TransactionDetail currentRow, final TaxBoxType1042S taxBoxType) {
+        return taxBoxType == TaxBoxType1042S.GROSS_AMOUNT && multiValueParameterContains(
+                Tax1042SParameterNames.INCOME_CLASS_CODE_DENOTING_ROYALTIES, currentRow.getIncomeClassCode());
+    }
+
+    private boolean isDVDocumentTransaction(final TransactionDetail currentRow) {
+        return StringUtils.equals(currentRow.getDocumentType(), DisbursementVoucherConstants.DOCUMENT_TYPE_CODE);
+    }
+
+    private TaxBoxType1042S findTaxBoxOverride(final TransactionDetail currentRow, final SprintaxHelper helper) {
+        final String transactionOverrideKey = TaxUtils.buildTransactionOverrideKey(currentRow);
+        final String transactionOverride = helper.transactionOverrides.get(transactionOverrideKey);
+        if (StringUtils.isBlank(transactionOverride)) {
+            return null;
+        }
+        switch (transactionOverride) {
+            case CUTaxConstants.FORM_1042S_GROSS_BOX:
+                return TaxBoxType1042S.GROSS_AMOUNT;
+
+            case CUTaxConstants.FORM_1042S_FED_TAX_WITHHELD_BOX:
+                return TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT;
+
+            case CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX:
+                return TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT;
+
+            case CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY:
+            default:
+                return TaxBoxType1042S.UNKNOWN;
         }
     }
 
-    private TaxAmountType determineAmountType(final TransactionDetail currentRow, final String incomeClassCode,
-            final SprintaxHelper helper) {
-        if (StringUtils.isNotBlank(incomeClassCode)) {
-            helper.increment(TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED);
-            return TaxAmountType.GROSS_AMOUNT;
-        } else if (multiValueParameterContains(Tax1042SParameterNames.FEDERAL_TAX_WITHHELD_VALID_OBJECT_CODES,
-                currentRow.getFinObjectCode())) {
-            helper.increment(TaxStatType.NUM_DETERMINED_FED_TAX_WITHHELD_INCOME_CODES);
-            return TaxAmountType.FEDERAL_TAX_WITHHELD_AMOUNT;
-        } else if (multiValueParameterContains(Tax1042SParameterNames.STATE_INCOME_TAX_WITHHELD_VALID_OBJECT_CODES,
-                currentRow.getFinObjectCode())) {
-            helper.increment(TaxStatType.NUM_DETERMINED_STATE_INC_TAX_WITHHELD_INCOME_CODES);
-            return TaxAmountType.STATE_INCOME_TAX_WITHHELD_AMOUNT;
+    private TaxBoxType1042S determineTaxBoxToUse(final TaxBoxType1042S taxBox, final TaxBoxType1042S taxBoxOverride,
+            final ClusionResult rowClusionResult) {
+        if (taxBoxOverride != null) {
+            return taxBoxOverride;
+        } else if (rowClusionResult == ClusionResult.EXCLUDE) {
+            return TaxBoxType1042S.UNKNOWN;
         } else {
-            return TaxAmountType.UNKNOWN;
+            return taxBox;
         }
+    }
+
+    private Map<TransactionDetailColumn, String> generateUpdatedTransactionDetailFieldValues(
+            final SprintaxInfo1042S currentInfo, final TaxBoxType1042S taxBox,
+            final TaxBoxType1042S overriddenTaxBox) {
+        final String overriddenTaxBoxForOutput = overriddenTaxBox != null ? overriddenTaxBox.toString() : null;
+        return Map.ofEntries(
+                Map.entry(TransactionDetailColumn.FORM_1042S_BOX, taxBox.toString()),
+                Map.entry(TransactionDetailColumn.FORM_1042S_OVERRIDDEN_BOX, overriddenTaxBoxForOutput),
+                Map.entry(TransactionDetailColumn.VENDOR_NAME, currentInfo.getVendorNameForOutput()),
+                Map.entry(TransactionDetailColumn.PARENT_VENDOR_NAME, currentInfo.getParentVendorNameForOutput()),
+                Map.entry(TransactionDetailColumn.VNDR_EMAIL_ADDR, currentInfo.getVendorEmailAddress()),
+                Map.entry(TransactionDetailColumn.VNDR_CHAP_4_STAT_CD, currentInfo.getChapter4StatusCode()),
+                Map.entry(TransactionDetailColumn.VNDR_GIIN, currentInfo.getVendorGIIN()),
+                Map.entry(TransactionDetailColumn.VNDR_LN1_ADDR, currentInfo.getVendorUSAddressLine1()),
+                Map.entry(TransactionDetailColumn.VNDR_LN2_ADDR, currentInfo.getVendorUSAddressLine2()),
+                Map.entry(TransactionDetailColumn.VNDR_CTY_NM, currentInfo.getVendorUSCityName()),
+                Map.entry(TransactionDetailColumn.VNDR_ST_CD, currentInfo.getVendorUSStateCode()),
+                Map.entry(TransactionDetailColumn.VNDR_ZIP_CD, currentInfo.getVendorUSZipCode()),
+                Map.entry(TransactionDetailColumn.VNDR_FRGN_LN1_ADDR, currentInfo.getVendorForeignAddressLine1()),
+                Map.entry(TransactionDetailColumn.VNDR_FRGN_LN2_ADDR, currentInfo.getVendorForeignAddressLine2()),
+                Map.entry(TransactionDetailColumn.VNDR_FRGN_CTY_NM, currentInfo.getVendorForeignCityName()),
+                Map.entry(TransactionDetailColumn.VNDR_FRGN_ZIP_CD, currentInfo.getVendorForeignZipCode()),
+                Map.entry(TransactionDetailColumn.VNDR_FRGN_PROV_NM, currentInfo.getVendorForeignProvinceName()),
+                Map.entry(TransactionDetailColumn.VNDR_FRGN_CNTRY_CD, currentInfo.getVendorForeignCountryCode())
+        );
     }
 
 
@@ -342,31 +474,31 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
 
     private String getSuffixedParameter(final String parameterNameSuffix) {
-        return parameterService.getParameterValueAsString(CUTaxConstants.TAX_NAMESPACE,
-                CUTaxConstants.TAX_1042S_PARM_DETAIL, CUTaxConstants.TAX_TYPE_1042S + parameterNameSuffix);
+        return getParameter(CUTaxConstants.TAX_TYPE_1042S + parameterNameSuffix);
     }
 
     private String getParameter(final String parameterName) {
-        return parameterService.getParameterValueAsString(CUTaxConstants.TAX_NAMESPACE,
-                CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
-    }
-
-    private boolean suffixedMultiValueParameterContains(final String parameterNameSuffix, final String value) {
-        return multiValueParameterContains(CUTaxConstants.TAX_TYPE_1042S + parameterNameSuffix, value);
+        return taxParameterService.getParameterValueAsString(CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
     }
 
     private boolean multiValueParameterContains(final String parameterName, final String value) {
+        if (StringUtils.isBlank(value)) {
+            return false;
+        }
         return getMultiValueParameter(parameterName).contains(value);
     }
 
-    private Collection<String> getMultiValueParameter(final String parameterName) {
-        return parameterService.getParameterValuesAsString(CUTaxConstants.TAX_NAMESPACE,
-                CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
+    private Set<String> getMultiValueParameter(final String parameterName) {
+        return taxParameterService.getParameterValuesAsString(CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
     }
 
     private String getSubParameter(final String parameterName, final String subParameterName) {
-        return parameterService.getSubParameterValueAsString(CUTaxConstants.TAX_NAMESPACE,
-                CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName, subParameterName);
+        if (StringUtils.isBlank(subParameterName)) {
+            return null;
+        }
+        final Map<String, String> subParameters = taxParameterService.getSubParameters(
+                CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
+        return subParameters.get(subParameterName);
     }
 
     private String createMessage(final String key, final Object... arguments) {
@@ -382,12 +514,16 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         this.taxOutputDefinitionV2FileType = taxOutputDefinitionV2FileType;
     }
 
+    public void setTransactionOverrideService(final TransactionOverrideService transactionOverrideService) {
+        this.transactionOverrideService = transactionOverrideService;
+    }
+
     public void setConfigurationService(final ConfigurationService configurationService) {
         this.configurationService = configurationService;
     }
 
-    public void setParameterService(final ParameterService parameterService) {
-        this.parameterService = parameterService;
+    public void setTaxParameterService(final TaxParameterService taxParameterService) {
+        this.taxParameterService = taxParameterService;
     }
 
     public void setSprintaxBioFileDefinitionFilePath(final String sprintaxBioFileDefinitionFilePath) {
@@ -409,19 +545,19 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         private final TransactionDetailExtractor rowExtractor;
         private final TaxFileRowWriterSprintaxBioFileImpl bioFileWriter;
         private final TaxFileRowWriterSprintaxPaymentsFileImpl paymentsFileWriter;
+        private final Map<String, String> transactionOverrides;
         private final TaxStatistics statistics;
-        private final Map<String, String> objectCodeToIncomeClassCodeMappings;
 
         private SprintaxHelper(final TaxOutputConfig config, final TransactionDetailExtractor rowExtractor,
                 final TaxFileRowWriterSprintaxBioFileImpl bioFileWriter,
                 final TaxFileRowWriterSprintaxPaymentsFileImpl paymentsFileWriter,
-                final Map<String, String> objectCodeToIncomeClassCodeMappings) {
+                final Map<String, String> transactionOverrides) {
             this.config = config;
             this.rowExtractor = rowExtractor;
             this.bioFileWriter = bioFileWriter;
             this.paymentsFileWriter = paymentsFileWriter;
+            this.transactionOverrides = transactionOverrides;
             this.statistics = new TaxStatistics();
-            this.objectCodeToIncomeClassCodeMappings = objectCodeToIncomeClassCodeMappings;
         }
 
         @Override

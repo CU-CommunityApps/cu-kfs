@@ -180,6 +180,14 @@ public class SprintaxPayment1042S {
         this.grossAmount = grossAmount;
     }
 
+    public void addToGrossAmount(final KualiDecimal grossAmount) {
+        if (this.grossAmount != null) {
+            this.grossAmount = this.grossAmount.add(grossAmount);
+        } else {
+            setGrossAmount(grossAmount);
+        }
+    }
+
     public KualiDecimal getFederalTaxWithheldAmount() {
         return federalTaxWithheldAmount;
     }
@@ -188,12 +196,28 @@ public class SprintaxPayment1042S {
         this.federalTaxWithheldAmount = federalTaxWithheldAmount;
     }
 
+    public void addToFederalTaxWithheldAmount(final KualiDecimal federalTaxWithheldAmount) {
+        if (this.federalTaxWithheldAmount != null) {
+            this.federalTaxWithheldAmount = this.federalTaxWithheldAmount.add(federalTaxWithheldAmount);
+        } else {
+            setFederalTaxWithheldAmount(federalTaxWithheldAmount);
+        }
+    }
+
     public KualiDecimal getStateIncomeTaxWithheldAmount() {
         return stateIncomeTaxWithheldAmount;
     }
 
     public void setStateIncomeTaxWithheldAmount(final KualiDecimal stateIncomeTaxWithheldAmount) {
         this.stateIncomeTaxWithheldAmount = stateIncomeTaxWithheldAmount;
+    }
+
+    public void addToStateIncomeTaxWithheldAmount(final KualiDecimal stateIncomeTaxWithheldAmount) {
+        if (this.stateIncomeTaxWithheldAmount != null) {
+            this.stateIncomeTaxWithheldAmount = this.stateIncomeTaxWithheldAmount.add(stateIncomeTaxWithheldAmount);
+        } else {
+            setStateIncomeTaxWithheldAmount(stateIncomeTaxWithheldAmount);
+        }
     }
 
 }

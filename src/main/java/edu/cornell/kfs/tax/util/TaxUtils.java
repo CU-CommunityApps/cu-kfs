@@ -9,14 +9,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.kuali.kfs.sys.KFSConstants;
 
 import edu.cornell.kfs.sys.CUKFSConstants;
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.businessobject.TransactionDetail;
+import edu.cornell.kfs.tax.businessobject.TransactionOverride;
 
 public final class TaxUtils {
 
@@ -66,20 +66,27 @@ public final class TaxUtils {
         return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
     }
 
-    public static Map<String, String> buildValueToKeyMapFromParameterContainingMultiValueEntries(
-            final Collection<String> parameterValues) {
-        final Stream.Builder<Map.Entry<String, String>> valueToKeyEntries = Stream.builder();
-        for (final String keyAndMultiValuePair : parameterValues) {
-            final String key = StringUtils.substringBefore(keyAndMultiValuePair, CUKFSConstants.EQUALS_SIGN);
-            final String commaDelimitedValues = StringUtils.substringAfter(
-                    keyAndMultiValuePair, CUKFSConstants.EQUALS_SIGN);
-            final String[] values = StringUtils.split(commaDelimitedValues, KFSConstants.COMMA);
-            for (final String value : values) {
-                valueToKeyEntries.add(Map.entry(value, key));
-            }
-        }
-        return valueToKeyEntries.build()
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    public static Map<String, String> buildTransactionOverridesMap(
+            final Collection<TransactionOverride> transactionOverrides) {
+        return transactionOverrides.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        TaxUtils::buildTransactionOverrideKey, TransactionOverride::getBoxNumber));
+    }
+
+    public static String buildTransactionOverrideKey(final TransactionOverride transactionOverride) {
+        return buildTransactionOverrideKey(transactionOverride.getUniversityDate(),
+                transactionOverride.getDocumentNumber(), transactionOverride.getFinancialDocumentLineNumber());
+    }
+
+    public static String buildTransactionOverrideKey(final TransactionDetail transactionDetail) {
+        return buildTransactionOverrideKey(transactionDetail.getPaymentDate(), transactionDetail.getDocumentNumber(),
+                transactionDetail.getFinancialDocumentLineNumber());
+    }
+
+    public static String buildTransactionOverrideKey(final java.sql.Date universityDate, final String documentNumber,
+            final Integer financialDocumentLineNumber) {
+        return StringUtils.joinWith(CUKFSConstants.SEMICOLON,
+                universityDate, documentNumber, financialDocumentLineNumber);
     }
 
     private TaxUtils() {
