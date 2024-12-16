@@ -77,7 +77,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
      * level GL entries (offsets or fee charges) when booking the actuals (not the encumbrances) from
      * KFSPTS-1891.
      * 
-     * Needed to also do the following when customiziing this mehtod:
+     * Needed to also do the following when customizing this method:
      *    - Declare purapAccountingService and purapAccountRevisionService locally and set the corresponding
      *      services in the super class due to the super class not declaring getters.
      *      
@@ -229,7 +229,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
     }
 
     /* Cornell Customization:
-     * KualiCo 2023-04-19 version of the method had to be copied into this class due to base code's retricitve scope.
+     * KualiCo 2023-04-19 version of the method had to be copied into this class due to base code's restrictive scope.
      * 
      * When an external payment PREQ is entering PROCESSED in the workflow, reversing entries are creating for the PREQ
      * actuals and then forward entries are generated as the PRQX actuals (see generateEntriesProcessedPaymentRequest).
@@ -245,7 +245,7 @@ public class CuPurapGeneralLedgerServiceImpl extends PurapGeneralLedgerServiceIm
     }
 
     /* Cornell Customization:
-     * KualiCo 2023-04-19 version of the method had to be copied into this class due to base code's retricitve scope.
+     * KualiCo 2023-04-19 version of the method had to be copied into this class due to base code's restrictive scope.
      * 
      * When a WT PREQ is entering PROCESSED in the workflow, reversing entries are creating for the PREQ actuals and
      * then forward entries are generated as the PRQW actuals (see generateEntriesProcessedPaymentRequest()).

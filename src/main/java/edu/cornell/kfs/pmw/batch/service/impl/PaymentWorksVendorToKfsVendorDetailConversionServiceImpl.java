@@ -370,18 +370,18 @@ public class PaymentWorksVendorToKfsVendorDetailConversionServiceImpl implements
         String vendorCountryCode = paymentWorksTaxRuleDependencyService.convertIsoCountryCodeToFipsCountryCode(
                 pmwVendor.getRequestingCompanyTaxCountry(), paymentWorksIsoToFipsCountryMap);
         if (isUnitedStatesFipsCountryCode(vendorCountryCode)) {
-            LOG.info("buildKFSPaymentMethodCode, Domestic Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+            LOG.info("buildDefaultKFSPaymentMethodCode, Domestic Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
             return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
         } else {
             if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.WIRE, pmwVendor.getPaymentMethod())) {
-                LOG.info("buildKFSPaymentMethodCode, Foreign Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE);
+                LOG.info("buildDefaultKFSPaymentMethodCode, Foreign Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE);
                 return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_WIRE;
             } else if (StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.CHECK, pmwVendor.getPaymentMethod()) ||
                     StringUtils.equalsIgnoreCase(PaymentWorksConstants.PaymentWorksPaymentMethods.ACH, pmwVendor.getPaymentMethod())) {
-                LOG.info("buildKFSPaymentMethodCode, Foreign Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
+                LOG.info("buildDefaultKFSPaymentMethodCode, Foreign Vendor, returning payment method code value of {}", KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
                 return KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK;
             } else {
-                throw new IllegalArgumentException("buildKFSPaymentMethodCode, Invalid PaymentWorks payment method code: " + pmwVendor.getPaymentMethod());
+                throw new IllegalArgumentException("buildDefaultKFSPaymentMethodCode, Invalid PaymentWorks payment method code: " + pmwVendor.getPaymentMethod());
             }
         }
     }

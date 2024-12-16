@@ -20,7 +20,7 @@ package org.kuali.kfs.sys.businessobject;
 
 import java.lang.reflect.Field;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.kuali.kfs.krad.bo.BusinessObject;
 import org.kuali.kfs.krad.bo.PersistableBusinessObjectBase;

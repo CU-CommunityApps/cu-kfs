@@ -19,12 +19,12 @@
 
 --%>
 
-<!-- Cornell Customization. KualiCo 2023-04-19 sys/innerWireTransfer.tag used.--> 
+<%-- Cornell Customization. KualiCo 2023-04-19 sys/innerWireTransfer.tag used.--%> 
 
 <%@ include file="/jsp/sys/kfsTldHeader.jsp"%>
 
 <c:set var="wireTransAttributes" value="${DataDictionary.PaymentSourceWireTransfer.attributes}" />
-<!-- Cornell Customization -->
+<%-- Cornell Customization --%>
 <c:set var="wireTransExtendedAttributes" value="${DataDictionary.PaymentSourceWireTransferExtendedAttribute.attributes}" />
 
 <table cellpadding=0 class="datatable standard" summary="Wire Transfer Section">
@@ -43,7 +43,7 @@
 			</td>
 		</tr>
 		<tr>
-            <!-- Cornell Customization: Added * due to inability to make field required. -->
+            <%-- Cornell Customization: Added * due to inability to make field required. --%>
             <th scope=row class="bord-l-b"><div align="right">*<kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankName}" forceRequired="true"/></div></th>
 			<td class="datacell">
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankName}" forceRequired="true" property="document.wireTransfer.bankName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
@@ -65,7 +65,7 @@
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.attentionLineText}" property="document.wireTransfer.attentionLineText" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
 			</td>
 		</tr>
-        <!-- Cornell Customization: Start : Added extended attribute -->
+        <%-- Cornell Customization: Start : Added extended attribute --%>
         <tr> 
             <th scope=row class="bord-l-b" >
                 <div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.bankStreetAddress}"/></div>
@@ -74,20 +74,20 @@
                 <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.bankStreetAddress}" property="document.wireTransfer.extension.bankStreetAddress" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
             </td>
         </tr>
-        <!-- Cornell Customization: End : Added extended attribute -->
+        <%-- Cornell Customization: End : Added extended attribute --%>
 		<tr>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankCityName}" forceRequired="true"/></div></th>
 			<td class="datacell">
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankCityName}" forceRequired="true" property="document.wireTransfer.bankCityName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
 			</td>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.currencyTypeCode}" forceRequired="true"/></div></th>
-                <!-- Cornell Customization : Start : Aded hint -->
+                <%-- Cornell Customization : Start : Added hint --%>
                 <c:set var="amountHint">
                     <bean:message key="label.wireTransfer.amount.hint"/>
                 </c:set>
             <td class="datacell">
                 <kul:htmlControlAttribute accessibilityHint="${amountHint}" attributeEntry="${wireTransAttributes.currencyTypeCode}" forceRequired="true" property="document.wireTransfer.currencyTypeCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
-                <!-- Cornell Customization : End : Added hint -->
+                <%-- Cornell Customization : End : Added hint --%>
 			</td>
 		</tr>
 		<tr>
@@ -97,13 +97,13 @@
 			<td class="datacell">
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.bankStateCode}" property="document.wireTransfer.bankStateCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
 			</td>
-            <!-- Cornell Customization : Added "rowspan=2" to both heading and data currencyTypeName tags -->
+            <%-- Cornell Customization : Added "rowspan=2" to both heading and data currencyTypeName tags --%>
             <th scope=row class="bord-l-b" rowspan=2><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.currencyTypeName}" forceRequired="true"/></div></th>
             <td class="datacell" colspan="3" rowspan=2>
 				<kul:htmlControlAttribute attributeEntry="${wireTransAttributes.currencyTypeName}" forceRequired="true" property="document.wireTransfer.currencyTypeName" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
 			</td>
 		</tr>
-        <!-- Cornell Customization : Start : Added extended attribute -->
+        <%-- Cornell Customization : Start : Added extended attribute --%>
         <tr>
             <th scope=row class="bord-l-b">
              	<div align="right">
@@ -114,7 +114,7 @@
               <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.bankProvince}" property="document.wireTransfer.extension.bankProvince" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
             </td>
         </tr>
-        <!-- Cornell Customization : End : Added extended attribute -->
+        <%-- Cornell Customization : End : Added extended attribute --%>
 		<tr>
 			<th scope=row class="bord-l-b"><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransAttributes.bankCountryCode}" forceRequired="true"/></div></th>
 			<td class="datacell" colspan="3">
@@ -135,7 +135,7 @@
 			</td>
 			<td class="datacell" colspan="2"><bean:message key="message.wiretransfer.fee"/></td>
 		</tr>
-        <!-- Cornell Customization - Start : Added extended attributes -->
+        <%-- Cornell Customization - Start : Added extended attributes --%>
         <tr>
             <td colspan=4 valign=middle class="tab-subhead"><b><bean:message key="message.wiretransfer.foreign.wires.additional.data"/></b></td>
         </tr>
@@ -179,7 +179,7 @@
             <td class="datacell">
                 <kul:htmlControlAttribute accessibilityHint="${sortOrTransitCodeHint}" attributeEntry="${wireTransExtendedAttributes.sortOrTransitCode}" property="document.wireTransfer.extension.sortOrTransitCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
             </td>
-            <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.disbVchrCorrespondentBankSwiftCode}"/></div></th>
+            <th scope=row class="bord-l-b" ><div align="right"><kul:htmlAttributeLabel attributeEntry="${wireTransExtendedAttributes.correspondentBankSwiftCode}"/></div></th>
             <td class="datacell">
                 <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankSwiftCode}" property="document.wireTransfer.extension.correspondentBankSwiftCode" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
             </td>
@@ -200,6 +200,6 @@
                 <kul:htmlControlAttribute attributeEntry="${wireTransExtendedAttributes.correspondentBankAccountNumber}" property="document.wireTransfer.extension.correspondentBankAccountNumber" readOnly="${!fullEntryMode&&!wireEntryMode&&!frnEntryMode}"/>
             </td>
         </tr>
-        <!-- Cornell Customization - End : Added extended attributes -->
+        <%-- Cornell Customization - End : Added extended attributes --%>
 	</tbody>
 </table>
