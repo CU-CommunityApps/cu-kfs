@@ -297,10 +297,9 @@ public class ConcurAccountValidationServiceTest {
 
     @ParameterizedTest
     @EnumSource
-    public void testValidateConcurAccountInfo(ConcurAccountInfoEnum accountinfo) {
-        ConcurAccountInfo accountInfo = accountinfo.toConcurAccountInfo();
-        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo);
-        validateResults(accountinfo.validationExpectation, accountinfo.expectedErrorMessages, validationResult,
+    public void testValidateConcurAccountInfo(ConcurAccountInfoEnum accountInfo) {
+        ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo.toConcurAccountInfo());
+        validateResults(accountInfo.validationExpectation, accountInfo.expectedErrorMessages, accountInfo.expectedDetailMessages, validationResult,
                 "testValidateConcurAccountInfo");
     }
 }

@@ -20,28 +20,30 @@ import edu.cornell.kfs.concur.ConcurUtils;
 import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 
 public class ConcurAccountValidationTestConstants {
-    public static final String VALID_CHART = "VALIDCHART";
-    public static final String BAD_CHART = "BADCHART";
-    public static final String VALID_ACCT_NBR = "VALIDACCT";
-    public static final String BAD_ACCT_NBR = "BADACCT";
-    public static final String INACTIVE_ACCT_NBR = "INACTIVEACCT";
-    public static final String CLOSED_ACCT_NBR = "CLOSEDACCT";
+    private static final String VALID_CHART = "VALIDCHART";
+    private static final String BAD_CHART = "BADCHART";
+    private static final String VALID_ACCT_NBR = "VALIDACCT";
+    private static final String BAD_ACCT_NBR = "BADACCT";
+    private static final String INACTIVE_ACCT_NBR = "INACTIVEACCT";
+    private static final String CLOSED_ACCT_NBR = "CLOSEDACCT";
 
-    public static final String VALID_OBJ_CD = "VALIDOBJ";
-    public static final String BAD_OBJ_CD = "BADOBJ";
-    public static final String INACTIVE_OBJ_CD = "INACTIVEOBJ";
+    private static final String VALID_OBJ_CD = "VALIDOBJ";
+    private static final String BAD_OBJ_CD = "BADOBJ";
+    private static final String INACTIVE_OBJ_CD = "INACTIVEOBJ";
 
     public static final String VALID_PROJECT_CODE = "VALIDPROJECT";
     public static final String BAD_PROJECT_CODE = "BADPROJECT";
     public static final String INACTIVE_PROJECT_CODE = "INACTIVEPROJECT";
 
-    public static final String VALID_SUB_ACCT = "VALIDSUBACCT";
-    public static final String BAD_SUB_ACCT = "BADSUBACCT";
-    public static final String INACTIVE_SUB_ACCT = "INACTIVESUBACCT";
+    private static final String VALID_SUB_ACCT = "VALIDSUBACCT";
+    private static final String BAD_SUB_ACCT = "BADSUBACCT";
+    private static final String INACTIVE_SUB_ACCT = "INACTIVESUBACCT";
 
-    public static final String VALID_SUB_OBJECT = "VALIDSUBOBJ";
-    public static final String BAD_SUB_OBJECT = "BADSUBOBJ";
-    public static final String INACTIVE_SUB_OBJECT = "INACTIVESUBOBJ";
+    private static final String VALID_SUB_OBJECT = "VALIDSUBOBJ";
+    private static final String BAD_SUB_OBJECT = "BADSUBOBJ";
+    private static final String INACTIVE_SUB_OBJECT = "INACTIVESUBOBJ";
+    
+    private static final String VALID_ACCOUNT_DETAIL_MESSAGE = "Account VALIDCHART-VALIDACCT, subFundCode, HEFC higherEdFunctionCode";
 
     public enum AccountEnum {
         VALID(VALID_CHART, VALID_ACCT_NBR, true, false, "subFundCode", "higherEdFunctionCode"),
@@ -188,7 +190,7 @@ public class ConcurAccountValidationTestConstants {
 
     public enum ConcurAccountInfoEnum {
         FULL_ACCOUNT_INFO(VALID_CHART, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT,
-                VALID_PROJECT_CODE, true, buildMessages()),
+                VALID_PROJECT_CODE, true, buildMessages(), buildMessages(VALID_ACCOUNT_DETAIL_MESSAGE)),
         NULL_CHART(null, VALID_ACCT_NBR, VALID_SUB_ACCT, VALID_OBJ_CD, VALID_SUB_OBJECT, VALID_PROJECT_CODE, false,
                 buildMessages(buildFormattedMessage(KFSKeyConstants.ERROR_REQUIRED,
                         ConcurConstants.AccountingStringFieldNames.CHART))),
@@ -279,9 +281,10 @@ public class ConcurAccountValidationTestConstants {
                                 BAD_OBJ_CD, BAD_SUB_OBJECT),
                         buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
                                 ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, BAD_PROJECT_CODE))),
-        MINIUMUM_ACCOUNT_INFO_NULLS(VALID_CHART, VALID_ACCT_NBR, null, VALID_OBJ_CD, null, null, true, buildMessages()),
+        MINIUMUM_ACCOUNT_INFO_NULLS(VALID_CHART, VALID_ACCT_NBR, null, VALID_OBJ_CD, null, null, true, buildMessages(), 
+                buildMessages(VALID_ACCOUNT_DETAIL_MESSAGE)),
         MINIUMUM_ACCOUNT_INFO_EMPTY(VALID_CHART, VALID_ACCT_NBR, StringUtils.EMPTY, VALID_OBJ_CD, StringUtils.EMPTY,
-                StringUtils.EMPTY, true, buildMessages());
+                StringUtils.EMPTY, true, buildMessages(), buildMessages(VALID_ACCOUNT_DETAIL_MESSAGE));
 
         public final String chart;
         public final String account;
@@ -291,9 +294,15 @@ public class ConcurAccountValidationTestConstants {
         public final String project;
         public final boolean validationExpectation;
         public final List<String> expectedErrorMessages;
+        public final List<String> expectedDetailMessages;
 
         private ConcurAccountInfoEnum(String chart, String account, String subAccount, String object, String subObject,
                 String project, boolean validationExpectation, List<String> expectedErrorMessages) {
+            this(chart, account, subAccount, object, subObject, project, validationExpectation, expectedErrorMessages, new ArrayList<String>());
+        }
+        
+        private ConcurAccountInfoEnum(String chart, String account, String subAccount, String object, String subObject,
+                String project, boolean validationExpectation, List<String> expectedErrorMessages, List<String> expectedDetailMessages) {
             this.chart = chart;
             this.account = account;
             this.subAccount = subAccount;
@@ -302,6 +311,7 @@ public class ConcurAccountValidationTestConstants {
             this.project = project;
             this.validationExpectation = validationExpectation;
             this.expectedErrorMessages = expectedErrorMessages;
+            this.expectedDetailMessages = expectedDetailMessages;
         }
 
         public ConcurAccountInfo toConcurAccountInfo() {

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -62,6 +63,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     private static final String MESSAGE_MISSING_ACCOUNT = "Account number is missing";
     private static final String MESSAGE_ERROR_ENCOUNTERED = "Encountered an error while validating";
     private static final String INVALID_WORKFLOW_ENDPOINT = "/expensereports/v4/unknown";
+    private static final String VALID_ACCOUNT_MESSAGE = "Accounts are valid";
 
     @RegisterExtension
     static MockMvcWebServerExtension webServerExtension = new MockMvcWebServerExtension();
@@ -136,7 +138,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     static Stream<ConcurEventNotificationResponse> resultsForExistingReports() {
         return Stream.of(
                 createResultsDTO(ConcurTestConstants.REPORT_ID_1,
-                        ConcurEventNotificationStatus.validAccounts),
+                        ConcurEventNotificationStatus.validAccounts, VALID_ACCOUNT_MESSAGE),
                 createResultsDTO(ConcurTestConstants.REPORT_ID_2,
                         ConcurEventNotificationStatus.invalidAccounts,
                         MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT),
@@ -148,7 +150,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
     static Stream<ConcurEventNotificationResponse> resultsForNonExistingReports() {
         return Stream.of(
                 createResultsDTO(NON_EXISTING_REPORT_ID_1,
-                        ConcurEventNotificationStatus.validAccounts),
+                        ConcurEventNotificationStatus.validAccounts, VALID_ACCOUNT_MESSAGE),
                 createResultsDTO(NON_EXISTING_REPORT_ID_2,
                         ConcurEventNotificationStatus.invalidAccounts,
                         MESSAGE_INACTIVE_CHART, MESSAGE_MISSING_ACCOUNT),
@@ -163,9 +165,16 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
 
     private static ConcurEventNotificationResponse createResultsDTO(
             String reportId, ConcurEventNotificationStatus reportResults, String... messages) {
+        List<String> errorMessages = new ArrayList<>();
+        List<String> detailMessages = new ArrayList<>();
+        if (reportResults == ConcurEventNotificationStatus.validAccounts) {
+            detailMessages = Arrays.asList(messages);
+        } else {
+            errorMessages = Arrays.asList(messages);
+        }
         return new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.ExpenseReport, reportResults, reportId, REPORT_NAME_E3_CONFERENCE, REPORT_STATUS_APPROVED,
-                TRAVELER_NAME_JOHN_DOE, TRAVELER_EMAIL_JOHN_DOE, Arrays.asList(messages), new ArrayList<String>());
+                TRAVELER_NAME_JOHN_DOE, TRAVELER_EMAIL_JOHN_DOE, errorMessages, detailMessages);
     }
 
     @ParameterizedTest
@@ -296,7 +305,7 @@ public class ConcurExpenseV3ServiceUpdateReportStatusTest {
         assertTrue(StringUtils.isNotBlank(workflowInfo.getComment()),
                 "A workflow comment should have been recorded for report " + reportId);
         if (reportValid) {
-            assertEquals(ConcurConstants.APPROVE_COMMENT, workflowInfo.getComment(),
+            assertEquals(ConcurConstants.DETAIL_MESSAGE_HEADER + VALID_ACCOUNT_MESSAGE, workflowInfo.getComment(),
                     "Wrong workflow comment was recorded for report " + reportId);
         }
         assertEquals(oldVersionNumber + 1, workflowInfo.getVersionNumber(),

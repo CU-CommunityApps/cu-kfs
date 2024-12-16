@@ -88,6 +88,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         if (specificCheckResult.isNotValid()) {
             validationResult.setValid(false);
             validationResult.addErrorMessages(specificCheckResult.getErrorMessages());
+            validationResult.getAccountDetailMessages().clear();
         }
     }
 
