@@ -88,7 +88,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
         if (specificCheckResult.isNotValid()) {
             validationResult.setValid(false);
             validationResult.addErrorMessages(specificCheckResult.getErrorMessages());
-            validationResult.getAccountDetailMessages().clear();
+            validationResult.getDetailMessages().clear();
         }
     }
 
@@ -119,7 +119,7 @@ public class ConcurAccountValidationServiceImpl implements ConcurAccountValidati
                     configurationService.getPropertyValueAsString(ConcurKeyConstants.MESSAGE_CONCUR_EVENT_NOTIFICATION_ACCOUNT_DETAIL),
                     account.getChartOfAccountsCode(), account.getAccountNumber(), account.getSubFundGroupCode(),
                     account.getFinancialHigherEdFunctionCd());
-            result.addAccountDetailMessage(accountDetailMessage);
+            result.addDetailMessage(accountDetailMessage);
         }
         return result;
     }

@@ -10,17 +10,12 @@ import org.kuali.kfs.sys.KFSConstants;
 public class ValidationResult {
     private boolean valid;
     private List<String> errorMessages;
-    private List<String> accountDetailMessages;
+    private List<String> detailMessages;
     
     public ValidationResult(){
         this.valid = true;
         this.errorMessages = new ArrayList<String>();
-        this.accountDetailMessages = new ArrayList<String>();
-    }
-
-    public ValidationResult(boolean valid, List<String> messages) {
-        this.valid = valid;
-        this.errorMessages = messages;
+        this.detailMessages = new ArrayList<String>();
     }
 
     public boolean isValid() {
@@ -66,56 +61,49 @@ public class ValidationResult {
     }
 
     public String getErrorMessagesAsOneFormattedString() {
+        return buildOneFormattedString(errorMessages);
+    }
+    
+    private String buildOneFormattedString(List<String> messageList) {
         StringBuffer result = new StringBuffer();
-
-        if (errorMessages != null && !errorMessages.isEmpty()) {
-            for (String message : errorMessages) {
+        if (messageList != null && !messageList.isEmpty()) {
+            for (String message : messageList) {
                 result.append(message);
                 result.append(KFSConstants.NEWLINE);
             }
         }
-        
         return result.toString();
     }
     
-    public List<String> getAccountDetailMessages() {
-        return accountDetailMessages;
+    public List<String> getDetailMessages() {
+        return detailMessages;
     }
     
-    public void addAccountDetailMessage(String message) {
-        if (accountDetailMessages == null) {
-            accountDetailMessages = new ArrayList<String>();
+    public void addDetailMessage(String message) {
+        if (detailMessages == null) {
+            detailMessages = new ArrayList<String>();
         }
-        if (StringUtils.isNotBlank(message) && isNotDuplicateMessage(accountDetailMessages, message)) {
-            accountDetailMessages.add(message);
+        if (StringUtils.isNotBlank(message) && isNotDuplicateMessage(detailMessages, message)) {
+            detailMessages.add(message);
         }
     }
     
-    public void addAccountDetailMessages(List<String> accountDetailMessagesToAdd) {
+    public void addDetailMessages(List<String> accountDetailMessagesToAdd) {
         if (CollectionUtils.isNotEmpty(accountDetailMessagesToAdd)) {
             for (String messageToAdd : accountDetailMessagesToAdd) {
-                addAccountDetailMessage(messageToAdd);
+                addDetailMessage(messageToAdd);
             }
         }
     }
     
-    public String getAccountDetailMessagesAsOneFormattedString() {
-        StringBuffer result = new StringBuffer();
-
-        if (accountDetailMessages != null && !accountDetailMessages.isEmpty()) {
-            for (String message : accountDetailMessages) {
-                result.append(message);
-                result.append(KFSConstants.NEWLINE);
-            }
-        }
-        
-        return result.toString();
+    public String getDetailMessagesAsOneFormattedString() {
+        return buildOneFormattedString(detailMessages);
     }
 
     public void add(ValidationResult validationResult){
         this.valid &= validationResult.isValid();
         this.addErrorMessages(validationResult.getErrorMessages());
-        this.addAccountDetailMessages(validationResult.getAccountDetailMessages());
+        this.addDetailMessages(validationResult.getDetailMessages());
     }
 
 }

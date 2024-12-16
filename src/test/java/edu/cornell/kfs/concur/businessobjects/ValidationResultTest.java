@@ -49,9 +49,9 @@ public class ValidationResultTest {
     @MethodSource("addMessageParams")
     public void testAddDetailMessage(List<String> messagesToAdd, int numberOfMessagesExpected, int baseListSize) {
         for (String message : messagesToAdd) {
-            validationResult.addAccountDetailMessage(message);
+            validationResult.addDetailMessage(message);
         }
-        assertEquals(numberOfMessagesExpected, validationResult.getAccountDetailMessages().size());
+        assertEquals(numberOfMessagesExpected, validationResult.getDetailMessages().size());
         assertEquals(baseListSize, messagesToAdd.size());
     }
     
@@ -67,9 +67,9 @@ public class ValidationResultTest {
     @ParameterizedTest
     @MethodSource("addMessageParams")
     public void testAddDetailMessages(List<String> messagesToAdd, int numberOfMessagesExpected, int baseListSize) {
-        validationResult.addAccountDetailMessage(TEST_STRING_FOO);
-        validationResult.addAccountDetailMessages(messagesToAdd);
-        assertEquals(numberOfMessagesExpected + 1, validationResult.getAccountDetailMessages().size());
+        validationResult.addDetailMessage(TEST_STRING_FOO);
+        validationResult.addDetailMessages(messagesToAdd);
+        assertEquals(numberOfMessagesExpected + 1, validationResult.getDetailMessages().size());
         assertEquals(baseListSize, messagesToAdd.size());
     }
     

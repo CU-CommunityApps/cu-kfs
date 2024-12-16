@@ -300,8 +300,10 @@ public class ConcurRequestV4ServiceImplTest {
         } else if (StringUtils.equals(ConcurTestConstants.ACCT_XXXXXXX, concurAccountInfo.getAccountNumber())) {
             messages.add(VALIDATION_ERROR_INVALID_ACCOUNT);
         }
-        
-        return new ValidationResult(messages.isEmpty(), messages);
+        ValidationResult vr = new ValidationResult();
+        vr.setValid(messages.isEmpty());
+        vr.addErrorMessages(messages);
+        return vr;
     }
 
     static Stream<Arguments> travelRequests() {

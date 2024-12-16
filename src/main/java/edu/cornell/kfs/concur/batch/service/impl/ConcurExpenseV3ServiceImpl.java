@@ -148,7 +148,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         
         ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.ExpenseReport, reportResults, reportNumber, reportName, reportStatus,
-                travelerName, travelerEmail, validationResults.getErrorMessages(), validationResults.getAccountDetailMessages());
+                travelerName, travelerEmail, validationResults.getErrorMessages(), validationResults.getDetailMessages());
         processingResults.add(resultsDTO);
         updateStatusInConcur(accessToken, reportNumber, validationResults.isValid(), resultsDTO);
         

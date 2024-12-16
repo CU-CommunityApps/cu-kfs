@@ -49,7 +49,7 @@ public class ConcurAccountValidationServiceTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Configurator.setLevel(ConcurAccountValidationServiceTest.class, Level.DEBUG);
+        Configurator.setLevel(ConcurAccountValidationServiceTest.class, Level.INFO);
         concurAccountValidationService = new ConcurAccountValidationServiceImpl();
         concurAccountValidationService.setAccountService(buildMockAccountService());
         concurAccountValidationService.setObjectCodeService(buildMockObjectCodeService());
@@ -169,7 +169,7 @@ public class ConcurAccountValidationServiceTest {
         Assert.assertEquals("Number of error messages is not what is exptected", expectedErrorMessages.size(),
                 validationResult.getErrorMessages().size());
         Assert.assertEquals("Number of detail messages is not what is exptected", expectedDetailMessages.size(),
-                validationResult.getAccountDetailMessages().size());
+                validationResult.getDetailMessages().size());
 
         for (String expectedMessage : expectedErrorMessages) {
             boolean isExpectedMessageFound = validationResult.getErrorMessages().contains(expectedMessage);
@@ -177,7 +177,7 @@ public class ConcurAccountValidationServiceTest {
         }
 
         for (String expectedMessage : expectedDetailMessages) {
-            boolean isExpectedMessageFound = validationResult.getAccountDetailMessages().contains(expectedMessage);
+            boolean isExpectedMessageFound = validationResult.getDetailMessages().contains(expectedMessage);
             Assert.assertTrue("expected to find account detail " + expectedMessage, isExpectedMessageFound);
         }
 
@@ -200,7 +200,7 @@ public class ConcurAccountValidationServiceTest {
             for (String expectedMessage : expectedDetailMessages) {
                 LOG.debug(functionName + ", expected detail message: " + expectedMessage);
             }
-            for (String expectedMessage : validationResult.getAccountDetailMessages()) {
+            for (String expectedMessage : validationResult.getDetailMessages()) {
                 LOG.debug(functionName + ", actual detail message:   " + expectedMessage);
             }
         }
