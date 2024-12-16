@@ -179,8 +179,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     private boolean shouldUpdateConcur(String reportId) {
-        return StringUtils.equalsIgnoreCase(reportId, "79D005C1BFEA444AB93D") || StringUtils.equalsIgnoreCase(reportId, "15A119720A004853962D");
-        //return true;
+        //return StringUtils.equalsIgnoreCase(reportId, "D9B34CBBA618434F9C34") || StringUtils.equalsIgnoreCase(reportId, "E9EA2595C7EC4CBF88C3");
+        return true;
     }
     
     protected boolean shouldUpdateStatusInConcur() {
@@ -205,6 +205,7 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
                 ? ConcurUtils.buildDetailMessageForWorkflowAction(resultsDTO)
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
+        LOG.debug("buildWebRequestForExpenseWorkflowAction, for reportId {}, the workflowComment is {}", reportId, workflowComment);
         ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
         String workflowActionUrl = buildFullUrlForExpenseWorkflowAction(reportId, workflowAction);
         
