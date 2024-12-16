@@ -179,8 +179,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     }
     
     private boolean shouldUpdateConcur(String reportId) {
-        //return StringUtils.equalsIgnoreCase(reportId, "0BAE300FD284493DB175");
-        return true;
+        return StringUtils.equalsIgnoreCase(reportId, "79D005C1BFEA444AB93D") || StringUtils.equalsIgnoreCase(reportId, "15A119720A004853962D");
+        //return true;
     }
     
     protected boolean shouldUpdateStatusInConcur() {
