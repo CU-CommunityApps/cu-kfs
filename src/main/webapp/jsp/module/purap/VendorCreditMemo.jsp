@@ -25,7 +25,7 @@
 
     <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
 
-    <!-- KFSPTS-1891 -->
+    <%-- KFSPTS-1891 --%>
     <c:set var="wireEntryMode" value="${KualiForm.editingMode['wireEntry']}" scope="request"/>
     <c:set var="frnEntryMode" value="${KualiForm.editingMode['frnEntry']}" scope="request"/>
 
@@ -41,7 +41,7 @@
     </c:if>
 
     <c:if test="${not displayInitTab}">
-        <!-- Display hold message if payment is on hold -->
+        <%-- Display hold message if payment is on hold --%>
         <c:if test="${KualiForm.document.holdIndicator}">
             <h4>This Credit Memo has been Held by <c:out
                     value="${KualiForm.document.lastActionPerformedByPersonName}"/></h4>
