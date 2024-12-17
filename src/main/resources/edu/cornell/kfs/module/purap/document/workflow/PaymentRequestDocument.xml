@@ -60,7 +60,6 @@
                     <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode" nextAppDocStatus="Awaiting Object Code Approval"/>
                     <role name="ObjectCode" nextNode="VendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Tax Approval"/>
                     <split name="VendorIsEmployeeOrNonresident"
-                           nextAppDocStatus="Awaiting Payment Method Review"
                            nextNode="PaymentMethod">
                         <branch name="True">
                             <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Payment Method Review"/>
