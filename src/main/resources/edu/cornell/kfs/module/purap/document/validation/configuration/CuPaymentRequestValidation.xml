@@ -9,13 +9,6 @@
 
   		<property name="validations">
   			<list merge="true">
-  				<bean parent="PaymentRequest-wireTransferValidation" scope="prototype">
-					<property name="parameterProperties">
-						<list>
-							<bean parent="accountingDocumentFieldConversion" />
-						</list>
-					</property>
-				</bean>
 				<bean parent="PaymentRequest-foreignDraftValidation" scope="prototype">
 					<property name="parameterProperties">
 						<list>
@@ -35,7 +28,7 @@
                 <bean parent="PaymentRequest-grandTotalOverZeroValidation" scope="prototype" />
                 <bean parent="PaymentRequest-payDateNotPastValidation" scope="prototype" />
             </list>
-        </property>                                     
+        </property>
     </bean>
   
  </beans>

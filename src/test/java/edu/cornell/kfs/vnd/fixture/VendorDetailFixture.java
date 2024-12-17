@@ -23,7 +23,7 @@ public enum VendorDetailFixture {
 	public final String ownershipTypeCode;
 	public final boolean isTaxable;
 	public final boolean isEInvoice;
-	public final String defaultB2BPaymentMethodCode;
+	public final String defaultPaymentMethodCode;
 	
 	private VendorDetailFixture(String vendorName, boolean vendorParentIndicator, 
 			Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier) 
@@ -39,12 +39,12 @@ public enum VendorDetailFixture {
 		this.ownershipTypeCode = "";
 		this.isTaxable = true;
 		this.isEInvoice = true;
-		this.defaultB2BPaymentMethodCode = "";
+		this.defaultPaymentMethodCode = "";
 	}
 	
 	private VendorDetailFixture(String vendorName, boolean vendorParentIndicator, 
 			Integer vendorHeaderGeneratedIdentifier, Integer vendorDetailAssignedIdentifier, String vendorTypeCode, boolean isForeign, String taxNumber,
-			String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice, String defaultB2BPaymentMethodCode) {
+			String taxNumberType, String ownershipTypeCode, boolean isTaxable, boolean isEInvoice, String defaultPaymentMethodCode) {
 		this.vendorName = vendorName;
 		this.vendorDetailAssignedIdentifier = vendorDetailAssignedIdentifier;
 		this.vendorHeaderGeneratedIdentifier = vendorHeaderGeneratedIdentifier;
@@ -56,7 +56,7 @@ public enum VendorDetailFixture {
 		this.ownershipTypeCode = ownershipTypeCode;
 		this.isTaxable = isTaxable;
 		this.isEInvoice = isEInvoice;
-		this.defaultB2BPaymentMethodCode = defaultB2BPaymentMethodCode;
+		this.defaultPaymentMethodCode = defaultPaymentMethodCode;
 	}
 	
 	public VendorDetail createVendorDetail() {

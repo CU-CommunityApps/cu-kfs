@@ -56,7 +56,7 @@ import org.kuali.kfs.krad.util.UrlFactory;
 import org.kuali.kfs.sys.KFSConstants;
 import org.kuali.kfs.sys.KFSKeyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
-import org.kuali.kfs.sys.PaymentMethodAdditionalDisbursementVoucherData;
+import org.kuali.kfs.sys.PaymentMethodAdditionalDocumentData;
 import org.kuali.kfs.sys.batch.service.PaymentSourceExtractionService;
 import org.kuali.kfs.sys.businessobject.PaymentMethod;
 import org.kuali.kfs.sys.context.SpringContext;
@@ -203,7 +203,7 @@ public class DisbursementVoucherAction extends KualiAccountingDocumentActionBase
         fieldValues.put(KFSPropertyConstants.ACTIVE, true);
         fieldValues.put(
                 PAYMENT_METHOD_PROPERTY_ADDITIONAL_DISBURSEMENT_VOUCHER_DATA_CODE,
-                PaymentMethodAdditionalDisbursementVoucherData.REQUIRED.getCode());
+                PaymentMethodAdditionalDocumentData.REQUIRED.getCode());
         final Set<String> paymentMethodsRequiringAdditionalData = getBusinessObjectService()
                 .findMatching(PaymentMethod.class, fieldValues)
                 .stream()

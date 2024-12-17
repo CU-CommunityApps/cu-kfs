@@ -1,16 +1,13 @@
 package edu.cornell.kfs.module.purap.service.impl;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -58,8 +55,6 @@ import org.kuali.kfs.kew.api.document.search.DocumentSearchResults;
 import org.kuali.kfs.kew.api.exception.WorkflowException;
 import org.kuali.kfs.kew.service.KEWServiceLocator;
 import org.kuali.kfs.kim.impl.identity.Person;
-import org.kuali.kfs.kim.api.identity.PersonService;
-import org.kuali.kfs.kim.api.services.KimApiServiceLocator;
 import org.kuali.kfs.kns.util.KNSGlobalVariables;
 import org.kuali.kfs.krad.bo.Attachment;
 import org.kuali.kfs.krad.bo.Note;
@@ -97,8 +92,6 @@ import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceItemHolder;
 import org.kuali.kfs.module.purap.service.impl.ElectronicInvoiceOrderHolder;
 import org.kuali.kfs.module.purap.util.ExpiredOrClosedAccountEntry;
 import org.kuali.kfs.sys.KFSConstants;
-import org.kuali.kfs.sys.businessobject.Bank;
-import org.kuali.kfs.sys.document.service.FinancialSystemDocumentService;
 import org.kuali.kfs.sys.document.validation.event.DocumentSystemSaveEvent;
 import org.kuali.kfs.vnd.businessobject.VendorDetail;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,15 +102,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import edu.cornell.kfs.fp.service.CUPaymentMethodGeneralLedgerPendingEntryService;
 import edu.cornell.kfs.module.purap.CUPurapConstants;
 import edu.cornell.kfs.module.purap.CUPurapParameterConstants;
 import edu.cornell.kfs.module.purap.businessobject.CuPaymentRequestItemExtension;
 import edu.cornell.kfs.module.purap.document.CuElectronicInvoiceRejectDocument;
-import edu.cornell.kfs.module.purap.document.CuPaymentRequestDocument;
 import edu.cornell.kfs.module.purap.service.CuElectronicInvoiceHelperService;
 import edu.cornell.kfs.sys.document.service.CUFinancialSystemDocumentService;
-import edu.cornell.kfs.vnd.businessobject.VendorDetailExtension;
 
 public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelperServiceImpl implements CuElectronicInvoiceHelperService {
     private static final Logger LOG = LogManager.getLogger();
@@ -132,7 +122,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 	
 	private WorkflowDocumentService workflowDocumentService;
 	private CUFinancialSystemDocumentService financialSystemDocumentService;
-	private CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService;
 
 	@Override
     public ElectronicInvoiceLoad loadElectronicInvoices() {
@@ -761,33 +750,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
             preqDoc.setAccountsPayablePurchasingDocumentLinkIdentifier(orderHolder.getAccountsPayablePurchasingDocumentLinkIdentifier());
         }
 
-        //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
-        //set bank code to default bank code in the system parameter
-        //KFSPTS-1891
-        boolean hasPaymentMethodCode = false;
-        if ( preqDoc instanceof PaymentRequestDocument ) {
-            String vendorPaymentMethodCode = ((VendorDetailExtension)poDoc.getVendorDetail().getExtension()).getDefaultB2BPaymentMethodCode();
-            if ( StringUtils.isNotEmpty(vendorPaymentMethodCode) ) { 
-                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(vendorPaymentMethodCode);
-                hasPaymentMethodCode = true;
-            } else {
-                ((CuPaymentRequestDocument)preqDoc).setPaymentMethodCode(KFSConstants.PaymentSourceConstants.PAYMENT_METHOD_CHECK);
-            }
-        }
-        Bank defaultBank = null;
-        if ( hasPaymentMethodCode ) {
-            defaultBank = cUPaymentMethodGeneralLedgerPendingEntryService.getBankForPaymentMethod( ((CuPaymentRequestDocument)preqDoc).getPaymentMethodCode() );
-        } else { // default to baseline behavior - extended documents not in use
-            //Copied from PaymentRequestServiceImpl.populatePaymentRequest()
-            //set bank code to default bank code in the system parameter
-            defaultBank = bankService.getDefaultBankByDocType(preqDoc.getClass());
-        }
-        
-        if (defaultBank != null) {
-            preqDoc.setBankCode(defaultBank.getBankCode());
-            preqDoc.setBank(defaultBank);
-        }
-
         final RequisitionDocument reqDoc = getRequisitionService().getRequisitionById(poDoc.getRequisitionIdentifier());
         final String reqDocInitiator = reqDoc.getDocumentHeader().getWorkflowDocument().getInitiatorPrincipalId();
         try {
@@ -810,6 +772,9 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
         LOG.info("{} accounts has been found as Expired or Closed", expiredOrClosedAccountList::size);
 
         preqDoc.populatePaymentRequestFromPurchaseOrder(orderHolder.getPurchaseOrderDocument(),expiredOrClosedAccountList);
+        
+        paymentRequestService.initializePaymentMethodAndBank(preqDoc);
+        
         // need to populate here for ext price.  it become per item
         // KFSPTS-1719.  convert 1st matching inv item that is qty, but po is non-qty
         checkQtyInvItemForNoQtyOrder(preqDoc, orderHolder);
@@ -1795,11 +1760,6 @@ public class CuElectronicInvoiceHelperServiceImpl extends ElectronicInvoiceHelpe
 
     public void setFinancialSystemDocumentService(CUFinancialSystemDocumentService financialSystemDocumentService) {
         this.financialSystemDocumentService = financialSystemDocumentService;
-    }
-
-    public void setcUPaymentMethodGeneralLedgerPendingEntryService(
-            CUPaymentMethodGeneralLedgerPendingEntryService cUPaymentMethodGeneralLedgerPendingEntryService) {
-        this.cUPaymentMethodGeneralLedgerPendingEntryService = cUPaymentMethodGeneralLedgerPendingEntryService;
     }
 
 }
