@@ -38,7 +38,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import com.rsmart.kuali.kfs.pdp.service.AchBundlerHelperService;
 
 import edu.cornell.kfs.fp.document.CuDisbursementVoucherConstants;
-import edu.cornell.kfs.pdp.CUPdpParameterConstants;
 import edu.cornell.kfs.pdp.batch.service.CuPayeeAddressService;
 import edu.cornell.kfs.sys.CUKFSParameterKeyConstants;
 
@@ -112,9 +111,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
 
     /**
-     * Overridden to call a CU-specific version of the parameter-checking method to determine
-     * whether or not to use the ISO 20022 format, as well as to allow for generating
-     * the proprietary XML when the ISO 20022 format is enabled.
+     * Overridden and Cornell customized to not generate proprietary check format.
      */
     @Override
     public void extractChecks() {
@@ -126,10 +123,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                         PdpConstants.PaymentStatusCodes.EXTRACTED
                 );
 
-        if (shouldCreateLegacyCheckFiles()) {
-            extractChecksToProprietaryFormat(extractedStatus);
-        }
-
         if (shouldUseIso20022Format()) {
             iso20022FormatExtractor.extractChecks(extractedStatus, directoryName);
         }
@@ -138,55 +131,15 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
     }
 
     /*
-     * The KualiCo superclass declares this method as private, so we have to copy it
-     * to allow this subclass to invoke it.
-     */
-    private void extractChecksToProprietaryFormat(
-            final PaymentStatus extractedStatus
-    ) {
-        LOG.debug("extractChecksToProprietaryFormat(...) - Enter : extractedStatus={}", extractedStatus);
-
-        final Date processDate = dateTimeService.getCurrentDate();
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-        String checkFilePrefix = this.kualiConfigurationService.getPropertyValueAsString(
-                PdpKeyConstants.ExtractPayment.CHECK_FILENAME);
-        checkFilePrefix = MessageFormat.format(checkFilePrefix, new Object[]{null});
-
-        final String filename = getOutputFile(checkFilePrefix, processDate);
-        LOG.debug("extractChecksToProprietaryFormat(...) - : filename={}", filename);
-
-        final List<PaymentProcess> extractsToRun = this.processDao.getAllExtractsToRun();
-        for (final PaymentProcess extractToRun : extractsToRun) {
-            writeExtractCheckFile(extractedStatus, extractToRun, filename, extractToRun.getId().intValue());
-            if (shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles()) {
-                extractToRun.setExtractedInd(true);
-                businessObjectService.save(extractToRun);
-            }
-        }
-
-        LOG.debug("extractChecksToProprietaryFormat(...) - Exit");
-    }
-
-    /*
      * The KualiCo superclass declares this method as private, so we have to define our own instead of overriding.
      */
     private boolean shouldUseIso20022Format() {
-        return isIso20022FormatParameterEnabled(PdpConstants.ISO20022_FORMAT_IND);
-    }
-
-    private boolean isIso20022FormatParameterEnabled(final String parameterName) {
-        return parameterService.getParameterValueAsBoolean(KFSConstants.CoreModuleNamespaces.PDP,
-                KFSConstants.Components.ISO_FORMAT, parameterName, Boolean.FALSE);
-    }
-
-    private boolean shouldCreateLegacyCheckFiles() {
-        return !shouldUseIso20022Format() || isIso20022FormatParameterEnabled(
-                CUPdpParameterConstants.CU_ISO20022_FORCE_CREATE_LEGACY_CHECK_FILES);
-    }
-
-    private boolean shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles() {
-        return !shouldUseIso20022Format();
+        return parameterService.getParameterValueAsBoolean(
+                KFSConstants.CoreModuleNamespaces.PDP,
+                KFSConstants.Components.ISO_FORMAT,
+                PdpConstants.ISO20022_FORMAT_IND,
+                Boolean.FALSE
+        );
     }
 
    /**
@@ -339,7 +292,7 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
                     while (paymentDetails.hasNext()) {
                         final PaymentDetail detail = paymentDetails.next();
                         final PaymentGroup group = detail.getPaymentGroup();
-                        if (!testMode && shouldPerformDataUpdatesWhenCreatingLegacyCheckFiles()) {
+                        if (!testMode) {
                             if (!paymentGroupIdsSaved.contains(group.getId())) {
                                 group.setDisbursementDate(new java.sql.Date(processDate.getTime()));
                                 group.setPaymentStatus(extractedStatus);
