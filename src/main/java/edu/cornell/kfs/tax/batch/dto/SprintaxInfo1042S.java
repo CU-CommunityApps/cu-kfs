@@ -9,24 +9,9 @@ public class SprintaxInfo1042S {
     private String payeeId;
     private Integer vendorHeaderId;
     private Integer vendorDetailId;
-    //private String incomeCode;
-    //private String incomeCodeSubType;
-    //private String taxTreatyExemptIncomeYesNo;
-    //private String foreignSourceIncomeYesNo;
     private String vendorTypeCode;
     private String vendorOwnershipCode;
     private String paymentAddressLine1;
-    //private String objectCode;
-    //private String chartCode;
-    //private String accountNumber;
-    //private String docType;
-    //private String docNumber;
-    //private String paymentReasonCode;
-    //private String dvCheckStubText;
-    //private Integer docLineNumber;
-    //private KualiDecimal fedIncomeTaxPercent;
-    //private KualiDecimal paymentAmount;
-    //private Date paymentDate;
     private String vendorNameForOutput;
     private String parentVendorNameForOutput;
     private String vendorLastName;
@@ -48,48 +33,13 @@ public class SprintaxInfo1042S {
     private String formattedITINValue;
     private String chapter3StatusCode;
     private String chapter4StatusCode;
-    //private String chapter3ExemptionCode;
     private String chapter4ExemptionCode;
-    //private String incomeCodeForOutput;
-    private String taxEINValue;
+    private String payerEIN;
     private String stateCode;
     private Date endDate;
-    //private KualiDecimal chapter3TaxRate;
-    //private KualiDecimal grossAmount;
-    //private KualiDecimal federalTaxWithheldAmount;
-    //private KualiDecimal stateIncomeTaxWithheldAmount;
+    private boolean biographicRowWritten;
 
     private SprintaxPayment1042S currentPayment;
-
-    /*public SprintaxFileRow1042S() {
-        super(TaxUtils.buildDefaultAmountFormatForFileOutput(), TaxUtils.buildDefaultPercentFormatForFileOutput(),
-                TaxUtils.buildDefaultDateFormatForFileOutput());
-    }*/
-
-    /*@Override
-    public Map<String, String> generateFileRowValues(final String sectionName) {
-        Validate.notBlank(sectionName, "sectionName cannot be blank");
-        switch (sectionName) {
-            case TaxFileSections.SPRINTAX_BIOGRAPHIC_ROW_1042S :
-                return generateValuesForBiographicRow();
-
-            case TaxFileSections.SPRINTAX_DETAIL_ROW_1042S :
-                return generateValuesForDetailRow();
-
-            default :
-                throw new IllegalArgumentException("Unrecognized Sprintax file section: " + sectionName);
-        }
-    }
-
-    private Map<String, String> generateValuesForBiographicRow() {
-        return Map.ofEntries(
-        );
-    }
-
-    private Map<String, String> generateValuesForDetailRow() {
-        return Map.ofEntries(
-        );
-    }*/
 
     public String getRowId() {
         return rowId;
@@ -131,38 +81,6 @@ public class SprintaxInfo1042S {
         this.vendorDetailId = vendorDetailId;
     }
 
-    /*public String getIncomeCode() {
-        return incomeCode;
-    }
-
-    public void setIncomeCode(final String incomeCode) {
-        this.incomeCode = incomeCode;
-    }
-
-    public String getIncomeCodeSubType() {
-        return incomeCodeSubType;
-    }
-
-    public void setIncomeCodeSubType(final String incomeCodeSubType) {
-        this.incomeCodeSubType = incomeCodeSubType;
-    }
-
-    public String getTaxTreatyExemptIncomeYesNo() {
-        return taxTreatyExemptIncomeYesNo;
-    }
-
-    public void setTaxTreatyExemptIncomeYesNo(final String taxTreatyExemptIncomeYesNo) {
-        this.taxTreatyExemptIncomeYesNo = taxTreatyExemptIncomeYesNo;
-    }
-
-    public String getForeignSourceIncomeYesNo() {
-        return foreignSourceIncomeYesNo;
-    }
-
-    public void setForeignSourceIncomeYesNo(final String foreignSourceIncomeYesNo) {
-        this.foreignSourceIncomeYesNo = foreignSourceIncomeYesNo;
-    }*/
-
     public String getVendorTypeCode() {
         return vendorTypeCode;
     }
@@ -186,94 +104,6 @@ public class SprintaxInfo1042S {
     public void setPaymentAddressLine1(final String paymentAddressLine1) {
         this.paymentAddressLine1 = paymentAddressLine1;
     }
-
-    /*public String getObjectCode() {
-        return objectCode;
-    }
-
-    public void setObjectCode(final String objectCode) {
-        this.objectCode = objectCode;
-    }
-
-    public String getChartCode() {
-        return chartCode;
-    }
-
-    public void setChartCode(final String chartCode) {
-        this.chartCode = chartCode;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(final String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public String getDocType() {
-        return docType;
-    }
-
-    public void setDocType(final String docType) {
-        this.docType = docType;
-    }
-
-    public String getDocNumber() {
-        return docNumber;
-    }
-
-    public void setDocNumber(final String docNumber) {
-        this.docNumber = docNumber;
-    }
-
-    public String getPaymentReasonCode() {
-        return paymentReasonCode;
-    }
-
-    public void setPaymentReasonCode(final String paymentReasonCode) {
-        this.paymentReasonCode = paymentReasonCode;
-    }
-
-    public String getDvCheckStubText() {
-        return dvCheckStubText;
-    }
-
-    public void setDvCheckStubText(final String dvCheckStubText) {
-        this.dvCheckStubText = dvCheckStubText;
-    }
-
-    public Integer getDocLineNumber() {
-        return docLineNumber;
-    }
-
-    public void setDocLineNumber(final Integer docLineNumber) {
-        this.docLineNumber = docLineNumber;
-    }
-
-    public KualiDecimal getFedIncomeTaxPercent() {
-        return fedIncomeTaxPercent;
-    }
-
-    public void setFedIncomeTaxPercent(final KualiDecimal fedIncomeTaxPercent) {
-        this.fedIncomeTaxPercent = fedIncomeTaxPercent;
-    }
-
-    public KualiDecimal getPaymentAmount() {
-        return paymentAmount;
-    }
-
-    public void setPaymentAmount(final KualiDecimal paymentAmount) {
-        this.paymentAmount = paymentAmount;
-    }
-
-    public Date getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(final Date paymentDate) {
-        this.paymentDate = paymentDate;
-    }*/
 
     public String getVendorNameForOutput() {
         return vendorNameForOutput;
@@ -435,14 +265,6 @@ public class SprintaxInfo1042S {
         this.chapter3StatusCode = chapter3StatusCode;
     }
 
-    /*public String getChapter3ExemptionCode() {
-        return chapter3ExemptionCode;
-    }
-
-    public void setChapter3ExemptionCode(final String chapter3ExemptionCode) {
-        this.chapter3ExemptionCode = chapter3ExemptionCode;
-    }*/
-
     public String getChapter4StatusCode() {
         return chapter4StatusCode;
     }
@@ -459,20 +281,12 @@ public class SprintaxInfo1042S {
         this.chapter4ExemptionCode = chapter4ExemptionCode;
     }
 
-    /*public String getIncomeCodeForOutput() {
-        return incomeCodeForOutput;
+    public String getPayerEIN() {
+        return payerEIN;
     }
 
-    public void setIncomeCodeForOutput(final String incomeCodeForOutput) {
-        this.incomeCodeForOutput = incomeCodeForOutput;
-    }*/
-
-    public String getTaxEINValue() {
-        return taxEINValue;
-    }
-
-    public void setTaxEINValue(final String taxEINValue) {
-        this.taxEINValue = taxEINValue;
+    public void setPayerEIN(final String payerEIN) {
+        this.payerEIN = payerEIN;
     }
 
     public String getStateCode() {
@@ -491,37 +305,13 @@ public class SprintaxInfo1042S {
         this.endDate = endDate;
     }
 
-    /*public KualiDecimal getChapter3TaxRate() {
-        return chapter3TaxRate;
+    public boolean isBiographicRowWritten() {
+        return biographicRowWritten;
     }
 
-    public void setChapter3TaxRate(final KualiDecimal chapter3TaxRate) {
-        this.chapter3TaxRate = chapter3TaxRate;
+    public void setBiographicRowWritten(final boolean biographicRowWritten) {
+        this.biographicRowWritten = biographicRowWritten;
     }
-
-    public KualiDecimal getGrossAmount() {
-        return grossAmount;
-    }
-
-    public void setGrossAmount(final KualiDecimal grossAmount) {
-        this.grossAmount = grossAmount;
-    }
-
-    public KualiDecimal getFederalTaxWithheldAmount() {
-        return federalTaxWithheldAmount;
-    }
-
-    public void setFederalTaxWithheldAmount(final KualiDecimal federalTaxWithheldAmount) {
-        this.federalTaxWithheldAmount = federalTaxWithheldAmount;
-    }
-
-    public KualiDecimal getStateIncomeTaxWithheldAmount() {
-        return stateIncomeTaxWithheldAmount;
-    }
-
-    public void setStateIncomeTaxWithheldAmount(final KualiDecimal stateIncomeTaxWithheldAmount) {
-        this.stateIncomeTaxWithheldAmount = stateIncomeTaxWithheldAmount;
-    }*/
 
     public SprintaxPayment1042S getCurrentPayment() {
         return currentPayment;

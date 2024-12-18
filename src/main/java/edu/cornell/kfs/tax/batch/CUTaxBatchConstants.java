@@ -525,7 +525,7 @@ public final class CUTaxBatchConstants {
 
     public static final class TaxFileSections {
         public static final String SPRINTAX_BIOGRAPHIC_ROW_1042S = "Sprintax_Bio_Row_1042S";
-        public static final String SPRINTAX_DETAIL_ROW_1042S = "Sprintax_Detail_Row_1042S";
+        public static final String SPRINTAX_PAYMENT_ROW_1042S = "Sprintax_Payment_Row_1042S";
     }
 
     public enum TaxBoxType1042S {

@@ -6,6 +6,7 @@ import org.kuali.kfs.core.api.util.type.KualiDecimal;
 
 public class SprintaxPayment1042S {
 
+    private String uniqueFormId;
     private String incomeCode;
     private String incomeCodeSubType;
     private String incomeCodeForOutput;
@@ -27,6 +28,15 @@ public class SprintaxPayment1042S {
     private KualiDecimal grossAmount;
     private KualiDecimal federalTaxWithheldAmount;
     private KualiDecimal stateIncomeTaxWithheldAmount;
+    private boolean foundAtLeastOneProcessableTransaction;
+
+    public String getUniqueFormId() {
+        return uniqueFormId;
+    }
+
+    public void setUniqueFormId(final String uniqueFormId) {
+        this.uniqueFormId = uniqueFormId;
+    }
 
     public String getIncomeCode() {
         return incomeCode;
@@ -218,6 +228,14 @@ public class SprintaxPayment1042S {
         } else {
             setStateIncomeTaxWithheldAmount(stateIncomeTaxWithheldAmount);
         }
+    }
+
+    public boolean isFoundAtLeastOneProcessableTransaction() {
+        return foundAtLeastOneProcessableTransaction;
+    }
+
+    public void setFoundAtLeastOneProcessableTransaction(final boolean foundAtLeastOneProcessableTransaction) {
+        this.foundAtLeastOneProcessableTransaction = foundAtLeastOneProcessableTransaction;
     }
 
 }

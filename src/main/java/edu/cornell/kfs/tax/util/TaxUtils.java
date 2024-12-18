@@ -55,15 +55,11 @@ public final class TaxUtils {
         return newFormat;
     }
 
-    public static DecimalFormat buildDefaultPercentFormatForFileOutput() {
-        final DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_PERCENT_FORMAT,
+    public static DecimalFormat buildDefaultPercentFormatForSprintaxFileOutput() {
+        final DecimalFormat newFormat = new DecimalFormat(CUTaxConstants.DEFAULT_SPRINTAX_PERCENT_FORMAT,
                 new DecimalFormatSymbols(Locale.US));
         newFormat.setMaximumIntegerDigits(CUTaxConstants.DEFAULT_PERCENT_MAX_INT_DIGITS);
         return newFormat;
-    }
-
-    public static SimpleDateFormat buildDefaultDateFormatForFileOutput() {
-        return new SimpleDateFormat(CUTaxConstants.DEFAULT_DATE_FORMAT, Locale.US);
     }
 
     public static Map<String, String> buildTransactionOverridesMap(
