@@ -260,7 +260,8 @@ public class ConcurReportsServiceImpl extends DisposableClientServiceImplBase im
         LOG.info("updateExpenseReportStatusInConcur()");
         
         if(validationResult.isValid()){
-            buildUpdateReportOutput(workflowURI, ConcurConstants.APPROVE_ACTION, ConcurConstants.APPROVE_COMMENT);  
+            String comment = addConcurMessageHeaderAndTruncate(ConcurConstants.APPROVE_ACTION + KFSConstants.NEWLINE + validationResult.getDetailMessagesAsOneFormattedString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH); 
+            buildUpdateReportOutput(workflowURI, ConcurConstants.APPROVE_ACTION, comment);
         }
         else{
             buildUpdateReportOutput(workflowURI, ConcurConstants.SEND_BACK_TO_EMPLOYEE_ACTION, addConcurMessageHeaderAndTruncate(validationResult.getErrorMessagesAsOneFormattedString(), ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH));  

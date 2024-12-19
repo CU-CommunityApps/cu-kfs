@@ -247,7 +247,7 @@ public class ConcurCreateCashAdvancePdpFeedFileServiceImpl implements ConcurCrea
 
     private void updateReportDataWithFileLineValidationError(ConcurSaeRequestedCashAdvanceBatchReportData reportData, ConcurStandardAccountingExtractDetailLine detailFileLine) {
         ConcurBatchReportLineValidationErrorItem errorDetails =
-                new ConcurBatchReportLineValidationErrorItem(detailFileLine.getCashAdvanceKey(), detailFileLine.getEmployeeId(), detailFileLine.getEmployeeLastName(), detailFileLine.getEmployeeFirstName(), detailFileLine.getEmployeeMiddleInitial(), detailFileLine.getValidationResult().getMessages());
+                new ConcurBatchReportLineValidationErrorItem(detailFileLine.getCashAdvanceKey(), detailFileLine.getEmployeeId(), detailFileLine.getEmployeeLastName(), detailFileLine.getEmployeeFirstName(), detailFileLine.getEmployeeMiddleInitial(), detailFileLine.getValidationResult().getErrorMessages());
         reportData.getValidationErrorFileLines().add(errorDetails);
     }
 

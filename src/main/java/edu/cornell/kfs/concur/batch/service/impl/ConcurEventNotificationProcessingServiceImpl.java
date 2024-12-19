@@ -53,7 +53,7 @@ public class ConcurEventNotificationProcessingServiceImpl implements ConcurEvent
                     }
                 else{
                     LOG.info("Concur Report not in Awaiting External Validation status");
-                    validationResult.addMessage(configurationService.getPropertyValueAsString(ConcurKeyConstants.INCORRECT_CONCUR_STATUS_CODE));
+                    validationResult.addErrorMessage(configurationService.getPropertyValueAsString(ConcurKeyConstants.INCORRECT_CONCUR_STATUS_CODE));
                 }               
                 concurEventNotificationService.updateConcurEventNotificationFlagsAndValidationMessage(concurEventNotification, ConcurConstants.EVENT_NOTIFICATION_NOT_IN_PROCESS, ConcurConstants.EVENT_NOTIFICATION_PROCESSED, validationResult.isValid(), validationResult.getErrorMessagesAsOneFormattedString());           
             }

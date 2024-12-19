@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
@@ -366,10 +367,10 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         
         assertEquals(expectedProcessingResults, newResultsDTO.getEventNotificationStatus(), "Wrong processing results");
         if (expectedProcessingResults == ConcurEventNotificationStatus.validAccounts) {
-            assertTrue(CollectionUtils.isEmpty(newResultsDTO.getMessages()),
+            assertTrue(CollectionUtils.isEmpty(newResultsDTO.getErrorMessages()),
                     "No error messages should have been present for a valid-accounts result");
         } else {
-            assertTrue(CollectionUtils.isNotEmpty(newResultsDTO.getMessages()),
+            assertTrue(CollectionUtils.isNotEmpty(newResultsDTO.getErrorMessages()),
                     "One or more error messages should have been present for an invalid-accounts or error result");
         }
     }
@@ -409,7 +410,7 @@ public class ConcurRequestV4ServiceUpdateRequestTest {
         return new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.TravelRequest, requestResults, requestFixture.requestId,
                 requestFixture.name, requestFixture.approvalStatus.name,
-                requestFixture.owner.getFullName(), KFSConstants.EMPTY_STRING, Arrays.asList(messages));
+                requestFixture.owner.getFullName(), KFSConstants.EMPTY_STRING, Arrays.asList(messages), new ArrayList<String>());
     }
 
     private static class TestConcurRequestV4ServiceImpl extends ConcurRequestV4ServiceImpl {

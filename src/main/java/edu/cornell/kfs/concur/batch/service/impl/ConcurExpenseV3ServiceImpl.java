@@ -128,31 +128,29 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     protected void validateExpenseAllocations(String accessToken, List<ConcurEventNotificationResponse> processingResults,
             List<ConcurExpenseAllocationV3ListItemDTO> allocationItems, String reportNumber, String reportName, String reportStatus, String travelerName,
             String travelerEmail) {
-        boolean reportValid = true;
-        ArrayList<String> validationMessages = new ArrayList<>();
+        ValidationResult validationResults = new ValidationResult();
         ConcurEventNotificationStatus reportResults = ConcurEventNotificationStatus.validAccounts;
         try {
             for (ConcurExpenseAllocationV3ListItemDTO allocationItem : allocationItems) {
                 ConcurAccountInfo info = buildConcurAccountInfo(allocationItem);
                 LOG.info("validateExpenseAllocations, for report " + reportNumber + " account info: " + info.toString());
-                ValidationResult results = concurAccountValidationService.validateConcurAccountInfo(info);
-                reportValid &= results.isValid();
-                validationMessages.addAll(results.getMessages());
+                validationResults.add(concurAccountValidationService.validateConcurAccountInfo(info));
             }
-            if (!reportValid) {
+            if (validationResults.isNotValid()) {
                 reportResults = ConcurEventNotificationStatus.invalidAccounts;
             }
         } catch (Exception e) {
-            reportValid = false;
             reportResults = ConcurEventNotificationStatus.processingError;
-            validationMessages.add("Encountered an error validating this report");
+            validationResults.setValid(false);
+            validationResults.addErrorMessage("Encountered an error validating this report");
             LOG.error("validateExpenseAllocations, had an error validating report " + reportNumber, e);
         }
         
-        ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport,
-                reportResults, reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
+        ConcurEventNotificationResponse resultsDTO = new ConcurEventNotificationResponse(
+                ConcurEventNotificationType.ExpenseReport, reportResults, reportNumber, reportName, reportStatus,
+                travelerName, travelerEmail, validationResults.getErrorMessages(), validationResults.getDetailMessages());
         processingResults.add(resultsDTO);
-        updateStatusInConcur(accessToken, reportNumber, reportValid, resultsDTO);
+        updateStatusInConcur(accessToken, reportNumber, validationResults.isValid(), resultsDTO);
         
     }
     
@@ -167,9 +165,9 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         String logMessageDetail = buildLogMessageDetailForExpenseWorkflowAction(workflowAction, reportId);
         ConcurWebRequest<Void> webRequest = buildWebRequestForExpenseWorkflowAction(
                 workflowAction, reportId, resultsDTO);
+        
+        concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
 
-        concurEventNotificationWebApiService.callConcurEndpoint(
-                accessToken, webRequest, logMessageDetail);
     }
     
     protected boolean shouldUpdateStatusInConcur() {
@@ -190,9 +188,11 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
     
     protected ConcurWebRequest<Void> buildWebRequestForExpenseWorkflowAction(String workflowAction, String reportId,
             ConcurEventNotificationResponse resultsDTO) {
+        
         String workflowComment = StringUtils.equals(workflowAction, ConcurWorkflowActions.APPROVE)
-                ? ConcurConstants.APPROVE_COMMENT
+                ? ConcurUtils.buildDetailMessageForWorkflowAction(resultsDTO)
                 : ConcurUtils.buildValidationErrorMessageForWorkflowAction(resultsDTO);
+        LOG.debug("buildWebRequestForExpenseWorkflowAction, for reportId {}, the workflowComment is {}", reportId, workflowComment);
         ConcurV4WorkflowDTO workflowDTO = new ConcurV4WorkflowDTO(workflowComment);
         String workflowActionUrl = buildFullUrlForExpenseWorkflowAction(reportId, workflowAction);
         

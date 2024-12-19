@@ -64,4 +64,5 @@ public class ConcurKeyConstants {
     public static final String MESSAGE_CONCUR_REQUESTV4_LISTING = "message.concur.requestv4.listing";
     public static final String MESSAGE_CONCUR_REQUESTV4_REQUEST = "message.concur.requestv4.request";
     public static final String MESSAGE_CONCUR_REQUESTV4_WORKFLOW = "message.concur.requestv4.workflow";
+    public static final String MESSAGE_CONCUR_EVENT_NOTIFICATION_ACCOUNT_DETAIL = "message.concur.eventnotification.account.detail";
 }
