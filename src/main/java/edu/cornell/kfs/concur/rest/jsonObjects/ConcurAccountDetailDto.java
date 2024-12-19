@@ -1,21 +1,27 @@
 package edu.cornell.kfs.concur.rest.jsonObjects;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.coa.businessobject.Account;
 
-public class ConcurAccountDetail {
+public class ConcurAccountDetailDto {
     
     private boolean active;
     private String chartOfAccountsCode;
     private String accountNumber;
     private String subFundGroupCode;
     private String higherEdFunctionCode;
+    private String accountTypeCode;
+    private String orgCode;
     
-    public ConcurAccountDetail(Account account) {
+    public ConcurAccountDetailDto(Account account) {
         this.active = account.isActive();
         this.chartOfAccountsCode = account.getChartOfAccountsCode();
         this.accountNumber = account.getAccountNumber();
         this.subFundGroupCode = account.getSubFundGroupCode();
         this.higherEdFunctionCode = account.getFinancialHigherEdFunctionCd();
+        this.accountTypeCode = account.getAccountTypeCode();
+        this.orgCode = account.getOrganizationCode();
     }
 
     public boolean isActive() {
@@ -58,5 +64,9 @@ public class ConcurAccountDetail {
         this.higherEdFunctionCode = higherEdFunctionCode;
     }
     
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
     
 }
