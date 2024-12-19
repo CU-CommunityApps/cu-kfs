@@ -281,9 +281,9 @@ public class ConcurAccountValidationTestConstants {
                                 BAD_OBJ_CD, BAD_SUB_OBJECT),
                         buildFormattedMessage(KFSKeyConstants.ERROR_EXISTENCE,
                                 ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, BAD_PROJECT_CODE))),
-        MINIUMUM_ACCOUNT_INFO_NULLS(VALID_CHART, VALID_ACCT_NBR, null, VALID_OBJ_CD, null, null, true, buildMessages(), 
+        MINIMUM_ACCOUNT_INFO_NULLS(VALID_CHART, VALID_ACCT_NBR, null, VALID_OBJ_CD, null, null, true, buildMessages(), 
                 buildMessages(VALID_ACCOUNT_DETAIL_MESSAGE)),
-        MINIUMUM_ACCOUNT_INFO_EMPTY(VALID_CHART, VALID_ACCT_NBR, StringUtils.EMPTY, VALID_OBJ_CD, StringUtils.EMPTY,
+        MINIMUM_ACCOUNT_INFO_EMPTY(VALID_CHART, VALID_ACCT_NBR, StringUtils.EMPTY, VALID_OBJ_CD, StringUtils.EMPTY,
                 StringUtils.EMPTY, true, buildMessages(), buildMessages(VALID_ACCOUNT_DETAIL_MESSAGE));
 
         public final String chart;

@@ -1,6 +1,5 @@
 package edu.cornell.kfs.concur;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,7 +25,6 @@ public class ConcurUtilsTest {
 
     public static final String GOOD_CONCUR_FORMAT_CODE_AND_DESCRIPTION = "(1234567) some account description";
     public static final String KFS_FORMAT_ACCOUNT_NUMBER = "1234567";
-    public static final String GOOD_CONCUR_FORMAT_CODE = "123";
 
     public static final String VALUE_IN_CODE_AND_DESCRIPTION_FORMAT = "(1234567) some account description";
     public static final String VALUE_NOT_IN_CODE_AND_DESCRIPTION_FORMAT = "1234567 some account description";
@@ -99,7 +97,7 @@ public class ConcurUtilsTest {
     }
     
     @ParameterizedTest
-    @MethodSource("testVuildValidationErrorMessageForWorkflowActionParams")
+    @MethodSource("testValidValidationErrorMessageForWorkflowActionParams")
     public void testVuildValidationErrorMessageForWorkflowAction(List<String> errorMessages) {
         ConcurEventNotificationResponse dto = buildTestingConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport, ConcurEventNotificationStatus.invalidAccounts);
         dto.setErrorMessages(errorMessages);        
@@ -119,7 +117,7 @@ public class ConcurUtilsTest {
                 
     }
     
-    private static Stream<Arguments> testVuildValidationErrorMessageForWorkflowActionParams() {
+    private static Stream<Arguments> testValidValidationErrorMessageForWorkflowActionParams() {
         return Stream.of(
                 Arguments.of(ConcurAccountValidationTestConstants.buildMessages("one error line", "another error line")),
                 Arguments.of(ConcurAccountValidationTestConstants.buildMessages("error line"))

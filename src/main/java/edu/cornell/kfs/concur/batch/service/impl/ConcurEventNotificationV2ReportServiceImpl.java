@@ -106,8 +106,10 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
             if (eventType.displayTravelerEmail) {
                 reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, "Traveler Email", dto.getTravelerEmail()));
             }
-            reportWriterService.writeFormattedMessageLine(buildFormattedMessageForReport(detailItemFormat, "Detail Messages", dto.getDetailMessages()));
-            reportWriterService.writeFormattedMessageLine(buildFormattedMessageForReport(detailItemFormat, "Error Messages", dto.getErrorMessages()));
+            String detailMessages = buildFormattedMessageForReport(detailItemFormat, "Detail Messages", dto.getDetailMessages());
+            reportWriterService.writeFormattedMessageLine(detailMessages);
+            String errorMessages = buildFormattedMessageForReport(detailItemFormat, "Error Messages", dto.getErrorMessages());
+            reportWriterService.writeFormattedMessageLine(errorMessages);
             
             reportIndex++;
         }

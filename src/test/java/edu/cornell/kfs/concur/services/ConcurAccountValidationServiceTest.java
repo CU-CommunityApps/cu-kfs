@@ -32,7 +32,6 @@ import org.mockito.Mockito;
 
 import edu.cornell.kfs.concur.ConcurConstants;
 import edu.cornell.kfs.concur.ConcurKeyConstants;
-import edu.cornell.kfs.concur.businessobjects.ConcurAccountInfo;
 import edu.cornell.kfs.concur.businessobjects.ValidationResult;
 import edu.cornell.kfs.concur.service.impl.ConcurAccountValidationServiceImpl;
 import edu.cornell.kfs.concur.services.ConcurAccountValidationTestConstants.AccountEnum;
@@ -100,13 +99,6 @@ public class ConcurAccountValidationServiceTest {
         return service;
     }
 
-    private ProjectCode createProjectCode(String projectCode, boolean active) {
-        ProjectCode project = new ProjectCode();
-        project.setCode(projectCode);
-        project.setActive(active);
-        return project;
-    }
-
     private SubAccountService buildMockSubAccountService() {
         SubAccountService service = Mockito.mock(SubAccountService.class);
         Mockito.when(service.getByPrimaryId(SubAccountEnum.VALID.chart, SubAccountEnum.VALID.account,
@@ -166,9 +158,9 @@ public class ConcurAccountValidationServiceTest {
 
         Assert.assertEquals("Validation was expected to be " + validationExpectation, validationExpectation,
                 validationResult.isValid());
-        Assert.assertEquals("Number of error messages is not what is exptected", expectedErrorMessages.size(),
+        Assert.assertEquals("Number of error messages is not what is expected", expectedErrorMessages.size(),
                 validationResult.getErrorMessages().size());
-        Assert.assertEquals("Number of detail messages is not what is exptected", expectedDetailMessages.size(),
+        Assert.assertEquals("Number of detail messages is not what is expected", expectedDetailMessages.size(),
                 validationResult.getDetailMessages().size());
 
         for (String expectedMessage : expectedErrorMessages) {
@@ -252,8 +244,8 @@ public class ConcurAccountValidationServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("testcheckSubObjectCodeParams")
-    public void testcheckSubObjectCode(SubObjectCodeEnum subObjectCodeEnum, boolean validationExpectation,
+    @MethodSource("testCheckSubObjectCodeParams")
+    public void testCheckSubObjectCode(SubObjectCodeEnum subObjectCodeEnum, boolean validationExpectation,
             String errorMessageKey) {
         List<String> expectedErrorMessages = new ArrayList<>();
         if (!validationExpectation) {
@@ -263,10 +255,10 @@ public class ConcurAccountValidationServiceTest {
         }
         ValidationResult validationResult = concurAccountValidationService.checkSubObjectCode(subObjectCodeEnum.chart,
                 subObjectCodeEnum.account, subObjectCodeEnum.objectCode, subObjectCodeEnum.subObjectCode);
-        validateResults(validationExpectation, expectedErrorMessages, validationResult, "testcheckSubObjectCode");
+        validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckSubObjectCode");
     }
 
-    private static Stream<Arguments> testcheckSubObjectCodeParams() {
+    private static Stream<Arguments> testCheckSubObjectCodeParams() {
         return Stream.of(Arguments.of(SubObjectCodeEnum.VALID, true, null),
                 Arguments.of(SubObjectCodeEnum.BAD_SUB_OBJ, false, KFSKeyConstants.ERROR_EXISTENCE),
                 Arguments.of(SubObjectCodeEnum.NULL_SUB_OBJ, true, null),
@@ -283,7 +275,7 @@ public class ConcurAccountValidationServiceTest {
                     ConcurConstants.AccountingStringFieldNames.PROJECT_CODE, projectCode));
         }
         ValidationResult validationResult = concurAccountValidationService.checkProjectCode(projectCode);
-        validateResults(validationExpectation, expectedErrorMessages, validationResult, "testcheckSubObjectCode");
+        validateResults(validationExpectation, expectedErrorMessages, validationResult, "testCheckSubObjectCode");
     }
 
     private static Stream<Arguments> testCheckProjectCodeParams() {

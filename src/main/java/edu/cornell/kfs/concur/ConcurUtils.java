@@ -142,7 +142,7 @@ public class ConcurUtils {
             fullMessage = ConcurConstants.ERROR_MESSAGE_HEADER + fullMessage;
             return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
         }
-        return StringUtils.left(ConcurConstants.ERROR_MESSAGE_STARTER, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH) ;
+        return ConcurConstants.ERROR_MESSAGE_STARTER;
         
     }
     
@@ -156,7 +156,7 @@ public class ConcurUtils {
             fullMessage = ConcurConstants.DETAIL_MESSAGE_HEADER + fullMessage;
             return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
         }
-        return StringUtils.left(ConcurConstants.APPROVE_COMMENT, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+        return ConcurConstants.APPROVE_COMMENT;
         
     }
 
