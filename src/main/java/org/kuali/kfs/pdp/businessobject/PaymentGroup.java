@@ -336,7 +336,7 @@ public class PaymentGroup extends PersistableBusinessObjectBase {
         }
 
         // CU Customization: KFSPTS-27383 do not add Stale to ACH or WIRE
-        if (isDisbursementTypeAchOrWire() && !StringUtils.equalsIgnoreCase(paymentStatus.getCode(), CRConstants.CLEARED)) {
+        if (!isDisbursementTypeAchOrWire() && !StringUtils.equalsIgnoreCase(paymentStatus.getCode(), CRConstants.CLEARED)) {
             // check for stale payments, if one payment detail is stale then they all are
             final PaymentDetail paymentDetail = getPaymentDetails().get(0);
             if (!paymentDetail.isDisbursementActionAllowed()) {
