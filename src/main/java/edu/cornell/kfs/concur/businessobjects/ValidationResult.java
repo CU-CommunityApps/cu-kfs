@@ -8,17 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.kuali.kfs.sys.KFSConstants;
 
 public class ValidationResult {
-    protected boolean valid;
-    protected List<String> messages;
+    private boolean valid;
+    private List<String> errorMessages;
+    private List<String> detailMessages;
     
     public ValidationResult(){
         this.valid = true;
-        this.messages = new ArrayList<String>();
-    }
-
-    public ValidationResult(boolean valid, List<String> messages) {
-        this.valid = valid;
-        this.messages = messages;
+        this.errorMessages = new ArrayList<String>();
+        this.detailMessages = new ArrayList<String>();
     }
 
     public boolean isValid() {
@@ -33,25 +30,21 @@ public class ValidationResult {
         this.valid = valid;
     }
 
-    public List<String> getMessages() {
-        return messages;
+    public List<String> getErrorMessages() {
+        return errorMessages;
     }
 
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
-
-    public void addMessage(String message) {
-        if (messages == null) {
-            messages = new ArrayList<String>();
+    public void addErrorMessage(String message) {
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<String>();
         }
-        if (StringUtils.isNotBlank(message) && isNotDuplicateMessage(message)) {
-            messages.add(message);
+        if (StringUtils.isNotBlank(message) && isNotDuplicateMessage(errorMessages, message)) {
+            errorMessages.add(message);
         }
     }
     
-    private boolean isNotDuplicateMessage(String message) {
-        for (String currentMessage : getMessages()) {
+    private boolean isNotDuplicateMessage(List<String> messages, String message) {
+        for (String currentMessage : messages) {
             if (StringUtils.equalsIgnoreCase(currentMessage, message)) {
                 return false;
             }
@@ -59,30 +52,58 @@ public class ValidationResult {
         return true;
     }
 
-    public void addMessages(List<String> messagesToAdd) {
-        if (CollectionUtils.isNotEmpty(messagesToAdd)) {
-            for (String messageToAdd : messagesToAdd) {
-                addMessage(messageToAdd);
+    public void addErrorMessages(List<String> errorMessagesToAdd) {
+        if (CollectionUtils.isNotEmpty(errorMessagesToAdd)) {
+            for (String messageToAdd : errorMessagesToAdd) {
+                addErrorMessage(messageToAdd);
             }
         }
     }
 
     public String getErrorMessagesAsOneFormattedString() {
+        return buildOneFormattedString(errorMessages);
+    }
+    
+    private String buildOneFormattedString(List<String> messageList) {
         StringBuffer result = new StringBuffer();
-
-        if (messages != null && !messages.isEmpty()) {
-            for (String message : messages) {
+        if (messageList != null && !messageList.isEmpty()) {
+            for (String message : messageList) {
                 result.append(message);
                 result.append(KFSConstants.NEWLINE);
             }
         }
-        
         return result.toString();
-    }   
+    }
     
+    public List<String> getDetailMessages() {
+        return detailMessages;
+    }
+    
+    public void addDetailMessage(String message) {
+        if (detailMessages == null) {
+            detailMessages = new ArrayList<String>();
+        }
+        if (StringUtils.isNotBlank(message) && isNotDuplicateMessage(detailMessages, message)) {
+            detailMessages.add(message);
+        }
+    }
+    
+    public void addDetailMessages(List<String> accountDetailMessagesToAdd) {
+        if (CollectionUtils.isNotEmpty(accountDetailMessagesToAdd)) {
+            for (String messageToAdd : accountDetailMessagesToAdd) {
+                addDetailMessage(messageToAdd);
+            }
+        }
+    }
+    
+    public String getDetailMessagesAsOneFormattedString() {
+        return buildOneFormattedString(detailMessages);
+    }
+
     public void add(ValidationResult validationResult){
         this.valid &= validationResult.isValid();
-        this.addMessages(validationResult.getMessages());
+        this.addErrorMessages(validationResult.getErrorMessages());
+        this.addDetailMessages(validationResult.getDetailMessages());
     }
 
 }

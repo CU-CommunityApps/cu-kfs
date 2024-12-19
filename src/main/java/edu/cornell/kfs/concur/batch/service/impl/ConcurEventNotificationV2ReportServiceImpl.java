@@ -106,15 +106,21 @@ public class ConcurEventNotificationV2ReportServiceImpl implements ConcurEventNo
             if (eventType.displayTravelerEmail) {
                 reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, "Traveler Email", dto.getTravelerEmail()));
             }
-            String messageListHeader = "Messages";
-            String messageListHeaderBlank = KFSConstants.NEWLINE + "          ";
-            String messageOutput = StringUtils.join(dto.getMessages(), messageListHeaderBlank);
-            reportWriterService.writeFormattedMessageLine(MessageFormat.format(detailItemFormat, messageListHeader, messageOutput));
+            String detailMessages = buildFormattedMessageForReport(detailItemFormat, "Detail Messages", dto.getDetailMessages());
+            reportWriterService.writeFormattedMessageLine(detailMessages);
+            String errorMessages = buildFormattedMessageForReport(detailItemFormat, "Error Messages", dto.getErrorMessages());
+            reportWriterService.writeFormattedMessageLine(errorMessages);
             
             reportIndex++;
         }
         reportWriterService.writeFormattedMessageLine(configurationService.getPropertyValueAsString(ConcurParameterConstants.CONCUR_EVENT_V2_PROCESSING_REPORT_SECTION_CLOSING));
         reportWriterService.writeNewLines(2);
+    }
+    
+    private String buildFormattedMessageForReport(String detailItemFormat, String header, List<String> messageList) {
+        String messageListHeaderBlank = KFSConstants.NEWLINE + "          ";
+        String messageOutput = StringUtils.join(messageList, messageListHeaderBlank);
+        return MessageFormat.format(detailItemFormat, header, messageOutput);
     }
 
     public void setReportWriterService(ReportWriterService reportWriterService) {
