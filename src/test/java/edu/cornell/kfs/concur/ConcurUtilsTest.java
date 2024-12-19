@@ -98,7 +98,7 @@ public class ConcurUtilsTest {
     
     @ParameterizedTest
     @MethodSource("testValidValidationErrorMessageForWorkflowActionParams")
-    public void testVuildValidationErrorMessageForWorkflowAction(List<String> errorMessages) {
+    public void testValidValidationErrorMessageForWorkflowAction(List<String> errorMessages) {
         ConcurEventNotificationResponse dto = buildTestingConcurEventNotificationResponse(ConcurEventNotificationType.ExpenseReport, ConcurEventNotificationStatus.invalidAccounts);
         dto.setErrorMessages(errorMessages);        
         
