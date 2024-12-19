@@ -137,11 +137,27 @@ public class ConcurUtils {
         if (resultsDTO.getEventNotificationStatus() == ConcurEventNotificationStatus.validAccounts) {
             throw new IllegalArgumentException("resultsDTO should not represent a successful validation");
         }
-        String fullMessage = resultsDTO.getFlattenedMessages();
+        String fullMessage = resultsDTO.getFlattenedErrorMessages();
         if (StringUtils.isNotBlank(fullMessage)) {
             fullMessage = ConcurConstants.ERROR_MESSAGE_HEADER + fullMessage;
+            return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
         }
-        return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+        return ConcurConstants.ERROR_MESSAGE_STARTER;
+        
+    }
+    
+    public static String buildDetailMessageForWorkflowAction(
+            ConcurEventNotificationResponse resultsDTO) {
+        if (resultsDTO.getEventNotificationStatus() != ConcurEventNotificationStatus.validAccounts) {
+            throw new IllegalArgumentException("resultsDTO should represent a successful validation");
+        }
+        String fullMessage = resultsDTO.getFlattenedDetailMessages();
+        if (StringUtils.isNotBlank(fullMessage)) {
+            fullMessage = ConcurConstants.DETAIL_MESSAGE_HEADER + fullMessage;
+            return StringUtils.left(fullMessage, ConcurConstants.VALIDATION_RESULT_MESSAGE_MAX_LENGTH);
+        }
+        return ConcurConstants.APPROVE_COMMENT;
+        
     }
 
 }

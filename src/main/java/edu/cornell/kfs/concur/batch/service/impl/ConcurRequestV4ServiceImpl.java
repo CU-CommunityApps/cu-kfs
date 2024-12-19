@@ -176,6 +176,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         String requestUuid = requestAsListItem.getId();
         ConcurEventNotificationStatus processingResult;
         List<String> validationMessages = new ArrayList<>();
+        List<String> detailMessages = new ArrayList<>();
         boolean requestValid;
         
         try {
@@ -185,7 +186,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
                     + accountInfo.toString());
             ValidationResult validationResult = concurAccountValidationService.validateConcurAccountInfo(accountInfo);
             requestValid = validationResult.isValid();
-            validationMessages.addAll(validationResult.getMessages());
+            validationMessages.addAll(validationResult.getErrorMessages());
             processingResult = requestValid ? ConcurEventNotificationStatus.validAccounts
                     : ConcurEventNotificationStatus.invalidAccounts;
         } catch (Exception e) {
@@ -208,7 +209,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         
         ConcurEventNotificationResponse eventNotificationResponse = new ConcurEventNotificationResponse(
                 ConcurEventNotificationType.TravelRequest, processingResult,
-                reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages);
+                reportNumber, reportName, reportStatus, travelerName, travelerEmail, validationMessages, detailMessages);
         updateRequestStatusInConcurIfNecessary(accessToken, requestUuid, eventNotificationResponse);
         
         return eventNotificationResponse;
@@ -263,8 +264,7 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
         ConcurWebRequest<ConcurRequestV4ReportDTO> webRequest = buildWebRequestForTravelRequestApproveAction(
                 requestUuid, resultsDTO);
         
-        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(
-                accessToken, webRequest, logMessageDetail);
+        ConcurRequestV4ReportDTO updatedTravelRequest = concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);
         
         try {
             checkStatusOfUpdatedRequest(updatedTravelRequest, requestUuid);
@@ -334,14 +334,14 @@ public class ConcurRequestV4ServiceImpl implements ConcurRequestV4Service {
     protected void updateProcessingResultForInvalidWorkflowResponse(
             ConcurEventNotificationResponse resultsDTO) {
         resultsDTO.setEventNotificationStatus(ConcurEventNotificationStatus.processingError);
-        List<String> messages = resultsDTO.getMessages();
+        List<String> messages = resultsDTO.getErrorMessages();
         if (ObjectUtils.isNull(messages)) {
             messages = new ArrayList<>();
         } else if (!(messages instanceof ArrayList)) {
             messages = new ArrayList<>(messages);
         }
         messages.add(POST_ACTION_ERROR_MESSAGE);
-        resultsDTO.setMessages(messages);
+        resultsDTO.setErrorMessages(messages);
     }
 
     protected ConcurRequestV4ReportDTO getTravelRequest(String accessToken, String requestUuid) {

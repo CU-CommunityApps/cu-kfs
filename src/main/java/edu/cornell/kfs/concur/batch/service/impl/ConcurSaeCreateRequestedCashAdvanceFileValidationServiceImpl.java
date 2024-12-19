@@ -86,7 +86,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
             detailFileLine.getValidationResult().setCashAdvanceLine(true);
         } else {
             detailFileLine.getValidationResult().setCashAdvanceLine(false);
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE));
+            detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE));
         }
         return detailFileLine.getValidationResult().isCashAdvanceLine();
     }
@@ -108,7 +108,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
 
             String errorMessage = getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_DATA_LINE_NOT_APPROVED_OR_APPLIED);
             String validationError = MessageFormat.format(errorMessage, detailFileLine.getCashAdvanceTransactionType());
-            detailFileLine.getValidationResult().addMessage(validationError);
+            detailFileLine.getValidationResult().addErrorMessage(validationError);
         }
 
         return detailFileLine.getValidationResult().isCashAdvanceApprovedOrApplied();
@@ -160,7 +160,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
         if (StringUtils.isNotEmpty(detailFileLine.getCashAdvanceTransactionType()) &&
             StringUtils.equalsIgnoreCase(detailFileLine.getCashAdvanceTransactionType(), ConcurConstants.SAE_CASH_ADVANCE_BEING_APPLIED_TO_TRIP_REIMBURSEMENT)) {
             detailFileLine.getValidationResult().setCashAdvanceUsedInExpenseReport(true);
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE));
+            detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_NOT_REQUESTED_CASH_ADVANCE_DATA_LINE));
             LOG.info("requestedCashAdvanceHasNotBeenUsedInExpenseReport: " + getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_USED_IN_EXPENSE_REPORT));
         } else {
             detailFileLine.getValidationResult().setCashAdvanceUsedInExpenseReport(false);
@@ -190,7 +190,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
 
             if (getConcurRequestedCashAdvanceService().isDuplicateConcurRequestCashAdvance(cashAdvanceSearchKeys)) {
                 detailFileLine.getValidationResult().setDuplicatedCashAdvanceLine(true);
-                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_DUPLICATE_CASH_ADVANCE_DETECTED));
+                detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_DUPLICATE_CASH_ADVANCE_DETECTED));
                 LOG.info("requestedCashAdvanceIsNotBeingDuplicated: " + getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_DUPLICATE_CASH_ADVANCE_DETECTED));
                 return false;
             } else {
@@ -200,7 +200,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
             }
         } else {
             detailFileLine.getValidationResult().setDuplicatedCashAdvanceLine(true);
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_KEYS_FOR_DUPLICATE_CHECK));
+            detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_KEYS_FOR_DUPLICATE_CHECK));
             LOG.info("requestedCashAdvanceIsNotBeingDuplicated: " + getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_KEYS_FOR_DUPLICATE_CHECK));
             return false;
         }
@@ -208,7 +208,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
 
     private boolean cashAdvanceKeyIsValid(ConcurStandardAccountingExtractDetailLine detailFileLine) {
         if (StringUtils.isEmpty(detailFileLine.getCashAdvanceKey())) {
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER));
+            detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_INVALID_UNIQUE_IDENTIFIER));
             return false;
         }
         else {
@@ -218,14 +218,14 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
 
     private boolean employeeIdIsValid(ConcurStandardAccountingExtractDetailLine detailFileLine) {
         if (StringUtils.isEmpty(detailFileLine.getEmployeeId())) {
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_EMPLOYEE_ID_NULL_OR_BLANK));
+            detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_EMPLOYEE_ID_NULL_OR_BLANK));
             return false;
         } else {
             boolean validPerson = getConcurEmployeeInfoValidationService().validPerson(detailFileLine.getEmployeeId());
             if(validPerson) {
                 return true;
             } else {
-                detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
+                detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_EMPLOYEE_ID_NOT_FOUND_IN_KFS));
                 return false;
             }
         }
@@ -236,7 +236,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
         String validationMessage = getConcurEmployeeInfoValidationService().getAddressValidationMessageIfCheckPayment(detailFileLine.getEmployeeId());
         if (StringUtils.isNotBlank(validationMessage)) {
             valid = false;
-            detailFileLine.getValidationResult().addMessage(validationMessage);
+            detailFileLine.getValidationResult().addErrorMessage(validationMessage);
         }
         detailFileLine.getValidationResult().setValidAddressWhenCheckPaymentForCashAdvance(valid);
         return valid;
@@ -244,7 +244,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
 
     private boolean requestAmountIsValid(ConcurStandardAccountingExtractDetailLine detailFileLine) {
         if ((detailFileLine.getCashAdvanceAmount() == null) || (detailFileLine.getCashAdvanceAmount().isNegative()) || (detailFileLine.getCashAdvanceAmount().isZero())) {
-            detailFileLine.getValidationResult().addMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_AMOUNT_INVALID));
+            detailFileLine.getValidationResult().addErrorMessage(getConfigurationService().getPropertyValueAsString(ConcurKeyConstants.CONCUR_SAE_REQUESTED_CASH_ADVANCE_AMOUNT_INVALID));
             return false;
         } else {
             return true;
@@ -342,7 +342,7 @@ public class ConcurSaeCreateRequestedCashAdvanceFileValidationServiceImpl implem
                                   StringUtils.EMPTY, StringUtils.EMPTY);
         ValidationResult validationResults = getConcurAccountValidationService().validateConcurAccountInfo(concurAccountInfo);
         if (validationResults.isNotValid()) {
-            detailFileLine.getValidationResult().addMessages(validationResults.getMessages());
+            detailFileLine.getValidationResult().addErrorMessages(validationResults.getErrorMessages());
         }
         detailFileLine.getValidationResult().setCashAdvanceAccountingDataValid(validationResults.isValid());
         return validationResults.isValid();
