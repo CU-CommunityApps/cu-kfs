@@ -166,21 +166,8 @@ public class ConcurExpenseV3ServiceImpl implements ConcurExpenseV3Service {
         ConcurWebRequest<Void> webRequest = buildWebRequestForExpenseWorkflowAction(
                 workflowAction, reportId, resultsDTO);
         
-        /*
-         * @todo re enable this
-         */
-        if (shouldUpdateConcur(reportId)) {
-            LOG.info("updateStatusInConcur, updating the status in Concur for report " + reportId);
-            concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
-        } else {
-            LOG.error("updateStatusInConcur. updates disabled, but would have updated the status in Concur for report " + reportId);
-        }
+        concurEventNotificationWebApiService.callConcurEndpoint(accessToken, webRequest, logMessageDetail);  
 
-    }
-    
-    private boolean shouldUpdateConcur(String reportId) {
-        //return StringUtils.equalsIgnoreCase(reportId, "D9B34CBBA618434F9C34") || StringUtils.equalsIgnoreCase(reportId, "E9EA2595C7EC4CBF88C3");
-        return true;
     }
     
     protected boolean shouldUpdateStatusInConcur() {
