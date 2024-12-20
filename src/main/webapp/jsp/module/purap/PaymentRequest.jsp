@@ -18,6 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
+<%-- KualiCo 2023-04-19 base code version of the JSP with Cornell customizations applied. --%>
+
 <%@ include file="/jsp/sys/kfsTldHeader.jsp" %>
 
 <kul:documentPage showDocumentInfo="true"
@@ -25,28 +27,27 @@
                   htmlFormAction="purapPaymentRequest" renderMultipart="true"
                   showTabButtons="true">
 
+    <%-- Cornell Customization --%>
     <c:set var="canEdit" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT]}" scope="request"/>
     <c:set var="canSave" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_SAVE]}" scope="request"/>
-    <c:set var="fullEntryMode"
-           value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"
+    <c:set var="fullEntryMode" value="${KualiForm.documentActions[KRADConstants.KUALI_ACTION_CAN_EDIT] && (empty KualiForm.editingMode['restrictFullEntry'])}"
            scope="request"/>
+
     <c:set var="displayInitTab" value="${KualiForm.editingMode['displayInitTab']}" scope="request"/>
     <c:set var="taxInfoViewable" value="${KualiForm.editingMode['taxInfoViewable']}" scope="request"/>
     <c:set var="taxAreaEditable" value="${KualiForm.editingMode['taxAreaEditable']}" scope="request"/>
 
-    <!-- KFSPTS-1891 -->
+    <%-- Cornell Customization: KFSPTS-1891 --%>
     <c:set var="wireEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['wireEntry']}" scope="request"/>
     <c:set var="frnEntryMode" value="${(canEdit || canSave) && KualiForm.editingMode['frnEntry']}" scope="request"/>
 
-    <!-- Display hold message if payment is on hold -->
+    <%-- Display hold message if payment is on hold --%>
     <c:if test="${KualiForm.paymentRequestDocument.holdIndicator}">
-        <h4>This Payment Request has been Held by <c:out
-                value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
+        <h4>This Payment Request has been Held by <c:out value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
     </c:if>
 
     <c:if test="${KualiForm.paymentRequestDocument.paymentRequestedCancelIndicator}">
-        <h4>This Payment Request has been Requested for Cancel by <c:out
-                value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
+        <h4>This Payment Request has been Requested for Cancel by <c:out value="${KualiForm.paymentRequestDocument.lastActionPerformedByPersonName}"/></h4>
     </c:if>
 
     <c:if test="${not KualiForm.editingMode['displayInitTab']}">
@@ -93,18 +94,18 @@
                 itemAttributes="${DataDictionary.PaymentRequestItem.attributes}"
                 documentAttributes="${DataDictionary.SourceAccountingLine.attributes}"/>
 
-        <purap:relatedDocuments />
+        <fp:wireTransfer/>
 
-        <purap:paymentHistory />
-
-        <purap:preqWireTransfer/>
-        <purap:preqForeignDraft/>
+        <%-- Cornell Customization --%>
+        <fp:foreignDraft/>
+        <purap:relatedDocuments/>
+        <purap:paymentHistory/>
 
         <gl:generalLedgerPendingEntries/>
 
-        <kul:notes
-                attachmentTypesValuesFinder="${DataDictionary.PaymentRequestDocument.attachmentTypesValuesFinder}"
-                defaultOpen="${KualiForm.document.openAttachmentTab}"/>
+        <%-- Cornell Customization --%>
+        <kul:notes attachmentTypesValuesFinder="${DataDictionary.PaymentRequestDocument.attachmentTypesValuesFinder}"
+                   defaultOpen="${KualiForm.document.openAttachmentTab}"/>
 
         <kul:adHocRecipients/>
 
@@ -119,5 +120,6 @@
             extraButtons="${extraButtons}"
             suppressRoutingControls="${KualiForm.editingMode['displayInitTab']}"
             tabindex="${globalButtonTabIndex}"/>
+
     <kul:modernLookupSupport />
 </kul:documentPage>

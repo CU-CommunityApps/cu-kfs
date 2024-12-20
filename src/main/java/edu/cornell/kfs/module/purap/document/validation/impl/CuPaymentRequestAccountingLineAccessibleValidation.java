@@ -11,7 +11,7 @@ public class CuPaymentRequestAccountingLineAccessibleValidation extends PaymentR
     @Override
     public boolean validate(final AttributedDocumentEvent event) {
         final PaymentRequestDocument preq = (PaymentRequestDocument)accountingDocumentForValidation;
-        if(StringUtils.equals(PaymentRequestStatuses.APPDOC_PAYMENT_METHOD_REVIEW, preq.getApplicationDocumentStatus())) {
+        if(StringUtils.equals(PaymentRequestStatuses.APPDOC_AWAITING_PAYMENT_METHOD_REVIEW, preq.getApplicationDocumentStatus())) {
             return true;
         }
         else{

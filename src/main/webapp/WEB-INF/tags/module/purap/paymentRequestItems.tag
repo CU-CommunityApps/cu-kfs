@@ -34,7 +34,8 @@
 <c:set var="purapTaxEnabled" value="${(not empty KualiForm.editingMode['purapTaxEnabled'])}" />
 <c:set var="tabindexOverrideBase" value="50" />
 <c:set var="fullDocEntryCompleted" value="${(not empty KualiForm.editingMode['fullDocumentEntryCompleted'])}" />
-<c:set var="editAmount" value="${(not empty KualiForm.editingMode['editAmount'])}" /> <!-- KFSPTS-1891 -->
+<c:set var="paymentMethodReview" value="${(not empty KualiForm.editingMode['paymentMethodReview'])}" />
+<c:set var="editAmount" value="${(not empty KualiForm.editingMode['editAmount'])}" /> <%-- KFSPTS-1891 --%>
 
 <c:set var="colSpanDescription" value="3"/>
 <c:if test="${purapTaxEnabled}">
@@ -99,7 +100,7 @@
 		</c:choose>
 
 		<tr class="top line">
-			<td class="infoline" nowrap="nowrap" rowspan="2" style="position: relative;"> <!-- KFSPTS-1719 -->
+			<td class="infoline" nowrap="nowrap" rowspan="2" style="position: relative;"> <%-- KFSPTS-1719 --%>
 				<bean:write name="KualiForm" property="document.item[${ctr}].extension.lineNumber"/>
 			</td>
 			<td class="infoline">
@@ -136,7 +137,7 @@
 			</td>
 			<td class="infoline right">
 				<c:if test="${KualiForm.document.items[ctr].itemType.quantityBasedGeneralLedgerIndicator}">
-					<!--  KFSPTS-1891 : added 'editAmount' check -->
+					<%--  KFSPTS-1891 : added 'editAmount' check --%>
                     <kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.itemUnitPrice}"
                             property="document.item[${ctr}].itemUnitPrice"
@@ -144,7 +145,7 @@
                             tabindexOverride="${tabindexOverrideBase + 0}" />
 				</c:if>
 				<c:if test="${KualiForm.document.items[ctr].itemType.amountBasedGeneralLedgerIndicator}">
-                    <!-- KFSPTS-1719 -->
+                    <%-- KFSPTS-1719 --%>
 					<kul:htmlControlAttribute
                             attributeEntry="${itemAttributes.itemUnitPrice}"
                             property="document.item[${ctr}].extension.poOutstandingAmountForDisplay" 
@@ -152,11 +153,11 @@
 				</c:if>
 			</td>
 			<td class="infoline right">
-				<!-- KFSPTS-1891 : added 'editAmount' check -->
+				<%-- KFSPTS-1891 : added 'editAmount' check --%>
 				<kul:htmlControlAttribute
 				        attributeEntry="${itemAttributes.extendedPrice}"
 				        property="document.item[${ctr}].extendedPrice" 
-				        readOnly="${(not (fullEntryMode) or (fullDocEntryCompleted)) and not (editAmount)}"
+				        readOnly="${not paymentMethodReview and (not (fullEntryMode) or (fullDocEntryCompleted)) and not (editAmount)}"
 				        tabindexOverride="${tabindexOverrideBase + 0}" />
 			</td>
 
@@ -165,7 +166,7 @@
 			        <kul:htmlControlAttribute
 				        attributeEntry="${itemAttributes.itemTaxAmount}"
 				        property="document.item[${ctr}].itemTaxAmount" 
-				        readOnly="${not (fullEntryMode) or lockTaxAmountEntry}" 
+				        readOnly="${not paymentMethodReview and not (fullEntryMode) or lockTaxAmountEntry}"
 				        tabindexOverride="${tabindexOverrideBase + 0}" />
 			</td>			
 				<td class="infoline right">

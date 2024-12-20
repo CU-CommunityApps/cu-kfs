@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <data xmlns="ns:workflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ns:workflow resource:WorkflowData">
     <documentTypes xmlns="ns:workflow/DocumentType" xsi:schemaLocation="ns:workflow/DocumentType resource:DocumentType">
         <documentType>
@@ -24,7 +24,7 @@
                 <status>Awaiting AP Review</status>
                 <status>Awaiting Sub-Account Manager Approval</status>
                 <status>Cancelled In Process</status>
-                <status>Awaiting Treasury Manager Approval</status>
+                <status>Awaiting Payment Method Review</status>
                 <status>Pending Route Electronic Invoice</status>
             </validApplicationStatuses>
             <policies>
@@ -59,24 +59,17 @@
                     <role name="Account" nextNode="AccountingOrganizationHierarchy" nextAppDocStatus="Awaiting Chart Approval"/>
                     <role name="AccountingOrganizationHierarchy" nextNode="ObjectCode" nextAppDocStatus="Awaiting Object Code Approval"/>
                     <role name="ObjectCode" nextNode="VendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Tax Approval"/>
-                    <split name="VendorIsEmployeeOrNonresident" nextNode="TreasuryManager">
+                    <split name="VendorIsEmployeeOrNonresident"
+                           nextNode="PaymentMethod">
                         <branch name="True">
-                            <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                            <role name="Tax" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Payment Method Review"/>
                         </branch>
                         <branch name="False">
-                            <simple name="NoOpVendorIsEmployeeOrNonresident" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Treasury Manager Approval"/>
+                            <simple name="NoOpVendorIsEmployeeOrNonresident" nextNode="JoinVendorIsEmployeeOrNonresident" nextAppDocStatus="Awaiting Payment Method Review"/>
                         </branch>
                         <join name="JoinVendorIsEmployeeOrNonresident"/>
                     </split>
-                    <split name="TreasuryManager" nextNode="RequiresAutoApprovalNotification">
-                        <branch name="True">
-                            <role name="PaymentMethodReviewer" nextNode="JoinTreasury"/>
-                        </branch>
-                        <branch name="False">
-                            <simple name="NoOpTreasury" nextNode="JoinTreasury"/>
-                        </branch>
-                        <join name="JoinTreasury"/>
-                    </split>
+                    <role name="PaymentMethod" nextNode="RequiresAutoApprovalNotification"/>
                     <split name="RequiresAutoApprovalNotification">
                         <branch name="True">
                             <role name="AutoApprove" nextNode="joinOnAutoApproval"/>
@@ -98,6 +91,9 @@
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinRequiresImageAttachment"/>
+                <simple name="NoOpRequiresImageAttachment">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
                 <split name="PurchaseWasReceived">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
@@ -106,6 +102,9 @@
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinReceiving"/>
+                <simple name="NoOpReceiving">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
                 <role name="SubAccount">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
@@ -131,14 +130,13 @@
                     <activationType>P</activationType>
                 </role>
                 <join name="JoinVendorIsEmployeeOrNonresident"/>
-                <split name="TreasuryManager">
-                    <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
-                </split>
-                <role name="PaymentMethodReviewer">
+                <simple name="NoOpVendorIsEmployeeOrNonresident">
+                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
+                </simple>
+                <role name="PaymentMethod">
                     <qualifierResolverClass>org.kuali.kfs.krad.workflow.attribute.DataDictionaryQualifierResolver</qualifierResolverClass>
                     <activationType>P</activationType>
                 </role>
-                <join name="JoinTreasury"/>
                 <split name="RequiresAutoApprovalNotification">
                     <type>org.kuali.kfs.sys.document.workflow.SimpleBooleanSplitNode</type>
                 </split>
@@ -148,18 +146,6 @@
                 </role>
                 <join name="joinOnAutoApproval"/>
                 <simple name="NoOpAutoApproval">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpTreasury">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpVendorIsEmployeeOrNonresident">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpReceiving">
-                    <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
-                </simple>
-                <simple name="NoOpRequiresImageAttachment">
                     <type>org.kuali.kfs.kew.engine.node.NoOpNode</type>
                 </simple>
             </routeNodes>

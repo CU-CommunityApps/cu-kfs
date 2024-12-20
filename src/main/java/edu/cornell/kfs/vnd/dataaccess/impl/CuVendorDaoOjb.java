@@ -101,8 +101,7 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
         String vendorSupplierDiversityExpirationDateVal = fieldValues.get(CUVendorPropertyConstants.VENDOR_HEADER_PREFIX  +
                 VendorPropertyConstants.VENDOR_SUPPLIER_DIVERSITIES + "." + CUVendorPropertyConstants.SUPPLIER_DIVERSITY_EXPRIATION);
         
-        //KFSPTS-1891
-        final String defaultPaymentMethod = fieldValues.get("extension.defaultB2BPaymentMethodCode");
+        final String defaultPaymentMethodCodeVal = fieldValues.get("defaultPaymentMethodCode");
         
         if (StringUtils.isNotBlank(headerVal)) {
         	header.addEqualTo("vendorHeaderGeneratedIdentifier", headerVal);  //
@@ -170,9 +169,9 @@ public class CuVendorDaoOjb extends VendorDaoOjb implements CuVendorDao {
             }
            
         }
-        //KFSPTS-1891
-        if (StringUtils.isNotBlank(defaultPaymentMethod)) {
-        	header.addEqualTo("extension.defaultB2BPaymentMethodCode", defaultPaymentMethod);  //
+        
+        if (StringUtils.isNotBlank(defaultPaymentMethodCodeVal)) {
+        	header.addEqualTo("defaultPaymentMethodCode", defaultPaymentMethodCodeVal);
         }
         
         final Long val = new Long( getPersistenceBrokerTemplate().getCount(QueryFactory.newQuery(VendorDetail.class, header)));
