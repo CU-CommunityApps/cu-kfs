@@ -17,12 +17,14 @@ public final class CUTaxConstants {
     public static final String PREVIOUS_YEAR_TO_DATE = "PYTD";
 
     public static final String TAX_OUTPUT_DEFINITION_FILE_TYPE_IDENTIFIER = "taxOutputDefinitionFileType";
+    public static final String TAX_OUTPUT_DEFINITION_V2_FILE_TYPE_IDENTIFIER = "taxOutputDefinitionV2FileType";
     public static final String TAX_DATA_DEFINITION_FILE_TYPE_IDENTIFIER = "taxDataDefinitionFileType";
     public static final String TRANSACTION_OVERRIDE_FILE_TYPE_IDENTIFIER = "transactionOverrideCSVInputFileType";
 
     public static final String RECORD_SOURCE_KFS = "KFS";
     public static final String TAX_TYPE_1099 = "1099";
     public static final String TAX_TYPE_1042S = "1042S";
+    public static final String TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY = "1042S_CREATE_TRANSACTION_ROWS_ONLY";
     public static final String TAX_SOURCE_DV = "DV";
     public static final String TAX_SOURCE_PDP = "PDP";
     public static final String TAX_SOURCE_PRNC = "PRNC";
@@ -57,6 +59,15 @@ public final class CUTaxConstants {
     public static final String TAX_1042S_TRANSACTION_DETAILS_OUTPUT_FILE_PREFIX = "irs_1042s_transaction_details_";
     public static final String TAX_OUTPUT_FILE_SUFFIX = ".txt";
 
+    public static class Sprintax {
+        public static final int MAX_FIELD_LENGTH = 90;
+
+        public static final String PAYMENTS_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_payments_";
+        public static final String BIO_OUTPUT_FILE_PREFIX = "irs_1042s_sprintax_bio";
+        public static final String TAX_CSV_FILE_SUFFIX = ".csv";
+
+    }
+
     public static final String FORM_1042S_GROSS_BOX = "GROSS";
     public static final String FORM_1042S_FED_TAX_WITHHELD_BOX = "FTW";
     public static final String FORM_1042S_STATE_INC_TAX_WITHHELD_BOX = "SITW";
@@ -68,6 +79,7 @@ public final class CUTaxConstants {
     // Constants pertaining to number and date formatting for output.
     public static final String DEFAULT_AMOUNT_FORMAT = "#########.##";
     public static final String DEFAULT_PERCENT_FORMAT = "00.00";
+    public static final String DEFAULT_SPRINTAX_PERCENT_FORMAT = "00.##";
     public static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
     public static final String FILENAME_SUFFIX_DATE_FORMAT = "_MMddyyyy_HH_mm_ss_SSS";
     public static final int DEFAULT_AMOUNT_MAX_INT_DIGITS = 9;
@@ -92,6 +104,7 @@ public final class CUTaxConstants {
         public static final String TAX_OUTPUT_EIN = "tax.output.ein";
         public static final String TAX_OUTPUT_SCRUBBED = "tax.output.scrubbed";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_OUTPUT_DEFINITION = "message.batchUpload.title.taxOutputDefinition";
+        public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_OUTPUT_DEFINITION_V2 = "message.batchUpload.title.taxOutputDefinitionV2";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TAX_DATA_DEFINITION = "message.batchUpload.title.taxDataDefinition";
         public static final String MESSAGE_BATCH_UPLOAD_TITLE_TRANSACTION_OVERRIDE = "message.batchUpload.title.transactionOverride";
         public static final String ERROR_BATCH_UPLOAD_INVALID_TRANSACTION_OVERRIDES = "error.batchUpload.invalidTransactionOverrides";

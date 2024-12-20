@@ -3,6 +3,8 @@ package edu.cornell.kfs.tax.batch;
 import org.kuali.kfs.module.purap.PurapPropertyConstants;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 
+import edu.cornell.kfs.tax.CUTaxConstants;
+
 /**
  * Helper class containing tax-batch-related constants.
  */
@@ -65,6 +67,11 @@ public final class CUTaxBatchConstants {
         STATE,
         ZIP_CODE,
         PHONE_NUMBER;
+    }
+
+    public enum TaxOutputFieldType {
+        STATIC,
+        DERIVED
     }
 
     /**
@@ -513,6 +520,29 @@ public final class CUTaxBatchConstants {
         
         private DerivedFieldNames() {
             throw new UnsupportedOperationException("do not call DerivedFieldNames constructor");
+        }
+    }
+
+    public static final class TaxFileSections {
+        public static final String SPRINTAX_BIOGRAPHIC_ROW_1042S = "Sprintax_Bio_Row_1042S";
+        public static final String SPRINTAX_PAYMENT_ROW_1042S = "Sprintax_Payment_Row_1042S";
+    }
+
+    public enum TaxBoxType1042S {
+        GROSS_AMOUNT(CUTaxConstants.FORM_1042S_GROSS_BOX),
+        FEDERAL_TAX_WITHHELD_AMOUNT(CUTaxConstants.FORM_1042S_FED_TAX_WITHHELD_BOX),
+        STATE_INCOME_TAX_WITHHELD_AMOUNT(CUTaxConstants.FORM_1042S_STATE_INC_TAX_WITHHELD_BOX),
+        UNKNOWN(CUTaxConstants.TAX_1042S_UNKNOWN_BOX_KEY);
+
+        public final String stringValue;
+
+        private TaxBoxType1042S(final String stringValue) {
+            this.stringValue = stringValue;
+        }
+
+        @Override
+        public String toString() {
+            return stringValue;
         }
     }
 

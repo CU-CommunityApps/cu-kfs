@@ -86,6 +86,18 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
                     CUTaxKeyConstants.TAX_FORMAT_1042S_PREFIX + CUTaxKeyConstants.TAX_FORMAT_SUMMARY_SUFFIX, reportYear);
             processTransactionRows(processingStartDate, summary, TransactionRowPrintProcessor.For1042S.class, tempDefinition);
             
+        } else if (StringUtils.equals(taxType, CUTaxConstants.TAX_TYPE_1042S_CREATE_TRANSACTION_ROWS_ONLY)) {
+            /*
+             * NOTE: This is a temporary duplication of only the create-transaction-rows section
+             * of the 1042-S processing above, to allow for rewriting the process-transaction-rows logic
+             * separately from the create-transaction-rows logic.
+             */
+            Transaction1042SSummary summary = new Transaction1042SSummary(reportYear, startDate, endDate, vendorForeign,
+                    taxProcessingService.getDataDefinition(CUTaxKeyConstants.TAX_TABLE_1042S_PREFIX, reportYear).getDataRowsAsMap());
+            getJdbcTemplate().update(TaxSqlUtils.getRawTransactionDetailDeleteSql(taxType, summary.rawTransactionDetailRow), Integer.valueOf(reportYear));
+            getJdbcTemplate().update(TaxSqlUtils.getTransactionDetailDeleteSql(taxType, summary.transactionDetailRow), Integer.valueOf(reportYear));
+            stats = createTransactionRows(summary, Arrays.<Class<? extends TransactionRowBuilder<Transaction1042SSummary>>>asList(
+                    TransactionRowPdpBuilder.For1042S.class, TransactionRowDvBuilder.For1042S.class, TransactionRowPRNCBuilder.For1042S.class));
         } else {
             // Invalid tax processing type was given.
             throw new IllegalArgumentException("Unrecognized tax type");
@@ -211,7 +223,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
      * containing numeric statistics pertaining to the various tax data sources.
      * NOTE: Each builder class must have a default constructor!
      */
-    private <T extends TransactionDetailSummary> List<EnumMap<TaxStatType,Integer>> createTransactionRows(
+    protected <T extends TransactionDetailSummary> List<EnumMap<TaxStatType,Integer>> createTransactionRows(
             final T summary, final List<Class<? extends TransactionRowBuilder<T>>> builderClasses) {
         final TaxProcessingDao currentDao = this;
         
@@ -341,7 +353,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
      * TX_TRANSACTION_DETAIL_T and uses them to print tax rows to the output file(s) accordingly. 
      * Returns an EnumMap containing numeric statistics pertaining to the transaction row processing.
      */
-    private <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processTransactionRows(final java.util.Date processingStartDate,
+    protected <T extends TransactionDetailSummary> EnumMap<TaxStatType,Integer> processTransactionRows(final java.util.Date processingStartDate,
             final T summary, final Class<? extends TransactionRowProcessor<T>> processorClazz, final TaxOutputDefinition outputDefinition) {
         // Create the object that will handle the processing of the transaction row data.
         final TransactionRowProcessor<T> processor = TransactionRowProcessorBuilder.createBuilder().buildNewProcessor(
@@ -454,7 +466,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
      * Index 1: The value's JDBC type (optional for String, int/Integer, or java.sql.Date values)
      * Index 2: The scale or stream length of the value (optional)
      */
-    private void setParameters(PreparedStatement pStatement, Object[][] args) throws SQLException {
+    protected void setParameters(PreparedStatement pStatement, Object[][] args) throws SQLException {
         int i = 1;
         for (Object[] arg : args) {
             if (arg.length == 0) {
@@ -491,7 +503,7 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
     /*
      * Helper method for printing the numeric statistics collected from the tax processing.
      */
-    private void printStatistics(List<EnumMap<TaxStatType,Integer>> stats) {
+    protected void printStatistics(List<EnumMap<TaxStatType,Integer>> stats) {
         for (TaxStatType statType : TaxStatType.values()) {
             int total = 0;
             boolean statDefined = false;
@@ -516,6 +528,10 @@ public class TaxProcessingDaoJdbc extends PlatformAwareDaoBaseJdbc implements Ta
 
     public void setReportsDirectory(String reportsDirectory) {
         this.reportsDirectory = reportsDirectory;
+    }
+
+    protected String getReportsDirectory() {
+        return reportsDirectory;
     }
 
     public void setConfigurationService(ConfigurationService configurationService) {

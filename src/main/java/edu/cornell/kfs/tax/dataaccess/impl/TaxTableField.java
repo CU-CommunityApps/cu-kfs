@@ -4,12 +4,12 @@ package edu.cornell.kfs.tax.dataaccess.impl;
  * Helper class containing data about how DB-backed fields map to database columns,
  * or basic info concerning non-DB-backed fields. Is an immutable class.
  */
-final class TaxTableField {
+public final class TaxTableField {
 
     // The property name; either "FullyQualifiedObjectClass::propName" for DB-backed fields, or an alias for non-DB-backed fields.
-    final String propertyName;
+    public final String propertyName;
     // The fully-qualified column name for DB-backed fields.
-    final String columnName;
+    public final String columnName;
     // The ResultSet column index for DB-backed fields.
     final int index;
     // The JDBC type of the field.

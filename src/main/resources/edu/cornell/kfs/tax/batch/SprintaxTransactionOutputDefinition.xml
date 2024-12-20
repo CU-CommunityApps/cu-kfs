@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxOutputDefinition xmlns="http://www.kuali.org/kfs/tax/taxOutputDefinition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <!-- Mappings to TransactionRowOutput -->
+    <section length="3518" hasExactLength="false" hasSeparators="true" separator=",">
+        <field name="Field1" length="90" type="DETAIL" value="vendorEmailAddress" /> <!-- E-mail -->
+        <field name="Field2" length="90" type="DETAIL" value="payeeId" /> <!-- Student number -->
+        <field name="Field3" length="90" type="DETAIL" value="transactionDetailId" /> <!-- UNIQUE FORM IDENTIFIER -->
+        <field name="Field4" length="90" type="STATIC" value="" />
+        <field name="Field5" length="90" type="STATIC" value="" />
+        <field name="Field6" length="90" type="DETAIL" value="incomeCode" />  <!-- Income Code -->
+        <field name="Field7" length="90" type="DETAIL" value="netPaymentAmount" />  <!-- Gross Income (todo derived?) -->
+        <field name="Field8" length="90" type="DETAIL" value="vendorTypeCode" /> <!-- Chapter 3 Indicator -->
+        <field name="Field9" length="90" type="DETAIL" value="incomeTaxTreatyExemptIndicator" /> <!-- Chapter 3 Exemption Code -->
+        <field name="Field10" length="90" type="STATIC" value="" /><!-- todo Chapter 3 Tax Rate => chapter3TaxRate -->
+        <field name="Field11" length="90" type="DETAIL" value="vendorChapter4StatusCode" /> <!-- Chapter 4 Exemption Code  incomeTaxTreatyExemptIndicator? -->
+        <field name="Field12" length="90" type="STATIC" value="00.00" /> <!-- Chapter 4 Tax Rate -->
+        <field name="Field13" length="90" type="STATIC" value="0" /> <!-- Withholding Allowance -->
+        <field name="Field14" length="90" type="DETAIL" value="netPaymentAmount" /> <!-- Net Income -->
+        <field name="Field15" length="90" type="DETAIL" value="federalIncomeTaxPercent" /> <!-- Federal Tax Withheld -->
+        <field name="Field16" length="90" type="STATIC" value="" /> <!-- Check if tax not deposited with IRS pursuant to escrow prodecure -->
+        <field name="Field17" length="90" type="STATIC" value="" />
+        <field name="Field18" length="90" type="STATIC" value="" />
+        <field name="Field19" length="90" type="STATIC" value="" />
+        <field name="Field20" length="90" type="STATIC" value="" /> <!-- Total withholding credit -->
+        <field name="Field21" length="90" type="STATIC" value="" />
+        <field name="Field22" length="90" type="STATIC" value="" /> <!-- Withholding agent's GIIN -->
+        <field name="Field23" length="90" type="STATIC" value="" /> <!-- Recipient Chapter 3 status code -->
+        <field name="Field24" length="90" type="DETAIL" value="vendorChapter4StatusCode" /> <!-- Recipient Chapter 4 status code -->
+        <field name="Field25" length="90" type="DETAIL" value="vendorGIIN" /> <!-- Recipient's GIIN -->
+        <field name="Field26" length="90" type="STATIC" value="" /> <!-- LOB code -->
+        <field name="Field27" length="90" type="DETAIL" value="accountNumber" />  <!-- Recipient's account number -->
+        <field name="Field28" length="90" type="STATIC" value="" />
+        <field name="Field29" length="90" type="STATIC" value="" />
+        <field name="Field30" length="90" type="STATIC" value="" /> <!-- Pro-rata Reporting -->
+        <field name="Field31" length="90" type="STATIC" value="" />
+        <field name="Field32" length="90" type="STATIC" value="" />
+        <field name="Field33" length="90" type="STATIC" value="" /> <!-- Intermediary's or FTE's Chapter 4 Status Code -->
+        <field name="Field34" length="90" type="STATIC" value="" />
+        <field name="Field35" length="90" type="STATIC" value="" />
+        <field name="Field36" length="90" type="STATIC" value="" />
+        <field name="Field37" length="90" type="STATIC" value="" /> <!-- Recipient's Foreign Tax I.D. Number -->
+        <field name="Field38" length="90" type="STATIC" value="" /> <!-- NQI/FLW-THR/PTP Address Line -->
+        <field name="Field39" length="90" type="STATIC" value="" /> <!-- NQI/FLW-THR/PTP City -->
+        <field name="Field40" length="90" type="STATIC" value="" /> <!-- Payer's Name -->
+        <field name="Field41" length="90" type="DERIVED" value="ssn" /> <!-- Payer's TIN -->
+        <field name="Field42" length="90" type="STATIC" value="" /> <!-- Payer's GIIN -->
+        <field name="Field43" length="90" type="STATIC" value="" /> <!-- Payer's Chapter 3 Status Code -->
+        <field name="Field44" length="90" type="STATIC" value="" /> <!-- Payer's Chapter 4 Status Code -->
+        <field name="Field45" length="90" type="STATIC" value="" /> <!-- State income tax withheld -->
+        <field name="Field46" length="90" type="STATIC" value="" /> <!-- Payer's State Tax Number -->
+        <field name="Field47" length="90" type="STATIC" value="" /> <!-- Name of State -->
+    </section>
+</taxOutputDefinition>
