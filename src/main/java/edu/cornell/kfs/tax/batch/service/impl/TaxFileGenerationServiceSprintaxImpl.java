@@ -31,8 +31,9 @@ import edu.cornell.kfs.tax.CUTaxConstants.TaxCommonParameterNames;
 import edu.cornell.kfs.tax.CUTaxKeyConstants;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxBoxType1042S;
 import edu.cornell.kfs.tax.batch.CUTaxBatchConstants.TaxFileSections;
+import edu.cornell.kfs.tax.batch.SprintaxStatistics;
+import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxColumns.TransactionDetailColumn;
-import edu.cornell.kfs.tax.batch.TaxOutputConfig;
 import edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType;
 import edu.cornell.kfs.tax.batch.TaxRowClusionBuilderBase.ClusionResult;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
@@ -70,11 +71,11 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     private boolean scrubOutput;
 
     @Override
-    public TaxStatistics generateFiles(final TaxOutputConfig config) throws IOException, SQLException {
+    public TaxStatistics generateFiles(final TaxBatchConfig config) throws IOException, SQLException {
         return transactionDetailProcessorDao.processTransactionDetails(config, this::generateFilesFromTransactions);
     }
 
-    private TaxStatistics generateFilesFromTransactions(final TaxOutputConfig config,
+    private TaxStatistics generateFilesFromTransactions(final TaxBatchConfig config,
             final TransactionDetailExtractor rowExtractor) throws Exception {
         final Map<String, String> transactionOverrides = getTransactionOverrides(config);
         final TaxOutputDefinition bioFileDefinition = parseTaxOutputDefinition(
@@ -93,7 +94,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         ) {
             final SprintaxHelper helper = new SprintaxHelper(config, rowExtractor, bioFileWriter, paymentsFileWriter,
                     transactionOverrides);
-            return generateSprintaxFiles(helper);
+            return extractAndProcessTransactions(helper);
         }
     }
 
@@ -104,13 +105,13 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         }
     }
 
-    private String createOutputFilePath(final String fileNamePrefix, final TaxOutputConfig config) {
+    private String createOutputFilePath(final String fileNamePrefix, final TaxBatchConfig config) {
         final DateFormat dateFormat = new SimpleDateFormat(CUTaxConstants.FILENAME_SUFFIX_DATE_FORMAT, Locale.US);
         return StringUtils.join(fileOutputDirectory, CUKFSConstants.SLASH,
                 fileNamePrefix, dateFormat.format(config.getProcessingStartDate()), FileExtensions.CSV);
     }
 
-    private Map<String, String> getTransactionOverrides(final TaxOutputConfig config) {
+    private Map<String, String> getTransactionOverrides(final TaxBatchConfig config) {
         final List<TransactionOverride> transactionOverrides = transactionOverrideService.getTransactionOverrides(
                 CUTaxConstants.TAX_TYPE_1042S, config.getStartDate(), config.getEndDate());
         return TaxUtils.buildTransactionOverridesMap(transactionOverrides);
@@ -118,8 +119,11 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
 
 
-    private TaxStatistics generateSprintaxFiles(final SprintaxHelper helper) throws IOException, SQLException {
+    private TaxStatistics extractAndProcessTransactions(final SprintaxHelper helper) throws IOException, SQLException {
         SprintaxInfo1042S currentInfo = null;
+
+        helper.bioFileWriter.writeHeaderRow(TaxFileSections.SPRINTAX_BIOGRAPHIC_ROW_1042S);
+        helper.paymentsFileWriter.writeHeaderRow(TaxFileSections.SPRINTAX_PAYMENT_ROW_1042S);
 
         while (helper.rowExtractor.moveToNextRow()) {
             final TransactionDetail currentRow = helper.rowExtractor.getCurrentRow();
@@ -338,7 +342,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         final TaxBoxType1042S taxBoxType = determineTaxBoxType(currentRow, incomeClassCode, helper);
         Validate.validState(taxBoxType != null, "Tax Box Type cannot be null; it should be UNKNOWN if undetermined");
 
-        ClusionResult rowClusionResult = checkForExclusions(currentInfo, currentRow, helper, taxBoxType);
+        final ClusionResult rowClusionResult = checkForExclusions(currentInfo, currentRow, helper, taxBoxType);
         final TaxBoxType1042S taxBoxOverride = findTaxBoxOverride(currentRow, helper);
         final TaxBoxType1042S taxBoxToUse = determineTaxBoxToUse(taxBoxType, taxBoxOverride, rowClusionResult);
         final TaxBoxType1042S overriddenTaxBox = (taxBoxOverride != null) ? taxBoxType : null;
@@ -374,15 +378,15 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     private TaxBoxType1042S determineTaxBoxType(final TransactionDetail currentRow, final String incomeClassCode,
             final SprintaxHelper helper) {
         if (StringUtils.isNotBlank(incomeClassCode)) {
-            helper.increment(TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED);
+            helper.increment(TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED, currentRow.getDocumentType());
             return TaxBoxType1042S.GROSS_AMOUNT;
         } else if (multiValueParameterContains(Tax1042SParameterNames.FEDERAL_TAX_WITHHELD_VALID_OBJECT_CODES,
                 currentRow.getFinObjectCode())) {
-            helper.increment(TaxStatType.NUM_DETERMINED_FED_TAX_WITHHELD_INCOME_CODES);
+            helper.increment(TaxStatType.NUM_FTW_AMOUNTS_DETERMINED, currentRow.getDocumentType());
             return TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT;
         } else if (multiValueParameterContains(Tax1042SParameterNames.STATE_INCOME_TAX_WITHHELD_VALID_OBJECT_CODES,
                 currentRow.getFinObjectCode())) {
-            helper.increment(TaxStatType.NUM_DETERMINED_STATE_INC_TAX_WITHHELD_INCOME_CODES);
+            helper.increment(TaxStatType.NUM_SITW_AMOUNTS_DETERMINED, currentRow.getDocumentType());
             return TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT;
         } else {
             return TaxBoxType1042S.UNKNOWN;
@@ -393,7 +397,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             final SprintaxHelper helper, final TaxBoxType1042S taxBoxType) throws SQLException {
         final String objectCode = currentRow.getFinObjectCode();
         final TaxRowClusionBuilderSprintaxImpl clusionBuilder = new TaxRowClusionBuilderSprintaxImpl(
-                helper, taxParameterService);
+                helper, taxParameterService, currentRow.getDocumentType());
 
         if (taxBoxType != TaxBoxType1042S.UNKNOWN) {
             clusionBuilder.appendCheckForVendorType(currentInfo.getVendorTypeCode())
@@ -476,6 +480,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             return taxBox;
         }
     }
+
+
 
     private Map<TransactionDetailColumn, String> generateUpdatedTransactionDetailFieldValues(
             final SprintaxInfo1042S currentInfo, final TaxBoxType1042S taxBox,
@@ -743,14 +749,14 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
 
     private static final class SprintaxHelper implements TaxStatisticsHandler {
-        private final TaxOutputConfig config;
+        private final TaxBatchConfig config;
         private final TransactionDetailExtractor rowExtractor;
         private final TaxFileRowWriterSprintaxBioFileImpl bioFileWriter;
         private final TaxFileRowWriterSprintaxPaymentsFileImpl paymentsFileWriter;
         private final Map<String, String> transactionOverrides;
         private final TaxStatistics statistics;
 
-        private SprintaxHelper(final TaxOutputConfig config, final TransactionDetailExtractor rowExtractor,
+        private SprintaxHelper(final TaxBatchConfig config, final TransactionDetailExtractor rowExtractor,
                 final TaxFileRowWriterSprintaxBioFileImpl bioFileWriter,
                 final TaxFileRowWriterSprintaxPaymentsFileImpl paymentsFileWriter,
                 final Map<String, String> transactionOverrides) {
@@ -759,12 +765,17 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             this.bioFileWriter = bioFileWriter;
             this.paymentsFileWriter = paymentsFileWriter;
             this.transactionOverrides = transactionOverrides;
-            this.statistics = new TaxStatistics();
+            this.statistics = new SprintaxStatistics();
         }
 
         @Override
         public void increment(final TaxStatType entryType) {
             statistics.increment(entryType);
+        }
+
+        @Override
+        public void increment(final TaxStatType baseEntryType, final String documentType) {
+            statistics.increment(baseEntryType, documentType);
         }
     }
 

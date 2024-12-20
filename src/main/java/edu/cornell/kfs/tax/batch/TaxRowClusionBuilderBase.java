@@ -25,18 +25,21 @@ public class TaxRowClusionBuilderBase {
     protected final TaxStatisticsHandler statsHandler;
     protected final TaxParameterService taxParameterService;
     protected final String parameterComponent;
+    protected final String transactionDocType;
 
     protected ClusionResult resultOfPreviousCheck;
     protected ClusionResult cumulativeResult;
 
     protected TaxRowClusionBuilderBase(final TaxStatisticsHandler statsHandler,
-            final TaxParameterService taxParameterService, final String parameterComponent) {
+            final TaxParameterService taxParameterService, final String parameterComponent,
+            final String transactionDocType) {
         Validate.notNull(statsHandler, "statsHandler cannot be null");
         Validate.notNull(taxParameterService, "taxParameterService cannot be null");
         Validate.notBlank(parameterComponent, "parameterComponent cannot be blank");
         this.statsHandler = statsHandler;
         this.taxParameterService = taxParameterService;
         this.parameterComponent = parameterComponent;
+        this.transactionDocType = transactionDocType;
         this.resultOfPreviousCheck = ClusionResult.UNKNOWN;
         this.cumulativeResult = ClusionResult.UNKNOWN;
     }
@@ -80,7 +83,7 @@ public class TaxRowClusionBuilderBase {
         if (shouldExclude) {
             resultOfPreviousCheck = ClusionResult.EXCLUDE;
             cumulativeResult = ClusionResult.EXCLUDE;
-            statsHandler.increment(statToUpdateIfExcluded);
+            statsHandler.increment(statToUpdateIfExcluded, transactionDocType);
         } else {
             resultOfPreviousCheck = ClusionResult.INCLUDE;
         }
@@ -125,12 +128,12 @@ public class TaxRowClusionBuilderBase {
             if (helper.inclusionsOverridePriorExclusions) {
                 cumulativeResult = ClusionResult.INCLUDE;
             }
-            statsHandler.increment(helper.taxStatToUpdateIfIncluded);
+            statsHandler.increment(helper.taxStatToUpdateIfIncluded, transactionDocType);
         } else if (result == ClusionResult.EXCLUDE) {
             cumulativeResult = ClusionResult.EXCLUDE;
-            statsHandler.increment(helper.taxStatToUpdateIfExcluded);
+            statsHandler.increment(helper.taxStatToUpdateIfExcluded, transactionDocType);
         } else {
-            statsHandler.increment(helper.taxStatToUpdateForUndeterminedClusion);
+            statsHandler.increment(helper.taxStatToUpdateForUndeterminedClusion, transactionDocType);
         }
     }
 

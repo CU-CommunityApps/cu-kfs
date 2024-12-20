@@ -62,12 +62,6 @@
         <property name="taxProcessingDao" ref="taxProcessingDao" />
     </bean>
 
-    <bean id="sprintaxProcessingService" class="edu.cornell.kfs.tax.service.impl.SprintaxProcessingServiceImpl">
-        <property name="taxOutputDefinitionFileType" ref="taxOutputDefinitionFileType" />
-        <property name="taxDataDefinitionFileType" ref="taxDataDefinitionFileType" />
-        <property name="sprintaxProcessingDao" ref="sprintaxProcessingDao" />
-    </bean>
-
     <bean id="taxOutputDefinitionFileType" parent="taxOutputDefinitionFileType-parentBean" />
     <bean id="taxOutputDefinitionFileType-parentBean" abstract="true" class="edu.cornell.kfs.tax.batch.TaxOutputDefinitionFileType">
         <property name="directoryPath">
@@ -101,13 +95,6 @@
         <property name="configurationService" ref="configurationService"/>
     </bean>
 
-    <bean id="sprintaxProcessingDao" class="edu.cornell.kfs.tax.dataaccess.impl.SprintaxProcessingDaoJdbc" parent="platformAwareDaoJdbc">
-        <property name="reportsDirectory">
-            <value>${reports.directory}/tax</value>
-        </property>
-        <property name="configurationService" ref="configurationService"/>
-    </bean>
-
     <bean id="taxTableMetadataService" class="edu.cornell.kfs.tax.dataaccess.impl.TaxTableMetadataServiceOjbImpl" />
     
     <bean id="paymentReason1099BoxService" parent="paymentReason1099BoxService-parentBean" />
@@ -119,6 +106,60 @@
     <bean id="documentType1099BoxService-parentBean" abstract="true" class="edu.cornell.kfs.tax.service.impl.DocumentType1099BoxServiceImpl">
         <property name="parameterService" ref="parameterService" />
     </bean>
+
+    <bean id="taxParameterService" parent="taxParameterService-parentBean"/>
+    <bean id="taxParameterService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TaxParameterServiceImpl"
+          p:parameterService-ref="parameterService"/>
+
+    <bean id="transactionOverrideService" parent="transactionOverrideService-parentBean"/>
+    <bean id="transactionOverrideService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TransactionOverrideServiceImpl"
+          p:criteriaLookupService-ref="criteriaLookupService"/>
+
+    <bean id="transactionDetailProcessorDao" parent="transactionDetailProcessorDao-parentBean"/>
+    <bean id="transactionDetailProcessorDao-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.dataaccess.impl.TransactionDetailProcessorDaoJdbcImpl"
+          parent="platformAwareDaoJdbc"
+          p:encryptionService-ref="encryptionService"/>
+
+    <bean id="taxOutputDefinitionV2FileType" parent="taxOutputDefinitionV2FileType-parentBean"/>
+    <bean id="taxOutputDefinitionV2FileType-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.batch.TaxOutputDefinitionV2FileType"
+          p:directoryPath="${staging.directory}/tax"
+          p:fileExtension="xml"
+          p:fileNamePrefix="NOT_USED_"
+          p:schemaLocation="classpath:edu/cornell/kfs/tax/batch/taxOutputDefinitionV2.xsd"
+          p:dateTimeService-ref="dateTimeService"/>
+
+    <bean id="sprintaxFileGenerationService" parent="sprintaxFileGenerationService-parentBean"/>
+    <bean id="sprintaxFileGenerationService-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TaxFileGenerationServiceSprintaxImpl"
+          p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"
+          p:taxOutputDefinitionV2FileType-ref="taxOutputDefinitionV2FileType"
+          p:transactionOverrideService-ref="transactionOverrideService"
+          p:configurationService-ref="configurationService"
+          p:taxParameterService-ref="taxParameterService"
+          p:sprintaxBioFileDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/SprintaxBioOutputDefinition.xml"
+          p:sprintaxPaymentsFileDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/SprintaxPaymentOutputDefinition.xml"
+          p:fileOutputDirectory="{staging.directory}/tax/sprintax"
+          p:payerEIN="${tax.output.ein}"
+          p:scrubOutput="${tax.output.scrubbed}"/>
+
+    <bean id="taxProcessingV2Service" parent="taxProcessingV2Service-parentBean"/>
+    <bean id="taxProcessingV2Service-parentBean"
+          abstract="true"
+          class="edu.cornell.kfs.tax.service.impl.TaxProcessingV2ServiceImpl"
+          p:legacyTaxProcessingDao-ref="taxProcessingDao"
+          p:taxFileGenerationServiceFor1042S-ref="sprintaxFileGenerationService"
+          p:taxParameterService-ref="taxParameterService"
+          p:configurationService-ref="configurationService"
+          p:dateTimeService-ref="dateTimeService"/>
 
     <!-- Batch Jobs -->
 
@@ -134,14 +175,15 @@
         </property>
     </bean>
 
-    <bean id="sprintaxProcessingStep" class="edu.cornell.kfs.tax.batch.SprintaxProcessingStep" parent="step">
-        <property name="sprintaxProcessingService" ref="sprintaxProcessingService" />
-    </bean>
+    <bean id="sprintaxProcessingStep"
+          class="edu.cornell.kfs.tax.batch.SprintaxProcessingStep"
+          parent="step"
+          p:taxProcessingV2Service-ref="taxProcessingV2Service"/>
 
     <bean id="sprintaxProcessingJob" parent="scheduledJobDescriptor">
         <property name="steps">
             <list>
-                <ref bean="sprintaxProcessingStep" />
+                <ref bean="sprintaxProcessingStep"/>
             </list>
         </property>
     </bean>

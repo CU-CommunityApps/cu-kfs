@@ -29,11 +29,11 @@ import edu.cornell.kfs.sys.dataaccess.PreparedStatementCreatorForUpdatableResult
 import edu.cornell.kfs.sys.util.CuSqlChunk;
 import edu.cornell.kfs.sys.util.CuSqlQuery;
 import edu.cornell.kfs.tax.CUTaxConstants;
+import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxColumns.NoteColumn;
 import edu.cornell.kfs.tax.batch.TaxColumns.TransactionDetailColumn;
 import edu.cornell.kfs.tax.batch.TaxColumns.VendorAddressColumn;
 import edu.cornell.kfs.tax.batch.TaxColumns.VendorDetailColumn;
-import edu.cornell.kfs.tax.batch.TaxOutputConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailExtractor;
 import edu.cornell.kfs.tax.batch.dataaccess.TransactionDetailProcessorDao;
@@ -51,8 +51,8 @@ public class TransactionDetailProcessorDaoJdbcImpl extends PlatformAwareDaoBaseJ
     private EncryptionService encryptionService;
 
     @Override
-    public TaxStatistics processTransactionDetails(final TaxOutputConfig config,
-            final FailableBiFunction<TaxOutputConfig, TransactionDetailExtractor, TaxStatistics, Exception> handler)
+    public TaxStatistics processTransactionDetails(final TaxBatchConfig config,
+            final FailableBiFunction<TaxBatchConfig, TransactionDetailExtractor, TaxStatistics, Exception> handler)
                     throws SQLException {
         final CuSqlQuery query = createTransactionDetailQuery(config);
         final PreparedStatementCreator statementCreator = new PreparedStatementCreatorForUpdatableResultSets(
@@ -75,7 +75,7 @@ public class TransactionDetailProcessorDaoJdbcImpl extends PlatformAwareDaoBaseJ
         });
     }
 
-    private CuSqlQuery createTransactionDetailQuery(final TaxOutputConfig config) {
+    private CuSqlQuery createTransactionDetailQuery(final TaxBatchConfig config) {
         switch (config.getTaxType()) {
             case CUTaxConstants.TAX_TYPE_1099 :
                 throw new RuntimeException("This implementation currently does not support 1099 processing");
@@ -88,7 +88,7 @@ public class TransactionDetailProcessorDaoJdbcImpl extends PlatformAwareDaoBaseJ
         }
     }
 
-    private CuSqlQuery createTransactionDetailQueryFor1042S(final TaxOutputConfig config) {
+    private CuSqlQuery createTransactionDetailQueryFor1042S(final TaxBatchConfig config) {
         return new CuSqlChunk()
                 .append("SELECT ").append(getCommaSeparatedListOfColumnSelectors(TransactionDetailColumn.class))
                 .append(" FROM KFS.TX_TRANSACTION_DETAIL_T")

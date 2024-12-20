@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.function.FailableBiFunction;
 
-import edu.cornell.kfs.tax.batch.TaxOutputConfig;
+import edu.cornell.kfs.tax.batch.TaxBatchConfig;
 import edu.cornell.kfs.tax.batch.TaxStatistics;
 import edu.cornell.kfs.tax.batch.dto.VendorQueryResults;
 import edu.cornell.kfs.tax.businessobject.NoteLite;
@@ -13,8 +13,8 @@ import edu.cornell.kfs.tax.businessobject.VendorAddressLite;
 
 public interface TransactionDetailProcessorDao {
 
-    TaxStatistics processTransactionDetails(final TaxOutputConfig config,
-            final FailableBiFunction<TaxOutputConfig, TransactionDetailExtractor, TaxStatistics, Exception> handler)
+    TaxStatistics processTransactionDetails(final TaxBatchConfig config,
+            final FailableBiFunction<TaxBatchConfig, TransactionDetailExtractor, TaxStatistics, Exception> handler)
                     throws SQLException;
 
     VendorQueryResults getVendor(final Integer vendorHeaderId, final Integer vendorDetailId) throws SQLException;

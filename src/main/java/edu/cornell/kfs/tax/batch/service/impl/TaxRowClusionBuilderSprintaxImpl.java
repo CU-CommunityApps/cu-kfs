@@ -19,8 +19,8 @@ import edu.cornell.kfs.tax.service.TaxParameterService;
 public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
 
     public TaxRowClusionBuilderSprintaxImpl(final TaxStatisticsHandler statsHandler,
-            final TaxParameterService taxParameterService) {
-        super(statsHandler, taxParameterService, CUTaxConstants.TAX_1042S_PARM_DETAIL);
+            final TaxParameterService taxParameterService, final String transactionDocType) {
+        super(statsHandler, taxParameterService, CUTaxConstants.TAX_1042S_PARM_DETAIL, transactionDocType);
     }
 
     public TaxRowClusionBuilderSprintaxImpl appendCheckForVendorType(final String vendorTypeCode) {
@@ -58,14 +58,14 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
 
     public TaxRowClusionBuilderSprintaxImpl appendCheckForDocumentNotes(final List<NoteLite> documentNotes) {
         if (CollectionUtils.isNotEmpty(documentNotes)) {
-            statsHandler.increment(TaxStatType.NUM_DOC_NOTE_SETS_RETRIEVED);
+            statsHandler.increment(TaxStatType.NUM_DOC_NOTE_SETS_RETRIEVED, transactionDocType);
             final Stream<String> noteTextStream = documentNotes.stream().map(NoteLite::getNoteText);
             checkAgainstExcludedPrefixes(
                     Tax1042SParameterNames.EXCLUDED_DOC_NOTE_TEXT, noteTextStream,
                     TaxStatType.NUM_DOC_NOTES_EXCLUSIONS_DETERMINED);
         } else {
             resultOfPreviousCheck = ClusionResult.INCLUDE;
-            statsHandler.increment(TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED);
+            statsHandler.increment(TaxStatType.NUM_DOC_NOTE_SETS_NOT_RETRIEVED, transactionDocType);
         }
         return this;
     }
@@ -121,11 +121,11 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
             resultOfPreviousCheck = ClusionResult.EXCLUDE;
             cumulativeResult = ClusionResult.EXCLUDE;
             if (taxBoxType == TaxBoxType1042S.GROSS_AMOUNT) {
-                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_GROSS_AMOUNTS);
+                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_GROSS_AMOUNTS, transactionDocType);
             } else if (taxBoxType == TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT) {
-                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_FTW_AMOUNTS);
+                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_FTW_AMOUNTS, transactionDocType);
             } else if (taxBoxType == TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT) {
-                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS);
+                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_EXCLUDED_SITW_AMOUNTS, transactionDocType);
             }
         } else {
             resultOfPreviousCheck = ClusionResult.INCLUDE;
@@ -140,11 +140,11 @@ public class TaxRowClusionBuilderSprintaxImpl extends TaxRowClusionBuilderBase {
             resultOfPreviousCheck = ClusionResult.EXCLUDE;
             cumulativeResult = ClusionResult.EXCLUDE;
             if (taxBoxType == TaxBoxType1042S.GROSS_AMOUNT) {
-                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_GROSS_AMOUNTS);
+                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_GROSS_AMOUNTS, transactionDocType);
             } else if (taxBoxType == TaxBoxType1042S.FEDERAL_TAX_WITHHELD_AMOUNT) {
-                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_FTW_AMOUNTS);
+                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_FTW_AMOUNTS, transactionDocType);
             } else if (taxBoxType == TaxBoxType1042S.STATE_INCOME_TAX_WITHHELD_AMOUNT) {
-                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS);
+                statsHandler.increment(TaxStatType.NUM_INCOME_CODE_SUBTYPE_EXCLUDED_SITW_AMOUNTS, transactionDocType);
             }
         } else {
             resultOfPreviousCheck = ClusionResult.INCLUDE;

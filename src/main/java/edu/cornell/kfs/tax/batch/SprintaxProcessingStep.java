@@ -2,25 +2,22 @@ package edu.cornell.kfs.tax.batch;
 
 import java.util.Date;
 
-import edu.cornell.kfs.tax.service.SprintaxProcessingService;
 import org.kuali.kfs.sys.batch.AbstractStep;
 
-import edu.cornell.kfs.tax.service.TaxProcessingService;
+import edu.cornell.kfs.tax.service.TaxProcessingV2Service;
 
-/**
- * Batch step that performs 1042S tax processing for Sprintax in a given year (or date range within a year).
- */
 public class SprintaxProcessingStep extends AbstractStep {
 
-    private SprintaxProcessingService sprintaxProcessingService;
+    private TaxProcessingV2Service taxProcessingV2Service;
 
     @Override
-    public boolean execute(String jobName, Date jobRunDate) throws InterruptedException {
-        sprintaxProcessingService.doTaxProcessing(jobRunDate);
+    public boolean execute(final String jobName, final Date jobRunDate) throws InterruptedException {
+        taxProcessingV2Service.performTaxProcessingFor1042S(jobRunDate);
         return true;
     }
 
-    public void setSprintaxProcessingService(SprintaxProcessingService sprintaxProcessingService) {
-        this.sprintaxProcessingService = sprintaxProcessingService;
+    public void setTaxProcessingV2Service(final TaxProcessingV2Service taxProcessingV2Service) {
+        this.taxProcessingV2Service = taxProcessingV2Service;
     }
+
 }
