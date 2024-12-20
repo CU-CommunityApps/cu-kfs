@@ -67,11 +67,11 @@ public abstract class TaxDataExtractorBase<T> implements TaxDataExtractor<T> {
 
     protected KualiDecimal getAsKualiDecimal(final Enum<?> column) throws SQLException {
         final BigDecimal value = resultSet.getBigDecimal(column.name());
-        return new KualiDecimal(value);
+        return (value != null) ? new KualiDecimal(value) : null;
     }
 
     protected KualiInteger getAsKualiInteger(final Enum<?> column) throws SQLException {
-        final Long value = resultSet.getLong(column.name());
+        final long value = resultSet.getLong(column.name());
         return new KualiInteger(value);
     }
 

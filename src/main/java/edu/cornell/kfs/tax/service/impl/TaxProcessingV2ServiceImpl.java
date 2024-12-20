@@ -113,7 +113,7 @@ public class TaxProcessingV2ServiceImpl implements TaxProcessingV2Service {
             final java.sql.Date startDate = dateTimeService.convertToSqlDate(literalDateValuesIterator.next());
             final java.sql.Date endDate = dateTimeService.convertToSqlDate(literalDateValuesIterator.next());
             final LocalDate localStartDate = startDate.toLocalDate();
-            final LocalDate localEndDate = startDate.toLocalDate();
+            final LocalDate localEndDate = endDate.toLocalDate();
             final int reportYear = localStartDate.getYear();
             Validate.validState(localStartDate.getYear() == localEndDate.getYear(),
                     "Tax processing range cannot span more than one calendar year");

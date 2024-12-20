@@ -10,9 +10,9 @@ import edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition;
 
 public class TaxFileRowWriterSprintaxPaymentsFileImpl extends TaxFileRowWriterSprintaxBase {
 
-    public TaxFileRowWriterSprintaxPaymentsFileImpl(final String outputFileName, final String taxFileType,
+    public TaxFileRowWriterSprintaxPaymentsFileImpl(final String outputFileName,
             final TaxOutputDefinition taxOutputDefinition) throws IOException {
-        super(outputFileName, taxFileType, taxOutputDefinition);
+        super(outputFileName, taxOutputDefinition);
     }
 
     @Override

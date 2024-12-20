@@ -1,5 +1,6 @@
 package edu.cornell.kfs.tax.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,9 @@ public interface TaxParameterService {
 
     String getParameterValueAsString(final String componentCode, final String parameterName);
 
-    Set<String> getParameterValuesAsString(final String componentCode, final String parameterName);
+    Collection<String> getParameterValuesAsString(final String componentCode, final String parameterName);
+
+    Set<String> getParameterValuesSetAsString(final String componentCode, final String parameterName);
 
     Map<String, String> getSubParameters(final String componentCode, final String parameterName);
 

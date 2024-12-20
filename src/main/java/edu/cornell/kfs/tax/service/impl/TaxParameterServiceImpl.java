@@ -37,8 +37,14 @@ public class TaxParameterServiceImpl implements TaxParameterService {
     }
 
     @Override
-    @Cacheable(cacheNames = Parameter.CACHE_NAME, key = "'{CU_getParameterValuesAsString}'+#p0+','+#p1")
-    public Set<String> getParameterValuesAsString(final String componentCode, final String parameterName) {
+    public Collection<String> getParameterValuesAsString(final String componentCode, final String parameterName) {
+        validateParams(componentCode, parameterName);
+        return parameterService.getParameterValuesAsString(CUTaxConstants.TAX_NAMESPACE, componentCode, parameterName);
+    }
+
+    @Override
+    @Cacheable(cacheNames = Parameter.CACHE_NAME, key = "'{CU_getParameterValuesSetAsString}'+#p0+','+#p1")
+    public Set<String> getParameterValuesSetAsString(final String componentCode, final String parameterName) {
         validateParams(componentCode, parameterName);
         final Collection<String> parameterValues = parameterService.getParameterValuesAsString(
                 CUTaxConstants.TAX_NAMESPACE, componentCode, parameterName);
@@ -145,7 +151,7 @@ public class TaxParameterServiceImpl implements TaxParameterService {
     }
 
     private void validateParams(final String componentCode, final String parameterName) {
-        Validate.notBlank(componentCode, "component cannot be blank");
+        Validate.notBlank(componentCode, "componentCode cannot be blank");
         Validate.notBlank(parameterName, "parameterName cannot be blank");
     }
 

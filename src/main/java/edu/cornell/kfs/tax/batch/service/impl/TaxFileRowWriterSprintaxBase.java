@@ -32,15 +32,13 @@ public abstract class TaxFileRowWriterSprintaxBase extends TaxFileRowWriterBase<
 
     protected final ICSVWriter csvWriter;
     protected final String outputFileName;
-    protected final String taxFileType;
     protected final DecimalFormat amountFormat;
     protected final DecimalFormat percentFormat;
 
-    protected TaxFileRowWriterSprintaxBase(final String outputFileName, final String taxFileType,
+    protected TaxFileRowWriterSprintaxBase(final String outputFileName,
             final TaxOutputDefinition taxOutputDefinition) throws IOException {
         super(taxOutputDefinition);
         Validate.notBlank(outputFileName, "outputFileName cannot be blank");
-        Validate.notBlank(taxFileType, "taxFileType cannot be blank");
 
         FileOutputStream outputStream = null;
         OutputStreamWriter streamWriter = null;
@@ -55,7 +53,6 @@ public abstract class TaxFileRowWriterSprintaxBase extends TaxFileRowWriterBase<
             this.streamWriter = streamWriter;
             this.csvWriter = csvWriter;
             this.outputFileName = outputFileName;
-            this.taxFileType = taxFileType;
             this.amountFormat = TaxUtils.buildDefaultAmountFormatForFileOutput();
             this.percentFormat = TaxUtils.buildDefaultPercentFormatForSprintaxFileOutput();
             success = true;
@@ -77,11 +74,6 @@ public abstract class TaxFileRowWriterSprintaxBase extends TaxFileRowWriterBase<
     @Override
     public void close() throws IOException {
         IOUtils.closeQuietly(csvWriter, streamWriter, outputStream);
-    }
-
-    @Override
-    public String getTaxFileType() {
-        return taxFileType;
     }
 
     @Override

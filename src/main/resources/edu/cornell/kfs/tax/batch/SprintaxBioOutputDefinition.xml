@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taxOutputDefinition>
-
+<taxOutputDefinition fieldSeparator=",">
     <section name="Sprintax_Bio_Row_1042S"
              hasHeaderRow="true"
-             hasExactLength="false"
-             hasSeparators="true"
-             separator=",">
+             useExactFieldLengths="false">
         <field name="First_Name" length="90" type="DERIVED" key="vendorFirstName"/>
         <field name="Middle_Name" length="90" type="STATIC" value=""/>
         <field name="Last_Name" length="90" type="DERIVED" key="vendorLastName"/>
@@ -28,5 +25,4 @@
         <field name="Mailing_Address" length="90" type="STATIC" value=""/>
         <field name="Canada_Province" length="90" type="DERIVED" key="vendorForeignProvinceName"/>
     </section>
-
 </taxOutputDefinition>

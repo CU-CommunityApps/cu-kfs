@@ -144,7 +144,7 @@ public class TaxRowClusionBuilderBase {
     }
 
     protected Set<String> getMultiValueParameter(final String parameterName) {
-        return taxParameterService.getParameterValuesAsString(parameterComponent, parameterName);
+        return taxParameterService.getParameterValuesSetAsString(parameterComponent, parameterName);
     }
 
     protected boolean getParameterAllowDisallowFlag(final String parameterName) {

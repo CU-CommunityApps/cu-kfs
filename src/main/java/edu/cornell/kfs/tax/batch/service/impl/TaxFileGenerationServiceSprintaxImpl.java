@@ -88,9 +88,9 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
 
         try (
                 final TaxFileRowWriterSprintaxBioFileImpl bioFileWriter = 
-                        new TaxFileRowWriterSprintaxBioFileImpl(bioFilePath, "", bioFileDefinition);
+                        new TaxFileRowWriterSprintaxBioFileImpl(bioFilePath, bioFileDefinition);
                 final TaxFileRowWriterSprintaxPaymentsFileImpl paymentsFileWriter = 
-                        new TaxFileRowWriterSprintaxPaymentsFileImpl(paymentsFilePath, "", paymentsFileDefinition);
+                        new TaxFileRowWriterSprintaxPaymentsFileImpl(paymentsFilePath, paymentsFileDefinition);
         ) {
             final SprintaxHelper helper = new SprintaxHelper(config, rowExtractor, bioFileWriter, paymentsFileWriter,
                     transactionOverrides);
@@ -687,7 +687,7 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
     }
 
     private Set<String> getMultiValueParameter(final String parameterName) {
-        return taxParameterService.getParameterValuesAsString(CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
+        return taxParameterService.getParameterValuesSetAsString(CUTaxConstants.TAX_1042S_PARM_DETAIL, parameterName);
     }
 
     private String getSubParameter(final String parameterName, final String subParameterName) {

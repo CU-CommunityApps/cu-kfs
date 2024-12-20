@@ -42,6 +42,7 @@
               <list>
                 <value>${reports.directory}/tax</value>
                 <value>${staging.directory}/tax</value>
+                <value>${staging.directory}/tax/sprintax</value>
               </list>
         </property>
     </bean>
@@ -134,12 +135,13 @@
           p:fileExtension="xml"
           p:fileNamePrefix="NOT_USED_"
           p:schemaLocation="classpath:edu/cornell/kfs/tax/batch/taxOutputDefinitionV2.xsd"
+          p:outputClass="edu.cornell.kfs.tax.batch.xml.TaxOutputDefinition"
           p:dateTimeService-ref="dateTimeService"/>
 
     <bean id="sprintaxFileGenerationService" parent="sprintaxFileGenerationService-parentBean"/>
     <bean id="sprintaxFileGenerationService-parentBean"
           abstract="true"
-          class="edu.cornell.kfs.tax.service.impl.TaxFileGenerationServiceSprintaxImpl"
+          class="edu.cornell.kfs.tax.batch.service.impl.TaxFileGenerationServiceSprintaxImpl"
           p:transactionDetailProcessorDao-ref="transactionDetailProcessorDao"
           p:taxOutputDefinitionV2FileType-ref="taxOutputDefinitionV2FileType"
           p:transactionOverrideService-ref="transactionOverrideService"
@@ -147,7 +149,7 @@
           p:taxParameterService-ref="taxParameterService"
           p:sprintaxBioFileDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/SprintaxBioOutputDefinition.xml"
           p:sprintaxPaymentsFileDefinitionFilePath="classpath:edu/cornell/kfs/tax/batch/SprintaxPaymentOutputDefinition.xml"
-          p:fileOutputDirectory="{staging.directory}/tax/sprintax"
+          p:fileOutputDirectory="${staging.directory}/tax/sprintax"
           p:payerEIN="${tax.output.ein}"
           p:scrubOutput="${tax.output.scrubbed}"/>
 
