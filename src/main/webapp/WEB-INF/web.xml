@@ -96,6 +96,11 @@
         <filter-name>ConcurAuthenticationFilter</filter-name>
         <filter-class>edu.cornell.kfs.concur.rest.authentication.ConcurAuthenticationFilter</filter-class>
     </filter>
+    
+    <filter>
+        <filter-name>ConcurAIAuthFilter</filter-name>
+        <filter-class>edu.cornell.kfs.concur.web.filter.ConcurAIAuthFilter</filter-class>
+    </filter>
 
     <filter>
         <filter-name>CuEinvoiceServerAuthFilter</filter-name>
@@ -203,6 +208,11 @@
         <filter-name>ConcurAuthenticationFilter</filter-name>
         <url-pattern>/ws/system/v1.0/testconnection</url-pattern>
         <url-pattern>/ws/concur/v1.0/validate</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>ConcurAIAuthFilter</filter-name>
+        <url-pattern>/ws/concur/ai/api/*</url-pattern>
     </filter-mapping>
 
     <!-- Listeners -->
