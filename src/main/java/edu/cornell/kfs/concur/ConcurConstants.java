@@ -284,6 +284,8 @@ public class ConcurConstants {
         public static final String AUTHORIZATION_HEADER_KEY = "authorization";
         public static final String BASIC_AUTHENTICATION_STARTER = "Basic ";
         public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
+        public static final String WEBSERVICE_CRED_GROUP_CODE = "CONCURAI";
+        public static final String WEBSERVICE_CRED_KEY = "usernamepassword";
     }
 
 }

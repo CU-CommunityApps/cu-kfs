@@ -17,13 +17,17 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kuali.kfs.sys.context.SpringContext;
 
 import com.google.gson.Gson;
 
 import edu.cornell.kfs.concur.ConcurConstants.ConcurAIConstants;
+import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public class ConcurAIAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
+
+    private WebServiceCredentialService webServiceCredentialService;
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -41,7 +45,8 @@ public class ConcurAIAuthFilter implements Filter {
 
     }
 
-    private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
+    private void checkAuthorization(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException {
         try {
             if (isAuthorized(request)) {
                 chain.doFilter(request, response);
@@ -58,19 +63,26 @@ public class ConcurAIAuthFilter implements Filter {
     }
 
     private boolean isAuthorized(HttpServletRequest request) {
-        byte[] byteArrayEncodedAllowableUserNamePassword = Base64.encodeBase64(getAllowableUserNamePassword().getBytes());
-        String encodedAllowableUserNamePassword = new String(byteArrayEncodedAllowableUserNamePassword, StandardCharsets.UTF_8);
+        byte[] byteArrayEncodedAllowableUserNamePassword = Base64
+                .encodeBase64(getAllowableUserNamePassword().getBytes());
+        String encodedAllowableUserNamePassword = new String(byteArrayEncodedAllowableUserNamePassword,
+                StandardCharsets.UTF_8);
         String authorizationFromRequest = request.getHeader(ConcurAIConstants.AUTHORIZATION_HEADER_KEY);
         return StringUtils.equals(authorizationFromRequest,
                 ConcurAIConstants.BASIC_AUTHENTICATION_STARTER + encodedAllowableUserNamePassword);
 
     }
 
-    /*
-     * @todo implement this from webservice credentials
-     */
     private String getAllowableUserNamePassword() {
-        return "concurai:concurAIPassword";
+        return getWebServiceCredentialService().getWebServiceCredentialValue(
+                ConcurAIConstants.WEBSERVICE_CRED_GROUP_CODE, ConcurAIConstants.WEBSERVICE_CRED_KEY);
+    }
+
+    public WebServiceCredentialService getWebServiceCredentialService() {
+        if (webServiceCredentialService == null) {
+            webServiceCredentialService = SpringContext.getBean(WebServiceCredentialService.class);
+        }
+        return webServiceCredentialService;
     }
 
 }

@@ -17,7 +17,6 @@ public class ConcurAIApplication extends Application {
         singletons.add(new ConcurAIResource());
     }
     
-    
     @Override
     public Set<Object> getSingletons() {
         return singletons;

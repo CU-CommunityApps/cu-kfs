@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.sys.KFSConstants;
 
@@ -189,11 +187,6 @@ public class ConcurAccountDetailDto {
 
     public void setHigherEdFunctionCode(String higherEdFunctionCode) {
         this.higherEdFunctionCode = higherEdFunctionCode;
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
     
 }
