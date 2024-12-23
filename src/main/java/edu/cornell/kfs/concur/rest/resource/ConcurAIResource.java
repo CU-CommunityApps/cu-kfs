@@ -1,27 +1,28 @@
 package edu.cornell.kfs.concur.rest.resource;
 
+import java.text.MessageFormat;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
+import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.google.gson.Gson;
 
+import edu.cornell.kfs.concur.ConcurConstants.ConcurAIConstants;
 import edu.cornell.kfs.concur.rest.jsonObjects.ConcurAccountDetailDto;
 
 @Path("api")
@@ -40,25 +41,35 @@ public class ConcurAIResource {
     
     @GET
     public Response describeConcurAIResource() {
-        return Response.ok("Concur AI resouce.").build();
+        return Response.ok(ConcurAIConstants.RESOURCE_NAME).build();
     }
     
     @GET
     @Path("/getAccountDetails")
-    public Response getAccountDetails(@RequestParam(value = "chartOfAccountsCode") String chart, 
-            @RequestParam(value = "accountNumber") String accountNumber) {
-        if (StringUtils.isBlank(chart) || StringUtils.isBlank(accountNumber)) {
-            //return Response.i
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both chart and accountNumber must be provided");
+    public Response getAccountDetails() {
+        try {
+            String chart = servletRequest.getParameter(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE);
+            String accountNumber = servletRequest.getParameter(KFSPropertyConstants.ACCOUNT_NUMBER);
+            LOG.debug("getAccountDetails, entering with chart {} and account {}", chart, accountNumber);
+            
+            if (StringUtils.isBlank(chart) || StringUtils.isBlank(accountNumber)) {
+                return Response.status(Status.BAD_REQUEST.getStatusCode(), ConcurAIConstants.CHART_AND_ACCOUNT_MUST_BE_PROVIDED).build();
+            }
+            
+            Account account = getAccountService().getByPrimaryId(chart, accountNumber);
+            
+            if (account != null) {
+                ConcurAccountDetailDto dto = new ConcurAccountDetailDto(account);
+                return Response.ok(gson.toJson(dto)).build();
+            } else {
+                String notFoundMessage = MessageFormat.format(ConcurAIConstants.ACCOUNT_NOT_FOUND_MESSAGE, chart, accountNumber);
+                return Response.status(Status.NOT_FOUND.getStatusCode(), notFoundMessage).build();
+            }
+            
+        } catch (Exception e) {
+            LOG.error("getAccountDetails, had an error getting account details", e);
+            return Response.serverError().build();
         }
-        
-        Account account = getAccountService().getByPrimaryId(chart, accountNumber);
-        if (account == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No account found");
-        }
-        
-        ConcurAccountDetailDto dto = new ConcurAccountDetailDto(account);
-        return Response.ok(gson.toJson(dto)).build();
     }
 
     public AccountService getAccountService() {
@@ -67,7 +78,5 @@ public class ConcurAIResource {
         }
         return accountService;
     }
-    
-    
 
 }

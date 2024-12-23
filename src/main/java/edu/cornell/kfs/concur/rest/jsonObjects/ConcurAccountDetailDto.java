@@ -1,8 +1,10 @@
 package edu.cornell.kfs.concur.rest.jsonObjects;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.kuali.kfs.coa.businessobject.Account;
@@ -11,7 +13,6 @@ import org.kuali.kfs.sys.KFSConstants;
 import edu.cornell.kfs.coa.businessobject.AccountExtendedAttribute;
 
 public class ConcurAccountDetailDto {
-    
     private static final SimpleDateFormat SDF = new SimpleDateFormat(KFSConstants.MONTH_DAY_YEAR_DATE_FORMAT, Locale.US);
     
     private boolean active;
@@ -49,9 +50,17 @@ public class ConcurAccountDetailDto {
         this.accountManagerName = account.getAccountManagerUser().getName();
         this.accountSupervisorName = account.getAccountSupervisoryUser().getName();
         this.closed = account.isClosed();
-        this.accountCreateDate = SDF.format(account.getAccountCreateDate());
-        this.accountExpirateDate = SDF.format(account.getAccountExpirationDate());
+        this.accountCreateDate = formatDate(account.getAccountCreateDate());
+        this.accountExpirateDate = formatDate(account.getAccountExpirationDate());
         this.higherEdFunctionCode = account.getFinancialHigherEdFunctionCd();
+    }
+    
+    private String formatDate(Date date) {
+        if (date != null) {
+            return SDF.format(date);
+        } else {
+            return StringUtils.EMPTY;
+        }
     }
     
     public boolean isActive() {

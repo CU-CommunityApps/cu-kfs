@@ -1,5 +1,8 @@
 package edu.cornell.kfs.concur;
 
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+
 public class ConcurConstants {
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
     public static final String CONSUMER_KEY_PROPERTY = "X-ConsumerKey";
@@ -270,6 +273,13 @@ public class ConcurConstants {
             this.code = code;
             this.name = name;
         }
+    }
+    
+    public static final class ConcurAIConstants {
+        public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provied with URL parameters "
+                + KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + StringUtils.SPACE + KFSPropertyConstants.ACCOUNT_NUMBER;
+        public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
+        public static final String RESOURCE_NAME = "Concur AI resouce.";
     }
 
 }
