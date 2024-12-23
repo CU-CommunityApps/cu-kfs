@@ -277,9 +277,13 @@ public class ConcurConstants {
     
     public static final class ConcurAIConstants {
         public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provied with URL parameters "
-                + KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE + StringUtils.SPACE + KFSPropertyConstants.ACCOUNT_NUMBER;
+                + KFSPropertyConstants.CHART_OF_ACCOUNTS + StringUtils.SPACE + KFSPropertyConstants.ACCOUNT_NUMBER;
         public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
         public static final String RESOURCE_NAME = "Concur AI resouce.";
+        public static final String UNAUTHORIZED = "Unauthorized";
+        public static final String AUTHORIZATION_HEADER_KEY = "authorization";
+        public static final String BASIC_AUTHENTICATION_STARTER = "Basic ";
+        public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
     }
 
 }
