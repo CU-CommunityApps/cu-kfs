@@ -26,6 +26,7 @@ import edu.cornell.kfs.sys.service.WebServiceCredentialService;
 
 public class ConcurAIAuthFilter implements Filter {
     private static final Logger LOG = LogManager.getLogger();
+    private static final Gson gson = new Gson();
 
     private WebServiceCredentialService webServiceCredentialService;
 
@@ -53,12 +54,12 @@ public class ConcurAIAuthFilter implements Filter {
             } else {
                 LOG.warn("checkAuthorization unauthorized {} {}", request.getMethod(), request.getPathInfo());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().println(new Gson().toJson(ConcurAIConstants.UNAUTHORIZED));
+                response.getWriter().println(gson.toJson(ConcurAIConstants.UNAUTHORIZED));
             }
         } catch (Exception ex) {
             LOG.error("checkAuthorization", ex);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println(new Gson().toJson(ConcurAIConstants.UNAUTHORIZED));
+            response.getWriter().println(gson.toJson(ConcurAIConstants.UNAUTHORIZED));
         }
     }
 

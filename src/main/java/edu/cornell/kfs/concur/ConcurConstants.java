@@ -276,7 +276,8 @@ public class ConcurConstants {
     }
     
     public static final class ConcurAIConstants {
-        public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provied with URL parameters "
+        public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+        public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provied with URL parameters in the proper format "
                 + KFSPropertyConstants.CHART_OF_ACCOUNTS + StringUtils.SPACE + KFSPropertyConstants.ACCOUNT_NUMBER;
         public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
         public static final String RESOURCE_NAME = "Concur AI resouce.";
