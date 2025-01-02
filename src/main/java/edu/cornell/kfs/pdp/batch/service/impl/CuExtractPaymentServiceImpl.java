@@ -110,26 +110,6 @@ public class CuExtractPaymentServiceImpl extends ExtractPaymentServiceImpl {
         }
     }
 
-    /**
-     * Overridden and Cornell customized to not generate proprietary check format.
-     */
-    @Override
-    public void extractChecks() {
-        LOG.debug("extractChecks() - Enter");
-
-        final PaymentStatus extractedStatus =
-                businessObjectService.findBySinglePrimaryKey(
-                        PaymentStatus.class,
-                        PdpConstants.PaymentStatusCodes.EXTRACTED
-                );
-
-        if (shouldUseIso20022Format()) {
-            iso20022FormatExtractor.extractChecks(extractedStatus, directoryName);
-        }
-
-        LOG.debug("extractChecks() - Exit");
-    }
-
     /*
      * The KualiCo superclass declares this method as private, so we have to define our own instead of overriding.
      */
