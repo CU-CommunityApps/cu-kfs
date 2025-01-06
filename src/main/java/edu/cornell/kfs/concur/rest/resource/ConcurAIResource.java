@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.coa.businessobject.Account;
 import org.kuali.kfs.coa.service.AccountService;
 import org.kuali.kfs.datadictionary.legacy.DataDictionaryService;
+import org.kuali.kfs.krad.datadictionary.AttributeDefinition;
 import org.kuali.kfs.sys.KFSPropertyConstants;
 import org.kuali.kfs.sys.context.SpringContext;
 
@@ -55,8 +56,8 @@ public class ConcurAIResource {
             String accountNumber = servletRequest.getParameter(KFSPropertyConstants.ACCOUNT_NUMBER);
             LOG.debug("getAccountDetails, entering with chart {} and account {}", chart, accountNumber);
             
-            if (!validatePropertyValue(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chart) || 
-                    !validatePropertyValue(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber)) {
+            if (!validateAccountPropertyValue(KFSPropertyConstants.CHART_OF_ACCOUNTS_CODE, chart) || 
+                    !validateAccountPropertyValue(KFSPropertyConstants.ACCOUNT_NUMBER, accountNumber)) {
                 LOG.debug("getAccountDetails, account or chart invalid");
                 return Response.status(Status.BAD_REQUEST).entity(ConcurAIConstants.CHART_AND_ACCOUNT_MUST_BE_PROVIDED).build();
             }
@@ -77,9 +78,13 @@ public class ConcurAIResource {
         }
     }
     
-    private boolean validatePropertyValue(String propertyName, String propertyValue) {
-        Pattern validationExpression = getDataDictionaryService().getAttributeValidatingExpression(Account.class.getName(), propertyName);
-        return  StringUtils.isNotBlank(propertyValue) && validationExpression.matcher(propertyValue).matches();
+    private boolean validateAccountPropertyValue(String propertyName, String propertyValue) {
+        AttributeDefinition accountAttributeDefinition = getDataDictionaryService().getAttributeDefinition(Account.class.getName(), propertyName);
+        Integer maxLength = accountAttributeDefinition.getMaxLength();
+        Pattern validationExpression = accountAttributeDefinition.getValidationPattern().getRegexPattern();
+
+        return StringUtils.isNotBlank(propertyValue) && propertyValue.length() <= maxLength
+                && validationExpression.matcher(propertyValue).matches();
     }
 
     public AccountService getAccountService() {
