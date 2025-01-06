@@ -330,12 +330,41 @@ public class Iso20022FormatExtractor {
             uniquePaymentProcessList.add(paymentProcess);
         }
 
+        /*
+         * Cornell Customization:
+         * Output processIDs to the log for the data file that is being written.
+         * Data existed here and did not need to be recreated with additional processing.
+         * Base code does not perform extraction in a similar manner for both ACH and
+         * checks so we could not use a single method to output this information.
+         */
+        LOG.info("determineUniquePaymentProcesses() : File contains data for these uniquePaymentProcessIds={}", uniquePaymentProcessIds);
+
         LOG.debug(
                 "determineUniquePaymentProcesses() - Exit : uniquePaymentProcessIds={}; uniquePaymentProcessList={}",
                 uniquePaymentProcessIds,
                 uniquePaymentProcessList
         );
         return uniquePaymentProcessList;
+    }
+
+    /*
+     * Cornell Customization:
+     * Determine unique processIds for the extractChecks routine and log those values.
+     * Logic used is similar to base code method determineUniquePaymentProcesses logic.
+     */
+    private void determineAndLogChecksUniquePaymentProcesses(List<PaymentProcess> paymentProcessList) {
+        final List<Integer> uniquePaymentProcessIds = new LinkedList<>();
+        final Iterator<PaymentProcess> paymentProcessIterator = paymentProcessList.iterator();
+        while (paymentProcessIterator.hasNext()) {
+            final PaymentProcess paymentProcess = paymentProcessIterator.next();
+            final int processId = paymentProcess.getId().intValue();
+            if (uniquePaymentProcessIds.contains(processId)) {
+                continue;
+            }
+            uniquePaymentProcessIds.add(processId);
+        }
+        LOG.info("determineAndLogChecksUniquePaymentProcesses() : File contains data for these uniquePaymentProcessIds={}", uniquePaymentProcessIds);
+        return;
     }
 
     public void extractChecks(
@@ -349,6 +378,7 @@ public class Iso20022FormatExtractor {
 
         // Formatted but not Extracted
         final List<PaymentProcess> paymentProcessList = processDao.getAllExtractsToRun();
+        determineAndLogChecksUniquePaymentProcesses(paymentProcessList);  // Cornell Customization
         LOG.info(
                 "extractChecks(...) - Extracting PaymentProcesses: numberOfPaymentProcesses={}",
                 paymentProcessList::size
