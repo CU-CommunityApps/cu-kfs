@@ -1,5 +1,8 @@
 package edu.cornell.kfs.concur;
 
+import org.apache.commons.lang3.StringUtils;
+import org.kuali.kfs.sys.KFSPropertyConstants;
+
 public class ConcurConstants {
     public static final String AUTHORIZATION_PROPERTY = "Authorization";
     public static final String CONSUMER_KEY_PROPERTY = "X-ConsumerKey";
@@ -270,6 +273,20 @@ public class ConcurConstants {
             this.code = code;
             this.name = name;
         }
+    }
+    
+    public static final class ConcurAIConstants {
+        public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
+        public static final String CHART_AND_ACCOUNT_MUST_BE_PROVIDED = "A chart and account must be provided using the proper format.  The URL parameters are "
+                + KFSPropertyConstants.CHART_OF_ACCOUNTS + " and " + KFSPropertyConstants.ACCOUNT_NUMBER;
+        public static final String ACCOUNT_NOT_FOUND_MESSAGE = "Could not find an account with a chart of {0} and account number {1}";
+        public static final String RESOURCE_NAME = "Concur AI resouce.";
+        public static final String UNAUTHORIZED = "Unauthorized";
+        public static final String AUTHORIZATION_HEADER_KEY = "authorization";
+        public static final String BASIC_AUTHENTICATION_STARTER = "Basic ";
+        public static final String ACCESS_CONTROL_HEADER_NAME = "Access-Control-Allow-Methods";
+        public static final String WEBSERVICE_CRED_GROUP_CODE = "CONCURAI";
+        public static final String WEBSERVICE_CRED_KEY = "usernamepassword";
     }
 
 }
