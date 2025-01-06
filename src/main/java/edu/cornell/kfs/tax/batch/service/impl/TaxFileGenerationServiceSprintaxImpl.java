@@ -6,14 +6,19 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kuali.kfs.core.api.config.property.ConfigurationService;
@@ -338,8 +343,8 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         currentPayment.setForeignSourceIncome(currentRow.getForeignSourceIncomeIndicator());
         currentPayment.setFedIncomeTaxPercent(currentRow.getFederalIncomeTaxPercent());
 
-        final String incomeClassCode = findIncomeClassCodeForObject(currentRow.getFinObjectCode());
-        final TaxBoxType1042S taxBoxType = determineTaxBoxType(currentRow, incomeClassCode, helper);
+        final Set<String> incomeClassCodes = findIncomeClassCodesForObject(currentRow.getFinObjectCode());
+        final TaxBoxType1042S taxBoxType = determineTaxBoxType(currentRow, incomeClassCodes, helper);
         Validate.validState(taxBoxType != null, "Tax Box Type cannot be null; it should be UNKNOWN if undetermined");
 
         final ClusionResult rowClusionResult = checkForExclusions(currentInfo, currentRow, helper, taxBoxType);
@@ -365,19 +370,19 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
         helper.rowExtractor.updateCurrentRow(updatedFieldValues);
     }
 
-    private String findIncomeClassCodeForObject(final String objectCode) {
+    private Set<String> findIncomeClassCodesForObject(final String objectCode) {
         if (StringUtils.isBlank(objectCode)) {
-            return null;
+            return Set.of();
         }
-        final Map<String, String> objectCodeToIncomeClassCodeMappings = taxParameterService
-                .getValueToKeyMapFromParameterContainingMultiValueEntries(CUTaxConstants.TAX_1042S_PARM_DETAIL,
+        final Map<String, Set<String>> objectCodeToIncomeClassCodeMappings = taxParameterService
+                .getValueToKeysMapFromParameterContainingMultiValueEntries(CUTaxConstants.TAX_1042S_PARM_DETAIL,
                         Tax1042SParameterNames.INCOME_CLASS_CODE_VALID_OBJECT_CODES);
-        return objectCodeToIncomeClassCodeMappings.get(objectCode);
+        return objectCodeToIncomeClassCodeMappings.getOrDefault(objectCode, Set.of());
     }
 
-    private TaxBoxType1042S determineTaxBoxType(final TransactionDetail currentRow, final String incomeClassCode,
-            final SprintaxHelper helper) {
-        if (StringUtils.isNotBlank(incomeClassCode)) {
+    private TaxBoxType1042S determineTaxBoxType(final TransactionDetail currentRow,
+            final Set<String> incomeClassCodes, final SprintaxHelper helper) {
+        if (CollectionUtils.isNotEmpty(incomeClassCodes)) {
             helper.increment(TaxStatType.NUM_GROSS_AMOUNTS_DETERMINED, currentRow.getDocumentType());
             return TaxBoxType1042S.GROSS_AMOUNT;
         } else if (multiValueParameterContains(Tax1042SParameterNames.FEDERAL_TAX_WITHHELD_VALID_OBJECT_CODES,
@@ -487,26 +492,28 @@ public class TaxFileGenerationServiceSprintaxImpl implements TaxFileGenerationSe
             final SprintaxInfo1042S currentInfo, final TaxBoxType1042S taxBox,
             final TaxBoxType1042S overriddenTaxBox) {
         final String overriddenTaxBoxForOutput = overriddenTaxBox != null ? overriddenTaxBox.toString() : null;
-        return Map.ofEntries(
-                Map.entry(TransactionDetailColumn.FORM_1042S_BOX, taxBox.toString()),
-                Map.entry(TransactionDetailColumn.FORM_1042S_OVERRIDDEN_BOX, overriddenTaxBoxForOutput),
-                Map.entry(TransactionDetailColumn.VENDOR_NAME, currentInfo.getVendorNameForOutput()),
-                Map.entry(TransactionDetailColumn.PARENT_VENDOR_NAME, currentInfo.getParentVendorNameForOutput()),
-                Map.entry(TransactionDetailColumn.VNDR_EMAIL_ADDR, currentInfo.getVendorEmailAddress()),
-                Map.entry(TransactionDetailColumn.VNDR_CHAP_4_STAT_CD, currentInfo.getChapter4StatusCode()),
-                Map.entry(TransactionDetailColumn.VNDR_GIIN, currentInfo.getVendorGIIN()),
-                Map.entry(TransactionDetailColumn.VNDR_LN1_ADDR, currentInfo.getVendorUSAddressLine1()),
-                Map.entry(TransactionDetailColumn.VNDR_LN2_ADDR, currentInfo.getVendorUSAddressLine2()),
-                Map.entry(TransactionDetailColumn.VNDR_CTY_NM, currentInfo.getVendorUSCityName()),
-                Map.entry(TransactionDetailColumn.VNDR_ST_CD, currentInfo.getVendorUSStateCode()),
-                Map.entry(TransactionDetailColumn.VNDR_ZIP_CD, currentInfo.getVendorUSZipCode()),
-                Map.entry(TransactionDetailColumn.VNDR_FRGN_LN1_ADDR, currentInfo.getVendorForeignAddressLine1()),
-                Map.entry(TransactionDetailColumn.VNDR_FRGN_LN2_ADDR, currentInfo.getVendorForeignAddressLine2()),
-                Map.entry(TransactionDetailColumn.VNDR_FRGN_CTY_NM, currentInfo.getVendorForeignCityName()),
-                Map.entry(TransactionDetailColumn.VNDR_FRGN_ZIP_CD, currentInfo.getVendorForeignZipCode()),
-                Map.entry(TransactionDetailColumn.VNDR_FRGN_PROV_NM, currentInfo.getVendorForeignProvinceName()),
-                Map.entry(TransactionDetailColumn.VNDR_FRGN_CNTRY_CD, currentInfo.getVendorForeignCountryCode())
-        );
+        final Map<TransactionDetailColumn, String> updatedValues = new HashMap<>();
+        MapUtils.putAll(updatedValues, new Object[] {
+                Pair.of(TransactionDetailColumn.FORM_1042S_BOX, taxBox.toString()),
+                Pair.of(TransactionDetailColumn.FORM_1042S_OVERRIDDEN_BOX, overriddenTaxBoxForOutput),
+                Pair.of(TransactionDetailColumn.VENDOR_NAME, currentInfo.getVendorNameForOutput()),
+                Pair.of(TransactionDetailColumn.PARENT_VENDOR_NAME, currentInfo.getParentVendorNameForOutput()),
+                Pair.of(TransactionDetailColumn.VNDR_EMAIL_ADDR, currentInfo.getVendorEmailAddress()),
+                Pair.of(TransactionDetailColumn.VNDR_CHAP_4_STAT_CD, currentInfo.getChapter4StatusCode()),
+                Pair.of(TransactionDetailColumn.VNDR_GIIN, currentInfo.getVendorGIIN()),
+                Pair.of(TransactionDetailColumn.VNDR_LN1_ADDR, currentInfo.getVendorUSAddressLine1()),
+                Pair.of(TransactionDetailColumn.VNDR_LN2_ADDR, currentInfo.getVendorUSAddressLine2()),
+                Pair.of(TransactionDetailColumn.VNDR_CTY_NM, currentInfo.getVendorUSCityName()),
+                Pair.of(TransactionDetailColumn.VNDR_ST_CD, currentInfo.getVendorUSStateCode()),
+                Pair.of(TransactionDetailColumn.VNDR_ZIP_CD, currentInfo.getVendorUSZipCode()),
+                Pair.of(TransactionDetailColumn.VNDR_FRGN_LN1_ADDR, currentInfo.getVendorForeignAddressLine1()),
+                Pair.of(TransactionDetailColumn.VNDR_FRGN_LN2_ADDR, currentInfo.getVendorForeignAddressLine2()),
+                Pair.of(TransactionDetailColumn.VNDR_FRGN_CTY_NM, currentInfo.getVendorForeignCityName()),
+                Pair.of(TransactionDetailColumn.VNDR_FRGN_ZIP_CD, currentInfo.getVendorForeignZipCode()),
+                Pair.of(TransactionDetailColumn.VNDR_FRGN_PROV_NM, currentInfo.getVendorForeignProvinceName()),
+                Pair.of(TransactionDetailColumn.VNDR_FRGN_CNTRY_CD, currentInfo.getVendorForeignCountryCode())
+        });
+        return Collections.unmodifiableMap(updatedValues);
     }
 
 

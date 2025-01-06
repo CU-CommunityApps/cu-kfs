@@ -46,7 +46,7 @@ public class TaxStatistics implements TaxStatisticsHandler {
         } else {
             taxSourceSuffix = CUKFSConstants.UNDERSCORE + CUTaxConstants.TAX_SOURCE_PDP;
         }
-        final TaxStatType taxSourceSpecificEntryType = TaxStatType.valueOf(baseEntryType + taxSourceSuffix);
+        final TaxStatType taxSourceSpecificEntryType = TaxStatType.valueOf(baseEntryType.name() + taxSourceSuffix);
         increment(taxSourceSpecificEntryType);
     }
 

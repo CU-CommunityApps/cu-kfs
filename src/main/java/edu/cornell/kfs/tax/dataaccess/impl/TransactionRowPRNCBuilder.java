@@ -71,6 +71,8 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
         endDateTime.set(Calendar.MINUTE, FIFTY_NINE);
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
         
+        LOG.info("copyValuesFromPreviousBuilder, Starting search for Foreign Draft and Wire Transfer PRNCs");
+        
         // Find all PRNC documents that were finalized between the start and end dates.
         CuRouteHeaderService routeHeaderService = (CuRouteHeaderService) SpringContext.getBean(
                 RouteHeaderService.class, KEWServiceLocator.DOC_ROUTE_HEADER_SRV);
@@ -82,6 +84,7 @@ abstract class TransactionRowPRNCBuilder<T extends TransactionDetailSummary> ext
             // If no matching PRNC documents were found, then just add a dummy value to prevent query generation problems.
         	finalizedPRNCDocuments.add(CUTaxConstants.DOC_ID_ZERO);
         }
+        LOG.info("copyValuesFromPreviousBuilder, Finished search for Foreign Draft and Wire Transfer PRNCs");
     }
 
 	@Override

@@ -20,7 +20,7 @@ public interface TaxParameterService {
 
     Map<String, String> getSubParameters(final String componentCode, final String parameterName);
 
-    Map<String, String> getValueToKeyMapFromParameterContainingMultiValueEntries(
+    Map<String, Set<String>> getValueToKeysMapFromParameterContainingMultiValueEntries(
             final String componentCode, final String parameterName);
 
     Map<String, Set<String>> getValuesMapFromParameterContainingDuplicateSubParameterKeys(

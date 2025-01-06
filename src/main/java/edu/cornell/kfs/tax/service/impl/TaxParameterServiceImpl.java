@@ -69,24 +69,27 @@ public class TaxParameterServiceImpl implements TaxParameterService {
 
     @Override
     @Cacheable(cacheNames = Parameter.CACHE_NAME,
-            key = "'{CU_getValueToKeyMapFromParameterContainingMultiValueEntries}'+#p0+','+#p1")
-    public Map<String, String> getValueToKeyMapFromParameterContainingMultiValueEntries(
+            key = "'{CU_getValueToKeysMapFromParameterContainingMultiValueEntries}'+#p0+','+#p1")
+    public Map<String, Set<String>> getValueToKeysMapFromParameterContainingMultiValueEntries(
             final String componentCode, final String parameterName) {
         validateParams(componentCode, parameterName);
         final Collection<String> parameterValues = parameterService.getParameterValuesAsString(
                 CUTaxConstants.TAX_NAMESPACE, componentCode, parameterName);
-        final Stream.Builder<Map.Entry<String, String>> valueToKeyEntries = Stream.builder();
+        final Map<String, Stream.Builder<String>> results = new HashMap<>();
         for (final String keyAndMultiValuePair : parameterValues) {
             final String key = StringUtils.substringBefore(keyAndMultiValuePair, CUKFSConstants.EQUALS_SIGN);
             final String commaDelimitedValues = StringUtils.substringAfter(
                     keyAndMultiValuePair, CUKFSConstants.EQUALS_SIGN);
             final String[] values = StringUtils.split(commaDelimitedValues, KFSConstants.COMMA);
             for (final String value : values) {
-                valueToKeyEntries.add(Map.entry(value, key));
+                results.computeIfAbsent(value, sameValue -> Stream.builder())
+                        .add(key);
             }
         }
-        return valueToKeyEntries.build()
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return results.entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().build().collect(Collectors.toUnmodifiableSet())));
     }
 
     

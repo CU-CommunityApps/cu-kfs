@@ -77,6 +77,8 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
         endDateTime.set(Calendar.HOUR_OF_DAY, TWENTY_THREE);
         endDateTime.set(Calendar.MINUTE, FIFTY_NINE);
         endDateTime.set(Calendar.SECOND, FIFTY_NINE);
+
+        LOG.info("copyValuesFromPreviousBuilder, Starting search for Foreign Draft and Wire Transfer DVs");
         
         // Find all DV documents that were finalized between the start and end dates.
         CuRouteHeaderService routeHeaderService = (CuRouteHeaderService) SpringContext.getBean(
@@ -90,6 +92,7 @@ abstract class TransactionRowDvBuilder<T extends TransactionDetailSummary> exten
             // If no matching DV documents were found, then just add a dummy value to prevent query generation problems.
             finalizedDvDocuments.add(CUTaxConstants.DOC_ID_ZERO);
         }
+        LOG.info("copyValuesFromPreviousBuilder, Finished search for Foreign Draft and Wire Transfer DVs");
     }
 
 
